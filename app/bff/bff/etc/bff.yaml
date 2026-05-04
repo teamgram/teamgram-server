@@ -66,6 +66,17 @@ MsgClient:
       - 127.0.0.1:2379
     Key: messenger.msg
 
+SyncClient:
+  DestService: messenger.sync
+  ServiceName: RPCSync
+  Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: messenger.sync
+
+TypingMinIntervalSeconds: 5
+
 UserupdatesClient:
   DestService: messenger.userupdates
   ServiceName: RPCUserupdates

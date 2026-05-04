@@ -33,9 +33,11 @@ type Config struct {
 	MediaClient               kitex.RpcClientConf
 	IdgenClient               kitex.RpcClientConf
 	MsgClient                 kitex.RpcClientConf
+	SyncClient                kitex.RpcClientConf
 	UserupdatesClient         kitex.RpcClientConf
 	DfsClient                 kitex.RpcClientConf
 	StatusClient              kitex.RpcClientConf
+	TypingMinIntervalSeconds  int                        `json:",default=5"`
 	SignInServiceNotification []conf.MessageEntityConfig `json:",optional"`
 	SignInMessage             []conf.MessageEntityConfig `json:",optional"`
 }

@@ -20,6 +20,11 @@ func TestBuildBizBackedConfigSetsConcreteKitexClients(t *testing.T) {
 			DestService: "messenger.msg",
 			ServiceName: "RPCMsg",
 		},
+		SyncClient: kitex.RpcClientConf{
+			DestService: "messenger.sync",
+			ServiceName: "RPCSync",
+		},
+		TypingMinIntervalSeconds: 7,
 	}
 
 	chatInvites := buildChatInvitesConfig(src)
@@ -77,6 +82,15 @@ func TestBuildBizBackedConfigSetsConcreteKitexClients(t *testing.T) {
 	}
 	if dialogs.MsgClient.ServiceName != "RPCMsg" {
 		t.Fatalf("expected dialogs msg client service name RPCMsg, got %#v", dialogs.MsgClient)
+	}
+	if dialogs.SyncClient.DestService != "messenger.sync" {
+		t.Fatalf("expected dialogs sync client dest service to be forwarded, got %#v", dialogs.SyncClient)
+	}
+	if dialogs.SyncClient.ServiceName != "RPCSync" {
+		t.Fatalf("expected dialogs sync client service name RPCSync, got %#v", dialogs.SyncClient)
+	}
+	if dialogs.TypingMinIntervalSeconds != 7 {
+		t.Fatalf("expected typing min interval 7, got %d", dialogs.TypingMinIntervalSeconds)
 	}
 }
 

@@ -62,6 +62,15 @@ MsgClient:
       - 127.0.0.1:2379
     Key: messenger.msg
   Timeout: 0
+SyncClient:
+  DestService: "messenger.sync"
+  ServiceName: "messenger.sync"
+  Codec: "zrpc"
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: messenger.sync
+TypingMinIntervalSeconds: 5
 DfsClient:
   DestService: "service.dfs"
   ServiceName: "service.dfs"
@@ -79,8 +88,3 @@ StatusClient:
     Hosts:
       - 127.0.0.1:2379
     Key: service.status
-#
-SyncClient:
-  Topic: "Sync-T"
-  Brokers:
-    - 127.0.0.1:9092

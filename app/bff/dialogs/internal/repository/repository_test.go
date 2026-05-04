@@ -6,6 +6,7 @@ import (
 
 	syncclient "github.com/teamgram/teamgram-server/v2/app/messenger/sync/client"
 	syncpb "github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/identity"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -46,5 +47,17 @@ func TestPushTypingUpdatesSetsCallerService(t *testing.T) {
 	}
 	if syncClient.updates != updates {
 		t.Fatal("updates was not forwarded")
+	}
+}
+
+func TestHasSyncClientConfigRequiresDestAndServiceName(t *testing.T) {
+	if hasSyncClientConfig(kitex.RpcClientConf{}) {
+		t.Fatal("empty sync config should be disabled")
+	}
+	if hasSyncClientConfig(kitex.RpcClientConf{DestService: "messenger.sync"}) {
+		t.Fatal("sync config without service name should be disabled")
+	}
+	if !hasSyncClientConfig(kitex.RpcClientConf{DestService: "messenger.sync", ServiceName: "RPCSync"}) {
+		t.Fatal("sync config with dest and service name should be enabled")
 	}
 }

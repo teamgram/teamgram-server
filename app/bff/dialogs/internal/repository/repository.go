@@ -28,6 +28,7 @@ import (
 	dialogclient "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/client"
 	messageclient "github.com/teamgram/teamgram-server/v2/app/service/biz/message/client"
 	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/identity"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -45,15 +46,22 @@ type Repository struct {
 
 // NewRepository creates a new Repository.
 func NewRepository(c config.Config) *Repository {
-	return &Repository{
+	r := &Repository{
 		ChatClient:        chatclient.NewChatClient(chatclient.MustNewKitexClient(c.ChatClient)),
 		DialogClient:      dialogclient.NewDialogClient(dialogclient.MustNewKitexClient(c.DialogClient)),
 		MessageClient:     messageclient.NewMessageClient(messageclient.MustNewKitexClient(c.MessageClient)),
 		MsgClient:         msgclient.NewMsgClient(msgclient.MustNewKitexClient(c.MsgClient)),
-		SyncClient:        syncclient.NewSyncClient(syncclient.MustNewKitexClient(c.SyncClient)),
 		UserupdatesClient: userupdatesclient.NewUserupdatesClient(userupdatesclient.MustNewKitexClient(c.UserupdatesClient)),
 		UserClient:        userclient.NewUserClient(userclient.MustNewKitexClient(c.UserClient)),
 	}
+	if hasSyncClientConfig(c.SyncClient) {
+		r.SyncClient = syncclient.NewSyncClient(syncclient.MustNewKitexClient(c.SyncClient))
+	}
+	return r
+}
+
+func hasSyncClientConfig(c kitex.RpcClientConf) bool {
+	return c.DestService != "" && c.ServiceName != ""
 }
 
 // PushTypingUpdates sends a realtime-only typing update to the sync service.
