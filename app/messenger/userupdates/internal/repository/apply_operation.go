@@ -197,6 +197,7 @@ func buildEventAndResponse(in ApplyUserOperationInput, op payload.MessageOperati
 		Out:                op.Out,
 		MessageText:        op.MessageText,
 		Entities:           op.Entities,
+		AuthKeyIdExclude:   in.AuthKeyIDExclude,
 	}
 	eventPayload, err := json.Marshal(event)
 	if err != nil {

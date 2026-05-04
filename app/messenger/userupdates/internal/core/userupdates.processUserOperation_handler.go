@@ -37,17 +37,18 @@ func (c *UserupdatesCore) UserupdatesProcessUserOperation(in *userupdates.TLUser
 	}
 
 	result, err := c.svcCtx.Repo.ApplyUserOperation(c.ctx, repository.ApplyUserOperationInput{
-		UserID:        op.UserId,
-		OperationID:   op.OperationId,
-		OpType:        op.OpType,
-		PeerType:      op.PeerType,
-		PeerID:        op.PeerId,
-		PayloadCodec:  op.PayloadCodec,
-		Payload:       op.Payload,
-		PayloadHash:   op.PayloadHash,
-		BucketID:      op.BucketId,
-		PartitionID:   op.PartitionId,
-		DependencyPts: dependencyPts,
+		UserID:           op.UserId,
+		OperationID:      op.OperationId,
+		OpType:           op.OpType,
+		PeerType:         op.PeerType,
+		PeerID:           op.PeerId,
+		PayloadCodec:     op.PayloadCodec,
+		Payload:          op.Payload,
+		PayloadHash:      op.PayloadHash,
+		BucketID:         op.BucketId,
+		PartitionID:      op.PartitionId,
+		DependencyPts:    dependencyPts,
+		AuthKeyIDExclude: op.AuthKeyIdExclude,
 	})
 	if err != nil {
 		return nil, err

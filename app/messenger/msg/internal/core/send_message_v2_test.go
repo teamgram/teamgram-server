@@ -75,6 +75,9 @@ func TestMsgSendMessageV2SingleUserPublishesReceiverOperation(t *testing.T) {
 	if updatesClient.processed == nil || updatesClient.processed.UserId != 1001 {
 		t.Fatalf("sender operation was not sent to userupdates: %+v", updatesClient.processed)
 	}
+	if updatesClient.processed.AuthKeyIdExclude == nil || *updatesClient.processed.AuthKeyIdExclude != 9001 {
+		t.Fatalf("sender operation auth_key_id_exclude = %v, want 9001", updatesClient.processed.AuthKeyIdExclude)
+	}
 	var senderOp payload.MessageOperationV1
 	if err := json.Unmarshal(updatesClient.processed.Payload, &senderOp); err != nil {
 		t.Fatalf("decode sender payload: %v", err)

@@ -50,6 +50,7 @@ type MessageEventV1 struct {
 	Out                bool              `json:"out"`
 	MessageText        string            `json:"message_text"`
 	Entities           []MessageEntityV1 `json:"entities,omitempty"`
+	AuthKeyIdExclude   *int64            `json:"auth_key_id_exclude,omitempty"`
 }
 
 func HashBytes(b []byte) []byte {

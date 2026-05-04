@@ -31,6 +31,7 @@ func TestProcessUserOperationMapsTLToRepository(t *testing.T) {
 		},
 	}
 	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+	authKeyIDExclude := int64(9001)
 
 	got, err := core.UserupdatesProcessUserOperation(&userupdates.TLUserupdatesProcessUserOperation{
 		Operation: userupdates.MakeTLUserOperation(&userupdates.TLUserOperation{
@@ -45,6 +46,7 @@ func TestProcessUserOperationMapsTLToRepository(t *testing.T) {
 			PayloadCodec:         repository.PayloadCodecJSON,
 			PayloadHash:          operationHash,
 			Payload:              operationPayload,
+			AuthKeyIdExclude:     &authKeyIDExclude,
 		}),
 	})
 	if err != nil {
@@ -66,7 +68,9 @@ func TestProcessUserOperationMapsTLToRepository(t *testing.T) {
 		repo.applyInput.OperationID != "v1:msg:2001:sender:1001:out" ||
 		!bytes.Equal(repo.applyInput.PayloadHash, operationHash) ||
 		repo.applyInput.BucketID != 77 ||
-		repo.applyInput.PartitionID != 13 {
+		repo.applyInput.PartitionID != 13 ||
+		repo.applyInput.AuthKeyIDExclude == nil ||
+		*repo.applyInput.AuthKeyIDExclude != authKeyIDExclude {
 		t.Fatalf("unexpected repository input: %+v", repo.applyInput)
 	}
 }

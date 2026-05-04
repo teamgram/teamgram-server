@@ -48,7 +48,7 @@ func (d *PushTaskDispatcher) HandlePushTaskKafkaRecord(ctx context.Context, reco
 		logx.WithContext(ctx).Errorf("push task terminal: task_id=%d user_id=%d code=unsupported_push_type push_type=%d", msg.TaskID, msg.UserID, msg.PushType)
 		return nil
 	}
-	updates, err := pushTaskUpdates(msg)
+	updates, authKeyIDExclude, err := pushTaskUpdates(msg)
 	if err != nil {
 		logx.WithContext(ctx).Errorf("push task terminal: task_id=%d user_id=%d code=payload_projection_failed err=%v", msg.TaskID, msg.UserID, err)
 		return nil
@@ -64,6 +64,9 @@ func (d *PushTaskDispatcher) HandlePushTaskKafkaRecord(ctx context.Context, reco
 		return nil
 	}
 	for _, permAuthKeyId := range keys.Datas {
+		if authKeyIDExclude != nil && *authKeyIDExclude == permAuthKeyId {
+			continue
+		}
 		if _, err := d.gateway.GatewayPushUpdatesData(ctx, &gateway.TLGatewayPushUpdatesData{
 			PermAuthKeyId: permAuthKeyId,
 			Updates:       updates,
@@ -74,21 +77,21 @@ func (d *PushTaskDispatcher) HandlePushTaskKafkaRecord(ctx context.Context, reco
 	return nil
 }
 
-func pushTaskUpdates(msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, error) {
+func pushTaskUpdates(msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, *int64, error) {
 	var event payload.MessageEventV1
 	if err := json.Unmarshal(msg.Payload, &event); err != nil {
-		return nil, fmt.Errorf("decode message event: %w", err)
+		return nil, nil, fmt.Errorf("decode message event: %w", err)
 	}
 	if event.SchemaVersion != payload.MessageEventSchemaVersion || event.EventKind != payload.EventKindNewMessage {
-		return nil, fmt.Errorf("unsupported message event schema=%d kind=%s", event.SchemaVersion, event.EventKind)
+		return nil, nil, fmt.Errorf("unsupported message event schema=%d kind=%s", event.SchemaVersion, event.EventKind)
 	}
 	messageID, err := int64ToInt32(event.MessageID, "message id")
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	pts, err := int64ToInt32(msg.Pts, "pts")
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	if event.PeerType == payload.PeerTypeUser {
 		return tg.MakeTLUpdateShortMessage(&tg.TLUpdateShortMessage{
@@ -99,7 +102,7 @@ func pushTaskUpdates(msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, erro
 			Pts:      pts,
 			PtsCount: 1,
 			Date:     event.Date,
-		}), nil
+		}), event.AuthKeyIdExclude, nil
 	}
 	message := tg.MakeTLMessage(&tg.TLMessage{
 		Out:     event.Out,
@@ -119,7 +122,7 @@ func pushTaskUpdates(msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, erro
 		Chats: []tg.ChatClazz{},
 		Date:  event.Date,
 		Seq:   pts,
-	}), nil
+	}), event.AuthKeyIdExclude, nil
 }
 
 func shortMessageUserID(event payload.MessageEventV1) int64 {

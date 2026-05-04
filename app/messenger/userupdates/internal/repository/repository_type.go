@@ -81,17 +81,18 @@ type PushTask struct {
 }
 
 type ApplyUserOperationInput struct {
-	UserID        int64
-	OperationID   string
-	OpType        int32
-	PeerType      int32
-	PeerID        int64
-	PayloadCodec  int32
-	Payload       []byte
-	PayloadHash   []byte
-	BucketID      int32
-	PartitionID   int32
-	DependencyPts []int64
+	UserID           int64
+	OperationID      string
+	OpType           int32
+	PeerType         int32
+	PeerID           int64
+	PayloadCodec     int32
+	Payload          []byte
+	PayloadHash      []byte
+	BucketID         int32
+	PartitionID      int32
+	DependencyPts    []int64
+	AuthKeyIDExclude *int64
 }
 
 type ApplyUserOperationResult struct {

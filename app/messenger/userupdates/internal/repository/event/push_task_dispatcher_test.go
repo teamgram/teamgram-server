@@ -96,3 +96,51 @@ func TestPushTaskDispatcherRoutesMessageUpdateToUserAuthKeys(t *testing.T) {
 		}
 	}
 }
+
+func TestPushTaskDispatcherSkipsExcludedAuthKey(t *testing.T) {
+	excludedAuthKeyID := int64(111)
+	eventPayload, err := json.Marshal(payload.MessageEventV1{
+		SchemaVersion:    payload.MessageEventSchemaVersion,
+		EventKind:        payload.EventKindNewMessage,
+		MessageID:        9,
+		PeerType:         payload.PeerTypeUser,
+		PeerID:           1001,
+		FromUserID:       1001,
+		ToUserID:         2002,
+		Date:             1777781234,
+		Out:              false,
+		MessageText:      "hello",
+		AuthKeyIdExclude: &excludedAuthKeyID,
+	})
+	if err != nil {
+		t.Fatalf("marshal event payload: %v", err)
+	}
+	body, err := payload.MarshalPushTaskKafkaMessage(payload.PushTaskKafkaMessageV1{
+		SchemaVersion: payload.PushTaskKafkaMessageSchemaVersion,
+		TaskID:        1,
+		UserID:        2002,
+		Pts:           38,
+		PushType:      1,
+		PeerType:      payload.PeerTypeUser,
+		PeerID:        1001,
+		OperationID:   "op",
+		Payload:       eventPayload,
+	})
+	if err != nil {
+		t.Fatalf("marshal push task: %v", err)
+	}
+	auth := &fakePushAuthsession{keys: []int64{111, 222}}
+	gatewayClient := &fakePushGateway{}
+	dispatcher := NewPushTaskDispatcher(auth, gatewayClient)
+
+	err = dispatcher.HandlePushTaskKafkaRecord(context.Background(), PushTaskKafkaRecord{Value: body})
+	if err != nil {
+		t.Fatalf("HandlePushTaskKafkaRecord() error = %v", err)
+	}
+	if len(gatewayClient.requests) != 1 {
+		t.Fatalf("gateway push count = %d, want 1", len(gatewayClient.requests))
+	}
+	if gatewayClient.requests[0].PermAuthKeyId != 222 {
+		t.Fatalf("pushed perm_auth_key_id = %d, want 222", gatewayClient.requests[0].PermAuthKeyId)
+	}
+}
