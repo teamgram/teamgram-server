@@ -17,14 +17,28 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/bff/drafts/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesClearAllDrafts
 // messages.clearAllDrafts#7e58ee9c = Bool;
 func (c *DraftsCore) MessagesClearAllDrafts(in *tg.TLMessagesClearAllDrafts) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.clearAllDrafts - error: method MessagesClearAllDrafts not impl")
+	rValues, err := c.svcCtx.Repo.DialogClient.DialogClearAllDrafts(c.ctx, &repository.DialogClearAll{
+		UserId: c.MD.UserId,
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.clearAllDrafts: %v", err)
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	if len(rValues.Datas) == 0 {
+		return tg.BoolTrue, nil
+	}
+
+	// TODO: for each cleared draft, build syncUpdates with user/chat
+	// resolution and call SyncUpdatesNotMe. PEER_CHANNEL case requires
+	// plugin (enterprise feature).
+
+	return tg.BoolTrue, nil
 }
