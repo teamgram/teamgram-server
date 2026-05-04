@@ -90,6 +90,17 @@ func pushTaskUpdates(msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, erro
 	if err != nil {
 		return nil, err
 	}
+	if event.PeerType == payload.PeerTypeUser {
+		return tg.MakeTLUpdateShortMessage(&tg.TLUpdateShortMessage{
+			Out:      event.Out,
+			Id:       messageID,
+			UserId:   shortMessageUserID(event),
+			Message:  event.MessageText,
+			Pts:      pts,
+			PtsCount: 1,
+			Date:     event.Date,
+		}), nil
+	}
 	message := tg.MakeTLMessage(&tg.TLMessage{
 		Out:     event.Out,
 		Id:      messageID,
@@ -109,6 +120,13 @@ func pushTaskUpdates(msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, erro
 		Date:  event.Date,
 		Seq:   pts,
 	}), nil
+}
+
+func shortMessageUserID(event payload.MessageEventV1) int64 {
+	if event.Out {
+		return event.PeerID
+	}
+	return event.FromUserID
 }
 
 func int64ToInt32(v int64, field string) (int32, error) {

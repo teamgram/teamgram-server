@@ -39,9 +39,9 @@ func TestPushTaskDispatcherRoutesMessageUpdateToUserAuthKeys(t *testing.T) {
 		PeerType:           payload.PeerTypeUser,
 		PeerID:             1001,
 		FromUserID:         1001,
-		ToUserID:           1001,
+		ToUserID:           2002,
 		Date:               1777781234,
-		Out:                true,
+		Out:                false,
 		MessageText:        "hello",
 	})
 	if err != nil {
@@ -50,7 +50,7 @@ func TestPushTaskDispatcherRoutesMessageUpdateToUserAuthKeys(t *testing.T) {
 	body, err := payload.MarshalPushTaskKafkaMessage(payload.PushTaskKafkaMessageV1{
 		SchemaVersion: payload.PushTaskKafkaMessageSchemaVersion,
 		TaskID:        1,
-		UserID:        1001,
+		UserID:        2002,
 		Pts:           38,
 		PushType:      1,
 		PeerType:      payload.PeerTypeUser,
@@ -74,8 +74,8 @@ func TestPushTaskDispatcherRoutesMessageUpdateToUserAuthKeys(t *testing.T) {
 	if err != nil {
 		t.Fatalf("HandlePushTaskKafkaRecord() error = %v", err)
 	}
-	if auth.userID != 1001 {
-		t.Fatalf("auth route user_id = %d, want 1001", auth.userID)
+	if auth.userID != 2002 {
+		t.Fatalf("auth route user_id = %d, want 2002", auth.userID)
 	}
 	if len(gatewayClient.requests) != 2 {
 		t.Fatalf("gateway push count = %d, want 2", len(gatewayClient.requests))
@@ -84,26 +84,15 @@ func TestPushTaskDispatcherRoutesMessageUpdateToUserAuthKeys(t *testing.T) {
 		if req.PermAuthKeyId != []int64{111, 222}[i] {
 			t.Fatalf("request %d perm_auth_key_id = %d", i, req.PermAuthKeyId)
 		}
-		updates, ok := req.Updates.(*tg.TLUpdates)
+		update, ok := req.Updates.(*tg.TLUpdateShortMessage)
 		if !ok {
-			t.Fatalf("request %d updates = %T, want *tg.TLUpdates", i, req.Updates)
-		}
-		if updates.Seq != 38 || len(updates.Updates) != 1 {
-			t.Fatalf("request %d updates = %#v", i, updates)
-		}
-		update, ok := updates.Updates[0].(*tg.TLUpdateNewMessage)
-		if !ok {
-			t.Fatalf("request %d update = %T, want *tg.TLUpdateNewMessage", i, updates.Updates[0])
+			t.Fatalf("request %d updates = %T, want *tg.TLUpdateShortMessage", i, req.Updates)
 		}
 		if update.Pts != 38 || update.PtsCount != 1 {
 			t.Fatalf("request %d update pts = %#v", i, update)
 		}
-		message, ok := update.Message.(*tg.TLMessage)
-		if !ok {
-			t.Fatalf("request %d message = %T, want *tg.TLMessage", i, update.Message)
-		}
-		if message.Id != 9 || message.Message != "hello" || !message.Out {
-			t.Fatalf("request %d message = %#v", i, message)
+		if update.Id != 9 || update.UserId != 1001 || update.Message != "hello" || update.Out || update.Date != 1777781234 {
+			t.Fatalf("request %d update = %#v", i, update)
 		}
 	}
 }
