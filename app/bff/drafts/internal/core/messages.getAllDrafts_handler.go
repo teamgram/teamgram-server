@@ -61,10 +61,13 @@ func (c *DraftsCore) MessagesGetAllDrafts(in *tg.TLMessagesGetAllDrafts) (*tg.Up
 	}
 
 	if len(userIdList) > 0 {
-		mutableUsers, _ := c.svcCtx.Repo.UserClient.UserGetMutableUsersV2(c.ctx,
+		mutableUsers, err := c.svcCtx.Repo.UserClient.UserGetMutableUsersV2(c.ctx,
 			&userpb.TLUserGetMutableUsersV2{
 				Id: userIdList,
 			})
+		if err != nil {
+			c.Logger.Errorf("messages.getAllDrafts - user.getMutableUsersV2 error: %v", err)
+		}
 		if mutableUsers != nil {
 			for _, u := range mutableUsers.Users {
 				user := projectImmutableUser(u)
@@ -76,11 +79,14 @@ func (c *DraftsCore) MessagesGetAllDrafts(in *tg.TLMessagesGetAllDrafts) (*tg.Up
 	}
 
 	if len(chatIdList) > 0 {
-		chats, _ := c.svcCtx.Repo.ChatClient.ChatGetChatListByIdList(c.ctx,
+		chats, err := c.svcCtx.Repo.ChatClient.ChatGetChatListByIdList(c.ctx,
 			&chatpb.TLChatGetChatListByIdList{
 				SelfId: c.MD.UserId,
 				IdList: chatIdList,
 			})
+		if err != nil {
+			c.Logger.Errorf("messages.getAllDrafts - chat.getChatListByIdList error: %v", err)
+		}
 		if chats != nil {
 			for _, ch := range chats.Datas {
 				if chat := projectMutableChat(ch, c.MD.UserId); chat != nil {

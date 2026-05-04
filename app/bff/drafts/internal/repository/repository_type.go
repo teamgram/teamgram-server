@@ -20,10 +20,7 @@ import (
 	dialogclient "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/client"
 	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
-	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
-	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // Type aliases for convenience in the Logic layer.
@@ -35,15 +32,4 @@ type (
 	DialogClearDraft   = dialogpb.TLDialogClearDraftMessage
 	DialogGetAllDrafts = dialogpb.TLDialogGetAllDrafts
 	DialogClearAll     = dialogpb.TLDialogClearAllDrafts
-	DraftResult        = dialogpb.VectorPeerWithDraftMessage
-	PeerWithDraft      = dialogpb.PeerWithDraftMessageClazz
-	UserGetImmutable   = userpb.TLUserGetImmutableUser
-	UserGetMutable     = userpb.TLUserGetMutableUsers
-	MutableUsers       = userpb.VectorImmutableUser
-	ChatGetMutable     = chatpb.TLChatGetMutableChat
-	ChatGetListById    = chatpb.TLChatGetChatListByIdList
-	MutableChats       = chatpb.VectorMutableChat
-	ImmutableUser      = tg.ImmutableUser
-	ImmutableUserClazz = tg.ImmutableUserClazz
-	MutableChat        = tg.MutableChat
 )
