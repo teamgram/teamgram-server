@@ -6,8 +6,8 @@ Etcd:
     - 127.0.0.1:2379
   Key: service.status
 Log:
-  #Mode: file
-  #Path: ../logs/status
+  Mode: file
+  Path: ../logs/status
   Level: debug
 
 KV:

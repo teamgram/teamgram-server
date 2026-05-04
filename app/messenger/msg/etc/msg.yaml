@@ -6,8 +6,8 @@ Etcd:
     - 127.0.0.1:2379
   Key: messenger.msg
 Log:
-  #Mode: file
-  #Path: ../logs/msg
+  Mode: file
+  Path: ../logs/msg
   Level: debug
 
 Mysql:

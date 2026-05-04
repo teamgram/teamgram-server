@@ -6,8 +6,8 @@ Etcd:
     - 127.0.0.1:2379
   Key: service.idgen
 Log:
-  #Mode: file
-  #Path: ../logs/idgen
+  Mode: file
+  Path: ../logs/idgen
   Level: debug
 
 # NodeId is the snowflake node id (range [0, 1023]). Each idgen instance

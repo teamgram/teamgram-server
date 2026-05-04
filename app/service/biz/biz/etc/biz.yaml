@@ -6,8 +6,8 @@ Etcd:
     - 127.0.0.1:2379
   Key: service.biz_service
 Log:
-  #Mode: file
-  #Path: ../logs/biz
+  Mode: file
+  Path: ../logs/biz
   Level: debug
 
 Mysql:

@@ -1,9 +1,14 @@
 Name: service.presence
 ListenOn: 127.0.0.1:20680
 Etcd:
+  #GoZero: true
   Hosts:
     - 127.0.0.1:2379
   Key: service.presence
+Log:
+  Mode: file
+  Path: ../logs/presence
+  Level: debug
 
 KV:
   - Host: 127.0.0.1:6379

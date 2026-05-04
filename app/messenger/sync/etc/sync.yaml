@@ -1,9 +1,14 @@
 Name: messenger.sync
 ListenOn: 127.0.0.1:29530
 Etcd:
+  #GoZero: true
   Hosts:
     - 127.0.0.1:2379
   Key: messenger.sync
+Log:
+  Mode: file
+  Path: ../logs/sync
+  Level: debug
 
 PresenceClient:
   DestService: service.presence
@@ -19,6 +24,7 @@ GatewayClientBase:
   Timeout: 3000
 
 GatewayAllowedCIDRs: [127.0.0.0/8]
+GatewayAllowedIPv6CIDRs: []
 GatewayAllowedPorts: [20110]
 AllowGatewayLoopback: true
 GatewayClientCacheMaxEntries: 1000

@@ -23,6 +23,7 @@ GatewayClientBase:
   Timeout: 3000
 
 GatewayAllowedCIDRs: [127.0.0.0/8]
+GatewayAllowedIPv6CIDRs: []
 GatewayAllowedPorts: [20110]
 AllowGatewayLoopback: true
 GatewayClientCacheMaxEntries: 1000

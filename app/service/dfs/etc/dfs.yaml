@@ -11,8 +11,8 @@ MiniHttp:
   Host: 0.0.0.0
   Port: 20641
   Log:
-    #Mode: file
-    #Path: ../logs/dfs
+    Mode: file
+    Path: ../logs/dfs
     Level: debug
 
 Kv:

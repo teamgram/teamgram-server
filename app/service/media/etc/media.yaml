@@ -6,8 +6,8 @@ Etcd:
     - 127.0.0.1:2379
   Key: service.media
 Log:
-  #Mode: file
-  #Path: ../logs/media
+  Mode: file
+  Path: ../logs/media
   Level: debug
 
 Mysql:
