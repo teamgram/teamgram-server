@@ -37,7 +37,7 @@ func (c *PresenceCore) PresenceSetSessionOffline(in *presence.TLPresenceSetSessi
 	if in.UserId <= 0 {
 		return nil, fmt.Errorf("%w: %s invalid user_id %d", presence.ErrPresenceInvalidArgument, method, in.UserId)
 	}
-	if in.AuthKeyId <= 0 {
+	if in.AuthKeyId == 0 {
 		return nil, fmt.Errorf("%w: %s invalid auth_key_id %d", presence.ErrPresenceInvalidArgument, method, in.AuthKeyId)
 	}
 	if in.SessionId == 0 {

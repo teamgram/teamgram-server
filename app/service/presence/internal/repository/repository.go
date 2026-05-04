@@ -298,7 +298,7 @@ func validateRepositoryOnlineSession(op string, session *presencepb.OnlineSessio
 	if session == nil {
 		return fmt.Errorf("%w: %s: session is nil", presencepb.ErrPresenceInvalidArgument, op)
 	}
-	if session.UserId <= 0 || session.PermAuthKeyId <= 0 || session.AuthKeyId <= 0 || session.SessionId == 0 || session.GatewayId == "" || session.GatewayGeneration == "" || session.GatewayRpcAddr == "" {
+	if session.UserId <= 0 || session.PermAuthKeyId == 0 || session.AuthKeyId == 0 || session.SessionId == 0 || session.GatewayId == "" || session.GatewayGeneration == "" || session.GatewayRpcAddr == "" {
 		return fmt.Errorf("%w: %s: invalid online session", presencepb.ErrPresenceInvalidArgument, op)
 	}
 	return nil

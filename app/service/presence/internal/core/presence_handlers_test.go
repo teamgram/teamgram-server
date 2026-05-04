@@ -141,6 +141,25 @@ func TestPresenceSetSessionOnlinePassesServiceTimeAndTTLs(t *testing.T) {
 	}
 }
 
+func TestPresenceSetSessionOnlineAllowsSignedAuthKeyID(t *testing.T) {
+	repo := &testRepo{}
+	c := newTestPresenceCore(repo, config.Config{SessionExpiresSeconds: 60, HashKeyTTLSeconds: 600})
+	req := validSetSessionOnlineRequest()
+	req.Session.PermAuthKeyId = -3922385800037876977
+	req.Session.AuthKeyId = -3213093451295049619
+
+	_, err := c.PresenceSetSessionOnline(req)
+	if err != nil {
+		t.Fatalf("PresenceSetSessionOnline() error = %v", err)
+	}
+	if repo.onlineSession == nil || repo.onlineSession.AuthKeyId != -3213093451295049619 {
+		t.Fatalf("online auth_key_id = %v, want signed auth key", repo.onlineSession)
+	}
+	if repo.onlineSession.PermAuthKeyId != -3922385800037876977 {
+		t.Fatalf("online perm_auth_key_id = %d, want signed perm auth key", repo.onlineSession.PermAuthKeyId)
+	}
+}
+
 func TestPresenceGetUserOnlineSessionsRejectsQueryQuotaExceeded(t *testing.T) {
 	cfg := config.Config{
 		RequireCallerIdentity:            true,

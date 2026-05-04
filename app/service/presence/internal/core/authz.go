@@ -78,10 +78,10 @@ func validateOnlineSession(method string, session *presencepb.OnlineSession) err
 	if session.UserId <= 0 {
 		return fmt.Errorf("%w: %s invalid user_id %d", presencepb.ErrPresenceInvalidArgument, method, session.UserId)
 	}
-	if session.PermAuthKeyId <= 0 {
+	if session.PermAuthKeyId == 0 {
 		return fmt.Errorf("%w: %s invalid perm_auth_key_id %d", presencepb.ErrPresenceInvalidArgument, method, session.PermAuthKeyId)
 	}
-	if session.AuthKeyId <= 0 {
+	if session.AuthKeyId == 0 {
 		return fmt.Errorf("%w: %s invalid auth_key_id %d", presencepb.ErrPresenceInvalidArgument, method, session.AuthKeyId)
 	}
 	if session.SessionId == 0 {
