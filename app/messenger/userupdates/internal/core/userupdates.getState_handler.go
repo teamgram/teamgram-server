@@ -30,7 +30,7 @@ func (c *UserupdatesCore) UserupdatesGetState(in *userupdates.TLUserupdatesGetSt
 	if in == nil {
 		return nil, fmt.Errorf("%w: missing getState request", userupdates.ErrOperationTerminal)
 	}
-	state, err := c.svcCtx.Repo.GetState(c.ctx, in.UserId)
+	state, err := c.svcCtx.Repo.GetState(c.ctx, in.UserId, in.AuthKeyId)
 	if err != nil {
 		return nil, err
 	}

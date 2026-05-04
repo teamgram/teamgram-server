@@ -35,9 +35,11 @@ func (c *UserupdatesCore) UserupdatesGetDifference(in *userupdates.TLUserupdates
 		limit = *in.PtsTotalLimit
 	}
 	difference, err := c.svcCtx.Repo.GetDifference(c.ctx, repository.GetDifferenceInput{
-		UserID: in.UserId,
-		Pts:    in.Pts,
-		Limit:  limit,
+		UserID:        in.UserId,
+		PermAuthKeyID: in.AuthKeyId,
+		Pts:           in.Pts,
+		Limit:         limit,
+		Date:          in.Date,
 	})
 	if err != nil {
 		return nil, err

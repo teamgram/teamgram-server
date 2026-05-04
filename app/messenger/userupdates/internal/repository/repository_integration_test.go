@@ -62,7 +62,7 @@ func TestApplyUserOperationFinalTransaction(t *testing.T) {
 			t.Fatalf("idempotent result mismatch: first=%+v again=%+v", result, again)
 		}
 
-		state, err := repo.GetState(ctx, userID)
+		state, err := repo.GetState(ctx, userID, 0)
 		if err != nil {
 			t.Fatalf("GetState() error = %v", err)
 		}
@@ -306,7 +306,7 @@ func TestApplyUserOperationFinalTransaction(t *testing.T) {
 			t.Fatalf("ApplyUserOperation() error = %v, want ErrUserupdatesStorage", err)
 		}
 
-		state, err := repo.GetState(ctx, userID)
+		state, err := repo.GetState(ctx, userID, 0)
 		if err != nil {
 			t.Fatalf("GetState() error = %v", err)
 		}

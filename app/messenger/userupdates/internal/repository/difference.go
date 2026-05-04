@@ -22,7 +22,7 @@ func (r *Repository) GetOperationResult(ctx context.Context, userID int64, opera
 	return operationResultFromModel(row), nil
 }
 
-func (r *Repository) GetState(ctx context.Context, userID int64) (*UserState, error) {
+func (r *Repository) GetState(ctx context.Context, userID int64, permAuthKeyID int64) (*UserState, error) {
 	if _, err := r.requireDB(); err != nil {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func (r *Repository) GetDifference(ctx context.Context, in GetDifferenceInput) (
 	if err != nil && !errors.Is(err, model.ErrNotFound) {
 		return nil, storageError("get difference events", err)
 	}
-	state, err := r.GetState(ctx, in.UserID)
+	state, err := r.GetState(ctx, in.UserID, in.PermAuthKeyID)
 	if err != nil {
 		return nil, err
 	}

@@ -31,7 +31,7 @@ import (
 type UserUpdatesRepository interface {
 	ApplyUserOperation(ctx context.Context, in repository.ApplyUserOperationInput) (*repository.ApplyUserOperationResult, error)
 	GetOperationResult(ctx context.Context, userID int64, operationID string) (*repository.OperationResult, error)
-	GetState(ctx context.Context, userID int64) (*repository.UserState, error)
+	GetState(ctx context.Context, userID int64, permAuthKeyID int64) (*repository.UserState, error)
 	GetDifference(ctx context.Context, in repository.GetDifferenceInput) (*repository.GetDifferenceResult, error)
 }
 

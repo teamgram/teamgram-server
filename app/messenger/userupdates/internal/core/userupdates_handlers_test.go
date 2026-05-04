@@ -188,12 +188,78 @@ func TestGetStateReturnsRepositoryState(t *testing.T) {
 	}
 }
 
+func TestGetStatePassesPermAuthKeyToRepository(t *testing.T) {
+	repo := &fakeUserUpdatesRepository{
+		state: &repository.UserState{UserID: 1001, Pts: 55},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	_, err := core.UserupdatesGetState(&userupdates.TLUserupdatesGetState{UserId: 1001, AuthKeyId: 9001})
+	if err != nil {
+		t.Fatalf("GetState returned error: %v", err)
+	}
+	if repo.stateUserID != 1001 || repo.statePermAuthKeyID != 9001 {
+		t.Fatalf("unexpected repository state cursor input: user_id=%d perm_auth_key_id=%d", repo.stateUserID, repo.statePermAuthKeyID)
+	}
+}
+
+func TestGetDifferenceCarriesNilDateAsPtsOnlyRequest(t *testing.T) {
+	repo := &fakeUserUpdatesRepository{
+		difference: &repository.GetDifferenceResult{
+			State: repository.UserState{UserID: 1001, Pts: 18},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	_, err := core.UserupdatesGetDifference(&userupdates.TLUserupdatesGetDifference{
+		UserId:        1001,
+		AuthKeyId:     9001,
+		Pts:           17,
+		PtsTotalLimit: int32Ptr(10),
+	})
+	if err != nil {
+		t.Fatalf("GetDifference returned error: %v", err)
+	}
+	if repo.differenceInput.UserID != 1001 || repo.differenceInput.PermAuthKeyID != 9001 || repo.differenceInput.Pts != 17 || repo.differenceInput.Limit != 10 {
+		t.Fatalf("unexpected repository difference input: %+v", repo.differenceInput)
+	}
+	if repo.differenceInput.Date != nil {
+		t.Fatalf("expected nil date, got %v", *repo.differenceInput.Date)
+	}
+}
+
+func TestGetDifferenceCarriesDateToRepository(t *testing.T) {
+	date := int64(1_772_000_000)
+	repo := &fakeUserUpdatesRepository{
+		difference: &repository.GetDifferenceResult{
+			State: repository.UserState{UserID: 1001, Pts: 18},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	_, err := core.UserupdatesGetDifference(&userupdates.TLUserupdatesGetDifference{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		Pts:       17,
+		Date:      &date,
+	})
+	if err != nil {
+		t.Fatalf("GetDifference returned error: %v", err)
+	}
+	if repo.differenceInput.Date == nil || *repo.differenceInput.Date != date {
+		t.Fatalf("expected date %d, got %v", date, repo.differenceInput.Date)
+	}
+}
+
 type fakeUserUpdatesRepository struct {
-	applyInput      repository.ApplyUserOperationInput
-	applyResult     *repository.ApplyUserOperationResult
-	operationResult *repository.OperationResult
-	state           *repository.UserState
-	difference      *repository.GetDifferenceResult
+	applyInput         repository.ApplyUserOperationInput
+	applyResult        *repository.ApplyUserOperationResult
+	operationResult    *repository.OperationResult
+	stateUserID        int64
+	statePermAuthKeyID int64
+	state              *repository.UserState
+	differenceInput    repository.GetDifferenceInput
+	difference         *repository.GetDifferenceResult
 }
 
 func (f *fakeUserUpdatesRepository) ApplyUserOperation(_ context.Context, in repository.ApplyUserOperationInput) (*repository.ApplyUserOperationResult, error) {
@@ -205,11 +271,14 @@ func (f *fakeUserUpdatesRepository) GetOperationResult(_ context.Context, _ int6
 	return f.operationResult, nil
 }
 
-func (f *fakeUserUpdatesRepository) GetState(_ context.Context, _ int64) (*repository.UserState, error) {
+func (f *fakeUserUpdatesRepository) GetState(_ context.Context, userID int64, permAuthKeyID int64) (*repository.UserState, error) {
+	f.stateUserID = userID
+	f.statePermAuthKeyID = permAuthKeyID
 	return f.state, nil
 }
 
-func (f *fakeUserUpdatesRepository) GetDifference(_ context.Context, _ repository.GetDifferenceInput) (*repository.GetDifferenceResult, error) {
+func (f *fakeUserUpdatesRepository) GetDifference(_ context.Context, in repository.GetDifferenceInput) (*repository.GetDifferenceResult, error) {
+	f.differenceInput = in
 	return f.difference, nil
 }
 

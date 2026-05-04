@@ -144,9 +144,11 @@ type UserEvent struct {
 }
 
 type GetDifferenceInput struct {
-	UserID int64
-	Pts    int64
-	Limit  int32
+	UserID        int64
+	PermAuthKeyID int64
+	Pts           int64
+	Limit         int32
+	Date          *int64
 }
 
 type GetDifferenceResult struct {

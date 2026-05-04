@@ -64,7 +64,7 @@ func (f *fakeReceiverProcessorRepository) GetOperationResult(context.Context, in
 	return nil, nil
 }
 
-func (f *fakeReceiverProcessorRepository) GetState(context.Context, int64) (*repository.UserState, error) {
+func (f *fakeReceiverProcessorRepository) GetState(context.Context, int64, int64) (*repository.UserState, error) {
 	return nil, nil
 }
 
