@@ -17,9 +17,9 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/bff/drafts/internal/repository"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
-	"github.com/teamgram/teamgram-server/v2/app/bff/drafts/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -27,6 +27,10 @@ import (
 // messages.getAllDrafts#6a3f8d65 = Updates;
 func (c *DraftsCore) MessagesGetAllDrafts(in *tg.TLMessagesGetAllDrafts) (*tg.Updates, error) {
 	_ = in
+
+	if c.svcCtx == nil || c.svcCtx.Repo == nil || c.svcCtx.Repo.DialogClient == nil {
+		return tg.MakeTLUpdates(&tg.TLUpdates{}).ToUpdates(), nil
+	}
 
 	drafts, err := c.svcCtx.Repo.DialogClient.DialogGetAllDrafts(c.ctx, &repository.DialogGetAllDrafts{
 		UserId: c.MD.UserId,

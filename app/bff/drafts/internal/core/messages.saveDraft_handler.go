@@ -32,6 +32,10 @@ func (c *DraftsCore) MessagesSaveDraft(in *tg.TLMessagesSaveDraft) (*tg.Bool, er
 		date                = int32(time.Now().Unix())
 	)
 
+	if c.svcCtx == nil || c.svcCtx.Repo == nil || c.svcCtx.Repo.DialogClient == nil {
+		return tg.BoolTrue, nil
+	}
+
 	if in.NoWebpage == true {
 		isDraftMessageEmpty = false
 	} else if in.ReplyTo != nil {
@@ -43,11 +47,13 @@ func (c *DraftsCore) MessagesSaveDraft(in *tg.TLMessagesSaveDraft) (*tg.Bool, er
 	}
 
 	if isDraftMessageEmpty {
-		c.svcCtx.Repo.DialogClient.DialogClearDraftMessage(c.ctx, &repository.DialogClearDraft{
+		if _, err := c.svcCtx.Repo.DialogClient.DialogClearDraftMessage(c.ctx, &repository.DialogClearDraft{
 			UserId:   c.MD.UserId,
 			PeerType: peer.PeerType,
 			PeerId:   peer.PeerId,
-		})
+		}); err != nil {
+			return nil, err
+		}
 	} else {
 		draft := tg.MakeTLDraftMessage(&tg.TLDraftMessage{
 			NoWebpage:   in.NoWebpage,
@@ -60,12 +66,14 @@ func (c *DraftsCore) MessagesSaveDraft(in *tg.TLMessagesSaveDraft) (*tg.Bool, er
 			Effect:      in.Effect,
 		})
 
-		c.svcCtx.Repo.DialogClient.DialogSaveDraftMessage(c.ctx, &repository.DialogSaveDraft{
+		if _, err := c.svcCtx.Repo.DialogClient.DialogSaveDraftMessage(c.ctx, &repository.DialogSaveDraft{
 			UserId:   c.MD.UserId,
 			PeerType: peer.PeerType,
 			PeerId:   peer.PeerId,
 			Message:  draft,
-		})
+		}); err != nil {
+			return nil, err
+		}
 	}
 
 	// TODO: build syncUpdates with user/chat resolution and call SyncUpdatesNotMe.

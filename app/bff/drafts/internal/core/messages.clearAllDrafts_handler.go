@@ -24,6 +24,10 @@ import (
 // MessagesClearAllDrafts
 // messages.clearAllDrafts#7e58ee9c = Bool;
 func (c *DraftsCore) MessagesClearAllDrafts(in *tg.TLMessagesClearAllDrafts) (*tg.Bool, error) {
+	if c.svcCtx == nil || c.svcCtx.Repo == nil || c.svcCtx.Repo.DialogClient == nil {
+		return tg.BoolTrue, nil
+	}
+
 	rValues, err := c.svcCtx.Repo.DialogClient.DialogClearAllDrafts(c.ctx, &repository.DialogClearAll{
 		UserId: c.MD.UserId,
 	})
