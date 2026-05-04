@@ -17,14 +17,21 @@
 package core
 
 import (
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountSetContactSignUpNotification
 // account.setContactSignUpNotification#cff43f61 silent:Bool = Bool;
 func (c *ContactsCore) AccountSetContactSignUpNotification(in *tg.TLAccountSetContactSignUpNotification) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.setContactSignUpNotification - error: method AccountSetContactSignUpNotification not impl")
+	rValue, err := c.svcCtx.Repo.UserClient.UserSetContactSignUpNotification(c.ctx, &userpb.TLUserSetContactSignUpNotification{
+		UserId: c.MD.UserId,
+		Silent: in.Silent,
+	})
+	if err != nil {
+		c.Logger.Errorf("account.setContactSignUpNotification - error: %v", err)
+		return tg.BoolFalse, nil
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return rValue, nil
 }

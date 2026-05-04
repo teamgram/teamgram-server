@@ -17,14 +17,20 @@
 package core
 
 import (
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // ContactsEditCloseFriends
 // contacts.editCloseFriends#ba6705f0 id:Vector<long> = Bool;
 func (c *ContactsCore) ContactsEditCloseFriends(in *tg.TLContactsEditCloseFriends) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("contacts.editCloseFriends - error: method ContactsEditCloseFriends not impl")
+	rV, err := c.svcCtx.Repo.UserClient.UserEditCloseFriends(c.ctx, &userpb.TLUserEditCloseFriends{
+		UserId: c.MD.UserId,
+		Id:     in.Id,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return rV, nil
 }

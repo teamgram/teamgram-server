@@ -109,6 +109,7 @@ func buildContactsConfig(c config.Config) contactshelper.Config {
 	return contactshelper.Config{
 		RpcServerConf: c.RpcServerConf,
 		ChatClient:    withServiceName(c.BizServiceClient, "RPCChat"),
+		UserClient:    withServiceName(c.BizServiceClient, "RPCUser"),
 	}
 }
 

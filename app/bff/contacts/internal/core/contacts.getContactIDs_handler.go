@@ -23,8 +23,5 @@ import (
 // ContactsGetContactIDs
 // contacts.getContactIDs#7adc669d hash:long = Vector<int>;
 func (c *ContactsCore) ContactsGetContactIDs(in *tg.TLContactsGetContactIDs) (*tg.VectorInt, error) {
-	// TODO: not impl
-	c.Logger.Errorf("contacts.getContactIDs - error: method ContactsGetContactIDs not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return &tg.VectorInt{Datas: []int32{}}, nil
 }

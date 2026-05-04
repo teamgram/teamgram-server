@@ -17,14 +17,51 @@
 package core
 
 import (
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // ContactsGetStatuses
 // contacts.getStatuses#c4a353ee = Vector<ContactStatus>;
 func (c *ContactsCore) ContactsGetStatuses(in *tg.TLContactsGetStatuses) (*tg.VectorContactStatus, error) {
-	// TODO: not impl
-	c.Logger.Errorf("contacts.getStatuses - error: method ContactsGetStatuses not impl")
+	contactList, err := c.svcCtx.Repo.UserClient.UserGetContactList(c.ctx, &userpb.TLUserGetContactList{
+		UserId: c.MD.UserId,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	var contactDatas []tg.ContactDataClazz
+	if contactList != nil {
+		contactDatas = contactList.Datas
+	}
+
+	idList := make([]int64, 0, len(contactDatas))
+	for _, contact := range contactDatas {
+		if contact != nil {
+			idList = append(idList, contact.ContactUserId)
+		}
+	}
+
+	lastSeenList, err := c.svcCtx.Repo.UserClient.UserGetLastSeens(c.ctx, &userpb.TLUserGetLastSeens{Id: idList})
+	if err != nil {
+		return nil, err
+	}
+
+	var lastSeens []userpb.LastSeenDataClazz
+	if lastSeenList != nil {
+		lastSeens = lastSeenList.Datas
+	}
+
+	statuses := make([]tg.ContactStatusClazz, 0, len(lastSeens))
+	for _, v := range lastSeens {
+		if v == nil {
+			continue
+		}
+		statuses = append(statuses, tg.MakeTLContactStatus(&tg.TLContactStatus{
+			UserId: v.UserId,
+			Status: makeUserStatus(v.LastSeenAt, true),
+		}).ToContactStatus())
+	}
+	return &tg.VectorContactStatus{Datas: statuses}, nil
 }

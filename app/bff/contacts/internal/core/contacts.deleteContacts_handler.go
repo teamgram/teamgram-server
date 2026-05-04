@@ -17,14 +17,66 @@
 package core
 
 import (
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // ContactsDeleteContacts
 // contacts.deleteContacts#96a0e00 id:Vector<InputUser> = Updates;
 func (c *ContactsCore) ContactsDeleteContacts(in *tg.TLContactsDeleteContacts) (*tg.Updates, error) {
-	// TODO: not impl
-	c.Logger.Errorf("contacts.deleteContacts - error: method ContactsDeleteContacts not impl")
+	userIDs := make([]int64, 0, len(in.Id))
+	for _, id := range in.Id {
+		peerID := tg.FromInputUser(c.MD.UserId, id)
+		if peerID.PeerType != tg.PEER_USER || peerID.PeerId == c.MD.UserId {
+			c.Logger.Errorf("contacts.deleteContacts - error: invalid id %v", id)
+			continue
+		}
+		userIDs = append(userIDs, peerID.PeerId)
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	users, err := c.svcCtx.Repo.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
+		Id: userIDs,
+		To: []int64{c.MD.UserId},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var immutableUsers []tg.ImmutableUserClazz
+	if users != nil {
+		immutableUsers = users.Datas
+	}
+
+	updates := make([]tg.UpdateClazz, 0, len(userIDs))
+	usersOut := make([]tg.UserClazz, 0, len(userIDs))
+	for _, id := range userIDs {
+		if _, err = c.svcCtx.Repo.UserClient.UserDeleteContact(c.ctx, &userpb.TLUserDeleteContact{
+			UserId: c.MD.UserId,
+			Id:     id,
+		}); err != nil {
+			return nil, err
+		}
+
+		updates = append(updates, tg.MakeTLUpdatePeerSettings(&tg.TLUpdatePeerSettings{
+			Peer:     tg.MakePeerUser(id),
+			Settings: makePeerSettings(),
+		}))
+
+		projected := projectImmutableUser(immutableUserByID(immutableUsers, id))
+		if user, ok := projected.(*tg.TLUser); ok {
+			user.Contact = false
+			user.MutualContact = false
+		}
+		usersOut = append(usersOut, projected)
+	}
+
+	rUpdates := tg.MakeTLUpdates(&tg.TLUpdates{
+		Updates: updates,
+		Users:   usersOut,
+		Chats:   []tg.ChatClazz{},
+		Date:    0,
+		Seq:     0,
+	}).ToUpdates()
+	// TODO: master sends these updates through sync.SyncUpdatesNotMe here.
+	return rUpdates, nil
 }

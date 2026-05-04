@@ -17,14 +17,50 @@
 package core
 
 import (
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // ContactsGetContacts
 // contacts.getContacts#5dd69e12 hash:long = contacts.Contacts;
 func (c *ContactsCore) ContactsGetContacts(in *tg.TLContactsGetContacts) (*tg.ContactsContacts, error) {
-	// TODO: not impl
-	c.Logger.Errorf("contacts.getContacts - error: method ContactsGetContacts not impl")
+	contactList, err := c.svcCtx.Repo.UserClient.UserGetContactList(c.ctx, &userpb.TLUserGetContactList{
+		UserId: c.MD.UserId,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if contactList == nil || len(contactList.Datas) == 0 {
+		return tg.MakeTLContactsContacts(&tg.TLContactsContacts{
+			Contacts:   []tg.ContactClazz{},
+			SavedCount: 0,
+			Users:      []tg.UserClazz{},
+		}).ToContactsContacts(), nil
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	idList := make([]int64, 0, len(contactList.Datas))
+	for _, contact := range contactList.Datas {
+		if contact != nil {
+			idList = append(idList, contact.ContactUserId)
+		}
+	}
+
+	users, err := c.svcCtx.Repo.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
+		Id: append([]int64{c.MD.UserId}, idList...),
+		To: []int64{c.MD.UserId},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var immutableUsers []tg.ImmutableUserClazz
+	if users != nil {
+		immutableUsers = users.Datas
+	}
+
+	return tg.MakeTLContactsContacts(&tg.TLContactsContacts{
+		Contacts:   contactDatasToContacts(contactList.Datas),
+		SavedCount: 0,
+		Users:      projectUsersByIDs(immutableUsers, idList),
+	}).ToContactsContacts(), nil
 }
