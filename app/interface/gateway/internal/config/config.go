@@ -18,20 +18,58 @@
 package config
 
 import (
+	"fmt"
+	"strings"
+
 	bffproxyclient "github.com/teamgram/teamgram-server/v2/app/bff/bff/client"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
 type Config struct {
 	kitex.RpcServerConf
-	Transport         TransportConf
-	GatewayId         string
-	AuthsessionClient kitex.RpcClientConf
-	BffClient         bffproxyclient.BFFProxyClientListConf
+	Transport                                     TransportConf
+	GatewayId                                     string
+	AuthsessionClient                             kitex.RpcClientConf
+	PresenceClient                                kitex.RpcClientConf
+	BffClient                                     bffproxyclient.BFFProxyClientListConf
+	AdvertiseRpcAddr                              string
+	PresenceRefreshMinIntervalSeconds             int `json:",default=20"`
+	PresenceRefreshScanIntervalSeconds            int `json:",default=10"`
+	PresenceRefreshRetryMinIntervalSeconds        int `json:",default=5"`
+	GatewayShutdownPresenceOfflineDeadlineSeconds int `json:",default=5"`
+	GatewayShutdownPresenceOfflineMaxSessions     int `json:",default=10000"`
 }
 
 type TransportConf struct {
 	TCPListenOn string
 	// Reserved for future HTTP/WebSocket MTProto transport. Phase 3 only serves TCP.
 	HTTPListenOn string `json:",optional"`
+}
+
+func (c Config) Validate() error {
+	if c.GatewayId == "" {
+		return fmt.Errorf("gateway config: GatewayId is required")
+	}
+	if c.AdvertiseRpcAddr == "" {
+		return fmt.Errorf("gateway config: AdvertiseRpcAddr is required")
+	}
+	if strings.HasPrefix(c.AdvertiseRpcAddr, "0.0.0.0:") {
+		return fmt.Errorf("gateway config: AdvertiseRpcAddr must not use wildcard host")
+	}
+	if c.PresenceRefreshMinIntervalSeconds <= 0 {
+		return fmt.Errorf("gateway config: PresenceRefreshMinIntervalSeconds must be positive")
+	}
+	if c.PresenceRefreshScanIntervalSeconds <= 0 {
+		return fmt.Errorf("gateway config: PresenceRefreshScanIntervalSeconds must be positive")
+	}
+	if c.PresenceRefreshRetryMinIntervalSeconds <= 0 {
+		return fmt.Errorf("gateway config: PresenceRefreshRetryMinIntervalSeconds must be positive")
+	}
+	if c.GatewayShutdownPresenceOfflineDeadlineSeconds <= 0 {
+		return fmt.Errorf("gateway config: GatewayShutdownPresenceOfflineDeadlineSeconds must be positive")
+	}
+	if c.GatewayShutdownPresenceOfflineMaxSessions <= 0 {
+		return fmt.Errorf("gateway config: GatewayShutdownPresenceOfflineMaxSessions must be positive")
+	}
+	return nil
 }

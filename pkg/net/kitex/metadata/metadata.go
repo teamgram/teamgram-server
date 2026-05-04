@@ -27,21 +27,23 @@ type Takeout struct {
 }
 
 type RpcMetadata struct {
-	ServerId      string   `json:"server_id,omitempty"`
-	ClientAddr    string   `json:"client_addr,omitempty"`
-	AuthId        int64    `json:"auth_id,omitempty"`
-	SessionId     int64    `json:"session_id,omitempty"`
-	ReceiveTime   int64    `json:"receive_time,omitempty"`
-	UserId        int64    `json:"user_id,omitempty"`
-	ClientMsgId   int64    `json:"client_msg_id,omitempty"`
-	IsBot         bool     `json:"is_bot,omitempty"`
-	Layer         int32    `json:"layer,omitempty"`
-	Client        string   `json:"client,omitempty"`
-	IsAdmin       bool     `json:"is_admin,omitempty"`
-	Takeout       *Takeout `json:"takeout,omitempty"`
-	Langpack      string   `json:"langpack,omitempty"`
-	PermAuthKeyId int64    `json:"perm_auth_key_id,omitempty"`
-	LangCode      string   `json:"lang_code,omitempty"`
+	ServerId          string   `json:"server_id,omitempty"`
+	ClientAddr        string   `json:"client_addr,omitempty"`
+	AuthId            int64    `json:"auth_id,omitempty"`
+	SessionId         int64    `json:"session_id,omitempty"`
+	ReceiveTime       int64    `json:"receive_time,omitempty"`
+	UserId            int64    `json:"user_id,omitempty"`
+	ClientMsgId       int64    `json:"client_msg_id,omitempty"`
+	IsBot             bool     `json:"is_bot,omitempty"`
+	Layer             int32    `json:"layer,omitempty"`
+	Client            string   `json:"client,omitempty"`
+	IsAdmin           bool     `json:"is_admin,omitempty"`
+	Takeout           *Takeout `json:"takeout,omitempty"`
+	Langpack          string   `json:"langpack,omitempty"`
+	PermAuthKeyId     int64    `json:"perm_auth_key_id,omitempty"`
+	LangCode          string   `json:"lang_code,omitempty"`
+	GatewayRpcAddr    string   `json:"gateway_rpc_addr,omitempty"`
+	GatewayGeneration string   `json:"gateway_generation,omitempty"`
 }
 
 func RpcMetadataFromIncoming(ctx context.Context) *RpcMetadata {

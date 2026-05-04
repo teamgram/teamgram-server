@@ -23,8 +23,10 @@ import (
 )
 
 type ConnInfo struct {
-	GatewayId  string
-	ClientAddr string
+	GatewayId         string
+	GatewayRpcAddr    string
+	GatewayGeneration string
+	ClientAddr        string
 }
 
 type Dispatcher interface {
@@ -32,11 +34,13 @@ type Dispatcher interface {
 }
 
 type ActiveSession struct {
+	UserId        int64
 	PermAuthKeyId int64
 	AuthKeyId     int64
 	AuthKeyType   int32
 	SessionId     int64
 	Layer         int32
+	Client        string
 	Salt          int64
 	AuthKey       *crypto.AuthKey
 }
@@ -103,24 +107,7 @@ func (p *Processor) HandleEncryptedWithSession(ctx context.Context, conn ConnInf
 	if err != nil {
 		return nil, err
 	}
-	var seq SeqNoAllocator
-	if observe != nil {
-		permAuthKeyId, layer, err := p.activeSessionMetadata(ctx, keyInfo, msg.AuthKeyId)
-		if err != nil {
-			return nil, err
-		}
-		seq = observe(ActiveSession{
-			PermAuthKeyId: permAuthKeyId,
-			AuthKeyId:     msg.AuthKeyId,
-			AuthKeyType:   authKeyType(keyInfo),
-			SessionId:     msg.SessionId,
-			Layer:         layer,
-			Salt:          msg.Salt,
-			AuthKey:       key,
-		})
-	}
-
-	body, err := p.handleMessageBody(ctx, conn, key, keyInfo, msg, seq)
+	body, seq, err := p.handleMessageBody(ctx, conn, key, keyInfo, msg, observe)
 	if err != nil || body == nil {
 		return nil, err
 	}
@@ -196,34 +183,35 @@ func (p *Processor) refreshAuthKeyInfo(ctx context.Context, authKeyId int64, cur
 	return keyInfo, nil
 }
 
-func (p *Processor) handleMessageBody(ctx context.Context, conn ConnInfo, key *crypto.AuthKey, keyInfo *tg.AuthKeyInfo, msg gmtproto.EncryptedMessage, seq SeqNoAllocator) ([]byte, error) {
+func (p *Processor) handleMessageBody(ctx context.Context, conn ConnInfo, key *crypto.AuthKey, keyInfo *tg.AuthKeyInfo, msg gmtproto.EncryptedMessage, observe SessionObserver) ([]byte, SeqNoAllocator, error) {
 	obj, err := iface.DecodeObject(bin.NewDecoder(msg.Body))
 	if err != nil {
-		return nil, fmt.Errorf("session processor: decode body: %w", err)
+		return nil, nil, fmt.Errorf("session processor: decode body: %w", err)
 	}
 
 	if body, handled, err := p.handleServiceMessage(obj, msg); handled || err != nil {
-		return body, err
+		return body, nil, err
 	}
 	if container, ok := obj.(*mt.TLMsgContainer); ok {
 		rawContainer, err := decodeRawContainer(msg.Body)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
-		return p.handleContainer(ctx, conn, keyInfo, msg, container, rawContainer, seq)
+		return p.handleContainer(ctx, conn, key, keyInfo, msg, container, rawContainer, observe)
 	}
-	return p.dispatchRPC(ctx, conn, keyInfo, msg, msg.Body)
+	return p.dispatchRPC(ctx, conn, key, keyInfo, msg, msg.Body, observe)
 }
 
-func (p *Processor) handleContainer(ctx context.Context, conn ConnInfo, keyInfo *tg.AuthKeyInfo, parent gmtproto.EncryptedMessage, container *mt.TLMsgContainer, rawContainer *mt.TLMsgRawDataContainer, seq SeqNoAllocator) ([]byte, error) {
+func (p *Processor) handleContainer(ctx context.Context, conn ConnInfo, key *crypto.AuthKey, keyInfo *tg.AuthKeyInfo, parent gmtproto.EncryptedMessage, container *mt.TLMsgContainer, rawContainer *mt.TLMsgRawDataContainer, observe SessionObserver) ([]byte, SeqNoAllocator, error) {
 	if len(container.Messages) != len(rawContainer.Messages) {
-		return nil, fmt.Errorf("session processor: container raw message count %d does not match decoded count %d", len(rawContainer.Messages), len(container.Messages))
+		return nil, nil, fmt.Errorf("session processor: container raw message count %d does not match decoded count %d", len(rawContainer.Messages), len(container.Messages))
 	}
 	var responses []*mt.TLMessage2
+	var seq SeqNoAllocator
 	for i, child := range container.Messages {
 		rawChild := rawContainer.Messages[i]
 		if child.MsgId != rawChild.MsgId || child.Seqno != rawChild.Seqno {
-			return nil, fmt.Errorf("session processor: container child %d raw metadata mismatch", i)
+			return nil, nil, fmt.Errorf("session processor: container child %d raw metadata mismatch", i)
 		}
 		childMsg := gmtproto.EncryptedMessage{
 			AuthKeyId: parent.AuthKeyId,
@@ -234,7 +222,7 @@ func (p *Processor) handleContainer(ctx context.Context, conn ConnInfo, keyInfo 
 			Body:      rawMessageBody(rawChild),
 		}
 		if body, handled, err := p.handleServiceMessage(child.Object, childMsg); err != nil {
-			return nil, err
+			return nil, nil, err
 		} else if handled {
 			if body != nil {
 				responses = append(responses, &mt.TLMessage2{
@@ -245,9 +233,12 @@ func (p *Processor) handleContainer(ctx context.Context, conn ConnInfo, keyInfo 
 			}
 			continue
 		}
-		body, err := p.dispatchRPC(ctx, conn, keyInfo, childMsg, childMsg.Body)
+		body, childSeq, err := p.dispatchRPC(ctx, conn, key, keyInfo, childMsg, childMsg.Body, observe)
 		if err != nil {
-			return nil, err
+			return nil, nil, err
+		}
+		if childSeq != nil {
+			seq = childSeq
 		}
 		if body == nil {
 			continue
@@ -260,9 +251,9 @@ func (p *Processor) handleContainer(ctx context.Context, conn ConnInfo, keyInfo 
 	}
 	switch len(responses) {
 	case 0:
-		return nil, nil
+		return nil, seq, nil
 	default:
-		return encodeObject(&mt.TLMsgContainer{Messages: responses}), nil
+		return encodeObject(&mt.TLMsgContainer{Messages: responses}), seq, nil
 	}
 }
 
@@ -293,13 +284,13 @@ func rawMessageBody(msg *mt.TLMessageRawData) []byte {
 	return append([]byte(nil), x.Bytes()...)
 }
 
-func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, keyInfo *tg.AuthKeyInfo, msg gmtproto.EncryptedMessage, payload []byte) ([]byte, error) {
+func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, key *crypto.AuthKey, keyInfo *tg.AuthKeyInfo, msg gmtproto.EncryptedMessage, payload []byte, observe SessionObserver) ([]byte, SeqNoAllocator, error) {
 	if p.dispatch == nil {
-		return nil, fmt.Errorf("session processor: dispatcher is nil")
+		return nil, nil, fmt.Errorf("session processor: dispatcher is nil")
 	}
 	inner, wrapperMD, err := gmtproto.UnwrapClientRPC(payload)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	cacheID := metadataCacheID(keyInfo, msg.AuthKeyId)
 	incomingMD := wrapperMD
@@ -310,11 +301,11 @@ func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, keyInfo *tg.
 	if hasWrapperMetadata(incomingMD) && changed {
 		if hasInitConnectionMetadata(wrapperMD) {
 			if err := p.store.SetClientSessionInfo(ctx, wrapperMetadataToClientSession(msg.AuthKeyId, wrapperMD)); err != nil {
-				return nil, fmt.Errorf("session processor: set client session info for auth key %d: %w", msg.AuthKeyId, err)
+				return nil, nil, fmt.Errorf("session processor: set client session info for auth key %d: %w", msg.AuthKeyId, err)
 			}
 		} else if wrapperMD.Layer != 0 {
 			if err := p.store.SetLayer(ctx, msg.AuthKeyId, clientIP(conn.ClientAddr), wrapperMD.Layer); err != nil {
-				return nil, fmt.Errorf("session processor: set client layer for auth key %d: %w", msg.AuthKeyId, err)
+				return nil, nil, fmt.Errorf("session processor: set client layer for auth key %d: %w", msg.AuthKeyId, err)
 			}
 		}
 	}
@@ -324,7 +315,7 @@ func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, keyInfo *tg.
 		} else if p.store != nil {
 			client, err := p.store.GetClientSession(ctx, msg.AuthKeyId)
 			if err != nil {
-				return nil, fmt.Errorf("session processor: get client session for auth key %d: %w", msg.AuthKeyId, err)
+				return nil, nil, fmt.Errorf("session processor: get client session for auth key %d: %w", msg.AuthKeyId, err)
 			}
 			if client != nil {
 				wrapperMD, _ = p.mergeClientMetadata(cacheID, clientSessionToWrapperMetadata(client))
@@ -332,17 +323,19 @@ func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, keyInfo *tg.
 		}
 	}
 	md := &metadata.RpcMetadata{
-		ServerId:      conn.GatewayId,
-		ClientAddr:    conn.ClientAddr,
-		AuthId:        msg.AuthKeyId,
-		SessionId:     msg.SessionId,
-		ReceiveTime:   time.Now().Unix(),
-		ClientMsgId:   msg.MsgId,
-		Layer:         wrapperMD.Layer,
-		Client:        wrapperMD.Client,
-		Langpack:      wrapperMD.LangPack,
-		LangCode:      wrapperMD.LangCode,
-		PermAuthKeyId: msg.AuthKeyId,
+		ServerId:          conn.GatewayId,
+		ClientAddr:        conn.ClientAddr,
+		AuthId:            msg.AuthKeyId,
+		SessionId:         msg.SessionId,
+		ReceiveTime:       time.Now().Unix(),
+		ClientMsgId:       msg.MsgId,
+		Layer:             wrapperMD.Layer,
+		Client:            wrapperMD.Client,
+		Langpack:          wrapperMD.LangPack,
+		LangCode:          wrapperMD.LangCode,
+		PermAuthKeyId:     msg.AuthKeyId,
+		GatewayRpcAddr:    conn.GatewayRpcAddr,
+		GatewayGeneration: conn.GatewayGeneration,
 	}
 	if keyInfo != nil && keyInfo.PermAuthKeyId != 0 {
 		md.PermAuthKeyId = keyInfo.PermAuthKeyId
@@ -350,9 +343,23 @@ func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, keyInfo *tg.
 	if p.store != nil && msg.AuthKeyId != 0 {
 		userID, err := p.store.GetUserId(ctx, msg.AuthKeyId)
 		if err != nil {
-			return nil, fmt.Errorf("session processor: get user id for auth key %d: %w", msg.AuthKeyId, err)
+			return nil, nil, fmt.Errorf("session processor: get user id for auth key %d: %w", msg.AuthKeyId, err)
 		}
 		md.UserId = userID
+	}
+	var seq SeqNoAllocator
+	if observe != nil {
+		seq = observe(ActiveSession{
+			UserId:        md.UserId,
+			PermAuthKeyId: md.PermAuthKeyId,
+			AuthKeyId:     msg.AuthKeyId,
+			AuthKeyType:   authKeyType(keyInfo),
+			SessionId:     msg.SessionId,
+			Layer:         md.Layer,
+			Client:        md.Client,
+			Salt:          msg.Salt,
+			AuthKey:       key,
+		})
 	}
 	method := rawRPCMethodName(inner)
 	result, err := p.dispatch.Invoke(ctx, md, inner)
@@ -374,7 +381,8 @@ func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, keyInfo *tg.
 					e.ErrorCode,
 					e.ErrorMessage,
 				)
-				return gmtproto.WrapRPCError(msg.MsgId, e.ErrorCode, e.ErrorMessage)
+				body, wrapErr := gmtproto.WrapRPCError(msg.MsgId, e.ErrorCode, e.ErrorMessage)
+				return body, seq, wrapErr
 			}
 		}
 		logx.WithContext(ctx).Errorf(
@@ -387,14 +395,15 @@ func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, keyInfo *tg.
 			conn.ClientAddr,
 			err,
 		)
-		return nil, err
+		return nil, nil, err
 	}
 	if method == tg.ClazzName_auth_bindTempAuthKey {
 		if _, err := p.refreshAuthKeyInfo(ctx, msg.AuthKeyId, keyInfo); err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 	}
-	return gmtproto.WrapRPCResult(msg.MsgId, result)
+	body, err := gmtproto.WrapRPCResult(msg.MsgId, result)
+	return body, seq, err
 }
 
 func metadataCacheID(keyInfo *tg.AuthKeyInfo, authKeyId int64) int64 {
@@ -411,23 +420,42 @@ func authKeyType(keyInfo *tg.AuthKeyInfo) int32 {
 	return keyInfo.AuthKeyType
 }
 
-func (p *Processor) activeSessionMetadata(ctx context.Context, keyInfo *tg.AuthKeyInfo, authKeyId int64) (int64, int32, error) {
+type activeSessionMetadataInfo struct {
+	permAuthKeyID int64
+	userID        int64
+	layer         int32
+	client        string
+}
+
+func (p *Processor) activeSessionMetadata(ctx context.Context, keyInfo *tg.AuthKeyInfo, authKeyId int64) (activeSessionMetadataInfo, error) {
 	cacheID := metadataCacheID(keyInfo, authKeyId)
+	result := activeSessionMetadataInfo{permAuthKeyID: cacheID}
 	if md, ok := p.cachedClientMetadata(cacheID); ok {
-		return cacheID, md.Layer, nil
+		result.layer = md.Layer
+		result.client = md.Client
 	}
 	if p.store == nil {
-		return cacheID, 0, nil
+		return result, nil
 	}
-	client, err := p.store.GetClientSession(ctx, authKeyId)
-	if err != nil {
-		return 0, 0, fmt.Errorf("session processor: get client session for auth key %d: %w", authKeyId, err)
+	if result.layer == 0 && result.client == "" {
+		client, err := p.store.GetClientSession(ctx, authKeyId)
+		if err != nil {
+			return activeSessionMetadataInfo{}, fmt.Errorf("session processor: get client session for auth key %d: %w", authKeyId, err)
+		}
+		if client != nil {
+			md, _ := p.mergeClientMetadata(cacheID, clientSessionToWrapperMetadata(client))
+			result.layer = md.Layer
+			result.client = md.Client
+		}
 	}
-	if client == nil {
-		return cacheID, 0, nil
+	if authKeyId != 0 {
+		userID, err := p.store.GetUserId(ctx, authKeyId)
+		if err != nil {
+			return activeSessionMetadataInfo{}, fmt.Errorf("session processor: get user id for auth key %d: %w", authKeyId, err)
+		}
+		result.userID = userID
 	}
-	md, _ := p.mergeClientMetadata(cacheID, clientSessionToWrapperMetadata(client))
-	return cacheID, md.Layer, nil
+	return result, nil
 }
 
 func (p *Processor) mergeClientMetadata(cacheID int64, md gmtproto.WrapperMetadata) (gmtproto.WrapperMetadata, bool) {

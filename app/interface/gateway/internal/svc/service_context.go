@@ -18,6 +18,12 @@
 package svc
 
 import (
+	"context"
+	"crypto/rand"
+	"encoding/hex"
+	"fmt"
+	"time"
+
 	_ "github.com/teamgram/teamgram-server/v2/app/bff/account/account/accountservice"
 	_ "github.com/teamgram/teamgram-server/v2/app/bff/authorization/authorization/authorizationservice"
 	_ "github.com/teamgram/teamgram-server/v2/app/bff/autodownload/autodownload/autodownloadservice"
@@ -45,23 +51,45 @@ import (
 	_ "github.com/teamgram/teamgram-server/v2/app/bff/usernames/usernames/usernamesservice"
 	_ "github.com/teamgram/teamgram-server/v2/app/bff/users/users/usersservice"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/config"
+	gatewaypresence "github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/presence"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/push"
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/repository"
+	presenceclient "github.com/teamgram/teamgram-server/v2/app/service/presence/client"
+	presencepb "github.com/teamgram/teamgram-server/v2/app/service/presence/presence"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
 type ServiceContext struct {
-	Config config.Config
-	Repo   *repository.Repository
-	BFF    *bffproxyclient.BFFProxyClient2
-	Push   *push.LocalWriter
+	Config            config.Config
+	GatewayGeneration string
+	Repo              *repository.Repository
+	BFF               *bffproxyclient.BFFProxyClient2
+	Push              *push.LocalWriter
+	Presence          *gatewaypresence.Registrar
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
+	generation := newGatewayGeneration()
+	var presenceRegistrar *gatewaypresence.Registrar
+	if presenceClientConfigured(c.PresenceClient) {
+		presenceRegistrar = gatewaypresence.NewRegistrar(gatewaypresence.Config{
+			GatewayID:                  c.GatewayId,
+			GatewayGeneration:          generation,
+			GatewayRPCAddr:             c.AdvertiseRpcAddr,
+			RefreshMinInterval:         time.Duration(c.PresenceRefreshMinIntervalSeconds) * time.Second,
+			RefreshRetryMinInterval:    time.Duration(c.PresenceRefreshRetryMinIntervalSeconds) * time.Second,
+			RefreshScanInterval:        time.Duration(c.PresenceRefreshScanIntervalSeconds) * time.Second,
+			ShutdownOfflineDeadline:    time.Duration(c.GatewayShutdownPresenceOfflineDeadlineSeconds) * time.Second,
+			ShutdownOfflineMaxSessions: c.GatewayShutdownPresenceOfflineMaxSessions,
+		}, generatedPresenceClient{client: presenceclient.NewPresenceClient(presenceclient.MustNewKitexClient(c.PresenceClient))}, time.Now)
+	}
 	return &ServiceContext{
-		Config: c,
-		Repo:   repository.NewRepository(c),
-		BFF:    bffproxyclient.NewBFFProxyClient2(c.BffClient.Clients),
-		Push:   push.NewLocalWriter(),
+		Config:            c,
+		GatewayGeneration: generation,
+		Repo:              repository.NewRepository(c),
+		BFF:               bffproxyclient.NewBFFProxyClient2(c.BffClient.Clients),
+		Push:              push.NewLocalWriter(),
+		Presence:          presenceRegistrar,
 	}
 }
 func (s *ServiceContext) Close() error {
@@ -69,4 +97,34 @@ func (s *ServiceContext) Close() error {
 		return nil
 	}
 	return s.Repo.Close()
+}
+
+type generatedPresenceClient struct {
+	client presenceclient.PresenceClient
+}
+
+func (c generatedPresenceClient) SetSessionOnline(ctx context.Context, session *presencepb.OnlineSession) error {
+	_, err := c.client.PresenceSetSessionOnline(ctx, &presencepb.TLPresenceSetSessionOnline{Session: session})
+	return err
+}
+
+func (c generatedPresenceClient) SetSessionOffline(ctx context.Context, userID, authKeyID, sessionID int64) error {
+	_, err := c.client.PresenceSetSessionOffline(ctx, &presencepb.TLPresenceSetSessionOffline{
+		UserId:    userID,
+		AuthKeyId: authKeyID,
+		SessionId: sessionID,
+	})
+	return err
+}
+
+func newGatewayGeneration() string {
+	var b [16]byte
+	if _, err := rand.Read(b[:]); err == nil {
+		return hex.EncodeToString(b[:])
+	}
+	return fmt.Sprintf("%d", time.Now().UnixNano())
+}
+
+func presenceClientConfigured(c kitex.RpcClientConf) bool {
+	return c.DestService != "" || len(c.Endpoints) > 0 || c.HasEtcd() || c.Target != ""
 }

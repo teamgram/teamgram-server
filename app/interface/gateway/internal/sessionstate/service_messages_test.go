@@ -2,6 +2,7 @@ package sessionstate
 
 import (
 	"context"
+	"errors"
 	"sync"
 	"testing"
 
@@ -27,6 +28,43 @@ func TestServiceMessagePingReturnsPong(t *testing.T) {
 	}
 	if len(dispatch.payloads) != 0 {
 		t.Fatalf("dispatch calls = %d, want 0", len(dispatch.payloads))
+	}
+}
+
+func TestServiceMessagePingWithObserverDoesNotRequireUserMetadata(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	store := &fakeAuthKeyStore{
+		key:     tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm),
+		userErr: errors.New("metadata unavailable"),
+	}
+	processor := NewProcessor(store, &fakeDispatcher{})
+	payload, err := gmtproto.EncodeEncryptedMessage(gmtproto.EncryptedMessage{
+		AuthKeyId: clientKey.AuthKeyId(),
+		Salt:      55,
+		SessionId: 77,
+		MsgId:     1000,
+		SeqNo:     1,
+		Body:      encodeTL(t, &mt.TLPing{PingId: 9}),
+	}, clientKey)
+	if err != nil {
+		t.Fatalf("EncodeEncryptedMessage() error = %v", err)
+	}
+	observed := false
+
+	resp, err := processor.HandleEncryptedWithSession(context.Background(), ConnInfo{}, payload, func(session ActiveSession) SeqNoAllocator {
+		observed = true
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("HandleEncryptedWithSession() error = %v", err)
+	}
+	if observed {
+		t.Fatal("observer called for service message")
+	}
+	decoded := decodeEncryptedForTest(t, clientKey, resp)
+	pong := decodeBodyAs[*mt.TLPong](t, decoded.Body)
+	if pong.MsgId != 1000 || pong.PingId != 9 {
+		t.Fatalf("pong = %#v", pong)
 	}
 }
 

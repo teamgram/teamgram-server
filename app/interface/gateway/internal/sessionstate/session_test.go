@@ -129,7 +129,7 @@ func TestSessionObserverReceivesPermAuthKeyAndLayer(t *testing.T) {
 	serverKey, clientKey := sessionTestKeys()
 	keyInfo := tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypeTemp)
 	keyInfo.PermAuthKeyId = 4242
-	store := &fakeAuthKeyStore{key: keyInfo}
+	store := &fakeAuthKeyStore{key: keyInfo, userID: 12345}
 	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
 	processor := NewProcessor(store, dispatch)
 	inner := encodeTL(t, &mt.TLGetFutureSalts{Num: 1})
@@ -159,8 +159,39 @@ func TestSessionObserverReceivesPermAuthKeyAndLayer(t *testing.T) {
 	if err != nil {
 		t.Fatalf("HandleEncryptedWithSession() error = %v", err)
 	}
-	if active.PermAuthKeyId != 4242 || active.Layer != 223 {
+	if active.UserId != 12345 || active.PermAuthKeyId != 4242 || active.Layer != 223 || active.Client != "tdesktop" {
 		t.Fatalf("active session = %#v", active)
+	}
+}
+
+func TestSessionDispatchesGatewayRouteMetadata(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	store := &fakeAuthKeyStore{key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)}
+	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
+	processor := NewProcessor(store, dispatch)
+	payload, err := gmtproto.EncodeEncryptedMessage(gmtproto.EncryptedMessage{
+		AuthKeyId: clientKey.AuthKeyId(),
+		Salt:      55,
+		SessionId: 77,
+		MsgId:     109,
+		SeqNo:     1,
+		Body:      encodeTL(t, &tg.TLHelpGetConfig{}),
+	}, clientKey)
+	if err != nil {
+		t.Fatalf("EncodeEncryptedMessage() error = %v", err)
+	}
+
+	_, err = processor.HandleEncrypted(context.Background(), ConnInfo{
+		GatewayId:         "gateway-test",
+		GatewayRpcAddr:    "127.0.0.1:20110",
+		GatewayGeneration: "generation-test",
+		ClientAddr:        "127.0.0.1:1",
+	}, payload)
+	if err != nil {
+		t.Fatalf("HandleEncrypted() error = %v", err)
+	}
+	if got := dispatch.md[0]; got.GatewayRpcAddr != "127.0.0.1:20110" || got.GatewayGeneration != "generation-test" {
+		t.Fatalf("gateway route metadata = %#v", got)
 	}
 }
 
