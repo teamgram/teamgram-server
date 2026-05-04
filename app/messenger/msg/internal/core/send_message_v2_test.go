@@ -283,6 +283,7 @@ func TestMsgGetHistoryReturnsCanonicalTextMessages(t *testing.T) {
 		PeerType:  payload.PeerTypeUser,
 		PeerId:    1002,
 		OffsetId:  3,
+		AddOffset: -2,
 		Limit:     20,
 	})
 	if err != nil {
@@ -306,6 +307,7 @@ func TestMsgGetHistoryReturnsCanonicalTextMessages(t *testing.T) {
 		repo.historyInput.UserID != 1001 ||
 		repo.historyInput.PeerID != 1002 ||
 		repo.historyInput.OffsetID != 3 ||
+		repo.historyInput.AddOffset != -2 ||
 		repo.historyInput.Limit != 20 {
 		t.Fatalf("unexpected history input: %+v", repo.historyInput)
 	}

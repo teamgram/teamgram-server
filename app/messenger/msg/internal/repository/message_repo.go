@@ -97,17 +97,7 @@ func (r *Repository) ListHistoryMessages(ctx context.Context, in ListHistoryMess
 		limit = 100
 	}
 
-	minPeerSeq := int64(0)
-	maxPeerSeq := int64(1<<63 - 1)
-	if in.OffsetID > 0 {
-		maxPeerSeq = int64(in.OffsetID)
-	}
-	if in.MaxID > 0 && int64(in.MaxID) < maxPeerSeq {
-		maxPeerSeq = int64(in.MaxID)
-	}
-	if in.MinID > 0 {
-		minPeerSeq = int64(in.MinID)
-	}
+	minPeerSeq, maxPeerSeq := historyPeerSeqWindow(in)
 
 	rows, err := r.models.CanonicalQueries.SelectHistoryMessages(ctx, in.UserID, in.PeerType, in.PeerID, MessageStatusLive, minPeerSeq, maxPeerSeq, limit)
 	if err != nil {
@@ -118,6 +108,29 @@ func (r *Repository) ListHistoryMessages(ctx context.Context, in ListHistoryMess
 		out = append(out, historyMessageRowToMessage(row))
 	}
 	return out, nil
+}
+
+func historyPeerSeqWindow(in ListHistoryMessagesInput) (int64, int64) {
+	minPeerSeq := int64(0)
+	maxPeerSeq := int64(1<<63 - 1)
+	if in.OffsetID > 0 {
+		maxPeerSeq = int64(in.OffsetID)
+		if in.AddOffset < 0 {
+			maxPeerSeq = int64(in.OffsetID) - int64(in.AddOffset)
+		} else if in.AddOffset > 0 {
+			maxPeerSeq = int64(in.OffsetID) - int64(in.AddOffset)
+			if maxPeerSeq < 1 {
+				maxPeerSeq = 1
+			}
+		}
+	}
+	if in.MaxID > 0 && int64(in.MaxID) < maxPeerSeq {
+		maxPeerSeq = int64(in.MaxID)
+	}
+	if in.MinID > 0 {
+		minPeerSeq = int64(in.MinID)
+	}
+	return minPeerSeq, maxPeerSeq
 }
 
 func historyMessageRowToMessage(r model.HistoryMessageRow) HistoryMessage {
