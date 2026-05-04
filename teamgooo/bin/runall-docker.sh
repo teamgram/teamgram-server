@@ -8,6 +8,10 @@ echo "run status ..."
 nohup ./status -f=../etc2/status.yaml >> ../logs/status.log  2>&1 &
 sleep 1
 
+echo "run presence ..."
+nohup ./presence -f=../etc2/presence.yaml >> ../logs/presence.log  2>&1 &
+sleep 1
+
 echo "run authsession ..."
 nohup ./authsession -f=../etc2/authsession.yaml >> ../logs/authsession.log  2>&1 &
 sleep 1

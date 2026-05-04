@@ -1,40 +1,73 @@
 Name: interface.gateway
-ListenOn: 127.0.0.1:20110
+ListenOn: 0.0.0.0:20110
 Etcd:
-  GoZero: true
   Hosts:
     - 127.0.0.1:2379
   Key: interface.gateway
 Log:
-  #Mode: file
-  #Path: ../logs/gnetway
+  Mode: file
+  Path: ../logs/gateway
   Level: debug
 
-RSAKey:
-  - KeyFile: "./server_pkcs1.key"
-    KeyFingerprint: "12240908862933197005"
-KeyFile: "./server_pkcs1.key"
-KeyFingerprint: "12240908862933197005"
-MaxProc: 4
+GatewayId: gateway-dev-1
+Transport:
+  TCPListenOn: 0.0.0.0:10443
 
-Gnetway:
-  Server:
-    - Proto: tcp
-      Addresses:
-        - 0.0.0.0:10443
-        - 0.0.0.0:5222
-    - Proto: websocket
-      Addresses:
-        - 0.0.0.0:11443
-  Multicore: false
-  SendBuf: 65536
-  ReceiveBuf: 65536
-
-Session:
-  DestService: interface.session
-  ServiceName: "RPCSession"
-  Codec: "zrpc"
+AuthsessionClient:
+  DestService: service.authsession
+  ServiceName: RPCAuthsession
+  Codec: zrpc
   Etcd:
     Hosts:
       - 127.0.0.1:2379
-    Key: interface.session
+    Key: service.authsession
+
+PresenceClient:
+  DestService: service.presence
+  ServiceName: RPCPresence
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.presence
+
+AdvertiseRpcAddr: 127.0.0.1:20110
+PresenceRefreshMinIntervalSeconds: 20
+PresenceRefreshScanIntervalSeconds: 10
+PresenceRefreshRetryMinIntervalSeconds: 5
+GatewayShutdownPresenceOfflineDeadlineSeconds: 5
+GatewayShutdownPresenceOfflineMaxSessions: 10000
+
+BffClient:
+  Clients:
+    - DestService: bff.bff
+      Codec: zrpc
+      Etcd:
+        Hosts:
+          - 127.0.0.1:2379
+        Key: bff.bff
+      ServiceNameList:
+        - RPCAccount
+        - RPCAuthorization
+        - RPCAutoDownload
+        - RPCChatInvites
+        - RPCChats
+        - RPCConfiguration
+        - RPCContacts
+        - RPCDialogs
+        - RPCDrafts
+        - RPCFiles
+        - RPCMessages
+        - RPCMiscellaneous
+        - RPCNotification
+        - RPCNsfw
+        - RPCPassport
+        - RPCPremium
+        - RPCPrivacySettings
+        - RPCQrCode
+        - RPCSavedMessageDialogs
+        - RPCSponsoredMessages
+        - RPCTos
+        - RPCUpdates
+        - RPCUserChannelProfiles
+        - RPCUsernames
+        - RPCUsers
