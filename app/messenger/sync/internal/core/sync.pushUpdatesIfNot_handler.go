@@ -16,10 +16,32 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
+import (
+	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 // SyncPushUpdatesIfNot
 // sync.pushUpdatesIfNot flags:# user_id:long includes:flags.0?Vector<long> excludes:flags.1?Vector<long> updates:Updates = Void;
 func (c *SyncCore) SyncPushUpdatesIfNot(in *sync.TLSyncPushUpdatesIfNot) (*sync.Void, error) {
-	return nil, sync.ErrSyncMethodNotImplemented
+	const method = "sync.pushUpdatesIfNot"
+	if in == nil {
+		return nil, sync.ErrSyncInvalidArgument
+	}
+	if err := c.requireCaller(method); err != nil {
+		return nil, err
+	}
+	if err := validateUserID(method, in.UserId); err != nil {
+		return nil, err
+	}
+	if err := validatePushUpdatesIfNot(method, in.Includes, in.Excludes); err != nil {
+		return nil, err
+	}
+	if err := validateUpdates(method, in.Updates); err != nil {
+		return nil, err
+	}
+	if err := c.svcCtx.Repo.PushUpdatesIfNot(c.ctx, in.UserId, in.Includes != nil, in.Includes, in.Excludes != nil, in.Excludes, in.Updates); err != nil {
+		return nil, err
+	}
+	return tg.VoidValue, nil
 }

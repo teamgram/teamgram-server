@@ -16,10 +16,32 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
+import (
+	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 // SyncUpdatesNotMe
 // sync.updatesNotMe user_id:long perm_auth_key_id:long updates:Updates = Void;
 func (c *SyncCore) SyncUpdatesNotMe(in *sync.TLSyncUpdatesNotMe) (*sync.Void, error) {
-	return nil, sync.ErrSyncMethodNotImplemented
+	const method = "sync.updatesNotMe"
+	if in == nil {
+		return nil, sync.ErrSyncInvalidArgument
+	}
+	if err := c.requireCaller(method); err != nil {
+		return nil, err
+	}
+	if err := validateUserID(method, in.UserId); err != nil {
+		return nil, err
+	}
+	if err := validatePositiveID(method, "perm_auth_key_id", in.PermAuthKeyId); err != nil {
+		return nil, err
+	}
+	if err := validateUpdates(method, in.Updates); err != nil {
+		return nil, err
+	}
+	if err := c.svcCtx.Repo.UpdatesNotMe(c.ctx, in.UserId, in.PermAuthKeyId, in.Updates); err != nil {
+		return nil, err
+	}
+	return tg.VoidValue, nil
 }

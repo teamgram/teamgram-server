@@ -1,18 +1,28 @@
 Name: messenger.sync
-ListenOn: 0.0.0.0:29530
-SessionClient:
-  DestService: interface.session
-  ServiceName: RPCSession
-  Codec: zrpc
+ListenOn: 127.0.0.1:29530
+Etcd:
+  Hosts:
+    - 127.0.0.1:2379
+  Key: messenger.sync
+
+PresenceClient:
+  DestService: service.presence
+  ServiceName: RPCPresence
   Etcd:
     Hosts:
       - 127.0.0.1:2379
-    Key: interface.session
-StatusClient:
-  DestService: service.status
-  ServiceName: RPCStatus
-  Codec: zrpc
-  Etcd:
-    Hosts:
-      - 127.0.0.1:2379
-    Key: service.status
+    Key: service.presence
+
+GatewayClientBase:
+  DestService: interface.gateway
+  ServiceName: RPCGateway
+  Timeout: 3000
+
+GatewayAllowedCIDRs: [127.0.0.0/8]
+GatewayAllowedPorts: [20110]
+AllowGatewayLoopback: true
+GatewayClientCacheMaxEntries: 1000
+GatewayClientCacheTTLSeconds: 300
+GatewayClientIdleTimeoutSeconds: 60
+RequireCallerIdentity: false
+AllowedCallers: [bff.dialogs, bff, msg, userupdates]

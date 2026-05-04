@@ -17,13 +17,24 @@
 package svc
 
 import (
+	"context"
+
 	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/sync/internal/repository"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
+
+type SyncRepository interface {
+	PushUpdates(ctx context.Context, userID int64, updates tg.UpdatesClazz) error
+	UpdatesNotMe(ctx context.Context, userID, permAuthKeyID int64, updates tg.UpdatesClazz) error
+	PushUpdatesIfNot(ctx context.Context, userID int64, includesSet bool, includes []int64, excludesSet bool, excludes []int64, updates tg.UpdatesClazz) error
+	UpdatesMe(ctx context.Context, userID, permAuthKeyID int64, authKeyID, sessionID int64, precise bool, updates tg.UpdatesClazz) error
+	PushRpcResult(ctx context.Context, route repository.RpcResultRoute) error
+}
 
 type ServiceContext struct {
 	Config config.Config
-	Repo   *repository.Repository
+	Repo   SyncRepository
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
