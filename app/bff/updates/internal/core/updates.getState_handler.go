@@ -44,5 +44,5 @@ func (c *UpdatesCore) UpdatesGetState(in *tg.TLUpdatesGetState) (*tg.UpdatesStat
 		return nil, err
 	}
 
-	return userStateToUpdatesState(state).ToUpdatesState(), nil
+	return userStateToUpdatesState(state)
 }

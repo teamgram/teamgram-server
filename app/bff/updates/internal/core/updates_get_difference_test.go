@@ -2,6 +2,8 @@ package core
 
 import (
 	"context"
+	"math"
+	"strings"
 	"testing"
 
 	"github.com/teamgram/teamgram-server/v2/app/bff/updates/internal/repository"
@@ -104,6 +106,89 @@ func TestUpdatesGetDifferenceReturnsEmptyDifference(t *testing.T) {
 	}
 	if empty.Date != 123 || empty.Seq != 0 {
 		t.Fatalf("empty difference = %#v", empty)
+	}
+}
+
+func TestUpdatesGetDifferenceReturnsSlice(t *testing.T) {
+	client := &fakeUserupdatesClient{difference: userupdates.MakeTLUserDifferenceSlice(&userupdates.TLUserDifferenceSlice{
+		NewMessages: []tg.MessageClazz{
+			tg.MakeTLMessage(&tg.TLMessage{Id: 9, Message: "hello"}),
+		},
+		OtherUpdates: []tg.UpdateClazz{
+			tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{Pts: 18, PtsCount: 1}),
+		},
+		IntermediateState: userupdates.MakeTLUserState(&userupdates.TLUserState{
+			Pts:         18,
+			Qts:         0,
+			Date:        123,
+			Seq:         2,
+			UnreadCount: 0,
+		}),
+	}).ToUserDifference()}
+	core := newUpdatesCore(client)
+
+	got, err := core.UpdatesGetDifference(&tg.TLUpdatesGetDifference{Pts: 17, Date: 100, Qts: 0})
+	if err != nil {
+		t.Fatalf("UpdatesGetDifference() error = %v", err)
+	}
+	if client.gotDifference == nil || client.gotDifference.Date == nil || *client.gotDifference.Date != 100 {
+		t.Fatalf("userupdates date = %#v, want 100", client.gotDifference)
+	}
+	slice, ok := got.ToUpdatesDifferenceSlice()
+	if !ok {
+		t.Fatalf("got %s, want updates.differenceSlice", got.ClazzName())
+	}
+	if len(slice.NewMessages) != 1 || len(slice.OtherUpdates) != 1 {
+		t.Fatalf("slice payload = %#v", slice)
+	}
+	if slice.IntermediateState == nil || slice.IntermediateState.Pts != 18 || slice.IntermediateState.Date != 123 || slice.IntermediateState.Seq != 2 {
+		t.Fatalf("intermediate state = %#v", slice.IntermediateState)
+	}
+	if slice.NewEncryptedMessages == nil || slice.Chats == nil || slice.Users == nil {
+		t.Fatalf("public vectors must be initialized: %#v", slice)
+	}
+}
+
+func TestUpdatesGetDifferenceReturnsTooLong(t *testing.T) {
+	client := &fakeUserupdatesClient{difference: userupdates.MakeTLUserDifferenceTooLong(&userupdates.TLUserDifferenceTooLong{
+		Pts: 123,
+	}).ToUserDifference()}
+	core := newUpdatesCore(client)
+
+	got, err := core.UpdatesGetDifference(&tg.TLUpdatesGetDifference{Pts: 1, Date: 100, Qts: 0})
+	if err != nil {
+		t.Fatalf("UpdatesGetDifference() error = %v", err)
+	}
+	tooLong, ok := got.ToUpdatesDifferenceTooLong()
+	if !ok {
+		t.Fatalf("got %s, want updates.differenceTooLong", got.ClazzName())
+	}
+	if tooLong.Pts != 123 {
+		t.Fatalf("tooLong pts = %d, want 123", tooLong.Pts)
+	}
+}
+
+func TestUpdatesGetStateRejectsOutOfRangePublicPts(t *testing.T) {
+	client := &fakeUserupdatesClient{state: userupdates.MakeTLUserState(&userupdates.TLUserState{
+		Pts: int64(math.MaxInt32) + 1,
+	}).ToUserState()}
+	core := newUpdatesCore(client)
+
+	_, err := core.UpdatesGetState(&tg.TLUpdatesGetState{})
+	if err == nil || !strings.Contains(err.Error(), "updates.state.pts out of int32 range") {
+		t.Fatalf("UpdatesGetState() error = %v, want checked pts overflow", err)
+	}
+}
+
+func TestUpdatesGetDifferenceRejectsOutOfRangeTooLongPts(t *testing.T) {
+	client := &fakeUserupdatesClient{difference: userupdates.MakeTLUserDifferenceTooLong(&userupdates.TLUserDifferenceTooLong{
+		Pts: int64(math.MaxInt32) + 1,
+	}).ToUserDifference()}
+	core := newUpdatesCore(client)
+
+	_, err := core.UpdatesGetDifference(&tg.TLUpdatesGetDifference{Pts: 1, Date: 100, Qts: 0})
+	if err == nil || !strings.Contains(err.Error(), "updates.differenceTooLong.pts out of int32 range") {
+		t.Fatalf("UpdatesGetDifference() error = %v, want checked tooLong pts overflow", err)
 	}
 }
 
