@@ -9,6 +9,7 @@ import (
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
+	"github.com/teamgram/teamgram-server/v2/pkg/pagination"
 )
 
 func (r *Repository) CreateOrGetByClientRandom(ctx context.Context, in CreateCanonicalMessageInput) (*CanonicalMessageResult, error) {
@@ -90,47 +91,89 @@ func (r *Repository) ListHistoryMessages(ctx context.Context, in ListHistoryMess
 		return nil, err
 	}
 
-	limit := in.Limit
-	if limit <= 0 {
-		limit = 50
-	} else if limit > 100 {
-		limit = 100
+	limit := pagination.NormalizeLimit(in.Limit)
+	offset, err := r.historySliceOffset(ctx, in)
+	if err != nil {
+		return nil, err
 	}
 
-	minPeerSeq, maxPeerSeq := historyPeerSeqWindow(in)
-
-	rows, err := r.models.CanonicalQueries.SelectHistoryMessages(ctx, in.UserID, in.PeerType, in.PeerID, MessageStatusLive, minPeerSeq, maxPeerSeq, limit)
+	rows, err := r.selectHistoryMessagesSlice(ctx, in, offset, limit)
 	if err != nil {
 		return nil, storageError("list history messages", err)
 	}
 	out := make([]HistoryMessage, 0, len(rows))
 	for _, row := range rows {
+		if in.MaxID > 0 && row.PeerSeq >= int64(in.MaxID) {
+			continue
+		}
+		if in.MinID > 0 && row.PeerSeq <= int64(in.MinID) {
+			continue
+		}
 		out = append(out, historyMessageRowToMessage(row))
 	}
 	return out, nil
 }
 
-func historyPeerSeqWindow(in ListHistoryMessagesInput) (int64, int64) {
-	minPeerSeq := int64(0)
-	maxPeerSeq := int64(1<<63 - 1)
-	if in.OffsetID > 0 {
-		maxPeerSeq = int64(in.OffsetID)
-		if in.AddOffset < 0 {
-			maxPeerSeq = int64(in.OffsetID) - int64(in.AddOffset)
-		} else if in.AddOffset > 0 {
-			maxPeerSeq = int64(in.OffsetID) - int64(in.AddOffset)
-			if maxPeerSeq < 1 {
-				maxPeerSeq = 1
-			}
-		}
+func (r *Repository) historySliceOffset(ctx context.Context, in ListHistoryMessagesInput) (int64, error) {
+	if in.OffsetID <= 0 {
+		return pagination.SliceOffset(0, pagination.IDOffsetInput{
+			OffsetID:  in.OffsetID,
+			AddOffset: in.AddOffset,
+		}), nil
 	}
-	if in.MaxID > 0 && int64(in.MaxID) < maxPeerSeq {
-		maxPeerSeq = int64(in.MaxID)
+
+	query := `
+SELECT
+	COUNT(*)
+FROM
+	user_message_views
+WHERE
+	user_id = ?
+	AND peer_type = ?
+	AND peer_id = ?
+	AND message_status = ?
+	AND peer_seq >= ?`
+	var offsetFromID int64
+	if err := r.db.QueryRow(ctx, &offsetFromID, query, in.UserID, in.PeerType, in.PeerID, MessageStatusLive, in.OffsetID); err != nil {
+		return 0, storageError("count history offset", err)
 	}
-	if in.MinID > 0 {
-		minPeerSeq = int64(in.MinID)
+
+	return pagination.SliceOffset(offsetFromID, pagination.IDOffsetInput{
+		OffsetID:  in.OffsetID,
+		AddOffset: in.AddOffset,
+	}), nil
+}
+
+func (r *Repository) selectHistoryMessagesSlice(ctx context.Context, in ListHistoryMessagesInput, offset int64, limit int32) ([]model.HistoryMessageRow, error) {
+	query := `
+SELECT
+	v.canonical_message_id,
+	v.peer_seq,
+	v.from_user_id,
+	v.peer_type,
+	v.peer_id,
+	v.message_kind,
+	c.message_text,
+	v.date AS message_date
+FROM
+	user_message_views v
+JOIN
+	canonical_messages c
+ON
+	c.canonical_message_id = v.canonical_message_id
+WHERE
+	v.user_id = ?
+	AND v.peer_type = ?
+	AND v.peer_id = ?
+	AND v.message_status = ?
+ORDER BY
+	v.peer_seq DESC
+LIMIT ?, ?`
+	var rows []model.HistoryMessageRow
+	if err := r.db.QueryRowsPartial(ctx, &rows, query, in.UserID, in.PeerType, in.PeerID, MessageStatusLive, offset, limit); err != nil {
+		return nil, err
 	}
-	return minPeerSeq, maxPeerSeq
+	return rows, nil
 }
 
 func historyMessageRowToMessage(r model.HistoryMessageRow) HistoryMessage {

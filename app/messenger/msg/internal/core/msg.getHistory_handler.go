@@ -20,6 +20,7 @@ package core
 import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
+	"github.com/teamgram/teamgram-server/v2/pkg/pagination"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -43,6 +44,11 @@ func (c *MsgCore) MsgGetHistory(in *msg.TLMsgGetHistory) (*tg.MessagesMessages, 
 	if err != nil {
 		return nil, err
 	}
+	if in.Hash != 0 && pagination.HashInt64IDs(historyMessageIDs(history)) == in.Hash {
+		return tg.MakeTLMessagesMessagesNotModified(&tg.TLMessagesMessagesNotModified{
+			Count: int32(len(history)),
+		}).ToMessagesMessages(), nil
+	}
 
 	messages := make([]tg.MessageClazz, 0, len(history))
 	for _, item := range history {
@@ -64,4 +70,12 @@ func (c *MsgCore) MsgGetHistory(in *msg.TLMsgGetHistory) (*tg.MessagesMessages, 
 		Chats:    []tg.ChatClazz{},
 		Users:    []tg.UserClazz{},
 	}).ToMessagesMessages(), nil
+}
+
+func historyMessageIDs(history []repository.HistoryMessage) []int64 {
+	ids := make([]int64, 0, len(history))
+	for _, item := range history {
+		ids = append(ids, item.PeerSeq)
+	}
+	return ids
 }

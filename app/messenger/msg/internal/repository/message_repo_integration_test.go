@@ -211,6 +211,52 @@ func TestMessageRepositoryListHistoryMessages(t *testing.T) {
 	}
 }
 
+func TestMessageRepositoryListHistoryMessagesUsesOffsetIDPositionBeforeFilters(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	repo := NewForTest(db, &testIDGenerator{next: base + 45_000})
+
+	senderID := base + 451
+	receiverID := base + 452
+	now := int32(time.Now().Unix())
+	one := createCanonicalMessageForTest(t, ctx, repo, senderID, receiverID, base+453, "one", now)
+	two := createCanonicalMessageForTest(t, ctx, repo, senderID, receiverID, base+454, "two", now+1)
+	three := createCanonicalMessageForTest(t, ctx, repo, senderID, receiverID, base+455, "three", now+2)
+
+	newerThanOne, err := repo.ListHistoryMessages(ctx, ListHistoryMessagesInput{
+		UserID:    senderID,
+		PeerType:  payload.PeerTypeUser,
+		PeerID:    receiverID,
+		OffsetID:  int32(one.PeerSeq),
+		AddOffset: -3,
+		Limit:     3,
+	})
+	if err != nil {
+		t.Fatalf("ListHistoryMessages() add_offset error = %v", err)
+	}
+	if len(newerThanOne) != 3 ||
+		newerThanOne[0].CanonicalMessageID != three.CanonicalMessageID ||
+		newerThanOne[1].CanonicalMessageID != two.CanonicalMessageID ||
+		newerThanOne[2].CanonicalMessageID != one.CanonicalMessageID {
+		t.Fatalf("ListHistoryMessages() add_offset = %+v, want three/two/one", newerThanOne)
+	}
+
+	filteredAfterSlice, err := repo.ListHistoryMessages(ctx, ListHistoryMessagesInput{
+		UserID:   senderID,
+		PeerType: payload.PeerTypeUser,
+		PeerID:   receiverID,
+		Limit:    2,
+		MaxID:    int32(three.PeerSeq),
+	})
+	if err != nil {
+		t.Fatalf("ListHistoryMessages() max_id error = %v", err)
+	}
+	if len(filteredAfterSlice) != 1 || filteredAfterSlice[0].CanonicalMessageID != two.CanonicalMessageID {
+		t.Fatalf("ListHistoryMessages() max_id after slice = %+v, want only two", filteredAfterSlice)
+	}
+}
+
 func TestMessageRepositoryListHistoryMessagesUsesViewerScopedViews(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)

@@ -11,6 +11,7 @@ import (
 	msgpb "github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	"github.com/teamgram/teamgram-server/v2/pkg/pagination"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -310,6 +311,48 @@ func TestMsgGetHistoryReturnsCanonicalTextMessages(t *testing.T) {
 		repo.historyInput.AddOffset != -2 ||
 		repo.historyInput.Limit != 20 {
 		t.Fatalf("unexpected history input: %+v", repo.historyInput)
+	}
+}
+
+func TestMsgGetHistoryReturnsNotModifiedForMatchingHash(t *testing.T) {
+	repo := &fakeMsgRepository{
+		history: []repository.HistoryMessage{
+			{
+				CanonicalMessageID: 9101,
+				PeerSeq:            2,
+				FromUserID:         1001,
+				PeerType:           payload.PeerTypeUser,
+				PeerID:             1002,
+				MessageKind:        repository.MessageKindText,
+				MessageText:        "second",
+				MessageDate:        1_772_000_020,
+			},
+			{
+				CanonicalMessageID: 9100,
+				PeerSeq:            1,
+				FromUserID:         1001,
+				PeerType:           payload.PeerTypeUser,
+				PeerID:             1002,
+				MessageKind:        repository.MessageKindText,
+				MessageText:        "first",
+				MessageDate:        1_772_000_010,
+			},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.MsgGetHistory(&msgpb.TLMsgGetHistory{
+		UserId:   1001,
+		PeerType: payload.PeerTypeUser,
+		PeerId:   1002,
+		Limit:    20,
+		Hash:     pagination.HashInt64IDs([]int64{2, 1}),
+	})
+	if err != nil {
+		t.Fatalf("MsgGetHistory() error = %v", err)
+	}
+	if _, ok := got.ToMessagesMessagesNotModified(); !ok {
+		t.Fatalf("MsgGetHistory() = %s, want messages.messagesNotModified", got.ClazzName())
 	}
 }
 
