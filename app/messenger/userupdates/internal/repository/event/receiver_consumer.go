@@ -20,6 +20,10 @@ type ReceiverKafkaHandler interface {
 	HandleReceiverKafkaRecord(ctx context.Context, record ReceiverKafkaRecord) error
 }
 
+type ReceiverPartitionClaimer interface {
+	ClaimPartitionOwner(ctx context.Context, partitionID int32) (int64, error)
+}
+
 type receiverConsumerGroup interface {
 	Consume(context.Context, []string, sarama.ConsumerGroupHandler) error
 	Errors() <-chan error
@@ -51,15 +55,16 @@ func (noopReceiverConsumerCounters) IncMessageCommit()    {}
 func (noopReceiverConsumerCounters) IncPanicRecovered()   {}
 
 type ReceiverConsumer struct {
-	group       receiverConsumerGroup
-	topics      []string
-	handler     ReceiverKafkaHandler
-	counters    ReceiverConsumerCounters
-	mu          sync.Mutex
-	attempt     int
-	backoffBase time.Duration
-	backoffMax  time.Duration
-	jitter      func(time.Duration) time.Duration
+	group            receiverConsumerGroup
+	topics           []string
+	handler          ReceiverKafkaHandler
+	partitionClaimer ReceiverPartitionClaimer
+	counters         ReceiverConsumerCounters
+	mu               sync.Mutex
+	attempt          int
+	backoffBase      time.Duration
+	backoffMax       time.Duration
+	jitter           func(time.Duration) time.Duration
 }
 
 func NewReceiverConsumer(c *kafka.KafkaConsumerConf, handler ReceiverKafkaHandler) (*ReceiverConsumer, error) {
@@ -71,14 +76,16 @@ func NewReceiverConsumer(c *kafka.KafkaConsumerConf, handler ReceiverKafkaHandle
 	if err != nil {
 		return nil, err
 	}
+	claimer, _ := handler.(ReceiverPartitionClaimer)
 	return &ReceiverConsumer{
-		group:       group,
-		topics:      c.Topics,
-		handler:     handler,
-		counters:    noopReceiverConsumerCounters{},
-		backoffBase: 100 * time.Millisecond,
-		backoffMax:  5 * time.Second,
-		jitter:      defaultReceiverBackoffJitter,
+		group:            group,
+		topics:           c.Topics,
+		handler:          handler,
+		partitionClaimer: claimer,
+		counters:         noopReceiverConsumerCounters{},
+		backoffBase:      100 * time.Millisecond,
+		backoffMax:       5 * time.Second,
+		jitter:           defaultReceiverBackoffJitter,
 	}, nil
 }
 
@@ -187,6 +194,20 @@ func (c *ReceiverConsumer) Setup(session sarama.ConsumerGroupSession) error {
 	c.ensureDefaults()
 	c.resetBackoff()
 	c.counters.IncRebalanceCount()
+	if c.partitionClaimer != nil {
+		for topic, partitions := range session.Claims() {
+			for _, partition := range partitions {
+				epoch, err := c.partitionClaimer.ClaimPartitionOwner(session.Context(), partition)
+				if err != nil {
+					return fmt.Errorf("claim receiver partition owner: topic=%s partition=%d: %w", topic, partition, err)
+				}
+				logx.WithContext(session.Context()).Infow("receiver consumer partition claimed",
+					logx.Field("topic", topic),
+					logx.Field("partition", partition),
+					logx.Field("owner_epoch", epoch))
+			}
+		}
+	}
 	logx.WithContext(session.Context()).Infow("receiver consumer session setup",
 		logx.Field("member_id", session.MemberID()),
 		logx.Field("generation_id", session.GenerationID()),

@@ -49,16 +49,20 @@ func (h *fakeReceiverHandler) HandleReceiverKafkaRecord(ctx context.Context, rec
 
 type fakeSession struct {
 	ctx           context.Context
+	claims        map[string][]int32
 	marked        int
 	committed     int
 	markedMessage *sarama.ConsumerMessage
 }
 
 func newFakeSession() *fakeSession {
-	return &fakeSession{ctx: context.Background()}
+	return &fakeSession{
+		ctx:    context.Background(),
+		claims: map[string][]int32{"topic": {0}},
+	}
 }
 
-func (s *fakeSession) Claims() map[string][]int32               { return map[string][]int32{"topic": {0}} }
+func (s *fakeSession) Claims() map[string][]int32               { return s.claims }
 func (s *fakeSession) MemberID() string                         { return "member-1" }
 func (s *fakeSession) GenerationID() int32                      { return 1 }
 func (s *fakeSession) MarkOffset(string, int32, int64, string)  {}
@@ -210,6 +214,32 @@ func TestReceiverConsumerSetupCleanupCounters(t *testing.T) {
 	}
 	if counters.rebalanceCount != 1 {
 		t.Fatalf("rebalance counter = %d, want 1", counters.rebalanceCount)
+	}
+}
+
+type fakePartitionClaimer struct {
+	claimed []int32
+	err     error
+}
+
+func (c *fakePartitionClaimer) ClaimPartitionOwner(_ context.Context, partitionID int32) (int64, error) {
+	c.claimed = append(c.claimed, partitionID)
+	return int64(len(c.claimed)), c.err
+}
+
+func TestReceiverConsumerSetupClaimsAssignedPartitions(t *testing.T) {
+	claimer := &fakePartitionClaimer{}
+	consumer := &ReceiverConsumer{partitionClaimer: claimer}
+	session := newFakeSession()
+	session.claims = map[string][]int32{
+		"userupdates.receiver_operations.v1": {35, 58},
+	}
+
+	if err := consumer.Setup(session); err != nil {
+		t.Fatalf("Setup() error = %v", err)
+	}
+	if len(claimer.claimed) != 2 || claimer.claimed[0] != 35 || claimer.claimed[1] != 58 {
+		t.Fatalf("claimed partitions = %v, want [35 58]", claimer.claimed)
 	}
 }
 

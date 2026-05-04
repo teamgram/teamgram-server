@@ -314,8 +314,8 @@ func (c *DialogsCore) fetchCanonicalUserDialog(operation string, peerUserID int6
 		Dialog: tg.MakeTLDialog(&tg.TLDialog{
 			Peer:            tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: peerUserID}),
 			TopMessage:      topMessageID,
-			ReadInboxMaxId:  topMessageID,
-			ReadOutboxMaxId: topMessageID,
+			ReadInboxMaxId:  0,
+			ReadOutboxMaxId: 0,
 			NotifySettings:  tg.MakeTLPeerNotifySettings(&tg.TLPeerNotifySettings{}),
 		}),
 		Messages: messages,

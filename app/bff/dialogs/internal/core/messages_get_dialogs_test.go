@@ -165,8 +165,8 @@ func TestMessagesGetDialogsFallsBackToCanonicalSelfHistory(t *testing.T) {
 		t.Fatalf("reply lens = count:%d dialogs:%d messages:%d users:%d", slice.Count, len(slice.Dialogs), len(slice.Messages), len(slice.Users))
 	}
 	dialog, ok := (&tg.Dialog{Clazz: slice.Dialogs[0]}).ToDialog()
-	if !ok || dialog.TopMessage != 2 || dialog.ReadOutboxMaxId != 2 {
-		t.Fatalf("dialog = %+v, ok=%v, want top/read outbox message 2", dialog, ok)
+	if !ok || dialog.TopMessage != 2 || dialog.ReadInboxMaxId != 0 || dialog.ReadOutboxMaxId != 0 {
+		t.Fatalf("dialog = %+v, ok=%v, want top_message=2 and unread fallback read state", dialog, ok)
 	}
 }
 
@@ -225,8 +225,8 @@ func TestMessagesGetPeerDialogsSelfFromCanonicalHistory(t *testing.T) {
 		t.Fatalf("reply lens = dialogs:%d messages:%d users:%d", len(r.Dialogs), len(r.Messages), len(r.Users))
 	}
 	dialog, ok := (&tg.Dialog{Clazz: r.Dialogs[0]}).ToDialog()
-	if !ok || dialog.TopMessage != 2 {
-		t.Fatalf("dialog = %+v, ok=%v, want top_message=2", dialog, ok)
+	if !ok || dialog.TopMessage != 2 || dialog.ReadInboxMaxId != 0 || dialog.ReadOutboxMaxId != 0 {
+		t.Fatalf("dialog = %+v, ok=%v, want top_message=2 and unread fallback read state", dialog, ok)
 	}
 }
 
