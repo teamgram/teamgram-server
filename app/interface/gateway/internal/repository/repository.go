@@ -19,7 +19,9 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
@@ -157,6 +159,9 @@ func (r *Repository) GetClientSession(ctx context.Context, authKeyId int64) (*au
 		AuthKeyId: authKeyId,
 	})
 	if err != nil {
+		if isPermAuthKeyEmpty(err) {
+			return nil, nil
+		}
 		return nil, fmt.Errorf("gateway repository: get client session %d: %w", authKeyId, err)
 	}
 	if state == nil || state.Client == nil {
@@ -167,4 +172,9 @@ func (r *Repository) GetClientSession(ctx context.Context, authKeyId int64) (*au
 
 func hasRPCClientConfig(c kitex.RpcClientConf) bool {
 	return len(c.Endpoints) > 0 || len(c.Target) > 0 || c.HasEtcd()
+}
+
+func isPermAuthKeyEmpty(err error) bool {
+	return errors.Is(err, authsession.ErrPermAuthKeyEmpty) ||
+		strings.Contains(err.Error(), authsession.ErrPermAuthKeyEmpty.Error())
 }

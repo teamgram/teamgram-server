@@ -190,3 +190,16 @@ func TestRepositoryGetClientSessionEmptyResult(t *testing.T) {
 		t.Fatalf("GetClientSession() = %#v, want nil", got)
 	}
 }
+
+func TestRepositoryGetClientSessionIgnoresUnboundTempAuthKey(t *testing.T) {
+	repo := &Repository{AuthsessionClient: &fakeAuthsessionClient{
+		stateErr: authsession.ErrPermAuthKeyEmpty,
+	}}
+	got, err := repo.GetClientSession(context.Background(), 1001)
+	if err != nil {
+		t.Fatalf("GetClientSession() error = %v", err)
+	}
+	if got != nil {
+		t.Fatalf("GetClientSession() = %#v, want nil", got)
+	}
+}
