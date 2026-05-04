@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"context"
 	"errors"
-	"fmt"
-	"strings"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
@@ -88,8 +86,7 @@ func (r *Repository) CreateOrGetByClientRandom(ctx context.Context, in CreateCan
 }
 
 func (r *Repository) ListHistoryMessages(ctx context.Context, in ListHistoryMessagesInput) ([]HistoryMessage, error) {
-	db, err := r.requireDB()
-	if err != nil {
+	if _, err := r.requireDB(); err != nil {
 		return nil, err
 	}
 
@@ -100,45 +97,20 @@ func (r *Repository) ListHistoryMessages(ctx context.Context, in ListHistoryMess
 		limit = 100
 	}
 
-	conditions := []string{
-		"v.`user_id` = ?",
-		"v.`peer_type` = ?",
-		"v.`peer_id` = ?",
-		"v.`message_status` = ?",
-	}
-	args := []any{in.UserID, in.PeerType, in.PeerID, MessageStatusLive}
+	minPeerSeq := int64(0)
+	maxPeerSeq := int64(1<<63 - 1)
 	if in.OffsetID > 0 {
-		conditions = append(conditions, "v.`peer_seq` < ?")
-		args = append(args, int64(in.OffsetID))
+		maxPeerSeq = int64(in.OffsetID)
 	}
-	if in.MaxID > 0 {
-		conditions = append(conditions, "v.`peer_seq` < ?")
-		args = append(args, int64(in.MaxID))
+	if in.MaxID > 0 && int64(in.MaxID) < maxPeerSeq {
+		maxPeerSeq = int64(in.MaxID)
 	}
 	if in.MinID > 0 {
-		conditions = append(conditions, "v.`peer_seq` > ?")
-		args = append(args, int64(in.MinID))
+		minPeerSeq = int64(in.MinID)
 	}
-	args = append(args, limit)
 
-	query := fmt.Sprintf(`
-SELECT
-	v.`+"`canonical_message_id`"+`,
-	v.`+"`peer_seq`"+`,
-	v.`+"`from_user_id`"+`,
-	v.`+"`peer_type`"+`,
-	v.`+"`peer_id`"+`,
-	v.`+"`message_kind`"+`,
-	c.`+"`message_text`"+`,
-	v.`+"`date`"+`
-FROM `+"`user_message_views`"+` AS v
-JOIN `+"`canonical_messages`"+` AS c ON c.`+"`canonical_message_id`"+` = v.`+"`canonical_message_id`"+`
-WHERE %s
-ORDER BY v.`+"`peer_seq`"+` DESC
-LIMIT ?`, strings.Join(conditions, " AND "))
-
-	var rows []historyMessageRow
-	if err := db.QueryRowsPartial(ctx, &rows, query, args...); err != nil {
+	rows, err := r.models.CanonicalQueries.SelectHistoryMessages(ctx, in.UserID, in.PeerType, in.PeerID, MessageStatusLive, minPeerSeq, maxPeerSeq, limit)
+	if err != nil {
 		return nil, storageError("list history messages", err)
 	}
 	out := make([]HistoryMessage, 0, len(rows))
@@ -148,19 +120,8 @@ LIMIT ?`, strings.Join(conditions, " AND "))
 	return out, nil
 }
 
-type historyMessageRow struct {
-	CanonicalMessageID int64     `db:"canonical_message_id"`
-	PeerSeq            int64     `db:"peer_seq"`
-	FromUserID         int64     `db:"from_user_id"`
-	PeerType           int32     `db:"peer_type"`
-	PeerID             int64     `db:"peer_id"`
-	MessageKind        int32     `db:"message_kind"`
-	MessageText        string    `db:"message_text"`
-	Date               time.Time `db:"date"`
-}
-
-func historyMessageRowToMessage(r historyMessageRow) HistoryMessage {
-	messageDate := time.Date(r.Date.Year(), r.Date.Month(), r.Date.Day(), r.Date.Hour(), r.Date.Minute(), r.Date.Second(), r.Date.Nanosecond(), time.UTC)
+func historyMessageRowToMessage(r model.HistoryMessageRow) HistoryMessage {
+	messageDate := time.Date(r.MessageDate.Year(), r.MessageDate.Month(), r.MessageDate.Day(), r.MessageDate.Hour(), r.MessageDate.Minute(), r.MessageDate.Second(), r.MessageDate.Nanosecond(), time.UTC)
 	return HistoryMessage{
 		CanonicalMessageID: r.CanonicalMessageID,
 		PeerSeq:            r.PeerSeq,

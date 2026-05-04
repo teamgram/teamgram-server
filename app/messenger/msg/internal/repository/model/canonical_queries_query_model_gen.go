@@ -29,14 +29,27 @@ type CanonicalMessageRow struct {
 	RequestPayloadHash []byte    `db:"request_payload_hash"`
 }
 
+type HistoryMessageRow struct {
+	CanonicalMessageID int64     `db:"canonical_message_id"`
+	PeerSeq            int64     `db:"peer_seq"`
+	FromUserID         int64     `db:"from_user_id"`
+	PeerType           int32     `db:"peer_type"`
+	PeerID             int64     `db:"peer_id"`
+	MessageKind        int32     `db:"message_kind"`
+	MessageText        string    `db:"message_text"`
+	MessageDate        time.Time `db:"message_date"`
+}
+
 type CanonicalQueriesModel interface {
 	SelectCanonicalByRandom(ctx context.Context, senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (*CanonicalMessageRow, error)
 	SelectCanonicalByID(ctx context.Context, sendStateId int64, requestPayloadHash []byte, canonicalMessageId int64) (*CanonicalMessageRow, error)
+	SelectHistoryMessages(ctx context.Context, userId int64, peerType int32, peerId int64, messageStatus int32, minPeerSeq int64, maxPeerSeq int64, limit int32) ([]HistoryMessageRow, error)
 }
 
 type CanonicalQueriesTxModel interface {
 	SelectCanonicalByRandom(senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (*CanonicalMessageRow, error)
 	SelectCanonicalByID(sendStateId int64, requestPayloadHash []byte, canonicalMessageId int64) (*CanonicalMessageRow, error)
+	SelectHistoryMessages(userId int64, peerType int32, peerId int64, messageStatus int32, minPeerSeq int64, maxPeerSeq int64, limit int32) ([]HistoryMessageRow, error)
 }
 
 type defaultCanonicalQueriesModel struct {
@@ -97,4 +110,26 @@ func (m *defaultCanonicalQueriesTxModel) SelectCanonicalByID(sendStateId int64, 
 		return nil, err
 	}
 	return &rValue, nil
+}
+
+func (m *defaultCanonicalQueriesModel) SelectHistoryMessages(ctx context.Context, userId int64, peerType int32, peerId int64, messageStatus int32, minPeerSeq int64, maxPeerSeq int64, limit int32) ([]HistoryMessageRow, error) {
+	var rList []HistoryMessageRow
+	query := "select v.canonical_message_id, v.peer_seq, v.from_user_id, v.peer_type, v.peer_id, v.message_kind, c.message_text, v.`date` as message_date from user_message_views as v join canonical_messages as c on c.canonical_message_id = v.canonical_message_id where v.user_id = ? and v.peer_type = ? and v.peer_id = ? and v.message_status = ? and v.peer_seq > ? and v.peer_seq < ? order by v.peer_seq desc limit ?"
+
+	err := m.db.QueryRowsPartial(ctx, &rList, query, userId, peerType, peerId, messageStatus, minPeerSeq, maxPeerSeq, limit)
+	if err != nil {
+		return nil, err
+	}
+	return rList, nil
+}
+
+func (m *defaultCanonicalQueriesTxModel) SelectHistoryMessages(userId int64, peerType int32, peerId int64, messageStatus int32, minPeerSeq int64, maxPeerSeq int64, limit int32) ([]HistoryMessageRow, error) {
+	var rList []HistoryMessageRow
+	query := "select v.canonical_message_id, v.peer_seq, v.from_user_id, v.peer_type, v.peer_id, v.message_kind, c.message_text, v.`date` as message_date from user_message_views as v join canonical_messages as c on c.canonical_message_id = v.canonical_message_id where v.user_id = ? and v.peer_type = ? and v.peer_id = ? and v.message_status = ? and v.peer_seq > ? and v.peer_seq < ? order by v.peer_seq desc limit ?"
+
+	err := m.tx.QueryRowsPartial(&rList, query, userId, peerType, peerId, messageStatus, minPeerSeq, maxPeerSeq, limit)
+	if err != nil {
+		return nil, err
+	}
+	return rList, nil
 }

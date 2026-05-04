@@ -7,6 +7,17 @@
         <field name="RequestPayloadHash" type="[]byte" db="request_payload_hash"/>
     </result>
 
+    <result name="HistoryMessageRow">
+        <field name="CanonicalMessageID" type="int64" db="canonical_message_id"/>
+        <field name="PeerSeq" type="int64" db="peer_seq"/>
+        <field name="FromUserID" type="int64" db="from_user_id"/>
+        <field name="PeerType" type="int32" db="peer_type"/>
+        <field name="PeerID" type="int64" db="peer_id"/>
+        <field name="MessageKind" type="int32" db="message_kind"/>
+        <field name="MessageText" type="string" db="message_text"/>
+        <field name="MessageDate" type="time.Time" db="message_date"/>
+    </result>
+
     <query name="SelectCanonicalByRandom" result="CanonicalMessageRow">
         <params>
             <param name="peer_type" type="int32"/>
@@ -49,6 +60,43 @@
             WHERE
                 canonical_message_id = :canonical_message_id
             LIMIT 1
+        </sql>
+    </query>
+
+    <query name="SelectHistoryMessages" result="HistoryMessageRow" result_set="list">
+        <params>
+            <param name="peer_type" type="int32"/>
+            <param name="message_status" type="int32"/>
+            <param name="min_peer_seq" type="int64"/>
+            <param name="max_peer_seq" type="int64"/>
+            <param name="limit" type="int32"/>
+        </params>
+        <sql>
+            SELECT
+                v.canonical_message_id,
+                v.peer_seq,
+                v.from_user_id,
+                v.peer_type,
+                v.peer_id,
+                v.message_kind,
+                c.message_text,
+                v.date AS message_date
+            FROM
+                user_message_views v
+            JOIN
+                canonical_messages c
+            ON
+                c.canonical_message_id = v.canonical_message_id
+            WHERE
+                v.user_id = :user_id
+                AND v.peer_type = :peer_type
+                AND v.peer_id = :peer_id
+                AND v.message_status = :message_status
+                AND v.peer_seq &gt; :min_peer_seq
+                AND v.peer_seq &lt; :max_peer_seq
+            ORDER BY
+                v.peer_seq DESC
+            LIMIT :limit
         </sql>
     </query>
 </queries>
