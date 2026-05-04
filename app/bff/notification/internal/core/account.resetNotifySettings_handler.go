@@ -29,7 +29,9 @@ func (c *NotificationCore) AccountResetNotifySettings(in *tg.TLAccountResetNotif
 	})
 	if err != nil {
 		c.Logger.Errorf("account.resetNotifySettings - error: %v", err)
-		return nil, err
+
+		// We ignore error
+		return tg.BoolFalse, err
 	}
 
 	// TODO: 3x sync.SyncUpdatesNotMe for PEER_USERS, PEER_CHATS, PEER_BROADCASTS
