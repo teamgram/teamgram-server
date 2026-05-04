@@ -17,14 +17,24 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UploadSaveFilePart
 // upload.saveFilePart#b304a621 file_id:long file_part:int bytes:bytes = Bool;
 func (c *FilesCore) UploadSaveFilePart(in *tg.TLUploadSaveFilePart) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("upload.saveFilePart - error: method UploadSaveFilePart not impl")
+	_, err := c.svcCtx.Repo.DfsClient.DfsWriteFilePartData(c.ctx, &dfs.TLDfsWriteFilePartData{
+		Creator:        c.MD.PermAuthKeyId,
+		FileId:         in.FileId,
+		FilePart:       in.FilePart,
+		Bytes:          in.Bytes,
+		Big:            false,
+		FileTotalParts: nil,
+	})
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.BoolTrue, nil
 }

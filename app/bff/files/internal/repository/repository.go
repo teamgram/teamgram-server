@@ -18,13 +18,23 @@ package repository
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/files/internal/config"
+	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
+	dfsclient "github.com/teamgram/teamgram-server/v2/app/service/dfs/client"
+	mediaclient "github.com/teamgram/teamgram-server/v2/app/service/media/client"
 )
 
 // Repository is the dependency container for repository instances.
 type Repository struct {
+	DfsClient   dfsclient.DfsClient
+	MediaClient mediaclient.MediaClient
+	UserClient  userclient.UserClient
 }
 
 // NewRepository creates a new Repository.
 func NewRepository(c config.Config) *Repository {
-	return &Repository{}
+	return &Repository{
+		DfsClient:   dfsclient.NewDfsClient(dfsclient.MustNewKitexClient(c.DfsClient)),
+		MediaClient: mediaclient.NewMediaClient(mediaclient.MustNewKitexClient(c.MediaClient)),
+		UserClient:  userclient.NewUserClient(userclient.MustNewKitexClient(c.UserClient)),
+	}
 }

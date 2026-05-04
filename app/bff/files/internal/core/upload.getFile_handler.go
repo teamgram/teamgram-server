@@ -17,14 +17,55 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UploadGetFile
 // upload.getFile#be5335be flags:# precise:flags.0?true cdn_supported:flags.1?true location:InputFileLocation offset:long limit:int = upload.File;
 func (c *FilesCore) UploadGetFile(in *tg.TLUploadGetFile) (*tg.UploadFile, error) {
-	// TODO: not impl
-	c.Logger.Errorf("upload.getFile - error: method UploadGetFile not impl")
+	location := in.Location
+	if location == nil {
+		return nil, tg.ErrLocationInvalid
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	switch location.InputFileLocationClazzName() {
+	case tg.ClazzName_inputFileLocation:
+		return nil, tg.ErrInputRequestInvalid
+	case tg.ClazzName_inputEncryptedFileLocation,
+		tg.ClazzName_inputDocumentFileLocation,
+		tg.ClazzName_inputSecureFileLocation,
+		tg.ClazzName_inputTakeoutFileLocation,
+		tg.ClazzName_inputPhotoFileLocation,
+		tg.ClazzName_inputPeerPhotoFileLocation:
+	case tg.ClazzName_inputStickerSetThumb:
+		// TODO: master resolves sticker set thumbs through enterprise plugin hooks.
+		return nil, tg.ErrMethodNotImpl
+	case tg.ClazzName_inputGroupCallStream:
+		// TODO: master resolves group call streams through enterprise plugin hooks.
+		return nil, tg.ErrMethodNotImpl
+	default:
+		return nil, tg.ErrLocationInvalid
+	}
+
+	uploadFile, err := c.svcCtx.Repo.DfsClient.DfsDownloadFile(c.ctx, &dfs.TLDfsDownloadFile{
+		Location: location,
+		Offset:   in.Offset,
+		Limit:    in.Limit,
+	})
+	if err != nil {
+		return nil, err
+	}
+	if uploadFile == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	file, ok := uploadFile.ToUploadFile()
+	if !ok || file.Type == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	if file.Type.StorageFileTypeClazzName() == tg.ClazzName_storage_fileUnknown {
+		file.Type = tg.MakeTLStorageFilePartial(&tg.TLStorageFilePartial{})
+	}
+
+	return uploadFile, nil
 }

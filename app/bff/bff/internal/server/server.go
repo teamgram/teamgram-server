@@ -195,6 +195,15 @@ func buildUserChannelProfilesConfig(c config.Config) userchannelprofileshelper.C
 	}
 }
 
+func buildFilesConfig(c config.Config) fileshelper.Config {
+	return fileshelper.Config{
+		RpcServerConf: c.RpcServerConf,
+		DfsClient:     withServiceName(c.DfsClient, "RPCDfs"),
+		MediaClient:   withServiceName(c.MediaClient, "RPCMedia"),
+		UserClient:    withServiceName(c.BizServiceClient, "RPCUser"),
+	}
+}
+
 func New() *Server {
 	return new(Server)
 }
@@ -268,12 +277,7 @@ func (s *Server) Initialize() error {
 			// fileshelper
 			_ = filesservice.RegisterService(
 				s,
-				fileshelper.New(fileshelper.Config{
-					RpcServerConf: c.RpcServerConf,
-					//DfsClient:     c.DfsClient,
-					//UserClient:    c.BizServiceClient,
-					//MediaClient:   c.MediaClient,
-				}))
+				fileshelper.New(buildFilesConfig(c)))
 
 			// passporthelper
 			_ = passportservice.RegisterService(

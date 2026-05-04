@@ -1,2 +1,26 @@
 Name: bff.files
 ListenOn: 0.0.0.0:21350
+DfsClient:
+  DestService: service.dfs
+  ServiceName: RPCDfs
+  Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.dfs
+MediaClient:
+  DestService: service.media
+  ServiceName: RPCMedia
+  Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.media
+UserClient:
+  DestService: service.biz_service.user
+  ServiceName: RPCUser
+  Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.biz_service.user
