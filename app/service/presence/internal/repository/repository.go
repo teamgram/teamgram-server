@@ -144,7 +144,7 @@ func buildOnlineSessionsWithCleanup(ctx context.Context, userID int64, raw map[s
 			cleanup = append(cleanup, cleanupField{field: field, errorClass: "decode"})
 			continue
 		}
-		if data.UserId != userID || data.AuthKeyId <= 0 || data.SessionId == 0 || data.PermAuthKeyId <= 0 || data.GatewayId == "" || data.GatewayGeneration == "" || data.GatewayRpcAddr == "" || field != sessionField(data.AuthKeyId, data.SessionId) {
+		if data.UserId != userID || data.AuthKeyId == 0 || data.SessionId == 0 || data.PermAuthKeyId == 0 || data.GatewayId == "" || data.GatewayGeneration == "" || data.GatewayRpcAddr == "" || field != sessionField(data.AuthKeyId, data.SessionId) {
 			logx.WithContext(ctx).Errorf("presence: inconsistent session entry: user_id=%d field=%s", userID, field)
 			metrics.CorruptEntry("inconsistent")
 			cleanup = append(cleanup, cleanupField{field: field, errorClass: "inconsistent"})

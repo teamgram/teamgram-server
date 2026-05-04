@@ -35,6 +35,22 @@ func TestBuildOnlineSessionsFiltersExpiredAndCorruptEntries(t *testing.T) {
 	}
 }
 
+func TestBuildOnlineSessionsKeepsSignedAuthKeyIDs(t *testing.T) {
+	raw := map[string]string{
+		"-1001:2002": `{"user_id":42,"perm_auth_key_id":9001,"auth_key_id":-1001,"auth_key_type":1,"session_id":2002,"gateway_id":"gw1","gateway_generation":"gen1","gateway_rpc_addr":"127.0.0.1:20110","layer":224,"client":"tdesktop","updated_at":100,"expires_at":160}`,
+	}
+	sessions, cleanup := buildOnlineSessions(context.Background(), 42, raw, 150)
+	if len(cleanup) != 0 {
+		t.Fatalf("len(cleanup) = %d, want 0", len(cleanup))
+	}
+	if len(sessions) != 1 {
+		t.Fatalf("len(sessions) = %d, want 1", len(sessions))
+	}
+	if sessions[0].AuthKeyId != -1001 || sessions[0].PermAuthKeyId != 9001 || sessions[0].SessionId != 2002 {
+		t.Fatalf("unexpected session: %+v", sessions[0])
+	}
+}
+
 func TestOnlineSessionCacheDataUsesServiceTime(t *testing.T) {
 	in := presencepb.MakeTLOnlineSession(&presencepb.TLOnlineSession{
 		UserId:            42,
