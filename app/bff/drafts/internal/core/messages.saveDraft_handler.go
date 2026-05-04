@@ -17,14 +17,59 @@
 package core
 
 import (
+	"time"
+
+	"github.com/teamgram/teamgram-server/v2/app/bff/drafts/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesSaveDraft
 // messages.saveDraft#54ae308e flags:# no_webpage:flags.1?true invert_media:flags.6?true reply_to:flags.4?InputReplyTo peer:InputPeer message:string entities:flags.3?Vector<MessageEntity> media:flags.5?InputMedia effect:flags.7?long suggested_post:flags.8?SuggestedPost = Bool;
 func (c *DraftsCore) MessagesSaveDraft(in *tg.TLMessagesSaveDraft) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.saveDraft - error: method MessagesSaveDraft not impl")
+	var (
+		peer                = tg.FromInputPeer2(c.MD.UserId, in.Peer)
+		isDraftMessageEmpty = true
+		date                = int32(time.Now().Unix())
+	)
 
-	return nil, tg.ErrMethodNotImpl
+	if in.NoWebpage == true {
+		isDraftMessageEmpty = false
+	} else if in.ReplyTo != nil {
+		isDraftMessageEmpty = false
+	} else if in.Message != "" {
+		isDraftMessageEmpty = false
+	} else if in.Entities != nil {
+		isDraftMessageEmpty = false
+	}
+
+	if isDraftMessageEmpty {
+		c.svcCtx.Repo.DialogClient.DialogClearDraftMessage(c.ctx, &repository.DialogClearDraft{
+			UserId:   c.MD.UserId,
+			PeerType: peer.PeerType,
+			PeerId:   peer.PeerId,
+		})
+	} else {
+		draft := tg.MakeTLDraftMessage(&tg.TLDraftMessage{
+			NoWebpage:   in.NoWebpage,
+			InvertMedia: in.InvertMedia,
+			ReplyTo:     in.ReplyTo,
+			Message:     in.Message,
+			Entities:    in.Entities,
+			Media:       in.Media,
+			Date:        date,
+			Effect:      in.Effect,
+		}).ToDraftMessage()
+
+		c.svcCtx.Repo.DialogClient.DialogSaveDraftMessage(c.ctx, &repository.DialogSaveDraft{
+			UserId:   c.MD.UserId,
+			PeerType: peer.PeerType,
+			PeerId:   peer.PeerId,
+			Message:  draft,
+		})
+	}
+
+	// TODO: build syncUpdates with user/chat resolution and call SyncUpdatesNotMe.
+	// PEER_CHANNEL case requires plugin (enterprise feature).
+
+	return tg.BoolTrue, nil
 }
