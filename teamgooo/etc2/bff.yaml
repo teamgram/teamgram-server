@@ -64,7 +64,7 @@ MsgClient:
   Timeout: 0
 SyncClient:
   DestService: "messenger.sync"
-  ServiceName: "messenger.sync"
+  ServiceName: "RPCSync"
   Codec: "zrpc"
   Etcd:
     Hosts:
