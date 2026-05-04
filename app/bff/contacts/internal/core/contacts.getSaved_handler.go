@@ -24,7 +24,9 @@ import (
 // contacts.getSaved#82f1e39f = Vector<SavedContact>;
 func (c *ContactsCore) ContactsGetSaved(in *tg.TLContactsGetSaved) (*tg.VectorSavedContact, error) {
 	// TODO: not impl
-	c.Logger.Errorf("contacts.getSaved - error: method ContactsGetSaved not impl")
+	// c.Logger.Errorf("contacts.getSaved - error: method ContactsGetSaved not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return &tg.VectorSavedContact{
+		Datas: []tg.SavedContactClazz{},
+	}, nil
 }

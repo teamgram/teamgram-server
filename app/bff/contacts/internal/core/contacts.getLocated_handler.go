@@ -24,7 +24,7 @@ import (
 // contacts.getLocated#d348bc44 flags:# background:flags.1?true geo_point:InputGeoPoint self_expires:flags.0?int = Updates;
 func (c *ContactsCore) ContactsGetLocated(in *tg.TLContactsGetLocated) (*tg.Updates, error) {
 	// TODO: not impl
-	c.Logger.Errorf("contacts.getLocated - error: method ContactsGetLocated not impl")
+	// c.Logger.Errorf("contacts.getLocated - error: method ContactsGetLocated not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.MakeEmptyUpdates(), nil
 }

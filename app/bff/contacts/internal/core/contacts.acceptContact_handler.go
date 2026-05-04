@@ -24,7 +24,7 @@ import (
 // contacts.acceptContact#f831a20f id:InputUser = Updates;
 func (c *ContactsCore) ContactsAcceptContact(in *tg.TLContactsAcceptContact) (*tg.Updates, error) {
 	// TODO: not impl
-	c.Logger.Errorf("contacts.acceptContact - error: method ContactsAcceptContact not impl")
+	// c.Logger.Errorf("contacts.acceptContact - error: method ContactsAcceptContact not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.MakeEmptyUpdates(), nil
 }

@@ -24,7 +24,12 @@ import (
 // contacts.importContacts#2c800be5 contacts:Vector<InputContact> = contacts.ImportedContacts;
 func (c *ContactsCore) ContactsImportContacts(in *tg.TLContactsImportContacts) (*tg.ContactsImportedContacts, error) {
 	// TODO: not impl
-	c.Logger.Errorf("contacts.importContacts - error: method ContactsImportContacts not impl")
+	// c.Logger.Errorf("contacts.importContacts - error: method ContactsImportContacts not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.MakeTLContactsImportedContacts(&tg.TLContactsImportedContacts{
+		Imported:       []tg.ImportedContactClazz{},
+		PopularInvites: []tg.PopularContactClazz{},
+		RetryContacts:  []int64{},
+		Users:          []tg.UserClazz{},
+	}).ToContactsImportedContacts(), nil
 }

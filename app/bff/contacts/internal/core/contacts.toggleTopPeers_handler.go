@@ -24,7 +24,7 @@ import (
 // contacts.toggleTopPeers#8514bdda enabled:Bool = Bool;
 func (c *ContactsCore) ContactsToggleTopPeers(in *tg.TLContactsToggleTopPeers) (*tg.Bool, error) {
 	// TODO: not impl
-	c.Logger.Errorf("contacts.toggleTopPeers - error: method ContactsToggleTopPeers not impl")
+	// c.Logger.Errorf("contacts.toggleTopPeers - error: method ContactsToggleTopPeers not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.BoolTrue, nil
 }

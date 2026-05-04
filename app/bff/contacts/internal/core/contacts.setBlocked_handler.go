@@ -24,7 +24,7 @@ import (
 // contacts.setBlocked#94c65c76 flags:# my_stories_from:flags.0?true id:Vector<InputPeer> limit:int = Bool;
 func (c *ContactsCore) ContactsSetBlocked(in *tg.TLContactsSetBlocked) (*tg.Bool, error) {
 	// TODO: not impl
-	c.Logger.Errorf("contacts.setBlocked - error: method ContactsSetBlocked not impl")
+	// c.Logger.Errorf("contacts.setBlocked - error: method ContactsSetBlocked not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.BoolTrue, nil
 }

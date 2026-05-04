@@ -24,7 +24,7 @@ import (
 // contacts.resetTopPeerRating#1ae373ac category:TopPeerCategory peer:InputPeer = Bool;
 func (c *ContactsCore) ContactsResetTopPeerRating(in *tg.TLContactsResetTopPeerRating) (*tg.Bool, error) {
 	// TODO: not impl
-	c.Logger.Errorf("contacts.resetTopPeerRating - error: method ContactsResetTopPeerRating not impl")
+	// c.Logger.Errorf("contacts.resetTopPeerRating - error: method ContactsResetTopPeerRating not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.BoolTrue, nil
 }

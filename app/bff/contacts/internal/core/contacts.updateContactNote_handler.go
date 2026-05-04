@@ -24,7 +24,7 @@ import (
 // contacts.updateContactNote#139f63fb id:InputUser note:TextWithEntities = Bool;
 func (c *ContactsCore) ContactsUpdateContactNote(in *tg.TLContactsUpdateContactNote) (*tg.Bool, error) {
 	// TODO: not impl
-	c.Logger.Errorf("contacts.updateContactNote - error: method ContactsUpdateContactNote not impl")
+	// c.Logger.Errorf("contacts.updateContactNote - error: method ContactsUpdateContactNote not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.BoolFalse, nil
 }

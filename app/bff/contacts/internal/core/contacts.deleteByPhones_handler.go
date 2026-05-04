@@ -23,5 +23,8 @@ import (
 // ContactsDeleteByPhones
 // contacts.deleteByPhones#1013fd9e phones:Vector<string> = Bool;
 func (c *ContactsCore) ContactsDeleteByPhones(in *tg.TLContactsDeleteByPhones) (*tg.Bool, error) {
+	// TODO: not impl
+	// c.Logger.Errorf("contacts.deleteByPhones - error: method ContactsDeleteByPhones not impl")
+
 	return tg.BoolTrue, nil
 }

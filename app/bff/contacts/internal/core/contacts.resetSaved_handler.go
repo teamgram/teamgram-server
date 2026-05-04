@@ -24,7 +24,7 @@ import (
 // contacts.resetSaved#879537f1 = Bool;
 func (c *ContactsCore) ContactsResetSaved(in *tg.TLContactsResetSaved) (*tg.Bool, error) {
 	// TODO: not impl
-	c.Logger.Errorf("contacts.resetSaved - error: method ContactsResetSaved not impl")
+	// c.Logger.Errorf("contacts.resetSaved - error: method ContactsResetSaved not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.BoolTrue, nil
 }
