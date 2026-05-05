@@ -19,7 +19,6 @@ type Models struct {
 	ChatsModel             ChatsModel
 	HashTagsModel          HashTagsModel
 	MessageReadOutboxModel MessageReadOutboxModel
-	MessagesModel          MessagesModel
 }
 
 type TxModels struct {
@@ -27,7 +26,6 @@ type TxModels struct {
 	ChatsModel             ChatsTxModel
 	HashTagsModel          HashTagsTxModel
 	MessageReadOutboxModel MessageReadOutboxTxModel
-	MessagesModel          MessagesTxModel
 }
 
 func NewModels(db *sqlx.DB) *Models {
@@ -36,7 +34,6 @@ func NewModels(db *sqlx.DB) *Models {
 		ChatsModel:             NewChatsModel(db),
 		HashTagsModel:          NewHashTagsModel(db),
 		MessageReadOutboxModel: NewMessageReadOutboxModel(db),
-		MessagesModel:          NewMessagesModel(db),
 	}
 }
 
@@ -46,6 +43,5 @@ func (m *Models) WithTx(tx *sqlx.Tx) *TxModels {
 		ChatsModel:             NewChatsTxModel(tx),
 		HashTagsModel:          NewHashTagsTxModel(tx),
 		MessageReadOutboxModel: NewMessageReadOutboxTxModel(tx),
-		MessagesModel:          NewMessagesTxModel(tx),
 	}
 }
