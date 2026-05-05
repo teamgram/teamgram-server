@@ -29,11 +29,13 @@ var _ *sqlx.Tx
 
 type bizDialogAuthSeqOutboxModel interface {
 	Insert(ctx context.Context, data *DialogAuthSeqOutbox) (lastInsertId, rowsAffected int64, err error)
+	InsertIgnore(ctx context.Context, data *DialogAuthSeqOutbox) (lastInsertId, rowsAffected int64, err error)
 	SelectByUserOperation(ctx context.Context, userId int64, operationId string) (*DialogAuthSeqOutbox, error)
 }
 
 type DialogAuthSeqOutboxTxModel interface {
 	Insert(data *DialogAuthSeqOutbox) (lastInsertId, rowsAffected int64, err error)
+	InsertIgnore(data *DialogAuthSeqOutbox) (lastInsertId, rowsAffected int64, err error)
 	SelectByUserOperation(userId int64, operationId string) (*DialogAuthSeqOutbox, error)
 }
 
@@ -95,6 +97,61 @@ func (m *defaultDialogAuthSeqOutboxTxModel) Insert(data *DialogAuthSeqOutbox) (l
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialog_auth_seq_outbox.Insert rows affected: %w", err)
+	}
+
+	return
+}
+
+// InsertIgnore
+// insert ignore into dialog_auth_seq_outbox(outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, last_error_kind, last_error_message) values (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :last_error_kind, :last_error_message)
+func (m *defaultDialogAuthSeqOutboxModel) InsertIgnore(ctx context.Context, data *DialogAuthSeqOutbox) (lastInsertId, rowsAffected int64, err error) {
+	var (
+		query = "insert ignore into dialog_auth_seq_outbox(outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, last_error_kind, last_error_message) values (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :last_error_kind, :last_error_message)"
+		r     sql.Result
+	)
+
+	r, err = m.db.NamedExec(ctx, query, data)
+	if err != nil {
+		err = fmt.Errorf("dialog_auth_seq_outbox.InsertIgnore named exec: %w", err)
+		return
+	}
+
+	lastInsertId, err = r.LastInsertId()
+	if err != nil {
+		err = fmt.Errorf("dialog_auth_seq_outbox.InsertIgnore last insert id: %w", err)
+		return
+	}
+	rowsAffected, err = r.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_auth_seq_outbox.InsertIgnore rows affected: %w", err)
+	}
+
+	return
+
+}
+
+// InsertIgnore
+// insert ignore into dialog_auth_seq_outbox(outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, last_error_kind, last_error_message) values (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :last_error_kind, :last_error_message)
+func (m *defaultDialogAuthSeqOutboxTxModel) InsertIgnore(data *DialogAuthSeqOutbox) (lastInsertId, rowsAffected int64, err error) {
+	var (
+		query = "insert ignore into dialog_auth_seq_outbox(outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, last_error_kind, last_error_message) values (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :last_error_kind, :last_error_message)"
+		r     sql.Result
+	)
+
+	r, err = m.tx.NamedExec(query, data)
+	if err != nil {
+		err = fmt.Errorf("dialog_auth_seq_outbox.InsertIgnore named exec: %w", err)
+		return
+	}
+
+	lastInsertId, err = r.LastInsertId()
+	if err != nil {
+		err = fmt.Errorf("dialog_auth_seq_outbox.InsertIgnore last insert id: %w", err)
+		return
+	}
+	rowsAffected, err = r.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_auth_seq_outbox.InsertIgnore rows affected: %w", err)
 	}
 
 	return

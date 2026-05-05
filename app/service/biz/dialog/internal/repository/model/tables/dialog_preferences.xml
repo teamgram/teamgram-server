@@ -14,6 +14,43 @@
         </sql>
     </operation>
 
+    <operation name="UpsertMainPin">
+        <sql>
+            INSERT INTO dialog_preferences
+                (user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version)
+            VALUES
+                (:user_id, :peer_type, :peer_id, :peer_dialog_id, :folder_id, :main_pinned_order, 0, :preferences_version)
+            ON DUPLICATE KEY UPDATE
+                main_pinned_order = VALUES(main_pinned_order),
+                preferences_version = VALUES(preferences_version)
+        </sql>
+    </operation>
+
+    <operation name="UpsertFolderPin">
+        <sql>
+            INSERT INTO dialog_preferences
+                (user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version)
+            VALUES
+                (:user_id, :peer_type, :peer_id, :peer_dialog_id, :folder_id, 0, :folder_pinned_order, :preferences_version)
+            ON DUPLICATE KEY UPDATE
+                folder_id = VALUES(folder_id),
+                folder_pinned_order = VALUES(folder_pinned_order),
+                preferences_version = VALUES(preferences_version)
+        </sql>
+    </operation>
+
+    <operation name="UpsertFolderMembership">
+        <sql>
+            INSERT INTO dialog_preferences
+                (user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version)
+            VALUES
+                (:user_id, :peer_type, :peer_id, :peer_dialog_id, :folder_id, 0, 0, :preferences_version)
+            ON DUPLICATE KEY UPDATE
+                folder_id = VALUES(folder_id),
+                preferences_version = VALUES(preferences_version)
+        </sql>
+    </operation>
+
     <operation name="SelectByUserPeer">
         <sql>
             SELECT

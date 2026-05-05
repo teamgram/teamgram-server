@@ -16,6 +16,24 @@
         </sql>
     </operation>
 
+    <operation name="UpsertTopFromMessage">
+        <sql>
+            <![CDATA[
+            INSERT INTO saved_dialogs
+                (user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload)
+            VALUES
+                (:user_id, :peer_type, :peer_id, :top_peer_seq, :top_canonical_message_id, :top_message_date, 0, 0, 0, :saved_schema_version, :saved_payload)
+            ON DUPLICATE KEY UPDATE
+                top_peer_seq = IF(top_message_date <= VALUES(top_message_date), VALUES(top_peer_seq), top_peer_seq),
+                top_canonical_message_id = IF(top_message_date <= VALUES(top_message_date), VALUES(top_canonical_message_id), top_canonical_message_id),
+                top_message_date = IF(top_message_date <= VALUES(top_message_date), VALUES(top_message_date), top_message_date),
+                deleted = 0,
+                saved_schema_version = IF(top_message_date <= VALUES(top_message_date), VALUES(saved_schema_version), saved_schema_version),
+                saved_payload = IF(top_message_date <= VALUES(top_message_date), VALUES(saved_payload), saved_payload)
+            ]]>
+        </sql>
+    </operation>
+
     <operation name="Select">
         <sql>
             SELECT

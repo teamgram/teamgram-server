@@ -27,4 +27,35 @@
                 user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id LIMIT 1
         </sql>
     </operation>
+
+    <operation name="SelectActiveByUser" result_set="list">
+        <sql>
+            SELECT
+                user_id, peer_type, peer_id, peer_dialog_id, draft_kind, message, entities_payload, reply_to_peer_seq, draft_payload_schema_version, draft_payload, date
+            FROM
+                dialog_drafts
+            WHERE
+                user_id = :user_id AND (draft_kind != 0 OR message != '')
+        </sql>
+    </operation>
+
+    <operation name="ClearByUserPeerBeforeDate">
+        <params>
+            <param name="clear_before_date" type="string" />
+        </params>
+        <sql>
+            UPDATE
+                dialog_drafts
+            SET
+                draft_kind = 0,
+                message = '',
+                entities_payload = :entities_payload,
+                reply_to_peer_seq = 0,
+                draft_payload_schema_version = :draft_payload_schema_version,
+                draft_payload = :draft_payload,
+                date = :date
+            WHERE
+                user_id = :user_id AND peer_dialog_id = :peer_dialog_id AND date &lt;= :clear_before_date
+        </sql>
+    </operation>
 </table>

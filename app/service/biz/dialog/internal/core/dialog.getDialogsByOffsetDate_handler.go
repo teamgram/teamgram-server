@@ -16,16 +16,10 @@
 
 package core
 
-import (
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 
 // DialogGetDialogsByOffsetDate
 // dialog.getDialogsByOffsetDate user_id:long exclude_pinned:Bool offset_date:int limit:int = Vector<DialogExt>;
 func (c *DialogCore) DialogGetDialogsByOffsetDate(in *dialog.TLDialogGetDialogsByOffsetDate) (*dialog.VectorDialogExt, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.getDialogsByOffsetDate - error: method DialogGetDialogsByOffsetDate not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return nil, dialog.ErrDeprecatedMethod
 }

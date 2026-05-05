@@ -29,6 +29,7 @@ var _ *sqlx.Tx
 
 type bizSavedDialogsModel interface {
 	InsertOrUpdate(ctx context.Context, data *SavedDialogs) (lastInsertId, rowsAffected int64, err error)
+	UpsertTopFromMessage(ctx context.Context, data *SavedDialogs) (lastInsertId, rowsAffected int64, err error)
 	Select(ctx context.Context, userId int64, peerType int32, peerId int64) (*SavedDialogs, error)
 	SelectPinnedDialogs(ctx context.Context, userId int64) ([]SavedDialogs, error)
 	SelectPinnedDialogsWithCB(ctx context.Context, userId int64, cb func(sz, i int, v *SavedDialogs)) ([]SavedDialogs, error)
@@ -40,6 +41,7 @@ type bizSavedDialogsModel interface {
 
 type SavedDialogsTxModel interface {
 	InsertOrUpdate(data *SavedDialogs) (lastInsertId, rowsAffected int64, err error)
+	UpsertTopFromMessage(data *SavedDialogs) (lastInsertId, rowsAffected int64, err error)
 	Select(userId int64, peerType int32, peerId int64) (*SavedDialogs, error)
 	SelectPinnedDialogs(userId int64) ([]SavedDialogs, error)
 	SelectDialogs(userId int64, topMessageDate string, limit int32) ([]SavedDialogs, error)
@@ -105,6 +107,61 @@ func (m *defaultSavedDialogsTxModel) InsertOrUpdate(data *SavedDialogs) (lastIns
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("saved_dialogs.InsertOrUpdate rows affected: %w", err)
+	}
+
+	return
+}
+
+// UpsertTopFromMessage
+// insert into saved_dialogs(user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload) values (:user_id, :peer_type, :peer_id, :top_peer_seq, :top_canonical_message_id, :top_message_date, 0, 0, 0, :saved_schema_version, :saved_payload) on duplicate key update top_peer_seq = if(top_message_date <= values(top_message_date), values(top_peer_seq), top_peer_seq), top_canonical_message_id = if(top_message_date <= values(top_message_date), values(top_canonical_message_id), top_canonical_message_id), top_message_date = if(top_message_date <= values(top_message_date), values(top_message_date), top_message_date), deleted = 0, saved_schema_version = if(top_message_date <= values(top_message_date), values(saved_schema_version), saved_schema_version), saved_payload = if(top_message_date <= values(top_message_date), values(saved_payload), saved_payload)
+func (m *defaultSavedDialogsModel) UpsertTopFromMessage(ctx context.Context, data *SavedDialogs) (lastInsertId, rowsAffected int64, err error) {
+	var (
+		query = "insert into saved_dialogs(user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload) values (:user_id, :peer_type, :peer_id, :top_peer_seq, :top_canonical_message_id, :top_message_date, 0, 0, 0, :saved_schema_version, :saved_payload) on duplicate key update top_peer_seq = if(top_message_date <= values(top_message_date), values(top_peer_seq), top_peer_seq), top_canonical_message_id = if(top_message_date <= values(top_message_date), values(top_canonical_message_id), top_canonical_message_id), top_message_date = if(top_message_date <= values(top_message_date), values(top_message_date), top_message_date), deleted = 0, saved_schema_version = if(top_message_date <= values(top_message_date), values(saved_schema_version), saved_schema_version), saved_payload = if(top_message_date <= values(top_message_date), values(saved_payload), saved_payload)"
+		r     sql.Result
+	)
+
+	r, err = m.db.NamedExec(ctx, query, data)
+	if err != nil {
+		err = fmt.Errorf("saved_dialogs.UpsertTopFromMessage named exec: %w", err)
+		return
+	}
+
+	lastInsertId, err = r.LastInsertId()
+	if err != nil {
+		err = fmt.Errorf("saved_dialogs.UpsertTopFromMessage last insert id: %w", err)
+		return
+	}
+	rowsAffected, err = r.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("saved_dialogs.UpsertTopFromMessage rows affected: %w", err)
+	}
+
+	return
+
+}
+
+// UpsertTopFromMessage
+// insert into saved_dialogs(user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload) values (:user_id, :peer_type, :peer_id, :top_peer_seq, :top_canonical_message_id, :top_message_date, 0, 0, 0, :saved_schema_version, :saved_payload) on duplicate key update top_peer_seq = if(top_message_date <= values(top_message_date), values(top_peer_seq), top_peer_seq), top_canonical_message_id = if(top_message_date <= values(top_message_date), values(top_canonical_message_id), top_canonical_message_id), top_message_date = if(top_message_date <= values(top_message_date), values(top_message_date), top_message_date), deleted = 0, saved_schema_version = if(top_message_date <= values(top_message_date), values(saved_schema_version), saved_schema_version), saved_payload = if(top_message_date <= values(top_message_date), values(saved_payload), saved_payload)
+func (m *defaultSavedDialogsTxModel) UpsertTopFromMessage(data *SavedDialogs) (lastInsertId, rowsAffected int64, err error) {
+	var (
+		query = "insert into saved_dialogs(user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload) values (:user_id, :peer_type, :peer_id, :top_peer_seq, :top_canonical_message_id, :top_message_date, 0, 0, 0, :saved_schema_version, :saved_payload) on duplicate key update top_peer_seq = if(top_message_date <= values(top_message_date), values(top_peer_seq), top_peer_seq), top_canonical_message_id = if(top_message_date <= values(top_message_date), values(top_canonical_message_id), top_canonical_message_id), top_message_date = if(top_message_date <= values(top_message_date), values(top_message_date), top_message_date), deleted = 0, saved_schema_version = if(top_message_date <= values(top_message_date), values(saved_schema_version), saved_schema_version), saved_payload = if(top_message_date <= values(top_message_date), values(saved_payload), saved_payload)"
+		r     sql.Result
+	)
+
+	r, err = m.tx.NamedExec(query, data)
+	if err != nil {
+		err = fmt.Errorf("saved_dialogs.UpsertTopFromMessage named exec: %w", err)
+		return
+	}
+
+	lastInsertId, err = r.LastInsertId()
+	if err != nil {
+		err = fmt.Errorf("saved_dialogs.UpsertTopFromMessage last insert id: %w", err)
+		return
+	}
+	rowsAffected, err = r.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("saved_dialogs.UpsertTopFromMessage rows affected: %w", err)
 	}
 
 	return

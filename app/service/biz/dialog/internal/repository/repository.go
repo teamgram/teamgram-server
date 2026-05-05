@@ -17,7 +17,11 @@
 package repository
 
 import (
+	"errors"
+	"fmt"
+
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository/model"
 )
@@ -41,4 +45,32 @@ func NewRepositoryForTest(models *model.Models) *Repository {
 	return &Repository{
 		model: models,
 	}
+}
+
+func NewRepositoryWithDBForTest(db *sqlx.DB) *Repository {
+	return &Repository{
+		db:    db,
+		model: model.NewModels(db),
+	}
+}
+
+func (r *Repository) requireDB() (*sqlx.DB, error) {
+	if r == nil || r.db == nil {
+		return nil, dialogpb.WrapDialogStorage("require db", errors.New("dialog mysql is not configured"))
+	}
+	return r.db, nil
+}
+
+func (r *Repository) requireModels() (*model.Models, error) {
+	if r == nil || r.model == nil {
+		return nil, dialogpb.WrapDialogStorage("require models", errors.New("dialog models are not configured"))
+	}
+	return r.model, nil
+}
+
+func storageError(op string, err error) error {
+	if err == nil {
+		return nil
+	}
+	return fmt.Errorf("%w: %s: %w", dialogpb.ErrDialogStorage, op, err)
 }

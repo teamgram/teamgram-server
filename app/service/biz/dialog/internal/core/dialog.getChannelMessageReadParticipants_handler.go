@@ -16,16 +16,10 @@
 
 package core
 
-import (
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 
 // DialogGetChannelMessageReadParticipants
 // dialog.getChannelMessageReadParticipants user_id:long channel_id:long msg_id:int = Vector<long>;
 func (c *DialogCore) DialogGetChannelMessageReadParticipants(in *dialog.TLDialogGetChannelMessageReadParticipants) (*dialog.VectorLong, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.getChannelMessageReadParticipants - error: method DialogGetChannelMessageReadParticipants not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return nil, dialog.ErrWrongOwner
 }

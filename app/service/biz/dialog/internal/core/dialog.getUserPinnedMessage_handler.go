@@ -24,8 +24,5 @@ import (
 // DialogGetUserPinnedMessage
 // dialog.getUserPinnedMessage user_id:long peer_type:int peer_id:long = Int32;
 func (c *DialogCore) DialogGetUserPinnedMessage(in *dialog.TLDialogGetUserPinnedMessage) (*tg.Int32, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.getUserPinnedMessage - error: method DialogGetUserPinnedMessage not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return nil, dialog.ErrWrongOwner
 }

@@ -30,11 +30,16 @@ var _ *sqlx.Tx
 type bizDialogDraftsModel interface {
 	InsertOrUpdate(ctx context.Context, data *DialogDrafts) (lastInsertId, rowsAffected int64, err error)
 	SelectByUserPeer(ctx context.Context, userId int64, peerType int32, peerId int64) (*DialogDrafts, error)
+	SelectActiveByUser(ctx context.Context, userId int64) ([]DialogDrafts, error)
+	SelectActiveByUserWithCB(ctx context.Context, userId int64, cb func(sz, i int, v *DialogDrafts)) ([]DialogDrafts, error)
+	ClearByUserPeerBeforeDate(ctx context.Context, entitiesPayload []byte, draftPayloadSchemaVersion int32, draftPayload []byte, date string, userId int64, peerDialogId int64, clearBeforeDate string) (rowsAffected int64, err error)
 }
 
 type DialogDraftsTxModel interface {
 	InsertOrUpdate(data *DialogDrafts) (lastInsertId, rowsAffected int64, err error)
 	SelectByUserPeer(userId int64, peerType int32, peerId int64) (*DialogDrafts, error)
+	SelectActiveByUser(userId int64) ([]DialogDrafts, error)
+	ClearByUserPeerBeforeDate(entitiesPayload []byte, draftPayloadSchemaVersion int32, draftPayload []byte, date string, userId int64, peerDialogId int64, clearBeforeDate string) (rowsAffected int64, err error)
 }
 
 type defaultDialogDraftsTxModel struct {
@@ -148,6 +153,133 @@ func (m *defaultDialogDraftsTxModel) SelectByUserPeer(userId int64, peerType int
 		return
 	}
 	rValue = do
+
+	return
+}
+
+// SelectActiveByUser
+// select user_id, peer_type, peer_id, peer_dialog_id, draft_kind, message, entities_payload, reply_to_peer_seq, draft_payload_schema_version, draft_payload, `date` from dialog_drafts where user_id = :user_id and (draft_kind != 0 or message != ”)
+func (m *defaultDialogDraftsModel) SelectActiveByUser(ctx context.Context, userId int64) (rList []DialogDrafts, err error) {
+	var (
+		query  = "select user_id, peer_type, peer_id, peer_dialog_id, draft_kind, message, entities_payload, reply_to_peer_seq, draft_payload_schema_version, draft_payload, `date` from dialog_drafts where user_id = ? and (draft_kind != 0 or message != '')"
+		values []DialogDrafts
+	)
+	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []DialogDrafts{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("dialog_drafts.SelectActiveByUser: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectActiveByUser
+// select user_id, peer_type, peer_id, peer_dialog_id, draft_kind, message, entities_payload, reply_to_peer_seq, draft_payload_schema_version, draft_payload, `date` from dialog_drafts where user_id = :user_id and (draft_kind != 0 or message != ”)
+func (m *defaultDialogDraftsTxModel) SelectActiveByUser(userId int64) (rList []DialogDrafts, err error) {
+	var (
+		query  = "select user_id, peer_type, peer_id, peer_dialog_id, draft_kind, message, entities_payload, reply_to_peer_seq, draft_payload_schema_version, draft_payload, `date` from dialog_drafts where user_id = ? and (draft_kind != 0 or message != '')"
+		values []DialogDrafts
+	)
+	err = m.tx.QueryRowsPartial(&values, query, userId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []DialogDrafts{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("dialog_drafts.SelectActiveByUser: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectActiveByUserWithCB
+// select user_id, peer_type, peer_id, peer_dialog_id, draft_kind, message, entities_payload, reply_to_peer_seq, draft_payload_schema_version, draft_payload, `date` from dialog_drafts where user_id = :user_id and (draft_kind != 0 or message != ”)
+func (m *defaultDialogDraftsModel) SelectActiveByUserWithCB(ctx context.Context, userId int64, cb func(sz, i int, v *DialogDrafts)) (rList []DialogDrafts, err error) {
+	var (
+		query  = "select user_id, peer_type, peer_id, peer_dialog_id, draft_kind, message, entities_payload, reply_to_peer_seq, draft_payload_schema_version, draft_payload, `date` from dialog_drafts where user_id = ? and (draft_kind != 0 or message != '')"
+		values []DialogDrafts
+	)
+	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []DialogDrafts{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("dialog_drafts.SelectActiveByUserWithCB: %w", err)
+		return
+	}
+
+	rList = values
+
+	if cb != nil {
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
+		}
+	}
+
+	return
+}
+
+// ClearByUserPeerBeforeDate
+// update dialog_drafts set draft_kind = 0, message = ”, entities_payload = :entities_payload, reply_to_peer_seq = 0, draft_payload_schema_version = :draft_payload_schema_version, draft_payload = :draft_payload, `date` = :date where user_id = :user_id and peer_dialog_id = :peer_dialog_id and `date` <= :clear_before_date
+func (m *defaultDialogDraftsModel) ClearByUserPeerBeforeDate(ctx context.Context, entitiesPayload []byte, draftPayloadSchemaVersion int32, draftPayload []byte, date string, userId int64, peerDialogId int64, clearBeforeDate string) (rowsAffected int64, err error) {
+
+	var (
+		query   = "update dialog_drafts set draft_kind = 0, message = '', entities_payload = ?, reply_to_peer_seq = 0, draft_payload_schema_version = ?, draft_payload = ?, `date` = ? where user_id = ? and peer_dialog_id = ? and `date` <= ?"
+		rResult sql.Result
+	)
+
+	rResult, err = m.db.Exec(ctx, query, entitiesPayload, draftPayloadSchemaVersion, draftPayload, date, userId, peerDialogId, clearBeforeDate)
+
+	if err != nil {
+		err = fmt.Errorf("dialog_drafts.ClearByUserPeerBeforeDate exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_drafts.ClearByUserPeerBeforeDate rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// ClearByUserPeerBeforeDate
+// update dialog_drafts set draft_kind = 0, message = ”, entities_payload = :entities_payload, reply_to_peer_seq = 0, draft_payload_schema_version = :draft_payload_schema_version, draft_payload = :draft_payload, `date` = :date where user_id = :user_id and peer_dialog_id = :peer_dialog_id and `date` <= :clear_before_date
+func (m *defaultDialogDraftsTxModel) ClearByUserPeerBeforeDate(entitiesPayload []byte, draftPayloadSchemaVersion int32, draftPayload []byte, date string, userId int64, peerDialogId int64, clearBeforeDate string) (rowsAffected int64, err error) {
+	var (
+		query   = "update dialog_drafts set draft_kind = 0, message = '', entities_payload = ?, reply_to_peer_seq = 0, draft_payload_schema_version = ?, draft_payload = ?, `date` = ? where user_id = ? and peer_dialog_id = ? and `date` <= ?"
+		rResult sql.Result
+	)
+	rResult, err = m.tx.Exec(query, entitiesPayload, draftPayloadSchemaVersion, draftPayload, date, userId, peerDialogId, clearBeforeDate)
+
+	if err != nil {
+		err = fmt.Errorf("dialog_drafts.ClearByUserPeerBeforeDate exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_drafts.ClearByUserPeerBeforeDate rows affected: %w", err)
+		return
+	}
 
 	return
 }

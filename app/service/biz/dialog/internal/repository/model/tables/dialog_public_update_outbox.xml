@@ -9,6 +9,15 @@
         </sql>
     </operation>
 
+    <operation name="InsertIgnore">
+        <sql>
+            INSERT IGNORE INTO dialog_public_update_outbox
+                (outbox_id, source_user_id, source_perm_auth_key_id, target_user_id, target_auth_policy, operation_id, delivery_path, public_update_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, status, attempt_count, next_retry_at, lease_owner, lease_until, published_pts, published_pts_count, published_seq, published_date, last_error_kind, last_error_message)
+            VALUES
+                (:outbox_id, :source_user_id, :source_perm_auth_key_id, :target_user_id, :target_auth_policy, :operation_id, :delivery_path, :public_update_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :published_pts, :published_pts_count, :published_seq, :published_date, :last_error_kind, :last_error_message)
+        </sql>
+    </operation>
+
     <operation name="SelectByTargetOperation">
         <sql>
             SELECT

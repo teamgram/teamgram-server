@@ -29,11 +29,13 @@ var _ *sqlx.Tx
 
 type bizDialogPublicUpdateOutboxModel interface {
 	Insert(ctx context.Context, data *DialogPublicUpdateOutbox) (lastInsertId, rowsAffected int64, err error)
+	InsertIgnore(ctx context.Context, data *DialogPublicUpdateOutbox) (lastInsertId, rowsAffected int64, err error)
 	SelectByTargetOperation(ctx context.Context, targetUserId int64, operationId string, deliveryPath string, publicUpdateType string) (*DialogPublicUpdateOutbox, error)
 }
 
 type DialogPublicUpdateOutboxTxModel interface {
 	Insert(data *DialogPublicUpdateOutbox) (lastInsertId, rowsAffected int64, err error)
+	InsertIgnore(data *DialogPublicUpdateOutbox) (lastInsertId, rowsAffected int64, err error)
 	SelectByTargetOperation(targetUserId int64, operationId string, deliveryPath string, publicUpdateType string) (*DialogPublicUpdateOutbox, error)
 }
 
@@ -95,6 +97,61 @@ func (m *defaultDialogPublicUpdateOutboxTxModel) Insert(data *DialogPublicUpdate
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialog_public_update_outbox.Insert rows affected: %w", err)
+	}
+
+	return
+}
+
+// InsertIgnore
+// insert ignore into dialog_public_update_outbox(outbox_id, source_user_id, source_perm_auth_key_id, target_user_id, target_auth_policy, operation_id, delivery_path, public_update_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, published_pts, published_pts_count, published_seq, published_date, last_error_kind, last_error_message) values (:outbox_id, :source_user_id, :source_perm_auth_key_id, :target_user_id, :target_auth_policy, :operation_id, :delivery_path, :public_update_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :published_pts, :published_pts_count, :published_seq, :published_date, :last_error_kind, :last_error_message)
+func (m *defaultDialogPublicUpdateOutboxModel) InsertIgnore(ctx context.Context, data *DialogPublicUpdateOutbox) (lastInsertId, rowsAffected int64, err error) {
+	var (
+		query = "insert ignore into dialog_public_update_outbox(outbox_id, source_user_id, source_perm_auth_key_id, target_user_id, target_auth_policy, operation_id, delivery_path, public_update_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, published_pts, published_pts_count, published_seq, published_date, last_error_kind, last_error_message) values (:outbox_id, :source_user_id, :source_perm_auth_key_id, :target_user_id, :target_auth_policy, :operation_id, :delivery_path, :public_update_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :published_pts, :published_pts_count, :published_seq, :published_date, :last_error_kind, :last_error_message)"
+		r     sql.Result
+	)
+
+	r, err = m.db.NamedExec(ctx, query, data)
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.InsertIgnore named exec: %w", err)
+		return
+	}
+
+	lastInsertId, err = r.LastInsertId()
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.InsertIgnore last insert id: %w", err)
+		return
+	}
+	rowsAffected, err = r.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.InsertIgnore rows affected: %w", err)
+	}
+
+	return
+
+}
+
+// InsertIgnore
+// insert ignore into dialog_public_update_outbox(outbox_id, source_user_id, source_perm_auth_key_id, target_user_id, target_auth_policy, operation_id, delivery_path, public_update_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, published_pts, published_pts_count, published_seq, published_date, last_error_kind, last_error_message) values (:outbox_id, :source_user_id, :source_perm_auth_key_id, :target_user_id, :target_auth_policy, :operation_id, :delivery_path, :public_update_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :published_pts, :published_pts_count, :published_seq, :published_date, :last_error_kind, :last_error_message)
+func (m *defaultDialogPublicUpdateOutboxTxModel) InsertIgnore(data *DialogPublicUpdateOutbox) (lastInsertId, rowsAffected int64, err error) {
+	var (
+		query = "insert ignore into dialog_public_update_outbox(outbox_id, source_user_id, source_perm_auth_key_id, target_user_id, target_auth_policy, operation_id, delivery_path, public_update_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, published_pts, published_pts_count, published_seq, published_date, last_error_kind, last_error_message) values (:outbox_id, :source_user_id, :source_perm_auth_key_id, :target_user_id, :target_auth_policy, :operation_id, :delivery_path, :public_update_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :published_pts, :published_pts_count, :published_seq, :published_date, :last_error_kind, :last_error_message)"
+		r     sql.Result
+	)
+
+	r, err = m.tx.NamedExec(query, data)
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.InsertIgnore named exec: %w", err)
+		return
+	}
+
+	lastInsertId, err = r.LastInsertId()
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.InsertIgnore last insert id: %w", err)
+		return
+	}
+	rowsAffected, err = r.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.InsertIgnore rows affected: %w", err)
 	}
 
 	return

@@ -16,16 +16,10 @@
 
 package core
 
-import (
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 
 // DialogGetMyDialogsData
 // dialog.getMyDialogsData flags:# user_id:long user:flags.0?true chat:flags.1?true channel:flags.2?true = DialogsData;
 func (c *DialogCore) DialogGetMyDialogsData(in *dialog.TLDialogGetMyDialogsData) (*dialog.DialogsData, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.getMyDialogsData - error: method DialogGetMyDialogsData not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return nil, dialog.ErrDeprecatedMethod
 }

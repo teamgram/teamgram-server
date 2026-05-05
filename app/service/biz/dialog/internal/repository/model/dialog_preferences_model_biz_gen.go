@@ -29,11 +29,17 @@ var _ *sqlx.Tx
 
 type bizDialogPreferencesModel interface {
 	InsertOrUpdate(ctx context.Context, data *DialogPreferences) (lastInsertId, rowsAffected int64, err error)
+	UpsertMainPin(ctx context.Context, data *DialogPreferences) (lastInsertId, rowsAffected int64, err error)
+	UpsertFolderPin(ctx context.Context, data *DialogPreferences) (lastInsertId, rowsAffected int64, err error)
+	UpsertFolderMembership(ctx context.Context, data *DialogPreferences) (lastInsertId, rowsAffected int64, err error)
 	SelectByUserPeer(ctx context.Context, userId int64, peerType int32, peerId int64) (*DialogPreferences, error)
 }
 
 type DialogPreferencesTxModel interface {
 	InsertOrUpdate(data *DialogPreferences) (lastInsertId, rowsAffected int64, err error)
+	UpsertMainPin(data *DialogPreferences) (lastInsertId, rowsAffected int64, err error)
+	UpsertFolderPin(data *DialogPreferences) (lastInsertId, rowsAffected int64, err error)
+	UpsertFolderMembership(data *DialogPreferences) (lastInsertId, rowsAffected int64, err error)
 	SelectByUserPeer(userId int64, peerType int32, peerId int64) (*DialogPreferences, error)
 }
 
@@ -95,6 +101,171 @@ func (m *defaultDialogPreferencesTxModel) InsertOrUpdate(data *DialogPreferences
 	rowsAffected, err = r.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("dialog_preferences.InsertOrUpdate rows affected: %w", err)
+	}
+
+	return
+}
+
+// UpsertMainPin
+// insert into dialog_preferences(user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :folder_id, :main_pinned_order, 0, :preferences_version) on duplicate key update main_pinned_order = values(main_pinned_order), preferences_version = values(preferences_version)
+func (m *defaultDialogPreferencesModel) UpsertMainPin(ctx context.Context, data *DialogPreferences) (lastInsertId, rowsAffected int64, err error) {
+	var (
+		query = "insert into dialog_preferences(user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :folder_id, :main_pinned_order, 0, :preferences_version) on duplicate key update main_pinned_order = values(main_pinned_order), preferences_version = values(preferences_version)"
+		r     sql.Result
+	)
+
+	r, err = m.db.NamedExec(ctx, query, data)
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.UpsertMainPin named exec: %w", err)
+		return
+	}
+
+	lastInsertId, err = r.LastInsertId()
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.UpsertMainPin last insert id: %w", err)
+		return
+	}
+	rowsAffected, err = r.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.UpsertMainPin rows affected: %w", err)
+	}
+
+	return
+
+}
+
+// UpsertMainPin
+// insert into dialog_preferences(user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :folder_id, :main_pinned_order, 0, :preferences_version) on duplicate key update main_pinned_order = values(main_pinned_order), preferences_version = values(preferences_version)
+func (m *defaultDialogPreferencesTxModel) UpsertMainPin(data *DialogPreferences) (lastInsertId, rowsAffected int64, err error) {
+	var (
+		query = "insert into dialog_preferences(user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :folder_id, :main_pinned_order, 0, :preferences_version) on duplicate key update main_pinned_order = values(main_pinned_order), preferences_version = values(preferences_version)"
+		r     sql.Result
+	)
+
+	r, err = m.tx.NamedExec(query, data)
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.UpsertMainPin named exec: %w", err)
+		return
+	}
+
+	lastInsertId, err = r.LastInsertId()
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.UpsertMainPin last insert id: %w", err)
+		return
+	}
+	rowsAffected, err = r.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.UpsertMainPin rows affected: %w", err)
+	}
+
+	return
+}
+
+// UpsertFolderPin
+// insert into dialog_preferences(user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :folder_id, 0, :folder_pinned_order, :preferences_version) on duplicate key update folder_id = values(folder_id), folder_pinned_order = values(folder_pinned_order), preferences_version = values(preferences_version)
+func (m *defaultDialogPreferencesModel) UpsertFolderPin(ctx context.Context, data *DialogPreferences) (lastInsertId, rowsAffected int64, err error) {
+	var (
+		query = "insert into dialog_preferences(user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :folder_id, 0, :folder_pinned_order, :preferences_version) on duplicate key update folder_id = values(folder_id), folder_pinned_order = values(folder_pinned_order), preferences_version = values(preferences_version)"
+		r     sql.Result
+	)
+
+	r, err = m.db.NamedExec(ctx, query, data)
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.UpsertFolderPin named exec: %w", err)
+		return
+	}
+
+	lastInsertId, err = r.LastInsertId()
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.UpsertFolderPin last insert id: %w", err)
+		return
+	}
+	rowsAffected, err = r.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.UpsertFolderPin rows affected: %w", err)
+	}
+
+	return
+
+}
+
+// UpsertFolderPin
+// insert into dialog_preferences(user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :folder_id, 0, :folder_pinned_order, :preferences_version) on duplicate key update folder_id = values(folder_id), folder_pinned_order = values(folder_pinned_order), preferences_version = values(preferences_version)
+func (m *defaultDialogPreferencesTxModel) UpsertFolderPin(data *DialogPreferences) (lastInsertId, rowsAffected int64, err error) {
+	var (
+		query = "insert into dialog_preferences(user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :folder_id, 0, :folder_pinned_order, :preferences_version) on duplicate key update folder_id = values(folder_id), folder_pinned_order = values(folder_pinned_order), preferences_version = values(preferences_version)"
+		r     sql.Result
+	)
+
+	r, err = m.tx.NamedExec(query, data)
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.UpsertFolderPin named exec: %w", err)
+		return
+	}
+
+	lastInsertId, err = r.LastInsertId()
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.UpsertFolderPin last insert id: %w", err)
+		return
+	}
+	rowsAffected, err = r.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.UpsertFolderPin rows affected: %w", err)
+	}
+
+	return
+}
+
+// UpsertFolderMembership
+// insert into dialog_preferences(user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :folder_id, 0, 0, :preferences_version) on duplicate key update folder_id = values(folder_id), preferences_version = values(preferences_version)
+func (m *defaultDialogPreferencesModel) UpsertFolderMembership(ctx context.Context, data *DialogPreferences) (lastInsertId, rowsAffected int64, err error) {
+	var (
+		query = "insert into dialog_preferences(user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :folder_id, 0, 0, :preferences_version) on duplicate key update folder_id = values(folder_id), preferences_version = values(preferences_version)"
+		r     sql.Result
+	)
+
+	r, err = m.db.NamedExec(ctx, query, data)
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.UpsertFolderMembership named exec: %w", err)
+		return
+	}
+
+	lastInsertId, err = r.LastInsertId()
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.UpsertFolderMembership last insert id: %w", err)
+		return
+	}
+	rowsAffected, err = r.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.UpsertFolderMembership rows affected: %w", err)
+	}
+
+	return
+
+}
+
+// UpsertFolderMembership
+// insert into dialog_preferences(user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :folder_id, 0, 0, :preferences_version) on duplicate key update folder_id = values(folder_id), preferences_version = values(preferences_version)
+func (m *defaultDialogPreferencesTxModel) UpsertFolderMembership(data *DialogPreferences) (lastInsertId, rowsAffected int64, err error) {
+	var (
+		query = "insert into dialog_preferences(user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version) values (:user_id, :peer_type, :peer_id, :peer_dialog_id, :folder_id, 0, 0, :preferences_version) on duplicate key update folder_id = values(folder_id), preferences_version = values(preferences_version)"
+		r     sql.Result
+	)
+
+	r, err = m.tx.NamedExec(query, data)
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.UpsertFolderMembership named exec: %w", err)
+		return
+	}
+
+	lastInsertId, err = r.LastInsertId()
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.UpsertFolderMembership last insert id: %w", err)
+		return
+	}
+	rowsAffected, err = r.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.UpsertFolderMembership rows affected: %w", err)
 	}
 
 	return
