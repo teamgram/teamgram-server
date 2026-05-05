@@ -17,6 +17,7 @@ type fakeDialogRepo struct {
 	countFn       func(context.Context, int64, bool, int32) (int32, error)
 	getFn         func(context.Context, int64, int32, int64) (*repository.DialogRecord, error)
 	idsFn         func(context.Context, int64, []int64) ([]repository.DialogRecord, error)
+	extrasFn      func(context.Context, int64, []repository.PeerRef) ([]repository.DialogExtrasRecord, error)
 	saveDraftFn   func(context.Context, repository.SaveDraftInput) (*repository.DraftMutationResult, error)
 	clearDraftFn  func(context.Context, repository.ClearDraftInput) (*repository.DraftMutationResult, error)
 	clearAfterFn  func(context.Context, repository.ClearDraftAfterSendInput) (*repository.DraftMutationResult, error)
@@ -45,6 +46,17 @@ func (f fakeDialogRepo) GetDialogByPeer(ctx context.Context, userID int64, peerT
 
 func (f fakeDialogRepo) ListDialogsByPeerDialogIDs(ctx context.Context, userID int64, ids []int64) ([]repository.DialogRecord, error) {
 	return f.idsFn(ctx, userID, ids)
+}
+
+func (f fakeDialogRepo) BatchGetDialogExtras(ctx context.Context, userID int64, peers []repository.PeerRef) ([]repository.DialogExtrasRecord, error) {
+	if f.extrasFn != nil {
+		return f.extrasFn(ctx, userID, peers)
+	}
+	out := make([]repository.DialogExtrasRecord, 0, len(peers))
+	for _, peer := range peers {
+		out = append(out, repository.DialogExtrasRecord{PeerType: peer.PeerType, PeerID: peer.PeerID})
+	}
+	return out, nil
 }
 
 func (f fakeDialogRepo) SaveDraft(ctx context.Context, in repository.SaveDraftInput) (*repository.DraftMutationResult, error) {

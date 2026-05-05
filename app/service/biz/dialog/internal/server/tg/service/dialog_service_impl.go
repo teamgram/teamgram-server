@@ -436,6 +436,86 @@ func (s *Service) DialogEditPeerFolders(ctx context.Context, request *dialog.TLD
 	return r, err
 }
 
+// DialogGetDialogsV2
+// dialog.getDialogsV2 user_id:long cursor:DialogCursor exclude_pinned:Bool limit:int = DialogPage;
+func (s *Service) DialogGetDialogsV2(ctx context.Context, request *dialog.TLDialogGetDialogsV2) (*dialog.DialogPage, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dialog.getDialogsV2 - request: %s", request)
+
+	r, err := c.DialogGetDialogsV2(request)
+	if err != nil {
+		c.Logger.Errorf("dialog.getDialogsV2 - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("dialog.getDialogsV2 - reply: %s", r)
+	return r, err
+}
+
+// DialogGetPeerDialogsV2
+// dialog.getPeerDialogsV2 user_id:long peers:Vector<DialogPeer> = Vector<DialogExtV2>;
+func (s *Service) DialogGetPeerDialogsV2(ctx context.Context, request *dialog.TLDialogGetPeerDialogsV2) (*dialog.VectorDialogExtV2, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dialog.getPeerDialogsV2 - request: %s", request)
+
+	r, err := c.DialogGetPeerDialogsV2(request)
+	if err != nil {
+		c.Logger.Errorf("dialog.getPeerDialogsV2 - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("dialog.getPeerDialogsV2 - reply: %s", r)
+	return r, err
+}
+
+// DialogGetPinnedDialogsV2
+// dialog.getPinnedDialogsV2 user_id:long folder_id:int limit:int = Vector<DialogExtV2>;
+func (s *Service) DialogGetPinnedDialogsV2(ctx context.Context, request *dialog.TLDialogGetPinnedDialogsV2) (*dialog.VectorDialogExtV2, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dialog.getPinnedDialogsV2 - request: %s", request)
+
+	r, err := c.DialogGetPinnedDialogsV2(request)
+	if err != nil {
+		c.Logger.Errorf("dialog.getPinnedDialogsV2 - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("dialog.getPinnedDialogsV2 - reply: %s", r)
+	return r, err
+}
+
+// DialogGetDialogByPeerV2
+// dialog.getDialogByPeerV2 user_id:long peer:DialogPeer = DialogExtV2;
+func (s *Service) DialogGetDialogByPeerV2(ctx context.Context, request *dialog.TLDialogGetDialogByPeerV2) (*dialog.DialogExtV2, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dialog.getDialogByPeerV2 - request: %s", request)
+
+	r, err := c.DialogGetDialogByPeerV2(request)
+	if err != nil {
+		c.Logger.Errorf("dialog.getDialogByPeerV2 - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("dialog.getDialogByPeerV2 - reply: %s", r)
+	return r, err
+}
+
+// DialogBatchGetDialogExtras
+// dialog.batchGetDialogExtras user_id:long peers:Vector<DialogPeer> = Vector<DialogExtras>;
+func (s *Service) DialogBatchGetDialogExtras(ctx context.Context, request *dialog.TLDialogBatchGetDialogExtras) (*dialog.VectorDialogExtras, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dialog.batchGetDialogExtras - request: %s", request)
+
+	r, err := c.DialogBatchGetDialogExtras(request)
+	if err != nil {
+		c.Logger.Errorf("dialog.batchGetDialogExtras - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("dialog.batchGetDialogExtras - reply: %s", r)
+	return r, err
+}
+
 // DialogGetChannelMessageReadParticipants
 // dialog.getChannelMessageReadParticipants user_id:long channel_id:long msg_id:int = Vector<long>;
 func (s *Service) DialogGetChannelMessageReadParticipants(ctx context.Context, request *dialog.TLDialogGetChannelMessageReadParticipants) (*dialog.VectorLong, error) {

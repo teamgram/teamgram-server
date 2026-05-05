@@ -49,6 +49,11 @@ type DialogClient interface {
 	DialogGetDialogFilters(ctx context.Context, in *dialog.TLDialogGetDialogFilters) (*dialog.VectorDialogFilterExt, error)
 	DialogGetDialogFolder(ctx context.Context, in *dialog.TLDialogGetDialogFolder) (*dialog.VectorDialogExt, error)
 	DialogEditPeerFolders(ctx context.Context, in *dialog.TLDialogEditPeerFolders) (*dialog.VectorDialogPinnedExt, error)
+	DialogGetDialogsV2(ctx context.Context, in *dialog.TLDialogGetDialogsV2) (*dialog.DialogPage, error)
+	DialogGetPeerDialogsV2(ctx context.Context, in *dialog.TLDialogGetPeerDialogsV2) (*dialog.VectorDialogExtV2, error)
+	DialogGetPinnedDialogsV2(ctx context.Context, in *dialog.TLDialogGetPinnedDialogsV2) (*dialog.VectorDialogExtV2, error)
+	DialogGetDialogByPeerV2(ctx context.Context, in *dialog.TLDialogGetDialogByPeerV2) (*dialog.DialogExtV2, error)
+	DialogBatchGetDialogExtras(ctx context.Context, in *dialog.TLDialogBatchGetDialogExtras) (*dialog.VectorDialogExtras, error)
 	DialogGetChannelMessageReadParticipants(ctx context.Context, in *dialog.TLDialogGetChannelMessageReadParticipants) (*dialog.VectorLong, error)
 	DialogSetChatTheme(ctx context.Context, in *dialog.TLDialogSetChatTheme) (*tg.Bool, error)
 	DialogSetHistoryTTL(ctx context.Context, in *dialog.TLDialogSetHistoryTTL) (*tg.Bool, error)
@@ -232,6 +237,36 @@ func (m *defaultDialogClient) DialogGetDialogFolder(ctx context.Context, in *dia
 // dialog.editPeerFolders user_id:long peer_dialog_list:Vector<long> folder_id:int source_perm_auth_key_id:long operation_id:string outbox_ids:Vector<long> = Vector<DialogPinnedExt>;
 func (m *defaultDialogClient) DialogEditPeerFolders(ctx context.Context, in *dialog.TLDialogEditPeerFolders) (*dialog.VectorDialogPinnedExt, error) {
 	return m.rpc.DialogEditPeerFolders(ctx, in)
+}
+
+// DialogGetDialogsV2
+// dialog.getDialogsV2 user_id:long cursor:DialogCursor exclude_pinned:Bool limit:int = DialogPage;
+func (m *defaultDialogClient) DialogGetDialogsV2(ctx context.Context, in *dialog.TLDialogGetDialogsV2) (*dialog.DialogPage, error) {
+	return m.rpc.DialogGetDialogsV2(ctx, in)
+}
+
+// DialogGetPeerDialogsV2
+// dialog.getPeerDialogsV2 user_id:long peers:Vector<DialogPeer> = Vector<DialogExtV2>;
+func (m *defaultDialogClient) DialogGetPeerDialogsV2(ctx context.Context, in *dialog.TLDialogGetPeerDialogsV2) (*dialog.VectorDialogExtV2, error) {
+	return m.rpc.DialogGetPeerDialogsV2(ctx, in)
+}
+
+// DialogGetPinnedDialogsV2
+// dialog.getPinnedDialogsV2 user_id:long folder_id:int limit:int = Vector<DialogExtV2>;
+func (m *defaultDialogClient) DialogGetPinnedDialogsV2(ctx context.Context, in *dialog.TLDialogGetPinnedDialogsV2) (*dialog.VectorDialogExtV2, error) {
+	return m.rpc.DialogGetPinnedDialogsV2(ctx, in)
+}
+
+// DialogGetDialogByPeerV2
+// dialog.getDialogByPeerV2 user_id:long peer:DialogPeer = DialogExtV2;
+func (m *defaultDialogClient) DialogGetDialogByPeerV2(ctx context.Context, in *dialog.TLDialogGetDialogByPeerV2) (*dialog.DialogExtV2, error) {
+	return m.rpc.DialogGetDialogByPeerV2(ctx, in)
+}
+
+// DialogBatchGetDialogExtras
+// dialog.batchGetDialogExtras user_id:long peers:Vector<DialogPeer> = Vector<DialogExtras>;
+func (m *defaultDialogClient) DialogBatchGetDialogExtras(ctx context.Context, in *dialog.TLDialogBatchGetDialogExtras) (*dialog.VectorDialogExtras, error) {
+	return m.rpc.DialogBatchGetDialogExtras(ctx, in)
 }
 
 // DialogGetChannelMessageReadParticipants

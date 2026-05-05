@@ -9,6 +9,11 @@ updateDraftMessage peer:Peer draft:DraftMessage = PeerWithDraftMessage;
 
 dialogExt flags:# order:long dialog:Dialog available_min_id:int date:long theme_emoticon:string ttl_period:int wallpaper_id:long wallpaper_overridden:flags.0?true = DialogExt;
 dialogPinnedExt order:long peer_type:int peer_id:long = DialogPinnedExt;
+dialogPeer peer_type:int peer_id:long = DialogPeer;
+dialogCursor flags:# folder_id:int section:string pinned_snapshot_version:long pin_order:long top_message_date:long top_peer_seq:long peer_type:int peer_id:long = DialogCursor;
+dialogExtras flags:# peer_type:int peer_id:long folder_id:int main_pinned_order:long folder_pinned_order:long draft_payload:flags.0?bytes private_ttl_period:flags.1?int private_theme_emoticon:flags.2?string wallpaper_id:flags.3?long wallpaper_overridden:flags.4?true = DialogExtras;
+dialogExtV2 flags:# peer_type:int peer_id:long top_peer_seq:long top_canonical_message_id:long top_message_date:long unread_count:int unread_mentions_count:int unread_reactions_count:int unread_mark:flags.0?true pinned_peer_seq:long pinned_canonical_message_id:long has_scheduled:flags.1?true available_min_peer_seq:long folder_id:int main_pinned_order:long folder_pinned_order:long extras:DialogExtras = DialogExtV2;
+dialogPage dialogs:Vector<DialogExtV2> next_cursor:DialogCursor exhausted:Bool = DialogPage;
 
 dialogFilterExt flags:# id:int joined_by_slug:flags.0?true slug:string dialog_filter:DialogFilter order:long = DialogFilterExt;
 
@@ -52,6 +57,12 @@ dialog.getDialogFilters user_id:long = Vector<DialogFilterExt>;
 
 dialog.getDialogFolder user_id:long folder_id:int = Vector<DialogExt>;
 dialog.editPeerFolders user_id:long peer_dialog_list:Vector<long> folder_id:int source_perm_auth_key_id:long operation_id:string outbox_ids:Vector<long> = Vector<DialogPinnedExt>;
+
+dialog.getDialogsV2 user_id:long cursor:DialogCursor exclude_pinned:Bool limit:int = DialogPage;
+dialog.getPeerDialogsV2 user_id:long peers:Vector<DialogPeer> = Vector<DialogExtV2>;
+dialog.getPinnedDialogsV2 user_id:long folder_id:int limit:int = Vector<DialogExtV2>;
+dialog.getDialogByPeerV2 user_id:long peer:DialogPeer = DialogExtV2;
+dialog.batchGetDialogExtras user_id:long peers:Vector<DialogPeer> = Vector<DialogExtras>;
 
 dialog.getChannelMessageReadParticipants user_id:long channel_id:long msg_id:int = Vector<long>;
 

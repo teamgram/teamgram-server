@@ -168,6 +168,7 @@ func TestDialogOutboxWorkerRetryAndBlockedState(t *testing.T) {
 	base := time.Now().UnixNano()
 	retryRow := newPublicUpdateOutboxRow(base, fmt.Sprintf("public-retry-%d", base), DeliveryPathUserupdatesPTS)
 	blockRow := newPublicUpdateOutboxRow(base+1, fmt.Sprintf("public-block-%d", base), DeliveryPathUserupdatesPTS)
+	blockRow.OutboxId = retryRow.OutboxId + 1
 	blockRow.AttemptCount = OutboxWorkerBlockedAttempts - 1
 	if _, _, err := repo.model.DialogPublicUpdateOutboxModel.Insert(ctx, retryRow); err != nil {
 		t.Fatalf("insert retry public update outbox: %v", err)
@@ -249,7 +250,7 @@ func testOutboxOptions(owner string) DialogOutboxWorkerOptions {
 func newAuthSeqOutboxRow(base int64, operationID string) *model.DialogAuthSeqOutbox {
 	payload := []byte(`{"schema_version":1}`)
 	return &model.DialogAuthSeqOutbox{
-		OutboxId:             base%1_000_000_000 + 10_000_000,
+		OutboxId:             -(base%1_000_000_000 + 10_000_000),
 		UserId:               base%1_000_000_000 + 101,
 		SourcePermAuthKeyId:  base%1_000_000_000 + 201,
 		TargetAuthPolicy:     TargetAuthPolicyNotSourcePermAuthKey,
@@ -270,7 +271,7 @@ func newAuthSeqOutboxRow(base int64, operationID string) *model.DialogAuthSeqOut
 func newPublicUpdateOutboxRow(base int64, operationID string, deliveryPath string) *model.DialogPublicUpdateOutbox {
 	payload := []byte(`{"schema_version":1}`)
 	return &model.DialogPublicUpdateOutbox{
-		OutboxId:             base%1_000_000_000 + 20_000_000,
+		OutboxId:             -(base%1_000_000_000 + 20_000_000),
 		SourceUserId:         base%1_000_000_000 + 401,
 		SourcePermAuthKeyId:  base%1_000_000_000 + 501,
 		TargetUserId:         base%1_000_000_000 + 601,

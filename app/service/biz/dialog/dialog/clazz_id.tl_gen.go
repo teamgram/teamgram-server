@@ -14,6 +14,11 @@ const (
 	ClazzID_updateDraftMessage                       = 0xf6bdc4b2 // f6bdc4b2
 	ClazzID_dialogExt                                = 0x730ba93f // 730ba93f
 	ClazzID_dialogPinnedExt                          = 0xea7222c  // ea7222c
+	ClazzID_dialogPeer                               = 0xb7789d79 // b7789d79
+	ClazzID_dialogCursor                             = 0x5b146008 // 5b146008
+	ClazzID_dialogExtras                             = 0x7a69125  // 7a69125
+	ClazzID_dialogExtV2                              = 0x7c9d7c44 // 7c9d7c44
+	ClazzID_dialogPage                               = 0x92dbd5aa // 92dbd5aa
 	ClazzID_dialogFilterExt                          = 0xa6d498fe // a6d498fe
 	ClazzID_simpleDialogsData                        = 0x1d59b45d // 1d59b45d
 	ClazzID_savedDialogList                          = 0x778fe85a // 778fe85a
@@ -43,6 +48,11 @@ const (
 	ClazzID_dialog_getDialogFilters                  = 0x6c676c3c // 6c676c3c
 	ClazzID_dialog_getDialogFolder                   = 0x411b8eb5 // 411b8eb5
 	ClazzID_dialog_editPeerFolders                   = 0xfbe6f2f  // fbe6f2f
+	ClazzID_dialog_getDialogsV2                      = 0x10dbef02 // 10dbef02
+	ClazzID_dialog_getPeerDialogsV2                  = 0xee61c04d // ee61c04d
+	ClazzID_dialog_getPinnedDialogsV2                = 0x74909bab // 74909bab
+	ClazzID_dialog_getDialogByPeerV2                 = 0xfb112ce3 // fb112ce3
+	ClazzID_dialog_batchGetDialogExtras              = 0xa393a92e // a393a92e
 	ClazzID_dialog_getChannelMessageReadParticipants = 0x28bd4d3b // 28bd4d3b
 	ClazzID_dialog_setChatTheme                      = 0xe9aea22a // e9aea22a
 	ClazzID_dialog_setHistoryTTL                     = 0x9d9b8ac  // 9d9b8ac

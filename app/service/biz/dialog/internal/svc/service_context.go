@@ -32,6 +32,7 @@ type DialogRepository interface {
 	CountDialogs(ctx context.Context, userID int64, excludePinned bool, folderID int32) (int32, error)
 	GetDialogByPeer(ctx context.Context, userID int64, peerType int32, peerID int64) (*repository.DialogRecord, error)
 	ListDialogsByPeerDialogIDs(ctx context.Context, userID int64, ids []int64) ([]repository.DialogRecord, error)
+	BatchGetDialogExtras(ctx context.Context, userID int64, peers []repository.PeerRef) ([]repository.DialogExtrasRecord, error)
 	SaveDraft(ctx context.Context, in repository.SaveDraftInput) (*repository.DraftMutationResult, error)
 	ClearDraft(ctx context.Context, in repository.ClearDraftInput) (*repository.DraftMutationResult, error)
 	ClearDraftAfterSend(ctx context.Context, in repository.ClearDraftAfterSendInput) (*repository.DraftMutationResult, error)

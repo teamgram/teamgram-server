@@ -51,6 +51,11 @@ type Client interface {
 	DialogGetDialogFilters(ctx context.Context, req *dialog.TLDialogGetDialogFilters, callOptions ...callopt.Option) (r *dialog.VectorDialogFilterExt, err error)
 	DialogGetDialogFolder(ctx context.Context, req *dialog.TLDialogGetDialogFolder, callOptions ...callopt.Option) (r *dialog.VectorDialogExt, err error)
 	DialogEditPeerFolders(ctx context.Context, req *dialog.TLDialogEditPeerFolders, callOptions ...callopt.Option) (r *dialog.VectorDialogPinnedExt, err error)
+	DialogGetDialogsV2(ctx context.Context, req *dialog.TLDialogGetDialogsV2, callOptions ...callopt.Option) (r *dialog.DialogPage, err error)
+	DialogGetPeerDialogsV2(ctx context.Context, req *dialog.TLDialogGetPeerDialogsV2, callOptions ...callopt.Option) (r *dialog.VectorDialogExtV2, err error)
+	DialogGetPinnedDialogsV2(ctx context.Context, req *dialog.TLDialogGetPinnedDialogsV2, callOptions ...callopt.Option) (r *dialog.VectorDialogExtV2, err error)
+	DialogGetDialogByPeerV2(ctx context.Context, req *dialog.TLDialogGetDialogByPeerV2, callOptions ...callopt.Option) (r *dialog.DialogExtV2, err error)
+	DialogBatchGetDialogExtras(ctx context.Context, req *dialog.TLDialogBatchGetDialogExtras, callOptions ...callopt.Option) (r *dialog.VectorDialogExtras, err error)
 	DialogGetChannelMessageReadParticipants(ctx context.Context, req *dialog.TLDialogGetChannelMessageReadParticipants, callOptions ...callopt.Option) (r *dialog.VectorLong, err error)
 	DialogSetChatTheme(ctx context.Context, req *dialog.TLDialogSetChatTheme, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	DialogSetHistoryTTL(ctx context.Context, req *dialog.TLDialogSetHistoryTTL, callOptions ...callopt.Option) (r *tg.Bool, err error)
@@ -233,6 +238,31 @@ func (p *kDialogClient) DialogGetDialogFolder(ctx context.Context, req *dialog.T
 func (p *kDialogClient) DialogEditPeerFolders(ctx context.Context, req *dialog.TLDialogEditPeerFolders, callOptions ...callopt.Option) (r *dialog.VectorDialogPinnedExt, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.DialogEditPeerFolders(ctx, req)
+}
+
+func (p *kDialogClient) DialogGetDialogsV2(ctx context.Context, req *dialog.TLDialogGetDialogsV2, callOptions ...callopt.Option) (r *dialog.DialogPage, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DialogGetDialogsV2(ctx, req)
+}
+
+func (p *kDialogClient) DialogGetPeerDialogsV2(ctx context.Context, req *dialog.TLDialogGetPeerDialogsV2, callOptions ...callopt.Option) (r *dialog.VectorDialogExtV2, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DialogGetPeerDialogsV2(ctx, req)
+}
+
+func (p *kDialogClient) DialogGetPinnedDialogsV2(ctx context.Context, req *dialog.TLDialogGetPinnedDialogsV2, callOptions ...callopt.Option) (r *dialog.VectorDialogExtV2, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DialogGetPinnedDialogsV2(ctx, req)
+}
+
+func (p *kDialogClient) DialogGetDialogByPeerV2(ctx context.Context, req *dialog.TLDialogGetDialogByPeerV2, callOptions ...callopt.Option) (r *dialog.DialogExtV2, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DialogGetDialogByPeerV2(ctx, req)
+}
+
+func (p *kDialogClient) DialogBatchGetDialogExtras(ctx context.Context, req *dialog.TLDialogBatchGetDialogExtras, callOptions ...callopt.Option) (r *dialog.VectorDialogExtras, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DialogBatchGetDialogExtras(ctx, req)
 }
 
 func (p *kDialogClient) DialogGetChannelMessageReadParticipants(ctx context.Context, req *dialog.TLDialogGetChannelMessageReadParticipants, callOptions ...callopt.Option) (r *dialog.VectorLong, err error) {

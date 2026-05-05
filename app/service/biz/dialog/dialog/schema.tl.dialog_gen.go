@@ -27,6 +27,199 @@ var (
 	_ json.Marshaler
 )
 
+// DialogCursorClazz <--
+//   - TL_DialogCursor
+type DialogCursorClazz = *TLDialogCursor
+
+func DecodeDialogCursorClazz(d *bin.Decoder) (DialogCursorClazz, error) {
+	// id, err := d.PeekClazzID()
+	id, err := d.ClazzID()
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode DialogCursor: constructor: %w", err)
+	}
+
+	switch id {
+	case 0x5b146008:
+		x := &TLDialogCursor{ClazzID: id, ClazzName2: ClazzName_dialogCursor}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
+		return x, nil
+	default:
+		return nil, fmt.Errorf("unable to decode DialogCursor: invalid constructor %x", id)
+	}
+
+}
+
+// TLDialogCursor <--
+type TLDialogCursor struct {
+	ClazzID               uint32 `json:"_id"`
+	ClazzName2            string `json:"_name"`
+	FolderId              int32  `json:"folder_id"`
+	Section               string `json:"section"`
+	PinnedSnapshotVersion int64  `json:"pinned_snapshot_version"`
+	PinOrder              int64  `json:"pin_order"`
+	TopMessageDate        int64  `json:"top_message_date"`
+	TopPeerSeq            int64  `json:"top_peer_seq"`
+	PeerType              int32  `json:"peer_type"`
+	PeerId                int64  `json:"peer_id"`
+}
+
+func MakeTLDialogCursor(m *TLDialogCursor) *TLDialogCursor {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_dialogCursor
+
+	return m
+}
+
+func (m *TLDialogCursor) String() string {
+	return iface.DebugStringWithName("dialogCursor", m)
+}
+
+func (m *TLDialogCursor) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("dialogCursor", m)
+}
+
+// DialogCursorClazzName <--
+func (m *TLDialogCursor) DialogCursorClazzName() string {
+	return ClazzName_dialogCursor
+}
+
+// ClazzName <--
+func (m *TLDialogCursor) ClazzName() string {
+	return m.ClazzName2
+}
+
+// ToDialogCursor <--
+func (m *TLDialogCursor) ToDialogCursor() *DialogCursor {
+	if m == nil {
+		return nil
+	}
+
+	return m
+
+}
+
+func (m *TLDialogCursor) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogCursor, int(layer)); clazzId {
+	case 0x5b146008:
+		size := 4
+		size += 4
+		size += 4
+		size += iface.CalcStringSize(m.Section)
+		size += 8
+		size += 8
+		size += 8
+		size += 8
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLDialogCursor) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogCursor, int(layer)); clazzId {
+	case 0x5b146008:
+		if err := iface.ValidateRequiredString("section", m.Section); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode dialogCursor: unsupported layer %d", layer)
+	}
+}
+
+// Encode <--
+func (m *TLDialogCursor) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogCursor, int(layer)); clazzId {
+	case 0x5b146008:
+		x.PutClazzID(0x5b146008)
+
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
+
+			return flags
+		}
+
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt32(m.FolderId)
+		x.PutString(m.Section)
+		x.PutInt64(m.PinnedSnapshotVersion)
+		x.PutInt64(m.PinOrder)
+		x.PutInt64(m.TopMessageDate)
+		x.PutInt64(m.TopPeerSeq)
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode dialogCursor: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLDialogCursor) Decode(d *bin.Decoder) (err error) {
+	switch m.ClazzID {
+	case 0x5b146008:
+		flags, err := d.Uint32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogCursor#0x5b146008: field flags: %w", err)
+		}
+		_ = flags
+		m.FolderId, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogCursor#0x5b146008: field folder_id: %w", err)
+		}
+		m.Section, err = d.String()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogCursor#0x5b146008: field section: %w", err)
+		}
+		m.PinnedSnapshotVersion, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogCursor#0x5b146008: field pinned_snapshot_version: %w", err)
+		}
+		m.PinOrder, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogCursor#0x5b146008: field pin_order: %w", err)
+		}
+		m.TopMessageDate, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogCursor#0x5b146008: field top_message_date: %w", err)
+		}
+		m.TopPeerSeq, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogCursor#0x5b146008: field top_peer_seq: %w", err)
+		}
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogCursor#0x5b146008: field peer_type: %w", err)
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogCursor#0x5b146008: field peer_id: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode dialogCursor: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// DialogCursor <--
+type DialogCursor = TLDialogCursor
+
 // DialogExtClazz <--
 //   - TL_DialogExt
 type DialogExtClazz = *TLDialogExt
@@ -232,6 +425,523 @@ func (m *TLDialogExt) Decode(d *bin.Decoder) (err error) {
 // DialogExt <--
 type DialogExt = TLDialogExt
 
+// DialogExtV2Clazz <--
+//   - TL_DialogExtV2
+type DialogExtV2Clazz = *TLDialogExtV2
+
+func DecodeDialogExtV2Clazz(d *bin.Decoder) (DialogExtV2Clazz, error) {
+	// id, err := d.PeekClazzID()
+	id, err := d.ClazzID()
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode DialogExtV2: constructor: %w", err)
+	}
+
+	switch id {
+	case 0x7c9d7c44:
+		x := &TLDialogExtV2{ClazzID: id, ClazzName2: ClazzName_dialogExtV2}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
+		return x, nil
+	default:
+		return nil, fmt.Errorf("unable to decode DialogExtV2: invalid constructor %x", id)
+	}
+
+}
+
+// TLDialogExtV2 <--
+type TLDialogExtV2 struct {
+	ClazzID                  uint32            `json:"_id"`
+	ClazzName2               string            `json:"_name"`
+	PeerType                 int32             `json:"peer_type"`
+	PeerId                   int64             `json:"peer_id"`
+	TopPeerSeq               int64             `json:"top_peer_seq"`
+	TopCanonicalMessageId    int64             `json:"top_canonical_message_id"`
+	TopMessageDate           int64             `json:"top_message_date"`
+	UnreadCount              int32             `json:"unread_count"`
+	UnreadMentionsCount      int32             `json:"unread_mentions_count"`
+	UnreadReactionsCount     int32             `json:"unread_reactions_count"`
+	UnreadMark               bool              `json:"unread_mark"`
+	PinnedPeerSeq            int64             `json:"pinned_peer_seq"`
+	PinnedCanonicalMessageId int64             `json:"pinned_canonical_message_id"`
+	HasScheduled             bool              `json:"has_scheduled"`
+	AvailableMinPeerSeq      int64             `json:"available_min_peer_seq"`
+	FolderId                 int32             `json:"folder_id"`
+	MainPinnedOrder          int64             `json:"main_pinned_order"`
+	FolderPinnedOrder        int64             `json:"folder_pinned_order"`
+	Extras                   DialogExtrasClazz `json:"extras"`
+}
+
+func MakeTLDialogExtV2(m *TLDialogExtV2) *TLDialogExtV2 {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_dialogExtV2
+
+	return m
+}
+
+func (m *TLDialogExtV2) String() string {
+	return iface.DebugStringWithName("dialogExtV2", m)
+}
+
+func (m *TLDialogExtV2) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("dialogExtV2", m)
+}
+
+// DialogExtV2ClazzName <--
+func (m *TLDialogExtV2) DialogExtV2ClazzName() string {
+	return ClazzName_dialogExtV2
+}
+
+// ClazzName <--
+func (m *TLDialogExtV2) ClazzName() string {
+	return m.ClazzName2
+}
+
+// ToDialogExtV2 <--
+func (m *TLDialogExtV2) ToDialogExtV2() *DialogExtV2 {
+	if m == nil {
+		return nil
+	}
+
+	return m
+
+}
+
+func (m *TLDialogExtV2) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogExtV2, int(layer)); clazzId {
+	case 0x7c9d7c44:
+		size := 4
+		size += 4
+		size += 4
+		size += 8
+		size += 8
+		size += 8
+		size += 8
+		size += 4
+		size += 4
+		size += 4
+		size += 8
+		size += 8
+		size += 8
+		size += 4
+		size += 8
+		size += 8
+		size += iface.CalcObjectSize(m.Extras, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLDialogExtV2) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogExtV2, int(layer)); clazzId {
+	case 0x7c9d7c44:
+		if err := iface.ValidateRequiredObject("extras", m.Extras); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode dialogExtV2: unsupported layer %d", layer)
+	}
+}
+
+// Encode <--
+func (m *TLDialogExtV2) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogExtV2, int(layer)); clazzId {
+	case 0x7c9d7c44:
+		x.PutClazzID(0x7c9d7c44)
+
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
+
+			if m.UnreadMark == true {
+				flags |= 1 << 0
+			}
+
+			if m.HasScheduled == true {
+				flags |= 1 << 1
+			}
+
+			return flags
+		}
+
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
+		x.PutInt64(m.TopPeerSeq)
+		x.PutInt64(m.TopCanonicalMessageId)
+		x.PutInt64(m.TopMessageDate)
+		x.PutInt32(m.UnreadCount)
+		x.PutInt32(m.UnreadMentionsCount)
+		x.PutInt32(m.UnreadReactionsCount)
+		x.PutInt64(m.PinnedPeerSeq)
+		x.PutInt64(m.PinnedCanonicalMessageId)
+		x.PutInt64(m.AvailableMinPeerSeq)
+		x.PutInt32(m.FolderId)
+		x.PutInt64(m.MainPinnedOrder)
+		x.PutInt64(m.FolderPinnedOrder)
+		if m.Extras == nil {
+			return fmt.Errorf("unable to encode dialogExtV2#0x7c9d7c44: field extras is nil")
+		}
+		if err := m.Extras.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode dialogExtV2#0x7c9d7c44: field extras: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode dialogExtV2: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLDialogExtV2) Decode(d *bin.Decoder) (err error) {
+	switch m.ClazzID {
+	case 0x7c9d7c44:
+		flags, err := d.Uint32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field flags: %w", err)
+		}
+		_ = flags
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field peer_type: %w", err)
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field peer_id: %w", err)
+		}
+		m.TopPeerSeq, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field top_peer_seq: %w", err)
+		}
+		m.TopCanonicalMessageId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field top_canonical_message_id: %w", err)
+		}
+		m.TopMessageDate, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field top_message_date: %w", err)
+		}
+		m.UnreadCount, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field unread_count: %w", err)
+		}
+		m.UnreadMentionsCount, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field unread_mentions_count: %w", err)
+		}
+		m.UnreadReactionsCount, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field unread_reactions_count: %w", err)
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.UnreadMark = true
+		}
+		m.PinnedPeerSeq, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field pinned_peer_seq: %w", err)
+		}
+		m.PinnedCanonicalMessageId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field pinned_canonical_message_id: %w", err)
+		}
+		if (flags & (1 << 1)) != 0 {
+			m.HasScheduled = true
+		}
+		m.AvailableMinPeerSeq, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field available_min_peer_seq: %w", err)
+		}
+		m.FolderId, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field folder_id: %w", err)
+		}
+		m.MainPinnedOrder, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field main_pinned_order: %w", err)
+		}
+		m.FolderPinnedOrder, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field folder_pinned_order: %w", err)
+		}
+
+		m.Extras, err = DecodeDialogExtrasClazz(d)
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field extras: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode dialogExtV2: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// DialogExtV2 <--
+type DialogExtV2 = TLDialogExtV2
+
+// DialogExtrasClazz <--
+//   - TL_DialogExtras
+type DialogExtrasClazz = *TLDialogExtras
+
+func DecodeDialogExtrasClazz(d *bin.Decoder) (DialogExtrasClazz, error) {
+	// id, err := d.PeekClazzID()
+	id, err := d.ClazzID()
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode DialogExtras: constructor: %w", err)
+	}
+
+	switch id {
+	case 0x7a69125:
+		x := &TLDialogExtras{ClazzID: id, ClazzName2: ClazzName_dialogExtras}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
+		return x, nil
+	default:
+		return nil, fmt.Errorf("unable to decode DialogExtras: invalid constructor %x", id)
+	}
+
+}
+
+// TLDialogExtras <--
+type TLDialogExtras struct {
+	ClazzID              uint32  `json:"_id"`
+	ClazzName2           string  `json:"_name"`
+	PeerType             int32   `json:"peer_type"`
+	PeerId               int64   `json:"peer_id"`
+	FolderId             int32   `json:"folder_id"`
+	MainPinnedOrder      int64   `json:"main_pinned_order"`
+	FolderPinnedOrder    int64   `json:"folder_pinned_order"`
+	DraftPayload         []byte  `json:"draft_payload"`
+	PrivateTtlPeriod     *int32  `json:"private_ttl_period"`
+	PrivateThemeEmoticon *string `json:"private_theme_emoticon"`
+	WallpaperId          *int64  `json:"wallpaper_id"`
+	WallpaperOverridden  bool    `json:"wallpaper_overridden"`
+}
+
+func MakeTLDialogExtras(m *TLDialogExtras) *TLDialogExtras {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_dialogExtras
+
+	return m
+}
+
+func (m *TLDialogExtras) String() string {
+	return iface.DebugStringWithName("dialogExtras", m)
+}
+
+func (m *TLDialogExtras) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("dialogExtras", m)
+}
+
+// DialogExtrasClazzName <--
+func (m *TLDialogExtras) DialogExtrasClazzName() string {
+	return ClazzName_dialogExtras
+}
+
+// ClazzName <--
+func (m *TLDialogExtras) ClazzName() string {
+	return m.ClazzName2
+}
+
+// ToDialogExtras <--
+func (m *TLDialogExtras) ToDialogExtras() *DialogExtras {
+	if m == nil {
+		return nil
+	}
+
+	return m
+
+}
+
+func (m *TLDialogExtras) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogExtras, int(layer)); clazzId {
+	case 0x7a69125:
+		size := 4
+		size += 4
+		size += 4
+		size += 8
+		size += 4
+		size += 8
+		size += 8
+		if m.DraftPayload != nil {
+			size += iface.CalcBytesSize(m.DraftPayload)
+		}
+
+		if m.PrivateTtlPeriod != nil {
+			size += 4
+		}
+
+		if m.PrivateThemeEmoticon != nil {
+			size += iface.CalcStringSize(*m.PrivateThemeEmoticon)
+		}
+
+		if m.WallpaperId != nil {
+			size += 8
+		}
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLDialogExtras) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogExtras, int(layer)); clazzId {
+	case 0x7a69125:
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode dialogExtras: unsupported layer %d", layer)
+	}
+}
+
+// Encode <--
+func (m *TLDialogExtras) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogExtras, int(layer)); clazzId {
+	case 0x7a69125:
+		x.PutClazzID(0x7a69125)
+
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
+
+			if m.DraftPayload != nil {
+				flags |= 1 << 0
+			}
+			if m.PrivateTtlPeriod != nil {
+				flags |= 1 << 1
+			}
+			if m.PrivateThemeEmoticon != nil {
+				flags |= 1 << 2
+			}
+			if m.WallpaperId != nil {
+				flags |= 1 << 3
+			}
+			if m.WallpaperOverridden == true {
+				flags |= 1 << 4
+			}
+
+			return flags
+		}
+
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
+		x.PutInt32(m.FolderId)
+		x.PutInt64(m.MainPinnedOrder)
+		x.PutInt64(m.FolderPinnedOrder)
+		if m.DraftPayload != nil {
+			x.PutBytes(m.DraftPayload)
+		}
+
+		if m.PrivateTtlPeriod != nil {
+			x.PutInt32(*m.PrivateTtlPeriod)
+		}
+
+		if m.PrivateThemeEmoticon != nil {
+			x.PutString(*m.PrivateThemeEmoticon)
+		}
+
+		if m.WallpaperId != nil {
+			x.PutInt64(*m.WallpaperId)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode dialogExtras: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLDialogExtras) Decode(d *bin.Decoder) (err error) {
+	switch m.ClazzID {
+	case 0x7a69125:
+		flags, err := d.Uint32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtras#0x7a69125: field flags: %w", err)
+		}
+		_ = flags
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtras#0x7a69125: field peer_type: %w", err)
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtras#0x7a69125: field peer_id: %w", err)
+		}
+		m.FolderId, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtras#0x7a69125: field folder_id: %w", err)
+		}
+		m.MainPinnedOrder, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtras#0x7a69125: field main_pinned_order: %w", err)
+		}
+		m.FolderPinnedOrder, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtras#0x7a69125: field folder_pinned_order: %w", err)
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.DraftPayload, err = d.Bytes()
+			if err != nil {
+				return fmt.Errorf("unable to decode dialogExtras#0x7a69125: field draft_payload: %w", err)
+			}
+		}
+
+		if (flags & (1 << 1)) != 0 {
+			m.PrivateTtlPeriod = new(int32)
+			*m.PrivateTtlPeriod, err = d.Int32()
+			if err != nil {
+				return fmt.Errorf("unable to decode dialogExtras#0x7a69125: field private_ttl_period: %w", err)
+			}
+		}
+		if (flags & (1 << 2)) != 0 {
+			m.PrivateThemeEmoticon = new(string)
+			*m.PrivateThemeEmoticon, err = d.String()
+			if err != nil {
+				return fmt.Errorf("unable to decode dialogExtras#0x7a69125: field private_theme_emoticon: %w", err)
+			}
+		}
+
+		if (flags & (1 << 3)) != 0 {
+			m.WallpaperId = new(int64)
+			*m.WallpaperId, err = d.Int64()
+			if err != nil {
+				return fmt.Errorf("unable to decode dialogExtras#0x7a69125: field wallpaper_id: %w", err)
+			}
+		}
+
+		if (flags & (1 << 4)) != 0 {
+			m.WallpaperOverridden = true
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode dialogExtras: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// DialogExtras <--
+type DialogExtras = TLDialogExtras
+
 // DialogFilterExtClazz <--
 //   - TL_DialogFilterExt
 type DialogFilterExtClazz = *TLDialogFilterExt
@@ -415,6 +1125,319 @@ func (m *TLDialogFilterExt) Decode(d *bin.Decoder) (err error) {
 
 // DialogFilterExt <--
 type DialogFilterExt = TLDialogFilterExt
+
+// DialogPageClazz <--
+//   - TL_DialogPage
+type DialogPageClazz = *TLDialogPage
+
+func DecodeDialogPageClazz(d *bin.Decoder) (DialogPageClazz, error) {
+	// id, err := d.PeekClazzID()
+	id, err := d.ClazzID()
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode DialogPage: constructor: %w", err)
+	}
+
+	switch id {
+	case 0x92dbd5aa:
+		x := &TLDialogPage{ClazzID: id, ClazzName2: ClazzName_dialogPage}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
+		return x, nil
+	default:
+		return nil, fmt.Errorf("unable to decode DialogPage: invalid constructor %x", id)
+	}
+
+}
+
+// TLDialogPage <--
+type TLDialogPage struct {
+	ClazzID    uint32             `json:"_id"`
+	ClazzName2 string             `json:"_name"`
+	Dialogs    []DialogExtV2Clazz `json:"dialogs"`
+	NextCursor DialogCursorClazz  `json:"next_cursor"`
+	Exhausted  tg.BoolClazz       `json:"exhausted"`
+}
+
+func MakeTLDialogPage(m *TLDialogPage) *TLDialogPage {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_dialogPage
+
+	return m
+}
+
+func (m *TLDialogPage) String() string {
+	return iface.DebugStringWithName("dialogPage", m)
+}
+
+func (m *TLDialogPage) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("dialogPage", m)
+}
+
+// DialogPageClazzName <--
+func (m *TLDialogPage) DialogPageClazzName() string {
+	return ClazzName_dialogPage
+}
+
+// ClazzName <--
+func (m *TLDialogPage) ClazzName() string {
+	return m.ClazzName2
+}
+
+// ToDialogPage <--
+func (m *TLDialogPage) ToDialogPage() *DialogPage {
+	if m == nil {
+		return nil
+	}
+
+	return m
+
+}
+
+func (m *TLDialogPage) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogPage, int(layer)); clazzId {
+	case 0x92dbd5aa:
+		size := 4
+		size += iface.CalcObjectListSize(m.Dialogs, layer)
+		size += iface.CalcObjectSize(m.NextCursor, layer)
+		size += iface.CalcObjectSize(m.Exhausted, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLDialogPage) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogPage, int(layer)); clazzId {
+	case 0x92dbd5aa:
+		if err := iface.ValidateRequiredSlice("dialogs", m.Dialogs); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("next_cursor", m.NextCursor); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("exhausted", m.Exhausted); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode dialogPage: unsupported layer %d", layer)
+	}
+}
+
+// Encode <--
+func (m *TLDialogPage) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogPage, int(layer)); clazzId {
+	case 0x92dbd5aa:
+		x.PutClazzID(0x92dbd5aa)
+
+		if err := iface.EncodeObjectList(x, m.Dialogs, layer); err != nil {
+			return fmt.Errorf("unable to encode dialogPage#0x92dbd5aa: field dialogs: %w", err)
+		}
+
+		if m.NextCursor == nil {
+			return fmt.Errorf("unable to encode dialogPage#0x92dbd5aa: field next_cursor is nil")
+		}
+		if err := m.NextCursor.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode dialogPage#0x92dbd5aa: field next_cursor: %w", err)
+		}
+		if m.Exhausted == nil {
+			return fmt.Errorf("unable to encode dialogPage#0x92dbd5aa: field exhausted is nil")
+		}
+		if err := m.Exhausted.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode dialogPage#0x92dbd5aa: field exhausted: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode dialogPage: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLDialogPage) Decode(d *bin.Decoder) (err error) {
+	switch m.ClazzID {
+	case 0x92dbd5aa:
+		l0, err3 := d.VectorHeader()
+		if err3 != nil {
+			return fmt.Errorf("unable to decode dialogPage#0x92dbd5aa: field dialogs: %w", err3)
+		}
+		if l0 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode dialogPage#0x92dbd5aa: field dialogs: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l0)})
+		}
+		prealloc0 := int(l0)
+		if prealloc0 > bin.PreallocateLimit {
+			prealloc0 = bin.PreallocateLimit
+		}
+		v0 := make([]DialogExtV2Clazz, 0, prealloc0)
+		for i := int32(0); i < l0; i++ {
+			vv0, err3 := DecodeDialogExtV2Clazz(d)
+			if err3 != nil {
+				return fmt.Errorf("unable to decode dialogPage#0x92dbd5aa: field dialogs: %w", err3)
+			}
+			v0 = append(v0, vv0)
+		}
+		m.Dialogs = v0
+
+		m.NextCursor, err = DecodeDialogCursorClazz(d)
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogPage#0x92dbd5aa: field next_cursor: %w", err)
+		}
+
+		m.Exhausted, err = tg.DecodeBoolClazz(d)
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogPage#0x92dbd5aa: field exhausted: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode dialogPage: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// DialogPage <--
+type DialogPage = TLDialogPage
+
+// DialogPeerClazz <--
+//   - TL_DialogPeer
+type DialogPeerClazz = *TLDialogPeer
+
+func DecodeDialogPeerClazz(d *bin.Decoder) (DialogPeerClazz, error) {
+	// id, err := d.PeekClazzID()
+	id, err := d.ClazzID()
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode DialogPeer: constructor: %w", err)
+	}
+
+	switch id {
+	case 0xb7789d79:
+		x := &TLDialogPeer{ClazzID: id, ClazzName2: ClazzName_dialogPeer}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
+		return x, nil
+	default:
+		return nil, fmt.Errorf("unable to decode DialogPeer: invalid constructor %x", id)
+	}
+
+}
+
+// TLDialogPeer <--
+type TLDialogPeer struct {
+	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
+	PeerType   int32  `json:"peer_type"`
+	PeerId     int64  `json:"peer_id"`
+}
+
+func MakeTLDialogPeer(m *TLDialogPeer) *TLDialogPeer {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_dialogPeer
+
+	return m
+}
+
+func (m *TLDialogPeer) String() string {
+	return iface.DebugStringWithName("dialogPeer", m)
+}
+
+func (m *TLDialogPeer) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("dialogPeer", m)
+}
+
+// DialogPeerClazzName <--
+func (m *TLDialogPeer) DialogPeerClazzName() string {
+	return ClazzName_dialogPeer
+}
+
+// ClazzName <--
+func (m *TLDialogPeer) ClazzName() string {
+	return m.ClazzName2
+}
+
+// ToDialogPeer <--
+func (m *TLDialogPeer) ToDialogPeer() *DialogPeer {
+	if m == nil {
+		return nil
+	}
+
+	return m
+
+}
+
+func (m *TLDialogPeer) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogPeer, int(layer)); clazzId {
+	case 0xb7789d79:
+		size := 4
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLDialogPeer) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogPeer, int(layer)); clazzId {
+	case 0xb7789d79:
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode dialogPeer: unsupported layer %d", layer)
+	}
+}
+
+// Encode <--
+func (m *TLDialogPeer) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogPeer, int(layer)); clazzId {
+	case 0xb7789d79:
+		x.PutClazzID(0xb7789d79)
+
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode dialogPeer: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLDialogPeer) Decode(d *bin.Decoder) (err error) {
+	switch m.ClazzID {
+	case 0xb7789d79:
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogPeer#0xb7789d79: field peer_type: %w", err)
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogPeer#0xb7789d79: field peer_id: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode dialogPeer: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// DialogPeer <--
+type DialogPeer = TLDialogPeer
 
 // DialogPinnedExtClazz <--
 //   - TL_DialogPinnedExt

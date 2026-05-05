@@ -18,6 +18,11 @@ const (
 	ClazzName_updateDraftMessage                       = "updateDraftMessage"
 	ClazzName_dialogExt                                = "dialogExt"
 	ClazzName_dialogPinnedExt                          = "dialogPinnedExt"
+	ClazzName_dialogPeer                               = "dialogPeer"
+	ClazzName_dialogCursor                             = "dialogCursor"
+	ClazzName_dialogExtras                             = "dialogExtras"
+	ClazzName_dialogExtV2                              = "dialogExtV2"
+	ClazzName_dialogPage                               = "dialogPage"
 	ClazzName_dialogFilterExt                          = "dialogFilterExt"
 	ClazzName_simpleDialogsData                        = "simpleDialogsData"
 	ClazzName_savedDialogList                          = "savedDialogList"
@@ -47,6 +52,11 @@ const (
 	ClazzName_dialog_getDialogFilters                  = "dialog_getDialogFilters"
 	ClazzName_dialog_getDialogFolder                   = "dialog_getDialogFolder"
 	ClazzName_dialog_editPeerFolders                   = "dialog_editPeerFolders"
+	ClazzName_dialog_getDialogsV2                      = "dialog_getDialogsV2"
+	ClazzName_dialog_getPeerDialogsV2                  = "dialog_getPeerDialogsV2"
+	ClazzName_dialog_getPinnedDialogsV2                = "dialog_getPinnedDialogsV2"
+	ClazzName_dialog_getDialogByPeerV2                 = "dialog_getDialogByPeerV2"
+	ClazzName_dialog_batchGetDialogExtras              = "dialog_batchGetDialogExtras"
 	ClazzName_dialog_getChannelMessageReadParticipants = "dialog_getChannelMessageReadParticipants"
 	ClazzName_dialog_setChatTheme                      = "dialog_setChatTheme"
 	ClazzName_dialog_setHistoryTTL                     = "dialog_setHistoryTTL"
@@ -69,6 +79,11 @@ func init() {
 	iface.RegisterClazzName(ClazzName_updateDraftMessage, 0, 0xf6bdc4b2)                       // f6bdc4b2
 	iface.RegisterClazzName(ClazzName_dialogExt, 0, 0x730ba93f)                                // 730ba93f
 	iface.RegisterClazzName(ClazzName_dialogPinnedExt, 0, 0xea7222c)                           // ea7222c
+	iface.RegisterClazzName(ClazzName_dialogPeer, 0, 0xb7789d79)                               // b7789d79
+	iface.RegisterClazzName(ClazzName_dialogCursor, 0, 0x5b146008)                             // 5b146008
+	iface.RegisterClazzName(ClazzName_dialogExtras, 0, 0x7a69125)                              // 7a69125
+	iface.RegisterClazzName(ClazzName_dialogExtV2, 0, 0x7c9d7c44)                              // 7c9d7c44
+	iface.RegisterClazzName(ClazzName_dialogPage, 0, 0x92dbd5aa)                               // 92dbd5aa
 	iface.RegisterClazzName(ClazzName_dialogFilterExt, 0, 0xa6d498fe)                          // a6d498fe
 	iface.RegisterClazzName(ClazzName_simpleDialogsData, 0, 0x1d59b45d)                        // 1d59b45d
 	iface.RegisterClazzName(ClazzName_savedDialogList, 0, 0x778fe85a)                          // 778fe85a
@@ -98,6 +113,11 @@ func init() {
 	iface.RegisterClazzName(ClazzName_dialog_getDialogFilters, 0, 0x6c676c3c)                  // 6c676c3c
 	iface.RegisterClazzName(ClazzName_dialog_getDialogFolder, 0, 0x411b8eb5)                   // 411b8eb5
 	iface.RegisterClazzName(ClazzName_dialog_editPeerFolders, 0, 0xfbe6f2f)                    // fbe6f2f
+	iface.RegisterClazzName(ClazzName_dialog_getDialogsV2, 0, 0x10dbef02)                      // 10dbef02
+	iface.RegisterClazzName(ClazzName_dialog_getPeerDialogsV2, 0, 0xee61c04d)                  // ee61c04d
+	iface.RegisterClazzName(ClazzName_dialog_getPinnedDialogsV2, 0, 0x74909bab)                // 74909bab
+	iface.RegisterClazzName(ClazzName_dialog_getDialogByPeerV2, 0, 0xfb112ce3)                 // fb112ce3
+	iface.RegisterClazzName(ClazzName_dialog_batchGetDialogExtras, 0, 0xa393a92e)              // a393a92e
 	iface.RegisterClazzName(ClazzName_dialog_getChannelMessageReadParticipants, 0, 0x28bd4d3b) // 28bd4d3b
 	iface.RegisterClazzName(ClazzName_dialog_setChatTheme, 0, 0xe9aea22a)                      // e9aea22a
 	iface.RegisterClazzName(ClazzName_dialog_setHistoryTTL, 0, 0x9d9b8ac)                      // 9d9b8ac
@@ -118,6 +138,11 @@ func init() {
 	iface.RegisterClazzIDName(ClazzName_updateDraftMessage, 0xf6bdc4b2)                       // f6bdc4b2
 	iface.RegisterClazzIDName(ClazzName_dialogExt, 0x730ba93f)                                // 730ba93f
 	iface.RegisterClazzIDName(ClazzName_dialogPinnedExt, 0xea7222c)                           // ea7222c
+	iface.RegisterClazzIDName(ClazzName_dialogPeer, 0xb7789d79)                               // b7789d79
+	iface.RegisterClazzIDName(ClazzName_dialogCursor, 0x5b146008)                             // 5b146008
+	iface.RegisterClazzIDName(ClazzName_dialogExtras, 0x7a69125)                              // 7a69125
+	iface.RegisterClazzIDName(ClazzName_dialogExtV2, 0x7c9d7c44)                              // 7c9d7c44
+	iface.RegisterClazzIDName(ClazzName_dialogPage, 0x92dbd5aa)                               // 92dbd5aa
 	iface.RegisterClazzIDName(ClazzName_dialogFilterExt, 0xa6d498fe)                          // a6d498fe
 	iface.RegisterClazzIDName(ClazzName_simpleDialogsData, 0x1d59b45d)                        // 1d59b45d
 	iface.RegisterClazzIDName(ClazzName_savedDialogList, 0x778fe85a)                          // 778fe85a
@@ -147,6 +172,11 @@ func init() {
 	iface.RegisterClazzIDName(ClazzName_dialog_getDialogFilters, 0x6c676c3c)                  // 6c676c3c
 	iface.RegisterClazzIDName(ClazzName_dialog_getDialogFolder, 0x411b8eb5)                   // 411b8eb5
 	iface.RegisterClazzIDName(ClazzName_dialog_editPeerFolders, 0xfbe6f2f)                    // fbe6f2f
+	iface.RegisterClazzIDName(ClazzName_dialog_getDialogsV2, 0x10dbef02)                      // 10dbef02
+	iface.RegisterClazzIDName(ClazzName_dialog_getPeerDialogsV2, 0xee61c04d)                  // ee61c04d
+	iface.RegisterClazzIDName(ClazzName_dialog_getPinnedDialogsV2, 0x74909bab)                // 74909bab
+	iface.RegisterClazzIDName(ClazzName_dialog_getDialogByPeerV2, 0xfb112ce3)                 // fb112ce3
+	iface.RegisterClazzIDName(ClazzName_dialog_batchGetDialogExtras, 0xa393a92e)              // a393a92e
 	iface.RegisterClazzIDName(ClazzName_dialog_getChannelMessageReadParticipants, 0x28bd4d3b) // 28bd4d3b
 	iface.RegisterClazzIDName(ClazzName_dialog_setChatTheme, 0xe9aea22a)                      // e9aea22a
 	iface.RegisterClazzIDName(ClazzName_dialog_setHistoryTTL, 0x9d9b8ac)                      // 9d9b8ac
