@@ -135,7 +135,7 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 	if err := insertUserMessageView(txModels, in, op, eventPayload); err != nil {
 		return nil, err
 	}
-	if err := upsertUserDialog(txModels, in, op, eventPayload); err != nil {
+	if err := upsertUserDialog(txModels, in, op, nextPTS, eventPayload); err != nil {
 		return nil, err
 	}
 	if err := insertPTSEvent(txModels, in, op, nextPTS, ptsCount, eventPayload, eventPayloadHash); err != nil {
@@ -241,26 +241,36 @@ func insertUserMessageView(txModels *model.TxModels, in ApplyUserOperationInput,
 	return nil
 }
 
-func upsertUserDialog(txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, dialogPayload []byte) error {
+func upsertUserDialog(txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, nextPTS int64, dialogPayload []byte) error {
 	unread := int32(0)
 	if !op.Out {
 		unread = 1
 	}
+	now := mysqlNow()
 	_, _, err := txModels.UserDialogsModel.InsertOrUpdateMessageEvent(&model.UserDialogs{
-		UserId:                in.UserID,
-		PeerType:              op.PeerType,
-		PeerId:                op.PeerID,
-		TopPeerSeq:            op.PeerSeq,
-		TopCanonicalMessageId: op.CanonicalMessageID,
-		TopMessageDate:        mysqlDate(op.Date),
-		UnreadCount:           unread,
-		UnreadMentionsCount:   0,
-		ReadInboxMaxPeerSeq:   0,
-		ReadOutboxMaxPeerSeq:  0,
-		Pinned:                false,
-		FolderId:              0,
-		DialogSchemaVersion:   1,
-		DialogPayload:         dialogPayload,
+		UserId:                   in.UserID,
+		PeerType:                 op.PeerType,
+		PeerId:                   op.PeerID,
+		TopPeerSeq:               op.PeerSeq,
+		TopCanonicalMessageId:    op.CanonicalMessageID,
+		TopMessageDate:           mysqlDate(op.Date),
+		TopMessageStatus:         MessageStatusLive,
+		ReadInboxMaxPeerSeq:      0,
+		ReadOutboxMaxPeerSeq:     0,
+		UnreadCount:              unread,
+		UnreadMentionsCount:      0,
+		UnreadReactionsCount:     0,
+		UnreadMark:               false,
+		PinnedPeerSeq:            0,
+		PinnedCanonicalMessageId: 0,
+		HasScheduled:             false,
+		AvailableMinPeerSeq:      0,
+		Hidden:                   false,
+		DeletedAt:                mysqlZeroTime(),
+		LastPts:                  nextPTS,
+		LastPtsAt:                now,
+		DialogSchemaVersion:      1,
+		DialogPayload:            dialogPayload,
 	})
 	if err != nil {
 		return storageError("upsert user dialog", err)
@@ -354,4 +364,8 @@ func mysqlDate(unix int32) string {
 
 func mysqlNow() string {
 	return time.Now().UTC().Format("2006-01-02 15:04:05.000000")
+}
+
+func mysqlZeroTime() string {
+	return "1970-01-01 00:00:00.000000"
 }
