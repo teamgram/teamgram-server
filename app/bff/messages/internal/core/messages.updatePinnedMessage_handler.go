@@ -17,14 +17,40 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesUpdatePinnedMessage
 // messages.updatePinnedMessage#d2aaf7ec flags:# silent:flags.0?true unpin:flags.1?true pm_oneside:flags.2?true peer:InputPeer id:int = Updates;
 func (c *MessagesCore) MessagesUpdatePinnedMessage(in *tg.TLMessagesUpdatePinnedMessage) (*tg.Updates, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.updatePinnedMessage - error: method MessagesUpdatePinnedMessage not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	md := c.MD
+	if md == nil || md.UserId <= 0 {
+		return nil, tg.ErrUserIdInvalid
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	peerUserID, ok := resolveUserPeerID(in.Peer, md.UserId)
+	if !ok {
+		return nil, tg.Err400PeerIdInvalid
+	}
+	var pinClient updatePinnedMessageClient = c.svcCtx.Repo.MsgClient
+	r, err := pinClient.MsgUpdatePinnedMessage(c.ctx, &msg.TLMsgUpdatePinnedMessage{
+		UserId:    md.UserId,
+		AuthKeyId: md.PermAuthKeyId,
+		Silent:    in.Silent,
+		Unpin:     in.Unpin,
+		PmOneside: in.PmOneside,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    peerUserID,
+		Id:        in.Id,
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.updatePinnedMessage - msg error: self_user_id: %d, peer_id: %d, id: %d, unpin: %t, err: %v",
+			md.UserId, peerUserID, in.Id, in.Unpin, err)
+		return nil, mapMsgSendError(err)
+	}
+	return r, nil
 }

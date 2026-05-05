@@ -16,9 +16,10 @@ import (
 
 type messagesFakeMsgClient struct {
 	msgclient.MsgClient
-	sendMessageV2 func(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error)
-	getHistory    func(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error)
-	readHistoryV2 func(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error)
+	sendMessageV2       func(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error)
+	getHistory          func(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error)
+	readHistoryV2       func(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error)
+	updatePinnedMessage func(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error)
 }
 
 func (f *messagesFakeMsgClient) MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
@@ -31,6 +32,10 @@ func (f *messagesFakeMsgClient) MsgGetHistory(ctx context.Context, in *msg.TLMsg
 
 func (f *messagesFakeMsgClient) MsgReadHistoryV2(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error) {
 	return f.readHistoryV2(ctx, in)
+}
+
+func (f *messagesFakeMsgClient) MsgUpdatePinnedMessage(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error) {
+	return f.updatePinnedMessage(ctx, in)
 }
 
 func newSendMsgCore(client msgclient.MsgClient, selfID, authKeyID int64) *MessagesCore {
@@ -289,6 +294,30 @@ func TestMessagesReadHistory_NonUserPeerRejected(t *testing.T) {
 	}
 	if called {
 		t.Fatal("msg service was called but should not have been")
+	}
+}
+
+func TestMessagesUpdatePinnedMessage_UserPeerSuccess(t *testing.T) {
+	var got *msg.TLMsgUpdatePinnedMessage
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		updatePinnedMessage: func(_ context.Context, in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error) {
+			got = in
+			return testUpdates(), nil
+		},
+	}, 100, 200)
+
+	r, err := c.MessagesUpdatePinnedMessage(&tg.TLMessagesUpdatePinnedMessage{
+		Peer: tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 300}),
+		Id:   7,
+	})
+	if err != nil {
+		t.Fatalf("MessagesUpdatePinnedMessage() error = %v", err)
+	}
+	if r == nil {
+		t.Fatal("result is nil")
+	}
+	if got == nil || got.UserId != 100 || got.AuthKeyId != 200 || got.PeerType != payload.PeerTypeUser || got.PeerId != 300 || got.Id != 7 {
+		t.Fatalf("MsgUpdatePinnedMessage request = %+v", got)
 	}
 }
 

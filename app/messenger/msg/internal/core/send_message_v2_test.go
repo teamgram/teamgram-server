@@ -479,9 +479,64 @@ func TestMsgReadHistoryV2ReturnsAffectedMessagesAck(t *testing.T) {
 	}
 }
 
+func TestMsgUpdatePinnedMessageRoutesProjectionOperation(t *testing.T) {
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:      1001,
+			OperationId: updatePinnedOperationID(1001, 1002, 7, false, 9001),
+			Status:      1,
+			Pts:         21,
+			PtsCount:    1,
+			CurrentPts:  21,
+		}),
+	}
+	repo := &fakeMsgRepository{
+		canonicalByPeerSeq: &repository.CanonicalMessage{
+			CanonicalMessageID: 7001,
+			PeerSeq:            7,
+			FromUserID:         1002,
+			PeerType:           payload.PeerTypeUser,
+			PeerID:             1002,
+			MessageText:        "pin me",
+			MessageDate:        1_772_000_123,
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:        repo,
+		UserUpdates: updatesClient,
+	})
+
+	got, err := core.MsgUpdatePinnedMessage(&msgpb.TLMsgUpdatePinnedMessage{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    1002,
+		Id:        7,
+	})
+	if err != nil {
+		t.Fatalf("MsgUpdatePinnedMessage() error = %v", err)
+	}
+	short, ok := got.ToUpdateShort()
+	if !ok {
+		t.Fatalf("MsgUpdatePinnedMessage() = %s, want updateShort", got.ClazzName())
+	}
+	pinned, ok := (&tg.Update{Clazz: short.Update}).ToUpdatePinnedMessages()
+	if !ok || !pinned.Pinned || len(pinned.Messages) != 1 || pinned.Messages[0] != 7 || pinned.Pts != 21 {
+		t.Fatalf("pinned update = %+v ok=%v", pinned, ok)
+	}
+	var op payload.MessageOperationV1
+	if err := json.Unmarshal(updatesClient.processed.Payload, &op); err != nil {
+		t.Fatalf("decode update pinned payload: %v", err)
+	}
+	if op.OperationKind != payload.OperationKindUpdatePinnedMessage || op.PinnedPeerSeq != 7 || op.PinnedCanonicalMessageID != 7001 {
+		t.Fatalf("unexpected update pinned payload: %+v", op)
+	}
+}
+
 type fakeMsgRepository struct {
 	sendState              *repository.SendState
 	canonical              *repository.CanonicalMessageResult
+	canonicalByPeerSeq     *repository.CanonicalMessage
 	history                []repository.HistoryMessage
 	historyInput           repository.ListHistoryMessagesInput
 	markCanonicalErr       error
@@ -499,6 +554,13 @@ func (f *fakeMsgRepository) CreateOrLoadSendState(context.Context, repository.Cr
 
 func (f *fakeMsgRepository) CreateOrGetByClientRandom(context.Context, repository.CreateCanonicalMessageInput) (*repository.CanonicalMessageResult, error) {
 	return f.canonical, nil
+}
+
+func (f *fakeMsgRepository) GetCanonicalMessageByPeerSeq(context.Context, int32, int64, int64) (*repository.CanonicalMessage, error) {
+	if f.canonicalByPeerSeq == nil {
+		return nil, msgpb.ErrSendStateConflict
+	}
+	return f.canonicalByPeerSeq, nil
 }
 
 func (f *fakeMsgRepository) ListHistoryMessages(_ context.Context, in repository.ListHistoryMessagesInput) ([]repository.HistoryMessage, error) {

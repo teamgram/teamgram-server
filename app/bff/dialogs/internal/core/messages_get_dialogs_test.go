@@ -2,6 +2,7 @@ package core
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"testing"
 
@@ -78,6 +79,7 @@ type dialogsFakeUserupdatesClient struct {
 	getState          func(context.Context, *userupdates.TLUserupdatesGetState) (*userupdates.UserState, error)
 	getDifference     func(context.Context, *userupdates.TLUserupdatesGetDifference) (*userupdates.UserDifference, error)
 	getDialogsByPeers func(context.Context, *userupdates.TLUserupdatesGetDialogsByPeers) (*userupdates.VectorDialogProjection, error)
+	processOperation  func(context.Context, *userupdates.TLUserupdatesProcessUserOperation) (*userupdates.UserOperationResult, error)
 }
 
 func (f *dialogsFakeUserupdatesClient) UserupdatesGetState(ctx context.Context, in *userupdates.TLUserupdatesGetState) (*userupdates.UserState, error) {
@@ -90,6 +92,10 @@ func (f *dialogsFakeUserupdatesClient) UserupdatesGetDifference(ctx context.Cont
 
 func (f *dialogsFakeUserupdatesClient) UserupdatesGetDialogsByPeers(ctx context.Context, in *userupdates.TLUserupdatesGetDialogsByPeers) (*userupdates.VectorDialogProjection, error) {
 	return f.getDialogsByPeers(ctx, in)
+}
+
+func (f *dialogsFakeUserupdatesClient) UserupdatesProcessUserOperation(ctx context.Context, in *userupdates.TLUserupdatesProcessUserOperation) (*userupdates.UserOperationResult, error) {
+	return f.processOperation(ctx, in)
 }
 
 func newDialogsGetDialogsCore(repo *repository.Repository, selfID int64) *DialogsCore {
@@ -623,6 +629,41 @@ func TestMessagesReorderPinnedDialogsPassesPeerDialogIDs(t *testing.T) {
 	}
 	if got.SourcePermAuthKeyId != 9001 || got.OperationId == "" || got.OutboxId == 0 {
 		t.Fatalf("source auth/outbox fields = auth:%d op:%q outbox:%d", got.SourcePermAuthKeyId, got.OperationId, got.OutboxId)
+	}
+}
+
+func TestMessagesMarkDialogUnreadWritesUserupdatesOperation(t *testing.T) {
+	var got *userupdates.TLUserOperation
+	c := newDialogsGetDialogsCore(&repository.Repository{
+		UserupdatesClient: &dialogsFakeUserupdatesClient{
+			processOperation: func(_ context.Context, in *userupdates.TLUserupdatesProcessUserOperation) (*userupdates.UserOperationResult, error) {
+				got = in.Operation
+				return userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{UserId: 100, OperationId: in.Operation.OperationId, Status: 1, Pts: 5, PtsCount: 1}), nil
+			},
+		},
+	}, 100)
+
+	r, err := c.MessagesMarkDialogUnread(&tg.TLMessagesMarkDialogUnread{
+		Unread: true,
+		Peer: tg.MakeTLInputDialogPeer(&tg.TLInputDialogPeer{
+			Peer: tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 200}),
+		}),
+	})
+	if err != nil {
+		t.Fatalf("MessagesMarkDialogUnread error = %v", err)
+	}
+	if r != tg.BoolTrue {
+		t.Fatalf("reply = %v, want boolTrue", r)
+	}
+	if got == nil || got.UserId != 100 || got.PeerType != dialogPeerTypeUser || got.PeerId != 200 {
+		t.Fatalf("operation = %+v", got)
+	}
+	var op payload.MessageOperationV1
+	if err := json.Unmarshal(got.Payload, &op); err != nil {
+		t.Fatalf("decode payload: %v", err)
+	}
+	if op.OperationKind != payload.OperationKindMarkDialogUnread || op.UnreadMark == nil || !*op.UnreadMark {
+		t.Fatalf("payload = %+v", op)
 	}
 }
 

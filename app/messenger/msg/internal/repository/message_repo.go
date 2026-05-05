@@ -114,6 +114,33 @@ func (r *Repository) ListHistoryMessages(ctx context.Context, in ListHistoryMess
 	return out, nil
 }
 
+func (r *Repository) GetCanonicalMessageByPeerSeq(ctx context.Context, peerType int32, peerID int64, peerSeq int64) (*CanonicalMessage, error) {
+	if _, err := r.requireDB(); err != nil {
+		return nil, err
+	}
+	row, err := r.models.CanonicalMessagesModel.SelectByPeerSeq(ctx, peerType, peerID, peerSeq)
+	if err != nil {
+		if errors.Is(err, model.ErrNotFound) {
+			return nil, msg.ErrSendStateConflict
+		}
+		return nil, storageError("select canonical by peer seq", err)
+	}
+	parsedDate, err := time.ParseInLocation("2006-01-02 15:04:05.000000", row.Date, time.UTC)
+	if err != nil {
+		return nil, storageError("parse canonical message date", err)
+	}
+	return &CanonicalMessage{
+		CanonicalMessageID: row.CanonicalMessageId,
+		PeerSeq:            row.PeerSeq,
+		FromUserID:         row.FromUserId,
+		PeerType:           row.PeerType,
+		PeerID:             row.PeerId,
+		MessageKind:        row.MessageKind,
+		MessageText:        row.MessageText,
+		MessageDate:        int32(parsedDate.Unix()),
+	}, nil
+}
+
 func (r *Repository) historySliceOffset(ctx context.Context, in ListHistoryMessagesInput) (int64, error) {
 	if in.OffsetID <= 0 {
 		return pagination.SliceOffset(0, pagination.IDOffsetInput{
