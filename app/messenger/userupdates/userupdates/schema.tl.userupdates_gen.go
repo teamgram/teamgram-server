@@ -27,6 +27,776 @@ var (
 	_ json.Marshaler
 )
 
+// DialogProjectionClazz <--
+//   - TL_DialogProjection
+type DialogProjectionClazz = *TLDialogProjection
+
+func DecodeDialogProjectionClazz(d *bin.Decoder) (DialogProjectionClazz, error) {
+	// id, err := d.PeekClazzID()
+	id, err := d.ClazzID()
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode DialogProjection: constructor: %w", err)
+	}
+
+	switch id {
+	case 0xb9bc23fd:
+		x := &TLDialogProjection{ClazzID: id, ClazzName2: ClazzName_dialogProjection}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
+		return x, nil
+	default:
+		return nil, fmt.Errorf("unable to decode DialogProjection: invalid constructor %x", id)
+	}
+
+}
+
+// TLDialogProjection <--
+type TLDialogProjection struct {
+	ClazzID                  uint32 `json:"_id"`
+	ClazzName2               string `json:"_name"`
+	PeerType                 int32  `json:"peer_type"`
+	PeerId                   int64  `json:"peer_id"`
+	TopPeerSeq               int64  `json:"top_peer_seq"`
+	TopCanonicalMessageId    int64  `json:"top_canonical_message_id"`
+	TopMessageDate           int64  `json:"top_message_date"`
+	TopMessageStatus         int32  `json:"top_message_status"`
+	ReadInboxMaxPeerSeq      int64  `json:"read_inbox_max_peer_seq"`
+	ReadOutboxMaxPeerSeq     int64  `json:"read_outbox_max_peer_seq"`
+	UnreadCount              int32  `json:"unread_count"`
+	UnreadMentionsCount      int32  `json:"unread_mentions_count"`
+	UnreadReactionsCount     int32  `json:"unread_reactions_count"`
+	UnreadMark               bool   `json:"unread_mark"`
+	PinnedPeerSeq            int64  `json:"pinned_peer_seq"`
+	PinnedCanonicalMessageId int64  `json:"pinned_canonical_message_id"`
+	HasScheduled             bool   `json:"has_scheduled"`
+	AvailableMinPeerSeq      int64  `json:"available_min_peer_seq"`
+	LastPts                  int64  `json:"last_pts"`
+	LastPtsAt                int64  `json:"last_pts_at"`
+	DialogSchemaVersion      int32  `json:"dialog_schema_version"`
+	DialogPayload            []byte `json:"dialog_payload"`
+}
+
+func MakeTLDialogProjection(m *TLDialogProjection) *TLDialogProjection {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_dialogProjection
+
+	return m
+}
+
+func (m *TLDialogProjection) String() string {
+	return iface.DebugStringWithName("dialogProjection", m)
+}
+
+func (m *TLDialogProjection) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("dialogProjection", m)
+}
+
+// DialogProjectionClazzName <--
+func (m *TLDialogProjection) DialogProjectionClazzName() string {
+	return ClazzName_dialogProjection
+}
+
+// ClazzName <--
+func (m *TLDialogProjection) ClazzName() string {
+	return m.ClazzName2
+}
+
+// ToDialogProjection <--
+func (m *TLDialogProjection) ToDialogProjection() *DialogProjection {
+	if m == nil {
+		return nil
+	}
+
+	return m
+
+}
+
+func (m *TLDialogProjection) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogProjection, int(layer)); clazzId {
+	case 0xb9bc23fd:
+		size := 4
+		size += 4
+		size += 4
+		size += 8
+		size += 8
+		size += 8
+		size += 8
+		size += 4
+		size += 8
+		size += 8
+		size += 4
+		size += 4
+		size += 4
+		size += 8
+		size += 8
+		size += 8
+		size += 8
+		size += 8
+		size += 4
+		size += iface.CalcBytesSize(m.DialogPayload)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLDialogProjection) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogProjection, int(layer)); clazzId {
+	case 0xb9bc23fd:
+		if err := iface.ValidateRequiredBytes("dialog_payload", m.DialogPayload); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode dialogProjection: unsupported layer %d", layer)
+	}
+}
+
+// Encode <--
+func (m *TLDialogProjection) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogProjection, int(layer)); clazzId {
+	case 0xb9bc23fd:
+		x.PutClazzID(0xb9bc23fd)
+
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
+
+			if m.UnreadMark == true {
+				flags |= 1 << 0
+			}
+
+			if m.HasScheduled == true {
+				flags |= 1 << 1
+			}
+
+			return flags
+		}
+
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
+		x.PutInt64(m.TopPeerSeq)
+		x.PutInt64(m.TopCanonicalMessageId)
+		x.PutInt64(m.TopMessageDate)
+		x.PutInt32(m.TopMessageStatus)
+		x.PutInt64(m.ReadInboxMaxPeerSeq)
+		x.PutInt64(m.ReadOutboxMaxPeerSeq)
+		x.PutInt32(m.UnreadCount)
+		x.PutInt32(m.UnreadMentionsCount)
+		x.PutInt32(m.UnreadReactionsCount)
+		x.PutInt64(m.PinnedPeerSeq)
+		x.PutInt64(m.PinnedCanonicalMessageId)
+		x.PutInt64(m.AvailableMinPeerSeq)
+		x.PutInt64(m.LastPts)
+		x.PutInt64(m.LastPtsAt)
+		x.PutInt32(m.DialogSchemaVersion)
+		x.PutBytes(m.DialogPayload)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode dialogProjection: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLDialogProjection) Decode(d *bin.Decoder) (err error) {
+	switch m.ClazzID {
+	case 0xb9bc23fd:
+		flags, err := d.Uint32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field flags: %w", err)
+		}
+		_ = flags
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field peer_type: %w", err)
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field peer_id: %w", err)
+		}
+		m.TopPeerSeq, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field top_peer_seq: %w", err)
+		}
+		m.TopCanonicalMessageId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field top_canonical_message_id: %w", err)
+		}
+		m.TopMessageDate, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field top_message_date: %w", err)
+		}
+		m.TopMessageStatus, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field top_message_status: %w", err)
+		}
+		m.ReadInboxMaxPeerSeq, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field read_inbox_max_peer_seq: %w", err)
+		}
+		m.ReadOutboxMaxPeerSeq, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field read_outbox_max_peer_seq: %w", err)
+		}
+		m.UnreadCount, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field unread_count: %w", err)
+		}
+		m.UnreadMentionsCount, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field unread_mentions_count: %w", err)
+		}
+		m.UnreadReactionsCount, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field unread_reactions_count: %w", err)
+		}
+		if (flags & (1 << 0)) != 0 {
+			m.UnreadMark = true
+		}
+		m.PinnedPeerSeq, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field pinned_peer_seq: %w", err)
+		}
+		m.PinnedCanonicalMessageId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field pinned_canonical_message_id: %w", err)
+		}
+		if (flags & (1 << 1)) != 0 {
+			m.HasScheduled = true
+		}
+		m.AvailableMinPeerSeq, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field available_min_peer_seq: %w", err)
+		}
+		m.LastPts, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field last_pts: %w", err)
+		}
+		m.LastPtsAt, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field last_pts_at: %w", err)
+		}
+		m.DialogSchemaVersion, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field dialog_schema_version: %w", err)
+		}
+		m.DialogPayload, err = d.Bytes()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field dialog_payload: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode dialogProjection: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// DialogProjection <--
+type DialogProjection = TLDialogProjection
+
+// DialogProjectionListClazz <--
+//   - TL_DialogProjectionList
+type DialogProjectionListClazz = *TLDialogProjectionList
+
+func DecodeDialogProjectionListClazz(d *bin.Decoder) (DialogProjectionListClazz, error) {
+	// id, err := d.PeekClazzID()
+	id, err := d.ClazzID()
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode DialogProjectionList: constructor: %w", err)
+	}
+
+	switch id {
+	case 0x4e60f01f:
+		x := &TLDialogProjectionList{ClazzID: id, ClazzName2: ClazzName_dialogProjectionList}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
+		return x, nil
+	default:
+		return nil, fmt.Errorf("unable to decode DialogProjectionList: invalid constructor %x", id)
+	}
+
+}
+
+// TLDialogProjectionList <--
+type TLDialogProjectionList struct {
+	ClazzID            uint32                  `json:"_id"`
+	ClazzName2         string                  `json:"_name"`
+	Projections        []DialogProjectionClazz `json:"projections"`
+	NextTopMessageDate int64                   `json:"next_top_message_date"`
+	NextTopPeerSeq     int64                   `json:"next_top_peer_seq"`
+	NextPeerType       int32                   `json:"next_peer_type"`
+	NextPeerId         int64                   `json:"next_peer_id"`
+	Exhausted          tg.BoolClazz            `json:"exhausted"`
+}
+
+func MakeTLDialogProjectionList(m *TLDialogProjectionList) *TLDialogProjectionList {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_dialogProjectionList
+
+	return m
+}
+
+func (m *TLDialogProjectionList) String() string {
+	return iface.DebugStringWithName("dialogProjectionList", m)
+}
+
+func (m *TLDialogProjectionList) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("dialogProjectionList", m)
+}
+
+// DialogProjectionListClazzName <--
+func (m *TLDialogProjectionList) DialogProjectionListClazzName() string {
+	return ClazzName_dialogProjectionList
+}
+
+// ClazzName <--
+func (m *TLDialogProjectionList) ClazzName() string {
+	return m.ClazzName2
+}
+
+// ToDialogProjectionList <--
+func (m *TLDialogProjectionList) ToDialogProjectionList() *DialogProjectionList {
+	if m == nil {
+		return nil
+	}
+
+	return m
+
+}
+
+func (m *TLDialogProjectionList) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogProjectionList, int(layer)); clazzId {
+	case 0x4e60f01f:
+		size := 4
+		size += iface.CalcObjectListSize(m.Projections, layer)
+		size += 8
+		size += 8
+		size += 4
+		size += 8
+		size += iface.CalcObjectSize(m.Exhausted, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLDialogProjectionList) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogProjectionList, int(layer)); clazzId {
+	case 0x4e60f01f:
+		if err := iface.ValidateRequiredSlice("projections", m.Projections); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("exhausted", m.Exhausted); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode dialogProjectionList: unsupported layer %d", layer)
+	}
+}
+
+// Encode <--
+func (m *TLDialogProjectionList) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogProjectionList, int(layer)); clazzId {
+	case 0x4e60f01f:
+		x.PutClazzID(0x4e60f01f)
+
+		if err := iface.EncodeObjectList(x, m.Projections, layer); err != nil {
+			return fmt.Errorf("unable to encode dialogProjectionList#0x4e60f01f: field projections: %w", err)
+		}
+
+		x.PutInt64(m.NextTopMessageDate)
+		x.PutInt64(m.NextTopPeerSeq)
+		x.PutInt32(m.NextPeerType)
+		x.PutInt64(m.NextPeerId)
+		if m.Exhausted == nil {
+			return fmt.Errorf("unable to encode dialogProjectionList#0x4e60f01f: field exhausted is nil")
+		}
+		if err := m.Exhausted.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode dialogProjectionList#0x4e60f01f: field exhausted: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode dialogProjectionList: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLDialogProjectionList) Decode(d *bin.Decoder) (err error) {
+	switch m.ClazzID {
+	case 0x4e60f01f:
+		l0, err3 := d.VectorHeader()
+		if err3 != nil {
+			return fmt.Errorf("unable to decode dialogProjectionList#0x4e60f01f: field projections: %w", err3)
+		}
+		if l0 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode dialogProjectionList#0x4e60f01f: field projections: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l0)})
+		}
+		prealloc0 := int(l0)
+		if prealloc0 > bin.PreallocateLimit {
+			prealloc0 = bin.PreallocateLimit
+		}
+		v0 := make([]DialogProjectionClazz, 0, prealloc0)
+		for i := int32(0); i < l0; i++ {
+			vv0, err3 := DecodeDialogProjectionClazz(d)
+			if err3 != nil {
+				return fmt.Errorf("unable to decode dialogProjectionList#0x4e60f01f: field projections: %w", err3)
+			}
+			v0 = append(v0, vv0)
+		}
+		m.Projections = v0
+
+		m.NextTopMessageDate, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjectionList#0x4e60f01f: field next_top_message_date: %w", err)
+		}
+		m.NextTopPeerSeq, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjectionList#0x4e60f01f: field next_top_peer_seq: %w", err)
+		}
+		m.NextPeerType, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjectionList#0x4e60f01f: field next_peer_type: %w", err)
+		}
+		m.NextPeerId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjectionList#0x4e60f01f: field next_peer_id: %w", err)
+		}
+
+		m.Exhausted, err = tg.DecodeBoolClazz(d)
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjectionList#0x4e60f01f: field exhausted: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode dialogProjectionList: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// DialogProjectionList <--
+type DialogProjectionList = TLDialogProjectionList
+
+// DialogProjectionPeerClazz <--
+//   - TL_DialogProjectionPeer
+type DialogProjectionPeerClazz = *TLDialogProjectionPeer
+
+func DecodeDialogProjectionPeerClazz(d *bin.Decoder) (DialogProjectionPeerClazz, error) {
+	// id, err := d.PeekClazzID()
+	id, err := d.ClazzID()
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode DialogProjectionPeer: constructor: %w", err)
+	}
+
+	switch id {
+	case 0x6d7ec124:
+		x := &TLDialogProjectionPeer{ClazzID: id, ClazzName2: ClazzName_dialogProjectionPeer}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
+		return x, nil
+	default:
+		return nil, fmt.Errorf("unable to decode DialogProjectionPeer: invalid constructor %x", id)
+	}
+
+}
+
+// TLDialogProjectionPeer <--
+type TLDialogProjectionPeer struct {
+	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
+	PeerType   int32  `json:"peer_type"`
+	PeerId     int64  `json:"peer_id"`
+}
+
+func MakeTLDialogProjectionPeer(m *TLDialogProjectionPeer) *TLDialogProjectionPeer {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_dialogProjectionPeer
+
+	return m
+}
+
+func (m *TLDialogProjectionPeer) String() string {
+	return iface.DebugStringWithName("dialogProjectionPeer", m)
+}
+
+func (m *TLDialogProjectionPeer) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("dialogProjectionPeer", m)
+}
+
+// DialogProjectionPeerClazzName <--
+func (m *TLDialogProjectionPeer) DialogProjectionPeerClazzName() string {
+	return ClazzName_dialogProjectionPeer
+}
+
+// ClazzName <--
+func (m *TLDialogProjectionPeer) ClazzName() string {
+	return m.ClazzName2
+}
+
+// ToDialogProjectionPeer <--
+func (m *TLDialogProjectionPeer) ToDialogProjectionPeer() *DialogProjectionPeer {
+	if m == nil {
+		return nil
+	}
+
+	return m
+
+}
+
+func (m *TLDialogProjectionPeer) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogProjectionPeer, int(layer)); clazzId {
+	case 0x6d7ec124:
+		size := 4
+		size += 4
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLDialogProjectionPeer) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogProjectionPeer, int(layer)); clazzId {
+	case 0x6d7ec124:
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode dialogProjectionPeer: unsupported layer %d", layer)
+	}
+}
+
+// Encode <--
+func (m *TLDialogProjectionPeer) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogProjectionPeer, int(layer)); clazzId {
+	case 0x6d7ec124:
+		x.PutClazzID(0x6d7ec124)
+
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode dialogProjectionPeer: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLDialogProjectionPeer) Decode(d *bin.Decoder) (err error) {
+	switch m.ClazzID {
+	case 0x6d7ec124:
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjectionPeer#0x6d7ec124: field peer_type: %w", err)
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjectionPeer#0x6d7ec124: field peer_id: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode dialogProjectionPeer: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// DialogProjectionPeer <--
+type DialogProjectionPeer = TLDialogProjectionPeer
+
+// UserAuthSeqAppendResultClazz <--
+//   - TL_UserAuthSeqAppendResult
+type UserAuthSeqAppendResultClazz = *TLUserAuthSeqAppendResult
+
+func DecodeUserAuthSeqAppendResultClazz(d *bin.Decoder) (UserAuthSeqAppendResultClazz, error) {
+	// id, err := d.PeekClazzID()
+	id, err := d.ClazzID()
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode UserAuthSeqAppendResult: constructor: %w", err)
+	}
+
+	switch id {
+	case 0x55994646:
+		x := &TLUserAuthSeqAppendResult{ClazzID: id, ClazzName2: ClazzName_userAuthSeqAppendResult}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
+		return x, nil
+	default:
+		return nil, fmt.Errorf("unable to decode UserAuthSeqAppendResult: invalid constructor %x", id)
+	}
+
+}
+
+// TLUserAuthSeqAppendResult <--
+type TLUserAuthSeqAppendResult struct {
+	ClazzID        uint32       `json:"_id"`
+	ClazzName2     string       `json:"_name"`
+	UserId         int64        `json:"user_id"`
+	OperationId    string       `json:"operation_id"`
+	Seq            int64        `json:"seq"`
+	Date           int32        `json:"date"`
+	AlreadyApplied tg.BoolClazz `json:"already_applied"`
+}
+
+func MakeTLUserAuthSeqAppendResult(m *TLUserAuthSeqAppendResult) *TLUserAuthSeqAppendResult {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_userAuthSeqAppendResult
+
+	return m
+}
+
+func (m *TLUserAuthSeqAppendResult) String() string {
+	return iface.DebugStringWithName("userAuthSeqAppendResult", m)
+}
+
+func (m *TLUserAuthSeqAppendResult) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("userAuthSeqAppendResult", m)
+}
+
+// UserAuthSeqAppendResultClazzName <--
+func (m *TLUserAuthSeqAppendResult) UserAuthSeqAppendResultClazzName() string {
+	return ClazzName_userAuthSeqAppendResult
+}
+
+// ClazzName <--
+func (m *TLUserAuthSeqAppendResult) ClazzName() string {
+	return m.ClazzName2
+}
+
+// ToUserAuthSeqAppendResult <--
+func (m *TLUserAuthSeqAppendResult) ToUserAuthSeqAppendResult() *UserAuthSeqAppendResult {
+	if m == nil {
+		return nil
+	}
+
+	return m
+
+}
+
+func (m *TLUserAuthSeqAppendResult) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_userAuthSeqAppendResult, int(layer)); clazzId {
+	case 0x55994646:
+		size := 4
+		size += 8
+		size += iface.CalcStringSize(m.OperationId)
+		size += 8
+		size += 4
+		size += iface.CalcObjectSize(m.AlreadyApplied, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUserAuthSeqAppendResult) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_userAuthSeqAppendResult, int(layer)); clazzId {
+	case 0x55994646:
+		if err := iface.ValidateRequiredString("operation_id", m.OperationId); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("already_applied", m.AlreadyApplied); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode userAuthSeqAppendResult: unsupported layer %d", layer)
+	}
+}
+
+// Encode <--
+func (m *TLUserAuthSeqAppendResult) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_userAuthSeqAppendResult, int(layer)); clazzId {
+	case 0x55994646:
+		x.PutClazzID(0x55994646)
+
+		x.PutInt64(m.UserId)
+		x.PutString(m.OperationId)
+		x.PutInt64(m.Seq)
+		x.PutInt32(m.Date)
+		if m.AlreadyApplied == nil {
+			return fmt.Errorf("unable to encode userAuthSeqAppendResult#0x55994646: field already_applied is nil")
+		}
+		if err := m.AlreadyApplied.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode userAuthSeqAppendResult#0x55994646: field already_applied: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode userAuthSeqAppendResult: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLUserAuthSeqAppendResult) Decode(d *bin.Decoder) (err error) {
+	switch m.ClazzID {
+	case 0x55994646:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode userAuthSeqAppendResult#0x55994646: field user_id: %w", err)
+		}
+		m.OperationId, err = d.String()
+		if err != nil {
+			return fmt.Errorf("unable to decode userAuthSeqAppendResult#0x55994646: field operation_id: %w", err)
+		}
+		m.Seq, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode userAuthSeqAppendResult#0x55994646: field seq: %w", err)
+		}
+		m.Date, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode userAuthSeqAppendResult#0x55994646: field date: %w", err)
+		}
+
+		m.AlreadyApplied, err = tg.DecodeBoolClazz(d)
+		if err != nil {
+			return fmt.Errorf("unable to decode userAuthSeqAppendResult#0x55994646: field already_applied: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode userAuthSeqAppendResult: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// UserAuthSeqAppendResult <--
+type UserAuthSeqAppendResult = TLUserAuthSeqAppendResult
+
 // UserDifferenceClazz <--
 //   - TL_UserDifferenceEmpty
 //   - TL_UserDifference
@@ -1361,6 +2131,172 @@ func (m *TLUserOperationResult) Decode(d *bin.Decoder) (err error) {
 
 // UserOperationResult <--
 type UserOperationResult = TLUserOperationResult
+
+// UserPtsAppendResultClazz <--
+//   - TL_UserPtsAppendResult
+type UserPtsAppendResultClazz = *TLUserPtsAppendResult
+
+func DecodeUserPtsAppendResultClazz(d *bin.Decoder) (UserPtsAppendResultClazz, error) {
+	// id, err := d.PeekClazzID()
+	id, err := d.ClazzID()
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode UserPtsAppendResult: constructor: %w", err)
+	}
+
+	switch id {
+	case 0xaa3fff4f:
+		x := &TLUserPtsAppendResult{ClazzID: id, ClazzName2: ClazzName_userPtsAppendResult}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
+		return x, nil
+	default:
+		return nil, fmt.Errorf("unable to decode UserPtsAppendResult: invalid constructor %x", id)
+	}
+
+}
+
+// TLUserPtsAppendResult <--
+type TLUserPtsAppendResult struct {
+	ClazzID        uint32       `json:"_id"`
+	ClazzName2     string       `json:"_name"`
+	UserId         int64        `json:"user_id"`
+	OperationId    string       `json:"operation_id"`
+	Pts            int64        `json:"pts"`
+	PtsCount       int32        `json:"pts_count"`
+	AlreadyApplied tg.BoolClazz `json:"already_applied"`
+}
+
+func MakeTLUserPtsAppendResult(m *TLUserPtsAppendResult) *TLUserPtsAppendResult {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_userPtsAppendResult
+
+	return m
+}
+
+func (m *TLUserPtsAppendResult) String() string {
+	return iface.DebugStringWithName("userPtsAppendResult", m)
+}
+
+func (m *TLUserPtsAppendResult) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("userPtsAppendResult", m)
+}
+
+// UserPtsAppendResultClazzName <--
+func (m *TLUserPtsAppendResult) UserPtsAppendResultClazzName() string {
+	return ClazzName_userPtsAppendResult
+}
+
+// ClazzName <--
+func (m *TLUserPtsAppendResult) ClazzName() string {
+	return m.ClazzName2
+}
+
+// ToUserPtsAppendResult <--
+func (m *TLUserPtsAppendResult) ToUserPtsAppendResult() *UserPtsAppendResult {
+	if m == nil {
+		return nil
+	}
+
+	return m
+
+}
+
+func (m *TLUserPtsAppendResult) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_userPtsAppendResult, int(layer)); clazzId {
+	case 0xaa3fff4f:
+		size := 4
+		size += 8
+		size += iface.CalcStringSize(m.OperationId)
+		size += 8
+		size += 4
+		size += iface.CalcObjectSize(m.AlreadyApplied, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUserPtsAppendResult) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_userPtsAppendResult, int(layer)); clazzId {
+	case 0xaa3fff4f:
+		if err := iface.ValidateRequiredString("operation_id", m.OperationId); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredObject("already_applied", m.AlreadyApplied); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode userPtsAppendResult: unsupported layer %d", layer)
+	}
+}
+
+// Encode <--
+func (m *TLUserPtsAppendResult) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_userPtsAppendResult, int(layer)); clazzId {
+	case 0xaa3fff4f:
+		x.PutClazzID(0xaa3fff4f)
+
+		x.PutInt64(m.UserId)
+		x.PutString(m.OperationId)
+		x.PutInt64(m.Pts)
+		x.PutInt32(m.PtsCount)
+		if m.AlreadyApplied == nil {
+			return fmt.Errorf("unable to encode userPtsAppendResult#0xaa3fff4f: field already_applied is nil")
+		}
+		if err := m.AlreadyApplied.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode userPtsAppendResult#0xaa3fff4f: field already_applied: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode userPtsAppendResult: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLUserPtsAppendResult) Decode(d *bin.Decoder) (err error) {
+	switch m.ClazzID {
+	case 0xaa3fff4f:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode userPtsAppendResult#0xaa3fff4f: field user_id: %w", err)
+		}
+		m.OperationId, err = d.String()
+		if err != nil {
+			return fmt.Errorf("unable to decode userPtsAppendResult#0xaa3fff4f: field operation_id: %w", err)
+		}
+		m.Pts, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode userPtsAppendResult#0xaa3fff4f: field pts: %w", err)
+		}
+		m.PtsCount, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode userPtsAppendResult#0xaa3fff4f: field pts_count: %w", err)
+		}
+
+		m.AlreadyApplied, err = tg.DecodeBoolClazz(d)
+		if err != nil {
+			return fmt.Errorf("unable to decode userPtsAppendResult#0xaa3fff4f: field already_applied: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode userPtsAppendResult: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// UserPtsAppendResult <--
+type UserPtsAppendResult = TLUserPtsAppendResult
 
 // UserStateClazz <--
 //   - TL_UserState

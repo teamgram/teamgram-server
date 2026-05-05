@@ -83,6 +83,41 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"/userupdates.RPCUserupdates/userupdates.listDialogs": kitex.NewMethodInfo(
+		listDialogsHandler,
+		newListDialogsArgs,
+		newListDialogsResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/userupdates.RPCUserupdates/userupdates.getDialogsByPeers": kitex.NewMethodInfo(
+		getDialogsByPeersHandler,
+		newGetDialogsByPeersArgs,
+		newGetDialogsByPeersResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/userupdates.RPCUserupdates/userupdates.getDialogCount": kitex.NewMethodInfo(
+		getDialogCountHandler,
+		newGetDialogCountArgs,
+		newGetDialogCountResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/userupdates.RPCUserupdates/userupdates.appendDialogAuthSeqSideEffect": kitex.NewMethodInfo(
+		appendDialogAuthSeqSideEffectHandler,
+		newAppendDialogAuthSeqSideEffectArgs,
+		newAppendDialogAuthSeqSideEffectResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/userupdates.RPCUserupdates/userupdates.appendDialogPtsSideEffect": kitex.NewMethodInfo(
+		appendDialogPtsSideEffectHandler,
+		newAppendDialogPtsSideEffectArgs,
+		newAppendDialogPtsSideEffectResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 }
 
 var (
@@ -692,6 +727,676 @@ func (p *GetDifferenceResult) GetResult() interface{} {
 	return p.Success
 }
 
+func listDialogsHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*ListDialogsArgs)
+	realResult := result.(*ListDialogsResult)
+	success, err := handler.(userupdates.RPCUserupdates).UserupdatesListDialogs(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newListDialogsArgs() interface{} {
+	return &ListDialogsArgs{}
+}
+
+func newListDialogsResult() interface{} {
+	return &ListDialogsResult{}
+}
+
+type ListDialogsArgs struct {
+	Req *userupdates.TLUserupdatesListDialogs
+}
+
+func (p *ListDialogsArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in ListDialogsArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *ListDialogsArgs) Unmarshal(in []byte) error {
+	msg := new(userupdates.TLUserupdatesListDialogs)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *ListDialogsArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in ListDialogsArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *ListDialogsArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(userupdates.TLUserupdatesListDialogs)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var ListDialogsArgs_Req_DEFAULT *userupdates.TLUserupdatesListDialogs
+
+func (p *ListDialogsArgs) GetReq() *userupdates.TLUserupdatesListDialogs {
+	if !p.IsSetReq() {
+		return ListDialogsArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *ListDialogsArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type ListDialogsResult struct {
+	Success *userupdates.DialogProjectionList
+}
+
+var ListDialogsResult_Success_DEFAULT *userupdates.DialogProjectionList
+
+func (p *ListDialogsResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in ListDialogsResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *ListDialogsResult) Unmarshal(in []byte) error {
+	msg := new(userupdates.DialogProjectionList)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ListDialogsResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in ListDialogsResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *ListDialogsResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(userupdates.DialogProjectionList)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ListDialogsResult) GetSuccess() *userupdates.DialogProjectionList {
+	if !p.IsSetSuccess() {
+		return ListDialogsResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ListDialogsResult) SetSuccess(x interface{}) {
+	p.Success = x.(*userupdates.DialogProjectionList)
+}
+
+func (p *ListDialogsResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ListDialogsResult) GetResult() interface{} {
+	return p.Success
+}
+
+func getDialogsByPeersHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*GetDialogsByPeersArgs)
+	realResult := result.(*GetDialogsByPeersResult)
+	success, err := handler.(userupdates.RPCUserupdates).UserupdatesGetDialogsByPeers(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newGetDialogsByPeersArgs() interface{} {
+	return &GetDialogsByPeersArgs{}
+}
+
+func newGetDialogsByPeersResult() interface{} {
+	return &GetDialogsByPeersResult{}
+}
+
+type GetDialogsByPeersArgs struct {
+	Req *userupdates.TLUserupdatesGetDialogsByPeers
+}
+
+func (p *GetDialogsByPeersArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in GetDialogsByPeersArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *GetDialogsByPeersArgs) Unmarshal(in []byte) error {
+	msg := new(userupdates.TLUserupdatesGetDialogsByPeers)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *GetDialogsByPeersArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in GetDialogsByPeersArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *GetDialogsByPeersArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(userupdates.TLUserupdatesGetDialogsByPeers)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetDialogsByPeersArgs_Req_DEFAULT *userupdates.TLUserupdatesGetDialogsByPeers
+
+func (p *GetDialogsByPeersArgs) GetReq() *userupdates.TLUserupdatesGetDialogsByPeers {
+	if !p.IsSetReq() {
+		return GetDialogsByPeersArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetDialogsByPeersArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type GetDialogsByPeersResult struct {
+	Success *userupdates.VectorDialogProjection
+}
+
+var GetDialogsByPeersResult_Success_DEFAULT *userupdates.VectorDialogProjection
+
+func (p *GetDialogsByPeersResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in GetDialogsByPeersResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *GetDialogsByPeersResult) Unmarshal(in []byte) error {
+	msg := new(userupdates.VectorDialogProjection)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetDialogsByPeersResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in GetDialogsByPeersResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *GetDialogsByPeersResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(userupdates.VectorDialogProjection)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetDialogsByPeersResult) GetSuccess() *userupdates.VectorDialogProjection {
+	if !p.IsSetSuccess() {
+		return GetDialogsByPeersResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetDialogsByPeersResult) SetSuccess(x interface{}) {
+	p.Success = x.(*userupdates.VectorDialogProjection)
+}
+
+func (p *GetDialogsByPeersResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetDialogsByPeersResult) GetResult() interface{} {
+	return p.Success
+}
+
+func getDialogCountHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*GetDialogCountArgs)
+	realResult := result.(*GetDialogCountResult)
+	success, err := handler.(userupdates.RPCUserupdates).UserupdatesGetDialogCount(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newGetDialogCountArgs() interface{} {
+	return &GetDialogCountArgs{}
+}
+
+func newGetDialogCountResult() interface{} {
+	return &GetDialogCountResult{}
+}
+
+type GetDialogCountArgs struct {
+	Req *userupdates.TLUserupdatesGetDialogCount
+}
+
+func (p *GetDialogCountArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in GetDialogCountArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *GetDialogCountArgs) Unmarshal(in []byte) error {
+	msg := new(userupdates.TLUserupdatesGetDialogCount)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *GetDialogCountArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in GetDialogCountArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *GetDialogCountArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(userupdates.TLUserupdatesGetDialogCount)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetDialogCountArgs_Req_DEFAULT *userupdates.TLUserupdatesGetDialogCount
+
+func (p *GetDialogCountArgs) GetReq() *userupdates.TLUserupdatesGetDialogCount {
+	if !p.IsSetReq() {
+		return GetDialogCountArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetDialogCountArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type GetDialogCountResult struct {
+	Success *tg.Int32
+}
+
+var GetDialogCountResult_Success_DEFAULT *tg.Int32
+
+func (p *GetDialogCountResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in GetDialogCountResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *GetDialogCountResult) Unmarshal(in []byte) error {
+	msg := new(tg.Int32)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetDialogCountResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in GetDialogCountResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *GetDialogCountResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.Int32)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetDialogCountResult) GetSuccess() *tg.Int32 {
+	if !p.IsSetSuccess() {
+		return GetDialogCountResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetDialogCountResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.Int32)
+}
+
+func (p *GetDialogCountResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetDialogCountResult) GetResult() interface{} {
+	return p.Success
+}
+
+func appendDialogAuthSeqSideEffectHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*AppendDialogAuthSeqSideEffectArgs)
+	realResult := result.(*AppendDialogAuthSeqSideEffectResult)
+	success, err := handler.(userupdates.RPCUserupdates).UserupdatesAppendDialogAuthSeqSideEffect(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newAppendDialogAuthSeqSideEffectArgs() interface{} {
+	return &AppendDialogAuthSeqSideEffectArgs{}
+}
+
+func newAppendDialogAuthSeqSideEffectResult() interface{} {
+	return &AppendDialogAuthSeqSideEffectResult{}
+}
+
+type AppendDialogAuthSeqSideEffectArgs struct {
+	Req *userupdates.TLUserupdatesAppendDialogAuthSeqSideEffect
+}
+
+func (p *AppendDialogAuthSeqSideEffectArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in AppendDialogAuthSeqSideEffectArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *AppendDialogAuthSeqSideEffectArgs) Unmarshal(in []byte) error {
+	msg := new(userupdates.TLUserupdatesAppendDialogAuthSeqSideEffect)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *AppendDialogAuthSeqSideEffectArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in AppendDialogAuthSeqSideEffectArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *AppendDialogAuthSeqSideEffectArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(userupdates.TLUserupdatesAppendDialogAuthSeqSideEffect)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var AppendDialogAuthSeqSideEffectArgs_Req_DEFAULT *userupdates.TLUserupdatesAppendDialogAuthSeqSideEffect
+
+func (p *AppendDialogAuthSeqSideEffectArgs) GetReq() *userupdates.TLUserupdatesAppendDialogAuthSeqSideEffect {
+	if !p.IsSetReq() {
+		return AppendDialogAuthSeqSideEffectArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *AppendDialogAuthSeqSideEffectArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type AppendDialogAuthSeqSideEffectResult struct {
+	Success *userupdates.UserAuthSeqAppendResult
+}
+
+var AppendDialogAuthSeqSideEffectResult_Success_DEFAULT *userupdates.UserAuthSeqAppendResult
+
+func (p *AppendDialogAuthSeqSideEffectResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in AppendDialogAuthSeqSideEffectResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *AppendDialogAuthSeqSideEffectResult) Unmarshal(in []byte) error {
+	msg := new(userupdates.UserAuthSeqAppendResult)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *AppendDialogAuthSeqSideEffectResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in AppendDialogAuthSeqSideEffectResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *AppendDialogAuthSeqSideEffectResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(userupdates.UserAuthSeqAppendResult)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *AppendDialogAuthSeqSideEffectResult) GetSuccess() *userupdates.UserAuthSeqAppendResult {
+	if !p.IsSetSuccess() {
+		return AppendDialogAuthSeqSideEffectResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *AppendDialogAuthSeqSideEffectResult) SetSuccess(x interface{}) {
+	p.Success = x.(*userupdates.UserAuthSeqAppendResult)
+}
+
+func (p *AppendDialogAuthSeqSideEffectResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *AppendDialogAuthSeqSideEffectResult) GetResult() interface{} {
+	return p.Success
+}
+
+func appendDialogPtsSideEffectHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*AppendDialogPtsSideEffectArgs)
+	realResult := result.(*AppendDialogPtsSideEffectResult)
+	success, err := handler.(userupdates.RPCUserupdates).UserupdatesAppendDialogPtsSideEffect(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newAppendDialogPtsSideEffectArgs() interface{} {
+	return &AppendDialogPtsSideEffectArgs{}
+}
+
+func newAppendDialogPtsSideEffectResult() interface{} {
+	return &AppendDialogPtsSideEffectResult{}
+}
+
+type AppendDialogPtsSideEffectArgs struct {
+	Req *userupdates.TLUserupdatesAppendDialogPtsSideEffect
+}
+
+func (p *AppendDialogPtsSideEffectArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in AppendDialogPtsSideEffectArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *AppendDialogPtsSideEffectArgs) Unmarshal(in []byte) error {
+	msg := new(userupdates.TLUserupdatesAppendDialogPtsSideEffect)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *AppendDialogPtsSideEffectArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in AppendDialogPtsSideEffectArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *AppendDialogPtsSideEffectArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(userupdates.TLUserupdatesAppendDialogPtsSideEffect)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var AppendDialogPtsSideEffectArgs_Req_DEFAULT *userupdates.TLUserupdatesAppendDialogPtsSideEffect
+
+func (p *AppendDialogPtsSideEffectArgs) GetReq() *userupdates.TLUserupdatesAppendDialogPtsSideEffect {
+	if !p.IsSetReq() {
+		return AppendDialogPtsSideEffectArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *AppendDialogPtsSideEffectArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type AppendDialogPtsSideEffectResult struct {
+	Success *userupdates.UserPtsAppendResult
+}
+
+var AppendDialogPtsSideEffectResult_Success_DEFAULT *userupdates.UserPtsAppendResult
+
+func (p *AppendDialogPtsSideEffectResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in AppendDialogPtsSideEffectResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *AppendDialogPtsSideEffectResult) Unmarshal(in []byte) error {
+	msg := new(userupdates.UserPtsAppendResult)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *AppendDialogPtsSideEffectResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in AppendDialogPtsSideEffectResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *AppendDialogPtsSideEffectResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(userupdates.UserPtsAppendResult)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *AppendDialogPtsSideEffectResult) GetSuccess() *userupdates.UserPtsAppendResult {
+	if !p.IsSetSuccess() {
+		return AppendDialogPtsSideEffectResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *AppendDialogPtsSideEffectResult) SetSuccess(x interface{}) {
+	p.Success = x.(*userupdates.UserPtsAppendResult)
+}
+
+func (p *AppendDialogPtsSideEffectResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *AppendDialogPtsSideEffectResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -744,6 +1449,66 @@ func (p *kClient) UserupdatesGetDifference(ctx context.Context, req *userupdates
 	var _result GetDifferenceResult
 
 	if err = p.c.Call(ctx, "/userupdates.RPCUserupdates/userupdates.getDifference", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) UserupdatesListDialogs(ctx context.Context, req *userupdates.TLUserupdatesListDialogs) (r *userupdates.DialogProjectionList, err error) {
+	// var _args ListDialogsArgs
+	// _args.Req = req
+	var _result ListDialogsResult
+
+	if err = p.c.Call(ctx, "/userupdates.RPCUserupdates/userupdates.listDialogs", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) UserupdatesGetDialogsByPeers(ctx context.Context, req *userupdates.TLUserupdatesGetDialogsByPeers) (r *userupdates.VectorDialogProjection, err error) {
+	// var _args GetDialogsByPeersArgs
+	// _args.Req = req
+	var _result GetDialogsByPeersResult
+
+	if err = p.c.Call(ctx, "/userupdates.RPCUserupdates/userupdates.getDialogsByPeers", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) UserupdatesGetDialogCount(ctx context.Context, req *userupdates.TLUserupdatesGetDialogCount) (r *tg.Int32, err error) {
+	// var _args GetDialogCountArgs
+	// _args.Req = req
+	var _result GetDialogCountResult
+
+	if err = p.c.Call(ctx, "/userupdates.RPCUserupdates/userupdates.getDialogCount", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) UserupdatesAppendDialogAuthSeqSideEffect(ctx context.Context, req *userupdates.TLUserupdatesAppendDialogAuthSeqSideEffect) (r *userupdates.UserAuthSeqAppendResult, err error) {
+	// var _args AppendDialogAuthSeqSideEffectArgs
+	// _args.Req = req
+	var _result AppendDialogAuthSeqSideEffectResult
+
+	if err = p.c.Call(ctx, "/userupdates.RPCUserupdates/userupdates.appendDialogAuthSeqSideEffect", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) UserupdatesAppendDialogPtsSideEffect(ctx context.Context, req *userupdates.TLUserupdatesAppendDialogPtsSideEffect) (r *userupdates.UserPtsAppendResult, err error) {
+	// var _args AppendDialogPtsSideEffectArgs
+	// _args.Req = req
+	var _result AppendDialogPtsSideEffectResult
+
+	if err = p.c.Call(ctx, "/userupdates.RPCUserupdates/userupdates.appendDialogPtsSideEffect", req, &_result); err != nil {
 		return
 	}
 

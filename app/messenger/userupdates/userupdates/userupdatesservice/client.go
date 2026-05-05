@@ -29,6 +29,11 @@ type Client interface {
 	UserupdatesGetOperationResult(ctx context.Context, req *userupdates.TLUserupdatesGetOperationResult, callOptions ...callopt.Option) (r *userupdates.UserOperationResult, err error)
 	UserupdatesGetState(ctx context.Context, req *userupdates.TLUserupdatesGetState, callOptions ...callopt.Option) (r *userupdates.UserState, err error)
 	UserupdatesGetDifference(ctx context.Context, req *userupdates.TLUserupdatesGetDifference, callOptions ...callopt.Option) (r *userupdates.UserDifference, err error)
+	UserupdatesListDialogs(ctx context.Context, req *userupdates.TLUserupdatesListDialogs, callOptions ...callopt.Option) (r *userupdates.DialogProjectionList, err error)
+	UserupdatesGetDialogsByPeers(ctx context.Context, req *userupdates.TLUserupdatesGetDialogsByPeers, callOptions ...callopt.Option) (r *userupdates.VectorDialogProjection, err error)
+	UserupdatesGetDialogCount(ctx context.Context, req *userupdates.TLUserupdatesGetDialogCount, callOptions ...callopt.Option) (r *tg.Int32, err error)
+	UserupdatesAppendDialogAuthSeqSideEffect(ctx context.Context, req *userupdates.TLUserupdatesAppendDialogAuthSeqSideEffect, callOptions ...callopt.Option) (r *userupdates.UserAuthSeqAppendResult, err error)
+	UserupdatesAppendDialogPtsSideEffect(ctx context.Context, req *userupdates.TLUserupdatesAppendDialogPtsSideEffect, callOptions ...callopt.Option) (r *userupdates.UserPtsAppendResult, err error)
 }
 
 // Deprecated: prefer the generated app client helper or pkg/net/kitex.NewClient for TL-aware transport setup.
@@ -86,4 +91,29 @@ func (p *kUserupdatesClient) UserupdatesGetState(ctx context.Context, req *useru
 func (p *kUserupdatesClient) UserupdatesGetDifference(ctx context.Context, req *userupdates.TLUserupdatesGetDifference, callOptions ...callopt.Option) (r *userupdates.UserDifference, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.UserupdatesGetDifference(ctx, req)
+}
+
+func (p *kUserupdatesClient) UserupdatesListDialogs(ctx context.Context, req *userupdates.TLUserupdatesListDialogs, callOptions ...callopt.Option) (r *userupdates.DialogProjectionList, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserupdatesListDialogs(ctx, req)
+}
+
+func (p *kUserupdatesClient) UserupdatesGetDialogsByPeers(ctx context.Context, req *userupdates.TLUserupdatesGetDialogsByPeers, callOptions ...callopt.Option) (r *userupdates.VectorDialogProjection, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserupdatesGetDialogsByPeers(ctx, req)
+}
+
+func (p *kUserupdatesClient) UserupdatesGetDialogCount(ctx context.Context, req *userupdates.TLUserupdatesGetDialogCount, callOptions ...callopt.Option) (r *tg.Int32, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserupdatesGetDialogCount(ctx, req)
+}
+
+func (p *kUserupdatesClient) UserupdatesAppendDialogAuthSeqSideEffect(ctx context.Context, req *userupdates.TLUserupdatesAppendDialogAuthSeqSideEffect, callOptions ...callopt.Option) (r *userupdates.UserAuthSeqAppendResult, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserupdatesAppendDialogAuthSeqSideEffect(ctx, req)
+}
+
+func (p *kUserupdatesClient) UserupdatesAppendDialogPtsSideEffect(ctx context.Context, req *userupdates.TLUserupdatesAppendDialogPtsSideEffect, callOptions ...callopt.Option) (r *userupdates.UserPtsAppendResult, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserupdatesAppendDialogPtsSideEffect(ctx, req)
 }

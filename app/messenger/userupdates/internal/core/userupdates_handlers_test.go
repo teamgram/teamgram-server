@@ -264,6 +264,15 @@ type fakeUserUpdatesRepository struct {
 	state              *repository.UserState
 	differenceInput    repository.GetDifferenceInput
 	difference         *repository.GetDifferenceResult
+	dialogListUserID   int64
+	dialogListCursor   repository.DialogProjectionCursor
+	dialogListLimit    int32
+	dialogProjections  []repository.DialogProjection
+	dialogPeerUserID   int64
+	dialogPeers        []repository.DialogProjectionPeer
+	dialogPeerMap      map[repository.DialogProjectionPeer]repository.DialogProjection
+	dialogCountUserID  int64
+	dialogCount        int32
 }
 
 func (f *fakeUserUpdatesRepository) ApplyUserOperation(_ context.Context, in repository.ApplyUserOperationInput) (*repository.ApplyUserOperationResult, error) {
@@ -284,6 +293,24 @@ func (f *fakeUserUpdatesRepository) GetState(_ context.Context, userID int64, pe
 func (f *fakeUserUpdatesRepository) GetDifference(_ context.Context, in repository.GetDifferenceInput) (*repository.GetDifferenceResult, error) {
 	f.differenceInput = in
 	return f.difference, nil
+}
+
+func (f *fakeUserUpdatesRepository) ListDialogProjections(_ context.Context, userID int64, cursor repository.DialogProjectionCursor, limit int32) ([]repository.DialogProjection, error) {
+	f.dialogListUserID = userID
+	f.dialogListCursor = cursor
+	f.dialogListLimit = limit
+	return f.dialogProjections, nil
+}
+
+func (f *fakeUserUpdatesRepository) GetDialogProjectionsByPeers(_ context.Context, userID int64, peers []repository.DialogProjectionPeer) (map[repository.DialogProjectionPeer]repository.DialogProjection, error) {
+	f.dialogPeerUserID = userID
+	f.dialogPeers = peers
+	return f.dialogPeerMap, nil
+}
+
+func (f *fakeUserUpdatesRepository) CountVisibleDialogs(_ context.Context, userID int64) (int32, error) {
+	f.dialogCountUserID = userID
+	return f.dialogCount, nil
 }
 
 func mustMarshalMessageEvent(t *testing.T, event payload.MessageEventV1) []byte {

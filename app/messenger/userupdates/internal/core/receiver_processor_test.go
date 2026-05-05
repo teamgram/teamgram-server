@@ -71,3 +71,15 @@ func (f *fakeReceiverProcessorRepository) GetState(context.Context, int64, int64
 func (f *fakeReceiverProcessorRepository) GetDifference(context.Context, repository.GetDifferenceInput) (*repository.GetDifferenceResult, error) {
 	return nil, nil
 }
+
+func (f *fakeReceiverProcessorRepository) ListDialogProjections(context.Context, int64, repository.DialogProjectionCursor, int32) ([]repository.DialogProjection, error) {
+	return nil, nil
+}
+
+func (f *fakeReceiverProcessorRepository) GetDialogProjectionsByPeers(context.Context, int64, []repository.DialogProjectionPeer) (map[repository.DialogProjectionPeer]repository.DialogProjection, error) {
+	return nil, nil
+}
+
+func (f *fakeReceiverProcessorRepository) CountVisibleDialogs(context.Context, int64) (int32, error) {
+	return 0, nil
+}

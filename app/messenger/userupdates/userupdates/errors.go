@@ -9,4 +9,6 @@ var (
 	ErrPtsContinuityViolation   = errors.New("userupdates: pts continuity violation")
 	ErrOperationTerminal        = errors.New("userupdates: operation terminal")
 	ErrUserupdatesStorage       = errors.New("userupdates: storage failure")
+	ErrDialogQueryTooLarge      = errors.New("userupdates: dialog query too large")
+	ErrAuthSeqLedgerUnavailable = errors.New("userupdates: auth seq ledger unavailable")
 )
