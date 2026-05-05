@@ -22,6 +22,13 @@ const (
 )
 
 const (
-	OperationKindSendMessage = "send_message"
-	EventKindNewMessage      = "new_message"
+	OperationKindSendMessage         = "send_message"
+	OperationKindReadHistory         = "read_history"
+	OperationKindDeleteMessages      = "delete_messages"
+	OperationKindDeleteHistory       = "delete_history"
+	OperationKindEditMessage         = "edit_message"
+	OperationKindUpdatePinnedMessage = "update_pinned_message"
+	OperationKindScheduledMarker     = "scheduled_marker"
+	OperationKindMarkDialogUnread    = "mark_dialog_unread"
+	EventKindNewMessage              = "new_message"
 )

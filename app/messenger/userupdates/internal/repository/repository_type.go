@@ -24,7 +24,11 @@ const (
 
 	OpTypeSendMessage int32 = 1
 
-	EventTypeNewMessage int32 = 1
+	EventTypeNewMessage          int32 = 1
+	EventTypeReadHistory         int32 = 2
+	EventTypeUpdatePinnedMessage int32 = 3
+	EventTypeMarkDialogUnread    int32 = 4
+	EventTypeScheduledMarker     int32 = 5
 
 	OperationResultStatusCompleted int32 = 1
 
