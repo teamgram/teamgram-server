@@ -33,12 +33,8 @@ var (
 type (
 	dialogFiltersModel interface {
 		Insert2(ctx context.Context, data *DialogFilters) (sql.Result, error)
-		FindOne(ctx context.Context, id int64) (*DialogFilters, error)
-		FindListByIdList(ctx context.Context, id ...int64) ([]DialogFilters, error)
-		Update2(ctx context.Context, data *DialogFilters) error
-		Delete2(ctx context.Context, id int64) error
 
-		FindOneByUserIdDialogFilterId(ctx context.Context, userId int64, dialogFilterId int32) (*DialogFilters, error)
+		FindOneByUserIdSlug(ctx context.Context, userId int64, slug string) (*DialogFilters, error)
 	}
 
 	defaultDialogFiltersModel struct {
@@ -46,17 +42,15 @@ type (
 	}
 
 	DialogFilters struct {
-		Id             int64  `db:"id" json:"id"`
-		UserId         int64  `db:"user_id" json:"user_id"`
-		DialogFilterId int32  `db:"dialog_filter_id" json:"dialog_filter_id"`
-		IsChatlist     bool   `db:"is_chatlist" json:"is_chatlist"`
-		JoinedBySlug   bool   `db:"joined_by_slug" json:"joined_by_slug"`
-		Slug           string `db:"slug" json:"slug"`
-		HasMyInvites   int32  `db:"has_my_invites" json:"has_my_invites"`
-		DialogFilter   string `db:"dialog_filter" json:"dialog_filter"`
-		OrderValue     int64  `db:"order_value" json:"order_value"`
-		FromSuggested  int32  `db:"from_suggested" json:"from_suggested"`
-		Deleted        bool   `db:"deleted" json:"deleted"`
+		UserId              int64  `db:"user_id" json:"user_id"`
+		DialogFilterId      int32  `db:"dialog_filter_id" json:"dialog_filter_id"`
+		Slug                string `db:"slug" json:"slug"`
+		Title               string `db:"title" json:"title"`
+		OrderValue          int64  `db:"order_value" json:"order_value"`
+		Enabled             bool   `db:"enabled" json:"enabled"`
+		Deleted             bool   `db:"deleted" json:"deleted"`
+		FilterSchemaVersion int32  `db:"filter_schema_version" json:"filter_schema_version"`
+		FilterPayload       []byte `db:"filter_payload" json:"filter_payload"`
 	}
 )
 
@@ -68,9 +62,9 @@ func newDialogFiltersModel(db *sqlx.DB) *defaultDialogFiltersModel {
 
 func (m *defaultDialogFiltersModel) Insert2(ctx context.Context, data *DialogFilters) (sql.Result, error) {
 	tableName := "dialog_filters"
-	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName, dialogFiltersRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName, dialogFiltersRowsExpectAutoSet)
 
-	r, err := m.db.Exec(ctx, query, data.UserId, data.DialogFilterId, data.IsChatlist, data.JoinedBySlug, data.Slug, data.HasMyInvites, data.DialogFilter, data.OrderValue, data.FromSuggested, data.Deleted)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.DialogFilterId, data.Slug, data.Title, data.OrderValue, data.Enabled, data.Deleted, data.FilterSchemaVersion, data.FilterPayload)
 	if err != nil {
 		return nil, fmt.Errorf("dialog_filters.Insert2 exec: %w", err)
 	}
@@ -78,87 +72,22 @@ func (m *defaultDialogFiltersModel) Insert2(ctx context.Context, data *DialogFil
 	return r, nil
 }
 
-func (m *defaultDialogFiltersModel) Delete2(ctx context.Context, id int64) error {
+func (m *defaultDialogFiltersModel) FindOneByUserIdSlug(ctx context.Context, userId int64, slug string) (*DialogFilters, error) {
 	tableName := "dialog_filters"
-	query := fmt.Sprintf("delete from `%s` where `id` = ?", tableName)
-
-	_, err := m.db.Exec(ctx, query, id)
-	if err != nil {
-		return fmt.Errorf("dialog_filters.Delete2 exec: %w", err)
-	}
-
-	return nil
-}
-
-func (m *defaultDialogFiltersModel) FindOne(ctx context.Context, id int64) (*DialogFilters, error) {
-	tableName := "dialog_filters"
-	query := fmt.Sprintf("select %s from %s where id = ? limit 1", dialogFiltersRows, tableName)
+	query := fmt.Sprintf("select %s from %s where user_id = ? AND slug = ? limit 1", dialogFiltersRows, tableName)
 	var resp DialogFilters
 
-	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+	err := m.db.QueryRowPartial(ctx, &resp, query, userId, slug)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
 			return nil, &NotFoundError{
 				Resource: "dialog_filters",
-				Key:      fmt.Sprintf("id=%v", id),
+				Key:      fmt.Sprintf("user_id=%v,slug=%v", userId, slug),
 				Cause:    err,
 			}
 		}
-		return nil, fmt.Errorf("dialog_filters.FindOne: %w", err)
-	}
-
-	return &resp, nil
-}
-
-func (m *defaultDialogFiltersModel) FindListByIdList(ctx context.Context, id ...int64) ([]DialogFilters, error) {
-	if len(id) == 0 {
-		return []DialogFilters{}, nil
-	}
-	tableName := "dialog_filters"
-
-	query := fmt.Sprintf("select %s from %s where id in (%s)", dialogFiltersRows, tableName, sqlx.InInt64List(id))
-
-	var resp []DialogFilters
-	err := m.db.QueryRowsPartial(ctx, &resp, query)
-	if err != nil {
-		if errors.Is(err, sqlx.ErrNotFound) {
-			return []DialogFilters{}, nil
-		}
-		return nil, fmt.Errorf("dialog_filters.FindListByIdList: %w", err)
-	}
-
-	return resp, nil
-}
-
-func (m *defaultDialogFiltersModel) Update2(ctx context.Context, data *DialogFilters) error {
-	tableName := "dialog_filters"
-	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, dialogFiltersRowsWithPlaceHolder)
-
-	_, err := m.db.Exec(ctx, query, data.UserId, data.DialogFilterId, data.IsChatlist, data.JoinedBySlug, data.Slug, data.HasMyInvites, data.DialogFilter, data.OrderValue, data.FromSuggested, data.Deleted, data.Id)
-	if err != nil {
-		return fmt.Errorf("dialog_filters.Update2 exec: %w", err)
-	}
-
-	return nil
-}
-
-func (m *defaultDialogFiltersModel) FindOneByUserIdDialogFilterId(ctx context.Context, userId int64, dialogFilterId int32) (*DialogFilters, error) {
-	tableName := "dialog_filters"
-	query := fmt.Sprintf("select %s from %s where user_id = ? AND dialog_filter_id = ? limit 1", dialogFiltersRows, tableName)
-	var resp DialogFilters
-
-	err := m.db.QueryRowPartial(ctx, &resp, query, userId, dialogFilterId)
-
-	if err != nil {
-		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, &NotFoundError{
-				Resource: "dialog_filters",
-				Key:      fmt.Sprintf("user_id=%v,dialog_filter_id=%v", userId, dialogFilterId),
-				Cause:    err,
-			}
-		}
-		return nil, fmt.Errorf("dialog_filters.FindOneByUserIdDialogFilterId: %w", err)
+		return nil, fmt.Errorf("dialog_filters.FindOneByUserIdSlug: %w", err)
 	}
 
 	return &resp, nil

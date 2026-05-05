@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="dialog_visual_settings">
+    <operation name="Upsert">
+        <sql>
+            INSERT INTO dialog_visual_settings
+                (user_id, peer_type, peer_id, wallpaper_id, wallpaper_overridden, visual_version)
+            VALUES
+                (:user_id, :peer_type, :peer_id, :wallpaper_id, :wallpaper_overridden, :visual_version)
+            ON DUPLICATE KEY UPDATE
+                wallpaper_id = VALUES(wallpaper_id),
+                wallpaper_overridden = VALUES(wallpaper_overridden),
+                visual_version = visual_version + 1
+        </sql>
+    </operation>
+
+    <operation name="SelectByUserPeer">
+        <sql>
+            SELECT
+                user_id, peer_type, peer_id, wallpaper_id, wallpaper_overridden, visual_version
+            FROM
+                dialog_visual_settings
+            WHERE
+                user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id LIMIT 1
+        </sql>
+    </operation>
+</table>

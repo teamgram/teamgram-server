@@ -3,52 +3,52 @@
     <operation name="InsertOrUpdate">
         <sql>
             INSERT INTO dialog_filters
-                (user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value)
+                (user_id, dialog_filter_id, slug, title, order_value, enabled, deleted, filter_schema_version, filter_payload)
             VALUES
-                (:user_id, :dialog_filter_id, :is_chatlist, :joined_by_slug, :slug, :dialog_filter, :order_value)
+                (:user_id, :dialog_filter_id, :slug, :title, :order_value, :enabled, :deleted, :filter_schema_version, :filter_payload)
             ON DUPLICATE KEY UPDATE
-                is_chatlist = VALUES(is_chatlist),
-                dialog_filter = VALUES(dialog_filter),
-                joined_by_slug = VALUES(joined_by_slug),
                 slug = VALUES(slug),
+                title = VALUES(title),
                 order_value = VALUES(order_value),
-                deleted = 0
+                enabled = VALUES(enabled),
+                deleted = VALUES(deleted),
+                filter_schema_version = VALUES(filter_schema_version),
+                filter_payload = VALUES(filter_payload)
         </sql>
     </operation>
 
     <operation name="SelectBySlug">
         <sql>
             SELECT
-                id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested
+                user_id, dialog_filter_id, slug, title, order_value, enabled, deleted, filter_schema_version, filter_payload
             FROM
                 dialog_filters
             WHERE
-                user_id=:user_id AND slug=:slug AND deleted=0
-            ORDER BY order_value DESC
+                user_id = :user_id AND slug = :slug AND deleted = 0 LIMIT 1
         </sql>
     </operation>
 
     <operation name="Select">
         <sql>
             SELECT
-                id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested
+                user_id, dialog_filter_id, slug, title, order_value, enabled, deleted, filter_schema_version, filter_payload
             FROM
                 dialog_filters
             WHERE
-                user_id=:user_id AND dialog_filter_id=:dialog_filter_id AND deleted=0
-            ORDER BY order_value DESC
+                user_id = :user_id AND dialog_filter_id = :dialog_filter_id AND deleted = 0 LIMIT 1
         </sql>
     </operation>
 
     <operation name="SelectList" result_set="list">
         <sql>
             SELECT
-                id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested
+                user_id, dialog_filter_id, slug, title, order_value, enabled, deleted, filter_schema_version, filter_payload
             FROM
                 dialog_filters
             WHERE
-                user_id=:user_id AND deleted=0
-            ORDER BY order_value DESC
+                user_id = :user_id AND deleted = 0
+            ORDER BY
+                order_value ASC
         </sql>
     </operation>
 
@@ -59,7 +59,7 @@
             SET
                 order_value = :order_value
             WHERE
-                user_id=:user_id AND dialog_filter_id = :dialog_filter_id
+                user_id = :user_id AND dialog_filter_id = :dialog_filter_id
         </sql>
     </operation>
 
@@ -68,9 +68,9 @@
             UPDATE
                 dialog_filters
             SET
-                deleted = 1, dialog_filter = 'null', order_value = 0
+                deleted = 1, enabled = 0, order_value = 0
             WHERE
-                user_id=:user_id AND dialog_filter_id = :dialog_filter_id
+                user_id = :user_id AND dialog_filter_id = :dialog_filter_id
         </sql>
     </operation>
 </table>

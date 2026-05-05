@@ -55,10 +55,10 @@ func NewDialogFiltersTxModel(tx *sqlx.Tx) DialogFiltersTxModel {
 }
 
 // InsertOrUpdate
-// insert into dialog_filters(user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value) values (:user_id, :dialog_filter_id, :is_chatlist, :joined_by_slug, :slug, :dialog_filter, :order_value) on duplicate key update is_chatlist = values(is_chatlist), dialog_filter = values(dialog_filter), joined_by_slug = values(joined_by_slug), slug = values(slug), order_value = values(order_value), deleted = 0
+// insert into dialog_filters(user_id, dialog_filter_id, slug, title, order_value, enabled, deleted, filter_schema_version, filter_payload) values (:user_id, :dialog_filter_id, :slug, :title, :order_value, :enabled, :deleted, :filter_schema_version, :filter_payload) on duplicate key update slug = values(slug), title = values(title), order_value = values(order_value), enabled = values(enabled), deleted = values(deleted), filter_schema_version = values(filter_schema_version), filter_payload = values(filter_payload)
 func (m *defaultDialogFiltersModel) InsertOrUpdate(ctx context.Context, data *DialogFilters) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into dialog_filters(user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value) values (:user_id, :dialog_filter_id, :is_chatlist, :joined_by_slug, :slug, :dialog_filter, :order_value) on duplicate key update is_chatlist = values(is_chatlist), dialog_filter = values(dialog_filter), joined_by_slug = values(joined_by_slug), slug = values(slug), order_value = values(order_value), deleted = 0"
+		query = "insert into dialog_filters(user_id, dialog_filter_id, slug, title, order_value, enabled, deleted, filter_schema_version, filter_payload) values (:user_id, :dialog_filter_id, :slug, :title, :order_value, :enabled, :deleted, :filter_schema_version, :filter_payload) on duplicate key update slug = values(slug), title = values(title), order_value = values(order_value), enabled = values(enabled), deleted = values(deleted), filter_schema_version = values(filter_schema_version), filter_payload = values(filter_payload)"
 		r     sql.Result
 	)
 
@@ -83,10 +83,10 @@ func (m *defaultDialogFiltersModel) InsertOrUpdate(ctx context.Context, data *Di
 }
 
 // InsertOrUpdate
-// insert into dialog_filters(user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value) values (:user_id, :dialog_filter_id, :is_chatlist, :joined_by_slug, :slug, :dialog_filter, :order_value) on duplicate key update is_chatlist = values(is_chatlist), dialog_filter = values(dialog_filter), joined_by_slug = values(joined_by_slug), slug = values(slug), order_value = values(order_value), deleted = 0
+// insert into dialog_filters(user_id, dialog_filter_id, slug, title, order_value, enabled, deleted, filter_schema_version, filter_payload) values (:user_id, :dialog_filter_id, :slug, :title, :order_value, :enabled, :deleted, :filter_schema_version, :filter_payload) on duplicate key update slug = values(slug), title = values(title), order_value = values(order_value), enabled = values(enabled), deleted = values(deleted), filter_schema_version = values(filter_schema_version), filter_payload = values(filter_payload)
 func (m *defaultDialogFiltersTxModel) InsertOrUpdate(data *DialogFilters) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into dialog_filters(user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value) values (:user_id, :dialog_filter_id, :is_chatlist, :joined_by_slug, :slug, :dialog_filter, :order_value) on duplicate key update is_chatlist = values(is_chatlist), dialog_filter = values(dialog_filter), joined_by_slug = values(joined_by_slug), slug = values(slug), order_value = values(order_value), deleted = 0"
+		query = "insert into dialog_filters(user_id, dialog_filter_id, slug, title, order_value, enabled, deleted, filter_schema_version, filter_payload) values (:user_id, :dialog_filter_id, :slug, :title, :order_value, :enabled, :deleted, :filter_schema_version, :filter_payload) on duplicate key update slug = values(slug), title = values(title), order_value = values(order_value), enabled = values(enabled), deleted = values(deleted), filter_schema_version = values(filter_schema_version), filter_payload = values(filter_payload)"
 		r     sql.Result
 	)
 
@@ -110,11 +110,11 @@ func (m *defaultDialogFiltersTxModel) InsertOrUpdate(data *DialogFilters) (lastI
 }
 
 // SelectBySlug
-// select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = :user_id and slug = :slug and deleted = 0 order by order_value desc
+// select user_id, dialog_filter_id, slug, title, order_value, enabled, deleted, filter_schema_version, filter_payload from dialog_filters where user_id = :user_id and slug = :slug and deleted = 0 limit 1
 func (m *defaultDialogFiltersModel) SelectBySlug(ctx context.Context, userId int64, slug string) (rValue *DialogFilters, err error) {
 
 	var (
-		query = "select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = ? and slug = ? and deleted = 0 order by order_value desc"
+		query = "select user_id, dialog_filter_id, slug, title, order_value, enabled, deleted, filter_schema_version, filter_payload from dialog_filters where user_id = ? and slug = ? and deleted = 0 limit 1"
 		do    = &DialogFilters{}
 	)
 	err = m.db.QueryRowPartial(ctx, do, query, userId, slug)
@@ -137,10 +137,10 @@ func (m *defaultDialogFiltersModel) SelectBySlug(ctx context.Context, userId int
 }
 
 // SelectBySlug
-// select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = :user_id and slug = :slug and deleted = 0 order by order_value desc
+// select user_id, dialog_filter_id, slug, title, order_value, enabled, deleted, filter_schema_version, filter_payload from dialog_filters where user_id = :user_id and slug = :slug and deleted = 0 limit 1
 func (m *defaultDialogFiltersTxModel) SelectBySlug(userId int64, slug string) (rValue *DialogFilters, err error) {
 	var (
-		query = "select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = ? and slug = ? and deleted = 0 order by order_value desc"
+		query = "select user_id, dialog_filter_id, slug, title, order_value, enabled, deleted, filter_schema_version, filter_payload from dialog_filters where user_id = ? and slug = ? and deleted = 0 limit 1"
 		do    = &DialogFilters{}
 	)
 	err = m.tx.QueryRowPartial(do, query, userId, slug)
@@ -162,11 +162,11 @@ func (m *defaultDialogFiltersTxModel) SelectBySlug(userId int64, slug string) (r
 }
 
 // Select
-// select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = :user_id and dialog_filter_id = :dialog_filter_id and deleted = 0 order by order_value desc
+// select user_id, dialog_filter_id, slug, title, order_value, enabled, deleted, filter_schema_version, filter_payload from dialog_filters where user_id = :user_id and dialog_filter_id = :dialog_filter_id and deleted = 0 limit 1
 func (m *defaultDialogFiltersModel) Select(ctx context.Context, userId int64, dialogFilterId int32) (rValue *DialogFilters, err error) {
 
 	var (
-		query = "select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = ? and dialog_filter_id = ? and deleted = 0 order by order_value desc"
+		query = "select user_id, dialog_filter_id, slug, title, order_value, enabled, deleted, filter_schema_version, filter_payload from dialog_filters where user_id = ? and dialog_filter_id = ? and deleted = 0 limit 1"
 		do    = &DialogFilters{}
 	)
 	err = m.db.QueryRowPartial(ctx, do, query, userId, dialogFilterId)
@@ -189,10 +189,10 @@ func (m *defaultDialogFiltersModel) Select(ctx context.Context, userId int64, di
 }
 
 // Select
-// select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = :user_id and dialog_filter_id = :dialog_filter_id and deleted = 0 order by order_value desc
+// select user_id, dialog_filter_id, slug, title, order_value, enabled, deleted, filter_schema_version, filter_payload from dialog_filters where user_id = :user_id and dialog_filter_id = :dialog_filter_id and deleted = 0 limit 1
 func (m *defaultDialogFiltersTxModel) Select(userId int64, dialogFilterId int32) (rValue *DialogFilters, err error) {
 	var (
-		query = "select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = ? and dialog_filter_id = ? and deleted = 0 order by order_value desc"
+		query = "select user_id, dialog_filter_id, slug, title, order_value, enabled, deleted, filter_schema_version, filter_payload from dialog_filters where user_id = ? and dialog_filter_id = ? and deleted = 0 limit 1"
 		do    = &DialogFilters{}
 	)
 	err = m.tx.QueryRowPartial(do, query, userId, dialogFilterId)
@@ -214,10 +214,10 @@ func (m *defaultDialogFiltersTxModel) Select(userId int64, dialogFilterId int32)
 }
 
 // SelectList
-// select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = :user_id and deleted = 0 order by order_value desc
+// select user_id, dialog_filter_id, slug, title, order_value, enabled, deleted, filter_schema_version, filter_payload from dialog_filters where user_id = :user_id and deleted = 0 order by order_value asc
 func (m *defaultDialogFiltersModel) SelectList(ctx context.Context, userId int64) (rList []DialogFilters, err error) {
 	var (
-		query  = "select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = ? and deleted = 0 order by order_value desc"
+		query  = "select user_id, dialog_filter_id, slug, title, order_value, enabled, deleted, filter_schema_version, filter_payload from dialog_filters where user_id = ? and deleted = 0 order by order_value asc"
 		values []DialogFilters
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
@@ -238,10 +238,10 @@ func (m *defaultDialogFiltersModel) SelectList(ctx context.Context, userId int64
 }
 
 // SelectList
-// select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = :user_id and deleted = 0 order by order_value desc
+// select user_id, dialog_filter_id, slug, title, order_value, enabled, deleted, filter_schema_version, filter_payload from dialog_filters where user_id = :user_id and deleted = 0 order by order_value asc
 func (m *defaultDialogFiltersTxModel) SelectList(userId int64) (rList []DialogFilters, err error) {
 	var (
-		query  = "select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = ? and deleted = 0 order by order_value desc"
+		query  = "select user_id, dialog_filter_id, slug, title, order_value, enabled, deleted, filter_schema_version, filter_payload from dialog_filters where user_id = ? and deleted = 0 order by order_value asc"
 		values []DialogFilters
 	)
 	err = m.tx.QueryRowsPartial(&values, query, userId)
@@ -262,10 +262,10 @@ func (m *defaultDialogFiltersTxModel) SelectList(userId int64) (rList []DialogFi
 }
 
 // SelectListWithCB
-// select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = :user_id and deleted = 0 order by order_value desc
+// select user_id, dialog_filter_id, slug, title, order_value, enabled, deleted, filter_schema_version, filter_payload from dialog_filters where user_id = :user_id and deleted = 0 order by order_value asc
 func (m *defaultDialogFiltersModel) SelectListWithCB(ctx context.Context, userId int64, cb func(sz, i int, v *DialogFilters)) (rList []DialogFilters, err error) {
 	var (
-		query  = "select id, user_id, dialog_filter_id, is_chatlist, joined_by_slug, slug, dialog_filter, order_value, from_suggested from dialog_filters where user_id = ? and deleted = 0 order by order_value desc"
+		query  = "select user_id, dialog_filter_id, slug, title, order_value, enabled, deleted, filter_schema_version, filter_payload from dialog_filters where user_id = ? and deleted = 0 order by order_value asc"
 		values []DialogFilters
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
@@ -341,11 +341,11 @@ func (m *defaultDialogFiltersTxModel) UpdateOrder(orderValue int64, userId int64
 }
 
 // Clear
-// update dialog_filters set deleted = 1, dialog_filter = 'null', order_value = 0 where user_id = :user_id and dialog_filter_id = :dialog_filter_id
+// update dialog_filters set deleted = 1, enabled = 0, order_value = 0 where user_id = :user_id and dialog_filter_id = :dialog_filter_id
 func (m *defaultDialogFiltersModel) Clear(ctx context.Context, userId int64, dialogFilterId int32) (rowsAffected int64, err error) {
 
 	var (
-		query   = "update dialog_filters set deleted = 1, dialog_filter = 'null', order_value = 0 where user_id = ? and dialog_filter_id = ?"
+		query   = "update dialog_filters set deleted = 1, enabled = 0, order_value = 0 where user_id = ? and dialog_filter_id = ?"
 		rResult sql.Result
 	)
 
@@ -366,10 +366,10 @@ func (m *defaultDialogFiltersModel) Clear(ctx context.Context, userId int64, dia
 }
 
 // Clear
-// update dialog_filters set deleted = 1, dialog_filter = 'null', order_value = 0 where user_id = :user_id and dialog_filter_id = :dialog_filter_id
+// update dialog_filters set deleted = 1, enabled = 0, order_value = 0 where user_id = :user_id and dialog_filter_id = :dialog_filter_id
 func (m *defaultDialogFiltersTxModel) Clear(userId int64, dialogFilterId int32) (rowsAffected int64, err error) {
 	var (
-		query   = "update dialog_filters set deleted = 1, dialog_filter = 'null', order_value = 0 where user_id = ? and dialog_filter_id = ?"
+		query   = "update dialog_filters set deleted = 1, enabled = 0, order_value = 0 where user_id = ? and dialog_filter_id = ?"
 		rResult sql.Result
 	)
 	rResult, err = m.tx.Exec(query, userId, dialogFilterId)

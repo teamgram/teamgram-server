@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="dialog_auth_seq_outbox">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO dialog_auth_seq_outbox
+                (outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, status, attempt_count, next_retry_at, lease_owner, lease_until, last_error_kind, last_error_message)
+            VALUES
+                (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :last_error_kind, :last_error_message)
+        </sql>
+    </operation>
+
+    <operation name="SelectByUserOperation">
+        <sql>
+            SELECT
+                outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, status, attempt_count, next_retry_at, lease_owner, lease_until, last_error_kind, last_error_message
+            FROM
+                dialog_auth_seq_outbox
+            WHERE
+                user_id = :user_id AND operation_id = :operation_id LIMIT 1
+        </sql>
+    </operation>
+</table>

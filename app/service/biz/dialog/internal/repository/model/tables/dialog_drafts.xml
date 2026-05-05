@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="dialog_drafts">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO dialog_drafts
+                (user_id, peer_type, peer_id, peer_dialog_id, draft_kind, message, entities_payload, reply_to_peer_seq, draft_payload_schema_version, draft_payload, date)
+            VALUES
+                (:user_id, :peer_type, :peer_id, :peer_dialog_id, :draft_kind, :message, :entities_payload, :reply_to_peer_seq, :draft_payload_schema_version, :draft_payload, :date)
+            ON DUPLICATE KEY UPDATE
+                draft_kind = VALUES(draft_kind),
+                message = VALUES(message),
+                entities_payload = VALUES(entities_payload),
+                reply_to_peer_seq = VALUES(reply_to_peer_seq),
+                draft_payload_schema_version = VALUES(draft_payload_schema_version),
+                draft_payload = VALUES(draft_payload),
+                date = VALUES(date)
+        </sql>
+    </operation>
+
+    <operation name="SelectByUserPeer">
+        <sql>
+            SELECT
+                user_id, peer_type, peer_id, peer_dialog_id, draft_kind, message, entities_payload, reply_to_peer_seq, draft_payload_schema_version, draft_payload, date
+            FROM
+                dialog_drafts
+            WHERE
+                user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id LIMIT 1
+        </sql>
+    </operation>
+</table>

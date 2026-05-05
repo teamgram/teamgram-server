@@ -13,7 +13,6 @@ package model
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -33,12 +32,6 @@ var (
 type (
 	savedDialogsModel interface {
 		Insert2(ctx context.Context, data *SavedDialogs) (sql.Result, error)
-		FindOne(ctx context.Context, id int64) (*SavedDialogs, error)
-		FindListByIdList(ctx context.Context, id ...int64) ([]SavedDialogs, error)
-		Update2(ctx context.Context, data *SavedDialogs) error
-		Delete2(ctx context.Context, id int64) error
-
-		FindOneByUserIdPeerTypePeerId(ctx context.Context, userId int64, peerType int32, peerId int64) (*SavedDialogs, error)
 	}
 
 	defaultSavedDialogsModel struct {
@@ -46,13 +39,17 @@ type (
 	}
 
 	SavedDialogs struct {
-		Id         int64 `db:"id" json:"id"`
-		UserId     int64 `db:"user_id" json:"user_id"`
-		PeerType   int32 `db:"peer_type" json:"peer_type"`
-		PeerId     int64 `db:"peer_id" json:"peer_id"`
-		Pinned     int64 `db:"pinned" json:"pinned"`
-		TopMessage int32 `db:"top_message" json:"top_message"`
-		Deleted    bool  `db:"deleted" json:"deleted"`
+		UserId                int64  `db:"user_id" json:"user_id"`
+		PeerType              int32  `db:"peer_type" json:"peer_type"`
+		PeerId                int64  `db:"peer_id" json:"peer_id"`
+		TopPeerSeq            int64  `db:"top_peer_seq" json:"top_peer_seq"`
+		TopCanonicalMessageId int64  `db:"top_canonical_message_id" json:"top_canonical_message_id"`
+		TopMessageDate        string `db:"top_message_date" json:"top_message_date"`
+		Pinned                bool   `db:"pinned" json:"pinned"`
+		PinOrder              int64  `db:"pin_order" json:"pin_order"`
+		Deleted               bool   `db:"deleted" json:"deleted"`
+		SavedSchemaVersion    int32  `db:"saved_schema_version" json:"saved_schema_version"`
+		SavedPayload          []byte `db:"saved_payload" json:"saved_payload"`
 	}
 )
 
@@ -64,98 +61,12 @@ func newSavedDialogsModel(db *sqlx.DB) *defaultSavedDialogsModel {
 
 func (m *defaultSavedDialogsModel) Insert2(ctx context.Context, data *SavedDialogs) (sql.Result, error) {
 	tableName := "saved_dialogs"
-	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?)", tableName, savedDialogsRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName, savedDialogsRowsExpectAutoSet)
 
-	r, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.Pinned, data.TopMessage, data.Deleted)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.TopPeerSeq, data.TopCanonicalMessageId, data.TopMessageDate, data.Pinned, data.PinOrder, data.Deleted, data.SavedSchemaVersion, data.SavedPayload)
 	if err != nil {
 		return nil, fmt.Errorf("saved_dialogs.Insert2 exec: %w", err)
 	}
 
 	return r, nil
-}
-
-func (m *defaultSavedDialogsModel) Delete2(ctx context.Context, id int64) error {
-	tableName := "saved_dialogs"
-	query := fmt.Sprintf("delete from `%s` where `id` = ?", tableName)
-
-	_, err := m.db.Exec(ctx, query, id)
-	if err != nil {
-		return fmt.Errorf("saved_dialogs.Delete2 exec: %w", err)
-	}
-
-	return nil
-}
-
-func (m *defaultSavedDialogsModel) FindOne(ctx context.Context, id int64) (*SavedDialogs, error) {
-	tableName := "saved_dialogs"
-	query := fmt.Sprintf("select %s from %s where id = ? limit 1", savedDialogsRows, tableName)
-	var resp SavedDialogs
-
-	err := m.db.QueryRowPartial(ctx, &resp, query, id)
-
-	if err != nil {
-		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, &NotFoundError{
-				Resource: "saved_dialogs",
-				Key:      fmt.Sprintf("id=%v", id),
-				Cause:    err,
-			}
-		}
-		return nil, fmt.Errorf("saved_dialogs.FindOne: %w", err)
-	}
-
-	return &resp, nil
-}
-
-func (m *defaultSavedDialogsModel) FindListByIdList(ctx context.Context, id ...int64) ([]SavedDialogs, error) {
-	if len(id) == 0 {
-		return []SavedDialogs{}, nil
-	}
-	tableName := "saved_dialogs"
-
-	query := fmt.Sprintf("select %s from %s where id in (%s)", savedDialogsRows, tableName, sqlx.InInt64List(id))
-
-	var resp []SavedDialogs
-	err := m.db.QueryRowsPartial(ctx, &resp, query)
-	if err != nil {
-		if errors.Is(err, sqlx.ErrNotFound) {
-			return []SavedDialogs{}, nil
-		}
-		return nil, fmt.Errorf("saved_dialogs.FindListByIdList: %w", err)
-	}
-
-	return resp, nil
-}
-
-func (m *defaultSavedDialogsModel) Update2(ctx context.Context, data *SavedDialogs) error {
-	tableName := "saved_dialogs"
-	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, savedDialogsRowsWithPlaceHolder)
-
-	_, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.Pinned, data.TopMessage, data.Deleted, data.Id)
-	if err != nil {
-		return fmt.Errorf("saved_dialogs.Update2 exec: %w", err)
-	}
-
-	return nil
-}
-
-func (m *defaultSavedDialogsModel) FindOneByUserIdPeerTypePeerId(ctx context.Context, userId int64, peerType int32, peerId int64) (*SavedDialogs, error) {
-	tableName := "saved_dialogs"
-	query := fmt.Sprintf("select %s from %s where user_id = ? AND peer_type = ? AND peer_id = ? limit 1", savedDialogsRows, tableName)
-	var resp SavedDialogs
-
-	err := m.db.QueryRowPartial(ctx, &resp, query, userId, peerType, peerId)
-
-	if err != nil {
-		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, &NotFoundError{
-				Resource: "saved_dialogs",
-				Key:      fmt.Sprintf("user_id=%v,peer_type=%v,peer_id=%v", userId, peerType, peerId),
-				Cause:    err,
-			}
-		}
-		return nil, fmt.Errorf("saved_dialogs.FindOneByUserIdPeerTypePeerId: %w", err)
-	}
-
-	return &resp, nil
 }
