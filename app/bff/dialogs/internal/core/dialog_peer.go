@@ -44,6 +44,18 @@ func dialogFacadePeerType(peerType int32) (int32, error) {
 	}
 }
 
+func resolveDialogUserPeerID(peer tg.InputPeerClazz, selfUserID int64) (int64, bool) {
+	p := tg.FromInputPeer2(selfUserID, peer)
+	switch p.PeerType {
+	case tg.PEER_SELF:
+		return selfUserID, selfUserID > 0
+	case tg.PEER_USER:
+		return p.PeerId, p.PeerId > 0
+	default:
+		return 0, false
+	}
+}
+
 func dialogFacadePeerDialogID(peerType int32, peerID int64) (int64, error) {
 	facadePeerType, err := dialogFacadePeerType(peerType)
 	if err != nil {

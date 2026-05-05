@@ -17,6 +17,7 @@
 package core
 
 import (
+	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -30,57 +31,43 @@ func (c *DialogsCore) MessagesGetPeerDialogs(in *tg.TLMessagesGetPeerDialogs) (*
 		return nil, tg.ErrInputRequestInvalid
 	}
 
-	dialogs := make([]tg.DialogClazz, 0, len(in.Peers))
-	messages := make([]tg.MessageClazz, 0, len(in.Peers))
-	users := make([]tg.UserClazz, 0, len(in.Peers))
+	peers := make([]dialogpb.DialogPeerClazz, 0, len(in.Peers))
 	for _, peer := range in.Peers {
-		inputDialogPeer, ok := (&tg.InputDialogPeer{Clazz: peer}).ToInputDialogPeer()
-		if !ok {
-			if _, isFolder := (&tg.InputDialogPeer{Clazz: peer}).ToInputDialogPeerFolder(); isFolder {
-				return nil, tg.ErrFolderIdInvalid
-			}
-			return nil, tg.ErrInputConstructorInvalid
-		}
-
-		peerUserID, ok := resolveDialogUserPeerID(inputDialogPeer.Peer, c.MD.UserId)
-		if !ok {
-			return nil, tg.Err400PeerIdInvalid
-		}
-		fallback, err := c.fetchCanonicalUserDialog("messages.getPeerDialogs", peerUserID)
+		resolved, err := c.resolveInputDialogPeer(peer)
 		if err != nil {
 			return nil, err
 		}
-		if fallback == nil {
-			continue
+		peerType, err := dialogFacadePeerType(resolved.PeerType)
+		if err != nil {
+			return nil, err
 		}
-		dialogs = append(dialogs, fallback.Dialog)
-		messages = append(messages, fallback.Messages...)
-		users = append(users, fallback.Users...)
+		peers = append(peers, dialogpb.MakeTLDialogPeer(&dialogpb.TLDialogPeer{
+			PeerType: peerType,
+			PeerId:   resolved.PeerId,
+		}))
+	}
+	if len(peers) == 0 {
+		return emptyPeerDialogs(), nil
 	}
 
+	result, err := c.svcCtx.Repo.DialogClient.DialogGetPeerDialogsV2(c.ctx, &dialogpb.TLDialogGetPeerDialogsV2{
+		UserId: c.MD.UserId,
+		Peers:  peers,
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.getPeerDialogs - dialog.getPeerDialogsV2 failed: user_id: %d, peer_count: %d, err: %v",
+			c.MD.UserId, len(peers), err)
+		return nil, tg.ErrInternalServerError
+	}
+	hydrated, err := c.hydrateDialogExtV2s("messages.getPeerDialogs", vectorDialogExtV2Datas(result))
+	if err != nil {
+		return nil, err
+	}
 	return tg.MakeTLMessagesPeerDialogs(&tg.TLMessagesPeerDialogs{
-		Dialogs:  dialogs,
-		Messages: messages,
-		Chats:    []tg.ChatClazz{},
-		Users:    users,
-		State: tg.MakeTLUpdatesState(&tg.TLUpdatesState{
-			Pts:         0,
-			Qts:         0,
-			Date:        0,
-			Seq:         0,
-			UnreadCount: 0,
-		}),
+		Dialogs:  hydrated.Dialogs,
+		Messages: hydrated.Messages,
+		Chats:    hydrated.Chats,
+		Users:    hydrated.Users,
+		State:    emptyUpdatesState(),
 	}).ToMessagesPeerDialogs(), nil
-}
-
-func resolveDialogUserPeerID(peer tg.InputPeerClazz, selfUserID int64) (int64, bool) {
-	p := tg.FromInputPeer2(selfUserID, peer)
-	switch p.PeerType {
-	case tg.PEER_SELF:
-		return selfUserID, selfUserID > 0
-	case tg.PEER_USER:
-		return p.PeerId, p.PeerId > 0
-	default:
-		return 0, false
-	}
 }

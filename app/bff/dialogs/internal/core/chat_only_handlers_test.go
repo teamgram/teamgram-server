@@ -15,11 +15,16 @@ import (
 type dialogsFakeChatClient struct {
 	chatclient.ChatClient
 
-	setHistoryTTL func(context.Context, *chatpb.TLChatSetHistoryTTL) (*tg.MutableChat, error)
+	setHistoryTTL       func(context.Context, *chatpb.TLChatSetHistoryTTL) (*tg.MutableChat, error)
+	getChatListByIDList func(context.Context, *chatpb.TLChatGetChatListByIdList) (*chatpb.VectorMutableChat, error)
 }
 
 func (f *dialogsFakeChatClient) ChatSetHistoryTTL(ctx context.Context, in *chatpb.TLChatSetHistoryTTL) (*tg.MutableChat, error) {
 	return f.setHistoryTTL(ctx, in)
+}
+
+func (f *dialogsFakeChatClient) ChatGetChatListByIdList(ctx context.Context, in *chatpb.TLChatGetChatListByIdList) (*chatpb.VectorMutableChat, error) {
+	return f.getChatListByIDList(ctx, in)
 }
 
 func newDialogsCore(client chatclient.ChatClient, selfID int64) *DialogsCore {

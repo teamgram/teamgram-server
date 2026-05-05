@@ -17,9 +17,6 @@
 package core
 
 import (
-	"strconv"
-
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -37,186 +34,34 @@ func (c *DialogsCore) MessagesGetPinnedDialogs(in *tg.TLMessagesGetPinnedDialogs
 		return nil, tg.ErrFolderIdInvalid
 	}
 
-	dialogs, err := c.svcCtx.Repo.DialogClient.DialogGetPinnedDialogs(c.ctx, &dialogpb.TLDialogGetPinnedDialogs{
+	dialogs, err := c.svcCtx.Repo.DialogClient.DialogGetPinnedDialogsV2(c.ctx, &dialogpb.TLDialogGetPinnedDialogsV2{
 		UserId:   c.MD.UserId,
 		FolderId: in.FolderId,
+		Limit:    100,
 	})
 	if err != nil {
-		c.Logger.Errorf("messages.getPinnedDialogs - dialog.getPinnedDialogs failed: user_id: %d, folder_id: %d, err: %v",
+		c.Logger.Errorf("messages.getPinnedDialogs - dialog.getPinnedDialogsV2 failed: user_id: %d, folder_id: %d, err: %v",
 			c.MD.UserId, in.FolderId, err)
 		return nil, tg.ErrInternalServerError
 	}
-	dialogExts, err := c.hydratePinnedDialogProjections(vectorDialogExts(dialogs))
+	return c.makePeerDialogsFromDialogExtV2s("messages.getPinnedDialogs", vectorDialogExtV2Datas(dialogs))
+}
+
+func (c *DialogsCore) makePeerDialogsFromDialogExtV2s(operation string, dialogExts []dialogpb.DialogExtV2Clazz) (*tg.MessagesPeerDialogs, error) {
+	hydrated, err := c.hydrateDialogExtV2s(operation, dialogExts)
 	if err != nil {
 		return nil, err
 	}
-	return c.makePeerDialogsFromDialogExts("messages.getPinnedDialogs", dialogExts)
-}
-
-func (c *DialogsCore) hydratePinnedDialogProjections(dialogExts []dialogpb.DialogExtClazz) ([]dialogpb.DialogExtClazz, error) {
-	if len(dialogExts) == 0 || c.svcCtx.Repo.UserupdatesClient == nil {
-		return dialogExts, nil
-	}
-	peers := make([]userupdates.DialogProjectionPeerClazz, 0, len(dialogExts))
-	orderByKey := make(map[string]int64, len(dialogExts))
-	folderByKey := make(map[string]int32, len(dialogExts))
-	for _, dialogExt := range dialogExts {
-		if dialogExt == nil || dialogExt.Dialog == nil {
-			continue
-		}
-		dialog, ok := (&tg.Dialog{Clazz: dialogExt.Dialog}).ToDialog()
-		if !ok {
-			continue
-		}
-		peerType, peerID, ok := dialogFacadePeerFromPublicPeer(dialog.Peer)
-		if !ok {
-			continue
-		}
-		key := dialogProjectionKey(peerType, peerID)
-		orderByKey[key] = dialogExt.Order
-		if dialog.FolderId != nil {
-			folderByKey[key] = *dialog.FolderId
-		}
-		peers = append(peers, userupdates.MakeTLDialogProjectionPeer(&userupdates.TLDialogProjectionPeer{
-			PeerType: peerType,
-			PeerId:   peerID,
-		}))
-	}
-	if len(peers) == 0 {
-		return dialogExts, nil
-	}
-	projections, err := c.svcCtx.Repo.UserupdatesClient.UserupdatesGetDialogsByPeers(c.ctx, &userupdates.TLUserupdatesGetDialogsByPeers{
-		UserId: c.MD.UserId,
-		Peers:  peers,
-	})
-	if err != nil {
-		c.Logger.Errorf("messages.getPinnedDialogs - userupdates.getDialogsByPeers failed: user_id: %d, err: %v", c.MD.UserId, err)
-		return nil, tg.ErrInternalServerError
-	}
-	if projections == nil {
-		return dialogExts, nil
-	}
-	byKey := make(map[string]userupdates.DialogProjectionClazz, len(projections.Datas))
-	for _, projection := range projections.Datas {
-		if projection == nil {
-			continue
-		}
-		byKey[dialogProjectionKey(projection.PeerType, projection.PeerId)] = projection
-	}
-	out := make([]dialogpb.DialogExtClazz, 0, len(dialogExts))
-	for _, dialogExt := range dialogExts {
-		if dialogExt == nil || dialogExt.Dialog == nil {
-			continue
-		}
-		dialog, ok := (&tg.Dialog{Clazz: dialogExt.Dialog}).ToDialog()
-		if !ok {
-			continue
-		}
-		peerType, peerID, ok := dialogFacadePeerFromPublicPeer(dialog.Peer)
-		if !ok {
-			out = append(out, dialogExt)
-			continue
-		}
-		key := dialogProjectionKey(peerType, peerID)
-		projection := byKey[key]
-		if projection == nil {
-			out = append(out, dialogExt)
-			continue
-		}
-		folderID := folderByKey[key]
-		ttlPeriod := int32(0)
-		out = append(out, dialogpb.MakeTLDialogExt(&dialogpb.TLDialogExt{
-			Order: orderByKey[key],
-			Dialog: tg.MakeTLDialog(&tg.TLDialog{
-				Pinned:               true,
-				UnreadMark:           projection.UnreadMark,
-				Peer:                 makePublicPeerFromDialogFacade(projection.PeerType, projection.PeerId),
-				TopMessage:           int32(projection.TopCanonicalMessageId),
-				ReadInboxMaxId:       int32(projection.ReadInboxMaxPeerSeq),
-				ReadOutboxMaxId:      int32(projection.ReadOutboxMaxPeerSeq),
-				UnreadCount:          projection.UnreadCount,
-				UnreadMentionsCount:  projection.UnreadMentionsCount,
-				UnreadReactionsCount: projection.UnreadReactionsCount,
-				NotifySettings:       tg.MakeTLPeerNotifySettings(&tg.TLPeerNotifySettings{}),
-				FolderId:             &folderID,
-				TtlPeriod:            &ttlPeriod,
-			}),
-			Date: projection.TopMessageDate,
-		}))
-	}
-	return out, nil
-}
-
-func (c *DialogsCore) makePeerDialogsFromDialogExts(operation string, dialogExts []dialogpb.DialogExtClazz) (*tg.MessagesPeerDialogs, error) {
-	if len(dialogExts) == 0 {
+	if len(hydrated.Dialogs) == 0 {
 		return emptyPeerDialogs(), nil
 	}
-	dialogList := make([]tg.DialogClazz, 0, len(dialogExts))
-	userIDs := make([]int64, 0, len(dialogExts))
-	chatIDs := make([]int64, 0, len(dialogExts))
-	topMessageIDs := make([]int32, 0, len(dialogExts))
-	for _, dialogExt := range dialogExts {
-		if dialogExt == nil || dialogExt.Dialog == nil {
-			continue
-		}
-		dialogList = append(dialogList, dialogExt.Dialog)
-		dialog, ok := (&tg.Dialog{Clazz: dialogExt.Dialog}).ToDialog()
-		if !ok {
-			continue
-		}
-		if dialog.TopMessage > 0 {
-			topMessageIDs = append(topMessageIDs, dialog.TopMessage)
-		}
-		switch peer := dialog.Peer.(type) {
-		case *tg.TLPeerUser:
-			userIDs = append(userIDs, peer.UserId)
-		case *tg.TLPeerChat:
-			chatIDs = append(chatIDs, peer.ChatId)
-		}
-	}
-	messages, err := c.fetchDialogTopMessages(topMessageIDs)
-	if err != nil {
-		return nil, err
-	}
-	users, err := c.fetchDialogUsersWithOperation(operation, userIDs)
-	if err != nil {
-		return nil, err
-	}
-	chats, err := c.fetchDialogChats(chatIDs)
-	if err != nil {
-		return nil, err
-	}
 	return tg.MakeTLMessagesPeerDialogs(&tg.TLMessagesPeerDialogs{
-		Dialogs:  dialogList,
-		Messages: messages,
-		Chats:    chats,
-		Users:    users,
+		Dialogs:  hydrated.Dialogs,
+		Messages: hydrated.Messages,
+		Chats:    hydrated.Chats,
+		Users:    hydrated.Users,
 		State:    emptyUpdatesState(),
 	}).ToMessagesPeerDialogs(), nil
-}
-
-func dialogFacadePeerFromPublicPeer(peer tg.PeerClazz) (int32, int64, bool) {
-	switch p := peer.(type) {
-	case *tg.TLPeerUser:
-		return dialogPeerTypeUser, p.UserId, p.UserId > 0
-	case *tg.TLPeerChat:
-		return dialogPeerTypeChat, p.ChatId, p.ChatId > 0
-	case *tg.TLPeerChannel:
-		return dialogPeerTypeChannel, p.ChannelId, p.ChannelId > 0
-	default:
-		return 0, 0, false
-	}
-}
-
-func dialogProjectionKey(peerType int32, peerID int64) string {
-	return strconv.FormatInt(int64(peerType), 10) + ":" + strconv.FormatInt(peerID, 10)
-}
-
-func vectorDialogExts(dialogs *dialogpb.VectorDialogExt) []dialogpb.DialogExtClazz {
-	if dialogs == nil {
-		return nil
-	}
-	return dialogs.Datas
 }
 
 func emptyPeerDialogs() *tg.MessagesPeerDialogs {
