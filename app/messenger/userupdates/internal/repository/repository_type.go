@@ -17,6 +17,8 @@
 
 package repository
 
+import "time"
+
 const (
 	PayloadCodecJSON int32 = 1
 
@@ -38,6 +40,27 @@ const (
 	PushTaskStatusPublished       int32 = 3
 	PushTaskStatusFailedRetryable int32 = 4
 	PushTaskStatusFailedTerminal  int32 = 5
+)
+
+const (
+	DialogSideEffectKindClearDraftAfterSend          = "clear_draft_after_send"
+	DialogSideEffectKindUpsertSavedDialogFromMessage = "upsert_saved_dialog_from_message"
+)
+
+const (
+	DialogSideEffectStatusPending         int32 = 1
+	DialogSideEffectStatusPublishing      int32 = 2
+	DialogSideEffectStatusCompleted       int32 = 3
+	DialogSideEffectStatusFailedRetryable int32 = 4
+	DialogSideEffectStatusBlocked         int32 = 5
+)
+
+const (
+	InitialRetryDelaySeconds = 1
+	MaxRetryDelaySeconds     = 300
+	BlockedAfterAttempts     = 20
+	BlockedAfterAgeSeconds   = 3600
+	OutboxWorkerBatchSize    = 100
 )
 
 const (
@@ -78,6 +101,29 @@ type PushTask struct {
 	OperationID     string
 	PushPartitionID int32
 	TaskPayload     []byte
+}
+
+type DialogSideEffect struct {
+	SideEffectID             int64
+	Kind                     string
+	UserID                   int64
+	PeerType                 int32
+	PeerID                   int64
+	SourcePermAuthKeyID      int64
+	SourceOperationID        string
+	SourceMessageDate        time.Time
+	SourcePeerSeq            int64
+	SourceCanonicalMessageID int64
+	ClearBeforeDate          time.Time
+	PayloadSchemaVersion     int32
+	Payload                  []byte
+	PayloadHash              []byte
+	Status                   int32
+	AttemptCount             int32
+	NextRetryAt              time.Time
+	LeaseOwner               string
+	LeaseUntil               time.Time
+	LastErrorCode            string
 }
 
 type ApplyUserOperationInput struct {

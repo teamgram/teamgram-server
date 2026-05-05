@@ -125,6 +125,9 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 	if len(in.DependencyPts) != 0 || len(op.DependencyPts) != 0 {
 		return nil, userupdates.ErrOperationTerminal
 	}
+	if op.ClearDraft && op.SourcePermAuthKeyID == 0 {
+		return nil, fmt.Errorf("%w: clear draft side effect requires source permanent auth key", userupdates.ErrOperationTerminal)
+	}
 
 	nextPTS := state.Pts + 1
 	ptsCount := int32(1)
@@ -142,6 +145,9 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 		return nil, err
 	}
 	if err := insertPushTask(ctx, txModels, r, in, op, nextPTS, eventPayload); err != nil {
+		return nil, err
+	}
+	if err := insertDialogSideEffects(ctx, txModels, r, in, op); err != nil {
 		return nil, err
 	}
 	if err := insertOperationResult(txModels, in, nextPTS, ptsCount, responsePayload, responsePayloadHash); err != nil {
@@ -334,6 +340,96 @@ func insertPushTask(ctx context.Context, txModels *model.TxModels, r *Repository
 		return storageError("insert push task", err)
 	}
 	return nil
+}
+
+func insertDialogSideEffects(ctx context.Context, txModels *model.TxModels, r *Repository, in ApplyUserOperationInput, op payload.MessageOperationV1) error {
+	if op.ClearDraft {
+		clearBeforeDate := op.ClearDraftBeforeDate
+		if clearBeforeDate == 0 {
+			clearBeforeDate = op.Date
+		}
+		body, err := json.Marshal(clearDraftSideEffectPayloadV1{
+			SchemaVersion:      1,
+			ClearBeforeDate:    clearBeforeDate,
+			SourceMessageDate:  op.Date,
+			SourcePeerSeq:      op.PeerSeq,
+			CanonicalMessageID: op.CanonicalMessageID,
+		})
+		if err != nil {
+			return storageError("marshal clear draft side effect", err)
+		}
+		sideEffectID, err := r.idgen.NextID(ctx)
+		if err != nil {
+			return storageError("next dialog side effect id", err)
+		}
+		if err := r.InsertDialogSideEffectTx(txModels, DialogSideEffect{
+			SideEffectID:             sideEffectID,
+			Kind:                     DialogSideEffectKindClearDraftAfterSend,
+			UserID:                   in.UserID,
+			PeerType:                 op.PeerType,
+			PeerID:                   op.PeerID,
+			SourcePermAuthKeyID:      op.SourcePermAuthKeyID,
+			SourceOperationID:        in.OperationID,
+			SourceMessageDate:        time.Unix(int64(op.Date), 0).UTC(),
+			SourcePeerSeq:            op.PeerSeq,
+			SourceCanonicalMessageID: op.CanonicalMessageID,
+			ClearBeforeDate:          time.Unix(int64(clearBeforeDate), 0).UTC(),
+			PayloadSchemaVersion:     1,
+			Payload:                  body,
+			PayloadHash:              payload.HashBytes(body),
+			Status:                   DialogSideEffectStatusPending,
+			AttemptCount:             0,
+			NextRetryAt:              time.Now().UTC(),
+		}); err != nil {
+			return err
+		}
+	}
+	if shouldWriteSavedDialogSideEffect(in, op) {
+		body, err := json.Marshal(savedDialogSideEffectPayloadV1{
+			SchemaVersion:         1,
+			SavedPeerType:         op.PeerType,
+			SavedPeerID:           op.PeerID,
+			TopPeerSeq:            op.PeerSeq,
+			TopCanonicalMessageID: op.CanonicalMessageID,
+			MessageDate:           op.Date,
+			Deleted:               false,
+			Top:                   true,
+		})
+		if err != nil {
+			return storageError("marshal saved dialog side effect", err)
+		}
+		sideEffectID, err := r.idgen.NextID(ctx)
+		if err != nil {
+			return storageError("next dialog side effect id", err)
+		}
+		if err := r.InsertDialogSideEffectTx(txModels, DialogSideEffect{
+			SideEffectID:             sideEffectID,
+			Kind:                     DialogSideEffectKindUpsertSavedDialogFromMessage,
+			UserID:                   in.UserID,
+			PeerType:                 op.PeerType,
+			PeerID:                   op.PeerID,
+			SourceOperationID:        in.OperationID,
+			SourceMessageDate:        time.Unix(int64(op.Date), 0).UTC(),
+			SourcePeerSeq:            op.PeerSeq,
+			SourceCanonicalMessageID: op.CanonicalMessageID,
+			PayloadSchemaVersion:     1,
+			Payload:                  body,
+			PayloadHash:              payload.HashBytes(body),
+			Status:                   DialogSideEffectStatusPending,
+			AttemptCount:             0,
+			NextRetryAt:              time.Now().UTC(),
+		}); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func shouldWriteSavedDialogSideEffect(in ApplyUserOperationInput, op payload.MessageOperationV1) bool {
+	if op.SavedDialogSideEffect {
+		return true
+	}
+	return op.PeerType == payload.PeerTypeUser && op.PeerID == in.UserID
 }
 
 func insertOperationResult(txModels *model.TxModels, in ApplyUserOperationInput, pts int64, ptsCount int32, responsePayload []byte, responseHash []byte) error {

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="dialog_side_effect_outbox">
+    <operation name="Insert">
+        <sql>
+            INSERT IGNORE INTO dialog_side_effect_outbox
+                (side_effect_id, kind, user_id, peer_type, peer_id, source_perm_auth_key_id, source_operation_id, source_message_date, source_peer_seq, source_canonical_message_id, clear_before_date, payload_schema_version, payload, payload_hash, status, attempt_count, next_retry_at, lease_owner, lease_until, last_error_code)
+            VALUES
+                (:side_effect_id, :kind, :user_id, :peer_type, :peer_id, :source_perm_auth_key_id, :source_operation_id, :source_message_date, :source_peer_seq, :source_canonical_message_id, :clear_before_date, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :last_error_code)
+        </sql>
+    </operation>
+
+    <operation name="SelectOne">
+        <sql>
+            SELECT
+                side_effect_id, kind, user_id, peer_type, peer_id, source_perm_auth_key_id, source_operation_id, source_message_date, source_peer_seq, source_canonical_message_id, clear_before_date, payload_schema_version, payload, payload_hash, status, attempt_count, next_retry_at, lease_owner, lease_until, last_error_code
+            FROM
+                dialog_side_effect_outbox
+            WHERE
+                side_effect_id = :side_effect_id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectPendingForUpdate" result_set="list">
+        <params>
+            <param name="pending_status" type="int32" />
+            <param name="failed_retryable_status" type="int32" />
+            <param name="publishing_status" type="int32" />
+            <param name="now" type="string" />
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            SELECT
+                side_effect_id, kind, user_id, peer_type, peer_id, source_perm_auth_key_id, source_operation_id, source_message_date, source_peer_seq, source_canonical_message_id, clear_before_date, payload_schema_version, payload, payload_hash, status, attempt_count, next_retry_at, lease_owner, lease_until, last_error_code
+            FROM
+                dialog_side_effect_outbox
+            WHERE
+                (
+                    (status IN (:pending_status, :failed_retryable_status) AND next_retry_at &lt;= :now)
+                    OR (status = :publishing_status AND lease_until &lt;= :now)
+                )
+            ORDER BY
+                next_retry_at, side_effect_id
+            LIMIT :limit
+            FOR UPDATE
+        </sql>
+    </operation>
+
+    <operation name="MarkBlockedIfOld">
+        <params>
+            <param name="blocked_before" type="string" />
+        </params>
+        <sql>
+            UPDATE
+                dialog_side_effect_outbox
+            SET
+                status = :status,
+                lease_owner = '',
+                lease_until = :lease_until,
+                last_error_code = :last_error_code
+            WHERE
+                side_effect_id = :side_effect_id
+                AND created_at &lt;= :blocked_before
+        </sql>
+    </operation>
+
+    <operation name="SelectExistingSideEffect">
+        <sql>
+            SELECT
+                side_effect_id, kind, user_id, peer_type, peer_id, source_perm_auth_key_id, source_operation_id, source_message_date, source_peer_seq, source_canonical_message_id, clear_before_date, payload_schema_version, payload, payload_hash, status, attempt_count, next_retry_at, lease_owner, lease_until, last_error_code
+            FROM
+                dialog_side_effect_outbox
+            WHERE
+                kind = :kind AND source_operation_id = :source_operation_id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="MarkPublishing">
+        <sql>
+            UPDATE
+                dialog_side_effect_outbox
+            SET
+                status = :status,
+                attempt_count = attempt_count + 1,
+                lease_owner = :lease_owner,
+                lease_until = :lease_until
+            WHERE
+                side_effect_id = :side_effect_id
+        </sql>
+    </operation>
+
+    <operation name="MarkCompleted">
+        <sql>
+            UPDATE
+                dialog_side_effect_outbox
+            SET
+                status = :status,
+                lease_owner = '',
+                lease_until = :lease_until,
+                last_error_code = ''
+            WHERE
+                side_effect_id = :side_effect_id
+        </sql>
+    </operation>
+
+    <operation name="MarkRetryableFailure">
+        <sql>
+            UPDATE
+                dialog_side_effect_outbox
+            SET
+                status = :status,
+                next_retry_at = :next_retry_at,
+                lease_owner = '',
+                lease_until = :lease_until,
+                last_error_code = :last_error_code
+            WHERE
+                side_effect_id = :side_effect_id
+        </sql>
+    </operation>
+
+    <operation name="MarkBlocked">
+        <sql>
+            UPDATE
+                dialog_side_effect_outbox
+            SET
+                status = :status,
+                lease_owner = '',
+                lease_until = :lease_until,
+                last_error_code = :last_error_code
+            WHERE
+                side_effect_id = :side_effect_id
+        </sql>
+    </operation>
+
+    <operation name="SelectBySourceOperationKind" result_set="list">
+        <sql>
+            SELECT
+                side_effect_id, kind, user_id, peer_type, peer_id, source_perm_auth_key_id, source_operation_id, source_message_date, source_peer_seq, source_canonical_message_id, clear_before_date, payload_schema_version, payload, payload_hash, status, attempt_count, next_retry_at, lease_owner, lease_until, last_error_code
+            FROM
+                dialog_side_effect_outbox
+            WHERE
+                source_operation_id = :source_operation_id AND kind = :kind
+            ORDER BY
+                side_effect_id
+        </sql>
+    </operation>
+</table>

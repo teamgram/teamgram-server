@@ -16,6 +16,7 @@ import (
 
 type Models struct {
 	DeliveryFailedOperationsModel   DeliveryFailedOperationsModel
+	DialogSideEffectOutboxModel     DialogSideEffectOutboxModel
 	PushTaskOutboxModel             PushTaskOutboxModel
 	UserDialogsModel                UserDialogsModel
 	UserMessageViewsModel           UserMessageViewsModel
@@ -27,6 +28,7 @@ type Models struct {
 
 type TxModels struct {
 	DeliveryFailedOperationsModel   DeliveryFailedOperationsTxModel
+	DialogSideEffectOutboxModel     DialogSideEffectOutboxTxModel
 	PushTaskOutboxModel             PushTaskOutboxTxModel
 	UserDialogsModel                UserDialogsTxModel
 	UserMessageViewsModel           UserMessageViewsTxModel
@@ -39,6 +41,7 @@ type TxModels struct {
 func NewModels(db *sqlx.DB) *Models {
 	return &Models{
 		DeliveryFailedOperationsModel:   NewDeliveryFailedOperationsModel(db),
+		DialogSideEffectOutboxModel:     NewDialogSideEffectOutboxModel(db),
 		PushTaskOutboxModel:             NewPushTaskOutboxModel(db),
 		UserDialogsModel:                NewUserDialogsModel(db),
 		UserMessageViewsModel:           NewUserMessageViewsModel(db),
@@ -52,6 +55,7 @@ func NewModels(db *sqlx.DB) *Models {
 func (m *Models) WithTx(tx *sqlx.Tx) *TxModels {
 	return &TxModels{
 		DeliveryFailedOperationsModel:   NewDeliveryFailedOperationsTxModel(tx),
+		DialogSideEffectOutboxModel:     NewDialogSideEffectOutboxTxModel(tx),
 		PushTaskOutboxModel:             NewPushTaskOutboxTxModel(tx),
 		UserDialogsModel:                NewUserDialogsTxModel(tx),
 		UserMessageViewsModel:           NewUserMessageViewsTxModel(tx),

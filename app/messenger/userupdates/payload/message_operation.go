@@ -7,19 +7,23 @@ import (
 )
 
 type MessageOperationV1 struct {
-	SchemaVersion      int               `json:"schema_version"`
-	OperationKind      string            `json:"operation_kind"`
-	CanonicalMessageID int64             `json:"canonical_message_id"`
-	PeerType           int32             `json:"peer_type"`
-	PeerID             int64             `json:"peer_id"`
-	PeerSeq            int64             `json:"peer_seq"`
-	FromUserID         int64             `json:"from_user_id"`
-	ToUserID           int64             `json:"to_user_id"`
-	Date               int32             `json:"date"`
-	Out                bool              `json:"out"`
-	MessageText        string            `json:"message_text"`
-	Entities           []MessageEntityV1 `json:"entities,omitempty"`
-	DependencyPts      []int64           `json:"dependency_pts,omitempty"`
+	SchemaVersion         int               `json:"schema_version"`
+	OperationKind         string            `json:"operation_kind"`
+	CanonicalMessageID    int64             `json:"canonical_message_id"`
+	PeerType              int32             `json:"peer_type"`
+	PeerID                int64             `json:"peer_id"`
+	PeerSeq               int64             `json:"peer_seq"`
+	FromUserID            int64             `json:"from_user_id"`
+	ToUserID              int64             `json:"to_user_id"`
+	Date                  int32             `json:"date"`
+	Out                   bool              `json:"out"`
+	MessageText           string            `json:"message_text"`
+	Entities              []MessageEntityV1 `json:"entities,omitempty"`
+	DependencyPts         []int64           `json:"dependency_pts,omitempty"`
+	ClearDraft            bool              `json:"clear_draft,omitempty"`
+	SourcePermAuthKeyID   int64             `json:"source_perm_auth_key_id,omitempty"`
+	ClearDraftBeforeDate  int32             `json:"clear_draft_before_date,omitempty"`
+	SavedDialogSideEffect bool              `json:"saved_dialog_side_effect,omitempty"`
 }
 
 type MessageEntityV1 struct {

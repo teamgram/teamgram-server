@@ -303,6 +303,35 @@ CREATE TABLE IF NOT EXISTS push_task_outbox (
   KEY idx_user_created (user_id, created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE IF NOT EXISTS dialog_side_effect_outbox (
+  side_effect_id                 BIGINT NOT NULL,
+  kind                           VARCHAR(64) NOT NULL,
+  user_id                        BIGINT NOT NULL,
+  peer_type                      INT NOT NULL,
+  peer_id                        BIGINT NOT NULL,
+  source_perm_auth_key_id        BIGINT NOT NULL DEFAULT 0,
+  source_operation_id            VARCHAR(160) NOT NULL,
+  source_message_date            DATETIME(6) NOT NULL,
+  source_peer_seq                BIGINT NOT NULL DEFAULT 0,
+  source_canonical_message_id    BIGINT NOT NULL DEFAULT 0,
+  clear_before_date              DATETIME(6) NOT NULL DEFAULT '1970-01-01 00:00:00.000000',
+  payload_schema_version         INT NOT NULL DEFAULT 1,
+  payload                        BLOB NOT NULL,
+  payload_hash                   BINARY(32) NOT NULL,
+  status                         INT NOT NULL,
+  attempt_count                  INT NOT NULL DEFAULT 0,
+  next_retry_at                  DATETIME(6) NOT NULL,
+  lease_owner                    VARCHAR(128) NOT NULL DEFAULT '',
+  lease_until                    DATETIME(6) NOT NULL DEFAULT '1970-01-01 00:00:00.000000',
+  last_error_code                VARCHAR(128) NOT NULL DEFAULT '',
+  created_at                     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at                     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (side_effect_id),
+  UNIQUE KEY uk_kind_operation (kind, source_operation_id),
+  KEY idx_status_retry (status, next_retry_at, side_effect_id),
+  KEY idx_user_kind (user_id, kind, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS delivery_failed_operations (
   failed_id             BIGINT NOT NULL,
   user_id               BIGINT NOT NULL,
