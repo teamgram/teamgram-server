@@ -94,12 +94,3 @@ DfsClient:
     Hosts:
       - 127.0.0.1:2379
     Key: service.dfs
-
-StatusClient:
-  DestService: service.status
-  ServiceName: RPCStatus
-  Codec: zrpc
-  Etcd:
-    Hosts:
-      - 127.0.0.1:2379
-    Key: service.status

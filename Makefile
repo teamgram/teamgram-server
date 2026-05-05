@@ -15,7 +15,7 @@ gitTreeState=$(shell if git status|grep -q 'clean';then echo clean; else echo di
 
 ldflags="-s -w -X ${versionDir}.gitTag=${gitTag} -X ${versionDir}.buildDate=${buildDate} -X ${versionDir}.gitCommit=${gitCommit} -X ${versionDir}.gitTreeState=${gitTreeState} -X ${versionDir}.version=${VERSION} -X ${versionDir}.gitBranch=${gitBranch}"
 
-all: geoip idgen status presence dfs media authsession biz userupdates msg sync bff gateway
+all: geoip idgen presence dfs media authsession biz userupdates msg sync bff gateway
 
 lint: lint-tg-primitives
 
@@ -29,10 +29,6 @@ geoip:
 idgen:
 	@echo "build idgen..."
 	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/idgen -tags=jsoniter app/service/idgen/cmd/idgen/*.go
-
-status:
-	@echo "build status..."
-	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/status -tags=jsoniter app/service/status/cmd/status/*.go
 
 presence:
 	@echo "build presence..."
@@ -77,7 +73,6 @@ gateway:
 clean:
 	@rm -rf ${INSTALL}/bin/geoip
 	@rm -rf ${INSTALL}/bin/idgen
-	@rm -rf ${INSTALL}/bin/status
 	@rm -rf ${INSTALL}/bin/presence
 	@rm -rf ${INSTALL}/bin/dfs
 	@rm -rf ${INSTALL}/bin/media

@@ -4,10 +4,6 @@ echo "run idgen ..."
 nohup ./idgen -f=../etc/idgen.yaml >> ../logs/idgen.log  2>&1 &
 sleep 1
 
-echo "run status ..."
-nohup ./status -f=../etc/status.yaml >> ../logs/status.log  2>&1 &
-sleep 1
-
 echo "run presence ..."
 nohup ./presence -f=../etc/presence.yaml >> ../logs/presence.log  2>&1 &
 sleep 1

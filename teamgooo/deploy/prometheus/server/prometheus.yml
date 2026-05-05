@@ -94,14 +94,6 @@ scrape_configs:
           job: interface.session
           app: interface.session
           env: dev
-  - job_name: service.status
-    metrics_path: /metrics
-    static_configs:
-      - targets: ["teamgram:20671"]
-        labels:
-          job: service.status
-          app: service.status
-          env: dev
   - job_name: messenger.sync
     metrics_path: /metrics
     static_configs:
