@@ -16,6 +16,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 
@@ -44,12 +45,12 @@ type (
 	}
 
 	UserPtsState struct {
-		UserId       int64  `db:"user_id" json:"user_id"`
-		Pts          int64  `db:"pts" json:"pts"`
-		PtsUpdatedAt string `db:"pts_updated_at" json:"pts_updated_at"`
-		PartitionId  int32  `db:"partition_id" json:"partition_id"`
-		OwnerEpoch   int64  `db:"owner_epoch" json:"owner_epoch"`
-		RowVersion   int64  `db:"row_version" json:"row_version"`
+		UserId       int64     `db:"user_id" json:"user_id"`
+		Pts          int64     `db:"pts" json:"pts"`
+		PtsUpdatedAt time.Time `db:"pts_updated_at" json:"pts_updated_at"`
+		PartitionId  int32     `db:"partition_id" json:"partition_id"`
+		OwnerEpoch   int64     `db:"owner_epoch" json:"owner_epoch"`
+		RowVersion   int64     `db:"row_version" json:"row_version"`
 	}
 )
 

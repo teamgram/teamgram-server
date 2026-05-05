@@ -34,8 +34,8 @@ type bizUserDialogsModel interface {
 	SelectByUserPeersWithCB(ctx context.Context, userId int64, peerIdList []int64, cb func(sz, i int, v *UserDialogs)) ([]UserDialogs, error)
 	SelectByUserCursor(ctx context.Context, userId int64, topMessageDate string, topPeerSeq int64, peerType int32, peerId int64, limit int32) ([]UserDialogs, error)
 	SelectByUserCursorWithCB(ctx context.Context, userId int64, topMessageDate string, topPeerSeq int64, peerType int32, peerId int64, limit int32, cb func(sz, i int, v *UserDialogs)) ([]UserDialogs, error)
-	UpdateReadState(ctx context.Context, unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, readInboxMaxPeerSeq int64, readOutboxMaxPeerSeq int64, lastPts int64, lastPtsAt string, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
-	UpdatePinnedMessage(ctx context.Context, pinnedPeerSeq int64, pinnedCanonicalMessageId int64, lastPts int64, lastPtsAt string, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	UpdateReadState(ctx context.Context, unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, readInboxMaxPeerSeq int64, readOutboxMaxPeerSeq int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	UpdatePinnedMessage(ctx context.Context, pinnedPeerSeq int64, pinnedCanonicalMessageId int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
 }
 
 type UserDialogsTxModel interface {
@@ -43,8 +43,8 @@ type UserDialogsTxModel interface {
 	SelectByUserPeer(userId int64, peerType int32, peerId int64) (*UserDialogs, error)
 	SelectByUserPeers(userId int64, peerIdList []int64) ([]UserDialogs, error)
 	SelectByUserCursor(userId int64, topMessageDate string, topPeerSeq int64, peerType int32, peerId int64, limit int32) ([]UserDialogs, error)
-	UpdateReadState(unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, readInboxMaxPeerSeq int64, readOutboxMaxPeerSeq int64, lastPts int64, lastPtsAt string, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
-	UpdatePinnedMessage(pinnedPeerSeq int64, pinnedCanonicalMessageId int64, lastPts int64, lastPtsAt string, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	UpdateReadState(unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, readInboxMaxPeerSeq int64, readOutboxMaxPeerSeq int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	UpdatePinnedMessage(pinnedPeerSeq int64, pinnedCanonicalMessageId int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
 }
 
 type defaultUserDialogsTxModel struct {
@@ -337,7 +337,7 @@ func (m *defaultUserDialogsModel) SelectByUserCursorWithCB(ctx context.Context, 
 
 // UpdateReadState
 // update user_dialogs set unread_count = :unread_count, unread_mentions_count = :unread_mentions_count, unread_reactions_count = :unread_reactions_count, unread_mark = :unread_mark, read_inbox_max_peer_seq = :read_inbox_max_peer_seq, read_outbox_max_peer_seq = :read_outbox_max_peer_seq, last_pts = :last_pts, last_pts_at = :last_pts_at where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
-func (m *defaultUserDialogsModel) UpdateReadState(ctx context.Context, unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, readInboxMaxPeerSeq int64, readOutboxMaxPeerSeq int64, lastPts int64, lastPtsAt string, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+func (m *defaultUserDialogsModel) UpdateReadState(ctx context.Context, unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, readInboxMaxPeerSeq int64, readOutboxMaxPeerSeq int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update user_dialogs set unread_count = ?, unread_mentions_count = ?, unread_reactions_count = ?, unread_mark = ?, read_inbox_max_peer_seq = ?, read_outbox_max_peer_seq = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
@@ -362,7 +362,7 @@ func (m *defaultUserDialogsModel) UpdateReadState(ctx context.Context, unreadCou
 
 // UpdateReadState
 // update user_dialogs set unread_count = :unread_count, unread_mentions_count = :unread_mentions_count, unread_reactions_count = :unread_reactions_count, unread_mark = :unread_mark, read_inbox_max_peer_seq = :read_inbox_max_peer_seq, read_outbox_max_peer_seq = :read_outbox_max_peer_seq, last_pts = :last_pts, last_pts_at = :last_pts_at where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
-func (m *defaultUserDialogsTxModel) UpdateReadState(unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, readInboxMaxPeerSeq int64, readOutboxMaxPeerSeq int64, lastPts int64, lastPtsAt string, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+func (m *defaultUserDialogsTxModel) UpdateReadState(unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, readInboxMaxPeerSeq int64, readOutboxMaxPeerSeq int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update user_dialogs set unread_count = ?, unread_mentions_count = ?, unread_reactions_count = ?, unread_mark = ?, read_inbox_max_peer_seq = ?, read_outbox_max_peer_seq = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
 		rResult sql.Result
@@ -385,7 +385,7 @@ func (m *defaultUserDialogsTxModel) UpdateReadState(unreadCount int32, unreadMen
 
 // UpdatePinnedMessage
 // update user_dialogs set pinned_peer_seq = :pinned_peer_seq, pinned_canonical_message_id = :pinned_canonical_message_id, last_pts = :last_pts, last_pts_at = :last_pts_at where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
-func (m *defaultUserDialogsModel) UpdatePinnedMessage(ctx context.Context, pinnedPeerSeq int64, pinnedCanonicalMessageId int64, lastPts int64, lastPtsAt string, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+func (m *defaultUserDialogsModel) UpdatePinnedMessage(ctx context.Context, pinnedPeerSeq int64, pinnedCanonicalMessageId int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update user_dialogs set pinned_peer_seq = ?, pinned_canonical_message_id = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
@@ -410,7 +410,7 @@ func (m *defaultUserDialogsModel) UpdatePinnedMessage(ctx context.Context, pinne
 
 // UpdatePinnedMessage
 // update user_dialogs set pinned_peer_seq = :pinned_peer_seq, pinned_canonical_message_id = :pinned_canonical_message_id, last_pts = :last_pts, last_pts_at = :last_pts_at where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
-func (m *defaultUserDialogsTxModel) UpdatePinnedMessage(pinnedPeerSeq int64, pinnedCanonicalMessageId int64, lastPts int64, lastPtsAt string, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+func (m *defaultUserDialogsTxModel) UpdatePinnedMessage(pinnedPeerSeq int64, pinnedCanonicalMessageId int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update user_dialogs set pinned_peer_seq = ?, pinned_canonical_message_id = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
 		rResult sql.Result

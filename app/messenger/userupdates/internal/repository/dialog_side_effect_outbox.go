@@ -103,7 +103,7 @@ func (r *Repository) ClaimDialogSideEffects(ctx context.Context, now time.Time, 
 			affected, err := txModels.DialogSideEffectOutboxModel.MarkPublishing(
 				DialogSideEffectStatusPublishing,
 				r.OwnerInstance(),
-				mysqlTimestamp(leaseUntil),
+				leaseUntil,
 				row.SideEffectId,
 			)
 			if err != nil {
@@ -115,7 +115,7 @@ func (r *Repository) ClaimDialogSideEffects(ctx context.Context, now time.Time, 
 			row.Status = DialogSideEffectStatusPublishing
 			row.AttemptCount++
 			row.LeaseOwner = r.OwnerInstance()
-			row.LeaseUntil = mysqlTimestamp(leaseUntil)
+			row.LeaseUntil = leaseUntil.UTC()
 			dto, err := fromDialogSideEffectModel(row)
 			if err != nil {
 				return err
@@ -163,7 +163,7 @@ func (r *Repository) ClaimDialogSideEffectsByKind(ctx context.Context, kind stri
 			affected, err := txModels.DialogSideEffectOutboxModel.MarkPublishing(
 				DialogSideEffectStatusPublishing,
 				r.OwnerInstance(),
-				mysqlTimestamp(leaseUntil),
+				leaseUntil,
 				row.SideEffectId,
 			)
 			if err != nil {
@@ -175,7 +175,7 @@ func (r *Repository) ClaimDialogSideEffectsByKind(ctx context.Context, kind stri
 			row.Status = DialogSideEffectStatusPublishing
 			row.AttemptCount++
 			row.LeaseOwner = r.OwnerInstance()
-			row.LeaseUntil = mysqlTimestamp(leaseUntil)
+			row.LeaseUntil = leaseUntil.UTC()
 			dto, err := fromDialogSideEffectModel(row)
 			if err != nil {
 				return err
@@ -233,7 +233,7 @@ func (r *Repository) MarkDialogSideEffectRetryableFailure(ctx context.Context, s
 	rows, err = r.models.DialogSideEffectOutboxModel.MarkRetryableFailure(
 		ctx,
 		DialogSideEffectStatusFailedRetryable,
-		mysqlTimestamp(nextRetryAt),
+		nextRetryAt,
 		mysqlZeroTime(),
 		errCode,
 		sideEffectID,
@@ -273,7 +273,7 @@ func (r *Repository) ResetDialogSideEffectOutboxBlocked(ctx context.Context, ids
 		query := `UPDATE dialog_side_effect_outbox
 SET status = ?, attempt_count = 0, next_retry_at = ?, lease_owner = '', lease_until = ?, last_error_code = ''
 WHERE status = ? AND side_effect_id = ?`
-		if _, err := db.Exec(ctx, query, DialogSideEffectStatusPending, mysqlTimestamp(time.Now().UTC()), mysqlZeroTime(), DialogSideEffectStatusBlocked, id); err != nil {
+		if _, err := db.Exec(ctx, query, DialogSideEffectStatusPending, mysqlNow(), mysqlZeroTime(), DialogSideEffectStatusBlocked, id); err != nil {
 			return storageError("reset dialog side effect outbox blocked", err)
 		}
 	}
@@ -312,39 +312,23 @@ func toDialogSideEffectModel(row DialogSideEffect) *model.DialogSideEffectOutbox
 		PeerId:                   row.PeerID,
 		SourcePermAuthKeyId:      row.SourcePermAuthKeyID,
 		SourceOperationId:        row.SourceOperationID,
-		SourceMessageDate:        mysqlTimestamp(row.SourceMessageDate),
+		SourceMessageDate:        row.SourceMessageDate.UTC(),
 		SourcePeerSeq:            row.SourcePeerSeq,
 		SourceCanonicalMessageId: row.SourceCanonicalMessageID,
-		ClearBeforeDate:          mysqlTimestampOrZero(row.ClearBeforeDate),
+		ClearBeforeDate:          mysqlTimeOrZero(row.ClearBeforeDate),
 		PayloadSchemaVersion:     row.PayloadSchemaVersion,
 		Payload:                  row.Payload,
 		PayloadHash:              row.PayloadHash,
 		Status:                   row.Status,
 		AttemptCount:             row.AttemptCount,
-		NextRetryAt:              mysqlTimestamp(row.NextRetryAt),
+		NextRetryAt:              row.NextRetryAt.UTC(),
 		LeaseOwner:               row.LeaseOwner,
-		LeaseUntil:               mysqlTimestampOrZero(row.LeaseUntil),
+		LeaseUntil:               mysqlTimeOrZero(row.LeaseUntil),
 		LastErrorCode:            row.LastErrorCode,
 	}
 }
 
 func fromDialogSideEffectModel(row model.DialogSideEffectOutbox) (DialogSideEffect, error) {
-	sourceDate, err := parseDBTimestamp(row.SourceMessageDate)
-	if err != nil {
-		return DialogSideEffect{}, storageError("parse dialog side effect source message date", err)
-	}
-	clearBeforeDate, err := parseDBTimestamp(row.ClearBeforeDate)
-	if err != nil {
-		return DialogSideEffect{}, storageError("parse dialog side effect clear before date", err)
-	}
-	nextRetryAt, err := parseDBTimestamp(row.NextRetryAt)
-	if err != nil {
-		return DialogSideEffect{}, storageError("parse dialog side effect next retry at", err)
-	}
-	leaseUntil, err := parseDBTimestamp(row.LeaseUntil)
-	if err != nil {
-		return DialogSideEffect{}, storageError("parse dialog side effect lease until", err)
-	}
 	return DialogSideEffect{
 		SideEffectID:             row.SideEffectId,
 		Kind:                     row.Kind,
@@ -353,42 +337,18 @@ func fromDialogSideEffectModel(row model.DialogSideEffectOutbox) (DialogSideEffe
 		PeerID:                   row.PeerId,
 		SourcePermAuthKeyID:      row.SourcePermAuthKeyId,
 		SourceOperationID:        row.SourceOperationId,
-		SourceMessageDate:        sourceDate,
+		SourceMessageDate:        row.SourceMessageDate.UTC(),
 		SourcePeerSeq:            row.SourcePeerSeq,
 		SourceCanonicalMessageID: row.SourceCanonicalMessageId,
-		ClearBeforeDate:          clearBeforeDate,
+		ClearBeforeDate:          mysqlTimeFromSentinel(row.ClearBeforeDate),
 		PayloadSchemaVersion:     row.PayloadSchemaVersion,
 		Payload:                  row.Payload,
 		PayloadHash:              row.PayloadHash,
 		Status:                   row.Status,
 		AttemptCount:             row.AttemptCount,
-		NextRetryAt:              nextRetryAt,
+		NextRetryAt:              row.NextRetryAt.UTC(),
 		LeaseOwner:               row.LeaseOwner,
-		LeaseUntil:               leaseUntil,
+		LeaseUntil:               mysqlTimeFromSentinel(row.LeaseUntil),
 		LastErrorCode:            row.LastErrorCode,
 	}, nil
-}
-
-func mysqlTimestampOrZero(t time.Time) string {
-	if t.IsZero() {
-		return mysqlZeroTime()
-	}
-	return mysqlTimestamp(t)
-}
-
-func parseDBTimestamp(value string) (time.Time, error) {
-	if value == "" {
-		return time.Time{}, nil
-	}
-	for _, layout := range []string{
-		time.RFC3339Nano,
-		"2006-01-02 15:04:05.999999",
-		"2006-01-02 15:04:05",
-	} {
-		parsed, err := time.Parse(layout, value)
-		if err == nil {
-			return parsed.UTC(), nil
-		}
-	}
-	return time.Time{}, fmt.Errorf("unsupported timestamp %q", value)
 }

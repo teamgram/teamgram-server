@@ -56,7 +56,7 @@ func (r *Repository) TryMarkPushTaskPublishing(ctx context.Context, taskID int64
 }
 
 func (r *Repository) MarkPushTaskPublished(ctx context.Context, taskID int64, ack KafkaAck) error {
-	rows, err := r.models.PushTaskOutboxModel.MarkPublished(ctx, PushTaskStatusPublished, ack.Topic, ack.Partition, ack.Offset, mysqlNow(), taskID)
+	rows, err := r.models.PushTaskOutboxModel.MarkPublished(ctx, PushTaskStatusPublished, ack.Topic, ack.Partition, ack.Offset, mysqlNullNow(), taskID)
 	if err != nil {
 		return storageError("mark push task published", err)
 	}
@@ -67,8 +67,7 @@ func (r *Repository) MarkPushTaskPublished(ctx context.Context, taskID int64, ac
 }
 
 func (r *Repository) MarkPushTaskPublishFailed(ctx context.Context, taskID int64, code string, nextRetryAt time.Time) error {
-	next := mysqlTimestamp(nextRetryAt)
-	rows, err := r.models.PushTaskOutboxModel.MarkPublishFailed(ctx, PushTaskStatusFailedRetryable, next, next, code, taskID)
+	rows, err := r.models.PushTaskOutboxModel.MarkPublishFailed(ctx, PushTaskStatusFailedRetryable, mysqlNullTime(nextRetryAt), nextRetryAt.UTC(), code, taskID)
 	if err != nil {
 		return storageError("mark push task publish failed", err)
 	}
@@ -92,8 +91,4 @@ func (r *Repository) ResetExpiredPublishingTasks(ctx context.Context, now time.T
 		return 0, storageError("reset stale publishing push tasks", err)
 	}
 	return rows, nil
-}
-
-func mysqlTimestamp(t time.Time) string {
-	return t.UTC().Format("2006-01-02 15:04:05.000000")
 }

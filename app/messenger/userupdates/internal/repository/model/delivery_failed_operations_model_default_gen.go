@@ -16,6 +16,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 
@@ -46,24 +47,24 @@ type (
 	}
 
 	DeliveryFailedOperations struct {
-		FailedId             int64  `db:"failed_id" json:"failed_id"`
-		UserId               int64  `db:"user_id" json:"user_id"`
-		OperationId          string `db:"operation_id" json:"operation_id"`
-		OpType               int32  `db:"op_type" json:"op_type"`
-		BucketId             int32  `db:"bucket_id" json:"bucket_id"`
-		KafkaTopic           string `db:"kafka_topic" json:"kafka_topic"`
-		KafkaPartition       int32  `db:"kafka_partition" json:"kafka_partition"`
-		KafkaOffset          int64  `db:"kafka_offset" json:"kafka_offset"`
-		PayloadSchemaVersion int32  `db:"payload_schema_version" json:"payload_schema_version"`
-		PayloadHash          []byte `db:"payload_hash" json:"payload_hash"`
-		FailureCategory      int32  `db:"failure_category" json:"failure_category"`
-		FailureCode          string `db:"failure_code" json:"failure_code"`
-		FailureMessage       string `db:"failure_message" json:"failure_message"`
-		RetryCount           int32  `db:"retry_count" json:"retry_count"`
-		Status               int32  `db:"status" json:"status"`
-		FailedAt             string `db:"failed_at" json:"failed_at"`
-		ReplayedAt           string `db:"replayed_at" json:"replayed_at"`
-		ReplayedBy           string `db:"replayed_by" json:"replayed_by"`
+		FailedId             int64        `db:"failed_id" json:"failed_id"`
+		UserId               int64        `db:"user_id" json:"user_id"`
+		OperationId          string       `db:"operation_id" json:"operation_id"`
+		OpType               int32        `db:"op_type" json:"op_type"`
+		BucketId             int32        `db:"bucket_id" json:"bucket_id"`
+		KafkaTopic           string       `db:"kafka_topic" json:"kafka_topic"`
+		KafkaPartition       int32        `db:"kafka_partition" json:"kafka_partition"`
+		KafkaOffset          int64        `db:"kafka_offset" json:"kafka_offset"`
+		PayloadSchemaVersion int32        `db:"payload_schema_version" json:"payload_schema_version"`
+		PayloadHash          []byte       `db:"payload_hash" json:"payload_hash"`
+		FailureCategory      int32        `db:"failure_category" json:"failure_category"`
+		FailureCode          string       `db:"failure_code" json:"failure_code"`
+		FailureMessage       string       `db:"failure_message" json:"failure_message"`
+		RetryCount           int32        `db:"retry_count" json:"retry_count"`
+		Status               int32        `db:"status" json:"status"`
+		FailedAt             time.Time    `db:"failed_at" json:"failed_at"`
+		ReplayedAt           sql.NullTime `db:"replayed_at" json:"replayed_at"`
+		ReplayedBy           string       `db:"replayed_by" json:"replayed_by"`
 	}
 )
 

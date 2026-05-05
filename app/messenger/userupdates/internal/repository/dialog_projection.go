@@ -52,7 +52,7 @@ func (r *Repository) ListDialogProjections(ctx context.Context, userID int64, cu
 	if limit == 0 {
 		return []DialogProjection{}, nil
 	}
-	rows, err := r.models.UserDialogsModel.SelectByUserCursorProjection(ctx, userID, cursor.TopMessageDate, cursor.TopPeerSeq, cursor.PeerType, cursor.PeerID, limit)
+	rows, err := r.models.UserDialogsModel.SelectByUserCursor(ctx, userID, cursor.TopMessageDate, cursor.TopPeerSeq, cursor.PeerType, cursor.PeerID, limit)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
 			return []DialogProjection{}, nil
@@ -83,7 +83,7 @@ func (r *Repository) GetDialogProjectionsByPeers(ctx context.Context, userID int
 		peerIDs = append(peerIDs, peer.PeerID)
 	}
 
-	rows, err := r.models.UserDialogsModel.SelectByUserPeersProjection(ctx, userID, peerIDs)
+	rows, err := r.models.UserDialogsModel.SelectByUserPeers(ctx, userID, peerIDs)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
 			return out, nil
@@ -127,7 +127,7 @@ func mapDialogProjectionRow(row model.UserDialogs) DialogProjection {
 		PeerID:                   row.PeerId,
 		TopPeerSeq:               row.TopPeerSeq,
 		TopCanonicalMessageID:    row.TopCanonicalMessageId,
-		TopMessageDate:           row.TopMessageDate,
+		TopMessageDate:           mysqlNullTimeString(row.TopMessageDate),
 		TopMessageStatus:         row.TopMessageStatus,
 		ReadInboxMaxPeerSeq:      row.ReadInboxMaxPeerSeq,
 		ReadOutboxMaxPeerSeq:     row.ReadOutboxMaxPeerSeq,
@@ -140,7 +140,7 @@ func mapDialogProjectionRow(row model.UserDialogs) DialogProjection {
 		HasScheduled:             row.HasScheduled,
 		AvailableMinPeerSeq:      row.AvailableMinPeerSeq,
 		LastPTS:                  row.LastPts,
-		LastPTSAt:                row.LastPtsAt,
+		LastPTSAt:                mysqlNullTimeString(row.LastPtsAt),
 		DialogSchemaVersion:      row.DialogSchemaVersion,
 		DialogPayload:            row.DialogPayload,
 	}

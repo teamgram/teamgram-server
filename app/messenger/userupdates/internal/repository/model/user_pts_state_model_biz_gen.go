@@ -16,6 +16,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 )
@@ -31,14 +32,14 @@ type bizUserPtsStateModel interface {
 	InsertIgnore(ctx context.Context, data *UserPtsState) (lastInsertId, rowsAffected int64, err error)
 	SelectByUserId(ctx context.Context, userId int64) (*UserPtsState, error)
 	SelectForUpdate(ctx context.Context, userId int64) (*UserPtsState, error)
-	UpdatePts(ctx context.Context, pts int64, ptsUpdatedAt string, partitionId int32, ownerEpoch int64, userId int64) (rowsAffected int64, err error)
+	UpdatePts(ctx context.Context, pts int64, ptsUpdatedAt time.Time, partitionId int32, ownerEpoch int64, userId int64) (rowsAffected int64, err error)
 }
 
 type UserPtsStateTxModel interface {
 	InsertIgnore(data *UserPtsState) (lastInsertId, rowsAffected int64, err error)
 	SelectByUserId(userId int64) (*UserPtsState, error)
 	SelectForUpdate(userId int64) (*UserPtsState, error)
-	UpdatePts(pts int64, ptsUpdatedAt string, partitionId int32, ownerEpoch int64, userId int64) (rowsAffected int64, err error)
+	UpdatePts(pts int64, ptsUpdatedAt time.Time, partitionId int32, ownerEpoch int64, userId int64) (rowsAffected int64, err error)
 }
 
 type defaultUserPtsStateTxModel struct {
@@ -210,7 +211,7 @@ func (m *defaultUserPtsStateTxModel) SelectForUpdate(userId int64) (rValue *User
 
 // UpdatePts
 // update user_pts_state set pts = :pts, pts_updated_at = :pts_updated_at, partition_id = :partition_id, owner_epoch = :owner_epoch, row_version = row_version + 1 where user_id = :user_id
-func (m *defaultUserPtsStateModel) UpdatePts(ctx context.Context, pts int64, ptsUpdatedAt string, partitionId int32, ownerEpoch int64, userId int64) (rowsAffected int64, err error) {
+func (m *defaultUserPtsStateModel) UpdatePts(ctx context.Context, pts int64, ptsUpdatedAt time.Time, partitionId int32, ownerEpoch int64, userId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update user_pts_state set pts = ?, pts_updated_at = ?, partition_id = ?, owner_epoch = ?, row_version = row_version + 1 where user_id = ?"
@@ -235,7 +236,7 @@ func (m *defaultUserPtsStateModel) UpdatePts(ctx context.Context, pts int64, pts
 
 // UpdatePts
 // update user_pts_state set pts = :pts, pts_updated_at = :pts_updated_at, partition_id = :partition_id, owner_epoch = :owner_epoch, row_version = row_version + 1 where user_id = :user_id
-func (m *defaultUserPtsStateTxModel) UpdatePts(pts int64, ptsUpdatedAt string, partitionId int32, ownerEpoch int64, userId int64) (rowsAffected int64, err error) {
+func (m *defaultUserPtsStateTxModel) UpdatePts(pts int64, ptsUpdatedAt time.Time, partitionId int32, ownerEpoch int64, userId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update user_pts_state set pts = ?, pts_updated_at = ?, partition_id = ?, owner_epoch = ?, row_version = row_version + 1 where user_id = ?"
 		rResult sql.Result

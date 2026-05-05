@@ -16,6 +16,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 )
@@ -34,12 +35,12 @@ type bizDialogSideEffectOutboxModel interface {
 	SelectPendingForUpdateWithCB(ctx context.Context, pendingStatus int32, failedRetryableStatus int32, now string, publishingStatus int32, limit int32, cb func(sz, i int, v *DialogSideEffectOutbox)) ([]DialogSideEffectOutbox, error)
 	SelectPendingForUpdateByKind(ctx context.Context, kind string, pendingStatus int32, failedRetryableStatus int32, now string, publishingStatus int32, limit int32) ([]DialogSideEffectOutbox, error)
 	SelectPendingForUpdateByKindWithCB(ctx context.Context, kind string, pendingStatus int32, failedRetryableStatus int32, now string, publishingStatus int32, limit int32, cb func(sz, i int, v *DialogSideEffectOutbox)) ([]DialogSideEffectOutbox, error)
-	MarkBlockedIfOld(ctx context.Context, status int32, leaseUntil string, lastErrorCode string, sideEffectId int64, blockedBefore string) (rowsAffected int64, err error)
+	MarkBlockedIfOld(ctx context.Context, status int32, leaseUntil time.Time, lastErrorCode string, sideEffectId int64, blockedBefore string) (rowsAffected int64, err error)
 	SelectExistingSideEffect(ctx context.Context, kind string, sourceOperationId string) (*DialogSideEffectOutbox, error)
-	MarkPublishing(ctx context.Context, status int32, leaseOwner string, leaseUntil string, sideEffectId int64) (rowsAffected int64, err error)
-	MarkCompleted(ctx context.Context, status int32, leaseUntil string, sideEffectId int64) (rowsAffected int64, err error)
-	MarkRetryableFailure(ctx context.Context, status int32, nextRetryAt string, leaseUntil string, lastErrorCode string, sideEffectId int64) (rowsAffected int64, err error)
-	MarkBlocked(ctx context.Context, status int32, leaseUntil string, lastErrorCode string, sideEffectId int64) (rowsAffected int64, err error)
+	MarkPublishing(ctx context.Context, status int32, leaseOwner string, leaseUntil time.Time, sideEffectId int64) (rowsAffected int64, err error)
+	MarkCompleted(ctx context.Context, status int32, leaseUntil time.Time, sideEffectId int64) (rowsAffected int64, err error)
+	MarkRetryableFailure(ctx context.Context, status int32, nextRetryAt time.Time, leaseUntil time.Time, lastErrorCode string, sideEffectId int64) (rowsAffected int64, err error)
+	MarkBlocked(ctx context.Context, status int32, leaseUntil time.Time, lastErrorCode string, sideEffectId int64) (rowsAffected int64, err error)
 	SelectBySourceOperationKind(ctx context.Context, sourceOperationId string, kind string) ([]DialogSideEffectOutbox, error)
 	SelectBySourceOperationKindWithCB(ctx context.Context, sourceOperationId string, kind string, cb func(sz, i int, v *DialogSideEffectOutbox)) ([]DialogSideEffectOutbox, error)
 }
@@ -49,12 +50,12 @@ type DialogSideEffectOutboxTxModel interface {
 	SelectOne(sideEffectId int64) (*DialogSideEffectOutbox, error)
 	SelectPendingForUpdate(pendingStatus int32, failedRetryableStatus int32, now string, publishingStatus int32, limit int32) ([]DialogSideEffectOutbox, error)
 	SelectPendingForUpdateByKind(kind string, pendingStatus int32, failedRetryableStatus int32, now string, publishingStatus int32, limit int32) ([]DialogSideEffectOutbox, error)
-	MarkBlockedIfOld(status int32, leaseUntil string, lastErrorCode string, sideEffectId int64, blockedBefore string) (rowsAffected int64, err error)
+	MarkBlockedIfOld(status int32, leaseUntil time.Time, lastErrorCode string, sideEffectId int64, blockedBefore string) (rowsAffected int64, err error)
 	SelectExistingSideEffect(kind string, sourceOperationId string) (*DialogSideEffectOutbox, error)
-	MarkPublishing(status int32, leaseOwner string, leaseUntil string, sideEffectId int64) (rowsAffected int64, err error)
-	MarkCompleted(status int32, leaseUntil string, sideEffectId int64) (rowsAffected int64, err error)
-	MarkRetryableFailure(status int32, nextRetryAt string, leaseUntil string, lastErrorCode string, sideEffectId int64) (rowsAffected int64, err error)
-	MarkBlocked(status int32, leaseUntil string, lastErrorCode string, sideEffectId int64) (rowsAffected int64, err error)
+	MarkPublishing(status int32, leaseOwner string, leaseUntil time.Time, sideEffectId int64) (rowsAffected int64, err error)
+	MarkCompleted(status int32, leaseUntil time.Time, sideEffectId int64) (rowsAffected int64, err error)
+	MarkRetryableFailure(status int32, nextRetryAt time.Time, leaseUntil time.Time, lastErrorCode string, sideEffectId int64) (rowsAffected int64, err error)
+	MarkBlocked(status int32, leaseUntil time.Time, lastErrorCode string, sideEffectId int64) (rowsAffected int64, err error)
 	SelectBySourceOperationKind(sourceOperationId string, kind string) ([]DialogSideEffectOutbox, error)
 }
 
@@ -333,7 +334,7 @@ func (m *defaultDialogSideEffectOutboxModel) SelectPendingForUpdateByKindWithCB(
 
 // MarkBlockedIfOld
 // update dialog_side_effect_outbox set `status` = :status, lease_owner = ”, lease_until = :lease_until, last_error_code = :last_error_code where side_effect_id = :side_effect_id and created_at <= :blocked_before
-func (m *defaultDialogSideEffectOutboxModel) MarkBlockedIfOld(ctx context.Context, status int32, leaseUntil string, lastErrorCode string, sideEffectId int64, blockedBefore string) (rowsAffected int64, err error) {
+func (m *defaultDialogSideEffectOutboxModel) MarkBlockedIfOld(ctx context.Context, status int32, leaseUntil time.Time, lastErrorCode string, sideEffectId int64, blockedBefore string) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update dialog_side_effect_outbox set `status` = ?, lease_owner = '', lease_until = ?, last_error_code = ? where side_effect_id = ? and created_at <= ?"
@@ -358,7 +359,7 @@ func (m *defaultDialogSideEffectOutboxModel) MarkBlockedIfOld(ctx context.Contex
 
 // MarkBlockedIfOld
 // update dialog_side_effect_outbox set `status` = :status, lease_owner = ”, lease_until = :lease_until, last_error_code = :last_error_code where side_effect_id = :side_effect_id and created_at <= :blocked_before
-func (m *defaultDialogSideEffectOutboxTxModel) MarkBlockedIfOld(status int32, leaseUntil string, lastErrorCode string, sideEffectId int64, blockedBefore string) (rowsAffected int64, err error) {
+func (m *defaultDialogSideEffectOutboxTxModel) MarkBlockedIfOld(status int32, leaseUntil time.Time, lastErrorCode string, sideEffectId int64, blockedBefore string) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialog_side_effect_outbox set `status` = ?, lease_owner = '', lease_until = ?, last_error_code = ? where side_effect_id = ? and created_at <= ?"
 		rResult sql.Result
@@ -433,7 +434,7 @@ func (m *defaultDialogSideEffectOutboxTxModel) SelectExistingSideEffect(kind str
 
 // MarkPublishing
 // update dialog_side_effect_outbox set `status` = :status, attempt_count = attempt_count + 1, lease_owner = :lease_owner, lease_until = :lease_until where side_effect_id = :side_effect_id
-func (m *defaultDialogSideEffectOutboxModel) MarkPublishing(ctx context.Context, status int32, leaseOwner string, leaseUntil string, sideEffectId int64) (rowsAffected int64, err error) {
+func (m *defaultDialogSideEffectOutboxModel) MarkPublishing(ctx context.Context, status int32, leaseOwner string, leaseUntil time.Time, sideEffectId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update dialog_side_effect_outbox set `status` = ?, attempt_count = attempt_count + 1, lease_owner = ?, lease_until = ? where side_effect_id = ?"
@@ -458,7 +459,7 @@ func (m *defaultDialogSideEffectOutboxModel) MarkPublishing(ctx context.Context,
 
 // MarkPublishing
 // update dialog_side_effect_outbox set `status` = :status, attempt_count = attempt_count + 1, lease_owner = :lease_owner, lease_until = :lease_until where side_effect_id = :side_effect_id
-func (m *defaultDialogSideEffectOutboxTxModel) MarkPublishing(status int32, leaseOwner string, leaseUntil string, sideEffectId int64) (rowsAffected int64, err error) {
+func (m *defaultDialogSideEffectOutboxTxModel) MarkPublishing(status int32, leaseOwner string, leaseUntil time.Time, sideEffectId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialog_side_effect_outbox set `status` = ?, attempt_count = attempt_count + 1, lease_owner = ?, lease_until = ? where side_effect_id = ?"
 		rResult sql.Result
@@ -481,7 +482,7 @@ func (m *defaultDialogSideEffectOutboxTxModel) MarkPublishing(status int32, leas
 
 // MarkCompleted
 // update dialog_side_effect_outbox set `status` = :status, lease_owner = ”, lease_until = :lease_until, last_error_code = ” where side_effect_id = :side_effect_id
-func (m *defaultDialogSideEffectOutboxModel) MarkCompleted(ctx context.Context, status int32, leaseUntil string, sideEffectId int64) (rowsAffected int64, err error) {
+func (m *defaultDialogSideEffectOutboxModel) MarkCompleted(ctx context.Context, status int32, leaseUntil time.Time, sideEffectId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update dialog_side_effect_outbox set `status` = ?, lease_owner = '', lease_until = ?, last_error_code = '' where side_effect_id = ?"
@@ -506,7 +507,7 @@ func (m *defaultDialogSideEffectOutboxModel) MarkCompleted(ctx context.Context, 
 
 // MarkCompleted
 // update dialog_side_effect_outbox set `status` = :status, lease_owner = ”, lease_until = :lease_until, last_error_code = ” where side_effect_id = :side_effect_id
-func (m *defaultDialogSideEffectOutboxTxModel) MarkCompleted(status int32, leaseUntil string, sideEffectId int64) (rowsAffected int64, err error) {
+func (m *defaultDialogSideEffectOutboxTxModel) MarkCompleted(status int32, leaseUntil time.Time, sideEffectId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialog_side_effect_outbox set `status` = ?, lease_owner = '', lease_until = ?, last_error_code = '' where side_effect_id = ?"
 		rResult sql.Result
@@ -529,7 +530,7 @@ func (m *defaultDialogSideEffectOutboxTxModel) MarkCompleted(status int32, lease
 
 // MarkRetryableFailure
 // update dialog_side_effect_outbox set `status` = :status, next_retry_at = :next_retry_at, lease_owner = ”, lease_until = :lease_until, last_error_code = :last_error_code where side_effect_id = :side_effect_id
-func (m *defaultDialogSideEffectOutboxModel) MarkRetryableFailure(ctx context.Context, status int32, nextRetryAt string, leaseUntil string, lastErrorCode string, sideEffectId int64) (rowsAffected int64, err error) {
+func (m *defaultDialogSideEffectOutboxModel) MarkRetryableFailure(ctx context.Context, status int32, nextRetryAt time.Time, leaseUntil time.Time, lastErrorCode string, sideEffectId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update dialog_side_effect_outbox set `status` = ?, next_retry_at = ?, lease_owner = '', lease_until = ?, last_error_code = ? where side_effect_id = ?"
@@ -554,7 +555,7 @@ func (m *defaultDialogSideEffectOutboxModel) MarkRetryableFailure(ctx context.Co
 
 // MarkRetryableFailure
 // update dialog_side_effect_outbox set `status` = :status, next_retry_at = :next_retry_at, lease_owner = ”, lease_until = :lease_until, last_error_code = :last_error_code where side_effect_id = :side_effect_id
-func (m *defaultDialogSideEffectOutboxTxModel) MarkRetryableFailure(status int32, nextRetryAt string, leaseUntil string, lastErrorCode string, sideEffectId int64) (rowsAffected int64, err error) {
+func (m *defaultDialogSideEffectOutboxTxModel) MarkRetryableFailure(status int32, nextRetryAt time.Time, leaseUntil time.Time, lastErrorCode string, sideEffectId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialog_side_effect_outbox set `status` = ?, next_retry_at = ?, lease_owner = '', lease_until = ?, last_error_code = ? where side_effect_id = ?"
 		rResult sql.Result
@@ -577,7 +578,7 @@ func (m *defaultDialogSideEffectOutboxTxModel) MarkRetryableFailure(status int32
 
 // MarkBlocked
 // update dialog_side_effect_outbox set `status` = :status, lease_owner = ”, lease_until = :lease_until, last_error_code = :last_error_code where side_effect_id = :side_effect_id
-func (m *defaultDialogSideEffectOutboxModel) MarkBlocked(ctx context.Context, status int32, leaseUntil string, lastErrorCode string, sideEffectId int64) (rowsAffected int64, err error) {
+func (m *defaultDialogSideEffectOutboxModel) MarkBlocked(ctx context.Context, status int32, leaseUntil time.Time, lastErrorCode string, sideEffectId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update dialog_side_effect_outbox set `status` = ?, lease_owner = '', lease_until = ?, last_error_code = ? where side_effect_id = ?"
@@ -602,7 +603,7 @@ func (m *defaultDialogSideEffectOutboxModel) MarkBlocked(ctx context.Context, st
 
 // MarkBlocked
 // update dialog_side_effect_outbox set `status` = :status, lease_owner = ”, lease_until = :lease_until, last_error_code = :last_error_code where side_effect_id = :side_effect_id
-func (m *defaultDialogSideEffectOutboxTxModel) MarkBlocked(status int32, leaseUntil string, lastErrorCode string, sideEffectId int64) (rowsAffected int64, err error) {
+func (m *defaultDialogSideEffectOutboxTxModel) MarkBlocked(status int32, leaseUntil time.Time, lastErrorCode string, sideEffectId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialog_side_effect_outbox set `status` = ?, lease_owner = '', lease_until = ?, last_error_code = ? where side_effect_id = ?"
 		rResult sql.Result

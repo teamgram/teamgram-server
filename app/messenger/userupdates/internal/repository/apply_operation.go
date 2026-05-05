@@ -24,7 +24,6 @@ func (r *Repository) ClaimPartitionOwner(ctx context.Context, partitionID int32)
 		OwnerEpoch:      0,
 		OwnerInstanceId: "unassigned",
 		LeaseId:         "",
-		LeaseExpiresAt:  "",
 	}); err != nil {
 		return 0, storageError("insert partition fence", err)
 	}
@@ -269,8 +268,8 @@ func insertUserMessageView(txModels *model.TxModels, in ApplyUserOperationInput,
 		MessageStatus:      MessageStatusLive,
 		EditVersion:        0,
 		Date:               mysqlDate(op.Date),
-		EditDate:           "",
-		DeletedAt:          "",
+		EditDate:           mysqlNullInvalid(),
+		DeletedAt:          mysqlNullInvalid(),
 		ViewSchemaVersion:  1,
 		ViewPayload:        viewPayload,
 	})
@@ -292,7 +291,7 @@ func upsertUserDialog(txModels *model.TxModels, in ApplyUserOperationInput, op p
 		PeerId:                   op.PeerID,
 		TopPeerSeq:               op.PeerSeq,
 		TopCanonicalMessageId:    op.CanonicalMessageID,
-		TopMessageDate:           mysqlDate(op.Date),
+		TopMessageDate:           mysqlNullDate(op.Date),
 		TopMessageStatus:         MessageStatusLive,
 		ReadInboxMaxPeerSeq:      0,
 		ReadOutboxMaxPeerSeq:     0,
@@ -305,9 +304,9 @@ func upsertUserDialog(txModels *model.TxModels, in ApplyUserOperationInput, op p
 		HasScheduled:             false,
 		AvailableMinPeerSeq:      0,
 		Hidden:                   false,
-		DeletedAt:                mysqlZeroTime(),
+		DeletedAt:                mysqlNullInvalid(),
 		LastPts:                  nextPTS,
-		LastPtsAt:                now,
+		LastPtsAt:                mysqlNullTime(now),
 		DialogSchemaVersion:      1,
 		DialogPayload:            dialogPayload,
 	})
@@ -330,7 +329,7 @@ func applyReadHistory(txModels *model.TxModels, in ApplyUserOperationInput, op p
 			return storageError("select dialog before read history", err)
 		}
 	}
-	_, err := txModels.UserDialogsModel.UpdateReadState(0, 0, 0, false, readInbox, readOutbox, nextPTS, mysqlNow(), in.UserID, op.PeerType, op.PeerID)
+	_, err := txModels.UserDialogsModel.UpdateReadState(0, 0, 0, false, readInbox, readOutbox, nextPTS, mysqlNullNow(), in.UserID, op.PeerType, op.PeerID)
 	if err != nil {
 		return storageError("apply read history", err)
 	}
@@ -348,11 +347,11 @@ func applyDeleteMessages(tx *sqlx.Tx, txModels *model.TxModels, in ApplyUserOper
 			return storageError("select message before delete", err)
 		}
 		row.MessageStatus = MessageStatusDeleted
+		row.DeletedAt = mysqlNullTime(deletedAt)
 		row.ViewPayload = []byte(`{"schema_version":1,"deleted":true}`)
 		if _, _, err := txModels.UserMessageViewsModel.InsertOrUpdate(row); err != nil {
 			return storageError("mark message deleted", err)
 		}
-		_ = deletedAt
 	}
 	return recomputeDialogTop(tx, in.UserID, op.PeerType, op.PeerID, nextPTS)
 }
@@ -401,7 +400,7 @@ func recomputeDialogTop(tx *sqlx.Tx, userID int64, peerType int32, peerID int64,
 		return nil
 	}
 	update := "update user_dialogs set top_peer_seq = ?, top_canonical_message_id = ?, top_message_date = ?, top_message_status = ?, hidden = 0, deleted_at = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
-	if _, err := tx.Exec(update, top.PeerSeq, top.CanonicalMessageId, top.Date, top.MessageStatus, mysqlZeroTime(), nextPTS, mysqlNow(), userID, peerType, peerID); err != nil {
+	if _, err := tx.Exec(update, top.PeerSeq, top.CanonicalMessageId, top.Date, top.MessageStatus, mysqlNullInvalid(), nextPTS, mysqlNow(), userID, peerType, peerID); err != nil {
 		return storageError("update dialog top after delete", err)
 	}
 	return nil
@@ -416,7 +415,7 @@ func applyUpdatePinnedMessage(txModels *model.TxModels, in ApplyUserOperationInp
 	if pinnedCanonicalID == 0 {
 		pinnedCanonicalID = op.CanonicalMessageID
 	}
-	_, err := txModels.UserDialogsModel.UpdatePinnedMessage(pinnedPeerSeq, pinnedCanonicalID, nextPTS, mysqlNow(), in.UserID, op.PeerType, op.PeerID)
+	_, err := txModels.UserDialogsModel.UpdatePinnedMessage(pinnedPeerSeq, pinnedCanonicalID, nextPTS, mysqlNullNow(), in.UserID, op.PeerType, op.PeerID)
 	if err != nil {
 		return storageError("apply update pinned message", err)
 	}
@@ -443,7 +442,7 @@ func applyMarkDialogUnread(txModels *model.TxModels, in ApplyUserOperationInput,
 		row.ReadInboxMaxPeerSeq,
 		row.ReadOutboxMaxPeerSeq,
 		nextPTS,
-		mysqlNow(),
+		mysqlNullNow(),
 		in.UserID,
 		op.PeerType,
 		op.PeerID,
@@ -465,7 +464,7 @@ func applyScheduledMarker(txModels *model.TxModels, in ApplyUserOperationInput, 
 		PeerId:                   op.PeerID,
 		TopPeerSeq:               op.PeerSeq,
 		TopCanonicalMessageId:    op.CanonicalMessageID,
-		TopMessageDate:           mysqlDate(op.Date),
+		TopMessageDate:           mysqlNullDate(op.Date),
 		TopMessageStatus:         MessageStatusLive,
 		ReadInboxMaxPeerSeq:      0,
 		ReadOutboxMaxPeerSeq:     0,
@@ -478,9 +477,9 @@ func applyScheduledMarker(txModels *model.TxModels, in ApplyUserOperationInput, 
 		HasScheduled:             hasScheduled,
 		AvailableMinPeerSeq:      0,
 		Hidden:                   false,
-		DeletedAt:                mysqlZeroTime(),
+		DeletedAt:                mysqlNullInvalid(),
 		LastPts:                  nextPTS,
-		LastPtsAt:                mysqlNow(),
+		LastPtsAt:                mysqlNullNow(),
 		DialogSchemaVersion:      1,
 		DialogPayload:            []byte(`{"schema_version":1}`),
 	})
@@ -550,12 +549,10 @@ func insertPushTask(ctx context.Context, txModels *model.TxModels, r *Repository
 		Status:             PushTaskStatusPending,
 		PublishAttempts:    0,
 		AvailableAt:        mysqlNow(),
-		NextRetryAt:        "",
 		PublishedTopic:     "",
 		PublishedPartition: 0,
 		PublishedOffset:    0,
 		LastErrorCode:      "",
-		PublishedAt:        "",
 	})
 	if err != nil {
 		return storageError("insert push task", err)
@@ -673,16 +670,4 @@ func insertOperationResult(txModels *model.TxModels, in ApplyUserOperationInput,
 		return storageError("insert operation result", err)
 	}
 	return nil
-}
-
-func mysqlDate(unix int32) string {
-	return time.Unix(int64(unix), 0).UTC().Format("2006-01-02 15:04:05.000000")
-}
-
-func mysqlNow() string {
-	return time.Now().UTC().Format("2006-01-02 15:04:05.000000")
-}
-
-func mysqlZeroTime() string {
-	return "1970-01-01 00:00:00.000000"
 }

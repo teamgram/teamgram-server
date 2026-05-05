@@ -39,29 +39,29 @@ type (
 	}
 
 	UserDialogs struct {
-		UserId                   int64  `db:"user_id" json:"user_id"`
-		PeerType                 int32  `db:"peer_type" json:"peer_type"`
-		PeerId                   int64  `db:"peer_id" json:"peer_id"`
-		TopPeerSeq               int64  `db:"top_peer_seq" json:"top_peer_seq"`
-		TopCanonicalMessageId    int64  `db:"top_canonical_message_id" json:"top_canonical_message_id"`
-		TopMessageDate           string `db:"top_message_date" json:"top_message_date"`
-		TopMessageStatus         int32  `db:"top_message_status" json:"top_message_status"`
-		UnreadCount              int32  `db:"unread_count" json:"unread_count"`
-		UnreadMentionsCount      int32  `db:"unread_mentions_count" json:"unread_mentions_count"`
-		UnreadReactionsCount     int32  `db:"unread_reactions_count" json:"unread_reactions_count"`
-		UnreadMark               bool   `db:"unread_mark" json:"unread_mark"`
-		PinnedPeerSeq            int64  `db:"pinned_peer_seq" json:"pinned_peer_seq"`
-		PinnedCanonicalMessageId int64  `db:"pinned_canonical_message_id" json:"pinned_canonical_message_id"`
-		HasScheduled             bool   `db:"has_scheduled" json:"has_scheduled"`
-		AvailableMinPeerSeq      int64  `db:"available_min_peer_seq" json:"available_min_peer_seq"`
-		Hidden                   bool   `db:"hidden" json:"hidden"`
-		DeletedAt                string `db:"deleted_at" json:"deleted_at"`
-		LastPts                  int64  `db:"last_pts" json:"last_pts"`
-		LastPtsAt                string `db:"last_pts_at" json:"last_pts_at"`
-		ReadInboxMaxPeerSeq      int64  `db:"read_inbox_max_peer_seq" json:"read_inbox_max_peer_seq"`
-		ReadOutboxMaxPeerSeq     int64  `db:"read_outbox_max_peer_seq" json:"read_outbox_max_peer_seq"`
-		DialogSchemaVersion      int32  `db:"dialog_schema_version" json:"dialog_schema_version"`
-		DialogPayload            []byte `db:"dialog_payload" json:"dialog_payload"`
+		UserId                   int64        `db:"user_id" json:"user_id"`
+		PeerType                 int32        `db:"peer_type" json:"peer_type"`
+		PeerId                   int64        `db:"peer_id" json:"peer_id"`
+		TopPeerSeq               int64        `db:"top_peer_seq" json:"top_peer_seq"`
+		TopCanonicalMessageId    int64        `db:"top_canonical_message_id" json:"top_canonical_message_id"`
+		TopMessageDate           sql.NullTime `db:"top_message_date" json:"top_message_date"`
+		TopMessageStatus         int32        `db:"top_message_status" json:"top_message_status"`
+		UnreadCount              int32        `db:"unread_count" json:"unread_count"`
+		UnreadMentionsCount      int32        `db:"unread_mentions_count" json:"unread_mentions_count"`
+		UnreadReactionsCount     int32        `db:"unread_reactions_count" json:"unread_reactions_count"`
+		UnreadMark               bool         `db:"unread_mark" json:"unread_mark"`
+		PinnedPeerSeq            int64        `db:"pinned_peer_seq" json:"pinned_peer_seq"`
+		PinnedCanonicalMessageId int64        `db:"pinned_canonical_message_id" json:"pinned_canonical_message_id"`
+		HasScheduled             bool         `db:"has_scheduled" json:"has_scheduled"`
+		AvailableMinPeerSeq      int64        `db:"available_min_peer_seq" json:"available_min_peer_seq"`
+		Hidden                   bool         `db:"hidden" json:"hidden"`
+		DeletedAt                sql.NullTime `db:"deleted_at" json:"deleted_at"`
+		LastPts                  int64        `db:"last_pts" json:"last_pts"`
+		LastPtsAt                sql.NullTime `db:"last_pts_at" json:"last_pts_at"`
+		ReadInboxMaxPeerSeq      int64        `db:"read_inbox_max_peer_seq" json:"read_inbox_max_peer_seq"`
+		ReadOutboxMaxPeerSeq     int64        `db:"read_outbox_max_peer_seq" json:"read_outbox_max_peer_seq"`
+		DialogSchemaVersion      int32        `db:"dialog_schema_version" json:"dialog_schema_version"`
+		DialogPayload            []byte       `db:"dialog_payload" json:"dialog_payload"`
 	}
 )
 

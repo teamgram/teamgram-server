@@ -5,6 +5,7 @@ package repository
 import (
 	"bytes"
 	"context"
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -502,18 +503,38 @@ func openIntegrationDB(t *testing.T) *sqlx.DB {
 }
 
 func mysqlTestTime(t time.Time) string {
-	return t.UTC().Format("2006-01-02 15:04:05.000000")
+	return mysqlTimestamp(t)
 }
 
-func normalizeDBTestTime(t *testing.T, value string) string {
+func mysqlTestTimeValue(t time.Time) time.Time {
+	return t.UTC()
+}
+
+func mysqlTestNullTime(t time.Time) sql.NullTime {
+	return sql.NullTime{Time: t.UTC(), Valid: true}
+}
+
+func normalizeDBTestTime(t *testing.T, value any) string {
 	t.Helper()
-	if parsed, err := time.Parse(time.RFC3339Nano, value); err == nil {
-		return parsed.Format("2006-01-02 15:04:05.000000")
+	switch v := value.(type) {
+	case time.Time:
+		return mysqlTestTime(v)
+	case sql.NullTime:
+		if !v.Valid {
+			return ""
+		}
+		return mysqlTestTime(v.Time)
+	case string:
+		if parsed, err := time.Parse(time.RFC3339Nano, v); err == nil {
+			return parsed.Format("2006-01-02 15:04:05.000000")
+		}
+		if parsed, err := time.Parse("2006-01-02 15:04:05.999999", v); err == nil {
+			return parsed.Format("2006-01-02 15:04:05.000000")
+		}
+		t.Fatalf("unsupported DB time format %q", v)
+	default:
+		t.Fatalf("unsupported DB time value %T", value)
 	}
-	if parsed, err := time.Parse("2006-01-02 15:04:05.999999", value); err == nil {
-		return parsed.Format("2006-01-02 15:04:05.000000")
-	}
-	t.Fatalf("unsupported DB time format %q", value)
 	return ""
 }
 

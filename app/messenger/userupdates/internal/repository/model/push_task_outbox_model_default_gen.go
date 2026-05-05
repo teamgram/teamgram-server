@@ -16,6 +16,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 
@@ -46,26 +47,26 @@ type (
 	}
 
 	PushTaskOutbox struct {
-		TaskId             int64  `db:"task_id" json:"task_id"`
-		UserId             int64  `db:"user_id" json:"user_id"`
-		Pts                int64  `db:"pts" json:"pts"`
-		PushType           int32  `db:"push_type" json:"push_type"`
-		PeerType           int32  `db:"peer_type" json:"peer_type"`
-		PeerId             int64  `db:"peer_id" json:"peer_id"`
-		OperationId        string `db:"operation_id" json:"operation_id"`
-		PushPartitionId    int32  `db:"push_partition_id" json:"push_partition_id"`
-		TaskSchemaVersion  int32  `db:"task_schema_version" json:"task_schema_version"`
-		TaskCodec          int32  `db:"task_codec" json:"task_codec"`
-		TaskPayload        []byte `db:"task_payload" json:"task_payload"`
-		Status             int32  `db:"status" json:"status"`
-		PublishAttempts    int32  `db:"publish_attempts" json:"publish_attempts"`
-		AvailableAt        string `db:"available_at" json:"available_at"`
-		NextRetryAt        string `db:"next_retry_at" json:"next_retry_at"`
-		PublishedTopic     string `db:"published_topic" json:"published_topic"`
-		PublishedPartition int32  `db:"published_partition" json:"published_partition"`
-		PublishedOffset    int64  `db:"published_offset" json:"published_offset"`
-		LastErrorCode      string `db:"last_error_code" json:"last_error_code"`
-		PublishedAt        string `db:"published_at" json:"published_at"`
+		TaskId             int64        `db:"task_id" json:"task_id"`
+		UserId             int64        `db:"user_id" json:"user_id"`
+		Pts                int64        `db:"pts" json:"pts"`
+		PushType           int32        `db:"push_type" json:"push_type"`
+		PeerType           int32        `db:"peer_type" json:"peer_type"`
+		PeerId             int64        `db:"peer_id" json:"peer_id"`
+		OperationId        string       `db:"operation_id" json:"operation_id"`
+		PushPartitionId    int32        `db:"push_partition_id" json:"push_partition_id"`
+		TaskSchemaVersion  int32        `db:"task_schema_version" json:"task_schema_version"`
+		TaskCodec          int32        `db:"task_codec" json:"task_codec"`
+		TaskPayload        []byte       `db:"task_payload" json:"task_payload"`
+		Status             int32        `db:"status" json:"status"`
+		PublishAttempts    int32        `db:"publish_attempts" json:"publish_attempts"`
+		AvailableAt        time.Time    `db:"available_at" json:"available_at"`
+		NextRetryAt        sql.NullTime `db:"next_retry_at" json:"next_retry_at"`
+		PublishedTopic     string       `db:"published_topic" json:"published_topic"`
+		PublishedPartition int32        `db:"published_partition" json:"published_partition"`
+		PublishedOffset    int64        `db:"published_offset" json:"published_offset"`
+		LastErrorCode      string       `db:"last_error_code" json:"last_error_code"`
+		PublishedAt        sql.NullTime `db:"published_at" json:"published_at"`
 	}
 )
 

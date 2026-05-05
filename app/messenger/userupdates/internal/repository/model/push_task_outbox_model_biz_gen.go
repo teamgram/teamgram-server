@@ -16,6 +16,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 )
@@ -35,8 +36,8 @@ type bizPushTaskOutboxModel interface {
 	SelectDueForPublishWithCB(ctx context.Context, pendingStatus int32, failedRetryableStatus int32, availableAt string, limit int32, cb func(sz, i int, v *PushTaskOutbox)) ([]PushTaskOutbox, error)
 	MarkPublishing(ctx context.Context, status int32, taskId int64) (rowsAffected int64, err error)
 	TryMarkPublishingDue(ctx context.Context, status int32, leaseExpiresAt string, taskId int64, pendingStatus int32, failedRetryableStatus int32, now string) (rowsAffected int64, err error)
-	MarkPublished(ctx context.Context, status int32, publishedTopic string, publishedPartition int32, publishedOffset int64, publishedAt string, taskId int64) (rowsAffected int64, err error)
-	MarkPublishFailed(ctx context.Context, status int32, nextRetryAt string, availableAt string, lastErrorCode string, taskId int64) (rowsAffected int64, err error)
+	MarkPublished(ctx context.Context, status int32, publishedTopic string, publishedPartition int32, publishedOffset int64, publishedAt sql.NullTime, taskId int64) (rowsAffected int64, err error)
+	MarkPublishFailed(ctx context.Context, status int32, nextRetryAt sql.NullTime, availableAt time.Time, lastErrorCode string, taskId int64) (rowsAffected int64, err error)
 	ResetExpiredPublishing(ctx context.Context, pendingStatus int32, availableAt string, publishingStatus int32, expiredAt string, limit int32) (rowsAffected int64, err error)
 }
 
@@ -46,8 +47,8 @@ type PushTaskOutboxTxModel interface {
 	SelectDueForPublish(pendingStatus int32, failedRetryableStatus int32, availableAt string, limit int32) ([]PushTaskOutbox, error)
 	MarkPublishing(status int32, taskId int64) (rowsAffected int64, err error)
 	TryMarkPublishingDue(status int32, leaseExpiresAt string, taskId int64, pendingStatus int32, failedRetryableStatus int32, now string) (rowsAffected int64, err error)
-	MarkPublished(status int32, publishedTopic string, publishedPartition int32, publishedOffset int64, publishedAt string, taskId int64) (rowsAffected int64, err error)
-	MarkPublishFailed(status int32, nextRetryAt string, availableAt string, lastErrorCode string, taskId int64) (rowsAffected int64, err error)
+	MarkPublished(status int32, publishedTopic string, publishedPartition int32, publishedOffset int64, publishedAt sql.NullTime, taskId int64) (rowsAffected int64, err error)
+	MarkPublishFailed(status int32, nextRetryAt sql.NullTime, availableAt time.Time, lastErrorCode string, taskId int64) (rowsAffected int64, err error)
 	ResetExpiredPublishing(pendingStatus int32, availableAt string, publishingStatus int32, expiredAt string, limit int32) (rowsAffected int64, err error)
 }
 
@@ -370,7 +371,7 @@ func (m *defaultPushTaskOutboxTxModel) TryMarkPublishingDue(status int32, leaseE
 
 // MarkPublished
 // update push_task_outbox set `status` = :status, published_topic = :published_topic, published_partition = :published_partition, published_offset = :published_offset, published_at = :published_at where task_id = :task_id
-func (m *defaultPushTaskOutboxModel) MarkPublished(ctx context.Context, status int32, publishedTopic string, publishedPartition int32, publishedOffset int64, publishedAt string, taskId int64) (rowsAffected int64, err error) {
+func (m *defaultPushTaskOutboxModel) MarkPublished(ctx context.Context, status int32, publishedTopic string, publishedPartition int32, publishedOffset int64, publishedAt sql.NullTime, taskId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update push_task_outbox set `status` = ?, published_topic = ?, published_partition = ?, published_offset = ?, published_at = ? where task_id = ?"
@@ -395,7 +396,7 @@ func (m *defaultPushTaskOutboxModel) MarkPublished(ctx context.Context, status i
 
 // MarkPublished
 // update push_task_outbox set `status` = :status, published_topic = :published_topic, published_partition = :published_partition, published_offset = :published_offset, published_at = :published_at where task_id = :task_id
-func (m *defaultPushTaskOutboxTxModel) MarkPublished(status int32, publishedTopic string, publishedPartition int32, publishedOffset int64, publishedAt string, taskId int64) (rowsAffected int64, err error) {
+func (m *defaultPushTaskOutboxTxModel) MarkPublished(status int32, publishedTopic string, publishedPartition int32, publishedOffset int64, publishedAt sql.NullTime, taskId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update push_task_outbox set `status` = ?, published_topic = ?, published_partition = ?, published_offset = ?, published_at = ? where task_id = ?"
 		rResult sql.Result
@@ -418,7 +419,7 @@ func (m *defaultPushTaskOutboxTxModel) MarkPublished(status int32, publishedTopi
 
 // MarkPublishFailed
 // update push_task_outbox set `status` = :status, next_retry_at = :next_retry_at, available_at = :available_at, last_error_code = :last_error_code where task_id = :task_id
-func (m *defaultPushTaskOutboxModel) MarkPublishFailed(ctx context.Context, status int32, nextRetryAt string, availableAt string, lastErrorCode string, taskId int64) (rowsAffected int64, err error) {
+func (m *defaultPushTaskOutboxModel) MarkPublishFailed(ctx context.Context, status int32, nextRetryAt sql.NullTime, availableAt time.Time, lastErrorCode string, taskId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update push_task_outbox set `status` = ?, next_retry_at = ?, available_at = ?, last_error_code = ? where task_id = ?"
@@ -443,7 +444,7 @@ func (m *defaultPushTaskOutboxModel) MarkPublishFailed(ctx context.Context, stat
 
 // MarkPublishFailed
 // update push_task_outbox set `status` = :status, next_retry_at = :next_retry_at, available_at = :available_at, last_error_code = :last_error_code where task_id = :task_id
-func (m *defaultPushTaskOutboxTxModel) MarkPublishFailed(status int32, nextRetryAt string, availableAt string, lastErrorCode string, taskId int64) (rowsAffected int64, err error) {
+func (m *defaultPushTaskOutboxTxModel) MarkPublishFailed(status int32, nextRetryAt sql.NullTime, availableAt time.Time, lastErrorCode string, taskId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update push_task_outbox set `status` = ?, next_retry_at = ?, available_at = ?, last_error_code = ? where task_id = ?"
 		rResult sql.Result
