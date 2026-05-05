@@ -1,5 +1,5 @@
 Name: interface.session
-ListenOn: 127.0.0.1:20120
+ListenOn: 0.0.0.0:20120
 Etcd:
   GoZero: true
   Hosts:

@@ -1,2 +1,11 @@
 Name: service.geoip
 ListenOn: 0.0.0.0:25670
+Etcd:
+  #GoZero: true
+  Hosts:
+    - 127.0.0.1:2379
+  Key: interface.geoip
+Log:
+  Mode: file
+  Path: ../logs/geoip
+  Level: debug

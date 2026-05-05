@@ -1,5 +1,5 @@
 Name: service.dfs
-ListenOn: 127.0.0.1:20640
+ListenOn: 0.0.0.0:20640
 Etcd:
   Hosts:
     - 127.0.0.1:2379

@@ -1,5 +1,5 @@
 Name: examples.echo
-ListenOn: 127.0.0.1:11001
+ListenOn: 0.0.0.0:11001
 Etcd:
   #GoZero: true
   Hosts:

@@ -1,5 +1,5 @@
 Name: bff.bff
-ListenOn: 127.0.0.1:20010
+ListenOn: 0.0.0.0:20010
 Etcd:
   Hosts:
     - 127.0.0.1:2379

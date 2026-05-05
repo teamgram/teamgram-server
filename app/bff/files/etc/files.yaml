@@ -3,7 +3,7 @@ ListenOn: 0.0.0.0:21350
 DfsClient:
   DestService: service.dfs
   ServiceName: RPCDfs
-  Codec: zrpc
+  # Codec: zrpc
   Etcd:
     Hosts:
       - 127.0.0.1:2379
@@ -11,7 +11,7 @@ DfsClient:
 MediaClient:
   DestService: service.media
   ServiceName: RPCMedia
-  Codec: zrpc
+  # Codec: zrpc
   Etcd:
     Hosts:
       - 127.0.0.1:2379
@@ -19,7 +19,7 @@ MediaClient:
 UserClient:
   DestService: service.biz_service.user
   ServiceName: RPCUser
-  Codec: zrpc
+  # Codec: zrpc
   Etcd:
     Hosts:
       - 127.0.0.1:2379

@@ -3,7 +3,7 @@ ListenOn: 0.0.0.0:21250
 AuthsessionClient:
   DestService: service.authsession
   ServiceName: RPCAuthsession
-  Codec: zrpc
+  # Codec: zrpc
   Etcd:
     Hosts:
       - 127.0.0.1:2379
@@ -11,7 +11,7 @@ AuthsessionClient:
 UserClient:
   DestService: service.biz_service.user
   ServiceName: RPCUser
-  Codec: zrpc
+  # Codec: zrpc
   Etcd:
     Hosts:
       - 127.0.0.1:2379

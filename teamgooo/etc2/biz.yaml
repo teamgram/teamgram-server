@@ -1,5 +1,5 @@
 Name: service.biz_service
-ListenOn: 127.0.0.1:20020
+ListenOn: 0.0.0.0:20020
 Etcd:
   Hosts:
     - 127.0.0.1:2379

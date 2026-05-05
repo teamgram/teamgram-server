@@ -1,5 +1,5 @@
 Name: bff.bff
-ListenOn: 127.0.0.1:20010
+ListenOn: 0.0.0.0:20010
 Etcd:
   #GoZero: true
   Hosts:
@@ -24,7 +24,7 @@ Code:
 BizServiceClient:
   DestService: service.biz_service
   ServiceName: RPCBizservice
-  Codec: zrpc
+  # Codec: zrpc
   Etcd:
     Hosts:
       - 127.0.0.1:2379
@@ -33,7 +33,7 @@ BizServiceClient:
 AuthSessionClient:
   DestService: service.authsession
   ServiceName: RPCAuthsession
-  Codec: zrpc
+  # Codec: zrpc
   Etcd:
     Hosts:
       - 127.0.0.1:2379
@@ -42,7 +42,7 @@ AuthSessionClient:
 MediaClient:
   DestService: service.media
   ServiceName: RPCMedia
-  Codec: zrpc
+  # Codec: zrpc
   Etcd:
     Hosts:
       - 127.0.0.1:2379
@@ -51,7 +51,7 @@ MediaClient:
 IdgenClient:
   DestService: service.idgen
   ServiceName: RPCIdgen
-  Codec: zrpc
+  # Codec: zrpc
   Etcd:
     Hosts:
       - 127.0.0.1:2379
@@ -60,7 +60,7 @@ IdgenClient:
 MsgClient:
   DestService: messenger.msg
   ServiceName: RPCMsg
-  Codec: zrpc
+  # Codec: zrpc
   Etcd:
     Hosts:
       - 127.0.0.1:2379
@@ -69,7 +69,7 @@ MsgClient:
 SyncClient:
   DestService: messenger.sync
   ServiceName: RPCSync
-  Codec: zrpc
+  # Codec: zrpc
   Etcd:
     Hosts:
       - 127.0.0.1:2379
@@ -80,7 +80,7 @@ TypingMinIntervalSeconds: 5
 UserupdatesClient:
   DestService: messenger.userupdates
   ServiceName: RPCUserupdates
-  Codec: zrpc
+  # Codec: zrpc
   Etcd:
     Hosts:
       - 127.0.0.1:2379
@@ -89,7 +89,7 @@ UserupdatesClient:
 DfsClient:
   DestService: service.dfs
   ServiceName: RPCDfs
-  Codec: zrpc
+  # Codec: zrpc
   Etcd:
     Hosts:
       - 127.0.0.1:2379

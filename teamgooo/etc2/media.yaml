@@ -1,5 +1,5 @@
 Name: service.media
-ListenOn: 127.0.0.1:20650
+ListenOn: 0.0.0.0:20650
 Etcd:
   Hosts:
     - 127.0.0.1:2379

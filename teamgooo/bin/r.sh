@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+echo "run geoip ..."
+nohup ./geoip -f=../../app/infra/geoip/etc/geoip.yaml >> ../logs/geoip.log  2>&1 &
+sleep 1
+
 echo "run idgen ..."
 nohup ./idgen -f=../../app/service/idgen/etc/idgen.yaml >> ../logs/idgen.log  2>&1 &
 sleep 1

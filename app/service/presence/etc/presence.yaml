@@ -1,5 +1,5 @@
 Name: service.presence
-ListenOn: 127.0.0.1:20680
+ListenOn: 0.0.0.0:20680
 Etcd:
   #GoZero: true
   Hosts:

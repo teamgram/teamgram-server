@@ -1,5 +1,5 @@
 Name: service.authsession
-ListenOn: 127.0.0.1:20450
+ListenOn: 0.0.0.0:20450
 Etcd:
   Hosts:
     - 127.0.0.1:2379

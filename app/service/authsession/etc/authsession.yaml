@@ -1,5 +1,5 @@
 Name: service.authsession
-ListenOn: 127.0.0.1:20450
+ListenOn: 0.0.0.0:20450
 Etcd:
   #GoZero: true
   Hosts:
@@ -13,7 +13,7 @@ Log:
 Geoip:
   DestService: service.geoip
   ServiceName: RPCGeoip
-  Codec: zrpc
+  # Codec: zrpc
   Etcd:
     Hosts:
       - 127.0.0.1:2379

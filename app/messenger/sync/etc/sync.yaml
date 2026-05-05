@@ -1,5 +1,5 @@
 Name: messenger.sync
-ListenOn: 127.0.0.1:29530
+ListenOn: 0.0.0.0:29530
 Etcd:
   #GoZero: true
   Hosts:

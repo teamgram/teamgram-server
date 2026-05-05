@@ -33,7 +33,7 @@ Minio:
 Idgen:
   DestService: service.idgen
   ServiceName: RPCIdgen
-  Codec: zrpc
+  # Codec: zrpc
   Etcd:
     Hosts:
       - 127.0.0.1:2379

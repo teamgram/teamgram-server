@@ -6,8 +6,8 @@ Etcd:
     - 127.0.0.1:2379
   Key: interface.gateway
 Log:
-  #Mode: file
-  #Path: ../logs/gateway
+  Mode: file
+  Path: ../logs/gateway
   Level: debug
 
 GatewayId: gateway-dev-1
@@ -17,10 +17,10 @@ Transport:
 AuthsessionClient:
   DestService: service.authsession
   ServiceName: RPCAuthsession
-  Codec: zrpc
-  ShortConnection: true
-  Endpoints:
-    - 127.0.0.1:20450
+  # Codec: zrpc
+  # ShortConnection: true
+  # Endpoints:
+  #  - 127.0.0.1:20450
   Etcd:
     Hosts:
       - 127.0.0.1:2379
@@ -44,7 +44,7 @@ GatewayShutdownPresenceOfflineMaxSessions: 10000
 BffClient:
   Clients:
     - DestService: bff.bff
-      Codec: zrpc
+      # Codec: zrpc
       Etcd:
         Hosts:
           - 127.0.0.1:2379

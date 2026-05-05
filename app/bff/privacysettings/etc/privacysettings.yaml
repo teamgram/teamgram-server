@@ -7,7 +7,7 @@ Etcd:
 
 UserClient:
   DestService: service.biz.user
-  Codec: zrpc
+  # Codec: zrpc
   Etcd:
     Hosts:
       - 127.0.0.1:2379
@@ -15,7 +15,7 @@ UserClient:
 
 ChatClient:
   DestService: service.biz.chat
-  Codec: zrpc
+  # Codec: zrpc
   Etcd:
     Hosts:
       - 127.0.0.1:2379
@@ -23,7 +23,7 @@ ChatClient:
 
 AuthsessionClient:
   DestService: service.authsession
-  Codec: zrpc
+  # Codec: zrpc
   Etcd:
     Hosts:
       - 127.0.0.1:2379
