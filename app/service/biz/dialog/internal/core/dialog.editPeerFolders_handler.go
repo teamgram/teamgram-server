@@ -17,15 +17,46 @@
 package core
 
 import (
+	"fmt"
+
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
 )
 
 // DialogEditPeerFolders
 // dialog.editPeerFolders user_id:long peer_dialog_list:Vector<long> folder_id:int = Vector<DialogPinnedExt>;
 func (c *DialogCore) DialogEditPeerFolders(in *dialog.TLDialogEditPeerFolders) (*dialog.VectorDialogPinnedExt, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.editPeerFolders - error: method DialogEditPeerFolders not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if in == nil {
+		return nil, dialog.ErrDialogInvalid
+	}
+	if len(in.OutboxIds) < len(in.PeerDialogList) {
+		return nil, dialog.ErrOutboxUnavailable
+	}
+	out := &dialog.VectorDialogPinnedExt{Datas: make([]dialog.DialogPinnedExtClazz, 0, len(in.PeerDialogList))}
+	for i, id := range in.PeerDialogList {
+		peer, err := repository.SplitPeerDialogID(id)
+		if err != nil {
+			return nil, err
+		}
+		_, err = c.svcCtx.Repo.EditPeerFolders(c.ctx, repository.EditPeerFoldersInput{
+			UserID:              in.UserId,
+			PeerType:            peer.PeerType,
+			PeerID:              peer.PeerID,
+			NewFolderID:         in.FolderId,
+			SourcePermAuthKeyID: in.SourcePermAuthKeyId,
+			OperationID:         in.OperationId + ":" + fmt.Sprint(id),
+			OutboxID:            in.OutboxIds[i],
+			PublicUpdateType:    "updateFolderPeers",
+			Payload:             []byte(`{"schema_version":1}`),
+		})
+		if err != nil {
+			return nil, err
+		}
+		out.Datas = append(out.Datas, dialog.MakeTLDialogPinnedExt(&dialog.TLDialogPinnedExt{
+			Order:    int64(i + 1),
+			PeerType: peer.PeerType,
+			PeerId:   peer.PeerID,
+		}))
+	}
+	return out, nil
 }

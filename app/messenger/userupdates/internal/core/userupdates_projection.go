@@ -54,7 +54,9 @@ func operationResultToTL(in *repository.OperationResult) (*userupdates.UserOpera
 
 func stateToTL(in repository.UserState) *userupdates.UserState {
 	return userupdates.MakeTLUserState(&userupdates.TLUserState{
-		Pts: in.Pts,
+		Pts:  in.Pts,
+		Seq:  int32(in.Seq),
+		Date: in.Date,
 	}).ToUserState()
 }
 
@@ -65,20 +67,29 @@ func differenceToTL(in *repository.GetDifferenceResult) (*userupdates.UserDiffer
 		}).ToUserDifference(), nil
 	}
 	state := stateToTL(in.State)
-	if len(in.Events) == 0 {
+	if len(in.Events) == 0 && len(in.AuthSeqEvents) == 0 {
 		return userupdates.MakeTLUserDifferenceEmpty(&userupdates.TLUserDifferenceEmpty{
 			State: state,
 		}).ToUserDifference(), nil
 	}
 
 	newMessages := make([]tg.MessageClazz, 0, len(in.Events))
-	otherUpdates := make([]tg.UpdateClazz, 0, len(in.Events))
+	otherUpdates := make([]tg.UpdateClazz, 0, len(in.Events)+len(in.AuthSeqEvents))
 	for _, event := range in.Events {
 		message, update, err := eventToTLUpdate(event)
 		if err != nil {
 			return nil, err
 		}
-		newMessages = append(newMessages, message)
+		if message != nil {
+			newMessages = append(newMessages, message)
+		}
+		otherUpdates = append(otherUpdates, update)
+	}
+	for _, event := range in.AuthSeqEvents {
+		update, err := authSeqEventToTLUpdate(event)
+		if err != nil {
+			return nil, err
+		}
 		otherUpdates = append(otherUpdates, update)
 	}
 	return userupdates.MakeTLUserDifference(&userupdates.TLUserDifference{
@@ -88,7 +99,7 @@ func differenceToTL(in *repository.GetDifferenceResult) (*userupdates.UserDiffer
 	}).ToUserDifference(), nil
 }
 
-func eventToTLUpdate(event repository.UserEvent) (*tg.TLMessage, *tg.TLUpdateNewMessage, error) {
+func eventToTLUpdate(event repository.UserEvent) (tg.MessageClazz, tg.UpdateClazz, error) {
 	if event.EventCodec != repository.PayloadCodecJSON || event.EventSchemaVersion != payload.MessageEventSchemaVersion {
 		return nil, nil, fmt.Errorf("%w: unsupported event codec=%d schema=%d", userupdates.ErrUserupdatesStorage, event.EventCodec, event.EventSchemaVersion)
 	}
@@ -100,7 +111,14 @@ func eventToTLUpdate(event repository.UserEvent) (*tg.TLMessage, *tg.TLUpdateNew
 	if err := json.Unmarshal(event.EventPayload, &messageEvent); err != nil {
 		return nil, nil, fmt.Errorf("%w: decode event payload: %v", userupdates.ErrUserupdatesStorage, err)
 	}
-	if messageEvent.SchemaVersion != payload.MessageEventSchemaVersion || messageEvent.EventKind != payload.EventKindNewMessage {
+	if messageEvent.SchemaVersion != payload.MessageEventSchemaVersion {
+		return nil, nil, fmt.Errorf("%w: unsupported event schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.SchemaVersion)
+	}
+	if event.EventType == repository.EventTypeDialogPublicUpdate {
+		update, err := dialogEventToTLUpdate(dialogEventFromMessageEvent(event, messageEvent), event.Pts, event.PtsCount)
+		return nil, update, err
+	}
+	if messageEvent.EventKind != payload.EventKindNewMessage {
 		return nil, nil, fmt.Errorf("%w: unsupported event kind=%s schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.EventKind, messageEvent.SchemaVersion)
 	}
 
@@ -126,6 +144,98 @@ func eventToTLUpdate(event repository.UserEvent) (*tg.TLMessage, *tg.TLUpdateNew
 		PtsCount: event.PtsCount,
 	})
 	return message, update, nil
+}
+
+func authSeqEventToTLUpdate(event repository.AuthSeqEvent) (tg.UpdateClazz, error) {
+	if event.EventCodec != repository.PayloadCodecJSON || event.EventSchemaVersion <= 0 {
+		return nil, fmt.Errorf("%w: unsupported auth seq event codec=%d schema=%d", userupdates.ErrUserupdatesStorage, event.EventCodec, event.EventSchemaVersion)
+	}
+	if len(event.EventPayloadHash) != 0 && !bytes.Equal(payload.HashBytes(event.EventPayload), event.EventPayloadHash) {
+		return nil, fmt.Errorf("%w: auth seq event payload hash mismatch", userupdates.ErrUserupdatesStorage)
+	}
+	dialogEvent := payload.DialogEventV1{
+		SchemaVersion:    payload.DialogEventSchemaVersion,
+		EventKind:        event.PublicUpdateType,
+		PublicUpdateType: event.PublicUpdateType,
+		PeerType:         event.PeerType,
+		PeerID:           event.PeerID,
+	}
+	var decoded payload.DialogEventV1
+	if len(event.EventPayload) != 0 && json.Unmarshal(event.EventPayload, &decoded) == nil && decoded.SchemaVersion != 0 {
+		if decoded.EventKind != "" {
+			dialogEvent.EventKind = decoded.EventKind
+		}
+		if decoded.PublicUpdateType != "" {
+			dialogEvent.PublicUpdateType = decoded.PublicUpdateType
+		}
+		if decoded.PeerType != 0 {
+			dialogEvent.PeerType = decoded.PeerType
+		}
+		if decoded.PeerID != 0 {
+			dialogEvent.PeerID = decoded.PeerID
+		}
+		dialogEvent.FolderID = decoded.FolderID
+		dialogEvent.Pinned = decoded.Pinned
+		dialogEvent.TTLPeriod = decoded.TTLPeriod
+	}
+	return dialogEventToTLUpdate(dialogEvent, 0, 0)
+}
+
+func dialogEventFromMessageEvent(event repository.UserEvent, messageEvent payload.MessageEventV1) payload.DialogEventV1 {
+	return payload.DialogEventV1{
+		SchemaVersion:    payload.DialogEventSchemaVersion,
+		EventKind:        messageEvent.EventKind,
+		PublicUpdateType: messageEvent.EventKind,
+		PeerType:         event.PeerType,
+		PeerID:           event.PeerID,
+	}
+}
+
+func dialogEventToTLUpdate(event payload.DialogEventV1, pts int64, ptsCount int32) (tg.UpdateClazz, error) {
+	peer := peerFromEvent(event.PeerType, event.PeerID)
+	dialogPeer := tg.MakeTLDialogPeer(&tg.TLDialogPeer{Peer: peer})
+	switch event.EventKind {
+	case payload.DialogEventDraftSaved:
+		return tg.MakeTLUpdateDraftMessage(&tg.TLUpdateDraftMessage{Peer: peer, Draft: tg.MakeTLDraftMessage(&tg.TLDraftMessage{})}), nil
+	case payload.DialogEventDraftCleared, payload.DialogEventDraftClearedAfterSend:
+		return tg.MakeTLUpdateDraftMessage(&tg.TLUpdateDraftMessage{Peer: peer, Draft: tg.MakeTLDraftMessageEmpty(&tg.TLDraftMessageEmpty{})}), nil
+	case payload.DialogEventPinToggled:
+		pinned := true
+		if event.Pinned != nil {
+			pinned = *event.Pinned
+		}
+		return tg.MakeTLUpdateDialogPinned(&tg.TLUpdateDialogPinned{Pinned: pinned, FolderId: event.FolderID, Peer: dialogPeer}), nil
+	case payload.DialogEventPinnedDialogsReordered:
+		return tg.MakeTLUpdatePinnedDialogs(&tg.TLUpdatePinnedDialogs{FolderId: event.FolderID, Order: []tg.DialogPeerClazz{dialogPeer}}), nil
+	case payload.DialogEventFolderPeersChanged:
+		pts32, err := int64ToInt32(pts, "pts")
+		if err != nil {
+			return nil, err
+		}
+		folderID := int32(0)
+		if event.FolderID != nil {
+			folderID = *event.FolderID
+		}
+		return tg.MakeTLUpdateFolderPeers(&tg.TLUpdateFolderPeers{FolderPeers: []tg.FolderPeerClazz{tg.MakeTLFolderPeer(&tg.TLFolderPeer{Peer: peer, FolderId: folderID})}, Pts: pts32, PtsCount: ptsCount}), nil
+	case payload.DialogEventFilterUpdated, payload.DialogEventFilterDeleted:
+		return tg.MakeTLUpdateDialogFilter(&tg.TLUpdateDialogFilter{}), nil
+	case payload.DialogEventFiltersOrderUpdated:
+		return tg.MakeTLUpdateDialogFilterOrder(&tg.TLUpdateDialogFilterOrder{Order: []int32{}}), nil
+	case payload.DialogEventWallpaperChanged:
+		return tg.MakeTLUpdatePeerWallpaper(&tg.TLUpdatePeerWallpaper{Peer: peer}), nil
+	case payload.DialogEventPrivatePeerHistoryTTL:
+		return tg.MakeTLUpdatePeerHistoryTTL(&tg.TLUpdatePeerHistoryTTL{Peer: peer, TtlPeriod: event.TTLPeriod}), nil
+	case payload.DialogEventSavedDialogPinned:
+		pinned := true
+		if event.Pinned != nil {
+			pinned = *event.Pinned
+		}
+		return tg.MakeTLUpdateSavedDialogPinned(&tg.TLUpdateSavedDialogPinned{Pinned: pinned, Peer: dialogPeer}), nil
+	case payload.DialogEventPinnedSavedDialogsChanged:
+		return tg.MakeTLUpdatePinnedSavedDialogs(&tg.TLUpdatePinnedSavedDialogs{Order: []tg.DialogPeerClazz{dialogPeer}}), nil
+	default:
+		return nil, fmt.Errorf("%w: unsupported dialog event kind=%s", userupdates.ErrUserupdatesStorage, event.EventKind)
+	}
 }
 
 func int64ToInt32(v int64, field string) (int32, error) {

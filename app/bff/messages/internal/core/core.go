@@ -39,6 +39,18 @@ type readHistoryClient interface {
 	MsgReadHistoryV2(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error)
 }
 
+type updatePinnedMessageClient interface {
+	MsgUpdatePinnedMessage(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error)
+}
+
+type deleteMessagesClient interface {
+	MsgDeleteMessages(ctx context.Context, in *msg.TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error)
+}
+
+type deleteHistoryClient interface {
+	MsgDeleteHistory(ctx context.Context, in *msg.TLMsgDeleteHistory) (*tg.MessagesAffectedHistory, error)
+}
+
 type MessagesCore struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext

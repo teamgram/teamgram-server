@@ -83,3 +83,83 @@ func (s *Service) UserupdatesGetDifference(ctx context.Context, request *userupd
 	c.Logger.Debugf("userupdates.getDifference - reply: %s", r)
 	return r, err
 }
+
+// UserupdatesListDialogs
+// userupdates.listDialogs user_id:long top_message_date:long top_peer_seq:long peer_type:int peer_id:long limit:int = DialogProjectionList;
+func (s *Service) UserupdatesListDialogs(ctx context.Context, request *userupdates.TLUserupdatesListDialogs) (*userupdates.DialogProjectionList, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("userupdates.listDialogs - request: %s", request)
+
+	r, err := c.UserupdatesListDialogs(request)
+	if err != nil {
+		c.Logger.Errorf("userupdates.listDialogs - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("userupdates.listDialogs - reply: %s", r)
+	return r, err
+}
+
+// UserupdatesGetDialogsByPeers
+// userupdates.getDialogsByPeers user_id:long peers:Vector<DialogProjectionPeer> = Vector<DialogProjection>;
+func (s *Service) UserupdatesGetDialogsByPeers(ctx context.Context, request *userupdates.TLUserupdatesGetDialogsByPeers) (*userupdates.VectorDialogProjection, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("userupdates.getDialogsByPeers - request: %s", request)
+
+	r, err := c.UserupdatesGetDialogsByPeers(request)
+	if err != nil {
+		c.Logger.Errorf("userupdates.getDialogsByPeers - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("userupdates.getDialogsByPeers - reply: %s", r)
+	return r, err
+}
+
+// UserupdatesGetDialogCount
+// userupdates.getDialogCount user_id:long = Int32;
+func (s *Service) UserupdatesGetDialogCount(ctx context.Context, request *userupdates.TLUserupdatesGetDialogCount) (*tg.Int32, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("userupdates.getDialogCount - request: %s", request)
+
+	r, err := c.UserupdatesGetDialogCount(request)
+	if err != nil {
+		c.Logger.Errorf("userupdates.getDialogCount - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("userupdates.getDialogCount - reply: %s", r)
+	return r, err
+}
+
+// UserupdatesAppendDialogAuthSeqSideEffect
+// userupdates.appendDialogAuthSeqSideEffect flags:# user_id:long source_perm_auth_key_id:long operation_id:string target_auth_policy:string public_update_type:string peer_type:int peer_id:long payload_schema_version:int payload:bytes payload_hash:bytes = UserAuthSeqAppendResult;
+func (s *Service) UserupdatesAppendDialogAuthSeqSideEffect(ctx context.Context, request *userupdates.TLUserupdatesAppendDialogAuthSeqSideEffect) (*userupdates.UserAuthSeqAppendResult, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("userupdates.appendDialogAuthSeqSideEffect - request: %s", request)
+
+	r, err := c.UserupdatesAppendDialogAuthSeqSideEffect(request)
+	if err != nil {
+		c.Logger.Errorf("userupdates.appendDialogAuthSeqSideEffect - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("userupdates.appendDialogAuthSeqSideEffect - reply: %s", r)
+	return r, err
+}
+
+// UserupdatesAppendDialogPtsSideEffect
+// userupdates.appendDialogPtsSideEffect flags:# user_id:long source_perm_auth_key_id:long operation_id:string target_auth_policy:string public_update_type:string peer_type:int peer_id:long payload_schema_version:int payload:bytes payload_hash:bytes = UserPtsAppendResult;
+func (s *Service) UserupdatesAppendDialogPtsSideEffect(ctx context.Context, request *userupdates.TLUserupdatesAppendDialogPtsSideEffect) (*userupdates.UserPtsAppendResult, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("userupdates.appendDialogPtsSideEffect - request: %s", request)
+
+	r, err := c.UserupdatesAppendDialogPtsSideEffect(request)
+	if err != nil {
+		c.Logger.Errorf("userupdates.appendDialogPtsSideEffect - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("userupdates.appendDialogPtsSideEffect - reply: %s", r)
+	return r, err
+}

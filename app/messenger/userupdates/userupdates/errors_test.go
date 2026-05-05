@@ -14,6 +14,8 @@ func TestSemanticErrorsSupportErrorsIs(t *testing.T) {
 		ErrPtsContinuityViolation,
 		ErrOperationTerminal,
 		ErrUserupdatesStorage,
+		ErrDialogQueryTooLarge,
+		ErrAuthSeqLedgerUnavailable,
 	}
 	for _, target := range cases {
 		wrapped := fmt.Errorf("wrapped: %w", target)

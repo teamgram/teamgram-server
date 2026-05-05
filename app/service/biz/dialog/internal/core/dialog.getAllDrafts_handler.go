@@ -24,8 +24,22 @@ import (
 // DialogGetAllDrafts
 // dialog.getAllDrafts user_id:long = Vector<PeerWithDraftMessage>;
 func (c *DialogCore) DialogGetAllDrafts(in *dialog.TLDialogGetAllDrafts) (*dialog.VectorPeerWithDraftMessage, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.getAllDrafts - error: method DialogGetAllDrafts not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if in == nil {
+		return nil, dialog.ErrDialogInvalid
+	}
+	drafts, err := c.svcCtx.Repo.ListActiveDrafts(c.ctx, in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	out := &dialog.VectorPeerWithDraftMessage{Datas: make([]dialog.PeerWithDraftMessageClazz, 0, len(drafts))}
+	for _, draft := range drafts {
+		out.Datas = append(out.Datas, dialog.MakeTLUpdateDraftMessage(&dialog.TLUpdateDraftMessage{
+			Peer: tgPeer(draft.PeerType, draft.PeerID),
+			Draft: tg.MakeTLDraftMessage(&tg.TLDraftMessage{
+				Message: draft.Message,
+				Date:    int32(draft.Date.Unix()),
+			}),
+		}))
+	}
+	return out, nil
 }

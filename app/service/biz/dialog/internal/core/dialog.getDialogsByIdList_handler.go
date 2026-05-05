@@ -23,9 +23,5 @@ import (
 // DialogGetDialogsByIdList
 // dialog.getDialogsByIdList user_id:long id_list:Vector<long> = Vector<DialogExt>;
 func (c *DialogCore) DialogGetDialogsByIdList(in *dialog.TLDialogGetDialogsByIdList) (*dialog.VectorDialogExt, error) {
-	records, err := c.svcCtx.Repo.ListDialogsByPeerDialogIDs(c.ctx, in.UserId, in.IdList)
-	if err != nil {
-		return nil, err
-	}
-	return makeDialogExtVector(records), nil
+	return nil, dialog.ErrDeprecatedMethod
 }

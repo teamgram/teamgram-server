@@ -18,13 +18,17 @@ package repository
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/savedmessagedialogs/internal/config"
+	dialogclient "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/client"
 )
 
 // Repository is the dependency container for repository instances.
 type Repository struct {
+	DialogClient dialogclient.DialogClient
 }
 
 // NewRepository creates a new Repository.
 func NewRepository(c config.Config) *Repository {
-	return &Repository{}
+	return &Repository{
+		DialogClient: dialogclient.NewDialogClient(dialogclient.MustNewKitexClient(c.DialogClient)),
+	}
 }

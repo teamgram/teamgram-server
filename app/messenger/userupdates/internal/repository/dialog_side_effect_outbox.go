@@ -1,0 +1,394 @@
+package repository
+
+import (
+	"bytes"
+	"context"
+	"errors"
+	"fmt"
+	"time"
+
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/model"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+)
+
+type savedDialogSideEffectPayloadV1 struct {
+	SchemaVersion         int   `json:"schema_version"`
+	SavedPeerType         int32 `json:"saved_peer_type"`
+	SavedPeerID           int64 `json:"saved_peer_id"`
+	TopPeerSeq            int64 `json:"top_peer_seq"`
+	TopCanonicalMessageID int64 `json:"top_canonical_message_id"`
+	MessageDate           int32 `json:"message_date"`
+	Deleted               bool  `json:"deleted"`
+	Top                   bool  `json:"top"`
+}
+
+type clearDraftSideEffectPayloadV1 struct {
+	SchemaVersion      int   `json:"schema_version"`
+	ClearBeforeDate    int32 `json:"clear_before_date"`
+	SourceMessageDate  int32 `json:"source_message_date"`
+	SourcePeerSeq      int64 `json:"source_peer_seq"`
+	CanonicalMessageID int64 `json:"canonical_message_id"`
+}
+
+func (r *Repository) InsertDialogSideEffectTx(txModels *model.TxModels, row DialogSideEffect) error {
+	if txModels == nil || txModels.DialogSideEffectOutboxModel == nil {
+		return storageError("insert dialog side effect", errors.New("dialog side effect model is not configured"))
+	}
+	if row.PayloadSchemaVersion == 0 {
+		row.PayloadSchemaVersion = 1
+	}
+	if len(row.PayloadHash) == 0 && len(row.Payload) != 0 {
+		row.PayloadHash = payload.HashBytes(row.Payload)
+	}
+	if row.Status == 0 {
+		row.Status = DialogSideEffectStatusPending
+	}
+	if row.NextRetryAt.IsZero() {
+		row.NextRetryAt = time.Now().UTC()
+	}
+	_, rowsAffected, err := txModels.DialogSideEffectOutboxModel.Insert(toDialogSideEffectModel(row))
+	if err != nil {
+		return storageError("insert dialog side effect", err)
+	}
+	if rowsAffected == 0 {
+		return validateExistingDialogSideEffectTx(txModels, row)
+	}
+	return nil
+}
+
+func validateExistingDialogSideEffectTx(txModels *model.TxModels, row DialogSideEffect) error {
+	existing, err := txModels.DialogSideEffectOutboxModel.SelectExistingSideEffect(row.Kind, row.SourceOperationID)
+	if err != nil {
+		return storageError("select existing dialog side effect", err)
+	}
+	if !bytes.Equal(existing.PayloadHash, row.PayloadHash) {
+		return storageError("insert dialog side effect", fmt.Errorf("payload conflict for kind=%s source_operation_id=%s", row.Kind, row.SourceOperationID))
+	}
+	if existing.UserId != row.UserID || existing.PeerType != row.PeerType || existing.PeerId != row.PeerID {
+		return storageError("insert dialog side effect", fmt.Errorf("peer conflict for kind=%s source_operation_id=%s", row.Kind, row.SourceOperationID))
+	}
+	return nil
+}
+
+func (r *Repository) ClaimDialogSideEffects(ctx context.Context, now time.Time, limit int32) ([]DialogSideEffect, error) {
+	db, err := r.requireDB()
+	if err != nil {
+		return nil, err
+	}
+	if limit <= 0 || limit > OutboxWorkerBatchSize {
+		limit = OutboxWorkerBatchSize
+	}
+	var out []DialogSideEffect
+	err = db.Transact(ctx, func(tx *sqlx.Tx) error {
+		txModels := r.models.WithTx(tx)
+		rows, err := txModels.DialogSideEffectOutboxModel.SelectPendingForUpdate(
+			DialogSideEffectStatusPending,
+			DialogSideEffectStatusFailedRetryable,
+			mysqlTimestamp(now),
+			DialogSideEffectStatusPublishing,
+			limit,
+		)
+		if err != nil {
+			if errors.Is(err, sqlx.ErrNotFound) {
+				out = []DialogSideEffect{}
+				return nil
+			}
+			return storageError("claim dialog side effects", err)
+		}
+		leaseUntil := now.UTC().Add(5 * time.Minute)
+		out = make([]DialogSideEffect, 0, len(rows))
+		for i := range rows {
+			row := rows[i]
+			affected, err := txModels.DialogSideEffectOutboxModel.MarkPublishing(
+				DialogSideEffectStatusPublishing,
+				r.OwnerInstance(),
+				mysqlTimestamp(leaseUntil),
+				row.SideEffectId,
+			)
+			if err != nil {
+				return storageError("mark dialog side effect publishing", err)
+			}
+			if affected == 0 {
+				return storageError("mark dialog side effect publishing", sqlx.ErrNotFound)
+			}
+			row.Status = DialogSideEffectStatusPublishing
+			row.AttemptCount++
+			row.LeaseOwner = r.OwnerInstance()
+			row.LeaseUntil = mysqlTimestamp(leaseUntil)
+			dto, err := fromDialogSideEffectModel(row)
+			if err != nil {
+				return err
+			}
+			out = append(out, dto)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (r *Repository) ClaimDialogSideEffectsByKind(ctx context.Context, kind string, now time.Time, limit int32) ([]DialogSideEffect, error) {
+	db, err := r.requireDB()
+	if err != nil {
+		return nil, err
+	}
+	if limit <= 0 || limit > OutboxWorkerBatchSize {
+		limit = OutboxWorkerBatchSize
+	}
+	var out []DialogSideEffect
+	err = db.Transact(ctx, func(tx *sqlx.Tx) error {
+		txModels := r.models.WithTx(tx)
+		rows, err := txModels.DialogSideEffectOutboxModel.SelectPendingForUpdateByKind(
+			kind,
+			DialogSideEffectStatusPending,
+			DialogSideEffectStatusFailedRetryable,
+			mysqlTimestamp(now),
+			DialogSideEffectStatusPublishing,
+			limit,
+		)
+		if err != nil {
+			if errors.Is(err, sqlx.ErrNotFound) {
+				out = []DialogSideEffect{}
+				return nil
+			}
+			return storageError("claim dialog side effects by kind", err)
+		}
+		leaseUntil := now.UTC().Add(5 * time.Minute)
+		out = make([]DialogSideEffect, 0, len(rows))
+		for i := range rows {
+			row := rows[i]
+			affected, err := txModels.DialogSideEffectOutboxModel.MarkPublishing(
+				DialogSideEffectStatusPublishing,
+				r.OwnerInstance(),
+				mysqlTimestamp(leaseUntil),
+				row.SideEffectId,
+			)
+			if err != nil {
+				return storageError("mark dialog side effect publishing", err)
+			}
+			if affected == 0 {
+				return storageError("mark dialog side effect publishing", sqlx.ErrNotFound)
+			}
+			row.Status = DialogSideEffectStatusPublishing
+			row.AttemptCount++
+			row.LeaseOwner = r.OwnerInstance()
+			row.LeaseUntil = mysqlTimestamp(leaseUntil)
+			dto, err := fromDialogSideEffectModel(row)
+			if err != nil {
+				return err
+			}
+			out = append(out, dto)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (r *Repository) MarkDialogSideEffectCompleted(ctx context.Context, sideEffectID int64) error {
+	rows, err := r.models.DialogSideEffectOutboxModel.MarkCompleted(
+		ctx,
+		DialogSideEffectStatusCompleted,
+		mysqlZeroTime(),
+		sideEffectID,
+	)
+	if err != nil {
+		return storageError("mark dialog side effect completed", err)
+	}
+	if rows == 0 {
+		return storageError("mark dialog side effect completed", sqlx.ErrNotFound)
+	}
+	return nil
+}
+
+func (r *Repository) MarkDialogSideEffectRetryableFailure(ctx context.Context, sideEffectID int64, errCode string, now time.Time) error {
+	row, err := r.models.DialogSideEffectOutboxModel.SelectOne(ctx, sideEffectID)
+	if err != nil {
+		return storageError("select dialog side effect for retry", err)
+	}
+	if row.AttemptCount >= BlockedAfterAttempts-1 {
+		return r.MarkDialogSideEffectBlocked(ctx, sideEffectID, errCode)
+	}
+	blockedBefore := now.UTC().Add(-time.Duration(BlockedAfterAgeSeconds) * time.Second)
+	rows, err := r.models.DialogSideEffectOutboxModel.MarkBlockedIfOld(
+		ctx,
+		DialogSideEffectStatusBlocked,
+		mysqlZeroTime(),
+		errCode,
+		sideEffectID,
+		mysqlTimestamp(blockedBefore),
+	)
+	if err != nil {
+		return storageError("mark old dialog side effect blocked", err)
+	}
+	if rows > 0 {
+		return nil
+	}
+	nextRetryAt := now.UTC().Add(dialogSideEffectRetryDelay(sideEffectID, row.AttemptCount))
+	rows, err = r.models.DialogSideEffectOutboxModel.MarkRetryableFailure(
+		ctx,
+		DialogSideEffectStatusFailedRetryable,
+		mysqlTimestamp(nextRetryAt),
+		mysqlZeroTime(),
+		errCode,
+		sideEffectID,
+	)
+	if err != nil {
+		return storageError("mark dialog side effect retryable failure", err)
+	}
+	if rows == 0 {
+		return storageError("mark dialog side effect retryable failure", sqlx.ErrNotFound)
+	}
+	return nil
+}
+
+func (r *Repository) MarkDialogSideEffectBlocked(ctx context.Context, sideEffectID int64, errCode string) error {
+	rows, err := r.models.DialogSideEffectOutboxModel.MarkBlocked(
+		ctx,
+		DialogSideEffectStatusBlocked,
+		mysqlZeroTime(),
+		errCode,
+		sideEffectID,
+	)
+	if err != nil {
+		return storageError("mark dialog side effect blocked", err)
+	}
+	if rows == 0 {
+		return storageError("mark dialog side effect blocked", sqlx.ErrNotFound)
+	}
+	return nil
+}
+
+func (r *Repository) ResetDialogSideEffectOutboxBlocked(ctx context.Context, ids []int64) error {
+	db, err := r.requireDB()
+	if err != nil {
+		return err
+	}
+	for _, id := range ids {
+		query := `UPDATE dialog_side_effect_outbox
+SET status = ?, attempt_count = 0, next_retry_at = ?, lease_owner = '', lease_until = ?, last_error_code = ''
+WHERE status = ? AND side_effect_id = ?`
+		if _, err := db.Exec(ctx, query, DialogSideEffectStatusPending, mysqlTimestamp(time.Now().UTC()), mysqlZeroTime(), DialogSideEffectStatusBlocked, id); err != nil {
+			return storageError("reset dialog side effect outbox blocked", err)
+		}
+	}
+	return nil
+}
+
+func dialogSideEffectRetryDelay(sideEffectID int64, attemptCount int32) time.Duration {
+	if attemptCount <= 1 {
+		return time.Duration(InitialRetryDelaySeconds) * time.Second
+	}
+	seconds := InitialRetryDelaySeconds
+	for i := int32(1); i < attemptCount; i++ {
+		seconds *= 2
+		if seconds >= MaxRetryDelaySeconds {
+			return time.Duration(MaxRetryDelaySeconds) * time.Second
+		}
+	}
+	jitterRange := seconds / 4
+	if jitterRange < 1 {
+		jitterRange = 1
+	}
+	jitter := int(sideEffectID % int64(jitterRange+1))
+	seconds += jitter
+	if seconds > MaxRetryDelaySeconds {
+		seconds = MaxRetryDelaySeconds
+	}
+	return time.Duration(seconds) * time.Second
+}
+
+func toDialogSideEffectModel(row DialogSideEffect) *model.DialogSideEffectOutbox {
+	return &model.DialogSideEffectOutbox{
+		SideEffectId:             row.SideEffectID,
+		Kind:                     row.Kind,
+		UserId:                   row.UserID,
+		PeerType:                 row.PeerType,
+		PeerId:                   row.PeerID,
+		SourcePermAuthKeyId:      row.SourcePermAuthKeyID,
+		SourceOperationId:        row.SourceOperationID,
+		SourceMessageDate:        mysqlTimestamp(row.SourceMessageDate),
+		SourcePeerSeq:            row.SourcePeerSeq,
+		SourceCanonicalMessageId: row.SourceCanonicalMessageID,
+		ClearBeforeDate:          mysqlTimestampOrZero(row.ClearBeforeDate),
+		PayloadSchemaVersion:     row.PayloadSchemaVersion,
+		Payload:                  row.Payload,
+		PayloadHash:              row.PayloadHash,
+		Status:                   row.Status,
+		AttemptCount:             row.AttemptCount,
+		NextRetryAt:              mysqlTimestamp(row.NextRetryAt),
+		LeaseOwner:               row.LeaseOwner,
+		LeaseUntil:               mysqlTimestampOrZero(row.LeaseUntil),
+		LastErrorCode:            row.LastErrorCode,
+	}
+}
+
+func fromDialogSideEffectModel(row model.DialogSideEffectOutbox) (DialogSideEffect, error) {
+	sourceDate, err := parseDBTimestamp(row.SourceMessageDate)
+	if err != nil {
+		return DialogSideEffect{}, storageError("parse dialog side effect source message date", err)
+	}
+	clearBeforeDate, err := parseDBTimestamp(row.ClearBeforeDate)
+	if err != nil {
+		return DialogSideEffect{}, storageError("parse dialog side effect clear before date", err)
+	}
+	nextRetryAt, err := parseDBTimestamp(row.NextRetryAt)
+	if err != nil {
+		return DialogSideEffect{}, storageError("parse dialog side effect next retry at", err)
+	}
+	leaseUntil, err := parseDBTimestamp(row.LeaseUntil)
+	if err != nil {
+		return DialogSideEffect{}, storageError("parse dialog side effect lease until", err)
+	}
+	return DialogSideEffect{
+		SideEffectID:             row.SideEffectId,
+		Kind:                     row.Kind,
+		UserID:                   row.UserId,
+		PeerType:                 row.PeerType,
+		PeerID:                   row.PeerId,
+		SourcePermAuthKeyID:      row.SourcePermAuthKeyId,
+		SourceOperationID:        row.SourceOperationId,
+		SourceMessageDate:        sourceDate,
+		SourcePeerSeq:            row.SourcePeerSeq,
+		SourceCanonicalMessageID: row.SourceCanonicalMessageId,
+		ClearBeforeDate:          clearBeforeDate,
+		PayloadSchemaVersion:     row.PayloadSchemaVersion,
+		Payload:                  row.Payload,
+		PayloadHash:              row.PayloadHash,
+		Status:                   row.Status,
+		AttemptCount:             row.AttemptCount,
+		NextRetryAt:              nextRetryAt,
+		LeaseOwner:               row.LeaseOwner,
+		LeaseUntil:               leaseUntil,
+		LastErrorCode:            row.LastErrorCode,
+	}, nil
+}
+
+func mysqlTimestampOrZero(t time.Time) string {
+	if t.IsZero() {
+		return mysqlZeroTime()
+	}
+	return mysqlTimestamp(t)
+}
+
+func parseDBTimestamp(value string) (time.Time, error) {
+	if value == "" {
+		return time.Time{}, nil
+	}
+	for _, layout := range []string{
+		time.RFC3339Nano,
+		"2006-01-02 15:04:05.999999",
+		"2006-01-02 15:04:05",
+	} {
+		parsed, err := time.Parse(layout, value)
+		if err == nil {
+			return parsed.UTC(), nil
+		}
+	}
+	return time.Time{}, fmt.Errorf("unsupported timestamp %q", value)
+}

@@ -87,6 +87,57 @@ func TestMsgSendMessageV2SingleUserPublishesReceiverOperation(t *testing.T) {
 	}
 }
 
+func TestMsgSendMessageV2ClearDraftWritesSenderOperationPayload(t *testing.T) {
+	responsePayload := []byte(`{"schema_version":1,"pts":15,"pts_count":1}`)
+	responseHash := mustHashBytes(t, responsePayload)
+	repo := &fakeMsgRepository{
+		sendState: &repository.SendState{SendStateID: 1, Status: repository.SendStateStatusInitialized},
+		canonical: &repository.CanonicalMessageResult{
+			SendStateID:        1,
+			CanonicalMessageID: 6001,
+			PeerSeq:            9,
+			MessageDate:        1_772_000_050,
+			RequestPayloadHash: payload.HashBytes([]byte("request")),
+			CreatedNew:         true,
+		},
+	}
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:              1001,
+			OperationId:         payload.SenderOperationID(6001, 1001),
+			Status:              1,
+			Pts:                 15,
+			PtsCount:            1,
+			CurrentPts:          15,
+			ResponsePayload:     responsePayload,
+			ResponsePayloadHash: responseHash,
+		}),
+	}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:              repo,
+		UserUpdates:       updatesClient,
+		ReceiverPublisher: &fakeReceiverPublisher{},
+	})
+
+	sourceAuth := int64(9001)
+	clearBefore := int32(1_772_000_049)
+	req := sendMessageRequest(1001, 1002, 9001, "hello")
+	req.ClearDraft = true
+	req.SourcePermAuthKeyId = &sourceAuth
+	req.ClearDraftBeforeDate = &clearBefore
+
+	if _, err := core.MsgSendMessageV2(req); err != nil {
+		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	}
+	var senderOp payload.MessageOperationV1
+	if err := json.Unmarshal(updatesClient.processed.Payload, &senderOp); err != nil {
+		t.Fatalf("decode sender payload: %v", err)
+	}
+	if !senderOp.ClearDraft || senderOp.SourcePermAuthKeyID != sourceAuth || senderOp.ClearDraftBeforeDate != clearBefore {
+		t.Fatalf("unexpected clear draft payload: %+v", senderOp)
+	}
+}
+
 func TestMsgSendMessageV2RecoversSenderCommitFromUserUpdatesResult(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":1,"pts":12,"pts_count":1}`)
 	responseHash := mustHashBytes(t, responsePayload)
@@ -379,7 +430,20 @@ func TestMsgGetHistoryPassesViewerUserID(t *testing.T) {
 }
 
 func TestMsgReadHistoryV2ReturnsAffectedMessagesAck(t *testing.T) {
-	core := New(context.Background(), &svc.ServiceContext{Repo: &fakeMsgRepository{}})
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:      1001,
+			OperationId: readHistoryOperationID(1001, 1002, 2, 9001),
+			Status:      1,
+			Pts:         15,
+			PtsCount:    1,
+			CurrentPts:  15,
+		}),
+	}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:        &fakeMsgRepository{},
+		UserUpdates: updatesClient,
+	})
 
 	got, err := core.MsgReadHistoryV2(&msgpb.TLMsgReadHistoryV2{
 		UserId:    1001,
@@ -394,14 +458,156 @@ func TestMsgReadHistoryV2ReturnsAffectedMessagesAck(t *testing.T) {
 	if got == nil {
 		t.Fatal("MsgReadHistoryV2() returned nil")
 	}
-	if got.Pts != 0 || got.PtsCount != 0 {
-		t.Fatalf("affected messages = %+v, want zero-pts ack", got)
+	if got.Pts != 15 || got.PtsCount != 1 {
+		t.Fatalf("affected messages = %+v, want pts=15 pts_count=1", got)
+	}
+	if updatesClient.processed == nil {
+		t.Fatal("read history operation was not sent to userupdates")
+	}
+	if updatesClient.processed.OperationId != readHistoryOperationID(1001, 1002, 2, 9001) {
+		t.Fatalf("operation_id = %q", updatesClient.processed.OperationId)
+	}
+	if updatesClient.processed.AuthKeyIdExclude == nil || *updatesClient.processed.AuthKeyIdExclude != 9001 {
+		t.Fatalf("auth_key_id_exclude = %v, want 9001", updatesClient.processed.AuthKeyIdExclude)
+	}
+	var op payload.MessageOperationV1
+	if err := json.Unmarshal(updatesClient.processed.Payload, &op); err != nil {
+		t.Fatalf("decode read history payload: %v", err)
+	}
+	if op.OperationKind != payload.OperationKindReadHistory || op.PeerID != 1002 || op.ReadInboxMaxPeerSeq != 2 || op.ReadOutboxMaxPeerSeq != 2 {
+		t.Fatalf("unexpected read history payload: %+v", op)
+	}
+}
+
+func TestMsgUpdatePinnedMessageRoutesProjectionOperation(t *testing.T) {
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:      1001,
+			OperationId: updatePinnedOperationID(1001, 1002, 7, false, 9001),
+			Status:      1,
+			Pts:         21,
+			PtsCount:    1,
+			CurrentPts:  21,
+		}),
+	}
+	repo := &fakeMsgRepository{
+		canonicalByPeerSeq: &repository.CanonicalMessage{
+			CanonicalMessageID: 7001,
+			PeerSeq:            7,
+			FromUserID:         1002,
+			PeerType:           payload.PeerTypeUser,
+			PeerID:             1002,
+			MessageText:        "pin me",
+			MessageDate:        1_772_000_123,
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:        repo,
+		UserUpdates: updatesClient,
+	})
+
+	got, err := core.MsgUpdatePinnedMessage(&msgpb.TLMsgUpdatePinnedMessage{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    1002,
+		Id:        7,
+	})
+	if err != nil {
+		t.Fatalf("MsgUpdatePinnedMessage() error = %v", err)
+	}
+	short, ok := got.ToUpdateShort()
+	if !ok {
+		t.Fatalf("MsgUpdatePinnedMessage() = %s, want updateShort", got.ClazzName())
+	}
+	pinned, ok := (&tg.Update{Clazz: short.Update}).ToUpdatePinnedMessages()
+	if !ok || !pinned.Pinned || len(pinned.Messages) != 1 || pinned.Messages[0] != 7 || pinned.Pts != 21 {
+		t.Fatalf("pinned update = %+v ok=%v", pinned, ok)
+	}
+	var op payload.MessageOperationV1
+	if err := json.Unmarshal(updatesClient.processed.Payload, &op); err != nil {
+		t.Fatalf("decode update pinned payload: %v", err)
+	}
+	if op.OperationKind != payload.OperationKindUpdatePinnedMessage || op.PinnedPeerSeq != 7 || op.PinnedCanonicalMessageID != 7001 {
+		t.Fatalf("unexpected update pinned payload: %+v", op)
+	}
+}
+
+func TestMsgDeleteMessagesRoutesProjectionOperation(t *testing.T) {
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:      1001,
+			OperationId: deleteMessagesOperationID(1001, 1002, []int32{7, 8}, false, 9001),
+			Status:      1,
+			Pts:         31,
+			PtsCount:    1,
+			CurrentPts:  31,
+		}),
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: &fakeMsgRepository{}, UserUpdates: updatesClient})
+
+	got, err := core.MsgDeleteMessages(&msgpb.TLMsgDeleteMessages{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    1002,
+		Id:        []int32{7, 8},
+	})
+	if err != nil {
+		t.Fatalf("MsgDeleteMessages() error = %v", err)
+	}
+	if got.Pts != 31 || got.PtsCount != 1 {
+		t.Fatalf("affected = %+v", got)
+	}
+	var op payload.MessageOperationV1
+	if err := json.Unmarshal(updatesClient.processed.Payload, &op); err != nil {
+		t.Fatalf("decode delete payload: %v", err)
+	}
+	if op.OperationKind != payload.OperationKindDeleteMessages || len(op.DeletePeerSeqs) != 2 || op.DeletePeerSeqs[0] != 7 {
+		t.Fatalf("unexpected delete payload: %+v", op)
+	}
+}
+
+func TestMsgDeleteHistoryRoutesProjectionOperation(t *testing.T) {
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:      1001,
+			OperationId: deleteHistoryOperationID(1001, 1002, 9, true, false, 9001),
+			Status:      1,
+			Pts:         32,
+			PtsCount:    1,
+			CurrentPts:  32,
+		}),
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: &fakeMsgRepository{}, UserUpdates: updatesClient})
+
+	got, err := core.MsgDeleteHistory(&msgpb.TLMsgDeleteHistory{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    1002,
+		JustClear: true,
+		MaxId:     9,
+	})
+	if err != nil {
+		t.Fatalf("MsgDeleteHistory() error = %v", err)
+	}
+	if got.Pts != 32 || got.PtsCount != 1 {
+		t.Fatalf("affected history = %+v", got)
+	}
+	var op payload.MessageOperationV1
+	if err := json.Unmarshal(updatesClient.processed.Payload, &op); err != nil {
+		t.Fatalf("decode delete history payload: %v", err)
+	}
+	if op.OperationKind != payload.OperationKindDeleteHistory || op.DeleteMaxPeerSeq != 9 || !op.JustClear {
+		t.Fatalf("unexpected delete history payload: %+v", op)
 	}
 }
 
 type fakeMsgRepository struct {
 	sendState              *repository.SendState
 	canonical              *repository.CanonicalMessageResult
+	canonicalByPeerSeq     *repository.CanonicalMessage
 	history                []repository.HistoryMessage
 	historyInput           repository.ListHistoryMessagesInput
 	markCanonicalErr       error
@@ -419,6 +625,13 @@ func (f *fakeMsgRepository) CreateOrLoadSendState(context.Context, repository.Cr
 
 func (f *fakeMsgRepository) CreateOrGetByClientRandom(context.Context, repository.CreateCanonicalMessageInput) (*repository.CanonicalMessageResult, error) {
 	return f.canonical, nil
+}
+
+func (f *fakeMsgRepository) GetCanonicalMessageByPeerSeq(context.Context, int32, int64, int64) (*repository.CanonicalMessage, error) {
+	if f.canonicalByPeerSeq == nil {
+		return nil, msgpb.ErrSendStateConflict
+	}
+	return f.canonicalByPeerSeq, nil
 }
 
 func (f *fakeMsgRepository) ListHistoryMessages(_ context.Context, in repository.ListHistoryMessagesInput) ([]repository.HistoryMessage, error) {

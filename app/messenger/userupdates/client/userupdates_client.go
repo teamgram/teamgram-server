@@ -27,6 +27,11 @@ type UserupdatesClient interface {
 	UserupdatesGetOperationResult(ctx context.Context, in *userupdates.TLUserupdatesGetOperationResult) (*userupdates.UserOperationResult, error)
 	UserupdatesGetState(ctx context.Context, in *userupdates.TLUserupdatesGetState) (*userupdates.UserState, error)
 	UserupdatesGetDifference(ctx context.Context, in *userupdates.TLUserupdatesGetDifference) (*userupdates.UserDifference, error)
+	UserupdatesListDialogs(ctx context.Context, in *userupdates.TLUserupdatesListDialogs) (*userupdates.DialogProjectionList, error)
+	UserupdatesGetDialogsByPeers(ctx context.Context, in *userupdates.TLUserupdatesGetDialogsByPeers) (*userupdates.VectorDialogProjection, error)
+	UserupdatesGetDialogCount(ctx context.Context, in *userupdates.TLUserupdatesGetDialogCount) (*tg.Int32, error)
+	UserupdatesAppendDialogAuthSeqSideEffect(ctx context.Context, in *userupdates.TLUserupdatesAppendDialogAuthSeqSideEffect) (*userupdates.UserAuthSeqAppendResult, error)
+	UserupdatesAppendDialogPtsSideEffect(ctx context.Context, in *userupdates.TLUserupdatesAppendDialogPtsSideEffect) (*userupdates.UserPtsAppendResult, error)
 }
 
 type defaultUserupdatesClient struct {
@@ -63,4 +68,34 @@ func (m *defaultUserupdatesClient) UserupdatesGetState(ctx context.Context, in *
 // userupdates.getDifference flags:# user_id:long auth_key_id:long pts:long pts_total_limit:flags.0?int date:flags.1?long = UserDifference;
 func (m *defaultUserupdatesClient) UserupdatesGetDifference(ctx context.Context, in *userupdates.TLUserupdatesGetDifference) (*userupdates.UserDifference, error) {
 	return m.rpc.UserupdatesGetDifference(ctx, in)
+}
+
+// UserupdatesListDialogs
+// userupdates.listDialogs user_id:long top_message_date:long top_peer_seq:long peer_type:int peer_id:long limit:int = DialogProjectionList;
+func (m *defaultUserupdatesClient) UserupdatesListDialogs(ctx context.Context, in *userupdates.TLUserupdatesListDialogs) (*userupdates.DialogProjectionList, error) {
+	return m.rpc.UserupdatesListDialogs(ctx, in)
+}
+
+// UserupdatesGetDialogsByPeers
+// userupdates.getDialogsByPeers user_id:long peers:Vector<DialogProjectionPeer> = Vector<DialogProjection>;
+func (m *defaultUserupdatesClient) UserupdatesGetDialogsByPeers(ctx context.Context, in *userupdates.TLUserupdatesGetDialogsByPeers) (*userupdates.VectorDialogProjection, error) {
+	return m.rpc.UserupdatesGetDialogsByPeers(ctx, in)
+}
+
+// UserupdatesGetDialogCount
+// userupdates.getDialogCount user_id:long = Int32;
+func (m *defaultUserupdatesClient) UserupdatesGetDialogCount(ctx context.Context, in *userupdates.TLUserupdatesGetDialogCount) (*tg.Int32, error) {
+	return m.rpc.UserupdatesGetDialogCount(ctx, in)
+}
+
+// UserupdatesAppendDialogAuthSeqSideEffect
+// userupdates.appendDialogAuthSeqSideEffect flags:# user_id:long source_perm_auth_key_id:long operation_id:string target_auth_policy:string public_update_type:string peer_type:int peer_id:long payload_schema_version:int payload:bytes payload_hash:bytes = UserAuthSeqAppendResult;
+func (m *defaultUserupdatesClient) UserupdatesAppendDialogAuthSeqSideEffect(ctx context.Context, in *userupdates.TLUserupdatesAppendDialogAuthSeqSideEffect) (*userupdates.UserAuthSeqAppendResult, error) {
+	return m.rpc.UserupdatesAppendDialogAuthSeqSideEffect(ctx, in)
+}
+
+// UserupdatesAppendDialogPtsSideEffect
+// userupdates.appendDialogPtsSideEffect flags:# user_id:long source_perm_auth_key_id:long operation_id:string target_auth_policy:string public_update_type:string peer_type:int peer_id:long payload_schema_version:int payload:bytes payload_hash:bytes = UserPtsAppendResult;
+func (m *defaultUserupdatesClient) UserupdatesAppendDialogPtsSideEffect(ctx context.Context, in *userupdates.TLUserupdatesAppendDialogPtsSideEffect) (*userupdates.UserPtsAppendResult, error) {
+	return m.rpc.UserupdatesAppendDialogPtsSideEffect(ctx, in)
 }

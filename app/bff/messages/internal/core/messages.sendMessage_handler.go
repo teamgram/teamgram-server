@@ -67,14 +67,18 @@ func (c *MessagesCore) MessagesSendMessage(in *tg.TLMessagesSendMessage) (*tg.Up
 		RandomId: in.RandomId,
 		Message:  outgoingMsg,
 	})
+	clearDraftBeforeDate := outgoingMsg.Date
 
 	var sendClient sendMessageClient = c.svcCtx.Repo.MsgClient
 	updates, err := sendClient.MsgSendMessageV2(c.ctx, &msg.TLMsgSendMessageV2{
-		UserId:    selfUserID,
-		AuthKeyId: authKeyID,
-		PeerType:  payload.PeerTypeUser,
-		PeerId:    peerUserID,
-		Message:   []msg.OutboxMessageClazz{outbox},
+		ClearDraft:           in.ClearDraft,
+		UserId:               selfUserID,
+		AuthKeyId:            authKeyID,
+		SourcePermAuthKeyId:  &authKeyID,
+		ClearDraftBeforeDate: &clearDraftBeforeDate,
+		PeerType:             payload.PeerTypeUser,
+		PeerId:               peerUserID,
+		Message:              []msg.OutboxMessageClazz{outbox},
 	})
 	if err != nil {
 		c.Logger.Errorf("messages.sendMessage - msg error: self_user_id: %d, peer_id: %d, random_id: %d, err: %v",

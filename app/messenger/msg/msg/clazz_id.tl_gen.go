@@ -16,7 +16,7 @@ const (
 	ClazzID_contentMessage             = 0x8d64b133 // 8d64b133
 	ClazzID_msg_pushUserMessage        = 0x35d0fa1a // 35d0fa1a
 	ClazzID_msg_readMessageContents    = 0x282484d4 // 282484d4
-	ClazzID_msg_sendMessageV2          = 0xf4ca7cc4 // f4ca7cc4
+	ClazzID_msg_sendMessageV2          = 0x1c17890c // 1c17890c
 	ClazzID_msg_editMessageV2          = 0x69fe5fe1 // 69fe5fe1
 	ClazzID_msg_deleteMessages         = 0x21e80a1d // 21e80a1d
 	ClazzID_msg_deleteHistory          = 0x75c0e8ca // 75c0e8ca

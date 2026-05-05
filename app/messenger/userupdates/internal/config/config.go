@@ -25,15 +25,17 @@ import (
 
 type Config struct {
 	kitex.RpcServerConf
-	Mysql              sqlx.Config              `json:",optional"`
-	Authsession        kitex.RpcClientConf      `json:",optional"`
-	Gateway            kitex.RpcClientConf      `json:",optional"`
-	Idgen              kitex.RpcClientConf      `json:",optional"`
-	OwnerInstance      string                   `json:",default=local-userupdates"`
-	ReceiverOperations *kafka.KafkaConsumerConf `json:",optional"`
-	PushTasks          *kafka.KafkaProducerConf `json:",optional"`
-	PushTaskConsumer   *kafka.KafkaConsumerConf `json:",optional"`
-	PushOutboxWorker   PushOutboxWorkerConf     `json:",optional"`
+	Mysql              sqlx.Config                `json:",optional"`
+	Authsession        kitex.RpcClientConf        `json:",optional"`
+	Gateway            kitex.RpcClientConf        `json:",optional"`
+	DialogClient       kitex.RpcClientConf        `json:",optional"`
+	Idgen              kitex.RpcClientConf        `json:",optional"`
+	OwnerInstance      string                     `json:",default=local-userupdates"`
+	ReceiverOperations *kafka.KafkaConsumerConf   `json:",optional"`
+	PushTasks          *kafka.KafkaProducerConf   `json:",optional"`
+	PushTaskConsumer   *kafka.KafkaConsumerConf   `json:",optional"`
+	PushOutboxWorker   PushOutboxWorkerConf       `json:",optional"`
+	DialogSideEffects  DialogSideEffectWorkerConf `json:",optional"`
 }
 
 type PushOutboxWorkerConf struct {
@@ -41,4 +43,10 @@ type PushOutboxWorkerConf struct {
 	PollInterval        int64 `json:",default=1000"`
 	BatchSize           int32 `json:",default=100"`
 	PublishingTimeoutMs int64 `json:",default=60000"`
+}
+
+type DialogSideEffectWorkerConf struct {
+	Enabled        bool  `json:",default=false"`
+	PollIntervalMs int64 `json:",default=1000"`
+	BatchSize      int32 `json:",default=100"`
 }

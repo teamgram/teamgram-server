@@ -17,14 +17,38 @@
 package core
 
 import (
+	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesToggleSavedDialogPin
 // messages.toggleSavedDialogPin#ac81bbde flags:# pinned:flags.0?true peer:InputDialogPeer = Bool;
 func (c *SavedMessageDialogsCore) MessagesToggleSavedDialogPin(in *tg.TLMessagesToggleSavedDialogPin) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.toggleSavedDialogPin - error: method MessagesToggleSavedDialogPin not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if c.MD == nil || c.MD.UserId <= 0 {
+		return nil, tg.ErrUserIdInvalid
+	}
+	if c.MD.PermAuthKeyId <= 0 {
+		return nil, tg.ErrAuthKeyPermEmpty
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	peer, err := c.resolveInputDialogPeer(in.Peer)
+	if err != nil {
+		return nil, err
+	}
+	facadePeer, err := savedDialogFacadePeerUtil(peer)
+	if err != nil {
+		return nil, err
+	}
+	if _, err := c.svcCtx.Repo.DialogClient.DialogToggleSavedDialogPin(c.ctx, &dialogpb.TLDialogToggleSavedDialogPin{
+		UserId: c.MD.UserId,
+		Peer:   facadePeer,
+		Pinned: tg.ToBoolClazz(in.Pinned),
+	}); err != nil {
+		c.Logger.Errorf("messages.toggleSavedDialogPin - dialog.toggleSavedDialogPin failed: user_id: %d peer_type: %d peer_id: %d err: %v",
+			c.MD.UserId, facadePeer.PeerType, facadePeer.PeerId, err)
+		return nil, tg.ErrInternalServerError
+	}
+	return tg.BoolTrue, nil
 }

@@ -15,33 +15,61 @@ import (
 )
 
 type Models struct {
-	DialogFiltersModel DialogFiltersModel
-	DialogsModel       DialogsModel
-	DraftsModel        DraftsModel
-	SavedDialogsModel  SavedDialogsModel
+	DialogAuthSeqOutboxModel      DialogAuthSeqOutboxModel
+	DialogDraftsModel             DialogDraftsModel
+	DialogFiltersModel            DialogFiltersModel
+	DialogPeerPolicyModel         DialogPeerPolicyModel
+	DialogPreferenceVersionsModel DialogPreferenceVersionsModel
+	DialogPreferencesModel        DialogPreferencesModel
+	DialogPublicUpdateOutboxModel DialogPublicUpdateOutboxModel
+	DialogVisualSettingsModel     DialogVisualSettingsModel
+	DialogsModel                  DialogsModel
+	DraftsModel                   DraftsModel
+	SavedDialogsModel             SavedDialogsModel
 }
 
 type TxModels struct {
-	DialogFiltersModel DialogFiltersTxModel
-	DialogsModel       DialogsTxModel
-	DraftsModel        DraftsTxModel
-	SavedDialogsModel  SavedDialogsTxModel
+	DialogAuthSeqOutboxModel      DialogAuthSeqOutboxTxModel
+	DialogDraftsModel             DialogDraftsTxModel
+	DialogFiltersModel            DialogFiltersTxModel
+	DialogPeerPolicyModel         DialogPeerPolicyTxModel
+	DialogPreferenceVersionsModel DialogPreferenceVersionsTxModel
+	DialogPreferencesModel        DialogPreferencesTxModel
+	DialogPublicUpdateOutboxModel DialogPublicUpdateOutboxTxModel
+	DialogVisualSettingsModel     DialogVisualSettingsTxModel
+	DialogsModel                  DialogsTxModel
+	DraftsModel                   DraftsTxModel
+	SavedDialogsModel             SavedDialogsTxModel
 }
 
 func NewModels(db *sqlx.DB) *Models {
 	return &Models{
-		DialogFiltersModel: NewDialogFiltersModel(db),
-		DialogsModel:       NewDialogsModel(db),
-		DraftsModel:        NewDraftsModel(db),
-		SavedDialogsModel:  NewSavedDialogsModel(db),
+		DialogAuthSeqOutboxModel:      NewDialogAuthSeqOutboxModel(db),
+		DialogDraftsModel:             NewDialogDraftsModel(db),
+		DialogFiltersModel:            NewDialogFiltersModel(db),
+		DialogPeerPolicyModel:         NewDialogPeerPolicyModel(db),
+		DialogPreferenceVersionsModel: NewDialogPreferenceVersionsModel(db),
+		DialogPreferencesModel:        NewDialogPreferencesModel(db),
+		DialogPublicUpdateOutboxModel: NewDialogPublicUpdateOutboxModel(db),
+		DialogVisualSettingsModel:     NewDialogVisualSettingsModel(db),
+		DialogsModel:                  NewDialogsModel(db),
+		DraftsModel:                   NewDraftsModel(db),
+		SavedDialogsModel:             NewSavedDialogsModel(db),
 	}
 }
 
 func (m *Models) WithTx(tx *sqlx.Tx) *TxModels {
 	return &TxModels{
-		DialogFiltersModel: NewDialogFiltersTxModel(tx),
-		DialogsModel:       NewDialogsTxModel(tx),
-		DraftsModel:        NewDraftsTxModel(tx),
-		SavedDialogsModel:  NewSavedDialogsTxModel(tx),
+		DialogAuthSeqOutboxModel:      NewDialogAuthSeqOutboxTxModel(tx),
+		DialogDraftsModel:             NewDialogDraftsTxModel(tx),
+		DialogFiltersModel:            NewDialogFiltersTxModel(tx),
+		DialogPeerPolicyModel:         NewDialogPeerPolicyTxModel(tx),
+		DialogPreferenceVersionsModel: NewDialogPreferenceVersionsTxModel(tx),
+		DialogPreferencesModel:        NewDialogPreferencesTxModel(tx),
+		DialogPublicUpdateOutboxModel: NewDialogPublicUpdateOutboxTxModel(tx),
+		DialogVisualSettingsModel:     NewDialogVisualSettingsTxModel(tx),
+		DialogsModel:                  NewDialogsTxModel(tx),
+		DraftsModel:                   NewDraftsTxModel(tx),
+		SavedDialogsModel:             NewSavedDialogsTxModel(tx),
 	}
 }

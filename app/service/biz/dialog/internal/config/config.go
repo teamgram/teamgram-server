@@ -23,5 +23,14 @@ import (
 
 type Config struct {
 	kitex.RpcServerConf
-	Mysql sqlx.Config
+	Mysql               sqlx.Config             `json:",optional"`
+	Userupdates         kitex.RpcClientConf     `json:",optional"`
+	DialogOutboxWorkers DialogOutboxWorkersConf `json:",optional"`
+}
+
+type DialogOutboxWorkersConf struct {
+	Enabled        bool  `json:",optional"`
+	BatchSize      int32 `json:",optional"`
+	LeaseSeconds   int32 `json:",optional"`
+	PollIntervalMs int32 `json:",optional"`
 }

@@ -24,8 +24,5 @@ import (
 // DialogInsertOrUpdateDialog
 // dialog.insertOrUpdateDialog flags:# user_id:long peer_type:int peer_id:long top_message:flags.0?int read_outbox_max_id:flags.1?int read_inbox_max_id:flags.2?int unread_count:flags.3?int unread_mark:flags.4?true date2:flags.5?long pinned_msg_id:flags.6?int = Bool;
 func (c *DialogCore) DialogInsertOrUpdateDialog(in *dialog.TLDialogInsertOrUpdateDialog) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.insertOrUpdateDialog - error: method DialogInsertOrUpdateDialog not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return nil, dialog.ErrWrongOwner
 }

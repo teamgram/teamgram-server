@@ -17,14 +17,53 @@
 package core
 
 import (
+	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesReorderPinnedDialogs
 // messages.reorderPinnedDialogs#3b1adf37 flags:# force:flags.0?true folder_id:int order:Vector<InputDialogPeer> = Bool;
 func (c *DialogsCore) MessagesReorderPinnedDialogs(in *tg.TLMessagesReorderPinnedDialogs) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.reorderPinnedDialogs - error: method MessagesReorderPinnedDialogs not impl")
+	if c.MD == nil || c.MD.UserId <= 0 {
+		return nil, tg.ErrUserIdInvalid
+	}
+	if c.MD.PermAuthKeyId <= 0 {
+		return nil, tg.ErrAuthKeyPermEmpty
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	if in.FolderId < 0 {
+		return nil, tg.ErrFolderIdInvalid
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	ids := make([]int64, 0, len(in.Order))
+	for _, input := range in.Order {
+		peer, err := c.resolveInputDialogPeer(input)
+		if err != nil {
+			return nil, err
+		}
+		id, err := dialogFacadePeerDialogID(peer.PeerType, peer.PeerId)
+		if err != nil {
+			return nil, err
+		}
+		ids = append(ids, id)
+	}
+	token := dialogOperationToken()
+	operationID := dialogOperationID("reorder_pinned", c.MD.UserId, token)
+	_, err := c.svcCtx.Repo.DialogClient.DialogReorderPinnedDialogs(c.ctx, &dialogpb.TLDialogReorderPinnedDialogs{
+		UserId:              c.MD.UserId,
+		Force:               tg.ToBoolClazz(in.Force),
+		FolderId:            in.FolderId,
+		IdList:              ids,
+		SourcePermAuthKeyId: c.MD.PermAuthKeyId,
+		OperationId:         operationID,
+		OutboxId:            dialogOutboxID(operationID),
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.reorderPinnedDialogs - dialog.reorderPinnedDialogs failed: user_id: %d, folder_id: %d, err: %v",
+			c.MD.UserId, in.FolderId, err)
+		return nil, tg.ErrInternalServerError
+	}
+	return tg.BoolTrue, nil
 }

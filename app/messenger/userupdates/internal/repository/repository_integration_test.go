@@ -316,6 +316,165 @@ func TestApplyUserOperationFinalTransaction(t *testing.T) {
 	})
 }
 
+func TestApplyReadHistoryUpdatesReadStateUnreadMarkAndPTS(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	userID := base + 2101
+	peerID := base + 2102
+	repo := NewForTest(db, &testIDGenerator{next: base + 21000}, "local-userupdates")
+	send := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion:      payload.MessageOperationSchemaVersion,
+		OperationKind:      payload.OperationKindSendMessage,
+		CanonicalMessageID: userID*10 + 1,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             peerID,
+		PeerSeq:            1,
+		FromUserID:         peerID,
+		ToUserID:           userID,
+		Date:               int32(time.Now().Unix()),
+		Out:                false,
+		MessageText:        "incoming",
+	}, "send")
+	if _, err := repo.ClaimPartitionOwner(ctx, send.PartitionID); err != nil {
+		t.Fatalf("ClaimPartitionOwner() error = %v", err)
+	}
+	if _, err := repo.ApplyUserOperation(ctx, send); err != nil {
+		t.Fatalf("ApplyUserOperation(send) error = %v", err)
+	}
+	read := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion:        payload.MessageOperationSchemaVersion,
+		OperationKind:        payload.OperationKindReadHistory,
+		PeerType:             payload.PeerTypeUser,
+		PeerID:               peerID,
+		PeerSeq:              1,
+		ReadInboxMaxPeerSeq:  1,
+		ReadOutboxMaxPeerSeq: 0,
+		FromUserID:           userID,
+		ToUserID:             userID,
+		Date:                 int32(time.Now().Unix()),
+	}, "read")
+	if _, err := repo.ApplyUserOperation(ctx, read); err != nil {
+		t.Fatalf("ApplyUserOperation(read) error = %v", err)
+	}
+	row, err := repo.models.UserDialogsModel.SelectByUserPeer(ctx, userID, payload.PeerTypeUser, peerID)
+	if err != nil {
+		t.Fatalf("SelectByUserPeer() error = %v", err)
+	}
+	if row.UnreadCount != 0 || row.UnreadMark || row.ReadInboxMaxPeerSeq != 1 || row.LastPts != 2 {
+		t.Fatalf("dialog read state = %+v, want unread cleared, read_inbox=1, last_pts=2", row)
+	}
+}
+
+func TestApplyUpdatePinnedMessageWritesProjectionAndPTSEvent(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	userID := base + 2201
+	peerID := base + 2202
+	repo := NewForTest(db, &testIDGenerator{next: base + 22000}, "local-userupdates")
+	send := buildApplyInput(t, userID, userID, peerID, true, "outgoing")
+	if _, err := repo.ClaimPartitionOwner(ctx, send.PartitionID); err != nil {
+		t.Fatalf("ClaimPartitionOwner() error = %v", err)
+	}
+	if _, err := repo.ApplyUserOperation(ctx, send); err != nil {
+		t.Fatalf("ApplyUserOperation(send) error = %v", err)
+	}
+	pin := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion:            payload.MessageOperationSchemaVersion,
+		OperationKind:            payload.OperationKindUpdatePinnedMessage,
+		CanonicalMessageID:       userID*10 + 1,
+		PeerType:                 payload.PeerTypeUser,
+		PeerID:                   peerID,
+		PeerSeq:                  1,
+		PinnedPeerSeq:            1,
+		PinnedCanonicalMessageID: userID*10 + 1,
+		FromUserID:               userID,
+		ToUserID:                 peerID,
+		Date:                     int32(time.Now().Unix()),
+	}, "pin")
+	if _, err := repo.ApplyUserOperation(ctx, pin); err != nil {
+		t.Fatalf("ApplyUserOperation(pin) error = %v", err)
+	}
+	row, err := repo.models.UserDialogsModel.SelectByUserPeer(ctx, userID, payload.PeerTypeUser, peerID)
+	if err != nil {
+		t.Fatalf("SelectByUserPeer() error = %v", err)
+	}
+	if row.PinnedPeerSeq != 1 || row.PinnedCanonicalMessageId != userID*10+1 || row.LastPts != 2 {
+		t.Fatalf("pinned projection = %+v, want pinned peer seq/canonical and last_pts=2", row)
+	}
+}
+
+func TestApplyMarkDialogUnreadLivesWithReadStateOwner(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	userID := base + 2301
+	peerID := base + 2302
+	repo := NewForTest(db, &testIDGenerator{next: base + 23000}, "local-userupdates")
+	send := buildApplyInput(t, userID, userID, peerID, true, "outgoing")
+	if _, err := repo.ClaimPartitionOwner(ctx, send.PartitionID); err != nil {
+		t.Fatalf("ClaimPartitionOwner() error = %v", err)
+	}
+	if _, err := repo.ApplyUserOperation(ctx, send); err != nil {
+		t.Fatalf("ApplyUserOperation(send) error = %v", err)
+	}
+	mark := true
+	in := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion: payload.MessageOperationSchemaVersion,
+		OperationKind: payload.OperationKindMarkDialogUnread,
+		PeerType:      payload.PeerTypeUser,
+		PeerID:        peerID,
+		PeerSeq:       1,
+		UnreadMark:    &mark,
+		FromUserID:    userID,
+		ToUserID:      peerID,
+		Date:          int32(time.Now().Unix()),
+	}, "mark-unread")
+	if _, err := repo.ApplyUserOperation(ctx, in); err != nil {
+		t.Fatalf("ApplyUserOperation(mark unread) error = %v", err)
+	}
+	row, err := repo.models.UserDialogsModel.SelectByUserPeer(ctx, userID, payload.PeerTypeUser, peerID)
+	if err != nil {
+		t.Fatalf("SelectByUserPeer() error = %v", err)
+	}
+	if !row.UnreadMark || row.LastPts != 2 {
+		t.Fatalf("dialog unread mark = %+v, want unread_mark and last_pts=2", row)
+	}
+}
+
+func TestApplyScheduledMarkerDefaultsFalseUntilScheduledAPIsExist(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	userID := base + 2401
+	peerID := base + 2402
+	repo := NewForTest(db, &testIDGenerator{next: base + 24000}, "local-userupdates")
+	in := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion: payload.MessageOperationSchemaVersion,
+		OperationKind: payload.OperationKindScheduledMarker,
+		PeerType:      payload.PeerTypeUser,
+		PeerID:        peerID,
+		PeerSeq:       1,
+		FromUserID:    userID,
+		ToUserID:      peerID,
+		Date:          int32(time.Now().Unix()),
+	}, "scheduled")
+	if _, err := repo.ClaimPartitionOwner(ctx, in.PartitionID); err != nil {
+		t.Fatalf("ClaimPartitionOwner() error = %v", err)
+	}
+	if _, err := repo.ApplyUserOperation(ctx, in); err != nil {
+		t.Fatalf("ApplyUserOperation(scheduled) error = %v", err)
+	}
+	row, err := repo.models.UserDialogsModel.SelectByUserPeer(ctx, userID, payload.PeerTypeUser, peerID)
+	if err != nil {
+		t.Fatalf("SelectByUserPeer() error = %v", err)
+	}
+	if row.HasScheduled {
+		t.Fatalf("HasScheduled = true, want default false")
+	}
+}
+
 func openIntegrationDB(t *testing.T) *sqlx.DB {
 	t.Helper()
 	if testing.Short() {
@@ -475,6 +634,27 @@ func buildApplyInput(t *testing.T, userID, fromUserID, toUserID int64, out bool,
 	return ApplyUserOperationInput{
 		UserID:       userID,
 		OperationID:  payload.SenderOperationID(op.CanonicalMessageID, userID),
+		OpType:       OpTypeSendMessage,
+		PeerType:     op.PeerType,
+		PeerID:       op.PeerID,
+		PayloadCodec: PayloadCodecJSON,
+		Payload:      body,
+		PayloadHash:  payload.HashBytes(body),
+		BucketID:     int32(route.BucketID),
+		PartitionID:  int32(route.ReceiverPartitionID),
+	}
+}
+
+func buildOperationApplyInput(t *testing.T, userID int64, op payload.MessageOperationV1, suffix string) ApplyUserOperationInput {
+	t.Helper()
+	route := payload.RouteUser(userID)
+	body, err := json.Marshal(op)
+	if err != nil {
+		t.Fatalf("marshal operation: %v", err)
+	}
+	return ApplyUserOperationInput{
+		UserID:       userID,
+		OperationID:  fmt.Sprintf("v1:%s:user:%d:%s:%d", op.OperationKind, userID, suffix, time.Now().UnixNano()),
 		OpType:       OpTypeSendMessage,
 		PeerType:     op.PeerType,
 		PeerID:       op.PeerID,

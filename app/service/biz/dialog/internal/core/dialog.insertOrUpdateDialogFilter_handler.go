@@ -17,15 +17,40 @@
 package core
 
 import (
+	"encoding/json"
+
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // DialogInsertOrUpdateDialogFilter
 // dialog.insertOrUpdateDialogFilter user_id:long id:int dialog_filter:DialogFilter = Bool;
 func (c *DialogCore) DialogInsertOrUpdateDialogFilter(in *dialog.TLDialogInsertOrUpdateDialogFilter) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.insertOrUpdateDialogFilter - error: method DialogInsertOrUpdateDialogFilter not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	sourceAuth, err := c.sourcePermAuthKeyID()
+	if err != nil {
+		return nil, err
+	}
+	payload, _ := json.Marshal(in.DialogFilter)
+	title := ""
+	if f, ok := in.DialogFilter.(*tg.TLDialogFilter); ok && f.Title != nil {
+		title = f.Title.Text
+	}
+	operationID := deterministicOperationID("upsert_filter", in.UserId, in.Id)
+	if _, err := c.svcCtx.Repo.SaveDialogFilter(c.ctx, repository.SaveDialogFilterInput{
+		UserID:              in.UserId,
+		DialogFilterID:      in.Id,
+		Title:               title,
+		OrderValue:          int64(in.Id),
+		Enabled:             true,
+		FilterSchemaVersion: 1,
+		FilterPayload:       payload,
+		SourcePermAuthKeyID: sourceAuth,
+		OperationID:         operationID,
+		OutboxID:            deterministicOutboxID(operationID, "filter"),
+		EventType:           "dialog.filterUpdated",
+	}); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

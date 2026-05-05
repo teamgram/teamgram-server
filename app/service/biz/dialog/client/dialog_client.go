@@ -25,6 +25,7 @@ var _ *tg.Bool
 type DialogClient interface {
 	DialogSaveDraftMessage(ctx context.Context, in *dialog.TLDialogSaveDraftMessage) (*tg.Bool, error)
 	DialogClearDraftMessage(ctx context.Context, in *dialog.TLDialogClearDraftMessage) (*tg.Bool, error)
+	DialogClearDraftAfterSend(ctx context.Context, in *dialog.TLDialogClearDraftAfterSend) (*tg.Bool, error)
 	DialogGetAllDrafts(ctx context.Context, in *dialog.TLDialogGetAllDrafts) (*dialog.VectorPeerWithDraftMessage, error)
 	DialogClearAllDrafts(ctx context.Context, in *dialog.TLDialogClearAllDrafts) (*dialog.VectorPeerWithDraftMessage, error)
 	DialogMarkDialogUnread(ctx context.Context, in *dialog.TLDialogMarkDialogUnread) (*tg.Bool, error)
@@ -48,12 +49,18 @@ type DialogClient interface {
 	DialogGetDialogFilters(ctx context.Context, in *dialog.TLDialogGetDialogFilters) (*dialog.VectorDialogFilterExt, error)
 	DialogGetDialogFolder(ctx context.Context, in *dialog.TLDialogGetDialogFolder) (*dialog.VectorDialogExt, error)
 	DialogEditPeerFolders(ctx context.Context, in *dialog.TLDialogEditPeerFolders) (*dialog.VectorDialogPinnedExt, error)
+	DialogGetDialogsV2(ctx context.Context, in *dialog.TLDialogGetDialogsV2) (*dialog.DialogPage, error)
+	DialogGetPeerDialogsV2(ctx context.Context, in *dialog.TLDialogGetPeerDialogsV2) (*dialog.VectorDialogExtV2, error)
+	DialogGetPinnedDialogsV2(ctx context.Context, in *dialog.TLDialogGetPinnedDialogsV2) (*dialog.VectorDialogExtV2, error)
+	DialogGetDialogByPeerV2(ctx context.Context, in *dialog.TLDialogGetDialogByPeerV2) (*dialog.DialogExtV2, error)
+	DialogBatchGetDialogExtras(ctx context.Context, in *dialog.TLDialogBatchGetDialogExtras) (*dialog.VectorDialogExtras, error)
 	DialogGetChannelMessageReadParticipants(ctx context.Context, in *dialog.TLDialogGetChannelMessageReadParticipants) (*dialog.VectorLong, error)
 	DialogSetChatTheme(ctx context.Context, in *dialog.TLDialogSetChatTheme) (*tg.Bool, error)
 	DialogSetHistoryTTL(ctx context.Context, in *dialog.TLDialogSetHistoryTTL) (*tg.Bool, error)
 	DialogGetMyDialogsData(ctx context.Context, in *dialog.TLDialogGetMyDialogsData) (*dialog.DialogsData, error)
 	DialogGetSavedDialogs(ctx context.Context, in *dialog.TLDialogGetSavedDialogs) (*dialog.SavedDialogList, error)
 	DialogGetPinnedSavedDialogs(ctx context.Context, in *dialog.TLDialogGetPinnedSavedDialogs) (*dialog.SavedDialogList, error)
+	DialogUpsertSavedDialogFromMessage(ctx context.Context, in *dialog.TLDialogUpsertSavedDialogFromMessage) (*tg.Bool, error)
 	DialogToggleSavedDialogPin(ctx context.Context, in *dialog.TLDialogToggleSavedDialogPin) (*tg.Bool, error)
 	DialogReorderPinnedSavedDialogs(ctx context.Context, in *dialog.TLDialogReorderPinnedSavedDialogs) (*tg.Bool, error)
 	DialogGetDialogFilter(ctx context.Context, in *dialog.TLDialogGetDialogFilter) (*dialog.DialogFilterExt, error)
@@ -78,15 +85,21 @@ func NewDialogClient(cli client.Client) DialogClient {
 }
 
 // DialogSaveDraftMessage
-// dialog.saveDraftMessage user_id:long peer_type:int peer_id:long message:DraftMessage = Bool;
+// dialog.saveDraftMessage user_id:long peer_type:int peer_id:long message:DraftMessage source_perm_auth_key_id:long operation_id:string outbox_id:long = Bool;
 func (m *defaultDialogClient) DialogSaveDraftMessage(ctx context.Context, in *dialog.TLDialogSaveDraftMessage) (*tg.Bool, error) {
 	return m.rpc.DialogSaveDraftMessage(ctx, in)
 }
 
 // DialogClearDraftMessage
-// dialog.clearDraftMessage user_id:long peer_type:int peer_id:long = Bool;
+// dialog.clearDraftMessage user_id:long peer_type:int peer_id:long source_perm_auth_key_id:long operation_id:string outbox_id:long = Bool;
 func (m *defaultDialogClient) DialogClearDraftMessage(ctx context.Context, in *dialog.TLDialogClearDraftMessage) (*tg.Bool, error) {
 	return m.rpc.DialogClearDraftMessage(ctx, in)
+}
+
+// DialogClearDraftAfterSend
+// dialog.clearDraftAfterSend user_id:long peer_type:int peer_id:long clear_before_date:int source_perm_auth_key_id:long source_operation_id:string outbox_id:long = Bool;
+func (m *defaultDialogClient) DialogClearDraftAfterSend(ctx context.Context, in *dialog.TLDialogClearDraftAfterSend) (*tg.Bool, error) {
+	return m.rpc.DialogClearDraftAfterSend(ctx, in)
 }
 
 // DialogGetAllDrafts
@@ -96,7 +109,7 @@ func (m *defaultDialogClient) DialogGetAllDrafts(ctx context.Context, in *dialog
 }
 
 // DialogClearAllDrafts
-// dialog.clearAllDrafts user_id:long = Vector<PeerWithDraftMessage>;
+// dialog.clearAllDrafts user_id:long source_perm_auth_key_id:long operation_id:string outbox_ids:Vector<long> = Vector<PeerWithDraftMessage>;
 func (m *defaultDialogClient) DialogClearAllDrafts(ctx context.Context, in *dialog.TLDialogClearAllDrafts) (*dialog.VectorPeerWithDraftMessage, error) {
 	return m.rpc.DialogClearAllDrafts(ctx, in)
 }
@@ -108,7 +121,7 @@ func (m *defaultDialogClient) DialogMarkDialogUnread(ctx context.Context, in *di
 }
 
 // DialogToggleDialogPin
-// dialog.toggleDialogPin user_id:long peer_type:int peer_id:long pinned:Bool = Int32;
+// dialog.toggleDialogPin user_id:long peer_type:int peer_id:long pinned:Bool source_perm_auth_key_id:long operation_id:string outbox_id:long = Int32;
 func (m *defaultDialogClient) DialogToggleDialogPin(ctx context.Context, in *dialog.TLDialogToggleDialogPin) (*tg.Int32, error) {
 	return m.rpc.DialogToggleDialogPin(ctx, in)
 }
@@ -150,7 +163,7 @@ func (m *defaultDialogClient) DialogGetPinnedDialogs(ctx context.Context, in *di
 }
 
 // DialogReorderPinnedDialogs
-// dialog.reorderPinnedDialogs user_id:long force:Bool folder_id:int id_list:Vector<long> = Bool;
+// dialog.reorderPinnedDialogs user_id:long force:Bool folder_id:int id_list:Vector<long> source_perm_auth_key_id:long operation_id:string outbox_id:long = Bool;
 func (m *defaultDialogClient) DialogReorderPinnedDialogs(ctx context.Context, in *dialog.TLDialogReorderPinnedDialogs) (*tg.Bool, error) {
 	return m.rpc.DialogReorderPinnedDialogs(ctx, in)
 }
@@ -222,9 +235,39 @@ func (m *defaultDialogClient) DialogGetDialogFolder(ctx context.Context, in *dia
 }
 
 // DialogEditPeerFolders
-// dialog.editPeerFolders user_id:long peer_dialog_list:Vector<long> folder_id:int = Vector<DialogPinnedExt>;
+// dialog.editPeerFolders user_id:long peer_dialog_list:Vector<long> folder_id:int source_perm_auth_key_id:long operation_id:string outbox_ids:Vector<long> = Vector<DialogPinnedExt>;
 func (m *defaultDialogClient) DialogEditPeerFolders(ctx context.Context, in *dialog.TLDialogEditPeerFolders) (*dialog.VectorDialogPinnedExt, error) {
 	return m.rpc.DialogEditPeerFolders(ctx, in)
+}
+
+// DialogGetDialogsV2
+// dialog.getDialogsV2 user_id:long cursor:DialogCursor exclude_pinned:Bool limit:int = DialogPage;
+func (m *defaultDialogClient) DialogGetDialogsV2(ctx context.Context, in *dialog.TLDialogGetDialogsV2) (*dialog.DialogPage, error) {
+	return m.rpc.DialogGetDialogsV2(ctx, in)
+}
+
+// DialogGetPeerDialogsV2
+// dialog.getPeerDialogsV2 user_id:long peers:Vector<DialogPeer> = Vector<DialogExtV2>;
+func (m *defaultDialogClient) DialogGetPeerDialogsV2(ctx context.Context, in *dialog.TLDialogGetPeerDialogsV2) (*dialog.VectorDialogExtV2, error) {
+	return m.rpc.DialogGetPeerDialogsV2(ctx, in)
+}
+
+// DialogGetPinnedDialogsV2
+// dialog.getPinnedDialogsV2 user_id:long folder_id:int limit:int = Vector<DialogExtV2>;
+func (m *defaultDialogClient) DialogGetPinnedDialogsV2(ctx context.Context, in *dialog.TLDialogGetPinnedDialogsV2) (*dialog.VectorDialogExtV2, error) {
+	return m.rpc.DialogGetPinnedDialogsV2(ctx, in)
+}
+
+// DialogGetDialogByPeerV2
+// dialog.getDialogByPeerV2 user_id:long peer:DialogPeer = DialogExtV2;
+func (m *defaultDialogClient) DialogGetDialogByPeerV2(ctx context.Context, in *dialog.TLDialogGetDialogByPeerV2) (*dialog.DialogExtV2, error) {
+	return m.rpc.DialogGetDialogByPeerV2(ctx, in)
+}
+
+// DialogBatchGetDialogExtras
+// dialog.batchGetDialogExtras user_id:long peers:Vector<DialogPeer> = Vector<DialogExtras>;
+func (m *defaultDialogClient) DialogBatchGetDialogExtras(ctx context.Context, in *dialog.TLDialogBatchGetDialogExtras) (*dialog.VectorDialogExtras, error) {
+	return m.rpc.DialogBatchGetDialogExtras(ctx, in)
 }
 
 // DialogGetChannelMessageReadParticipants
@@ -261,6 +304,12 @@ func (m *defaultDialogClient) DialogGetSavedDialogs(ctx context.Context, in *dia
 // dialog.getPinnedSavedDialogs user_id:long = SavedDialogList;
 func (m *defaultDialogClient) DialogGetPinnedSavedDialogs(ctx context.Context, in *dialog.TLDialogGetPinnedSavedDialogs) (*dialog.SavedDialogList, error) {
 	return m.rpc.DialogGetPinnedSavedDialogs(ctx, in)
+}
+
+// DialogUpsertSavedDialogFromMessage
+// dialog.upsertSavedDialogFromMessage user_id:long peer_type:int peer_id:long top_peer_seq:long top_canonical_message_id:long top_message_date:int payload:bytes = Bool;
+func (m *defaultDialogClient) DialogUpsertSavedDialogFromMessage(ctx context.Context, in *dialog.TLDialogUpsertSavedDialogFromMessage) (*tg.Bool, error) {
+	return m.rpc.DialogUpsertSavedDialogFromMessage(ctx, in)
 }
 
 // DialogToggleSavedDialogPin

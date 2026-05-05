@@ -17,7 +17,10 @@
 package core
 
 import (
+	"time"
+
 	"github.com/teamgram/teamgram-server/v2/app/bff/drafts/internal/repository"
+	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -28,11 +31,34 @@ func (c *DraftsCore) MessagesClearAllDrafts(in *tg.TLMessagesClearAllDrafts) (*t
 		return tg.BoolTrue, nil
 	}
 
-	rValues, err := c.svcCtx.Repo.DialogClient.DialogClearAllDrafts(c.ctx, &repository.DialogClearAll{
+	existing, err := c.svcCtx.Repo.DialogClient.DialogGetAllDrafts(c.ctx, &repository.DialogGetAllDrafts{
 		UserId: c.MD.UserId,
 	})
 	if err != nil {
-		c.Logger.Errorf("messages.clearAllDrafts: %v", err)
+		return nil, err
+	}
+
+	operationID := clearAllDraftsOperationID(c.MD.UserId, time.Now().UnixNano())
+	var existingDrafts []dialogpb.PeerWithDraftMessageClazz
+	if existing != nil {
+		existingDrafts = existing.Datas
+	}
+	outboxIDs := make([]int64, 0, len(existingDrafts))
+	for _, draft := range existingDrafts {
+		if draft == nil {
+			continue
+		}
+		peer := tg.FromPeer(draft.ToPeerWithDraftMessage().Peer)
+		outboxIDs = append(outboxIDs, draftOutboxID(draftOperationID("clear_all", c.MD.UserId, peer.PeerType, peer.PeerId, int64(len(outboxIDs)+1))+"|"+operationID))
+	}
+
+	rValues, err := c.svcCtx.Repo.DialogClient.DialogClearAllDrafts(c.ctx, &repository.DialogClearAll{
+		UserId:              c.MD.UserId,
+		SourcePermAuthKeyId: c.MD.PermAuthKeyId,
+		OperationId:         operationID,
+		OutboxIds:           outboxIDs,
+	})
+	if err != nil {
 		return nil, err
 	}
 

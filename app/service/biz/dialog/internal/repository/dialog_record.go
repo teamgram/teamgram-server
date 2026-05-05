@@ -7,6 +7,7 @@ type DialogRecord struct {
 	PeerType             int32
 	PeerID               int64
 	PeerDialogID         int64
+	Order                int64
 	Pinned               int64
 	TopMessage           int32
 	PinnedMsgID          int32

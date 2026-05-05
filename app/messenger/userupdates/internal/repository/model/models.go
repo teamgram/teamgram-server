@@ -16,7 +16,10 @@ import (
 
 type Models struct {
 	DeliveryFailedOperationsModel   DeliveryFailedOperationsModel
+	DialogSideEffectOutboxModel     DialogSideEffectOutboxModel
 	PushTaskOutboxModel             PushTaskOutboxModel
+	UserAuthSeqEventsModel          UserAuthSeqEventsModel
+	UserAuthSeqStateModel           UserAuthSeqStateModel
 	UserDialogsModel                UserDialogsModel
 	UserMessageViewsModel           UserMessageViewsModel
 	UserOperationResultsModel       UserOperationResultsModel
@@ -27,7 +30,10 @@ type Models struct {
 
 type TxModels struct {
 	DeliveryFailedOperationsModel   DeliveryFailedOperationsTxModel
+	DialogSideEffectOutboxModel     DialogSideEffectOutboxTxModel
 	PushTaskOutboxModel             PushTaskOutboxTxModel
+	UserAuthSeqEventsModel          UserAuthSeqEventsTxModel
+	UserAuthSeqStateModel           UserAuthSeqStateTxModel
 	UserDialogsModel                UserDialogsTxModel
 	UserMessageViewsModel           UserMessageViewsTxModel
 	UserOperationResultsModel       UserOperationResultsTxModel
@@ -39,7 +45,10 @@ type TxModels struct {
 func NewModels(db *sqlx.DB) *Models {
 	return &Models{
 		DeliveryFailedOperationsModel:   NewDeliveryFailedOperationsModel(db),
+		DialogSideEffectOutboxModel:     NewDialogSideEffectOutboxModel(db),
 		PushTaskOutboxModel:             NewPushTaskOutboxModel(db),
+		UserAuthSeqEventsModel:          NewUserAuthSeqEventsModel(db),
+		UserAuthSeqStateModel:           NewUserAuthSeqStateModel(db),
 		UserDialogsModel:                NewUserDialogsModel(db),
 		UserMessageViewsModel:           NewUserMessageViewsModel(db),
 		UserOperationResultsModel:       NewUserOperationResultsModel(db),
@@ -52,7 +61,10 @@ func NewModels(db *sqlx.DB) *Models {
 func (m *Models) WithTx(tx *sqlx.Tx) *TxModels {
 	return &TxModels{
 		DeliveryFailedOperationsModel:   NewDeliveryFailedOperationsTxModel(tx),
+		DialogSideEffectOutboxModel:     NewDialogSideEffectOutboxTxModel(tx),
 		PushTaskOutboxModel:             NewPushTaskOutboxTxModel(tx),
+		UserAuthSeqEventsModel:          NewUserAuthSeqEventsTxModel(tx),
+		UserAuthSeqStateModel:           NewUserAuthSeqStateTxModel(tx),
 		UserDialogsModel:                NewUserDialogsTxModel(tx),
 		UserMessageViewsModel:           NewUserMessageViewsTxModel(tx),
 		UserOperationResultsModel:       NewUserOperationResultsTxModel(tx),

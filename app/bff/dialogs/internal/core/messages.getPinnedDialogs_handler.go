@@ -17,6 +17,7 @@
 package core
 
 import (
+	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -33,13 +34,44 @@ func (c *DialogsCore) MessagesGetPinnedDialogs(in *tg.TLMessagesGetPinnedDialogs
 		return nil, tg.ErrFolderIdInvalid
 	}
 
+	dialogs, err := c.svcCtx.Repo.DialogClient.DialogGetPinnedDialogsV2(c.ctx, &dialogpb.TLDialogGetPinnedDialogsV2{
+		UserId:   c.MD.UserId,
+		FolderId: in.FolderId,
+		Limit:    100,
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.getPinnedDialogs - dialog.getPinnedDialogsV2 failed: user_id: %d, folder_id: %d, err: %v",
+			c.MD.UserId, in.FolderId, err)
+		return nil, tg.ErrInternalServerError
+	}
+	return c.makePeerDialogsFromDialogExtV2s("messages.getPinnedDialogs", vectorDialogExtV2Datas(dialogs))
+}
+
+func (c *DialogsCore) makePeerDialogsFromDialogExtV2s(operation string, dialogExts []dialogpb.DialogExtV2Clazz) (*tg.MessagesPeerDialogs, error) {
+	hydrated, err := c.hydrateDialogExtV2s(operation, dialogExts)
+	if err != nil {
+		return nil, err
+	}
+	if len(hydrated.Dialogs) == 0 {
+		return emptyPeerDialogs(), nil
+	}
+	return tg.MakeTLMessagesPeerDialogs(&tg.TLMessagesPeerDialogs{
+		Dialogs:  hydrated.Dialogs,
+		Messages: hydrated.Messages,
+		Chats:    hydrated.Chats,
+		Users:    hydrated.Users,
+		State:    emptyUpdatesState(),
+	}).ToMessagesPeerDialogs(), nil
+}
+
+func emptyPeerDialogs() *tg.MessagesPeerDialogs {
 	return tg.MakeTLMessagesPeerDialogs(&tg.TLMessagesPeerDialogs{
 		Dialogs:  []tg.DialogClazz{},
 		Messages: []tg.MessageClazz{},
 		Chats:    []tg.ChatClazz{},
 		Users:    []tg.UserClazz{},
 		State:    emptyUpdatesState(),
-	}).ToMessagesPeerDialogs(), nil
+	}).ToMessagesPeerDialogs()
 }
 
 func emptyUpdatesState() tg.UpdatesStateClazz {

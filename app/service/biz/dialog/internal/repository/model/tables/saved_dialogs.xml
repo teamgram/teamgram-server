@@ -3,23 +3,45 @@
     <operation name="InsertOrUpdate">
         <sql>
             INSERT INTO saved_dialogs
-                (user_id, peer_type, peer_id, pinned, top_message)
+                (user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload)
             VALUES
-                (:user_id, :peer_type, :peer_id, 0, :top_message)
+                (:user_id, :peer_type, :peer_id, :top_peer_seq, :top_canonical_message_id, :top_message_date, :pinned, :pin_order, :deleted, :saved_schema_version, :saved_payload)
             ON DUPLICATE KEY UPDATE
-                top_message = VALUES(top_message),
-                deleted = 0
+                top_peer_seq = VALUES(top_peer_seq),
+                top_canonical_message_id = VALUES(top_canonical_message_id),
+                top_message_date = VALUES(top_message_date),
+                deleted = VALUES(deleted),
+                saved_schema_version = VALUES(saved_schema_version),
+                saved_payload = VALUES(saved_payload)
+        </sql>
+    </operation>
+
+    <operation name="UpsertTopFromMessage">
+        <sql>
+            <![CDATA[
+            INSERT INTO saved_dialogs
+                (user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload)
+            VALUES
+                (:user_id, :peer_type, :peer_id, :top_peer_seq, :top_canonical_message_id, :top_message_date, 0, 0, 0, :saved_schema_version, :saved_payload)
+            ON DUPLICATE KEY UPDATE
+                top_peer_seq = IF(top_message_date <= VALUES(top_message_date), VALUES(top_peer_seq), top_peer_seq),
+                top_canonical_message_id = IF(top_message_date <= VALUES(top_message_date), VALUES(top_canonical_message_id), top_canonical_message_id),
+                top_message_date = IF(top_message_date <= VALUES(top_message_date), VALUES(top_message_date), top_message_date),
+                deleted = 0,
+                saved_schema_version = IF(top_message_date <= VALUES(top_message_date), VALUES(saved_schema_version), saved_schema_version),
+                saved_payload = IF(top_message_date <= VALUES(top_message_date), VALUES(saved_payload), saved_payload)
+            ]]>
         </sql>
     </operation>
 
     <operation name="Select">
         <sql>
             SELECT
-                user_id, peer_type, peer_id, pinned, top_message
+                user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload
             FROM
                 saved_dialogs
             WHERE
-                user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id AND deleted = 0
+                user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id AND deleted = 0 LIMIT 1
         </sql>
     </operation>
 
@@ -27,29 +49,12 @@
         <sql>
             <![CDATA[
             SELECT
-                user_id, peer_type, peer_id, pinned, top_message
+                user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload
             FROM
                 saved_dialogs
             WHERE
-                user_id = :user_id AND pinned > 0 AND deleted = 0
-            ORDER BY pinned DESC
-            ]]>
-        </sql>
-    </operation>
-
-    <operation name="SelectExcludePinnedDialogs" result_set="list">
-        <params>
-            <param name="limit" type="int32" />
-        </params>
-        <sql>
-            <![CDATA[
-            SELECT
-                user_id, peer_type, peer_id, pinned, top_message
-            FROM
-                saved_dialogs
-            WHERE
-                user_id = :user_id AND pinned = 0 AND top_message < :top_message AND deleted = 0
-            ORDER BY top_message DESC LIMIT :limit
+                user_id = :user_id AND pinned = 1 AND deleted = 0
+            ORDER BY pin_order ASC
             ]]>
         </sql>
     </operation>
@@ -61,12 +66,12 @@
         <sql>
             <![CDATA[
             SELECT
-                user_id, peer_type, peer_id, pinned, top_message
+                user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload
             FROM
                 saved_dialogs
             WHERE
-                user_id = :user_id AND top_message < :top_message AND deleted = 0
-            ORDER BY top_message DESC LIMIT :limit
+                user_id = :user_id AND deleted = 0 AND top_message_date < :top_message_date
+            ORDER BY top_message_date DESC LIMIT :limit
             ]]>
         </sql>
     </operation>
@@ -76,9 +81,10 @@
             UPDATE
                 saved_dialogs
             SET
-                pinned = 0
+                pinned = 0,
+                pin_order = 0
             WHERE
-                user_id=:user_id AND pinned>0 AND deleted = 0
+                user_id = :user_id AND pinned = 1 AND deleted = 0
         </sql>
     </operation>
 
@@ -87,9 +93,10 @@
             UPDATE
                 saved_dialogs
             SET
-                pinned = :pinned
+                pinned = :pinned,
+                pin_order = :pin_order
             WHERE
-                user_id=:user_id AND peer_type=:peer_type AND peer_id=:peer_id
+                user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id
         </sql>
     </operation>
 </table>

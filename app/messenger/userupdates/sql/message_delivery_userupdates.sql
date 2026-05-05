@@ -198,6 +198,36 @@ CREATE TABLE IF NOT EXISTS user_pts_events (
   KEY idx_peer (peer_type, peer_id, peer_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE IF NOT EXISTS user_auth_seq_state (
+  user_id               BIGINT NOT NULL,
+  seq                   BIGINT NOT NULL,
+  date                  INT NOT NULL,
+  row_version           BIGINT NOT NULL DEFAULT 0,
+  created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS user_auth_seq_events (
+  user_id               BIGINT NOT NULL,
+  seq                   BIGINT NOT NULL,
+  date                  INT NOT NULL,
+  operation_id          VARCHAR(160) NOT NULL,
+  source_perm_auth_key_id BIGINT NOT NULL DEFAULT 0,
+  target_auth_policy    VARCHAR(64) NOT NULL,
+  public_update_type    VARCHAR(128) NOT NULL,
+  peer_type             INT NOT NULL DEFAULT 0,
+  peer_id               BIGINT NOT NULL DEFAULT 0,
+  event_schema_version  INT NOT NULL,
+  event_codec           INT NOT NULL,
+  event_payload         BLOB NOT NULL,
+  event_payload_hash    BINARY(32) NOT NULL,
+  created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, seq),
+  UNIQUE KEY uk_user_operation (user_id, operation_id),
+  KEY idx_user_date (user_id, date, seq)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS user_operation_results (
   user_id               BIGINT NOT NULL,
   operation_id          VARCHAR(160) NOT NULL,
@@ -249,19 +279,28 @@ CREATE TABLE IF NOT EXISTS user_dialogs (
   top_peer_seq          BIGINT NULL,
   top_canonical_message_id BIGINT NULL,
   top_message_date      DATETIME(6) NULL,
-  unread_count          INT NOT NULL DEFAULT 0,
-  unread_mentions_count INT NOT NULL DEFAULT 0,
+  top_message_status    INT NOT NULL DEFAULT 1,
   read_inbox_max_peer_seq BIGINT NOT NULL DEFAULT 0,
   read_outbox_max_peer_seq BIGINT NOT NULL DEFAULT 0,
-  pinned                BOOLEAN NOT NULL DEFAULT FALSE,
-  folder_id             INT NULL,
+  unread_count          INT NOT NULL DEFAULT 0,
+  unread_mentions_count INT NOT NULL DEFAULT 0,
+  unread_reactions_count INT NOT NULL DEFAULT 0,
+  unread_mark           BOOLEAN NOT NULL DEFAULT FALSE,
+  pinned_peer_seq       BIGINT NOT NULL DEFAULT 0,
+  pinned_canonical_message_id BIGINT NOT NULL DEFAULT 0,
+  has_scheduled         BOOLEAN NOT NULL DEFAULT FALSE,
+  available_min_peer_seq BIGINT NOT NULL DEFAULT 0,
+  hidden                BOOLEAN NOT NULL DEFAULT FALSE,
+  deleted_at            DATETIME(6) NULL,
+  last_pts              BIGINT NOT NULL DEFAULT 0,
+  last_pts_at           DATETIME(6) NULL,
   dialog_schema_version INT NOT NULL DEFAULT 1,
   dialog_payload        BLOB NULL,
   created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (user_id, peer_type, peer_id),
-  KEY idx_user_top_date (user_id, top_message_date),
-  KEY idx_user_pinned (user_id, pinned)
+  KEY idx_user_hidden_top (user_id, hidden, top_message_date, top_peer_seq),
+  KEY idx_peer_read_inbox (peer_type, peer_id, read_inbox_max_peer_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE IF NOT EXISTS push_task_outbox (
@@ -292,6 +331,35 @@ CREATE TABLE IF NOT EXISTS push_task_outbox (
   KEY idx_status_retry (status, next_retry_at),
   KEY idx_status_available (status, available_at, task_id),
   KEY idx_user_created (user_id, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS dialog_side_effect_outbox (
+  side_effect_id                 BIGINT NOT NULL,
+  kind                           VARCHAR(64) NOT NULL,
+  user_id                        BIGINT NOT NULL,
+  peer_type                      INT NOT NULL,
+  peer_id                        BIGINT NOT NULL,
+  source_perm_auth_key_id        BIGINT NOT NULL DEFAULT 0,
+  source_operation_id            VARCHAR(160) NOT NULL,
+  source_message_date            DATETIME(6) NOT NULL,
+  source_peer_seq                BIGINT NOT NULL DEFAULT 0,
+  source_canonical_message_id    BIGINT NOT NULL DEFAULT 0,
+  clear_before_date              DATETIME(6) NOT NULL DEFAULT '1970-01-01 00:00:00.000000',
+  payload_schema_version         INT NOT NULL DEFAULT 1,
+  payload                        BLOB NOT NULL,
+  payload_hash                   BINARY(32) NOT NULL,
+  status                         INT NOT NULL,
+  attempt_count                  INT NOT NULL DEFAULT 0,
+  next_retry_at                  DATETIME(6) NOT NULL,
+  lease_owner                    VARCHAR(128) NOT NULL DEFAULT '',
+  lease_until                    DATETIME(6) NOT NULL DEFAULT '1970-01-01 00:00:00.000000',
+  last_error_code                VARCHAR(128) NOT NULL DEFAULT '',
+  created_at                     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at                     TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (side_effect_id),
+  UNIQUE KEY uk_kind_operation (kind, source_operation_id),
+  KEY idx_status_retry (status, next_retry_at, side_effect_id),
+  KEY idx_user_kind (user_id, kind, created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 CREATE TABLE IF NOT EXISTS delivery_failed_operations (

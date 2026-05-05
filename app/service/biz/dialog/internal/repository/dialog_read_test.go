@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository/model"
 )
 
@@ -35,83 +36,23 @@ func TestMapDialogRecordsNilAndEmpty(t *testing.T) {
 	}
 }
 
-func TestListDialogsReturnsMappedRows(t *testing.T) {
-	row := testDialogRow()
-	repo := NewRepositoryForTest(&model.Models{
-		DialogsModel: fakeDialogsModel{
-			selectDialogsFn: func(ctx context.Context, userID int64, folderID int32) ([]model.Dialogs, error) {
-				if userID != 1 || folderID != 3 {
-					t.Fatalf("SelectDialogs userID=%d folderID=%d, want 1/3", userID, folderID)
-				}
-				return []model.Dialogs{row}, nil
-			},
-		},
-	})
-
-	got, err := repo.ListDialogs(context.Background(), 1, false, 3)
-	if err != nil {
-		t.Fatalf("ListDialogs error = %v", err)
+func TestOldMixedDialogReadMethodsAreDeprecated(t *testing.T) {
+	repo := NewRepositoryForTest(&model.Models{})
+	if got, err := repo.ListDialogs(context.Background(), 1, false, 3); !errors.Is(err, dialogpb.ErrDeprecatedMethod) || got != nil {
+		t.Fatalf("ListDialogs = (%+v, %v), want deprecated nil", got, err)
 	}
-	if len(got) != 1 {
-		t.Fatalf("len(ListDialogs) = %d, want 1", len(got))
+	if got, err := repo.CountDialogs(context.Background(), 1, false, 3); !errors.Is(err, dialogpb.ErrDeprecatedMethod) || got != 0 {
+		t.Fatalf("CountDialogs = (%d, %v), want deprecated zero", got, err)
 	}
-	if got[0].PeerDialogID != row.PeerDialogId {
-		t.Fatalf("PeerDialogID = %d, want %d", got[0].PeerDialogID, row.PeerDialogId)
+	if got, err := repo.GetDialogByPeer(context.Background(), 1, 2, 3); !errors.Is(err, dialogpb.ErrDeprecatedMethod) || got != nil {
+		t.Fatalf("GetDialogByPeer = (%+v, %v), want deprecated nil", got, err)
+	}
+	if got, err := repo.ListDialogsByPeerDialogIDs(context.Background(), 1, []int64{1}); !errors.Is(err, dialogpb.ErrDeprecatedMethod) || got != nil {
+		t.Fatalf("ListDialogsByPeerDialogIDs = (%+v, %v), want deprecated nil", got, err)
 	}
 }
 
-func TestListDialogsReturnsEmptyRows(t *testing.T) {
-	repo := NewRepositoryForTest(&model.Models{
-		DialogsModel: fakeDialogsModel{
-			selectDialogsFn: func(context.Context, int64, int32) ([]model.Dialogs, error) {
-				return []model.Dialogs{}, nil
-			},
-		},
-	})
-
-	got, err := repo.ListDialogs(context.Background(), 1, false, 0)
-	if err != nil {
-		t.Fatalf("ListDialogs error = %v", err)
-	}
-	if len(got) != 0 {
-		t.Fatalf("len(ListDialogs) = %d, want 0", len(got))
-	}
-}
-
-func TestListDialogsRejectsNilModels(t *testing.T) {
-	r := &Repository{}
-	got, err := r.ListDialogs(context.Background(), 1, false, 0)
-	if err == nil {
-		t.Fatal("ListDialogs returned nil error")
-	}
-	if got != nil {
-		t.Fatalf("ListDialogs result = %#v, want nil on storage failure", got)
-	}
-}
-
-func TestListDialogsWrapsStorageError(t *testing.T) {
-	cause := errors.New("select failed")
-	repo := NewRepositoryForTest(&model.Models{
-		DialogsModel: fakeDialogsModel{
-			selectDialogsFn: func(context.Context, int64, int32) ([]model.Dialogs, error) {
-				return nil, cause
-			},
-		},
-	})
-
-	got, err := repo.ListDialogs(context.Background(), 1, false, 0)
-	if err == nil {
-		t.Fatal("ListDialogs returned nil error")
-	}
-	if got != nil {
-		t.Fatalf("ListDialogs result = %#v, want nil on storage failure", got)
-	}
-	if !errors.Is(err, cause) {
-		t.Fatalf("errors.Is(%v, cause) = false", err)
-	}
-}
-
-func TestCountDialogsUsesListLength(t *testing.T) {
+func TestCountDialogRecordsUsesListLength(t *testing.T) {
 	records := []DialogRecord{
 		{UserID: 1, PeerDialogID: 10},
 		{UserID: 1, PeerDialogID: 11},
@@ -184,13 +125,4 @@ func testDialogRow() model.Dialogs {
 		WallpaperOverridden:  true,
 		Date2:                1710000000,
 	}
-}
-
-type fakeDialogsModel struct {
-	model.DialogsModel
-	selectDialogsFn func(context.Context, int64, int32) ([]model.Dialogs, error)
-}
-
-func (f fakeDialogsModel) SelectDialogs(ctx context.Context, userID int64, folderID int32) ([]model.Dialogs, error) {
-	return f.selectDialogsFn(ctx, userID, folderID)
 }

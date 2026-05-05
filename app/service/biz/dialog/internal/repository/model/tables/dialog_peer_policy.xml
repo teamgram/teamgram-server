@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="dialog_peer_policy">
+    <operation name="Upsert">
+        <sql>
+            INSERT INTO dialog_peer_policy
+                (scope_type, scope_id, peer_type, peer_id, ttl_period, theme_emoticon, policy_version)
+            VALUES
+                (:scope_type, :scope_id, :peer_type, :peer_id, :ttl_period, :theme_emoticon, :policy_version)
+            ON DUPLICATE KEY UPDATE
+                peer_type = VALUES(peer_type),
+                peer_id = VALUES(peer_id),
+                ttl_period = VALUES(ttl_period),
+                theme_emoticon = VALUES(theme_emoticon),
+                policy_version = policy_version + 1
+        </sql>
+    </operation>
+
+    <operation name="SelectByScope">
+        <sql>
+            SELECT
+                scope_type, scope_id, peer_type, peer_id, ttl_period, theme_emoticon, policy_version
+            FROM
+                dialog_peer_policy
+            WHERE
+                scope_type = :scope_type AND scope_id = :scope_id LIMIT 1
+        </sql>
+    </operation>
+</table>

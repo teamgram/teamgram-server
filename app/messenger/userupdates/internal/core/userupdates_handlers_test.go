@@ -255,6 +255,239 @@ func TestGetDifferenceCarriesDateToRepository(t *testing.T) {
 	}
 }
 
+func TestDifferenceMapsDialogAuthSeqEvents(t *testing.T) {
+	pinned := false
+	folderID := int32(2)
+	ttl := int32(86400)
+	tests := []struct {
+		name      string
+		eventKind string
+		event     payload.DialogEventV1
+		wantType  any
+	}{
+		{
+			name:      "draft saved",
+			eventKind: payload.DialogEventDraftSaved,
+			wantType:  &tg.TLUpdateDraftMessage{},
+		},
+		{
+			name:      "dialog pin",
+			eventKind: payload.DialogEventPinToggled,
+			event:     payload.DialogEventV1{Pinned: &pinned, FolderID: &folderID},
+			wantType:  &tg.TLUpdateDialogPinned{},
+		},
+		{
+			name:      "pinned order",
+			eventKind: payload.DialogEventPinnedDialogsReordered,
+			event:     payload.DialogEventV1{FolderID: &folderID},
+			wantType:  &tg.TLUpdatePinnedDialogs{},
+		},
+		{
+			name:      "filter updated",
+			eventKind: payload.DialogEventFilterUpdated,
+			wantType:  &tg.TLUpdateDialogFilter{},
+		},
+		{
+			name:      "filter order",
+			eventKind: payload.DialogEventFiltersOrderUpdated,
+			wantType:  &tg.TLUpdateDialogFilterOrder{},
+		},
+		{
+			name:      "wallpaper",
+			eventKind: payload.DialogEventWallpaperChanged,
+			wantType:  &tg.TLUpdatePeerWallpaper{},
+		},
+		{
+			name:      "private ttl",
+			eventKind: payload.DialogEventPrivatePeerHistoryTTL,
+			event:     payload.DialogEventV1{TTLPeriod: &ttl},
+			wantType:  &tg.TLUpdatePeerHistoryTTL{},
+		},
+		{
+			name:      "saved dialog pinned",
+			eventKind: payload.DialogEventSavedDialogPinned,
+			event:     payload.DialogEventV1{Pinned: &pinned},
+			wantType:  &tg.TLUpdateSavedDialogPinned{},
+		},
+		{
+			name:      "pinned saved order",
+			eventKind: payload.DialogEventPinnedSavedDialogsChanged,
+			wantType:  &tg.TLUpdatePinnedSavedDialogs{},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			dialogEvent := tt.event
+			dialogEvent.SchemaVersion = payload.DialogEventSchemaVersion
+			dialogEvent.EventKind = tt.eventKind
+			dialogEvent.PublicUpdateType = tt.eventKind
+			dialogEvent.PeerType = payload.PeerTypeUser
+			dialogEvent.PeerID = 1002
+			eventPayload := mustMarshalDialogEvent(t, dialogEvent)
+			got, err := differenceToTL(&repository.GetDifferenceResult{
+				State: repository.UserState{UserID: 1001, Pts: 18, Seq: 7, Date: 1_772_000_001},
+				AuthSeqEvents: []repository.AuthSeqEvent{
+					{
+						UserID:             1001,
+						Seq:                7,
+						Date:               1_772_000_001,
+						OperationID:        "v1:dialog:auth",
+						PublicUpdateType:   tt.eventKind,
+						PeerType:           payload.PeerTypeUser,
+						PeerID:             1002,
+						EventSchemaVersion: payload.DialogEventSchemaVersion,
+						EventCodec:         repository.PayloadCodecJSON,
+						EventPayload:       eventPayload,
+						EventPayloadHash:   payload.HashBytes(eventPayload),
+					},
+				},
+			})
+			if err != nil {
+				t.Fatalf("differenceToTL returned error: %v", err)
+			}
+			diff, ok := got.ToUserDifference()
+			if !ok {
+				t.Fatalf("expected userDifference, got %s", got.ClazzName())
+			}
+			if diff.State == nil || diff.State.Pts != 18 || diff.State.Seq != 7 || diff.State.Date != 1_772_000_001 {
+				t.Fatalf("unexpected state: %#v", diff.State)
+			}
+			if len(diff.OtherUpdates) != 1 {
+				t.Fatalf("expected one auth-seq update, got %d", len(diff.OtherUpdates))
+			}
+			switch tt.wantType.(type) {
+			case *tg.TLUpdateDraftMessage:
+				if _, ok := diff.OtherUpdates[0].(*tg.TLUpdateDraftMessage); !ok {
+					t.Fatalf("expected TLUpdateDraftMessage, got %T", diff.OtherUpdates[0])
+				}
+			case *tg.TLUpdateDialogPinned:
+				update, ok := diff.OtherUpdates[0].(*tg.TLUpdateDialogPinned)
+				if !ok {
+					t.Fatalf("expected TLUpdateDialogPinned, got %T", diff.OtherUpdates[0])
+				}
+				if update.Pinned != pinned || update.FolderId == nil || *update.FolderId != folderID {
+					t.Fatalf("unexpected pinned update: %+v", update)
+				}
+			case *tg.TLUpdatePinnedDialogs:
+				if _, ok := diff.OtherUpdates[0].(*tg.TLUpdatePinnedDialogs); !ok {
+					t.Fatalf("expected TLUpdatePinnedDialogs, got %T", diff.OtherUpdates[0])
+				}
+			case *tg.TLUpdateDialogFilter:
+				if _, ok := diff.OtherUpdates[0].(*tg.TLUpdateDialogFilter); !ok {
+					t.Fatalf("expected TLUpdateDialogFilter, got %T", diff.OtherUpdates[0])
+				}
+			case *tg.TLUpdateDialogFilterOrder:
+				if _, ok := diff.OtherUpdates[0].(*tg.TLUpdateDialogFilterOrder); !ok {
+					t.Fatalf("expected TLUpdateDialogFilterOrder, got %T", diff.OtherUpdates[0])
+				}
+			case *tg.TLUpdatePeerWallpaper:
+				if _, ok := diff.OtherUpdates[0].(*tg.TLUpdatePeerWallpaper); !ok {
+					t.Fatalf("expected TLUpdatePeerWallpaper, got %T", diff.OtherUpdates[0])
+				}
+			case *tg.TLUpdatePeerHistoryTTL:
+				update, ok := diff.OtherUpdates[0].(*tg.TLUpdatePeerHistoryTTL)
+				if !ok {
+					t.Fatalf("expected TLUpdatePeerHistoryTTL, got %T", diff.OtherUpdates[0])
+				}
+				if update.TtlPeriod == nil || *update.TtlPeriod != ttl {
+					t.Fatalf("unexpected ttl update: %+v", update)
+				}
+			case *tg.TLUpdateSavedDialogPinned:
+				if _, ok := diff.OtherUpdates[0].(*tg.TLUpdateSavedDialogPinned); !ok {
+					t.Fatalf("expected TLUpdateSavedDialogPinned, got %T", diff.OtherUpdates[0])
+				}
+			case *tg.TLUpdatePinnedSavedDialogs:
+				if _, ok := diff.OtherUpdates[0].(*tg.TLUpdatePinnedSavedDialogs); !ok {
+					t.Fatalf("expected TLUpdatePinnedSavedDialogs, got %T", diff.OtherUpdates[0])
+				}
+			default:
+				t.Fatalf("unsupported test type %T", tt.wantType)
+			}
+		})
+	}
+}
+
+func TestDifferenceMapsFolderPeersAsPTSEvent(t *testing.T) {
+	folderID := int32(3)
+	eventPayload := mustMarshalMessageEvent(t, payload.MessageEventV1{
+		SchemaVersion: payload.MessageEventSchemaVersion,
+		EventKind:     payload.DialogEventFolderPeersChanged,
+	})
+	got, err := differenceToTL(&repository.GetDifferenceResult{
+		State: repository.UserState{UserID: 1001, Pts: 21},
+		Events: []repository.UserEvent{
+			{
+				UserID:             1001,
+				Pts:                21,
+				PtsCount:           1,
+				OperationID:        "v1:dialog:folder",
+				EventType:          repository.EventTypeDialogPublicUpdate,
+				PeerType:           payload.PeerTypeUser,
+				PeerID:             1002,
+				EventSchemaVersion: payload.MessageEventSchemaVersion,
+				EventCodec:         repository.PayloadCodecJSON,
+				EventPayload:       eventPayload,
+				EventPayloadHash:   payload.HashBytes(eventPayload),
+			},
+		},
+	})
+	if err != nil {
+		t.Fatalf("differenceToTL returned error: %v", err)
+	}
+	diff, ok := got.ToUserDifference()
+	if !ok {
+		t.Fatalf("expected userDifference, got %s", got.ClazzName())
+	}
+	if len(diff.NewMessages) != 0 || len(diff.OtherUpdates) != 1 {
+		t.Fatalf("unexpected difference lens: new=%d updates=%d", len(diff.NewMessages), len(diff.OtherUpdates))
+	}
+	update, ok := diff.OtherUpdates[0].(*tg.TLUpdateFolderPeers)
+	if !ok {
+		t.Fatalf("expected TLUpdateFolderPeers, got %T", diff.OtherUpdates[0])
+	}
+	if update.Pts != 21 || update.PtsCount != 1 {
+		t.Fatalf("unexpected pts update: %+v", update)
+	}
+	if len(update.FolderPeers) != 1 {
+		t.Fatalf("expected one folder peer, got %d", len(update.FolderPeers))
+	}
+	fp := update.FolderPeers[0]
+	if fp.FolderId != 0 && fp.FolderId != folderID {
+		t.Fatalf("unexpected folder peer: %+v", fp)
+	}
+}
+
+func TestDifferenceRejectsUnknownDialogAuthSeqEvent(t *testing.T) {
+	eventPayload := mustMarshalDialogEvent(t, payload.DialogEventV1{
+		SchemaVersion:    payload.DialogEventSchemaVersion,
+		EventKind:        "dialog.unknown",
+		PublicUpdateType: "dialog.unknown",
+		PeerType:         payload.PeerTypeUser,
+		PeerID:           1002,
+	})
+	_, err := differenceToTL(&repository.GetDifferenceResult{
+		State: repository.UserState{UserID: 1001, Pts: 18, Seq: 7, Date: 1_772_000_001},
+		AuthSeqEvents: []repository.AuthSeqEvent{
+			{
+				UserID:             1001,
+				Seq:                7,
+				Date:               1_772_000_001,
+				OperationID:        "v1:dialog:auth",
+				PublicUpdateType:   "dialog.unknown",
+				PeerType:           payload.PeerTypeUser,
+				PeerID:             1002,
+				EventSchemaVersion: payload.DialogEventSchemaVersion,
+				EventCodec:         repository.PayloadCodecJSON,
+				EventPayload:       eventPayload,
+				EventPayloadHash:   payload.HashBytes(eventPayload),
+			},
+		},
+	})
+	if !errors.Is(err, userupdates.ErrUserupdatesStorage) {
+		t.Fatalf("expected ErrUserupdatesStorage, got %v", err)
+	}
+}
+
 type fakeUserUpdatesRepository struct {
 	applyInput         repository.ApplyUserOperationInput
 	applyResult        *repository.ApplyUserOperationResult
@@ -264,6 +497,15 @@ type fakeUserUpdatesRepository struct {
 	state              *repository.UserState
 	differenceInput    repository.GetDifferenceInput
 	difference         *repository.GetDifferenceResult
+	dialogListUserID   int64
+	dialogListCursor   repository.DialogProjectionCursor
+	dialogListLimit    int32
+	dialogProjections  []repository.DialogProjection
+	dialogPeerUserID   int64
+	dialogPeers        []repository.DialogProjectionPeer
+	dialogPeerMap      map[repository.DialogProjectionPeer]repository.DialogProjection
+	dialogCountUserID  int64
+	dialogCount        int32
 }
 
 func (f *fakeUserUpdatesRepository) ApplyUserOperation(_ context.Context, in repository.ApplyUserOperationInput) (*repository.ApplyUserOperationResult, error) {
@@ -286,11 +528,46 @@ func (f *fakeUserUpdatesRepository) GetDifference(_ context.Context, in reposito
 	return f.difference, nil
 }
 
+func (f *fakeUserUpdatesRepository) AppendDialogAuthSeqSideEffect(context.Context, repository.DialogSideEffectAppendInput) (*repository.AuthSeqAppendResult, error) {
+	return nil, nil
+}
+
+func (f *fakeUserUpdatesRepository) AppendDialogPtsSideEffect(context.Context, repository.DialogSideEffectAppendInput) (*repository.PtsAppendResult, error) {
+	return nil, nil
+}
+
+func (f *fakeUserUpdatesRepository) ListDialogProjections(_ context.Context, userID int64, cursor repository.DialogProjectionCursor, limit int32) ([]repository.DialogProjection, error) {
+	f.dialogListUserID = userID
+	f.dialogListCursor = cursor
+	f.dialogListLimit = limit
+	return f.dialogProjections, nil
+}
+
+func (f *fakeUserUpdatesRepository) GetDialogProjectionsByPeers(_ context.Context, userID int64, peers []repository.DialogProjectionPeer) (map[repository.DialogProjectionPeer]repository.DialogProjection, error) {
+	f.dialogPeerUserID = userID
+	f.dialogPeers = peers
+	return f.dialogPeerMap, nil
+}
+
+func (f *fakeUserUpdatesRepository) CountVisibleDialogs(_ context.Context, userID int64) (int32, error) {
+	f.dialogCountUserID = userID
+	return f.dialogCount, nil
+}
+
 func mustMarshalMessageEvent(t *testing.T, event payload.MessageEventV1) []byte {
 	t.Helper()
 	b, err := json.Marshal(event)
 	if err != nil {
 		t.Fatalf("marshal message event: %v", err)
+	}
+	return b
+}
+
+func mustMarshalDialogEvent(t *testing.T, event payload.DialogEventV1) []byte {
+	t.Helper()
+	b, err := json.Marshal(event)
+	if err != nil {
+		t.Fatalf("marshal dialog event: %v", err)
 	}
 	return b
 }

@@ -17,17 +17,27 @@
 
 package repository
 
+import "time"
+
 const (
 	PayloadCodecJSON int32 = 1
 
 	OpTypeSendMessage int32 = 1
 
-	EventTypeNewMessage int32 = 1
+	EventTypeNewMessage          int32 = 1
+	EventTypeReadHistory         int32 = 2
+	EventTypeUpdatePinnedMessage int32 = 3
+	EventTypeMarkDialogUnread    int32 = 4
+	EventTypeScheduledMarker     int32 = 5
+	EventTypeDeleteMessages      int32 = 6
+	EventTypeDeleteHistory       int32 = 7
+	EventTypeDialogPublicUpdate  int32 = 100
 
 	OperationResultStatusCompleted int32 = 1
 
-	MessageKindText   int32 = 1
-	MessageStatusLive int32 = 1
+	MessageKindText      int32 = 1
+	MessageStatusLive    int32 = 1
+	MessageStatusDeleted int32 = 2
 
 	PushTypeUserUpdate    int32 = 1
 	PushTaskStatusPending int32 = 1
@@ -38,6 +48,27 @@ const (
 	PushTaskStatusPublished       int32 = 3
 	PushTaskStatusFailedRetryable int32 = 4
 	PushTaskStatusFailedTerminal  int32 = 5
+)
+
+const (
+	DialogSideEffectKindClearDraftAfterSend          = "clear_draft_after_send"
+	DialogSideEffectKindUpsertSavedDialogFromMessage = "upsert_saved_dialog_from_message"
+)
+
+const (
+	DialogSideEffectStatusPending         int32 = 1
+	DialogSideEffectStatusPublishing      int32 = 2
+	DialogSideEffectStatusCompleted       int32 = 3
+	DialogSideEffectStatusFailedRetryable int32 = 4
+	DialogSideEffectStatusBlocked         int32 = 5
+)
+
+const (
+	InitialRetryDelaySeconds = 1
+	MaxRetryDelaySeconds     = 300
+	BlockedAfterAttempts     = 20
+	BlockedAfterAgeSeconds   = 3600
+	OutboxWorkerBatchSize    = 100
 )
 
 const (
@@ -78,6 +109,29 @@ type PushTask struct {
 	OperationID     string
 	PushPartitionID int32
 	TaskPayload     []byte
+}
+
+type DialogSideEffect struct {
+	SideEffectID             int64
+	Kind                     string
+	UserID                   int64
+	PeerType                 int32
+	PeerID                   int64
+	SourcePermAuthKeyID      int64
+	SourceOperationID        string
+	SourceMessageDate        time.Time
+	SourcePeerSeq            int64
+	SourceCanonicalMessageID int64
+	ClearBeforeDate          time.Time
+	PayloadSchemaVersion     int32
+	Payload                  []byte
+	PayloadHash              []byte
+	Status                   int32
+	AttemptCount             int32
+	NextRetryAt              time.Time
+	LeaseOwner               string
+	LeaseUntil               time.Time
+	LastErrorCode            string
 }
 
 type ApplyUserOperationInput struct {
@@ -121,6 +175,8 @@ type OperationResult struct {
 type UserState struct {
 	UserID      int64
 	Pts         int64
+	Seq         int64
+	Date        int32
 	PartitionID int32
 	OwnerEpoch  int64
 	RowVersion  int64
@@ -153,8 +209,54 @@ type GetDifferenceInput struct {
 }
 
 type GetDifferenceResult struct {
-	State  UserState
-	Events []UserEvent
+	State         UserState
+	Events        []UserEvent
+	AuthSeqEvents []AuthSeqEvent
+}
+
+type DialogSideEffectAppendInput struct {
+	UserID               int64
+	SourcePermAuthKeyID  int64
+	OperationID          string
+	TargetAuthPolicy     string
+	PublicUpdateType     string
+	PeerType             int32
+	PeerID               int64
+	PayloadSchemaVersion int32
+	Payload              []byte
+	PayloadHash          []byte
+}
+
+type AuthSeqAppendResult struct {
+	UserID         int64
+	OperationID    string
+	Seq            int64
+	Date           int32
+	AlreadyApplied bool
+}
+
+type PtsAppendResult struct {
+	UserID         int64
+	OperationID    string
+	Pts            int64
+	PtsCount       int32
+	AlreadyApplied bool
+}
+
+type AuthSeqEvent struct {
+	UserID              int64
+	Seq                 int64
+	Date                int32
+	OperationID         string
+	SourcePermAuthKeyID int64
+	TargetAuthPolicy    string
+	PublicUpdateType    string
+	PeerType            int32
+	PeerID              int64
+	EventSchemaVersion  int32
+	EventCodec          int32
+	EventPayload        []byte
+	EventPayloadHash    []byte
 }
 
 type RecordDeliveryFailureInput struct {

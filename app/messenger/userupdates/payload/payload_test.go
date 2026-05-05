@@ -107,6 +107,50 @@ func TestMessageOperationV1UsesServerOwnedJSON(t *testing.T) {
 	}
 }
 
+func TestMessageOperationV1SideEffectFieldsAffectPayloadHash(t *testing.T) {
+	base := MessageOperationV1{
+		SchemaVersion:      MessageOperationSchemaVersion,
+		OperationKind:      OperationKindSendMessage,
+		CanonicalMessageID: 1001,
+		PeerType:           PeerTypeUser,
+		PeerID:             2002,
+		PeerSeq:            3,
+		FromUserID:         100,
+		ToUserID:           200,
+		Date:               1710000000,
+		Out:                true,
+		MessageText:        "hello",
+	}
+	withSideEffect := base
+	withSideEffect.ClearDraft = true
+	withSideEffect.SourcePermAuthKeyID = 9001
+	withSideEffect.ClearDraftBeforeDate = 1709999990
+	withSideEffect.SavedDialogSideEffect = true
+
+	baseBody, err := json.Marshal(base)
+	if err != nil {
+		t.Fatalf("Marshal(base) error = %v", err)
+	}
+	sideEffectBody, err := json.Marshal(withSideEffect)
+	if err != nil {
+		t.Fatalf("Marshal(withSideEffect) error = %v", err)
+	}
+	text := string(sideEffectBody)
+	for _, want := range []string{
+		`"clear_draft":true`,
+		`"source_perm_auth_key_id":9001`,
+		`"clear_draft_before_date":1709999990`,
+		`"saved_dialog_side_effect":true`,
+	} {
+		if !strings.Contains(text, want) {
+			t.Fatalf("side-effect payload missing %s: %s", want, text)
+		}
+	}
+	if hex.EncodeToString(HashBytes(baseBody)) == hex.EncodeToString(HashBytes(sideEffectBody)) {
+		t.Fatalf("side-effect fields did not affect payload hash")
+	}
+}
+
 func TestOperationResponseAndEventCarrySchemaVersion(t *testing.T) {
 	resp := OperationResponseV1{SchemaVersion: OperationResponseSchemaVersion, Pts: 1, PtsCount: 1}
 	if resp.SchemaVersion != 1 {

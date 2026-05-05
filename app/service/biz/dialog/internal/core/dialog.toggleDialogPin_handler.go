@@ -18,14 +18,29 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // DialogToggleDialogPin
 // dialog.toggleDialogPin user_id:long peer_type:int peer_id:long pinned:Bool = Int32;
 func (c *DialogCore) DialogToggleDialogPin(in *dialog.TLDialogToggleDialogPin) (*tg.Int32, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.toggleDialogPin - error: method DialogToggleDialogPin not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if in == nil {
+		return nil, dialog.ErrDialogInvalid
+	}
+	result, err := c.svcCtx.Repo.ToggleDialogPin(c.ctx, repository.ToggleDialogPinInput{
+		UserID:              in.UserId,
+		PeerType:            in.PeerType,
+		PeerID:              in.PeerId,
+		Pinned:              tg.FromBoolClazz(in.Pinned),
+		SourcePermAuthKeyID: in.SourcePermAuthKeyId,
+		OperationID:         in.OperationId,
+		OutboxID:            in.OutboxId,
+		EventType:           "dialog.pinToggled",
+		Payload:             []byte(`{"schema_version":1}`),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeInt32(int32(result.AggregateVersion)), nil
 }

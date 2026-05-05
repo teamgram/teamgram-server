@@ -24,8 +24,5 @@ import (
 // DialogUpdateUserPinnedMessage
 // dialog.updateUserPinnedMessage user_id:long peer_type:int peer_id:long pinned_msg_id:int = Bool;
 func (c *DialogCore) DialogUpdateUserPinnedMessage(in *dialog.TLDialogUpdateUserPinnedMessage) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.updateUserPinnedMessage - error: method DialogUpdateUserPinnedMessage not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return nil, dialog.ErrWrongOwner
 }

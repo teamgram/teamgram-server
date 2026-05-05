@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="dialog_preference_versions">
+    <operation name="Increment">
+        <sql>
+            INSERT INTO dialog_preference_versions
+                (user_id, scope_kind, folder_id, aggregate_version)
+            VALUES
+                (:user_id, :scope_kind, :folder_id, 1)
+            ON DUPLICATE KEY UPDATE
+                aggregate_version = aggregate_version + 1
+        </sql>
+    </operation>
+
+    <operation name="SelectOne">
+        <sql>
+            SELECT
+                user_id, scope_kind, folder_id, aggregate_version
+            FROM
+                dialog_preference_versions
+            WHERE
+                user_id = :user_id AND scope_kind = :scope_kind AND folder_id = :folder_id LIMIT 1
+        </sql>
+    </operation>
+</table>

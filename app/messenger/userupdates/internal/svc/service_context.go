@@ -26,6 +26,8 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
 	receiverevent "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/event"
 	authsessionclient "github.com/teamgram/teamgram-server/v2/app/service/authsession/client"
+	dialogclient "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/client"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
 type UserUpdatesRepository interface {
@@ -33,6 +35,11 @@ type UserUpdatesRepository interface {
 	GetOperationResult(ctx context.Context, userID int64, operationID string) (*repository.OperationResult, error)
 	GetState(ctx context.Context, userID int64, permAuthKeyID int64) (*repository.UserState, error)
 	GetDifference(ctx context.Context, in repository.GetDifferenceInput) (*repository.GetDifferenceResult, error)
+	AppendDialogAuthSeqSideEffect(ctx context.Context, in repository.DialogSideEffectAppendInput) (*repository.AuthSeqAppendResult, error)
+	AppendDialogPtsSideEffect(ctx context.Context, in repository.DialogSideEffectAppendInput) (*repository.PtsAppendResult, error)
+	ListDialogProjections(ctx context.Context, userID int64, cursor repository.DialogProjectionCursor, limit int32) ([]repository.DialogProjection, error)
+	GetDialogProjectionsByPeers(ctx context.Context, userID int64, peers []repository.DialogProjectionPeer) (map[repository.DialogProjectionPeer]repository.DialogProjection, error)
+	CountVisibleDialogs(ctx context.Context, userID int64) (int32, error)
 }
 
 type backgroundWorker interface {
@@ -96,6 +103,14 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		sc.closers = append(sc.closers, consumer)
 	}
 
+	if c.DialogSideEffects.Enabled && hasRPCClientConfig(c.DialogClient) {
+		dialogClient := dialogclient.NewDialogClient(dialogclient.MustNewKitexClient(c.DialogClient))
+		sc.workers = append(sc.workers, repository.NewDialogSideEffectWorker(repo, dialogClient, repository.DialogSideEffectWorkerOptions{
+			Interval:  time.Duration(c.DialogSideEffects.PollIntervalMs) * time.Millisecond,
+			BatchSize: c.DialogSideEffects.BatchSize,
+		}))
+	}
+
 	return sc
 }
 
@@ -142,4 +157,11 @@ func (s *ServiceContext) Close() error {
 		}
 	}
 	return firstErr
+}
+
+func hasRPCClientConfig(c kitex.RpcClientConf) bool {
+	if c.DestService == "" {
+		return false
+	}
+	return len(c.Endpoints) > 0 || c.Target != "" || c.HasEtcd()
 }

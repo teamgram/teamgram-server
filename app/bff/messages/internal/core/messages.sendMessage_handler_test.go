@@ -16,9 +16,12 @@ import (
 
 type messagesFakeMsgClient struct {
 	msgclient.MsgClient
-	sendMessageV2 func(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error)
-	getHistory    func(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error)
-	readHistoryV2 func(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error)
+	sendMessageV2       func(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error)
+	getHistory          func(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error)
+	readHistoryV2       func(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error)
+	updatePinnedMessage func(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error)
+	deleteMessages      func(ctx context.Context, in *msg.TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error)
+	deleteHistory       func(ctx context.Context, in *msg.TLMsgDeleteHistory) (*tg.MessagesAffectedHistory, error)
 }
 
 func (f *messagesFakeMsgClient) MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
@@ -31,6 +34,18 @@ func (f *messagesFakeMsgClient) MsgGetHistory(ctx context.Context, in *msg.TLMsg
 
 func (f *messagesFakeMsgClient) MsgReadHistoryV2(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error) {
 	return f.readHistoryV2(ctx, in)
+}
+
+func (f *messagesFakeMsgClient) MsgUpdatePinnedMessage(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error) {
+	return f.updatePinnedMessage(ctx, in)
+}
+
+func (f *messagesFakeMsgClient) MsgDeleteMessages(ctx context.Context, in *msg.TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error) {
+	return f.deleteMessages(ctx, in)
+}
+
+func (f *messagesFakeMsgClient) MsgDeleteHistory(ctx context.Context, in *msg.TLMsgDeleteHistory) (*tg.MessagesAffectedHistory, error) {
+	return f.deleteHistory(ctx, in)
 }
 
 func newSendMsgCore(client msgclient.MsgClient, selfID, authKeyID int64) *MessagesCore {
@@ -107,6 +122,38 @@ func TestMessagesSendMessage_Success(t *testing.T) {
 	}
 	if r == nil {
 		t.Fatal("result is nil")
+	}
+}
+
+func TestSendMessageClearDraftCarriesSourcePermAuthKey(t *testing.T) {
+	var got *msg.TLMsgSendMessageV2
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+			got = in
+			return testUpdates(), nil
+		},
+	}, 100, 200)
+
+	_, err := c.MessagesSendMessage(&tg.TLMessagesSendMessage{
+		ClearDraft: true,
+		Peer:       inputPeerUser(300),
+		Message:    "hello",
+		RandomId:   42,
+	})
+	if err != nil {
+		t.Fatalf("MessagesSendMessage error = %v", err)
+	}
+	if got == nil {
+		t.Fatal("msg service was not called")
+	}
+	if !got.ClearDraft {
+		t.Fatal("ClearDraft = false, want true")
+	}
+	if got.SourcePermAuthKeyId == nil || *got.SourcePermAuthKeyId != 200 {
+		t.Fatalf("SourcePermAuthKeyId = %v, want 200", got.SourcePermAuthKeyId)
+	}
+	if got.ClearDraftBeforeDate == nil || *got.ClearDraftBeforeDate == 0 {
+		t.Fatalf("ClearDraftBeforeDate = %v, want non-zero", got.ClearDraftBeforeDate)
 	}
 }
 
@@ -257,6 +304,77 @@ func TestMessagesReadHistory_NonUserPeerRejected(t *testing.T) {
 	}
 	if called {
 		t.Fatal("msg service was called but should not have been")
+	}
+}
+
+func TestMessagesUpdatePinnedMessage_UserPeerSuccess(t *testing.T) {
+	var got *msg.TLMsgUpdatePinnedMessage
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		updatePinnedMessage: func(_ context.Context, in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error) {
+			got = in
+			return testUpdates(), nil
+		},
+	}, 100, 200)
+
+	r, err := c.MessagesUpdatePinnedMessage(&tg.TLMessagesUpdatePinnedMessage{
+		Peer: tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 300}),
+		Id:   7,
+	})
+	if err != nil {
+		t.Fatalf("MessagesUpdatePinnedMessage() error = %v", err)
+	}
+	if r == nil {
+		t.Fatal("result is nil")
+	}
+	if got == nil || got.UserId != 100 || got.AuthKeyId != 200 || got.PeerType != payload.PeerTypeUser || got.PeerId != 300 || got.Id != 7 {
+		t.Fatalf("MsgUpdatePinnedMessage request = %+v", got)
+	}
+}
+
+func TestMessagesDeleteHistory_UserPeerSuccess(t *testing.T) {
+	var got *msg.TLMsgDeleteHistory
+	reply := tg.MakeTLMessagesAffectedHistory(&tg.TLMessagesAffectedHistory{Pts: 9, PtsCount: 1}).ToMessagesAffectedHistory()
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		deleteHistory: func(_ context.Context, in *msg.TLMsgDeleteHistory) (*tg.MessagesAffectedHistory, error) {
+			got = in
+			return reply, nil
+		},
+	}, 100, 200)
+
+	r, err := c.MessagesDeleteHistory(&tg.TLMessagesDeleteHistory{
+		Peer:  tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 300}),
+		MaxId: 7,
+	})
+	if err != nil {
+		t.Fatalf("MessagesDeleteHistory() error = %v", err)
+	}
+	if r != reply {
+		t.Fatalf("reply mismatch: got %p want %p", r, reply)
+	}
+	if got == nil || got.UserId != 100 || got.AuthKeyId != 200 || got.PeerType != payload.PeerTypeUser || got.PeerId != 300 || got.MaxId != 7 {
+		t.Fatalf("MsgDeleteHistory request = %+v", got)
+	}
+}
+
+func TestMessagesDeleteMessagesRoutesSelfPeerSlice(t *testing.T) {
+	var got *msg.TLMsgDeleteMessages
+	reply := tg.MakeTLMessagesAffectedMessages(&tg.TLMessagesAffectedMessages{Pts: 10, PtsCount: 1}).ToMessagesAffectedMessages()
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		deleteMessages: func(_ context.Context, in *msg.TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error) {
+			got = in
+			return reply, nil
+		},
+	}, 100, 200)
+
+	r, err := c.MessagesDeleteMessages(&tg.TLMessagesDeleteMessages{Id: []int32{7, 8}})
+	if err != nil {
+		t.Fatalf("MessagesDeleteMessages() error = %v", err)
+	}
+	if r != reply {
+		t.Fatalf("reply mismatch: got %p want %p", r, reply)
+	}
+	if got == nil || got.UserId != 100 || got.AuthKeyId != 200 || got.PeerType != payload.PeerTypeUser || got.PeerId != 100 || len(got.Id) != 2 {
+		t.Fatalf("MsgDeleteMessages request = %+v", got)
 	}
 }
 

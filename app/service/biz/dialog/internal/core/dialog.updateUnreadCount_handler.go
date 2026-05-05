@@ -24,8 +24,5 @@ import (
 // DialogUpdateUnreadCount
 // dialog.updateUnreadCount flags:# user_id:long peer_type:int peer_id:long unread_count:flags.0?int unread_mentions_count:flags.1?int unread_reactions_count:flags.2?int = Bool;
 func (c *DialogCore) DialogUpdateUnreadCount(in *dialog.TLDialogUpdateUnreadCount) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.updateUnreadCount - error: method DialogUpdateUnreadCount not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	return nil, dialog.ErrWrongOwner
 }

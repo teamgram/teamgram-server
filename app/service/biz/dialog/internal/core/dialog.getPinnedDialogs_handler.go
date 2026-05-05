@@ -18,14 +18,13 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // DialogGetPinnedDialogs
 // dialog.getPinnedDialogs  user_id:long folder_id:int = Vector<DialogExt>;
 func (c *DialogCore) DialogGetPinnedDialogs(in *dialog.TLDialogGetPinnedDialogs) (*dialog.VectorDialogExt, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.getPinnedDialogs - error: method DialogGetPinnedDialogs not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if in == nil {
+		return nil, dialog.ErrDialogInvalid
+	}
+	return nil, dialog.ErrDeprecatedMethod
 }

@@ -29,17 +29,38 @@ func (r *Repository) GetState(ctx context.Context, userID int64, permAuthKeyID i
 	row, err := r.models.UserPtsStateModel.SelectByUserId(ctx, userID)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
-			return &UserState{UserID: userID}, nil
+			state := &UserState{UserID: userID}
+			if err := r.fillAuthSeqState(ctx, state); err != nil {
+				return nil, err
+			}
+			return state, nil
 		}
 		return nil, storageError("get state", err)
 	}
-	return &UserState{
+	state := &UserState{
 		UserID:      row.UserId,
 		Pts:         row.Pts,
 		PartitionID: row.PartitionId,
 		OwnerEpoch:  row.OwnerEpoch,
 		RowVersion:  row.RowVersion,
-	}, nil
+	}
+	if err := r.fillAuthSeqState(ctx, state); err != nil {
+		return nil, err
+	}
+	return state, nil
+}
+
+func (r *Repository) fillAuthSeqState(ctx context.Context, state *UserState) error {
+	authState, err := r.models.UserAuthSeqStateModel.SelectByUserId(ctx, state.UserID)
+	if err != nil {
+		if errors.Is(err, model.ErrNotFound) {
+			return nil
+		}
+		return storageError("get auth seq state", err)
+	}
+	state.Seq = authState.Seq
+	state.Date = authState.Date
+	return nil
 }
 
 func (r *Repository) GetDifference(ctx context.Context, in GetDifferenceInput) (*GetDifferenceResult, error) {
@@ -62,7 +83,21 @@ func (r *Repository) GetDifference(ctx context.Context, in GetDifferenceInput) (
 	for _, row := range rows {
 		events = append(events, userEventFromModel(row))
 	}
-	return &GetDifferenceResult{State: *state, Events: events}, nil
+	var authSeqEvents []AuthSeqEvent
+	if in.Date != nil {
+		authRows, err := r.models.UserAuthSeqEventsModel.SelectAfterDate(ctx, in.UserID, int32(*in.Date), limit)
+		if err != nil && !errors.Is(err, model.ErrNotFound) {
+			return nil, storageError("get auth seq events", err)
+		}
+		authSeqEvents = make([]AuthSeqEvent, 0, len(authRows))
+		for _, row := range authRows {
+			if row.TargetAuthPolicy == "not_source_perm_auth_key" && row.SourcePermAuthKeyId == in.PermAuthKeyID {
+				continue
+			}
+			authSeqEvents = append(authSeqEvents, authSeqEventFromModel(row))
+		}
+	}
+	return &GetDifferenceResult{State: *state, Events: events, AuthSeqEvents: authSeqEvents}, nil
 }
 
 func operationResultFromModel(r *model.UserOperationResults) *OperationResult {

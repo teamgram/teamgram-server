@@ -21,7 +21,7 @@ import (
 var _ *tg.Bool
 
 // DialogSaveDraftMessage
-// dialog.saveDraftMessage user_id:long peer_type:int peer_id:long message:DraftMessage = Bool;
+// dialog.saveDraftMessage user_id:long peer_type:int peer_id:long message:DraftMessage source_perm_auth_key_id:long operation_id:string outbox_id:long = Bool;
 func (s *Service) DialogSaveDraftMessage(ctx context.Context, request *dialog.TLDialogSaveDraftMessage) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("dialog.saveDraftMessage - request: %s", request)
@@ -37,7 +37,7 @@ func (s *Service) DialogSaveDraftMessage(ctx context.Context, request *dialog.TL
 }
 
 // DialogClearDraftMessage
-// dialog.clearDraftMessage user_id:long peer_type:int peer_id:long = Bool;
+// dialog.clearDraftMessage user_id:long peer_type:int peer_id:long source_perm_auth_key_id:long operation_id:string outbox_id:long = Bool;
 func (s *Service) DialogClearDraftMessage(ctx context.Context, request *dialog.TLDialogClearDraftMessage) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("dialog.clearDraftMessage - request: %s", request)
@@ -49,6 +49,22 @@ func (s *Service) DialogClearDraftMessage(ctx context.Context, request *dialog.T
 	}
 
 	c.Logger.Debugf("dialog.clearDraftMessage - reply: %s", r)
+	return r, err
+}
+
+// DialogClearDraftAfterSend
+// dialog.clearDraftAfterSend user_id:long peer_type:int peer_id:long clear_before_date:int source_perm_auth_key_id:long source_operation_id:string outbox_id:long = Bool;
+func (s *Service) DialogClearDraftAfterSend(ctx context.Context, request *dialog.TLDialogClearDraftAfterSend) (*tg.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dialog.clearDraftAfterSend - request: %s", request)
+
+	r, err := c.DialogClearDraftAfterSend(request)
+	if err != nil {
+		c.Logger.Errorf("dialog.clearDraftAfterSend - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("dialog.clearDraftAfterSend - reply: %s", r)
 	return r, err
 }
 
@@ -69,7 +85,7 @@ func (s *Service) DialogGetAllDrafts(ctx context.Context, request *dialog.TLDial
 }
 
 // DialogClearAllDrafts
-// dialog.clearAllDrafts user_id:long = Vector<PeerWithDraftMessage>;
+// dialog.clearAllDrafts user_id:long source_perm_auth_key_id:long operation_id:string outbox_ids:Vector<long> = Vector<PeerWithDraftMessage>;
 func (s *Service) DialogClearAllDrafts(ctx context.Context, request *dialog.TLDialogClearAllDrafts) (*dialog.VectorPeerWithDraftMessage, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("dialog.clearAllDrafts - request: %s", request)
@@ -101,7 +117,7 @@ func (s *Service) DialogMarkDialogUnread(ctx context.Context, request *dialog.TL
 }
 
 // DialogToggleDialogPin
-// dialog.toggleDialogPin user_id:long peer_type:int peer_id:long pinned:Bool = Int32;
+// dialog.toggleDialogPin user_id:long peer_type:int peer_id:long pinned:Bool source_perm_auth_key_id:long operation_id:string outbox_id:long = Int32;
 func (s *Service) DialogToggleDialogPin(ctx context.Context, request *dialog.TLDialogToggleDialogPin) (*tg.Int32, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("dialog.toggleDialogPin - request: %s", request)
@@ -213,7 +229,7 @@ func (s *Service) DialogGetPinnedDialogs(ctx context.Context, request *dialog.TL
 }
 
 // DialogReorderPinnedDialogs
-// dialog.reorderPinnedDialogs user_id:long force:Bool folder_id:int id_list:Vector<long> = Bool;
+// dialog.reorderPinnedDialogs user_id:long force:Bool folder_id:int id_list:Vector<long> source_perm_auth_key_id:long operation_id:string outbox_id:long = Bool;
 func (s *Service) DialogReorderPinnedDialogs(ctx context.Context, request *dialog.TLDialogReorderPinnedDialogs) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("dialog.reorderPinnedDialogs - request: %s", request)
@@ -405,7 +421,7 @@ func (s *Service) DialogGetDialogFolder(ctx context.Context, request *dialog.TLD
 }
 
 // DialogEditPeerFolders
-// dialog.editPeerFolders user_id:long peer_dialog_list:Vector<long> folder_id:int = Vector<DialogPinnedExt>;
+// dialog.editPeerFolders user_id:long peer_dialog_list:Vector<long> folder_id:int source_perm_auth_key_id:long operation_id:string outbox_ids:Vector<long> = Vector<DialogPinnedExt>;
 func (s *Service) DialogEditPeerFolders(ctx context.Context, request *dialog.TLDialogEditPeerFolders) (*dialog.VectorDialogPinnedExt, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("dialog.editPeerFolders - request: %s", request)
@@ -417,6 +433,86 @@ func (s *Service) DialogEditPeerFolders(ctx context.Context, request *dialog.TLD
 	}
 
 	c.Logger.Debugf("dialog.editPeerFolders - reply: %s", r)
+	return r, err
+}
+
+// DialogGetDialogsV2
+// dialog.getDialogsV2 user_id:long cursor:DialogCursor exclude_pinned:Bool limit:int = DialogPage;
+func (s *Service) DialogGetDialogsV2(ctx context.Context, request *dialog.TLDialogGetDialogsV2) (*dialog.DialogPage, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dialog.getDialogsV2 - request: %s", request)
+
+	r, err := c.DialogGetDialogsV2(request)
+	if err != nil {
+		c.Logger.Errorf("dialog.getDialogsV2 - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("dialog.getDialogsV2 - reply: %s", r)
+	return r, err
+}
+
+// DialogGetPeerDialogsV2
+// dialog.getPeerDialogsV2 user_id:long peers:Vector<DialogPeer> = Vector<DialogExtV2>;
+func (s *Service) DialogGetPeerDialogsV2(ctx context.Context, request *dialog.TLDialogGetPeerDialogsV2) (*dialog.VectorDialogExtV2, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dialog.getPeerDialogsV2 - request: %s", request)
+
+	r, err := c.DialogGetPeerDialogsV2(request)
+	if err != nil {
+		c.Logger.Errorf("dialog.getPeerDialogsV2 - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("dialog.getPeerDialogsV2 - reply: %s", r)
+	return r, err
+}
+
+// DialogGetPinnedDialogsV2
+// dialog.getPinnedDialogsV2 user_id:long folder_id:int limit:int = Vector<DialogExtV2>;
+func (s *Service) DialogGetPinnedDialogsV2(ctx context.Context, request *dialog.TLDialogGetPinnedDialogsV2) (*dialog.VectorDialogExtV2, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dialog.getPinnedDialogsV2 - request: %s", request)
+
+	r, err := c.DialogGetPinnedDialogsV2(request)
+	if err != nil {
+		c.Logger.Errorf("dialog.getPinnedDialogsV2 - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("dialog.getPinnedDialogsV2 - reply: %s", r)
+	return r, err
+}
+
+// DialogGetDialogByPeerV2
+// dialog.getDialogByPeerV2 user_id:long peer:DialogPeer = DialogExtV2;
+func (s *Service) DialogGetDialogByPeerV2(ctx context.Context, request *dialog.TLDialogGetDialogByPeerV2) (*dialog.DialogExtV2, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dialog.getDialogByPeerV2 - request: %s", request)
+
+	r, err := c.DialogGetDialogByPeerV2(request)
+	if err != nil {
+		c.Logger.Errorf("dialog.getDialogByPeerV2 - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("dialog.getDialogByPeerV2 - reply: %s", r)
+	return r, err
+}
+
+// DialogBatchGetDialogExtras
+// dialog.batchGetDialogExtras user_id:long peers:Vector<DialogPeer> = Vector<DialogExtras>;
+func (s *Service) DialogBatchGetDialogExtras(ctx context.Context, request *dialog.TLDialogBatchGetDialogExtras) (*dialog.VectorDialogExtras, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dialog.batchGetDialogExtras - request: %s", request)
+
+	r, err := c.DialogBatchGetDialogExtras(request)
+	if err != nil {
+		c.Logger.Errorf("dialog.batchGetDialogExtras - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("dialog.batchGetDialogExtras - reply: %s", r)
 	return r, err
 }
 
@@ -513,6 +609,22 @@ func (s *Service) DialogGetPinnedSavedDialogs(ctx context.Context, request *dial
 	}
 
 	c.Logger.Debugf("dialog.getPinnedSavedDialogs - reply: %s", r)
+	return r, err
+}
+
+// DialogUpsertSavedDialogFromMessage
+// dialog.upsertSavedDialogFromMessage user_id:long peer_type:int peer_id:long top_peer_seq:long top_canonical_message_id:long top_message_date:int payload:bytes = Bool;
+func (s *Service) DialogUpsertSavedDialogFromMessage(ctx context.Context, request *dialog.TLDialogUpsertSavedDialogFromMessage) (*tg.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dialog.upsertSavedDialogFromMessage - request: %s", request)
+
+	r, err := c.DialogUpsertSavedDialogFromMessage(request)
+	if err != nil {
+		c.Logger.Errorf("dialog.upsertSavedDialogFromMessage - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("dialog.upsertSavedDialogFromMessage - reply: %s", r)
 	return r, err
 }
 

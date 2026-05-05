@@ -11,8 +11,8 @@
 package dialogclient
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog/dialogservice"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog/dialogservice"
 
 	"github.com/cloudwego/kitex/client"
 )

@@ -18,26 +18,146 @@ package svc
 
 import (
 	"context"
+	"time"
 
+	userupdatesclient "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/client"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 type DialogRepository interface {
 	ListDialogs(ctx context.Context, userID int64, excludePinned bool, folderID int32) ([]repository.DialogRecord, error)
+	ListPinnedDialogs(ctx context.Context, userID int64, folderID int32) ([]repository.DialogRecord, error)
 	CountDialogs(ctx context.Context, userID int64, excludePinned bool, folderID int32) (int32, error)
 	GetDialogByPeer(ctx context.Context, userID int64, peerType int32, peerID int64) (*repository.DialogRecord, error)
 	ListDialogsByPeerDialogIDs(ctx context.Context, userID int64, ids []int64) ([]repository.DialogRecord, error)
+	BatchGetDialogExtras(ctx context.Context, userID int64, peers []repository.PeerRef) ([]repository.DialogExtrasRecord, error)
+	ListDialogFilters(ctx context.Context, userID int64) ([]repository.DialogFilterRecord, error)
+	GetDialogFilter(ctx context.Context, userID int64, filterID int32) (*repository.DialogFilterRecord, error)
+	GetDialogFilterBySlug(ctx context.Context, userID int64, slug string) (*repository.DialogFilterRecord, error)
+	SaveDialogFilter(ctx context.Context, in repository.SaveDialogFilterInput) (*repository.DialogFilterRecord, error)
+	DeleteDialogFilter(ctx context.Context, in repository.DeleteDialogFilterInput) error
+	ReorderDialogFilters(ctx context.Context, in repository.ReorderDialogFiltersInput) error
+	SetPeerWallpaper(ctx context.Context, in repository.PeerWallpaperInput) error
+	SetPrivatePeerPolicy(ctx context.Context, in repository.PrivatePeerPolicyInput) (*repository.PrivatePeerPolicyResult, error)
+	SaveDraft(ctx context.Context, in repository.SaveDraftInput) (*repository.DraftMutationResult, error)
+	ClearDraft(ctx context.Context, in repository.ClearDraftInput) (*repository.DraftMutationResult, error)
+	ClearDraftAfterSend(ctx context.Context, in repository.ClearDraftAfterSendInput) (*repository.DraftMutationResult, error)
+	ClearAllDrafts(ctx context.Context, in repository.ClearAllDraftsInput) ([]repository.DraftMutationResult, error)
+	ListActiveDrafts(ctx context.Context, userID int64) ([]repository.DraftRecord, error)
+	UpsertSavedDialogFromMessage(ctx context.Context, in repository.SavedDialogTopInput) error
+	ListSavedDialogs(ctx context.Context, userID int64, excludePinned bool, offsetDate time.Time, limit int32) ([]repository.SavedDialogRecord, error)
+	ListPinnedSavedDialogs(ctx context.Context, userID int64) ([]repository.SavedDialogRecord, error)
+	ToggleSavedDialogPin(ctx context.Context, in repository.SavedDialogPinInput) error
+	ReorderPinnedSavedDialogs(ctx context.Context, in repository.ReorderPinnedSavedDialogsInput) error
+	ToggleDialogPin(ctx context.Context, in repository.ToggleDialogPinInput) (*repository.PreferenceMutationResult, error)
+	ReorderPinnedDialogs(ctx context.Context, in repository.ReorderPinnedDialogsInput) (*repository.PreferenceMutationResult, error)
+	EditPeerFolders(ctx context.Context, in repository.EditPeerFoldersInput) (*repository.PreferenceMutationResult, error)
+}
+
+type UserupdatesClient interface {
+	UserupdatesListDialogs(ctx context.Context, in *userupdates.TLUserupdatesListDialogs) (*userupdates.DialogProjectionList, error)
+	UserupdatesGetDialogsByPeers(ctx context.Context, in *userupdates.TLUserupdatesGetDialogsByPeers) (*userupdates.VectorDialogProjection, error)
+	UserupdatesGetDialogCount(ctx context.Context, in *userupdates.TLUserupdatesGetDialogCount) (*tg.Int32, error)
+}
+
+type backgroundWorker interface {
+	Run(ctx context.Context)
+	Stop()
+}
+
+type waitableBackgroundWorker interface {
+	Wait()
 }
 
 type ServiceContext struct {
-	Config config.Config
-	Repo   DialogRepository
+	Config      config.Config
+	Repo        DialogRepository
+	Userupdates UserupdatesClient
+	workers     []backgroundWorker
+	closers     []interface{ Close() error }
+	cancel      context.CancelFunc
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	return &ServiceContext{
+	repo := repository.NewRepository(c)
+	sc := &ServiceContext{
 		Config: c,
-		Repo:   repository.NewRepository(c),
+		Repo:   repo,
 	}
+	if closer, ok := any(repo).(interface{ Close() error }); ok {
+		sc.closers = append(sc.closers, closer)
+	}
+	if hasRPCClientConfig(c.Userupdates) {
+		updates := userupdatesclient.NewUserupdatesClient(userupdatesclient.MustNewKitexClient(c.Userupdates))
+		sc.Userupdates = updates
+		if !c.DialogOutboxWorkers.Enabled {
+			return sc
+		}
+		options := repository.DialogOutboxWorkerOptions{
+			BatchSize:    c.DialogOutboxWorkers.BatchSize,
+			LeaseSeconds: c.DialogOutboxWorkers.LeaseSeconds,
+			PollInterval: time.Duration(c.DialogOutboxWorkers.PollIntervalMs) * time.Millisecond,
+		}
+		sc.workers = append(sc.workers,
+			repository.NewDialogAuthSeqOutboxWorker(repo, updates, options),
+			repository.NewDialogPublicUpdateOutboxWorker(repo, updates, options),
+		)
+	}
+	return sc
+}
+
+func (s *ServiceContext) StartWorkers() {
+	if s == nil || len(s.workers) == 0 {
+		return
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	s.cancel = cancel
+	for _, worker := range s.workers {
+		go worker.Run(ctx)
+	}
+}
+
+func (s *ServiceContext) StopWorkers() {
+	if s == nil {
+		return
+	}
+	if s.cancel != nil {
+		s.cancel()
+	}
+	for _, worker := range s.workers {
+		worker.Stop()
+	}
+	for _, worker := range s.workers {
+		if waitable, ok := worker.(waitableBackgroundWorker); ok {
+			waitable.Wait()
+		}
+	}
+}
+
+func (s *ServiceContext) Close() error {
+	if s == nil {
+		return nil
+	}
+	s.StopWorkers()
+	var firstErr error
+	for _, closer := range s.closers {
+		if closer == nil {
+			continue
+		}
+		if err := closer.Close(); err != nil && firstErr == nil {
+			firstErr = err
+		}
+	}
+	return firstErr
+}
+
+func hasRPCClientConfig(c kitex.RpcClientConf) bool {
+	if c.DestService == "" {
+		return false
+	}
+	return len(c.Endpoints) > 0 || c.Target != "" || c.HasEtcd()
 }

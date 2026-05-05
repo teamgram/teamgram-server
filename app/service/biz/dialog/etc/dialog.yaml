@@ -10,3 +10,17 @@ Mysql:
   QueryTimeout: 5s
   ExecTimeout: 5s
   TranTimeout: 5s
+
+Userupdates:
+  DestService: messenger.userupdates
+  ServiceName: RPCUserupdates
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: messenger.userupdates
+
+DialogOutboxWorkers:
+  Enabled: true
+  BatchSize: 100
+  LeaseSeconds: 30
+  PollIntervalMs: 1000
