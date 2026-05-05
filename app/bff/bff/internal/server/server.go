@@ -190,6 +190,13 @@ func buildPrivacySettingsConfig(c config.Config) privacysettingshelper.Config {
 	}
 }
 
+func buildSavedMessageDialogsConfig(c config.Config) savedmessagedialogshelper.Config {
+	return savedmessagedialogshelper.Config{
+		RpcServerConf: c.RpcServerConf,
+		DialogClient:  withServiceName(c.BizServiceClient, "RPCDialog"),
+	}
+}
+
 func buildUserChannelProfilesConfig(c config.Config) userchannelprofileshelper.Config {
 	return userchannelprofileshelper.Config{
 		RpcServerConf: c.RpcServerConf,
@@ -373,15 +380,7 @@ func (s *Server) Initialize() error {
 			// savedmessagedialogshelper
 			_ = savedmessagedialogsservice.RegisterService(
 				s,
-				savedmessagedialogshelper.New(savedmessagedialogshelper.Config{
-					RpcServerConf: c.RpcServerConf,
-					//UpdatesClient: c.BizServiceClient,
-					//UserClient:    c.BizServiceClient,
-					//ChatClient:    c.BizServiceClient,
-					//DialogClient:  c.BizServiceClient,
-					//SyncClient:    c.SyncClient,
-					//MessageClient: c.BizServiceClient,
-				}))
+				savedmessagedialogshelper.New(buildSavedMessageDialogsConfig(c)))
 
 			// userchannelprofilehelper
 			_ = userchannelprofilesservice.RegisterService(

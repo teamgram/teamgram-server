@@ -92,6 +92,14 @@ func TestBuildBizBackedConfigSetsConcreteKitexClients(t *testing.T) {
 	if dialogs.TypingMinIntervalSeconds != 7 {
 		t.Fatalf("expected typing min interval 7, got %d", dialogs.TypingMinIntervalSeconds)
 	}
+
+	savedMessageDialogs := buildSavedMessageDialogsConfig(src)
+	if savedMessageDialogs.DialogClient.DestService != "service.biz_service" {
+		t.Fatalf("expected saved message dialogs dialog client dest service to be forwarded, got %#v", savedMessageDialogs.DialogClient)
+	}
+	if savedMessageDialogs.DialogClient.ServiceName != "RPCDialog" {
+		t.Fatalf("expected saved message dialogs dialog client service name RPCDialog, got %#v", savedMessageDialogs.DialogClient)
+	}
 }
 
 func TestBuildAuthorizationConfigUsesUnifiedBFFDependencies(t *testing.T) {
