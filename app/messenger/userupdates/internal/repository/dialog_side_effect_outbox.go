@@ -130,6 +130,66 @@ func (r *Repository) ClaimDialogSideEffects(ctx context.Context, now time.Time, 
 	return out, nil
 }
 
+func (r *Repository) ClaimDialogSideEffectsByKind(ctx context.Context, kind string, now time.Time, limit int32) ([]DialogSideEffect, error) {
+	db, err := r.requireDB()
+	if err != nil {
+		return nil, err
+	}
+	if limit <= 0 || limit > OutboxWorkerBatchSize {
+		limit = OutboxWorkerBatchSize
+	}
+	var out []DialogSideEffect
+	err = db.Transact(ctx, func(tx *sqlx.Tx) error {
+		txModels := r.models.WithTx(tx)
+		rows, err := txModels.DialogSideEffectOutboxModel.SelectPendingForUpdateByKind(
+			kind,
+			DialogSideEffectStatusPending,
+			DialogSideEffectStatusFailedRetryable,
+			mysqlTimestamp(now),
+			DialogSideEffectStatusPublishing,
+			limit,
+		)
+		if err != nil {
+			if errors.Is(err, sqlx.ErrNotFound) {
+				out = []DialogSideEffect{}
+				return nil
+			}
+			return storageError("claim dialog side effects by kind", err)
+		}
+		leaseUntil := now.UTC().Add(5 * time.Minute)
+		out = make([]DialogSideEffect, 0, len(rows))
+		for i := range rows {
+			row := rows[i]
+			affected, err := txModels.DialogSideEffectOutboxModel.MarkPublishing(
+				DialogSideEffectStatusPublishing,
+				r.OwnerInstance(),
+				mysqlTimestamp(leaseUntil),
+				row.SideEffectId,
+			)
+			if err != nil {
+				return storageError("mark dialog side effect publishing", err)
+			}
+			if affected == 0 {
+				return storageError("mark dialog side effect publishing", sqlx.ErrNotFound)
+			}
+			row.Status = DialogSideEffectStatusPublishing
+			row.AttemptCount++
+			row.LeaseOwner = r.OwnerInstance()
+			row.LeaseUntil = mysqlTimestamp(leaseUntil)
+			dto, err := fromDialogSideEffectModel(row)
+			if err != nil {
+				return err
+			}
+			out = append(out, dto)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (r *Repository) MarkDialogSideEffectCompleted(ctx context.Context, sideEffectID int64) error {
 	rows, err := r.models.DialogSideEffectOutboxModel.MarkCompleted(
 		ctx,

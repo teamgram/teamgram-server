@@ -434,6 +434,51 @@ func (r *Repository) UpsertSavedDialogFromMessage(ctx context.Context, in SavedD
 	return nil
 }
 
+func (r *Repository) ListSavedDialogs(ctx context.Context, userID int64, excludePinned bool, offsetDate time.Time, limit int32) ([]SavedDialogRecord, error) {
+	models, err := r.requireModels()
+	if err != nil {
+		return nil, err
+	}
+	if limit <= 0 {
+		limit = 100
+	}
+	if offsetDate.IsZero() {
+		offsetDate = time.Date(9999, 12, 31, 23, 59, 59, 0, time.UTC)
+	}
+	if !excludePinned {
+		rows, err := models.SavedDialogsModel.SelectDialogs(ctx, userID, mysqlTimestamp(offsetDate), limit)
+		if err != nil {
+			return nil, storageError("select saved dialogs", err)
+		}
+		return makeSavedDialogRecords(rows)
+	}
+	rows := make([]model.SavedDialogs, 0)
+	query := `
+SELECT
+	user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload
+FROM
+	saved_dialogs
+WHERE
+	user_id = ? AND deleted = 0 AND pinned = 0 AND top_message_date < ?
+ORDER BY top_message_date DESC LIMIT ?`
+	if err := r.db.QueryRowsPartial(ctx, &rows, query, userID, mysqlTimestamp(offsetDate), limit); err != nil {
+		return nil, storageError("select unpinned saved dialogs", err)
+	}
+	return makeSavedDialogRecords(rows)
+}
+
+func (r *Repository) ListPinnedSavedDialogs(ctx context.Context, userID int64) ([]SavedDialogRecord, error) {
+	models, err := r.requireModels()
+	if err != nil {
+		return nil, err
+	}
+	rows, err := models.SavedDialogsModel.SelectPinnedDialogs(ctx, userID)
+	if err != nil {
+		return nil, storageError("select pinned saved dialogs", err)
+	}
+	return makeSavedDialogRecords(rows)
+}
+
 func (r *Repository) ToggleSavedDialogPin(ctx context.Context, in SavedDialogPinInput) error {
 	if in.SourcePermAuthKeyID == 0 {
 		return dialogpb.ErrSourceAuthKeyRequired
@@ -460,12 +505,45 @@ func (r *Repository) ToggleSavedDialogPin(ctx context.Context, in SavedDialogPin
 		pinOrder := in.PinOrder
 		if !in.Pinned {
 			pinOrder = 0
+		} else {
+			if pinOrder <= 0 {
+				if err := tx.QueryRowPartial(&pinOrder, "SELECT COALESCE(MAX(pin_order), 0) + 1 FROM saved_dialogs WHERE user_id = ? AND pinned = 1 AND deleted = 0", in.UserID); err != nil {
+					return storageError("select next saved dialog pin order", err)
+				}
+			}
+			if _, err := tx.Exec("UPDATE saved_dialogs SET pinned = 0, pin_order = 0 WHERE user_id = ? AND pin_order = ? AND NOT (peer_type = ? AND peer_id = ?) AND deleted = 0",
+				in.UserID, pinOrder, in.PeerType, in.PeerID); err != nil {
+				return storageError("clear duplicate saved dialog pin order", err)
+			}
 		}
 		if _, err := txModels.SavedDialogsModel.UpdateUserPeerPinned(in.Pinned, pinOrder, in.UserID, in.PeerType, in.PeerID); err != nil {
 			return storageError("toggle saved dialog pin", err)
 		}
 		return nil
 	})
+}
+
+func makeSavedDialogRecords(rows []model.SavedDialogs) ([]SavedDialogRecord, error) {
+	out := make([]SavedDialogRecord, 0, len(rows))
+	for i := range rows {
+		row := rows[i]
+		date, err := parseMysqlTimestamp(row.TopMessageDate)
+		if err != nil {
+			return nil, storageError("parse saved dialog top date", err)
+		}
+		out = append(out, SavedDialogRecord{
+			UserID:                row.UserId,
+			PeerType:              row.PeerType,
+			PeerID:                row.PeerId,
+			TopPeerSeq:            row.TopPeerSeq,
+			TopCanonicalMessageID: row.TopCanonicalMessageId,
+			TopMessageDate:        date,
+			Pinned:                row.Pinned,
+			PinOrder:              row.PinOrder,
+			SavedPayload:          row.SavedPayload,
+		})
+	}
+	return out, nil
 }
 
 func (r *Repository) ReorderPinnedSavedDialogs(ctx context.Context, in ReorderPinnedSavedDialogsInput) error {

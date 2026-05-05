@@ -77,6 +77,7 @@ dialog.getMyDialogsData flags:# user_id:long user:flags.0?true chat:flags.1?true
 // saved_dialogs
 dialog.getSavedDialogs user_id:long exclude_pinned:Bool offset_date:int offset_id:int offset_peer:PeerUtil limit:int = SavedDialogList;
 dialog.getPinnedSavedDialogs user_id:long = SavedDialogList;
+dialog.upsertSavedDialogFromMessage user_id:long peer_type:int peer_id:long top_peer_seq:long top_canonical_message_id:long top_message_date:int payload:bytes = Bool;
 dialog.toggleSavedDialogPin user_id:long peer:PeerUtil pinned:Bool = Bool;
 dialog.reorderPinnedSavedDialogs user_id:long force:Bool order:Vector<PeerUtil> = Bool;
 

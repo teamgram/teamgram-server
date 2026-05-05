@@ -314,6 +314,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"/dialog.RPCDialog/dialog.upsertSavedDialogFromMessage": kitex.NewMethodInfo(
+		upsertSavedDialogFromMessageHandler,
+		newUpsertSavedDialogFromMessageArgs,
+		newUpsertSavedDialogFromMessageResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 	"/dialog.RPCDialog/dialog.toggleSavedDialogPin": kitex.NewMethodInfo(
 		toggleSavedDialogPinHandler,
 		newToggleSavedDialogPinArgs,
@@ -5408,6 +5415,140 @@ func (p *GetPinnedSavedDialogsResult) GetResult() interface{} {
 	return p.Success
 }
 
+func upsertSavedDialogFromMessageHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*UpsertSavedDialogFromMessageArgs)
+	realResult := result.(*UpsertSavedDialogFromMessageResult)
+	success, err := handler.(dialog.RPCDialog).DialogUpsertSavedDialogFromMessage(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newUpsertSavedDialogFromMessageArgs() interface{} {
+	return &UpsertSavedDialogFromMessageArgs{}
+}
+
+func newUpsertSavedDialogFromMessageResult() interface{} {
+	return &UpsertSavedDialogFromMessageResult{}
+}
+
+type UpsertSavedDialogFromMessageArgs struct {
+	Req *dialog.TLDialogUpsertSavedDialogFromMessage
+}
+
+func (p *UpsertSavedDialogFromMessageArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in UpsertSavedDialogFromMessageArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *UpsertSavedDialogFromMessageArgs) Unmarshal(in []byte) error {
+	msg := new(dialog.TLDialogUpsertSavedDialogFromMessage)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *UpsertSavedDialogFromMessageArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in UpsertSavedDialogFromMessageArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *UpsertSavedDialogFromMessageArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(dialog.TLDialogUpsertSavedDialogFromMessage)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var UpsertSavedDialogFromMessageArgs_Req_DEFAULT *dialog.TLDialogUpsertSavedDialogFromMessage
+
+func (p *UpsertSavedDialogFromMessageArgs) GetReq() *dialog.TLDialogUpsertSavedDialogFromMessage {
+	if !p.IsSetReq() {
+		return UpsertSavedDialogFromMessageArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *UpsertSavedDialogFromMessageArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type UpsertSavedDialogFromMessageResult struct {
+	Success *tg.Bool
+}
+
+var UpsertSavedDialogFromMessageResult_Success_DEFAULT *tg.Bool
+
+func (p *UpsertSavedDialogFromMessageResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in UpsertSavedDialogFromMessageResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *UpsertSavedDialogFromMessageResult) Unmarshal(in []byte) error {
+	msg := new(tg.Bool)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *UpsertSavedDialogFromMessageResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in UpsertSavedDialogFromMessageResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *UpsertSavedDialogFromMessageResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *UpsertSavedDialogFromMessageResult) GetSuccess() *tg.Bool {
+	if !p.IsSetSuccess() {
+		return UpsertSavedDialogFromMessageResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *UpsertSavedDialogFromMessageResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.Bool)
+}
+
+func (p *UpsertSavedDialogFromMessageResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *UpsertSavedDialogFromMessageResult) GetResult() interface{} {
+	return p.Success
+}
+
 func toggleSavedDialogPinHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*ToggleSavedDialogPinArgs)
 	realResult := result.(*ToggleSavedDialogPinResult)
@@ -7062,6 +7203,18 @@ func (p *kClient) DialogGetPinnedSavedDialogs(ctx context.Context, req *dialog.T
 	var _result GetPinnedSavedDialogsResult
 
 	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.getPinnedSavedDialogs", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) DialogUpsertSavedDialogFromMessage(ctx context.Context, req *dialog.TLDialogUpsertSavedDialogFromMessage) (r *tg.Bool, err error) {
+	// var _args UpsertSavedDialogFromMessageArgs
+	// _args.Req = req
+	var _result UpsertSavedDialogFromMessageResult
+
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.upsertSavedDialogFromMessage", req, &_result); err != nil {
 		return
 	}
 

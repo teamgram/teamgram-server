@@ -173,6 +173,18 @@ type SavedDialogPinInput struct {
 	Payload             []byte
 }
 
+type SavedDialogRecord struct {
+	UserID                int64
+	PeerType              int32
+	PeerID                int64
+	TopPeerSeq            int64
+	TopCanonicalMessageID int64
+	TopMessageDate        time.Time
+	Pinned                bool
+	PinOrder              int64
+	SavedPayload          []byte
+}
+
 type ReorderPinnedSavedDialogsInput struct {
 	UserID              int64
 	Order               []PeerRef

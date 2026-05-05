@@ -26,6 +26,8 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
 	receiverevent "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/event"
 	authsessionclient "github.com/teamgram/teamgram-server/v2/app/service/authsession/client"
+	dialogclient "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/client"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
 type UserUpdatesRepository interface {
@@ -99,6 +101,14 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		sc.closers = append(sc.closers, consumer)
 	}
 
+	if c.DialogSideEffects.Enabled && hasRPCClientConfig(c.DialogClient) {
+		dialogClient := dialogclient.NewDialogClient(dialogclient.MustNewKitexClient(c.DialogClient))
+		sc.workers = append(sc.workers, repository.NewDialogSideEffectWorker(repo, dialogClient, repository.DialogSideEffectWorkerOptions{
+			Interval:  time.Duration(c.DialogSideEffects.PollIntervalMs) * time.Millisecond,
+			BatchSize: c.DialogSideEffects.BatchSize,
+		}))
+	}
+
 	return sc
 }
 
@@ -145,4 +155,11 @@ func (s *ServiceContext) Close() error {
 		}
 	}
 	return firstErr
+}
+
+func hasRPCClientConfig(c kitex.RpcClientConf) bool {
+	if c.DestService == "" {
+		return false
+	}
+	return len(c.Endpoints) > 0 || c.Target != "" || c.HasEtcd()
 }

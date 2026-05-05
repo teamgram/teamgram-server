@@ -18,14 +18,33 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // DialogToggleSavedDialogPin
 // dialog.toggleSavedDialogPin user_id:long peer:PeerUtil pinned:Bool = Bool;
 func (c *DialogCore) DialogToggleSavedDialogPin(in *dialog.TLDialogToggleSavedDialogPin) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.toggleSavedDialogPin - error: method DialogToggleSavedDialogPin not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if in == nil || in.Peer == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	sourcePermAuthKeyID, err := c.sourcePermAuthKeyID()
+	if err != nil {
+		return nil, err
+	}
+	operationID := deterministicOperationID("saved_dialog_pin", in.UserId, in.Peer.PeerType, in.Peer.PeerId, tg.FromBoolClazz(in.Pinned))
+	if err := c.svcCtx.Repo.ToggleSavedDialogPin(c.ctx, repository.SavedDialogPinInput{
+		UserID:              in.UserId,
+		PeerType:            in.Peer.PeerType,
+		PeerID:              in.Peer.PeerId,
+		Pinned:              tg.FromBoolClazz(in.Pinned),
+		SourcePermAuthKeyID: sourcePermAuthKeyID,
+		OperationID:         operationID,
+		OutboxID:            deterministicOutboxID(operationID, "actor"),
+		EventType:           "dialog.savedDialogPinned",
+		Payload:             []byte(`{"schema_version":1}`),
+	}); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

@@ -18,14 +18,14 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // DialogGetPinnedSavedDialogs
 // dialog.getPinnedSavedDialogs user_id:long = SavedDialogList;
 func (c *DialogCore) DialogGetPinnedSavedDialogs(in *dialog.TLDialogGetPinnedSavedDialogs) (*dialog.SavedDialogList, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.getPinnedSavedDialogs - error: method DialogGetPinnedSavedDialogs not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	records, err := c.svcCtx.Repo.ListPinnedSavedDialogs(c.ctx, in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	return makeSavedDialogList(records), nil
 }

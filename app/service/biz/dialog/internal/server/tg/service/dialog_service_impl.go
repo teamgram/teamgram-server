@@ -612,6 +612,22 @@ func (s *Service) DialogGetPinnedSavedDialogs(ctx context.Context, request *dial
 	return r, err
 }
 
+// DialogUpsertSavedDialogFromMessage
+// dialog.upsertSavedDialogFromMessage user_id:long peer_type:int peer_id:long top_peer_seq:long top_canonical_message_id:long top_message_date:int payload:bytes = Bool;
+func (s *Service) DialogUpsertSavedDialogFromMessage(ctx context.Context, request *dialog.TLDialogUpsertSavedDialogFromMessage) (*tg.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dialog.upsertSavedDialogFromMessage - request: %s", request)
+
+	r, err := c.DialogUpsertSavedDialogFromMessage(request)
+	if err != nil {
+		c.Logger.Errorf("dialog.upsertSavedDialogFromMessage - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("dialog.upsertSavedDialogFromMessage - reply: %s", r)
+	return r, err
+}
+
 // DialogToggleSavedDialogPin
 // dialog.toggleSavedDialogPin user_id:long peer:PeerUtil pinned:Bool = Bool;
 func (s *Service) DialogToggleSavedDialogPin(ctx context.Context, request *dialog.TLDialogToggleSavedDialogPin) (*tg.Bool, error) {

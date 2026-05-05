@@ -24,8 +24,12 @@ import (
 // DialogGetSavedDialogs
 // dialog.getSavedDialogs user_id:long exclude_pinned:Bool offset_date:int offset_id:int offset_peer:PeerUtil limit:int = SavedDialogList;
 func (c *DialogCore) DialogGetSavedDialogs(in *dialog.TLDialogGetSavedDialogs) (*dialog.SavedDialogList, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.getSavedDialogs - error: method DialogGetSavedDialogs not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	records, err := c.svcCtx.Repo.ListSavedDialogs(c.ctx, in.UserId, tg.FromBoolClazz(in.ExcludePinned), unixOffsetDate(in.OffsetDate), in.Limit)
+	if err != nil {
+		return nil, err
+	}
+	return makeSavedDialogList(records), nil
 }

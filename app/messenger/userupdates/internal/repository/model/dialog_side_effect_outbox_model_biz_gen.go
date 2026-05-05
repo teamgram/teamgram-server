@@ -32,6 +32,8 @@ type bizDialogSideEffectOutboxModel interface {
 	SelectOne(ctx context.Context, sideEffectId int64) (*DialogSideEffectOutbox, error)
 	SelectPendingForUpdate(ctx context.Context, pendingStatus int32, failedRetryableStatus int32, now string, publishingStatus int32, limit int32) ([]DialogSideEffectOutbox, error)
 	SelectPendingForUpdateWithCB(ctx context.Context, pendingStatus int32, failedRetryableStatus int32, now string, publishingStatus int32, limit int32, cb func(sz, i int, v *DialogSideEffectOutbox)) ([]DialogSideEffectOutbox, error)
+	SelectPendingForUpdateByKind(ctx context.Context, kind string, pendingStatus int32, failedRetryableStatus int32, now string, publishingStatus int32, limit int32) ([]DialogSideEffectOutbox, error)
+	SelectPendingForUpdateByKindWithCB(ctx context.Context, kind string, pendingStatus int32, failedRetryableStatus int32, now string, publishingStatus int32, limit int32, cb func(sz, i int, v *DialogSideEffectOutbox)) ([]DialogSideEffectOutbox, error)
 	MarkBlockedIfOld(ctx context.Context, status int32, leaseUntil string, lastErrorCode string, sideEffectId int64, blockedBefore string) (rowsAffected int64, err error)
 	SelectExistingSideEffect(ctx context.Context, kind string, sourceOperationId string) (*DialogSideEffectOutbox, error)
 	MarkPublishing(ctx context.Context, status int32, leaseOwner string, leaseUntil string, sideEffectId int64) (rowsAffected int64, err error)
@@ -46,6 +48,7 @@ type DialogSideEffectOutboxTxModel interface {
 	Insert(data *DialogSideEffectOutbox) (lastInsertId, rowsAffected int64, err error)
 	SelectOne(sideEffectId int64) (*DialogSideEffectOutbox, error)
 	SelectPendingForUpdate(pendingStatus int32, failedRetryableStatus int32, now string, publishingStatus int32, limit int32) ([]DialogSideEffectOutbox, error)
+	SelectPendingForUpdateByKind(kind string, pendingStatus int32, failedRetryableStatus int32, now string, publishingStatus int32, limit int32) ([]DialogSideEffectOutbox, error)
 	MarkBlockedIfOld(status int32, leaseUntil string, lastErrorCode string, sideEffectId int64, blockedBefore string) (rowsAffected int64, err error)
 	SelectExistingSideEffect(kind string, sourceOperationId string) (*DialogSideEffectOutbox, error)
 	MarkPublishing(status int32, leaseOwner string, leaseUntil string, sideEffectId int64) (rowsAffected int64, err error)
@@ -234,6 +237,85 @@ func (m *defaultDialogSideEffectOutboxModel) SelectPendingForUpdateWithCB(ctx co
 			return
 		}
 		err = fmt.Errorf("dialog_side_effect_outbox.SelectPendingForUpdateWithCB: %w", err)
+		return
+	}
+
+	rList = values
+
+	if cb != nil {
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
+		}
+	}
+
+	return
+}
+
+// SelectPendingForUpdateByKind
+// select side_effect_id, kind, user_id, peer_type, peer_id, source_perm_auth_key_id, source_operation_id, source_message_date, source_peer_seq, source_canonical_message_id, clear_before_date, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, last_error_code from dialog_side_effect_outbox where kind = :kind and ((`status` in (:pending_status, :failed_retryable_status) and next_retry_at <= :now) or (`status` = :publishing_status and lease_until <= :now)) order by next_retry_at asc, side_effect_id asc limit :limit for update
+func (m *defaultDialogSideEffectOutboxModel) SelectPendingForUpdateByKind(ctx context.Context, kind string, pendingStatus int32, failedRetryableStatus int32, now string, publishingStatus int32, limit int32) (rList []DialogSideEffectOutbox, err error) {
+	var (
+		query  = "select side_effect_id, kind, user_id, peer_type, peer_id, source_perm_auth_key_id, source_operation_id, source_message_date, source_peer_seq, source_canonical_message_id, clear_before_date, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, last_error_code from dialog_side_effect_outbox where kind = ? and ((`status` in (?, ?) and next_retry_at <= ?) or (`status` = ? and lease_until <= ?)) order by next_retry_at asc, side_effect_id asc limit ? for update"
+		values []DialogSideEffectOutbox
+	)
+	err = m.db.QueryRowsPartial(ctx, &values, query, kind, pendingStatus, failedRetryableStatus, now, publishingStatus, now, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []DialogSideEffectOutbox{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("dialog_side_effect_outbox.SelectPendingForUpdateByKind: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectPendingForUpdateByKind
+// select side_effect_id, kind, user_id, peer_type, peer_id, source_perm_auth_key_id, source_operation_id, source_message_date, source_peer_seq, source_canonical_message_id, clear_before_date, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, last_error_code from dialog_side_effect_outbox where kind = :kind and ((`status` in (:pending_status, :failed_retryable_status) and next_retry_at <= :now) or (`status` = :publishing_status and lease_until <= :now)) order by next_retry_at asc, side_effect_id asc limit :limit for update
+func (m *defaultDialogSideEffectOutboxTxModel) SelectPendingForUpdateByKind(kind string, pendingStatus int32, failedRetryableStatus int32, now string, publishingStatus int32, limit int32) (rList []DialogSideEffectOutbox, err error) {
+	var (
+		query  = "select side_effect_id, kind, user_id, peer_type, peer_id, source_perm_auth_key_id, source_operation_id, source_message_date, source_peer_seq, source_canonical_message_id, clear_before_date, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, last_error_code from dialog_side_effect_outbox where kind = ? and ((`status` in (?, ?) and next_retry_at <= ?) or (`status` = ? and lease_until <= ?)) order by next_retry_at asc, side_effect_id asc limit ? for update"
+		values []DialogSideEffectOutbox
+	)
+	err = m.tx.QueryRowsPartial(&values, query, kind, pendingStatus, failedRetryableStatus, now, publishingStatus, now, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []DialogSideEffectOutbox{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("dialog_side_effect_outbox.SelectPendingForUpdateByKind: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectPendingForUpdateByKindWithCB
+// select side_effect_id, kind, user_id, peer_type, peer_id, source_perm_auth_key_id, source_operation_id, source_message_date, source_peer_seq, source_canonical_message_id, clear_before_date, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, last_error_code from dialog_side_effect_outbox where kind = :kind and ((`status` in (:pending_status, :failed_retryable_status) and next_retry_at <= :now) or (`status` = :publishing_status and lease_until <= :now)) order by next_retry_at asc, side_effect_id asc limit :limit for update
+func (m *defaultDialogSideEffectOutboxModel) SelectPendingForUpdateByKindWithCB(ctx context.Context, kind string, pendingStatus int32, failedRetryableStatus int32, now string, publishingStatus int32, limit int32, cb func(sz, i int, v *DialogSideEffectOutbox)) (rList []DialogSideEffectOutbox, err error) {
+	var (
+		query  = "select side_effect_id, kind, user_id, peer_type, peer_id, source_perm_auth_key_id, source_operation_id, source_message_date, source_peer_seq, source_canonical_message_id, clear_before_date, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, last_error_code from dialog_side_effect_outbox where kind = ? and ((`status` in (?, ?) and next_retry_at <= ?) or (`status` = ? and lease_until <= ?)) order by next_retry_at asc, side_effect_id asc limit ? for update"
+		values []DialogSideEffectOutbox
+	)
+	err = m.db.QueryRowsPartial(ctx, &values, query, kind, pendingStatus, failedRetryableStatus, now, publishingStatus, now, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []DialogSideEffectOutbox{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("dialog_side_effect_outbox.SelectPendingForUpdateByKindWithCB: %w", err)
 		return
 	}
 

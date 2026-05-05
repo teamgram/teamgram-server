@@ -46,6 +46,11 @@ type DialogRepository interface {
 	ClearDraftAfterSend(ctx context.Context, in repository.ClearDraftAfterSendInput) (*repository.DraftMutationResult, error)
 	ClearAllDrafts(ctx context.Context, in repository.ClearAllDraftsInput) ([]repository.DraftMutationResult, error)
 	ListActiveDrafts(ctx context.Context, userID int64) ([]repository.DraftRecord, error)
+	UpsertSavedDialogFromMessage(ctx context.Context, in repository.SavedDialogTopInput) error
+	ListSavedDialogs(ctx context.Context, userID int64, excludePinned bool, offsetDate time.Time, limit int32) ([]repository.SavedDialogRecord, error)
+	ListPinnedSavedDialogs(ctx context.Context, userID int64) ([]repository.SavedDialogRecord, error)
+	ToggleSavedDialogPin(ctx context.Context, in repository.SavedDialogPinInput) error
+	ReorderPinnedSavedDialogs(ctx context.Context, in repository.ReorderPinnedSavedDialogsInput) error
 	ToggleDialogPin(ctx context.Context, in repository.ToggleDialogPinInput) (*repository.PreferenceMutationResult, error)
 	ReorderPinnedDialogs(ctx context.Context, in repository.ReorderPinnedDialogsInput) (*repository.PreferenceMutationResult, error)
 	EditPeerFolders(ctx context.Context, in repository.EditPeerFoldersInput) (*repository.PreferenceMutationResult, error)

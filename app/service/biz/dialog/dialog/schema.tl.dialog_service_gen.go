@@ -2512,6 +2512,87 @@ func (m *TLDialogGetPinnedSavedDialogs) Decode(d *bin.Decoder) (err error) {
 	}
 }
 
+// TLDialogUpsertSavedDialogFromMessage <--
+type TLDialogUpsertSavedDialogFromMessage struct {
+	ClazzID               uint32 `json:"_id"`
+	UserId                int64  `json:"user_id"`
+	PeerType              int32  `json:"peer_type"`
+	PeerId                int64  `json:"peer_id"`
+	TopPeerSeq            int64  `json:"top_peer_seq"`
+	TopCanonicalMessageId int64  `json:"top_canonical_message_id"`
+	TopMessageDate        int32  `json:"top_message_date"`
+	Payload               []byte `json:"payload"`
+}
+
+func (m *TLDialogUpsertSavedDialogFromMessage) String() string {
+	return iface.DebugStringWithName(ClazzName_dialog_upsertSavedDialogFromMessage, m)
+}
+
+// Encode <--
+func (m *TLDialogUpsertSavedDialogFromMessage) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_upsertSavedDialogFromMessage, int(layer)); clazzId {
+	case 0x9e3ab43c:
+		x.PutClazzID(0x9e3ab43c)
+
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
+		x.PutInt64(m.TopPeerSeq)
+		x.PutInt64(m.TopCanonicalMessageId)
+		x.PutInt32(m.TopMessageDate)
+		x.PutBytes(m.Payload)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode dialog_upsertSavedDialogFromMessage: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLDialogUpsertSavedDialogFromMessage) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_upsertSavedDialogFromMessage: constructor: %w", err)
+		}
+	}
+	switch m.ClazzID {
+	case 0x9e3ab43c:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_upsertSavedDialogFromMessage#0x9e3ab43c: field user_id: %w", err)
+		}
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_upsertSavedDialogFromMessage#0x9e3ab43c: field peer_type: %w", err)
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_upsertSavedDialogFromMessage#0x9e3ab43c: field peer_id: %w", err)
+		}
+		m.TopPeerSeq, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_upsertSavedDialogFromMessage#0x9e3ab43c: field top_peer_seq: %w", err)
+		}
+		m.TopCanonicalMessageId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_upsertSavedDialogFromMessage#0x9e3ab43c: field top_canonical_message_id: %w", err)
+		}
+		m.TopMessageDate, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_upsertSavedDialogFromMessage#0x9e3ab43c: field top_message_date: %w", err)
+		}
+		m.Payload, err = d.Bytes()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_upsertSavedDialogFromMessage#0x9e3ab43c: field payload: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode dialog_upsertSavedDialogFromMessage: invalid constructor %x", m.ClazzID)
+	}
+}
+
 // TLDialogToggleSavedDialogPin <--
 type TLDialogToggleSavedDialogPin struct {
 	ClazzID uint32           `json:"_id"`
@@ -3365,6 +3446,7 @@ type RPCDialog interface {
 	DialogGetMyDialogsData(ctx context.Context, in *TLDialogGetMyDialogsData) (*DialogsData, error)
 	DialogGetSavedDialogs(ctx context.Context, in *TLDialogGetSavedDialogs) (*SavedDialogList, error)
 	DialogGetPinnedSavedDialogs(ctx context.Context, in *TLDialogGetPinnedSavedDialogs) (*SavedDialogList, error)
+	DialogUpsertSavedDialogFromMessage(ctx context.Context, in *TLDialogUpsertSavedDialogFromMessage) (*tg.Bool, error)
 	DialogToggleSavedDialogPin(ctx context.Context, in *TLDialogToggleSavedDialogPin) (*tg.Bool, error)
 	DialogReorderPinnedSavedDialogs(ctx context.Context, in *TLDialogReorderPinnedSavedDialogs) (*tg.Bool, error)
 	DialogGetDialogFilter(ctx context.Context, in *TLDialogGetDialogFilter) (*DialogFilterExt, error)

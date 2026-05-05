@@ -17,14 +17,41 @@
 package core
 
 import (
+	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesReorderPinnedSavedDialogs
 // messages.reorderPinnedSavedDialogs#8b716587 flags:# force:flags.0?true order:Vector<InputDialogPeer> = Bool;
 func (c *SavedMessageDialogsCore) MessagesReorderPinnedSavedDialogs(in *tg.TLMessagesReorderPinnedSavedDialogs) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.reorderPinnedSavedDialogs - error: method MessagesReorderPinnedSavedDialogs not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if c.MD == nil || c.MD.UserId <= 0 {
+		return nil, tg.ErrUserIdInvalid
+	}
+	if c.MD.PermAuthKeyId <= 0 {
+		return nil, tg.ErrAuthKeyPermEmpty
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	order := make([]tg.PeerUtilClazz, 0, len(in.Order))
+	for _, input := range in.Order {
+		peer, err := c.resolveInputDialogPeer(input)
+		if err != nil {
+			return nil, err
+		}
+		facadePeer, err := savedDialogFacadePeerUtil(peer)
+		if err != nil {
+			return nil, err
+		}
+		order = append(order, facadePeer)
+	}
+	if _, err := c.svcCtx.Repo.DialogClient.DialogReorderPinnedSavedDialogs(c.ctx, &dialogpb.TLDialogReorderPinnedSavedDialogs{
+		UserId: c.MD.UserId,
+		Force:  tg.ToBoolClazz(in.Force),
+		Order:  order,
+	}); err != nil {
+		c.Logger.Errorf("messages.reorderPinnedSavedDialogs - dialog.reorderPinnedSavedDialogs failed: user_id: %d err: %v", c.MD.UserId, err)
+		return nil, tg.ErrInternalServerError
+	}
+	return tg.BoolTrue, nil
 }

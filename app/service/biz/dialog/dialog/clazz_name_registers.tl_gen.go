@@ -63,6 +63,7 @@ const (
 	ClazzName_dialog_getMyDialogsData                  = "dialog_getMyDialogsData"
 	ClazzName_dialog_getSavedDialogs                   = "dialog_getSavedDialogs"
 	ClazzName_dialog_getPinnedSavedDialogs             = "dialog_getPinnedSavedDialogs"
+	ClazzName_dialog_upsertSavedDialogFromMessage      = "dialog_upsertSavedDialogFromMessage"
 	ClazzName_dialog_toggleSavedDialogPin              = "dialog_toggleSavedDialogPin"
 	ClazzName_dialog_reorderPinnedSavedDialogs         = "dialog_reorderPinnedSavedDialogs"
 	ClazzName_dialog_getDialogFilter                   = "dialog_getDialogFilter"
@@ -124,6 +125,7 @@ func init() {
 	iface.RegisterClazzName(ClazzName_dialog_getMyDialogsData, 0, 0x7ee08f03)                  // 7ee08f03
 	iface.RegisterClazzName(ClazzName_dialog_getSavedDialogs, 0, 0x38c1d668)                   // 38c1d668
 	iface.RegisterClazzName(ClazzName_dialog_getPinnedSavedDialogs, 0, 0x40a3b7e7)             // 40a3b7e7
+	iface.RegisterClazzName(ClazzName_dialog_upsertSavedDialogFromMessage, 0, 0x9e3ab43c)      // 9e3ab43c
 	iface.RegisterClazzName(ClazzName_dialog_toggleSavedDialogPin, 0, 0x44f317d9)              // 44f317d9
 	iface.RegisterClazzName(ClazzName_dialog_reorderPinnedSavedDialogs, 0, 0xd85ccbd2)         // d85ccbd2
 	iface.RegisterClazzName(ClazzName_dialog_getDialogFilter, 0, 0xf388061c)                   // f388061c
@@ -183,6 +185,7 @@ func init() {
 	iface.RegisterClazzIDName(ClazzName_dialog_getMyDialogsData, 0x7ee08f03)                  // 7ee08f03
 	iface.RegisterClazzIDName(ClazzName_dialog_getSavedDialogs, 0x38c1d668)                   // 38c1d668
 	iface.RegisterClazzIDName(ClazzName_dialog_getPinnedSavedDialogs, 0x40a3b7e7)             // 40a3b7e7
+	iface.RegisterClazzIDName(ClazzName_dialog_upsertSavedDialogFromMessage, 0x9e3ab43c)      // 9e3ab43c
 	iface.RegisterClazzIDName(ClazzName_dialog_toggleSavedDialogPin, 0x44f317d9)              // 44f317d9
 	iface.RegisterClazzIDName(ClazzName_dialog_reorderPinnedSavedDialogs, 0xd85ccbd2)         // d85ccbd2
 	iface.RegisterClazzIDName(ClazzName_dialog_getDialogFilter, 0xf388061c)                   // f388061c

@@ -17,14 +17,30 @@
 package core
 
 import (
+	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesGetSavedDialogs
 // messages.getSavedDialogs#1e91fc99 flags:# exclude_pinned:flags.0?true parent_peer:flags.1?InputPeer offset_date:int offset_id:int offset_peer:InputPeer limit:int hash:long = messages.SavedDialogs;
 func (c *SavedMessageDialogsCore) MessagesGetSavedDialogs(in *tg.TLMessagesGetSavedDialogs) (*tg.MessagesSavedDialogs, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.getSavedDialogs - error: method MessagesGetSavedDialogs not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if c.MD == nil || c.MD.UserId <= 0 {
+		return nil, tg.ErrUserIdInvalid
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	got, err := c.svcCtx.Repo.DialogClient.DialogGetSavedDialogs(c.ctx, &dialogpb.TLDialogGetSavedDialogs{
+		UserId:        c.MD.UserId,
+		ExcludePinned: tg.ToBoolClazz(in.ExcludePinned),
+		OffsetDate:    in.OffsetDate,
+		OffsetId:      in.OffsetId,
+		OffsetPeer:    tg.MakeTLPeerUtil(&tg.TLPeerUtil{}),
+		Limit:         in.Limit,
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.getSavedDialogs - dialog.getSavedDialogs failed: user_id: %d err: %v", c.MD.UserId, err)
+		return nil, tg.ErrInternalServerError
+	}
+	return makeMessagesSavedDialogs(got), nil
 }

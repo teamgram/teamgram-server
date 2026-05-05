@@ -59,6 +59,7 @@ const (
 	ClazzID_dialog_getMyDialogsData                  = 0x7ee08f03 // 7ee08f03
 	ClazzID_dialog_getSavedDialogs                   = 0x38c1d668 // 38c1d668
 	ClazzID_dialog_getPinnedSavedDialogs             = 0x40a3b7e7 // 40a3b7e7
+	ClazzID_dialog_upsertSavedDialogFromMessage      = 0x9e3ab43c // 9e3ab43c
 	ClazzID_dialog_toggleSavedDialogPin              = 0x44f317d9 // 44f317d9
 	ClazzID_dialog_reorderPinnedSavedDialogs         = 0xd85ccbd2 // d85ccbd2
 	ClazzID_dialog_getDialogFilter                   = 0xf388061c // f388061c

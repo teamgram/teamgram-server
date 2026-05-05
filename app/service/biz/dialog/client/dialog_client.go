@@ -60,6 +60,7 @@ type DialogClient interface {
 	DialogGetMyDialogsData(ctx context.Context, in *dialog.TLDialogGetMyDialogsData) (*dialog.DialogsData, error)
 	DialogGetSavedDialogs(ctx context.Context, in *dialog.TLDialogGetSavedDialogs) (*dialog.SavedDialogList, error)
 	DialogGetPinnedSavedDialogs(ctx context.Context, in *dialog.TLDialogGetPinnedSavedDialogs) (*dialog.SavedDialogList, error)
+	DialogUpsertSavedDialogFromMessage(ctx context.Context, in *dialog.TLDialogUpsertSavedDialogFromMessage) (*tg.Bool, error)
 	DialogToggleSavedDialogPin(ctx context.Context, in *dialog.TLDialogToggleSavedDialogPin) (*tg.Bool, error)
 	DialogReorderPinnedSavedDialogs(ctx context.Context, in *dialog.TLDialogReorderPinnedSavedDialogs) (*tg.Bool, error)
 	DialogGetDialogFilter(ctx context.Context, in *dialog.TLDialogGetDialogFilter) (*dialog.DialogFilterExt, error)
@@ -303,6 +304,12 @@ func (m *defaultDialogClient) DialogGetSavedDialogs(ctx context.Context, in *dia
 // dialog.getPinnedSavedDialogs user_id:long = SavedDialogList;
 func (m *defaultDialogClient) DialogGetPinnedSavedDialogs(ctx context.Context, in *dialog.TLDialogGetPinnedSavedDialogs) (*dialog.SavedDialogList, error) {
 	return m.rpc.DialogGetPinnedSavedDialogs(ctx, in)
+}
+
+// DialogUpsertSavedDialogFromMessage
+// dialog.upsertSavedDialogFromMessage user_id:long peer_type:int peer_id:long top_peer_seq:long top_canonical_message_id:long top_message_date:int payload:bytes = Bool;
+func (m *defaultDialogClient) DialogUpsertSavedDialogFromMessage(ctx context.Context, in *dialog.TLDialogUpsertSavedDialogFromMessage) (*tg.Bool, error) {
+	return m.rpc.DialogUpsertSavedDialogFromMessage(ctx, in)
 }
 
 // DialogToggleSavedDialogPin

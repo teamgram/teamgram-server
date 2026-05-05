@@ -62,6 +62,7 @@ type Client interface {
 	DialogGetMyDialogsData(ctx context.Context, req *dialog.TLDialogGetMyDialogsData, callOptions ...callopt.Option) (r *dialog.DialogsData, err error)
 	DialogGetSavedDialogs(ctx context.Context, req *dialog.TLDialogGetSavedDialogs, callOptions ...callopt.Option) (r *dialog.SavedDialogList, err error)
 	DialogGetPinnedSavedDialogs(ctx context.Context, req *dialog.TLDialogGetPinnedSavedDialogs, callOptions ...callopt.Option) (r *dialog.SavedDialogList, err error)
+	DialogUpsertSavedDialogFromMessage(ctx context.Context, req *dialog.TLDialogUpsertSavedDialogFromMessage, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	DialogToggleSavedDialogPin(ctx context.Context, req *dialog.TLDialogToggleSavedDialogPin, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	DialogReorderPinnedSavedDialogs(ctx context.Context, req *dialog.TLDialogReorderPinnedSavedDialogs, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	DialogGetDialogFilter(ctx context.Context, req *dialog.TLDialogGetDialogFilter, callOptions ...callopt.Option) (r *dialog.DialogFilterExt, err error)
@@ -293,6 +294,11 @@ func (p *kDialogClient) DialogGetSavedDialogs(ctx context.Context, req *dialog.T
 func (p *kDialogClient) DialogGetPinnedSavedDialogs(ctx context.Context, req *dialog.TLDialogGetPinnedSavedDialogs, callOptions ...callopt.Option) (r *dialog.SavedDialogList, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.DialogGetPinnedSavedDialogs(ctx, req)
+}
+
+func (p *kDialogClient) DialogUpsertSavedDialogFromMessage(ctx context.Context, req *dialog.TLDialogUpsertSavedDialogFromMessage, callOptions ...callopt.Option) (r *tg.Bool, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DialogUpsertSavedDialogFromMessage(ctx, req)
 }
 
 func (p *kDialogClient) DialogToggleSavedDialogPin(ctx context.Context, req *dialog.TLDialogToggleSavedDialogPin, callOptions ...callopt.Option) (r *tg.Bool, err error) {

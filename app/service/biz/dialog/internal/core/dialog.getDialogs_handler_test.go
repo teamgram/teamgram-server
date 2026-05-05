@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
@@ -12,28 +13,33 @@ import (
 )
 
 type fakeDialogRepo struct {
-	listFn        func(context.Context, int64, bool, int32) ([]repository.DialogRecord, error)
-	listPinnedFn  func(context.Context, int64, int32) ([]repository.DialogRecord, error)
-	countFn       func(context.Context, int64, bool, int32) (int32, error)
-	getFn         func(context.Context, int64, int32, int64) (*repository.DialogRecord, error)
-	idsFn         func(context.Context, int64, []int64) ([]repository.DialogRecord, error)
-	extrasFn      func(context.Context, int64, []repository.PeerRef) ([]repository.DialogExtrasRecord, error)
-	filterListFn  func(context.Context, int64) ([]repository.DialogFilterRecord, error)
-	filterGetFn   func(context.Context, int64, int32) (*repository.DialogFilterRecord, error)
-	filterSlugFn  func(context.Context, int64, string) (*repository.DialogFilterRecord, error)
-	filterSaveFn  func(context.Context, repository.SaveDialogFilterInput) (*repository.DialogFilterRecord, error)
-	filterDelFn   func(context.Context, repository.DeleteDialogFilterInput) error
-	filterOrderFn func(context.Context, repository.ReorderDialogFiltersInput) error
-	wallpaperFn   func(context.Context, repository.PeerWallpaperInput) error
-	policyFn      func(context.Context, repository.PrivatePeerPolicyInput) (*repository.PrivatePeerPolicyResult, error)
-	saveDraftFn   func(context.Context, repository.SaveDraftInput) (*repository.DraftMutationResult, error)
-	clearDraftFn  func(context.Context, repository.ClearDraftInput) (*repository.DraftMutationResult, error)
-	clearAfterFn  func(context.Context, repository.ClearDraftAfterSendInput) (*repository.DraftMutationResult, error)
-	clearAllFn    func(context.Context, repository.ClearAllDraftsInput) ([]repository.DraftMutationResult, error)
-	listDraftsFn  func(context.Context, int64) ([]repository.DraftRecord, error)
-	togglePinFn   func(context.Context, repository.ToggleDialogPinInput) (*repository.PreferenceMutationResult, error)
-	reorderPinFn  func(context.Context, repository.ReorderPinnedDialogsInput) (*repository.PreferenceMutationResult, error)
-	editFoldersFn func(context.Context, repository.EditPeerFoldersInput) (*repository.PreferenceMutationResult, error)
+	listFn         func(context.Context, int64, bool, int32) ([]repository.DialogRecord, error)
+	listPinnedFn   func(context.Context, int64, int32) ([]repository.DialogRecord, error)
+	countFn        func(context.Context, int64, bool, int32) (int32, error)
+	getFn          func(context.Context, int64, int32, int64) (*repository.DialogRecord, error)
+	idsFn          func(context.Context, int64, []int64) ([]repository.DialogRecord, error)
+	extrasFn       func(context.Context, int64, []repository.PeerRef) ([]repository.DialogExtrasRecord, error)
+	filterListFn   func(context.Context, int64) ([]repository.DialogFilterRecord, error)
+	filterGetFn    func(context.Context, int64, int32) (*repository.DialogFilterRecord, error)
+	filterSlugFn   func(context.Context, int64, string) (*repository.DialogFilterRecord, error)
+	filterSaveFn   func(context.Context, repository.SaveDialogFilterInput) (*repository.DialogFilterRecord, error)
+	filterDelFn    func(context.Context, repository.DeleteDialogFilterInput) error
+	filterOrderFn  func(context.Context, repository.ReorderDialogFiltersInput) error
+	wallpaperFn    func(context.Context, repository.PeerWallpaperInput) error
+	policyFn       func(context.Context, repository.PrivatePeerPolicyInput) (*repository.PrivatePeerPolicyResult, error)
+	saveDraftFn    func(context.Context, repository.SaveDraftInput) (*repository.DraftMutationResult, error)
+	clearDraftFn   func(context.Context, repository.ClearDraftInput) (*repository.DraftMutationResult, error)
+	clearAfterFn   func(context.Context, repository.ClearDraftAfterSendInput) (*repository.DraftMutationResult, error)
+	clearAllFn     func(context.Context, repository.ClearAllDraftsInput) ([]repository.DraftMutationResult, error)
+	listDraftsFn   func(context.Context, int64) ([]repository.DraftRecord, error)
+	upsertSavedFn  func(context.Context, repository.SavedDialogTopInput) error
+	listSavedFn    func(context.Context, int64, bool, int32, int32) ([]repository.SavedDialogRecord, error)
+	pinnedSavedFn  func(context.Context, int64) ([]repository.SavedDialogRecord, error)
+	toggleSavedFn  func(context.Context, repository.SavedDialogPinInput) error
+	reorderSavedFn func(context.Context, repository.ReorderPinnedSavedDialogsInput) error
+	togglePinFn    func(context.Context, repository.ToggleDialogPinInput) (*repository.PreferenceMutationResult, error)
+	reorderPinFn   func(context.Context, repository.ReorderPinnedDialogsInput) (*repository.PreferenceMutationResult, error)
+	editFoldersFn  func(context.Context, repository.EditPeerFoldersInput) (*repository.PreferenceMutationResult, error)
 }
 
 func (f fakeDialogRepo) ListDialogs(ctx context.Context, userID int64, excludePinned bool, folderID int32) ([]repository.DialogRecord, error) {
@@ -141,6 +147,41 @@ func (f fakeDialogRepo) ClearAllDrafts(ctx context.Context, in repository.ClearA
 
 func (f fakeDialogRepo) ListActiveDrafts(ctx context.Context, userID int64) ([]repository.DraftRecord, error) {
 	return f.listDraftsFn(ctx, userID)
+}
+
+func (f fakeDialogRepo) UpsertSavedDialogFromMessage(ctx context.Context, in repository.SavedDialogTopInput) error {
+	if f.upsertSavedFn != nil {
+		return f.upsertSavedFn(ctx, in)
+	}
+	return nil
+}
+
+func (f fakeDialogRepo) ListSavedDialogs(ctx context.Context, userID int64, excludePinned bool, offsetDate time.Time, limit int32) ([]repository.SavedDialogRecord, error) {
+	if f.listSavedFn != nil {
+		return f.listSavedFn(ctx, userID, excludePinned, int32(offsetDate.Unix()), limit)
+	}
+	return []repository.SavedDialogRecord{}, nil
+}
+
+func (f fakeDialogRepo) ListPinnedSavedDialogs(ctx context.Context, userID int64) ([]repository.SavedDialogRecord, error) {
+	if f.pinnedSavedFn != nil {
+		return f.pinnedSavedFn(ctx, userID)
+	}
+	return []repository.SavedDialogRecord{}, nil
+}
+
+func (f fakeDialogRepo) ToggleSavedDialogPin(ctx context.Context, in repository.SavedDialogPinInput) error {
+	if f.toggleSavedFn != nil {
+		return f.toggleSavedFn(ctx, in)
+	}
+	return nil
+}
+
+func (f fakeDialogRepo) ReorderPinnedSavedDialogs(ctx context.Context, in repository.ReorderPinnedSavedDialogsInput) error {
+	if f.reorderSavedFn != nil {
+		return f.reorderSavedFn(ctx, in)
+	}
+	return nil
 }
 
 func (f fakeDialogRepo) ToggleDialogPin(ctx context.Context, in repository.ToggleDialogPinInput) (*repository.PreferenceMutationResult, error) {

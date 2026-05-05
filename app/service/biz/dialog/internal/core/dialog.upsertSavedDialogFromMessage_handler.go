@@ -1,4 +1,5 @@
-// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
+// Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
+//  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,30 +18,27 @@
 package core
 
 import (
+	"time"
+
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-// DialogReorderPinnedSavedDialogs
-// dialog.reorderPinnedSavedDialogs user_id:long force:Bool order:Vector<PeerUtil> = Bool;
-func (c *DialogCore) DialogReorderPinnedSavedDialogs(in *dialog.TLDialogReorderPinnedSavedDialogs) (*tg.Bool, error) {
+// DialogUpsertSavedDialogFromMessage
+// dialog.upsertSavedDialogFromMessage user_id:long peer_type:int peer_id:long top_peer_seq:long top_canonical_message_id:long top_message_date:int payload:bytes = Bool;
+func (c *DialogCore) DialogUpsertSavedDialogFromMessage(in *dialog.TLDialogUpsertSavedDialogFromMessage) (*tg.Bool, error) {
 	if in == nil {
 		return nil, tg.ErrInputRequestInvalid
 	}
-	sourcePermAuthKeyID, err := c.sourcePermAuthKeyID()
-	if err != nil {
-		return nil, err
-	}
-	operationID := deterministicOperationID("saved_dialog_reorder", in.UserId, len(in.Order))
-	if err := c.svcCtx.Repo.ReorderPinnedSavedDialogs(c.ctx, repository.ReorderPinnedSavedDialogsInput{
-		UserID:              in.UserId,
-		Order:               peerRefsFromPeerUtils(in.Order),
-		SourcePermAuthKeyID: sourcePermAuthKeyID,
-		OperationID:         operationID,
-		OutboxID:            deterministicOutboxID(operationID, "actor"),
-		EventType:           "dialog.pinnedSavedDialogs",
-		Payload:             []byte(`{"schema_version":1}`),
+	if err := c.svcCtx.Repo.UpsertSavedDialogFromMessage(c.ctx, repository.SavedDialogTopInput{
+		UserID:                in.UserId,
+		PeerType:              in.PeerType,
+		PeerID:                in.PeerId,
+		TopPeerSeq:            in.TopPeerSeq,
+		TopCanonicalMessageID: in.TopCanonicalMessageId,
+		TopMessageDate:        time.Unix(int64(in.TopMessageDate), 0).UTC(),
+		Payload:               in.Payload,
 	}); err != nil {
 		return nil, err
 	}

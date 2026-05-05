@@ -458,6 +458,107 @@ func TestSavedDialogsOlderMessageDoesNotOverwriteTopPayload(t *testing.T) {
 	}
 }
 
+func TestSavedDialogPinInvariant(t *testing.T) {
+	ctx := context.Background()
+	repo := NewRepositoryWithDBForTest(openDialogIntegrationDB(t))
+	base := time.Now().UnixNano()
+	userID := base%1_000_000_000 + 1071
+	peerIDs := []int64{base%1_000_000_000 + 1072, base%1_000_000_000 + 1073}
+	for i, peerID := range peerIDs {
+		if err := repo.UpsertSavedDialogFromMessage(ctx, SavedDialogTopInput{
+			UserID:                userID,
+			PeerType:              PeerTypeUser,
+			PeerID:                peerID,
+			TopPeerSeq:            int64(i + 1),
+			TopCanonicalMessageID: base%1_000_000_000 + int64(1074+i),
+			TopMessageDate:        time.Now().UTC().Add(time.Duration(i) * time.Second),
+			Payload:               []byte(`{"schema_version":1}`),
+		}); err != nil {
+			t.Fatalf("UpsertSavedDialogFromMessage(%d) error = %v", i, err)
+		}
+		if err := repo.ToggleSavedDialogPin(ctx, SavedDialogPinInput{
+			UserID:              userID,
+			PeerType:            PeerTypeUser,
+			PeerID:              peerID,
+			Pinned:              true,
+			SourcePermAuthKeyID: base%1_000_000_000 + int64(1080+i),
+			OperationID:         fmt.Sprintf("saved-pin-invariant-%d-%d", base, i),
+			OutboxID:            base%1_000_000_000 + int64(1082+i),
+			EventType:           "dialog.savedDialogPinned",
+			Payload:             []byte(`{"schema_version":1}`),
+		}); err != nil {
+			t.Fatalf("ToggleSavedDialogPin(%d) error = %v", i, err)
+		}
+	}
+	rows, err := repo.ListPinnedSavedDialogs(ctx, userID)
+	if err != nil {
+		t.Fatalf("ListPinnedSavedDialogs() error = %v", err)
+	}
+	if len(rows) != 2 {
+		t.Fatalf("pinned len = %d, want 2", len(rows))
+	}
+	seen := map[int64]bool{}
+	for _, row := range rows {
+		if !row.Pinned || row.PinOrder <= 0 {
+			t.Fatalf("saved pin = %t/%d, want true/positive", row.Pinned, row.PinOrder)
+		}
+		if seen[row.PinOrder] {
+			t.Fatalf("duplicate pin_order %d in %+v", row.PinOrder, rows)
+		}
+		seen[row.PinOrder] = true
+	}
+}
+
+func TestReorderPinnedSavedDialogsNoDuplicateOrder(t *testing.T) {
+	ctx := context.Background()
+	repo := NewRepositoryWithDBForTest(openDialogIntegrationDB(t))
+	base := time.Now().UnixNano()
+	userID := base%1_000_000_000 + 1091
+	peerIDs := []int64{base%1_000_000_000 + 1092, base%1_000_000_000 + 1093, base%1_000_000_000 + 1094}
+	for i, peerID := range peerIDs {
+		if err := repo.UpsertSavedDialogFromMessage(ctx, SavedDialogTopInput{
+			UserID:                userID,
+			PeerType:              PeerTypeUser,
+			PeerID:                peerID,
+			TopPeerSeq:            int64(i + 1),
+			TopCanonicalMessageID: base%1_000_000_000 + int64(1095+i),
+			TopMessageDate:        time.Now().UTC().Add(time.Duration(i) * time.Second),
+			Payload:               []byte(`{"schema_version":1}`),
+		}); err != nil {
+			t.Fatalf("UpsertSavedDialogFromMessage(%d) error = %v", i, err)
+		}
+	}
+	if err := repo.ReorderPinnedSavedDialogs(ctx, ReorderPinnedSavedDialogsInput{
+		UserID: userID,
+		Order: []PeerRef{
+			{PeerType: PeerTypeUser, PeerID: peerIDs[2]},
+			{PeerType: PeerTypeUser, PeerID: peerIDs[0]},
+		},
+		SourcePermAuthKeyID: base%1_000_000_000 + 1100,
+		OperationID:         fmt.Sprintf("saved-reorder-%d", base),
+		OutboxID:            base%1_000_000_000 + 1101,
+		EventType:           "dialog.pinnedSavedDialogs",
+		Payload:             []byte(`{"schema_version":1}`),
+	}); err != nil {
+		t.Fatalf("ReorderPinnedSavedDialogs() error = %v", err)
+	}
+	rows, err := repo.ListPinnedSavedDialogs(ctx, userID)
+	if err != nil {
+		t.Fatalf("ListPinnedSavedDialogs() error = %v", err)
+	}
+	if len(rows) != 2 {
+		t.Fatalf("pinned len = %d, want 2", len(rows))
+	}
+	for i, row := range rows {
+		if row.PinOrder != int64(i+1) {
+			t.Fatalf("row %d pin_order = %d, want %d", i, row.PinOrder, i+1)
+		}
+		if row.PeerID != []int64{peerIDs[2], peerIDs[0]}[i] {
+			t.Fatalf("row %d peer_id = %d", i, row.PeerID)
+		}
+	}
+}
+
 func TestDialogPeerPolicyPrivatePairCanonical(t *testing.T) {
 	ctx := context.Background()
 	repo := NewRepositoryWithDBForTest(openDialogIntegrationDB(t))

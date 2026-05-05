@@ -69,6 +69,7 @@ func init() {
 	iface.RegisterClazzID(0x7ee08f03, func() iface.TLObject { return &TLDialogGetMyDialogsData{ClazzID: 0x7ee08f03} })                  // 0x7ee08f03
 	iface.RegisterClazzID(0x38c1d668, func() iface.TLObject { return &TLDialogGetSavedDialogs{ClazzID: 0x38c1d668} })                   // 0x38c1d668
 	iface.RegisterClazzID(0x40a3b7e7, func() iface.TLObject { return &TLDialogGetPinnedSavedDialogs{ClazzID: 0x40a3b7e7} })             // 0x40a3b7e7
+	iface.RegisterClazzID(0x9e3ab43c, func() iface.TLObject { return &TLDialogUpsertSavedDialogFromMessage{ClazzID: 0x9e3ab43c} })      // 0x9e3ab43c
 	iface.RegisterClazzID(0x44f317d9, func() iface.TLObject { return &TLDialogToggleSavedDialogPin{ClazzID: 0x44f317d9} })              // 0x44f317d9
 	iface.RegisterClazzID(0xd85ccbd2, func() iface.TLObject { return &TLDialogReorderPinnedSavedDialogs{ClazzID: 0xd85ccbd2} })         // 0xd85ccbd2
 	iface.RegisterClazzID(0xf388061c, func() iface.TLObject { return &TLDialogGetDialogFilter{ClazzID: 0xf388061c} })                   // 0xf388061c
