@@ -157,10 +157,10 @@ func (c *DialogsCore) hydrateDialogExtV2s(operation string, dialogExts []dialogp
 		if dialogExt == nil {
 			continue
 		}
-		topMessageID, err := int64ToDialogMessageID(dialogExt.TopCanonicalMessageId)
+		topMessageID, err := int64ToDialogMessageID(dialogExt.TopPeerSeq)
 		if err != nil {
-			c.Logger.Errorf("%s - invalid top canonical message id: user_id: %d, peer_type: %d, peer_id: %d, top_canonical_message_id: %d, err: %v",
-				operation, c.MD.UserId, dialogExt.PeerType, dialogExt.PeerId, dialogExt.TopCanonicalMessageId, err)
+			c.Logger.Errorf("%s - invalid top peer seq: user_id: %d, peer_type: %d, peer_id: %d, top_peer_seq: %d, top_canonical_message_id: %d, err: %v",
+				operation, c.MD.UserId, dialogExt.PeerType, dialogExt.PeerId, dialogExt.TopPeerSeq, dialogExt.TopCanonicalMessageId, err)
 			return nil, tg.ErrInternalServerError
 		}
 		notifyPeer, ok := notifyPeerFromDialogFacade(c.MD.UserId, dialogExt.PeerType, dialogExt.PeerId)

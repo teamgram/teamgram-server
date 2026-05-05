@@ -488,7 +488,7 @@ func TestMessagesGetDialogsMapsUserDialogAndTopMessage(t *testing.T) {
 						PeerType:              dialogPeerTypeUser,
 						PeerId:                200,
 						TopPeerSeq:            7,
-						TopCanonicalMessageId: 7,
+						TopCanonicalMessageId: 2051345931852316672,
 						TopMessageDate:        123,
 						UnreadCount:           1,
 					}),
