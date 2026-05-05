@@ -62,6 +62,8 @@ type (
 		NextRetryAt          string `db:"next_retry_at" json:"next_retry_at"`
 		LeaseOwner           string `db:"lease_owner" json:"lease_owner"`
 		LeaseUntil           string `db:"lease_until" json:"lease_until"`
+		PublishedSeq         int64  `db:"published_seq" json:"published_seq"`
+		PublishedDate        int32  `db:"published_date" json:"published_date"`
 		LastErrorKind        string `db:"last_error_kind" json:"last_error_kind"`
 		LastErrorMessage     string `db:"last_error_message" json:"last_error_message"`
 	}
@@ -75,9 +77,9 @@ func newDialogAuthSeqOutboxModel(db *sqlx.DB) *defaultDialogAuthSeqOutboxModel {
 
 func (m *defaultDialogAuthSeqOutboxModel) Insert2(ctx context.Context, data *DialogAuthSeqOutbox) (sql.Result, error) {
 	tableName := "dialog_auth_seq_outbox"
-	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName, dialogAuthSeqOutboxRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName, dialogAuthSeqOutboxRowsExpectAutoSet)
 
-	r, err := m.db.Exec(ctx, query, data.UserId, data.SourcePermAuthKeyId, data.TargetAuthPolicy, data.OperationId, data.EventType, data.PeerType, data.PeerId, data.PayloadSchemaVersion, data.Payload, data.PayloadHash, data.Status, data.AttemptCount, data.NextRetryAt, data.LeaseOwner, data.LeaseUntil, data.LastErrorKind, data.LastErrorMessage)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.SourcePermAuthKeyId, data.TargetAuthPolicy, data.OperationId, data.EventType, data.PeerType, data.PeerId, data.PayloadSchemaVersion, data.Payload, data.PayloadHash, data.Status, data.AttemptCount, data.NextRetryAt, data.LeaseOwner, data.LeaseUntil, data.PublishedSeq, data.PublishedDate, data.LastErrorKind, data.LastErrorMessage)
 	if err != nil {
 		return nil, fmt.Errorf("dialog_auth_seq_outbox.Insert2 exec: %w", err)
 	}
@@ -142,7 +144,7 @@ func (m *defaultDialogAuthSeqOutboxModel) Update2(ctx context.Context, data *Dia
 	tableName := "dialog_auth_seq_outbox"
 	query := fmt.Sprintf("update `%s` set %s where `outbox_id` = ?", tableName, dialogAuthSeqOutboxRowsWithPlaceHolder)
 
-	_, err := m.db.Exec(ctx, query, data.UserId, data.SourcePermAuthKeyId, data.TargetAuthPolicy, data.OperationId, data.EventType, data.PeerType, data.PeerId, data.PayloadSchemaVersion, data.Payload, data.PayloadHash, data.Status, data.AttemptCount, data.NextRetryAt, data.LeaseOwner, data.LeaseUntil, data.LastErrorKind, data.LastErrorMessage, data.OutboxId)
+	_, err := m.db.Exec(ctx, query, data.UserId, data.SourcePermAuthKeyId, data.TargetAuthPolicy, data.OperationId, data.EventType, data.PeerType, data.PeerId, data.PayloadSchemaVersion, data.Payload, data.PayloadHash, data.Status, data.AttemptCount, data.NextRetryAt, data.LeaseOwner, data.LeaseUntil, data.PublishedSeq, data.PublishedDate, data.LastErrorKind, data.LastErrorMessage, data.OutboxId)
 	if err != nil {
 		return fmt.Errorf("dialog_auth_seq_outbox.Update2 exec: %w", err)
 	}

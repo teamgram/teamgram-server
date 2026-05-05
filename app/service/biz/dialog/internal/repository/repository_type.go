@@ -26,7 +26,20 @@ const (
 	TargetAuthPolicyAll                  = "all"
 	TargetAuthPolicyNotSourcePermAuthKey = "not_source_perm_auth_key"
 
-	OutboxStatusPending int32 = 1
+	OutboxStatusPending         int32 = 1
+	OutboxStatusPublishing      int32 = 2
+	OutboxStatusPublished       int32 = 3
+	OutboxStatusFailedRetryable int32 = 4
+	OutboxStatusBlocked         int32 = 5
+
+	DeliveryPathUserupdatesPTS     = "userupdates_pts"
+	DeliveryPathUserupdatesAuthSeq = "userupdates_auth_seq"
+
+	DefaultOutboxWorkerBatchSize    = 100
+	DefaultOutboxWorkerLeaseSeconds = 30
+	DefaultOutboxWorkerPollSeconds  = 1
+	OutboxWorkerMaxRetryDelay       = 300
+	OutboxWorkerBlockedAttempts     = 20
 )
 
 type ToggleDialogPinInput struct {

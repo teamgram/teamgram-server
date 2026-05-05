@@ -3,25 +3,25 @@
     <operation name="Insert">
         <sql>
             INSERT INTO dialog_auth_seq_outbox
-                (outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, status, attempt_count, next_retry_at, lease_owner, lease_until, last_error_kind, last_error_message)
+                (outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, status, attempt_count, next_retry_at, lease_owner, lease_until, published_seq, published_date, last_error_kind, last_error_message)
             VALUES
-                (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :last_error_kind, :last_error_message)
+                (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :published_seq, :published_date, :last_error_kind, :last_error_message)
         </sql>
     </operation>
 
     <operation name="InsertIgnore">
         <sql>
             INSERT IGNORE INTO dialog_auth_seq_outbox
-                (outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, status, attempt_count, next_retry_at, lease_owner, lease_until, last_error_kind, last_error_message)
+                (outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, status, attempt_count, next_retry_at, lease_owner, lease_until, published_seq, published_date, last_error_kind, last_error_message)
             VALUES
-                (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :last_error_kind, :last_error_message)
+                (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :published_seq, :published_date, :last_error_kind, :last_error_message)
         </sql>
     </operation>
 
     <operation name="SelectByUserOperation">
         <sql>
             SELECT
-                outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, status, attempt_count, next_retry_at, lease_owner, lease_until, last_error_kind, last_error_message
+                outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, status, attempt_count, next_retry_at, lease_owner, lease_until, published_seq, published_date, last_error_kind, last_error_message
             FROM
                 dialog_auth_seq_outbox
             WHERE

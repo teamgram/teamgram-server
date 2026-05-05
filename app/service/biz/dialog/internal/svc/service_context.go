@@ -18,9 +18,12 @@ package svc
 
 import (
 	"context"
+	"time"
 
+	userupdatesclient "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/client"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
 type DialogRepository interface {
@@ -39,14 +42,95 @@ type DialogRepository interface {
 	EditPeerFolders(ctx context.Context, in repository.EditPeerFoldersInput) (*repository.PreferenceMutationResult, error)
 }
 
+type backgroundWorker interface {
+	Run(ctx context.Context)
+	Stop()
+}
+
+type waitableBackgroundWorker interface {
+	Wait()
+}
+
 type ServiceContext struct {
-	Config config.Config
-	Repo   DialogRepository
+	Config  config.Config
+	Repo    DialogRepository
+	workers []backgroundWorker
+	closers []interface{ Close() error }
+	cancel  context.CancelFunc
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	return &ServiceContext{
+	repo := repository.NewRepository(c)
+	sc := &ServiceContext{
 		Config: c,
-		Repo:   repository.NewRepository(c),
+		Repo:   repo,
 	}
+	if closer, ok := any(repo).(interface{ Close() error }); ok {
+		sc.closers = append(sc.closers, closer)
+	}
+	if c.DialogOutboxWorkers.Enabled && hasRPCClientConfig(c.Userupdates) {
+		updates := userupdatesclient.NewUserupdatesClient(userupdatesclient.MustNewKitexClient(c.Userupdates))
+		options := repository.DialogOutboxWorkerOptions{
+			BatchSize:    c.DialogOutboxWorkers.BatchSize,
+			LeaseSeconds: c.DialogOutboxWorkers.LeaseSeconds,
+			PollInterval: time.Duration(c.DialogOutboxWorkers.PollIntervalMs) * time.Millisecond,
+		}
+		sc.workers = append(sc.workers,
+			repository.NewDialogAuthSeqOutboxWorker(repo, updates, options),
+			repository.NewDialogPublicUpdateOutboxWorker(repo, updates, options),
+		)
+	}
+	return sc
+}
+
+func (s *ServiceContext) StartWorkers() {
+	if s == nil || len(s.workers) == 0 {
+		return
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	s.cancel = cancel
+	for _, worker := range s.workers {
+		go worker.Run(ctx)
+	}
+}
+
+func (s *ServiceContext) StopWorkers() {
+	if s == nil {
+		return
+	}
+	if s.cancel != nil {
+		s.cancel()
+	}
+	for _, worker := range s.workers {
+		worker.Stop()
+	}
+	for _, worker := range s.workers {
+		if waitable, ok := worker.(waitableBackgroundWorker); ok {
+			waitable.Wait()
+		}
+	}
+}
+
+func (s *ServiceContext) Close() error {
+	if s == nil {
+		return nil
+	}
+	s.StopWorkers()
+	var firstErr error
+	for _, closer := range s.closers {
+		if closer == nil {
+			continue
+		}
+		if err := closer.Close(); err != nil && firstErr == nil {
+			firstErr = err
+		}
+	}
+	return firstErr
+}
+
+func hasRPCClientConfig(c kitex.RpcClientConf) bool {
+	if c.DestService == "" {
+		return false
+	}
+	return len(c.Endpoints) > 0 || c.Target != "" || c.HasEtcd()
 }

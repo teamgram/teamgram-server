@@ -105,6 +105,8 @@ CREATE TABLE IF NOT EXISTS `dialog_auth_seq_outbox` (
   `next_retry_at` datetime(6) NOT NULL,
   `lease_owner` varchar(128) NOT NULL DEFAULT '',
   `lease_until` datetime(6) NOT NULL DEFAULT '1970-01-01 00:00:00.000000',
+  `published_seq` bigint NOT NULL DEFAULT 0,
+  `published_date` int NOT NULL DEFAULT 0,
   `last_error_kind` varchar(128) NOT NULL DEFAULT '',
   `last_error_message` varchar(1024) NOT NULL DEFAULT '',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

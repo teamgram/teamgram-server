@@ -48,10 +48,10 @@ func NewDialogAuthSeqOutboxTxModel(tx *sqlx.Tx) DialogAuthSeqOutboxTxModel {
 }
 
 // Insert
-// insert into dialog_auth_seq_outbox(outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, last_error_kind, last_error_message) values (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :last_error_kind, :last_error_message)
+// insert into dialog_auth_seq_outbox(outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, published_seq, published_date, last_error_kind, last_error_message) values (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :published_seq, :published_date, :last_error_kind, :last_error_message)
 func (m *defaultDialogAuthSeqOutboxModel) Insert(ctx context.Context, data *DialogAuthSeqOutbox) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into dialog_auth_seq_outbox(outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, last_error_kind, last_error_message) values (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :last_error_kind, :last_error_message)"
+		query = "insert into dialog_auth_seq_outbox(outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, published_seq, published_date, last_error_kind, last_error_message) values (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :published_seq, :published_date, :last_error_kind, :last_error_message)"
 		r     sql.Result
 	)
 
@@ -76,10 +76,10 @@ func (m *defaultDialogAuthSeqOutboxModel) Insert(ctx context.Context, data *Dial
 }
 
 // Insert
-// insert into dialog_auth_seq_outbox(outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, last_error_kind, last_error_message) values (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :last_error_kind, :last_error_message)
+// insert into dialog_auth_seq_outbox(outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, published_seq, published_date, last_error_kind, last_error_message) values (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :published_seq, :published_date, :last_error_kind, :last_error_message)
 func (m *defaultDialogAuthSeqOutboxTxModel) Insert(data *DialogAuthSeqOutbox) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into dialog_auth_seq_outbox(outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, last_error_kind, last_error_message) values (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :last_error_kind, :last_error_message)"
+		query = "insert into dialog_auth_seq_outbox(outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, published_seq, published_date, last_error_kind, last_error_message) values (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :published_seq, :published_date, :last_error_kind, :last_error_message)"
 		r     sql.Result
 	)
 
@@ -103,10 +103,10 @@ func (m *defaultDialogAuthSeqOutboxTxModel) Insert(data *DialogAuthSeqOutbox) (l
 }
 
 // InsertIgnore
-// insert ignore into dialog_auth_seq_outbox(outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, last_error_kind, last_error_message) values (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :last_error_kind, :last_error_message)
+// insert ignore into dialog_auth_seq_outbox(outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, published_seq, published_date, last_error_kind, last_error_message) values (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :published_seq, :published_date, :last_error_kind, :last_error_message)
 func (m *defaultDialogAuthSeqOutboxModel) InsertIgnore(ctx context.Context, data *DialogAuthSeqOutbox) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert ignore into dialog_auth_seq_outbox(outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, last_error_kind, last_error_message) values (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :last_error_kind, :last_error_message)"
+		query = "insert ignore into dialog_auth_seq_outbox(outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, published_seq, published_date, last_error_kind, last_error_message) values (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :published_seq, :published_date, :last_error_kind, :last_error_message)"
 		r     sql.Result
 	)
 
@@ -131,10 +131,10 @@ func (m *defaultDialogAuthSeqOutboxModel) InsertIgnore(ctx context.Context, data
 }
 
 // InsertIgnore
-// insert ignore into dialog_auth_seq_outbox(outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, last_error_kind, last_error_message) values (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :last_error_kind, :last_error_message)
+// insert ignore into dialog_auth_seq_outbox(outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, published_seq, published_date, last_error_kind, last_error_message) values (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :published_seq, :published_date, :last_error_kind, :last_error_message)
 func (m *defaultDialogAuthSeqOutboxTxModel) InsertIgnore(data *DialogAuthSeqOutbox) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert ignore into dialog_auth_seq_outbox(outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, last_error_kind, last_error_message) values (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :last_error_kind, :last_error_message)"
+		query = "insert ignore into dialog_auth_seq_outbox(outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, published_seq, published_date, last_error_kind, last_error_message) values (:outbox_id, :user_id, :source_perm_auth_key_id, :target_auth_policy, :operation_id, :event_type, :peer_type, :peer_id, :payload_schema_version, :payload, :payload_hash, :status, :attempt_count, :next_retry_at, :lease_owner, :lease_until, :published_seq, :published_date, :last_error_kind, :last_error_message)"
 		r     sql.Result
 	)
 
@@ -158,11 +158,11 @@ func (m *defaultDialogAuthSeqOutboxTxModel) InsertIgnore(data *DialogAuthSeqOutb
 }
 
 // SelectByUserOperation
-// select outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, last_error_kind, last_error_message from dialog_auth_seq_outbox where user_id = :user_id and operation_id = :operation_id limit 1
+// select outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, published_seq, published_date, last_error_kind, last_error_message from dialog_auth_seq_outbox where user_id = :user_id and operation_id = :operation_id limit 1
 func (m *defaultDialogAuthSeqOutboxModel) SelectByUserOperation(ctx context.Context, userId int64, operationId string) (rValue *DialogAuthSeqOutbox, err error) {
 
 	var (
-		query = "select outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, last_error_kind, last_error_message from dialog_auth_seq_outbox where user_id = ? and operation_id = ? limit 1"
+		query = "select outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, published_seq, published_date, last_error_kind, last_error_message from dialog_auth_seq_outbox where user_id = ? and operation_id = ? limit 1"
 		do    = &DialogAuthSeqOutbox{}
 	)
 	err = m.db.QueryRowPartial(ctx, do, query, userId, operationId)
@@ -185,10 +185,10 @@ func (m *defaultDialogAuthSeqOutboxModel) SelectByUserOperation(ctx context.Cont
 }
 
 // SelectByUserOperation
-// select outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, last_error_kind, last_error_message from dialog_auth_seq_outbox where user_id = :user_id and operation_id = :operation_id limit 1
+// select outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, published_seq, published_date, last_error_kind, last_error_message from dialog_auth_seq_outbox where user_id = :user_id and operation_id = :operation_id limit 1
 func (m *defaultDialogAuthSeqOutboxTxModel) SelectByUserOperation(userId int64, operationId string) (rValue *DialogAuthSeqOutbox, err error) {
 	var (
-		query = "select outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, last_error_kind, last_error_message from dialog_auth_seq_outbox where user_id = ? and operation_id = ? limit 1"
+		query = "select outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type, peer_type, peer_id, payload_schema_version, payload, payload_hash, `status`, attempt_count, next_retry_at, lease_owner, lease_until, published_seq, published_date, last_error_kind, last_error_message from dialog_auth_seq_outbox where user_id = ? and operation_id = ? limit 1"
 		do    = &DialogAuthSeqOutbox{}
 	)
 	err = m.tx.QueryRowPartial(do, query, userId, operationId)
