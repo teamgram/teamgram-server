@@ -198,6 +198,36 @@ CREATE TABLE IF NOT EXISTS user_pts_events (
   KEY idx_peer (peer_type, peer_id, peer_seq)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE IF NOT EXISTS user_auth_seq_state (
+  user_id               BIGINT NOT NULL,
+  seq                   BIGINT NOT NULL,
+  date                  INT NOT NULL,
+  row_version           BIGINT NOT NULL DEFAULT 0,
+  created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS user_auth_seq_events (
+  user_id               BIGINT NOT NULL,
+  seq                   BIGINT NOT NULL,
+  date                  INT NOT NULL,
+  operation_id          VARCHAR(160) NOT NULL,
+  source_perm_auth_key_id BIGINT NOT NULL DEFAULT 0,
+  target_auth_policy    VARCHAR(64) NOT NULL,
+  public_update_type    VARCHAR(128) NOT NULL,
+  peer_type             INT NOT NULL DEFAULT 0,
+  peer_id               BIGINT NOT NULL DEFAULT 0,
+  event_schema_version  INT NOT NULL,
+  event_codec           INT NOT NULL,
+  event_payload         BLOB NOT NULL,
+  event_payload_hash    BINARY(32) NOT NULL,
+  created_at            TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, seq),
+  UNIQUE KEY uk_user_operation (user_id, operation_id),
+  KEY idx_user_date (user_id, date, seq)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS user_operation_results (
   user_id               BIGINT NOT NULL,
   operation_id          VARCHAR(160) NOT NULL,

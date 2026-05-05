@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="user_auth_seq_state">
+    <operation name="InsertIgnore">
+        <sql>
+            INSERT IGNORE INTO user_auth_seq_state
+                (user_id, seq, date, row_version)
+            VALUES
+                (:user_id, :seq, :date, :row_version)
+        </sql>
+    </operation>
+
+    <operation name="SelectByUserId">
+        <sql>
+            SELECT
+                user_id, seq, date, row_version
+            FROM
+                user_auth_seq_state
+            WHERE
+                user_id = :user_id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectForUpdate">
+        <sql>
+            SELECT
+                user_id, seq, date, row_version
+            FROM
+                user_auth_seq_state
+            WHERE
+                user_id = :user_id LIMIT 1 FOR UPDATE
+        </sql>
+    </operation>
+
+    <operation name="UpdateSeqDate">
+        <sql>
+            UPDATE
+                user_auth_seq_state
+            SET
+                seq = :seq,
+                date = :date,
+                row_version = row_version + 1
+            WHERE
+                user_id = :user_id
+        </sql>
+    </operation>
+</table>

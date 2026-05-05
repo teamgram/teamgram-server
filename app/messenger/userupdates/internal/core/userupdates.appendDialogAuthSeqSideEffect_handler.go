@@ -21,8 +21,10 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UserupdatesAppendDialogAuthSeqSideEffect
@@ -42,7 +44,28 @@ func (c *UserupdatesCore) UserupdatesAppendDialogAuthSeqSideEffect(in *userupdat
 		return nil, err
 	}
 
-	return nil, userupdates.ErrAuthSeqLedgerUnavailable
+	result, err := c.svcCtx.Repo.AppendDialogAuthSeqSideEffect(c.ctx, repository.DialogSideEffectAppendInput{
+		UserID:               in.UserId,
+		SourcePermAuthKeyID:  in.SourcePermAuthKeyId,
+		OperationID:          in.OperationId,
+		TargetAuthPolicy:     in.TargetAuthPolicy,
+		PublicUpdateType:     in.PublicUpdateType,
+		PeerType:             in.PeerType,
+		PeerID:               in.PeerId,
+		PayloadSchemaVersion: in.PayloadSchemaVersion,
+		Payload:              in.Payload,
+		PayloadHash:          in.PayloadHash,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return userupdates.MakeTLUserAuthSeqAppendResult(&userupdates.TLUserAuthSeqAppendResult{
+		UserId:         result.UserID,
+		OperationId:    result.OperationID,
+		Seq:            result.Seq,
+		Date:           result.Date,
+		AlreadyApplied: tg.ToBoolClazz(result.AlreadyApplied),
+	}).ToUserAuthSeqAppendResult(), nil
 }
 
 type dialogSideEffectAppendInput struct {

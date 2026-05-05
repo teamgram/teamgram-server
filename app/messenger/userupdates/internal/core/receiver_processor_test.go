@@ -72,6 +72,14 @@ func (f *fakeReceiverProcessorRepository) GetDifference(context.Context, reposit
 	return nil, nil
 }
 
+func (f *fakeReceiverProcessorRepository) AppendDialogAuthSeqSideEffect(context.Context, repository.DialogSideEffectAppendInput) (*repository.AuthSeqAppendResult, error) {
+	return nil, nil
+}
+
+func (f *fakeReceiverProcessorRepository) AppendDialogPtsSideEffect(context.Context, repository.DialogSideEffectAppendInput) (*repository.PtsAppendResult, error) {
+	return nil, nil
+}
+
 func (f *fakeReceiverProcessorRepository) ListDialogProjections(context.Context, int64, repository.DialogProjectionCursor, int32) ([]repository.DialogProjection, error) {
 	return nil, nil
 }

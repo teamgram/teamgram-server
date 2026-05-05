@@ -31,6 +31,7 @@ const (
 	EventTypeScheduledMarker     int32 = 5
 	EventTypeDeleteMessages      int32 = 6
 	EventTypeDeleteHistory       int32 = 7
+	EventTypeDialogPublicUpdate  int32 = 100
 
 	OperationResultStatusCompleted int32 = 1
 
@@ -174,6 +175,8 @@ type OperationResult struct {
 type UserState struct {
 	UserID      int64
 	Pts         int64
+	Seq         int64
+	Date        int32
 	PartitionID int32
 	OwnerEpoch  int64
 	RowVersion  int64
@@ -206,8 +209,54 @@ type GetDifferenceInput struct {
 }
 
 type GetDifferenceResult struct {
-	State  UserState
-	Events []UserEvent
+	State         UserState
+	Events        []UserEvent
+	AuthSeqEvents []AuthSeqEvent
+}
+
+type DialogSideEffectAppendInput struct {
+	UserID               int64
+	SourcePermAuthKeyID  int64
+	OperationID          string
+	TargetAuthPolicy     string
+	PublicUpdateType     string
+	PeerType             int32
+	PeerID               int64
+	PayloadSchemaVersion int32
+	Payload              []byte
+	PayloadHash          []byte
+}
+
+type AuthSeqAppendResult struct {
+	UserID         int64
+	OperationID    string
+	Seq            int64
+	Date           int32
+	AlreadyApplied bool
+}
+
+type PtsAppendResult struct {
+	UserID         int64
+	OperationID    string
+	Pts            int64
+	PtsCount       int32
+	AlreadyApplied bool
+}
+
+type AuthSeqEvent struct {
+	UserID              int64
+	Seq                 int64
+	Date                int32
+	OperationID         string
+	SourcePermAuthKeyID int64
+	TargetAuthPolicy    string
+	PublicUpdateType    string
+	PeerType            int32
+	PeerID              int64
+	EventSchemaVersion  int32
+	EventCodec          int32
+	EventPayload        []byte
+	EventPayloadHash    []byte
 }
 
 type RecordDeliveryFailureInput struct {

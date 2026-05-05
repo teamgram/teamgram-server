@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="user_auth_seq_events">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO user_auth_seq_events
+                (user_id, seq, date, operation_id, source_perm_auth_key_id, target_auth_policy, public_update_type, peer_type, peer_id, event_schema_version, event_codec, event_payload, event_payload_hash)
+            VALUES
+                (:user_id, :seq, :date, :operation_id, :source_perm_auth_key_id, :target_auth_policy, :public_update_type, :peer_type, :peer_id, :event_schema_version, :event_codec, :event_payload, :event_payload_hash)
+        </sql>
+    </operation>
+
+    <operation name="SelectByOperation">
+        <sql>
+            SELECT
+                user_id, seq, date, operation_id, source_perm_auth_key_id, target_auth_policy, public_update_type, peer_type, peer_id, event_schema_version, event_codec, event_payload, event_payload_hash
+            FROM
+                user_auth_seq_events
+            WHERE
+                user_id = :user_id AND operation_id = :operation_id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectAfterDate" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            SELECT
+                user_id, seq, date, operation_id, source_perm_auth_key_id, target_auth_policy, public_update_type, peer_type, peer_id, event_schema_version, event_codec, event_payload, event_payload_hash
+            FROM
+                user_auth_seq_events
+            WHERE
+                user_id = :user_id AND date &gt; :date
+            ORDER BY
+                seq LIMIT :limit
+        </sql>
+    </operation>
+</table>

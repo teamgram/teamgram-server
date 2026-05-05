@@ -20,7 +20,9 @@ package core
 import (
 	"fmt"
 
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UserupdatesAppendDialogPtsSideEffect
@@ -40,5 +42,26 @@ func (c *UserupdatesCore) UserupdatesAppendDialogPtsSideEffect(in *userupdates.T
 		return nil, err
 	}
 
-	return nil, userupdates.ErrAuthSeqLedgerUnavailable
+	result, err := c.svcCtx.Repo.AppendDialogPtsSideEffect(c.ctx, repository.DialogSideEffectAppendInput{
+		UserID:               in.UserId,
+		SourcePermAuthKeyID:  in.SourcePermAuthKeyId,
+		OperationID:          in.OperationId,
+		TargetAuthPolicy:     in.TargetAuthPolicy,
+		PublicUpdateType:     in.PublicUpdateType,
+		PeerType:             in.PeerType,
+		PeerID:               in.PeerId,
+		PayloadSchemaVersion: in.PayloadSchemaVersion,
+		Payload:              in.Payload,
+		PayloadHash:          in.PayloadHash,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return userupdates.MakeTLUserPtsAppendResult(&userupdates.TLUserPtsAppendResult{
+		UserId:         result.UserID,
+		OperationId:    result.OperationID,
+		Pts:            result.Pts,
+		PtsCount:       result.PtsCount,
+		AlreadyApplied: tg.ToBoolClazz(result.AlreadyApplied),
+	}).ToUserPtsAppendResult(), nil
 }
