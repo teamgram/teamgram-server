@@ -61,6 +61,14 @@ func buildUserConfig(c config.Config) userhelper.Config {
 	}
 }
 
+func buildDialogConfig(c config.Config) dialoghelper.Config {
+	return dialoghelper.Config{
+		RpcServerConf: c.RpcServerConf,
+		Mysql:         c.Mysql,
+		Userupdates:   withServiceName(c.UserupdatesClient, "RPCUserupdates"),
+	}
+}
+
 func New() *Server {
 	return new(Server)
 }
@@ -98,11 +106,7 @@ func (s *Server) Initialize() error {
 			// dialoghelper
 			_ = dialogservice.RegisterService(
 				s,
-				dialoghelper.New(dialoghelper.Config{
-					RpcServerConf: c.RpcServerConf,
-					Mysql:         c.Mysql,
-					//Cache:         c.Cache,
-				}))
+				dialoghelper.New(buildDialogConfig(c)))
 
 			// messagehelper
 			_ = messageservice.RegisterService(

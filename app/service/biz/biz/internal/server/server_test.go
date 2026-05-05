@@ -49,3 +49,33 @@ func TestBuildUserConfigForwardsStorageAndMediaClient(t *testing.T) {
 		t.Fatalf("expected media client service name RPCMedia, got %#v", got.MediaClient)
 	}
 }
+
+func TestBuildDialogConfigForwardsStorageAndUserupdatesClient(t *testing.T) {
+	src := bizconfig.Config{
+		RpcServerConf: kitex.RpcServerConf{
+			ListenOn: "127.0.0.1:20020",
+		},
+		Mysql: sqlx.Config{
+			DSN: "root:@tcp(127.0.0.1:3306)/teamgram",
+		},
+		UserupdatesClient: kitex.RpcClientConf{
+			DestService: "messenger.userupdates",
+			ServiceName: "messenger.userupdates",
+		},
+	}
+
+	got := buildDialogConfig(src)
+
+	if got.ListenOn != src.ListenOn {
+		t.Fatalf("expected listen_on %q, got %q", src.ListenOn, got.ListenOn)
+	}
+	if got.Mysql.DSN != src.Mysql.DSN {
+		t.Fatalf("expected mysql dsn to be forwarded, got %#v", got.Mysql)
+	}
+	if got.Userupdates.DestService != "messenger.userupdates" {
+		t.Fatalf("expected userupdates dest service to be forwarded, got %#v", got.Userupdates)
+	}
+	if got.Userupdates.ServiceName != "RPCUserupdates" {
+		t.Fatalf("expected userupdates service name RPCUserupdates, got %#v", got.Userupdates)
+	}
+}
