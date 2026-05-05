@@ -38,8 +38,10 @@ const (
 	DefaultOutboxWorkerBatchSize    = 100
 	DefaultOutboxWorkerLeaseSeconds = 30
 	DefaultOutboxWorkerPollSeconds  = 1
+	InitialRetryDelaySeconds        = 1
 	OutboxWorkerMaxRetryDelay       = 300
 	OutboxWorkerBlockedAttempts     = 20
+	OutboxWorkerBlockedAgeSeconds   = 3600
 )
 
 type ToggleDialogPinInput struct {

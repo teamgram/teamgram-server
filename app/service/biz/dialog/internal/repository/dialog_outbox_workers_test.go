@@ -4,6 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -199,6 +202,97 @@ func TestDialogOutboxWorkerRetryAndBlockedState(t *testing.T) {
 	}
 	if blockGot.Status != OutboxStatusBlocked || blockGot.LastErrorKind != "userupdates_append_pts" {
 		t.Fatalf("blocked state = status:%d kind:%q, want status:%d kind userupdates_append_pts", blockGot.Status, blockGot.LastErrorKind, OutboxStatusBlocked)
+	}
+}
+
+func TestOutboxRetryDelayIsCapped(t *testing.T) {
+	if got := nextOutboxRetry(99); got != time.Duration(OutboxWorkerMaxRetryDelay)*time.Second {
+		t.Fatalf("nextOutboxRetry(99) = %v, want %ds", got, OutboxWorkerMaxRetryDelay)
+	}
+	if got := nextOutboxRetry(0); got != time.Duration(InitialRetryDelaySeconds)*time.Second {
+		t.Fatalf("nextOutboxRetry(0) = %v, want initial delay", got)
+	}
+}
+
+func TestOutboxBlockedAfterAge(t *testing.T) {
+	ctx := context.Background()
+	repo := NewRepositoryWithDBForTest(openDialogIntegrationDB(t))
+	base := time.Now().UnixNano()
+	row := newPublicUpdateOutboxRow(base, fmt.Sprintf("public-age-block-%d", base), DeliveryPathUserupdatesPTS)
+	old := time.Now().UTC().Add(-time.Duration(OutboxWorkerBlockedAgeSeconds+1) * time.Second)
+	row.NextRetryAt = mysqlTimestamp(old)
+	if _, _, err := repo.model.DialogPublicUpdateOutboxModel.Insert(ctx, row); err != nil {
+		t.Fatalf("insert public update outbox: %v", err)
+	}
+
+	worker := NewDialogPublicUpdateOutboxWorker(repo, nil, testOutboxOptions("public-age-block"))
+	if err := worker.markPublicUpdateFailure(ctx, *row, "userupdates_append_pts", errors.New("ledger unavailable")); err != nil {
+		t.Fatalf("markPublicUpdateFailure() error = %v", err)
+	}
+
+	got, err := repo.model.DialogPublicUpdateOutboxModel.FindOne(ctx, row.OutboxId)
+	if err != nil {
+		t.Fatalf("FindOne() error = %v", err)
+	}
+	if got.Status != OutboxStatusBlocked {
+		t.Fatalf("status = %d, want blocked", got.Status)
+	}
+}
+
+func TestOutboxResetBlockedToPendingPreservesOperationID(t *testing.T) {
+	ctx := context.Background()
+	repo := NewRepositoryWithDBForTest(openDialogIntegrationDB(t))
+	base := time.Now().UnixNano()
+	row := newPublicUpdateOutboxRow(base, fmt.Sprintf("public-reset-%d", base), DeliveryPathUserupdatesPTS)
+	row.Status = OutboxStatusBlocked
+	row.AttemptCount = 9
+	row.LastErrorKind = "blocked"
+	row.LastErrorMessage = "payload preserved"
+	if _, _, err := repo.model.DialogPublicUpdateOutboxModel.Insert(ctx, row); err != nil {
+		t.Fatalf("insert public update outbox: %v", err)
+	}
+
+	if err := repo.ResetDialogPublicUpdateOutboxBlocked(ctx, []int64{row.OutboxId}); err != nil {
+		t.Fatalf("ResetDialogPublicUpdateOutboxBlocked() error = %v", err)
+	}
+
+	got, err := repo.model.DialogPublicUpdateOutboxModel.FindOne(ctx, row.OutboxId)
+	if err != nil {
+		t.Fatalf("FindOne() error = %v", err)
+	}
+	if got.Status != OutboxStatusPending || got.AttemptCount != 0 || got.LastErrorKind != "" || got.LastErrorMessage != "" {
+		t.Fatalf("reset state mismatch: %+v", got)
+	}
+	if got.OperationId != row.OperationId || string(got.Payload) != string(row.Payload) || string(got.PayloadHash) != string(row.PayloadHash) {
+		t.Fatalf("reset changed idempotency fields: got=%+v want operation=%q", got, row.OperationId)
+	}
+}
+
+func TestOutboxMetricsDoNotUsePayloadAsLabel(t *testing.T) {
+	var hits []string
+	for _, root := range []string{"."} {
+		err := filepath.WalkDir(root, func(path string, d os.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+			if d.IsDir() || filepath.Ext(path) != ".go" || strings.HasSuffix(path, "_test.go") {
+				return nil
+			}
+			b, err := os.ReadFile(path)
+			if err != nil {
+				return err
+			}
+			if strings.Contains(string(b), "Payload") && strings.Contains(string(b), "Label") {
+				hits = append(hits, path)
+			}
+			return nil
+		})
+		if err != nil {
+			t.Fatalf("scan metrics labels: %v", err)
+		}
+	}
+	if len(hits) != 0 {
+		t.Fatalf("payload appears in metric label paths: %v", hits)
 	}
 }
 

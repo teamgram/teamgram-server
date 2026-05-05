@@ -104,6 +104,22 @@ WHERE outbox_id = ?`
 	return nil
 }
 
+func (r *Repository) ResetDialogAuthSeqOutboxBlocked(ctx context.Context, ids []int64) error {
+	db, err := r.requireDB()
+	if err != nil {
+		return err
+	}
+	for _, id := range ids {
+		query := `UPDATE dialog_auth_seq_outbox
+SET status = ?, attempt_count = 0, next_retry_at = ?, lease_owner = '', lease_until = ?, last_error_kind = '', last_error_message = ''
+WHERE status = ? AND outbox_id = ?`
+		if _, err := db.Exec(ctx, query, OutboxStatusPending, mysqlTimestamp(time.Now().UTC()), mysqlZeroTime(), OutboxStatusBlocked, id); err != nil {
+			return storageError("reset dialog auth seq outbox blocked", err)
+		}
+	}
+	return nil
+}
+
 func (r *Repository) ClaimDialogPublicUpdateOutbox(ctx context.Context, owner string, now time.Time, leaseUntil time.Time, limit int32) ([]model.DialogPublicUpdateOutbox, error) {
 	db, err := r.requireDB()
 	if err != nil {
@@ -194,6 +210,22 @@ SET status = ?, lease_owner = '', lease_until = ?, last_error_kind = ?, last_err
 WHERE outbox_id = ?`
 	if _, err := db.Exec(ctx, query, OutboxStatusBlocked, mysqlZeroTime(), kind, truncateOutboxError(message), outboxID); err != nil {
 		return storageError("mark dialog public update outbox blocked", err)
+	}
+	return nil
+}
+
+func (r *Repository) ResetDialogPublicUpdateOutboxBlocked(ctx context.Context, ids []int64) error {
+	db, err := r.requireDB()
+	if err != nil {
+		return err
+	}
+	for _, id := range ids {
+		query := `UPDATE dialog_public_update_outbox
+SET status = ?, attempt_count = 0, next_retry_at = ?, lease_owner = '', lease_until = ?, last_error_kind = '', last_error_message = ''
+WHERE status = ? AND outbox_id = ?`
+		if _, err := db.Exec(ctx, query, OutboxStatusPending, mysqlTimestamp(time.Now().UTC()), mysqlZeroTime(), OutboxStatusBlocked, id); err != nil {
+			return storageError("reset dialog public update outbox blocked", err)
+		}
 	}
 	return nil
 }

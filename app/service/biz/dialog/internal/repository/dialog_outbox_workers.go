@@ -132,7 +132,7 @@ func (w *DialogAuthSeqOutboxWorker) processRow(ctx context.Context, row model.Di
 
 func (w *DialogAuthSeqOutboxWorker) markAuthSeqFailure(ctx context.Context, row model.DialogAuthSeqOutbox, kind string, err error) error {
 	next := nextOutboxRetry(row.AttemptCount + 1)
-	if row.AttemptCount+1 >= w.options.BlockedAttempt {
+	if row.AttemptCount+1 >= w.options.BlockedAttempt || outboxRetryAgeExceeded(row.NextRetryAt, time.Now().UTC()) {
 		return w.repo.MarkDialogAuthSeqOutboxBlocked(ctx, row.OutboxId, kind, err.Error())
 	}
 	return w.repo.MarkDialogAuthSeqOutboxRetryable(ctx, row.OutboxId, OutboxRetryState{
@@ -236,7 +236,7 @@ func (w *DialogPublicUpdateOutboxWorker) processRow(ctx context.Context, row mod
 
 func (w *DialogPublicUpdateOutboxWorker) markPublicUpdateFailure(ctx context.Context, row model.DialogPublicUpdateOutbox, kind string, err error) error {
 	next := nextOutboxRetry(row.AttemptCount + 1)
-	if row.AttemptCount+1 >= w.options.BlockedAttempt {
+	if row.AttemptCount+1 >= w.options.BlockedAttempt || outboxRetryAgeExceeded(row.NextRetryAt, time.Now().UTC()) {
 		return w.repo.MarkDialogPublicUpdateOutboxBlocked(ctx, row.OutboxId, kind, err.Error())
 	}
 	return w.repo.MarkDialogPublicUpdateOutboxRetryable(ctx, row.OutboxId, OutboxRetryState{
@@ -270,7 +270,7 @@ func nextOutboxRetry(attempt int32) time.Duration {
 	if attempt < 1 {
 		attempt = 1
 	}
-	seconds := int64(1)
+	seconds := int64(InitialRetryDelaySeconds)
 	for i := int32(1); i < attempt && seconds < OutboxWorkerMaxRetryDelay; i++ {
 		seconds *= 2
 	}
@@ -278,4 +278,15 @@ func nextOutboxRetry(attempt int32) time.Duration {
 		seconds = OutboxWorkerMaxRetryDelay
 	}
 	return time.Duration(seconds) * time.Second
+}
+
+func outboxRetryAgeExceeded(firstRetryAtText string, now time.Time) bool {
+	firstRetryAt, err := parseMysqlTimestamp(firstRetryAtText)
+	if err != nil {
+		return false
+	}
+	if firstRetryAt.IsZero() || firstRetryAt.Year() <= 1971 {
+		return false
+	}
+	return now.Sub(firstRetryAt.UTC()) >= time.Duration(OutboxWorkerBlockedAgeSeconds)*time.Second
 }
