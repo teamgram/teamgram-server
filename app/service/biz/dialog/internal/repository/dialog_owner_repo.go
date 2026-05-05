@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
@@ -103,11 +104,13 @@ func (r *Repository) ReorderPinnedDialogs(ctx context.Context, in ReorderPinnedD
 		if err != nil || duplicate {
 			return err
 		}
+		peerDialogIDs := make([]int64, 0, len(in.PeerOrder))
 		for i, peer := range in.PeerOrder {
 			peerDialogID, err := MakePeerDialogID(peer.PeerType, peer.PeerID)
 			if err != nil {
 				return fmt.Errorf("%w: %v", dialogpb.ErrInvalidPeer, err)
 			}
+			peerDialogIDs = append(peerDialogIDs, peerDialogID)
 			if in.FolderID == 0 {
 				if err := upsertMainPinPreference(txModels, in.UserID, peer.PeerType, peer.PeerID, peerDialogID, int64(i+1)); err != nil {
 					return err
@@ -117,6 +120,9 @@ func (r *Repository) ReorderPinnedDialogs(ctx context.Context, in ReorderPinnedD
 					return err
 				}
 			}
+		}
+		if err := clearOmittedPinnedPreferences(tx, in.UserID, in.FolderID, peerDialogIDs); err != nil {
+			return err
 		}
 		if err := incrementPreferenceVersion(txModels, in.UserID, scope, in.FolderID); err != nil {
 			return err
@@ -148,6 +154,12 @@ func (r *Repository) EditPeerFolders(ctx context.Context, in EditPeerFoldersInpu
 	}
 	err = db.Transact(ctx, func(tx *sqlx.Tx) error {
 		txModels := r.model.WithTx(tx)
+		oldFolderID := in.OldFolderID
+		if row, err := txModels.DialogPreferencesModel.SelectByUserPeer(in.UserID, in.PeerType, in.PeerID); err == nil {
+			oldFolderID = row.FolderId
+		} else if !errors.Is(err, model.ErrNotFound) {
+			return storageError("select old folder preference", err)
+		}
 		duplicate, err := insertPublicUpdateOutbox(txModels, publicUpdateOutboxInput{
 			OutboxID:            in.OutboxID,
 			SourceUserID:        in.UserID,
@@ -170,8 +182,8 @@ func (r *Repository) EditPeerFolders(ctx context.Context, in EditPeerFoldersInpu
 		if err := incrementPreferenceVersion(txModels, in.UserID, PreferenceScopeFolderMembership, in.NewFolderID); err != nil {
 			return err
 		}
-		if in.OldFolderID != in.NewFolderID {
-			if err := incrementPreferenceVersion(txModels, in.UserID, PreferenceScopeFolderMembership, in.OldFolderID); err != nil {
+		if oldFolderID != in.NewFolderID {
+			if err := incrementPreferenceVersion(txModels, in.UserID, PreferenceScopeFolderMembership, oldFolderID); err != nil {
 				return err
 			}
 		}
@@ -835,6 +847,29 @@ func hashPayload(b []byte) []byte {
 	out := make([]byte, len(sum))
 	copy(out, sum[:])
 	return out
+}
+
+func clearOmittedPinnedPreferences(tx *sqlx.Tx, userID int64, folderID int32, keepPeerDialogIDs []int64) error {
+	column := "main_pinned_order"
+	query := "UPDATE dialog_preferences SET main_pinned_order = 0 WHERE user_id = ? AND main_pinned_order > 0"
+	args := []interface{}{userID}
+	if folderID != 0 {
+		column = "folder_pinned_order"
+		query = "UPDATE dialog_preferences SET folder_pinned_order = 0 WHERE user_id = ? AND folder_id = ? AND folder_pinned_order > 0"
+		args = []interface{}{userID, folderID}
+	}
+	if len(keepPeerDialogIDs) > 0 {
+		placeholders := make([]string, 0, len(keepPeerDialogIDs))
+		for _, id := range keepPeerDialogIDs {
+			placeholders = append(placeholders, "?")
+			args = append(args, id)
+		}
+		query += " AND peer_dialog_id NOT IN (" + strings.Join(placeholders, ",") + ")"
+	}
+	if _, err := tx.Exec(query, args...); err != nil {
+		return storageError("clear omitted "+column, err)
+	}
+	return nil
 }
 
 func mysqlTimestamp(t time.Time) string {

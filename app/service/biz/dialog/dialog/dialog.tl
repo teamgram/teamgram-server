@@ -19,18 +19,19 @@ savedDialogList count:int dialogs:Vector<SavedDialog> = SavedDialogList;
 ---functions---
 dialog.saveDraftMessage user_id:long peer_type:int peer_id:long message:DraftMessage source_perm_auth_key_id:long operation_id:string outbox_id:long = Bool;
 dialog.clearDraftMessage user_id:long peer_type:int peer_id:long source_perm_auth_key_id:long operation_id:string outbox_id:long = Bool;
+dialog.clearDraftAfterSend user_id:long peer_type:int peer_id:long clear_before_date:int source_perm_auth_key_id:long source_operation_id:string outbox_id:long = Bool;
 dialog.getAllDrafts user_id:long = Vector<PeerWithDraftMessage>;
 dialog.clearAllDrafts user_id:long source_perm_auth_key_id:long operation_id:string outbox_ids:Vector<long> = Vector<PeerWithDraftMessage>;
 
 dialog.markDialogUnread user_id:long peer_type:int peer_id:long unread_mark:Bool = Bool;
-dialog.toggleDialogPin user_id:long peer_type:int peer_id:long pinned:Bool = Int32;
+dialog.toggleDialogPin user_id:long peer_type:int peer_id:long pinned:Bool source_perm_auth_key_id:long operation_id:string outbox_id:long = Int32;
 dialog.getDialogUnreadMarkList user_id:long = Vector<DialogPeer>;
 dialog.getDialogsByOffsetDate user_id:long exclude_pinned:Bool offset_date:int limit:int = Vector<DialogExt>;
 dialog.getDialogs user_id:long exclude_pinned:Bool folder_id:int = Vector<DialogExt>;
 dialog.getDialogsByIdList user_id:long id_list:Vector<long> = Vector<DialogExt>;
 dialog.getDialogsCount user_id:long exclude_pinned:Bool folder_id:int = Int32;
 dialog.getPinnedDialogs  user_id:long folder_id:int = Vector<DialogExt>;
-dialog.reorderPinnedDialogs user_id:long force:Bool folder_id:int id_list:Vector<long> = Bool;
+dialog.reorderPinnedDialogs user_id:long force:Bool folder_id:int id_list:Vector<long> source_perm_auth_key_id:long operation_id:string outbox_id:long = Bool;
 dialog.getDialogById user_id:long peer_type:int peer_id:long = DialogExt;
 
 dialog.getTopMessage user_id:long peer_type:int peer_id:long = Int32;
@@ -50,7 +51,7 @@ dialog.updateDialogFiltersOrder user_id:long order:Vector<int> = Bool;
 dialog.getDialogFilters user_id:long = Vector<DialogFilterExt>;
 
 dialog.getDialogFolder user_id:long folder_id:int = Vector<DialogExt>;
-dialog.editPeerFolders user_id:long peer_dialog_list:Vector<long> folder_id:int = Vector<DialogPinnedExt>;
+dialog.editPeerFolders user_id:long peer_dialog_list:Vector<long> folder_id:int source_perm_auth_key_id:long operation_id:string outbox_ids:Vector<long> = Vector<DialogPinnedExt>;
 
 dialog.getChannelMessageReadParticipants user_id:long channel_id:long msg_id:int = Vector<long>;
 

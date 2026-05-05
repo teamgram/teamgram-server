@@ -69,6 +69,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"/dialog.RPCDialog/dialog.clearDraftAfterSend": kitex.NewMethodInfo(
+		clearDraftAfterSendHandler,
+		newClearDraftAfterSendArgs,
+		newClearDraftAfterSendResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 	"/dialog.RPCDialog/dialog.getAllDrafts": kitex.NewMethodInfo(
 		getAllDraftsHandler,
 		newGetAllDraftsArgs,
@@ -673,6 +680,140 @@ func (p *ClearDraftMessageResult) IsSetSuccess() bool {
 }
 
 func (p *ClearDraftMessageResult) GetResult() interface{} {
+	return p.Success
+}
+
+func clearDraftAfterSendHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*ClearDraftAfterSendArgs)
+	realResult := result.(*ClearDraftAfterSendResult)
+	success, err := handler.(dialog.RPCDialog).DialogClearDraftAfterSend(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newClearDraftAfterSendArgs() interface{} {
+	return &ClearDraftAfterSendArgs{}
+}
+
+func newClearDraftAfterSendResult() interface{} {
+	return &ClearDraftAfterSendResult{}
+}
+
+type ClearDraftAfterSendArgs struct {
+	Req *dialog.TLDialogClearDraftAfterSend
+}
+
+func (p *ClearDraftAfterSendArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in ClearDraftAfterSendArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *ClearDraftAfterSendArgs) Unmarshal(in []byte) error {
+	msg := new(dialog.TLDialogClearDraftAfterSend)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *ClearDraftAfterSendArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in ClearDraftAfterSendArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *ClearDraftAfterSendArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(dialog.TLDialogClearDraftAfterSend)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var ClearDraftAfterSendArgs_Req_DEFAULT *dialog.TLDialogClearDraftAfterSend
+
+func (p *ClearDraftAfterSendArgs) GetReq() *dialog.TLDialogClearDraftAfterSend {
+	if !p.IsSetReq() {
+		return ClearDraftAfterSendArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *ClearDraftAfterSendArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type ClearDraftAfterSendResult struct {
+	Success *tg.Bool
+}
+
+var ClearDraftAfterSendResult_Success_DEFAULT *tg.Bool
+
+func (p *ClearDraftAfterSendResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in ClearDraftAfterSendResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *ClearDraftAfterSendResult) Unmarshal(in []byte) error {
+	msg := new(tg.Bool)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ClearDraftAfterSendResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in ClearDraftAfterSendResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *ClearDraftAfterSendResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.Bool)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ClearDraftAfterSendResult) GetSuccess() *tg.Bool {
+	if !p.IsSetSuccess() {
+		return ClearDraftAfterSendResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ClearDraftAfterSendResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.Bool)
+}
+
+func (p *ClearDraftAfterSendResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ClearDraftAfterSendResult) GetResult() interface{} {
 	return p.Success
 }
 
@@ -5796,6 +5937,18 @@ func (p *kClient) DialogClearDraftMessage(ctx context.Context, req *dialog.TLDia
 	var _result ClearDraftMessageResult
 
 	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.clearDraftMessage", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) DialogClearDraftAfterSend(ctx context.Context, req *dialog.TLDialogClearDraftAfterSend) (r *tg.Bool, err error) {
+	// var _args ClearDraftAfterSendArgs
+	// _args.Req = req
+	var _result ClearDraftAfterSendResult
+
+	if err = p.c.Call(ctx, "/dialog.RPCDialog/dialog.clearDraftAfterSend", req, &_result); err != nil {
 		return
 	}
 

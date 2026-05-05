@@ -27,6 +27,7 @@ var _ *tg.Bool
 type Client interface {
 	DialogSaveDraftMessage(ctx context.Context, req *dialog.TLDialogSaveDraftMessage, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	DialogClearDraftMessage(ctx context.Context, req *dialog.TLDialogClearDraftMessage, callOptions ...callopt.Option) (r *tg.Bool, err error)
+	DialogClearDraftAfterSend(ctx context.Context, req *dialog.TLDialogClearDraftAfterSend, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	DialogGetAllDrafts(ctx context.Context, req *dialog.TLDialogGetAllDrafts, callOptions ...callopt.Option) (r *dialog.VectorPeerWithDraftMessage, err error)
 	DialogClearAllDrafts(ctx context.Context, req *dialog.TLDialogClearAllDrafts, callOptions ...callopt.Option) (r *dialog.VectorPeerWithDraftMessage, err error)
 	DialogMarkDialogUnread(ctx context.Context, req *dialog.TLDialogMarkDialogUnread, callOptions ...callopt.Option) (r *tg.Bool, err error)
@@ -112,6 +113,11 @@ func (p *kDialogClient) DialogSaveDraftMessage(ctx context.Context, req *dialog.
 func (p *kDialogClient) DialogClearDraftMessage(ctx context.Context, req *dialog.TLDialogClearDraftMessage, callOptions ...callopt.Option) (r *tg.Bool, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.DialogClearDraftMessage(ctx, req)
+}
+
+func (p *kDialogClient) DialogClearDraftAfterSend(ctx context.Context, req *dialog.TLDialogClearDraftAfterSend, callOptions ...callopt.Option) (r *tg.Bool, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DialogClearDraftAfterSend(ctx, req)
 }
 
 func (p *kDialogClient) DialogGetAllDrafts(ctx context.Context, req *dialog.TLDialogGetAllDrafts, callOptions ...callopt.Option) (r *dialog.VectorPeerWithDraftMessage, err error) {

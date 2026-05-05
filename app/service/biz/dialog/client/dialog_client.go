@@ -25,6 +25,7 @@ var _ *tg.Bool
 type DialogClient interface {
 	DialogSaveDraftMessage(ctx context.Context, in *dialog.TLDialogSaveDraftMessage) (*tg.Bool, error)
 	DialogClearDraftMessage(ctx context.Context, in *dialog.TLDialogClearDraftMessage) (*tg.Bool, error)
+	DialogClearDraftAfterSend(ctx context.Context, in *dialog.TLDialogClearDraftAfterSend) (*tg.Bool, error)
 	DialogGetAllDrafts(ctx context.Context, in *dialog.TLDialogGetAllDrafts) (*dialog.VectorPeerWithDraftMessage, error)
 	DialogClearAllDrafts(ctx context.Context, in *dialog.TLDialogClearAllDrafts) (*dialog.VectorPeerWithDraftMessage, error)
 	DialogMarkDialogUnread(ctx context.Context, in *dialog.TLDialogMarkDialogUnread) (*tg.Bool, error)
@@ -89,6 +90,12 @@ func (m *defaultDialogClient) DialogClearDraftMessage(ctx context.Context, in *d
 	return m.rpc.DialogClearDraftMessage(ctx, in)
 }
 
+// DialogClearDraftAfterSend
+// dialog.clearDraftAfterSend user_id:long peer_type:int peer_id:long clear_before_date:int source_perm_auth_key_id:long source_operation_id:string outbox_id:long = Bool;
+func (m *defaultDialogClient) DialogClearDraftAfterSend(ctx context.Context, in *dialog.TLDialogClearDraftAfterSend) (*tg.Bool, error) {
+	return m.rpc.DialogClearDraftAfterSend(ctx, in)
+}
+
 // DialogGetAllDrafts
 // dialog.getAllDrafts user_id:long = Vector<PeerWithDraftMessage>;
 func (m *defaultDialogClient) DialogGetAllDrafts(ctx context.Context, in *dialog.TLDialogGetAllDrafts) (*dialog.VectorPeerWithDraftMessage, error) {
@@ -108,7 +115,7 @@ func (m *defaultDialogClient) DialogMarkDialogUnread(ctx context.Context, in *di
 }
 
 // DialogToggleDialogPin
-// dialog.toggleDialogPin user_id:long peer_type:int peer_id:long pinned:Bool = Int32;
+// dialog.toggleDialogPin user_id:long peer_type:int peer_id:long pinned:Bool source_perm_auth_key_id:long operation_id:string outbox_id:long = Int32;
 func (m *defaultDialogClient) DialogToggleDialogPin(ctx context.Context, in *dialog.TLDialogToggleDialogPin) (*tg.Int32, error) {
 	return m.rpc.DialogToggleDialogPin(ctx, in)
 }
@@ -150,7 +157,7 @@ func (m *defaultDialogClient) DialogGetPinnedDialogs(ctx context.Context, in *di
 }
 
 // DialogReorderPinnedDialogs
-// dialog.reorderPinnedDialogs user_id:long force:Bool folder_id:int id_list:Vector<long> = Bool;
+// dialog.reorderPinnedDialogs user_id:long force:Bool folder_id:int id_list:Vector<long> source_perm_auth_key_id:long operation_id:string outbox_id:long = Bool;
 func (m *defaultDialogClient) DialogReorderPinnedDialogs(ctx context.Context, in *dialog.TLDialogReorderPinnedDialogs) (*tg.Bool, error) {
 	return m.rpc.DialogReorderPinnedDialogs(ctx, in)
 }
@@ -222,7 +229,7 @@ func (m *defaultDialogClient) DialogGetDialogFolder(ctx context.Context, in *dia
 }
 
 // DialogEditPeerFolders
-// dialog.editPeerFolders user_id:long peer_dialog_list:Vector<long> folder_id:int = Vector<DialogPinnedExt>;
+// dialog.editPeerFolders user_id:long peer_dialog_list:Vector<long> folder_id:int source_perm_auth_key_id:long operation_id:string outbox_ids:Vector<long> = Vector<DialogPinnedExt>;
 func (m *defaultDialogClient) DialogEditPeerFolders(ctx context.Context, in *dialog.TLDialogEditPeerFolders) (*dialog.VectorDialogPinnedExt, error) {
 	return m.rpc.DialogEditPeerFolders(ctx, in)
 }

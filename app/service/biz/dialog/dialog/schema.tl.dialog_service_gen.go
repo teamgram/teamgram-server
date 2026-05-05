@@ -191,6 +191,87 @@ func (m *TLDialogClearDraftMessage) Decode(d *bin.Decoder) (err error) {
 	}
 }
 
+// TLDialogClearDraftAfterSend <--
+type TLDialogClearDraftAfterSend struct {
+	ClazzID             uint32 `json:"_id"`
+	UserId              int64  `json:"user_id"`
+	PeerType            int32  `json:"peer_type"`
+	PeerId              int64  `json:"peer_id"`
+	ClearBeforeDate     int32  `json:"clear_before_date"`
+	SourcePermAuthKeyId int64  `json:"source_perm_auth_key_id"`
+	SourceOperationId   string `json:"source_operation_id"`
+	OutboxId            int64  `json:"outbox_id"`
+}
+
+func (m *TLDialogClearDraftAfterSend) String() string {
+	return iface.DebugStringWithName(ClazzName_dialog_clearDraftAfterSend, m)
+}
+
+// Encode <--
+func (m *TLDialogClearDraftAfterSend) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_clearDraftAfterSend, int(layer)); clazzId {
+	case 0xda48bb0b:
+		x.PutClazzID(0xda48bb0b)
+
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
+		x.PutInt32(m.ClearBeforeDate)
+		x.PutInt64(m.SourcePermAuthKeyId)
+		x.PutString(m.SourceOperationId)
+		x.PutInt64(m.OutboxId)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode dialog_clearDraftAfterSend: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLDialogClearDraftAfterSend) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_clearDraftAfterSend: constructor: %w", err)
+		}
+	}
+	switch m.ClazzID {
+	case 0xda48bb0b:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_clearDraftAfterSend#0xda48bb0b: field user_id: %w", err)
+		}
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_clearDraftAfterSend#0xda48bb0b: field peer_type: %w", err)
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_clearDraftAfterSend#0xda48bb0b: field peer_id: %w", err)
+		}
+		m.ClearBeforeDate, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_clearDraftAfterSend#0xda48bb0b: field clear_before_date: %w", err)
+		}
+		m.SourcePermAuthKeyId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_clearDraftAfterSend#0xda48bb0b: field source_perm_auth_key_id: %w", err)
+		}
+		m.SourceOperationId, err = d.String()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_clearDraftAfterSend#0xda48bb0b: field source_operation_id: %w", err)
+		}
+		m.OutboxId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_clearDraftAfterSend#0xda48bb0b: field outbox_id: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode dialog_clearDraftAfterSend: invalid constructor %x", m.ClazzID)
+	}
+}
+
 // TLDialogGetAllDrafts <--
 type TLDialogGetAllDrafts struct {
 	ClazzID uint32 `json:"_id"`
@@ -372,11 +453,14 @@ func (m *TLDialogMarkDialogUnread) Decode(d *bin.Decoder) (err error) {
 
 // TLDialogToggleDialogPin <--
 type TLDialogToggleDialogPin struct {
-	ClazzID  uint32       `json:"_id"`
-	UserId   int64        `json:"user_id"`
-	PeerType int32        `json:"peer_type"`
-	PeerId   int64        `json:"peer_id"`
-	Pinned   tg.BoolClazz `json:"pinned"`
+	ClazzID             uint32       `json:"_id"`
+	UserId              int64        `json:"user_id"`
+	PeerType            int32        `json:"peer_type"`
+	PeerId              int64        `json:"peer_id"`
+	Pinned              tg.BoolClazz `json:"pinned"`
+	SourcePermAuthKeyId int64        `json:"source_perm_auth_key_id"`
+	OperationId         string       `json:"operation_id"`
+	OutboxId            int64        `json:"outbox_id"`
 }
 
 func (m *TLDialogToggleDialogPin) String() string {
@@ -386,18 +470,21 @@ func (m *TLDialogToggleDialogPin) String() string {
 // Encode <--
 func (m *TLDialogToggleDialogPin) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_toggleDialogPin, int(layer)); clazzId {
-	case 0x867ee52f:
-		x.PutClazzID(0x867ee52f)
+	case 0x6ad45bb4:
+		x.PutClazzID(0x6ad45bb4)
 
 		x.PutInt64(m.UserId)
 		x.PutInt32(m.PeerType)
 		x.PutInt64(m.PeerId)
 		if m.Pinned == nil {
-			return fmt.Errorf("unable to encode dialog_toggleDialogPin#0x867ee52f: field pinned is nil")
+			return fmt.Errorf("unable to encode dialog_toggleDialogPin#0x6ad45bb4: field pinned is nil")
 		}
 		if err := m.Pinned.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to encode dialog_toggleDialogPin#0x867ee52f: field pinned: %w", err)
+			return fmt.Errorf("unable to encode dialog_toggleDialogPin#0x6ad45bb4: field pinned: %w", err)
 		}
+		x.PutInt64(m.SourcePermAuthKeyId)
+		x.PutString(m.OperationId)
+		x.PutInt64(m.OutboxId)
 
 		return nil
 	default:
@@ -414,23 +501,36 @@ func (m *TLDialogToggleDialogPin) Decode(d *bin.Decoder) (err error) {
 		}
 	}
 	switch m.ClazzID {
-	case 0x867ee52f:
+	case 0x6ad45bb4:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialog_toggleDialogPin#0x867ee52f: field user_id: %w", err)
+			return fmt.Errorf("unable to decode dialog_toggleDialogPin#0x6ad45bb4: field user_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialog_toggleDialogPin#0x867ee52f: field peer_type: %w", err)
+			return fmt.Errorf("unable to decode dialog_toggleDialogPin#0x6ad45bb4: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialog_toggleDialogPin#0x867ee52f: field peer_id: %w", err)
+			return fmt.Errorf("unable to decode dialog_toggleDialogPin#0x6ad45bb4: field peer_id: %w", err)
 		}
 
 		m.Pinned, err = tg.DecodeBoolClazz(d)
 		if err != nil {
-			return fmt.Errorf("unable to decode dialog_toggleDialogPin#0x867ee52f: field pinned: %w", err)
+			return fmt.Errorf("unable to decode dialog_toggleDialogPin#0x6ad45bb4: field pinned: %w", err)
+		}
+
+		m.SourcePermAuthKeyId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_toggleDialogPin#0x6ad45bb4: field source_perm_auth_key_id: %w", err)
+		}
+		m.OperationId, err = d.String()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_toggleDialogPin#0x6ad45bb4: field operation_id: %w", err)
+		}
+		m.OutboxId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_toggleDialogPin#0x6ad45bb4: field outbox_id: %w", err)
 		}
 
 		return nil
@@ -788,11 +888,14 @@ func (m *TLDialogGetPinnedDialogs) Decode(d *bin.Decoder) (err error) {
 
 // TLDialogReorderPinnedDialogs <--
 type TLDialogReorderPinnedDialogs struct {
-	ClazzID  uint32       `json:"_id"`
-	UserId   int64        `json:"user_id"`
-	Force    tg.BoolClazz `json:"force"`
-	FolderId int32        `json:"folder_id"`
-	IdList   []int64      `json:"id_list"`
+	ClazzID             uint32       `json:"_id"`
+	UserId              int64        `json:"user_id"`
+	Force               tg.BoolClazz `json:"force"`
+	FolderId            int32        `json:"folder_id"`
+	IdList              []int64      `json:"id_list"`
+	SourcePermAuthKeyId int64        `json:"source_perm_auth_key_id"`
+	OperationId         string       `json:"operation_id"`
+	OutboxId            int64        `json:"outbox_id"`
 }
 
 func (m *TLDialogReorderPinnedDialogs) String() string {
@@ -802,19 +905,23 @@ func (m *TLDialogReorderPinnedDialogs) String() string {
 // Encode <--
 func (m *TLDialogReorderPinnedDialogs) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_reorderPinnedDialogs, int(layer)); clazzId {
-	case 0xfee33567:
-		x.PutClazzID(0xfee33567)
+	case 0x3aff2348:
+		x.PutClazzID(0x3aff2348)
 
 		x.PutInt64(m.UserId)
 		if m.Force == nil {
-			return fmt.Errorf("unable to encode dialog_reorderPinnedDialogs#0xfee33567: field force is nil")
+			return fmt.Errorf("unable to encode dialog_reorderPinnedDialogs#0x3aff2348: field force is nil")
 		}
 		if err := m.Force.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to encode dialog_reorderPinnedDialogs#0xfee33567: field force: %w", err)
+			return fmt.Errorf("unable to encode dialog_reorderPinnedDialogs#0x3aff2348: field force: %w", err)
 		}
 		x.PutInt32(m.FolderId)
 
 		iface.EncodeInt64List(x, m.IdList)
+
+		x.PutInt64(m.SourcePermAuthKeyId)
+		x.PutString(m.OperationId)
+		x.PutInt64(m.OutboxId)
 
 		return nil
 	default:
@@ -831,25 +938,38 @@ func (m *TLDialogReorderPinnedDialogs) Decode(d *bin.Decoder) (err error) {
 		}
 	}
 	switch m.ClazzID {
-	case 0xfee33567:
+	case 0x3aff2348:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialog_reorderPinnedDialogs#0xfee33567: field user_id: %w", err)
+			return fmt.Errorf("unable to decode dialog_reorderPinnedDialogs#0x3aff2348: field user_id: %w", err)
 		}
 
 		m.Force, err = tg.DecodeBoolClazz(d)
 		if err != nil {
-			return fmt.Errorf("unable to decode dialog_reorderPinnedDialogs#0xfee33567: field force: %w", err)
+			return fmt.Errorf("unable to decode dialog_reorderPinnedDialogs#0x3aff2348: field force: %w", err)
 		}
 
 		m.FolderId, err = d.Int32()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialog_reorderPinnedDialogs#0xfee33567: field folder_id: %w", err)
+			return fmt.Errorf("unable to decode dialog_reorderPinnedDialogs#0x3aff2348: field folder_id: %w", err)
 		}
 
 		m.IdList, err = iface.DecodeInt64List(d)
 		if err != nil {
-			return fmt.Errorf("unable to decode dialog_reorderPinnedDialogs#0xfee33567: field id_list: %w", err)
+			return fmt.Errorf("unable to decode dialog_reorderPinnedDialogs#0x3aff2348: field id_list: %w", err)
+		}
+
+		m.SourcePermAuthKeyId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_reorderPinnedDialogs#0x3aff2348: field source_perm_auth_key_id: %w", err)
+		}
+		m.OperationId, err = d.String()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_reorderPinnedDialogs#0x3aff2348: field operation_id: %w", err)
+		}
+		m.OutboxId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_reorderPinnedDialogs#0x3aff2348: field outbox_id: %w", err)
 		}
 
 		return nil
@@ -1584,10 +1704,13 @@ func (m *TLDialogGetDialogFolder) Decode(d *bin.Decoder) (err error) {
 
 // TLDialogEditPeerFolders <--
 type TLDialogEditPeerFolders struct {
-	ClazzID        uint32  `json:"_id"`
-	UserId         int64   `json:"user_id"`
-	PeerDialogList []int64 `json:"peer_dialog_list"`
-	FolderId       int32   `json:"folder_id"`
+	ClazzID             uint32  `json:"_id"`
+	UserId              int64   `json:"user_id"`
+	PeerDialogList      []int64 `json:"peer_dialog_list"`
+	FolderId            int32   `json:"folder_id"`
+	SourcePermAuthKeyId int64   `json:"source_perm_auth_key_id"`
+	OperationId         string  `json:"operation_id"`
+	OutboxIds           []int64 `json:"outbox_ids"`
 }
 
 func (m *TLDialogEditPeerFolders) String() string {
@@ -1597,14 +1720,18 @@ func (m *TLDialogEditPeerFolders) String() string {
 // Encode <--
 func (m *TLDialogEditPeerFolders) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_editPeerFolders, int(layer)); clazzId {
-	case 0x2446869a:
-		x.PutClazzID(0x2446869a)
+	case 0xfbe6f2f:
+		x.PutClazzID(0xfbe6f2f)
 
 		x.PutInt64(m.UserId)
 
 		iface.EncodeInt64List(x, m.PeerDialogList)
 
 		x.PutInt32(m.FolderId)
+		x.PutInt64(m.SourcePermAuthKeyId)
+		x.PutString(m.OperationId)
+
+		iface.EncodeInt64List(x, m.OutboxIds)
 
 		return nil
 	default:
@@ -1621,20 +1748,33 @@ func (m *TLDialogEditPeerFolders) Decode(d *bin.Decoder) (err error) {
 		}
 	}
 	switch m.ClazzID {
-	case 0x2446869a:
+	case 0xfbe6f2f:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialog_editPeerFolders#0x2446869a: field user_id: %w", err)
+			return fmt.Errorf("unable to decode dialog_editPeerFolders#0xfbe6f2f: field user_id: %w", err)
 		}
 
 		m.PeerDialogList, err = iface.DecodeInt64List(d)
 		if err != nil {
-			return fmt.Errorf("unable to decode dialog_editPeerFolders#0x2446869a: field peer_dialog_list: %w", err)
+			return fmt.Errorf("unable to decode dialog_editPeerFolders#0xfbe6f2f: field peer_dialog_list: %w", err)
 		}
 
 		m.FolderId, err = d.Int32()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialog_editPeerFolders#0x2446869a: field folder_id: %w", err)
+			return fmt.Errorf("unable to decode dialog_editPeerFolders#0xfbe6f2f: field folder_id: %w", err)
+		}
+		m.SourcePermAuthKeyId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_editPeerFolders#0xfbe6f2f: field source_perm_auth_key_id: %w", err)
+		}
+		m.OperationId, err = d.String()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_editPeerFolders#0xfbe6f2f: field operation_id: %w", err)
+		}
+
+		m.OutboxIds, err = iface.DecodeInt64List(d)
+		if err != nil {
+			return fmt.Errorf("unable to decode dialog_editPeerFolders#0xfbe6f2f: field outbox_ids: %w", err)
 		}
 
 		return nil
@@ -2812,6 +2952,7 @@ func (m *VectorLong) Decode(d *bin.Decoder) (err error) {
 type RPCDialog interface {
 	DialogSaveDraftMessage(ctx context.Context, in *TLDialogSaveDraftMessage) (*tg.Bool, error)
 	DialogClearDraftMessage(ctx context.Context, in *TLDialogClearDraftMessage) (*tg.Bool, error)
+	DialogClearDraftAfterSend(ctx context.Context, in *TLDialogClearDraftAfterSend) (*tg.Bool, error)
 	DialogGetAllDrafts(ctx context.Context, in *TLDialogGetAllDrafts) (*VectorPeerWithDraftMessage, error)
 	DialogClearAllDrafts(ctx context.Context, in *TLDialogClearAllDrafts) (*VectorPeerWithDraftMessage, error)
 	DialogMarkDialogUnread(ctx context.Context, in *TLDialogMarkDialogUnread) (*tg.Bool, error)

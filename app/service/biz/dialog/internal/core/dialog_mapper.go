@@ -9,9 +9,13 @@ import (
 func makeDialogExt(record repository.DialogRecord) *dialogpb.DialogExt {
 	folderID := record.FolderID
 	ttlPeriod := record.TTLPeriod
+	order := record.Order
+	if order == 0 {
+		order = record.PeerDialogID
+	}
 
 	return dialogpb.MakeTLDialogExt(&dialogpb.TLDialogExt{
-		Order: record.PeerDialogID,
+		Order: order,
 		Dialog: tg.MakeTLDialog(&tg.TLDialog{
 			Pinned:               record.Pinned != 0,
 			UnreadMark:           record.UnreadMark,

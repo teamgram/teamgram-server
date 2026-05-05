@@ -17,14 +17,45 @@
 package core
 
 import (
+	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesToggleDialogPin
 // messages.toggleDialogPin#a731e257 flags:# pinned:flags.0?true peer:InputDialogPeer = Bool;
 func (c *DialogsCore) MessagesToggleDialogPin(in *tg.TLMessagesToggleDialogPin) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.toggleDialogPin - error: method MessagesToggleDialogPin not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if c.MD == nil || c.MD.UserId <= 0 {
+		return nil, tg.ErrUserIdInvalid
+	}
+	if c.MD.PermAuthKeyId <= 0 {
+		return nil, tg.ErrAuthKeyPermEmpty
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	peer, err := c.resolveInputDialogPeer(in.Peer)
+	if err != nil {
+		return nil, err
+	}
+	peerType, err := dialogFacadePeerType(peer.PeerType)
+	if err != nil {
+		return nil, err
+	}
+	token := dialogOperationToken()
+	operationID := dialogOperationID("toggle_pin", c.MD.UserId, token)
+	_, err = c.svcCtx.Repo.DialogClient.DialogToggleDialogPin(c.ctx, &dialogpb.TLDialogToggleDialogPin{
+		UserId:              c.MD.UserId,
+		PeerType:            peerType,
+		PeerId:              peer.PeerId,
+		Pinned:              tg.ToBoolClazz(in.Pinned),
+		SourcePermAuthKeyId: c.MD.PermAuthKeyId,
+		OperationId:         operationID,
+		OutboxId:            dialogOutboxID(operationID),
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.toggleDialogPin - dialog.toggleDialogPin failed: user_id: %d, peer_type: %d, peer_id: %d, err: %v",
+			c.MD.UserId, peerType, peer.PeerId, err)
+		return nil, tg.ErrInternalServerError
+	}
+	return tg.BoolTrue, nil
 }

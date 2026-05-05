@@ -1,4 +1,5 @@
-// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
+// Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
+//  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,33 +18,31 @@
 package core
 
 import (
+	"time"
+
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-// DialogReorderPinnedDialogs
-// dialog.reorderPinnedDialogs user_id:long force:Bool folder_id:int id_list:Vector<long> = Bool;
-func (c *DialogCore) DialogReorderPinnedDialogs(in *dialog.TLDialogReorderPinnedDialogs) (*tg.Bool, error) {
+// DialogClearDraftAfterSend
+// dialog.clearDraftAfterSend user_id:long peer_type:int peer_id:long clear_before_date:int source_perm_auth_key_id:long source_operation_id:string outbox_id:long = Bool;
+func (c *DialogCore) DialogClearDraftAfterSend(in *dialog.TLDialogClearDraftAfterSend) (*tg.Bool, error) {
 	if in == nil {
 		return nil, dialog.ErrDialogInvalid
 	}
-	peers := make([]repository.PeerRef, 0, len(in.IdList))
-	for _, id := range in.IdList {
-		peer, err := repository.SplitPeerDialogID(id)
-		if err != nil {
-			return nil, err
-		}
-		peers = append(peers, peer)
+	if in.SourceOperationId == "" {
+		return nil, dialog.ErrOutboxUnavailable
 	}
-	_, err := c.svcCtx.Repo.ReorderPinnedDialogs(c.ctx, repository.ReorderPinnedDialogsInput{
+	_, err := c.svcCtx.Repo.ClearDraftAfterSend(c.ctx, repository.ClearDraftAfterSendInput{
 		UserID:              in.UserId,
-		FolderID:            in.FolderId,
-		PeerOrder:           peers,
+		PeerType:            in.PeerType,
+		PeerID:              in.PeerId,
+		ClearBeforeDate:     time.Unix(int64(in.ClearBeforeDate), 0).UTC(),
 		SourcePermAuthKeyID: in.SourcePermAuthKeyId,
-		OperationID:         in.OperationId,
+		OperationID:         in.SourceOperationId,
 		OutboxID:            in.OutboxId,
-		EventType:           "dialog.pinnedDialogsReordered",
+		EventType:           "dialog.draftClearedAfterSend",
 		Payload:             []byte(`{"schema_version":1}`),
 	})
 	if err != nil {

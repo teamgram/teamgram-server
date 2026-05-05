@@ -24,11 +24,26 @@ import (
 
 type dialogsFakeDialogClient struct {
 	dialogclient.DialogClient
-	getDialogs func(context.Context, *dialogpb.TLDialogGetDialogs) (*dialogpb.VectorDialogExt, error)
+	getDialogs       func(context.Context, *dialogpb.TLDialogGetDialogs) (*dialogpb.VectorDialogExt, error)
+	getPinnedDialogs func(context.Context, *dialogpb.TLDialogGetPinnedDialogs) (*dialogpb.VectorDialogExt, error)
+	toggleDialogPin  func(context.Context, *dialogpb.TLDialogToggleDialogPin) (*tg.Int32, error)
+	reorderPinned    func(context.Context, *dialogpb.TLDialogReorderPinnedDialogs) (*tg.Bool, error)
 }
 
 func (f *dialogsFakeDialogClient) DialogGetDialogs(ctx context.Context, in *dialogpb.TLDialogGetDialogs) (*dialogpb.VectorDialogExt, error) {
 	return f.getDialogs(ctx, in)
+}
+
+func (f *dialogsFakeDialogClient) DialogGetPinnedDialogs(ctx context.Context, in *dialogpb.TLDialogGetPinnedDialogs) (*dialogpb.VectorDialogExt, error) {
+	return f.getPinnedDialogs(ctx, in)
+}
+
+func (f *dialogsFakeDialogClient) DialogToggleDialogPin(ctx context.Context, in *dialogpb.TLDialogToggleDialogPin) (*tg.Int32, error) {
+	return f.toggleDialogPin(ctx, in)
+}
+
+func (f *dialogsFakeDialogClient) DialogReorderPinnedDialogs(ctx context.Context, in *dialogpb.TLDialogReorderPinnedDialogs) (*tg.Bool, error) {
+	return f.reorderPinned(ctx, in)
 }
 
 type dialogsFakeUserClient struct {
@@ -60,8 +75,9 @@ func (f *dialogsFakeMsgClient) MsgGetHistory(ctx context.Context, in *msg.TLMsgG
 
 type dialogsFakeUserupdatesClient struct {
 	userupdatesclient.UserupdatesClient
-	getState      func(context.Context, *userupdates.TLUserupdatesGetState) (*userupdates.UserState, error)
-	getDifference func(context.Context, *userupdates.TLUserupdatesGetDifference) (*userupdates.UserDifference, error)
+	getState          func(context.Context, *userupdates.TLUserupdatesGetState) (*userupdates.UserState, error)
+	getDifference     func(context.Context, *userupdates.TLUserupdatesGetDifference) (*userupdates.UserDifference, error)
+	getDialogsByPeers func(context.Context, *userupdates.TLUserupdatesGetDialogsByPeers) (*userupdates.VectorDialogProjection, error)
 }
 
 func (f *dialogsFakeUserupdatesClient) UserupdatesGetState(ctx context.Context, in *userupdates.TLUserupdatesGetState) (*userupdates.UserState, error) {
@@ -72,9 +88,13 @@ func (f *dialogsFakeUserupdatesClient) UserupdatesGetDifference(ctx context.Cont
 	return f.getDifference(ctx, in)
 }
 
+func (f *dialogsFakeUserupdatesClient) UserupdatesGetDialogsByPeers(ctx context.Context, in *userupdates.TLUserupdatesGetDialogsByPeers) (*userupdates.VectorDialogProjection, error) {
+	return f.getDialogsByPeers(ctx, in)
+}
+
 func newDialogsGetDialogsCore(repo *repository.Repository, selfID int64) *DialogsCore {
 	c := New(context.Background(), &svc.ServiceContext{Repo: repo})
-	c.MD = &metadata.RpcMetadata{UserId: selfID}
+	c.MD = &metadata.RpcMetadata{UserId: selfID, PermAuthKeyId: 9001}
 	return c
 }
 
@@ -439,7 +459,13 @@ func TestMessagesGetPeerDialogsEmptyVectorReturnsEmptyPeerDialogs(t *testing.T) 
 }
 
 func TestMessagesGetPinnedDialogsReturnsEmptyPeerDialogs(t *testing.T) {
-	c := newDialogsGetDialogsCore(&repository.Repository{}, 100)
+	c := newDialogsGetDialogsCore(&repository.Repository{
+		DialogClient: &dialogsFakeDialogClient{
+			getPinnedDialogs: func(context.Context, *dialogpb.TLDialogGetPinnedDialogs) (*dialogpb.VectorDialogExt, error) {
+				return &dialogpb.VectorDialogExt{}, nil
+			},
+		},
+	}, 100)
 
 	r, err := c.MessagesGetPinnedDialogs(&tg.TLMessagesGetPinnedDialogs{FolderId: 0})
 	if err != nil {
@@ -453,6 +479,150 @@ func TestMessagesGetPinnedDialogsReturnsEmptyPeerDialogs(t *testing.T) {
 	}
 	if r.State == nil {
 		t.Fatal("MessagesGetPinnedDialogs state is nil")
+	}
+}
+
+func TestMessagesGetPinnedDialogsHydratesUserupdatesProjection(t *testing.T) {
+	var gotProjection *userupdates.TLUserupdatesGetDialogsByPeers
+	c := newDialogsGetDialogsCore(&repository.Repository{
+		DialogClient: &dialogsFakeDialogClient{
+			getPinnedDialogs: func(context.Context, *dialogpb.TLDialogGetPinnedDialogs) (*dialogpb.VectorDialogExt, error) {
+				return &dialogpb.VectorDialogExt{Datas: []dialogpb.DialogExtClazz{
+					dialogpb.MakeTLDialogExt(&dialogpb.TLDialogExt{
+						Order: 99,
+						Dialog: tg.MakeTLDialog(&tg.TLDialog{
+							Peer: tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 200}),
+						}),
+					}),
+				}}, nil
+			},
+		},
+		UserupdatesClient: &dialogsFakeUserupdatesClient{
+			getDialogsByPeers: func(_ context.Context, in *userupdates.TLUserupdatesGetDialogsByPeers) (*userupdates.VectorDialogProjection, error) {
+				gotProjection = in
+				return &userupdates.VectorDialogProjection{Datas: []userupdates.DialogProjectionClazz{
+					userupdates.MakeTLDialogProjection(&userupdates.TLDialogProjection{
+						PeerType:              dialogPeerTypeUser,
+						PeerId:                200,
+						TopCanonicalMessageId: 7,
+						TopMessageDate:        123,
+						UnreadCount:           2,
+					}),
+				}}, nil
+			},
+		},
+		MessageClient: &dialogsFakeMessageClient{
+			getUserMessageList: func(context.Context, *messagepb.TLMessageGetUserMessageList) (*messagepb.VectorMessageBox, error) {
+				return &messagepb.VectorMessageBox{Datas: []tg.MessageBoxClazz{
+					tg.MakeTLMessageBox(&tg.TLMessageBox{
+						UserId:    100,
+						MessageId: 7,
+						Message: tg.MakeTLMessage(&tg.TLMessage{
+							Id:      7,
+							PeerId:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 200}),
+							Message: "hello",
+							Date:    123,
+						}),
+					}),
+				}}, nil
+			},
+		},
+		UserClient: &dialogsFakeUserClient{
+			getMutableUsersV2: func(context.Context, *userpb.TLUserGetMutableUsersV2) (*tg.MutableUsers, error) {
+				return tg.MakeTLMutableUsers(&tg.TLMutableUsers{Users: []tg.ImmutableUserClazz{
+					tg.MakeTLImmutableUser(&tg.TLImmutableUser{
+						User: tg.MakeTLUserData(&tg.TLUserData{Id: 200, FirstName: "Peer"}),
+					}),
+				}}).ToMutableUsers(), nil
+			},
+		},
+	}, 100)
+
+	r, err := c.MessagesGetPinnedDialogs(&tg.TLMessagesGetPinnedDialogs{FolderId: 0})
+	if err != nil {
+		t.Fatalf("MessagesGetPinnedDialogs error = %v", err)
+	}
+	if gotProjection == nil || len(gotProjection.Peers) != 1 || gotProjection.Peers[0].PeerType != dialogPeerTypeUser || gotProjection.Peers[0].PeerId != 200 {
+		t.Fatalf("UserupdatesGetDialogsByPeers request = %+v", gotProjection)
+	}
+	if len(r.Dialogs) != 1 || len(r.Messages) != 1 || len(r.Users) != 1 {
+		t.Fatalf("reply lens = dialogs:%d messages:%d users:%d", len(r.Dialogs), len(r.Messages), len(r.Users))
+	}
+	dialog, ok := (&tg.Dialog{Clazz: r.Dialogs[0]}).ToDialog()
+	if !ok || dialog.TopMessage != 7 || dialog.UnreadCount != 2 {
+		t.Fatalf("dialog = %+v ok=%v, want hydrated top/unread", dialog, ok)
+	}
+}
+
+func TestMessagesToggleDialogPinPassesSourceAuthAndOutbox(t *testing.T) {
+	var got *dialogpb.TLDialogToggleDialogPin
+	c := newDialogsGetDialogsCore(&repository.Repository{
+		DialogClient: &dialogsFakeDialogClient{
+			toggleDialogPin: func(_ context.Context, in *dialogpb.TLDialogToggleDialogPin) (*tg.Int32, error) {
+				got = in
+				return tg.MakeInt32(3), nil
+			},
+		},
+	}, 100)
+
+	r, err := c.MessagesToggleDialogPin(&tg.TLMessagesToggleDialogPin{
+		Pinned: true,
+		Peer: tg.MakeTLInputDialogPeer(&tg.TLInputDialogPeer{
+			Peer: tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 200}),
+		}),
+	})
+	if err != nil {
+		t.Fatalf("MessagesToggleDialogPin error = %v", err)
+	}
+	if r != tg.BoolTrue {
+		t.Fatalf("reply = %v, want boolTrue", r)
+	}
+	if got == nil {
+		t.Fatal("DialogToggleDialogPin was not called")
+	}
+	if got.UserId != 100 || got.PeerType != dialogPeerTypeUser || got.PeerId != 200 || got.Pinned != tg.BoolTrueClazz {
+		t.Fatalf("DialogToggleDialogPin request = %+v", got)
+	}
+	if got.SourcePermAuthKeyId != 9001 || got.OperationId == "" || got.OutboxId == 0 {
+		t.Fatalf("source auth/outbox fields = auth:%d op:%q outbox:%d", got.SourcePermAuthKeyId, got.OperationId, got.OutboxId)
+	}
+}
+
+func TestMessagesReorderPinnedDialogsPassesPeerDialogIDs(t *testing.T) {
+	var got *dialogpb.TLDialogReorderPinnedDialogs
+	c := newDialogsGetDialogsCore(&repository.Repository{
+		DialogClient: &dialogsFakeDialogClient{
+			reorderPinned: func(_ context.Context, in *dialogpb.TLDialogReorderPinnedDialogs) (*tg.Bool, error) {
+				got = in
+				return tg.BoolTrue, nil
+			},
+		},
+	}, 100)
+
+	_, err := c.MessagesReorderPinnedDialogs(&tg.TLMessagesReorderPinnedDialogs{
+		Force:    true,
+		FolderId: 1,
+		Order: []tg.InputDialogPeerClazz{
+			tg.MakeTLInputDialogPeer(&tg.TLInputDialogPeer{
+				Peer: tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 200}),
+			}),
+			tg.MakeTLInputDialogPeer(&tg.TLInputDialogPeer{
+				Peer: tg.MakeTLInputPeerChat(&tg.TLInputPeerChat{ChatId: 300}),
+			}),
+		},
+	})
+	if err != nil {
+		t.Fatalf("MessagesReorderPinnedDialogs error = %v", err)
+	}
+	if got == nil {
+		t.Fatal("DialogReorderPinnedDialogs was not called")
+	}
+	wantIDs := []int64{200*16 + int64(dialogPeerTypeUser), 300*16 + int64(dialogPeerTypeChat)}
+	if got.UserId != 100 || got.Force != tg.BoolTrueClazz || got.FolderId != 1 || len(got.IdList) != 2 || got.IdList[0] != wantIDs[0] || got.IdList[1] != wantIDs[1] {
+		t.Fatalf("DialogReorderPinnedDialogs request = %+v, want ids %v", got, wantIDs)
+	}
+	if got.SourcePermAuthKeyId != 9001 || got.OperationId == "" || got.OutboxId == 0 {
+		t.Fatalf("source auth/outbox fields = auth:%d op:%q outbox:%d", got.SourcePermAuthKeyId, got.OperationId, got.OutboxId)
 	}
 }
 

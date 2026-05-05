@@ -29,17 +29,18 @@ func init() {
 	// Method
 	iface.RegisterClazzID(0x3bfb9d31, func() iface.TLObject { return &TLDialogSaveDraftMessage{ClazzID: 0x3bfb9d31} })                  // 0x3bfb9d31
 	iface.RegisterClazzID(0x9390695, func() iface.TLObject { return &TLDialogClearDraftMessage{ClazzID: 0x9390695} })                   // 0x9390695
+	iface.RegisterClazzID(0xda48bb0b, func() iface.TLObject { return &TLDialogClearDraftAfterSend{ClazzID: 0xda48bb0b} })               // 0xda48bb0b
 	iface.RegisterClazzID(0xacde4fe6, func() iface.TLObject { return &TLDialogGetAllDrafts{ClazzID: 0xacde4fe6} })                      // 0xacde4fe6
 	iface.RegisterClazzID(0x8432b418, func() iface.TLObject { return &TLDialogClearAllDrafts{ClazzID: 0x8432b418} })                    // 0x8432b418
 	iface.RegisterClazzID(0x4532910e, func() iface.TLObject { return &TLDialogMarkDialogUnread{ClazzID: 0x4532910e} })                  // 0x4532910e
-	iface.RegisterClazzID(0x867ee52f, func() iface.TLObject { return &TLDialogToggleDialogPin{ClazzID: 0x867ee52f} })                   // 0x867ee52f
+	iface.RegisterClazzID(0x6ad45bb4, func() iface.TLObject { return &TLDialogToggleDialogPin{ClazzID: 0x6ad45bb4} })                   // 0x6ad45bb4
 	iface.RegisterClazzID(0xcabc38f4, func() iface.TLObject { return &TLDialogGetDialogUnreadMarkList{ClazzID: 0xcabc38f4} })           // 0xcabc38f4
 	iface.RegisterClazzID(0x9d7e8604, func() iface.TLObject { return &TLDialogGetDialogsByOffsetDate{ClazzID: 0x9d7e8604} })            // 0x9d7e8604
 	iface.RegisterClazzID(0x860b1e16, func() iface.TLObject { return &TLDialogGetDialogs{ClazzID: 0x860b1e16} })                        // 0x860b1e16
 	iface.RegisterClazzID(0xad258871, func() iface.TLObject { return &TLDialogGetDialogsByIdList{ClazzID: 0xad258871} })                // 0xad258871
 	iface.RegisterClazzID(0xe039b465, func() iface.TLObject { return &TLDialogGetDialogsCount{ClazzID: 0xe039b465} })                   // 0xe039b465
 	iface.RegisterClazzID(0xa8c21bb5, func() iface.TLObject { return &TLDialogGetPinnedDialogs{ClazzID: 0xa8c21bb5} })                  // 0xa8c21bb5
-	iface.RegisterClazzID(0xfee33567, func() iface.TLObject { return &TLDialogReorderPinnedDialogs{ClazzID: 0xfee33567} })              // 0xfee33567
+	iface.RegisterClazzID(0x3aff2348, func() iface.TLObject { return &TLDialogReorderPinnedDialogs{ClazzID: 0x3aff2348} })              // 0x3aff2348
 	iface.RegisterClazzID(0xa15f3bf5, func() iface.TLObject { return &TLDialogGetDialogById{ClazzID: 0xa15f3bf5} })                     // 0xa15f3bf5
 	iface.RegisterClazzID(0xfa7db272, func() iface.TLObject { return &TLDialogGetTopMessage{ClazzID: 0xfa7db272} })                     // 0xfa7db272
 	iface.RegisterClazzID(0x5d2b8822, func() iface.TLObject { return &TLDialogInsertOrUpdateDialog{ClazzID: 0x5d2b8822} })              // 0x5d2b8822
@@ -51,7 +52,7 @@ func init() {
 	iface.RegisterClazzID(0xb13c0b3f, func() iface.TLObject { return &TLDialogUpdateDialogFiltersOrder{ClazzID: 0xb13c0b3f} })          // 0xb13c0b3f
 	iface.RegisterClazzID(0x6c676c3c, func() iface.TLObject { return &TLDialogGetDialogFilters{ClazzID: 0x6c676c3c} })                  // 0x6c676c3c
 	iface.RegisterClazzID(0x411b8eb5, func() iface.TLObject { return &TLDialogGetDialogFolder{ClazzID: 0x411b8eb5} })                   // 0x411b8eb5
-	iface.RegisterClazzID(0x2446869a, func() iface.TLObject { return &TLDialogEditPeerFolders{ClazzID: 0x2446869a} })                   // 0x2446869a
+	iface.RegisterClazzID(0xfbe6f2f, func() iface.TLObject { return &TLDialogEditPeerFolders{ClazzID: 0xfbe6f2f} })                     // 0xfbe6f2f
 	iface.RegisterClazzID(0x28bd4d3b, func() iface.TLObject { return &TLDialogGetChannelMessageReadParticipants{ClazzID: 0x28bd4d3b} }) // 0x28bd4d3b
 	iface.RegisterClazzID(0xe9aea22a, func() iface.TLObject { return &TLDialogSetChatTheme{ClazzID: 0xe9aea22a} })                      // 0xe9aea22a
 	iface.RegisterClazzID(0x9d9b8ac, func() iface.TLObject { return &TLDialogSetHistoryTTL{ClazzID: 0x9d9b8ac} })                       // 0x9d9b8ac

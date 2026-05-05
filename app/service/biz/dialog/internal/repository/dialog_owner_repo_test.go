@@ -90,6 +90,155 @@ func TestDialogPreferencesFolderPinWritesFolderPinOrder(t *testing.T) {
 	}
 }
 
+func TestListPinnedDialogsHonorsPreferenceOrder(t *testing.T) {
+	ctx := context.Background()
+	repo := NewRepositoryWithDBForTest(openDialogIntegrationDB(t))
+	base := time.Now().UnixNano()
+	userID := base%1_000_000_000 + 451
+	firstPeerID := base%1_000_000_000 + 452
+	secondPeerID := base%1_000_000_000 + 453
+	firstDialogID, err := MakePeerDialogID(PeerTypeUser, firstPeerID)
+	if err != nil {
+		t.Fatalf("MakePeerDialogID(first) error = %v", err)
+	}
+	secondDialogID, err := MakePeerDialogID(PeerTypeUser, secondPeerID)
+	if err != nil {
+		t.Fatalf("MakePeerDialogID(second) error = %v", err)
+	}
+	for _, row := range []*model.Dialogs{
+		{UserId: userID, PeerType: PeerTypeUser, PeerId: firstPeerID, PeerDialogId: firstDialogID, TopMessage: 11, Date2: 111, DraftMessageData: `{}`},
+		{UserId: userID, PeerType: PeerTypeUser, PeerId: secondPeerID, PeerDialogId: secondDialogID, TopMessage: 22, Date2: 222, DraftMessageData: `{}`},
+	} {
+		if _, err := repo.model.DialogsModel.Insert2(ctx, row); err != nil {
+			t.Fatalf("DialogsModel.Insert2() error = %v", err)
+		}
+	}
+	for _, in := range []ToggleDialogPinInput{
+		{
+			UserID:              userID,
+			PeerType:            PeerTypeUser,
+			PeerID:              firstPeerID,
+			Pinned:              true,
+			PinOrder:            10,
+			SourcePermAuthKeyID: base%1_000_000_000 + 454,
+			OperationID:         fmt.Sprintf("list-pin-first-%d", base),
+			OutboxID:            base%1_000_000_000 + 455,
+			EventType:           "dialog.preferencePinned",
+			Payload:             []byte(`{"schema_version":1}`),
+		},
+		{
+			UserID:              userID,
+			PeerType:            PeerTypeUser,
+			PeerID:              secondPeerID,
+			Pinned:              true,
+			PinOrder:            20,
+			SourcePermAuthKeyID: base%1_000_000_000 + 454,
+			OperationID:         fmt.Sprintf("list-pin-second-%d", base),
+			OutboxID:            base%1_000_000_000 + 456,
+			EventType:           "dialog.preferencePinned",
+			Payload:             []byte(`{"schema_version":1}`),
+		},
+	} {
+		if _, err := repo.ToggleDialogPin(ctx, in); err != nil {
+			t.Fatalf("ToggleDialogPin() error = %v", err)
+		}
+	}
+	got, err := repo.ListPinnedDialogs(ctx, userID, 0)
+	if err != nil {
+		t.Fatalf("ListPinnedDialogs() error = %v", err)
+	}
+	if len(got) != 2 {
+		t.Fatalf("len(ListPinnedDialogs) = %d, want 2", len(got))
+	}
+	if got[0].PeerID != secondPeerID || got[0].Order != 20 || got[1].PeerID != firstPeerID || got[1].Order != 10 {
+		t.Fatalf("ListPinnedDialogs = %+v, want second(order 20) then first(order 10)", got)
+	}
+}
+
+func TestReorderPinnedDialogsClearsOmittedPins(t *testing.T) {
+	ctx := context.Background()
+	repo := NewRepositoryWithDBForTest(openDialogIntegrationDB(t))
+	base := time.Now().UnixNano()
+	userID := base%1_000_000_000 + 551
+	firstPeerID := base%1_000_000_000 + 552
+	secondPeerID := base%1_000_000_000 + 553
+	for i, peerID := range []int64{firstPeerID, secondPeerID} {
+		in := ToggleDialogPinInput{
+			UserID:              userID,
+			PeerType:            PeerTypeUser,
+			PeerID:              peerID,
+			Pinned:              true,
+			PinOrder:            int64(i + 1),
+			SourcePermAuthKeyID: base%1_000_000_000 + 554,
+			OperationID:         fmt.Sprintf("reorder-clear-pin-%d-%d", base, i),
+			OutboxID:            base%1_000_000_000 + 555 + int64(i),
+			EventType:           "dialog.preferencePinned",
+			Payload:             []byte(`{"schema_version":1}`),
+		}
+		if _, err := repo.ToggleDialogPin(ctx, in); err != nil {
+			t.Fatalf("ToggleDialogPin() error = %v", err)
+		}
+	}
+	if _, err := repo.ReorderPinnedDialogs(ctx, ReorderPinnedDialogsInput{
+		UserID:              userID,
+		PeerOrder:           []PeerRef{{PeerType: PeerTypeUser, PeerID: secondPeerID}},
+		SourcePermAuthKeyID: base%1_000_000_000 + 554,
+		OperationID:         fmt.Sprintf("reorder-clear-%d", base),
+		OutboxID:            base%1_000_000_000 + 557,
+		EventType:           "dialog.pinnedDialogsReordered",
+		Payload:             []byte(`{"schema_version":1}`),
+	}); err != nil {
+		t.Fatalf("ReorderPinnedDialogs() error = %v", err)
+	}
+	first, err := repo.model.DialogPreferencesModel.SelectByUserPeer(ctx, userID, PeerTypeUser, firstPeerID)
+	if err != nil {
+		t.Fatalf("SelectByUserPeer(first) error = %v", err)
+	}
+	second, err := repo.model.DialogPreferencesModel.SelectByUserPeer(ctx, userID, PeerTypeUser, secondPeerID)
+	if err != nil {
+		t.Fatalf("SelectByUserPeer(second) error = %v", err)
+	}
+	if first.MainPinnedOrder != 0 || second.MainPinnedOrder != 1 {
+		t.Fatalf("pin orders = first:%d second:%d, want first cleared and second normalized to 1", first.MainPinnedOrder, second.MainPinnedOrder)
+	}
+}
+
+func TestEditPeerFoldersIncrementsOldFolderVersion(t *testing.T) {
+	ctx := context.Background()
+	repo := NewRepositoryWithDBForTest(openDialogIntegrationDB(t))
+	base := time.Now().UnixNano()
+	userID := base%1_000_000_000 + 651
+	peerID := base%1_000_000_000 + 652
+	first := EditPeerFoldersInput{
+		UserID:              userID,
+		PeerType:            PeerTypeUser,
+		PeerID:              peerID,
+		NewFolderID:         7,
+		SourcePermAuthKeyID: base%1_000_000_000 + 653,
+		OperationID:         fmt.Sprintf("folder-first-%d", base),
+		OutboxID:            base%1_000_000_000 + 654,
+		PublicUpdateType:    "updateFolderPeers",
+		Payload:             []byte(`{"schema_version":1}`),
+	}
+	if _, err := repo.EditPeerFolders(ctx, first); err != nil {
+		t.Fatalf("EditPeerFolders(first) error = %v", err)
+	}
+	second := first
+	second.NewFolderID = 8
+	second.OperationID = fmt.Sprintf("folder-second-%d", base)
+	second.OutboxID++
+	if _, err := repo.EditPeerFolders(ctx, second); err != nil {
+		t.Fatalf("EditPeerFolders(second) error = %v", err)
+	}
+	oldVersion, err := repo.model.DialogPreferenceVersionsModel.SelectOne(ctx, userID, PreferenceScopeFolderMembership, 7)
+	if err != nil {
+		t.Fatalf("SelectOne(old folder) error = %v", err)
+	}
+	if oldVersion.AggregateVersion != 2 {
+		t.Fatalf("old folder AggregateVersion = %d, want 2", oldVersion.AggregateVersion)
+	}
+}
+
 func TestDialogDraftsClearAfterSendSkipsNewerDraft(t *testing.T) {
 	ctx := context.Background()
 	repo := NewRepositoryWithDBForTest(openDialogIntegrationDB(t))
