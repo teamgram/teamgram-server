@@ -17,15 +17,52 @@
 package core
 
 import (
+	"encoding/json"
+	"time"
+
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // DialogSaveDraftMessage
 // dialog.saveDraftMessage user_id:long peer_type:int peer_id:long message:DraftMessage = Bool;
 func (c *DialogCore) DialogSaveDraftMessage(in *dialog.TLDialogSaveDraftMessage) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.saveDraftMessage - error: method DialogSaveDraftMessage not impl")
+	if in == nil || in.Message == nil {
+		return nil, dialog.ErrDialogInvalid
+	}
+	payload, err := json.Marshal(in.Message)
+	if err != nil {
+		return nil, dialog.WrapDialogStorage("marshal draft payload", err)
+	}
+	var (
+		draftKind int32 = 1
+		message   string
+		date      = time.Now().UTC()
+	)
+	if draft, ok := in.Message.(*tg.TLDraftMessage); ok {
+		message = draft.Message
+		date = time.Unix(int64(draft.Date), 0).UTC()
+	}
+	if _, ok := in.Message.(*tg.TLDraftMessageEmpty); ok {
+		draftKind = 0
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	_, err = c.svcCtx.Repo.SaveDraft(c.ctx, repository.SaveDraftInput{
+		UserID:              in.UserId,
+		PeerType:            in.PeerType,
+		PeerID:              in.PeerId,
+		DraftKind:           draftKind,
+		Message:             message,
+		DraftPayload:        payload,
+		Date:                date,
+		SourcePermAuthKeyID: in.SourcePermAuthKeyId,
+		OperationID:         in.OperationId,
+		OutboxID:            in.OutboxId,
+		EventType:           "dialog.draftSaved",
+	})
+	if err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

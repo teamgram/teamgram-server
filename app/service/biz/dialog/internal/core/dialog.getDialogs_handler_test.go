@@ -12,10 +12,14 @@ import (
 )
 
 type fakeDialogRepo struct {
-	listFn  func(context.Context, int64, bool, int32) ([]repository.DialogRecord, error)
-	countFn func(context.Context, int64, bool, int32) (int32, error)
-	getFn   func(context.Context, int64, int32, int64) (*repository.DialogRecord, error)
-	idsFn   func(context.Context, int64, []int64) ([]repository.DialogRecord, error)
+	listFn       func(context.Context, int64, bool, int32) ([]repository.DialogRecord, error)
+	countFn      func(context.Context, int64, bool, int32) (int32, error)
+	getFn        func(context.Context, int64, int32, int64) (*repository.DialogRecord, error)
+	idsFn        func(context.Context, int64, []int64) ([]repository.DialogRecord, error)
+	saveDraftFn  func(context.Context, repository.SaveDraftInput) (*repository.DraftMutationResult, error)
+	clearDraftFn func(context.Context, repository.ClearDraftInput) (*repository.DraftMutationResult, error)
+	clearAllFn   func(context.Context, repository.ClearAllDraftsInput) ([]repository.DraftMutationResult, error)
+	listDraftsFn func(context.Context, int64) ([]repository.DraftRecord, error)
 }
 
 func (f fakeDialogRepo) ListDialogs(ctx context.Context, userID int64, excludePinned bool, folderID int32) ([]repository.DialogRecord, error) {
@@ -32,6 +36,22 @@ func (f fakeDialogRepo) GetDialogByPeer(ctx context.Context, userID int64, peerT
 
 func (f fakeDialogRepo) ListDialogsByPeerDialogIDs(ctx context.Context, userID int64, ids []int64) ([]repository.DialogRecord, error) {
 	return f.idsFn(ctx, userID, ids)
+}
+
+func (f fakeDialogRepo) SaveDraft(ctx context.Context, in repository.SaveDraftInput) (*repository.DraftMutationResult, error) {
+	return f.saveDraftFn(ctx, in)
+}
+
+func (f fakeDialogRepo) ClearDraft(ctx context.Context, in repository.ClearDraftInput) (*repository.DraftMutationResult, error) {
+	return f.clearDraftFn(ctx, in)
+}
+
+func (f fakeDialogRepo) ClearAllDrafts(ctx context.Context, in repository.ClearAllDraftsInput) ([]repository.DraftMutationResult, error) {
+	return f.clearAllFn(ctx, in)
+}
+
+func (f fakeDialogRepo) ListActiveDrafts(ctx context.Context, userID int64) ([]repository.DraftRecord, error) {
+	return f.listDraftsFn(ctx, userID)
 }
 
 func TestDialogGetDialogsReturnsMappedVector(t *testing.T) {
@@ -65,6 +85,36 @@ func TestDialogGetDialogsReturnsMappedVector(t *testing.T) {
 	}
 	if ext.Dialog.(*tg.TLDialog).TopMessage != 99 {
 		t.Fatalf("TopMessage = %d, want 99", ext.Dialog.(*tg.TLDialog).TopMessage)
+	}
+}
+
+func TestDialogSaveDraftMessageCallsRepositoryWithSourceAuth(t *testing.T) {
+	var got repository.SaveDraftInput
+	repo := fakeDialogRepo{
+		saveDraftFn: func(_ context.Context, in repository.SaveDraftInput) (*repository.DraftMutationResult, error) {
+			got = in
+			return &repository.DraftMutationResult{UserID: in.UserID}, nil
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	_, err := core.DialogSaveDraftMessage(&dialogpb.TLDialogSaveDraftMessage{
+		UserId:              1001,
+		PeerType:            repository.PeerTypeUser,
+		PeerId:              2002,
+		Message:             tg.MakeTLDraftMessage(&tg.TLDraftMessage{Message: "draft", Date: 123}),
+		SourcePermAuthKeyId: 9001,
+		OperationId:         "op-save",
+		OutboxId:            7001,
+	})
+	if err != nil {
+		t.Fatalf("DialogSaveDraftMessage error = %v", err)
+	}
+	if got.SourcePermAuthKeyID != 9001 || got.OperationID != "op-save" || got.OutboxID != 7001 {
+		t.Fatalf("repository input = %+v", got)
+	}
+	if got.Message != "draft" || got.Date.Unix() != 123 {
+		t.Fatalf("draft mapping = message:%q date:%v", got.Message, got.Date)
 	}
 }
 

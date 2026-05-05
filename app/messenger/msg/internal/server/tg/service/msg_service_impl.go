@@ -53,7 +53,7 @@ func (s *Service) MsgReadMessageContents(ctx context.Context, request *msg.TLMsg
 }
 
 // MsgSendMessageV2
-// msg.sendMessageV2 user_id:long auth_key_id:long peer_type:int peer_id:long message:Vector<OutboxMessage> = Updates;
+// msg.sendMessageV2 flags:# clear_draft:flags.0?true user_id:long auth_key_id:long source_perm_auth_key_id:flags.1?long clear_draft_before_date:flags.2?int peer_type:int peer_id:long message:Vector<OutboxMessage> = Updates;
 func (s *Service) MsgSendMessageV2(ctx context.Context, request *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("msg.sendMessageV2 - request: %s", request)

@@ -87,6 +87,57 @@ func TestMsgSendMessageV2SingleUserPublishesReceiverOperation(t *testing.T) {
 	}
 }
 
+func TestMsgSendMessageV2ClearDraftWritesSenderOperationPayload(t *testing.T) {
+	responsePayload := []byte(`{"schema_version":1,"pts":15,"pts_count":1}`)
+	responseHash := mustHashBytes(t, responsePayload)
+	repo := &fakeMsgRepository{
+		sendState: &repository.SendState{SendStateID: 1, Status: repository.SendStateStatusInitialized},
+		canonical: &repository.CanonicalMessageResult{
+			SendStateID:        1,
+			CanonicalMessageID: 6001,
+			PeerSeq:            9,
+			MessageDate:        1_772_000_050,
+			RequestPayloadHash: payload.HashBytes([]byte("request")),
+			CreatedNew:         true,
+		},
+	}
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:              1001,
+			OperationId:         payload.SenderOperationID(6001, 1001),
+			Status:              1,
+			Pts:                 15,
+			PtsCount:            1,
+			CurrentPts:          15,
+			ResponsePayload:     responsePayload,
+			ResponsePayloadHash: responseHash,
+		}),
+	}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:              repo,
+		UserUpdates:       updatesClient,
+		ReceiverPublisher: &fakeReceiverPublisher{},
+	})
+
+	sourceAuth := int64(9001)
+	clearBefore := int32(1_772_000_049)
+	req := sendMessageRequest(1001, 1002, 9001, "hello")
+	req.ClearDraft = true
+	req.SourcePermAuthKeyId = &sourceAuth
+	req.ClearDraftBeforeDate = &clearBefore
+
+	if _, err := core.MsgSendMessageV2(req); err != nil {
+		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	}
+	var senderOp payload.MessageOperationV1
+	if err := json.Unmarshal(updatesClient.processed.Payload, &senderOp); err != nil {
+		t.Fatalf("decode sender payload: %v", err)
+	}
+	if !senderOp.ClearDraft || senderOp.SourcePermAuthKeyID != sourceAuth || senderOp.ClearDraftBeforeDate != clearBefore {
+		t.Fatalf("unexpected clear draft payload: %+v", senderOp)
+	}
+}
+
 func TestMsgSendMessageV2RecoversSenderCommitFromUserUpdatesResult(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":1,"pts":12,"pts_count":1}`)
 	responseHash := mustHashBytes(t, responsePayload)

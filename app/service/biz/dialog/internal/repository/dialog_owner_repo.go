@@ -365,6 +365,38 @@ func (r *Repository) ClearAllDrafts(ctx context.Context, in ClearAllDraftsInput)
 	return cleared, nil
 }
 
+func (r *Repository) ListActiveDrafts(ctx context.Context, userID int64) ([]DraftRecord, error) {
+	models, err := r.requireModels()
+	if err != nil {
+		return nil, err
+	}
+	rows, err := models.DialogDraftsModel.SelectActiveByUser(ctx, userID)
+	if err != nil {
+		return nil, storageError("select active drafts", err)
+	}
+	out := make([]DraftRecord, 0, len(rows))
+	for i := range rows {
+		row := rows[i]
+		date, err := parseMysqlTimestamp(row.Date)
+		if err != nil {
+			return nil, storageError("parse draft date", err)
+		}
+		out = append(out, DraftRecord{
+			UserID:          row.UserId,
+			PeerType:        row.PeerType,
+			PeerID:          row.PeerId,
+			PeerDialogID:    row.PeerDialogId,
+			DraftKind:       row.DraftKind,
+			Message:         row.Message,
+			EntitiesPayload: row.EntitiesPayload,
+			ReplyToPeerSeq:  row.ReplyToPeerSeq,
+			DraftPayload:    row.DraftPayload,
+			Date:            date,
+		})
+	}
+	return out, nil
+}
+
 func (r *Repository) UpsertSavedDialogFromMessage(ctx context.Context, in SavedDialogTopInput) error {
 	_, err := MakePeerDialogID(in.PeerType, in.PeerID)
 	if err != nil {
@@ -807,6 +839,18 @@ func hashPayload(b []byte) []byte {
 
 func mysqlTimestamp(t time.Time) string {
 	return t.UTC().Format("2006-01-02 15:04:05.000000")
+}
+
+func parseMysqlTimestamp(s string) (time.Time, error) {
+	if s == "" {
+		return time.Time{}, nil
+	}
+	for _, layout := range []string{"2006-01-02 15:04:05.000000", "2006-01-02 15:04:05"} {
+		if t, err := time.ParseInLocation(layout, s, time.UTC); err == nil {
+			return t, nil
+		}
+	}
+	return time.Parse(time.RFC3339Nano, s)
 }
 
 func mysqlZeroTime() string {

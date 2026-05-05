@@ -40,7 +40,7 @@ func init() {
 	iface.RegisterClazzName(ClazzName_contentMessage, 0, 0x8d64b133)             // 8d64b133
 	iface.RegisterClazzName(ClazzName_msg_pushUserMessage, 0, 0x35d0fa1a)        // 35d0fa1a
 	iface.RegisterClazzName(ClazzName_msg_readMessageContents, 0, 0x282484d4)    // 282484d4
-	iface.RegisterClazzName(ClazzName_msg_sendMessageV2, 0, 0xf4ca7cc4)          // f4ca7cc4
+	iface.RegisterClazzName(ClazzName_msg_sendMessageV2, 0, 0x1c17890c)          // 1c17890c
 	iface.RegisterClazzName(ClazzName_msg_editMessageV2, 0, 0x69fe5fe1)          // 69fe5fe1
 	iface.RegisterClazzName(ClazzName_msg_deleteMessages, 0, 0x21e80a1d)         // 21e80a1d
 	iface.RegisterClazzName(ClazzName_msg_deleteHistory, 0, 0x75c0e8ca)          // 75c0e8ca
@@ -58,7 +58,7 @@ func init() {
 	iface.RegisterClazzIDName(ClazzName_contentMessage, 0x8d64b133)             // 8d64b133
 	iface.RegisterClazzIDName(ClazzName_msg_pushUserMessage, 0x35d0fa1a)        // 35d0fa1a
 	iface.RegisterClazzIDName(ClazzName_msg_readMessageContents, 0x282484d4)    // 282484d4
-	iface.RegisterClazzIDName(ClazzName_msg_sendMessageV2, 0xf4ca7cc4)          // f4ca7cc4
+	iface.RegisterClazzIDName(ClazzName_msg_sendMessageV2, 0x1c17890c)          // 1c17890c
 	iface.RegisterClazzIDName(ClazzName_msg_editMessageV2, 0x69fe5fe1)          // 69fe5fe1
 	iface.RegisterClazzIDName(ClazzName_msg_deleteMessages, 0x21e80a1d)         // 21e80a1d
 	iface.RegisterClazzIDName(ClazzName_msg_deleteHistory, 0x75c0e8ca)          // 75c0e8ca

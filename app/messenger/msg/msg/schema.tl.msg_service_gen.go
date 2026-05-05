@@ -199,12 +199,15 @@ func (m *TLMsgReadMessageContents) Decode(d *bin.Decoder) (err error) {
 
 // TLMsgSendMessageV2 <--
 type TLMsgSendMessageV2 struct {
-	ClazzID   uint32               `json:"_id"`
-	UserId    int64                `json:"user_id"`
-	AuthKeyId int64                `json:"auth_key_id"`
-	PeerType  int32                `json:"peer_type"`
-	PeerId    int64                `json:"peer_id"`
-	Message   []OutboxMessageClazz `json:"message"`
+	ClazzID              uint32               `json:"_id"`
+	ClearDraft           bool                 `json:"clear_draft"`
+	UserId               int64                `json:"user_id"`
+	AuthKeyId            int64                `json:"auth_key_id"`
+	SourcePermAuthKeyId  *int64               `json:"source_perm_auth_key_id"`
+	ClearDraftBeforeDate *int32               `json:"clear_draft_before_date"`
+	PeerType             int32                `json:"peer_type"`
+	PeerId               int64                `json:"peer_id"`
+	Message              []OutboxMessageClazz `json:"message"`
 }
 
 func (m *TLMsgSendMessageV2) String() string {
@@ -214,16 +217,45 @@ func (m *TLMsgSendMessageV2) String() string {
 // Encode <--
 func (m *TLMsgSendMessageV2) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_msg_sendMessageV2, int(layer)); clazzId {
-	case 0xf4ca7cc4:
-		x.PutClazzID(0xf4ca7cc4)
+	case 0x1c17890c:
+		x.PutClazzID(0x1c17890c)
 
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
+
+			if m.ClearDraft == true {
+				flags |= 1 << 0
+			}
+
+			if m.SourcePermAuthKeyId != nil {
+				flags |= 1 << 1
+			}
+			if m.ClearDraftBeforeDate != nil {
+				flags |= 1 << 2
+			}
+
+			return flags
+		}
+
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
 		x.PutInt64(m.UserId)
 		x.PutInt64(m.AuthKeyId)
+		if m.SourcePermAuthKeyId != nil {
+			x.PutInt64(*m.SourcePermAuthKeyId)
+		}
+
+		if m.ClearDraftBeforeDate != nil {
+			x.PutInt32(*m.ClearDraftBeforeDate)
+		}
+
 		x.PutInt32(m.PeerType)
 		x.PutInt64(m.PeerId)
 
 		if err := iface.EncodeObjectList(x, m.Message, layer); err != nil {
-			return fmt.Errorf("unable to encode msg_sendMessageV2#0xf4ca7cc4: field message: %w", err)
+			return fmt.Errorf("unable to encode msg_sendMessageV2#0x1c17890c: field message: %w", err)
 		}
 
 		return nil
@@ -241,43 +273,66 @@ func (m *TLMsgSendMessageV2) Decode(d *bin.Decoder) (err error) {
 		}
 	}
 	switch m.ClazzID {
-	case 0xf4ca7cc4:
+	case 0x1c17890c:
+		flags, err := d.Uint32()
+		if err != nil {
+			return fmt.Errorf("unable to decode msg_sendMessageV2: field flags: %w", err)
+		}
+		_ = flags
+		if (flags & (1 << 0)) != 0 {
+			m.ClearDraft = true
+		}
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode msg_sendMessageV2#0xf4ca7cc4: field user_id: %w", err)
+			return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field user_id: %w", err)
 		}
 		m.AuthKeyId, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode msg_sendMessageV2#0xf4ca7cc4: field auth_key_id: %w", err)
+			return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field auth_key_id: %w", err)
+		}
+		if (flags & (1 << 1)) != 0 {
+			m.SourcePermAuthKeyId = new(int64)
+			*m.SourcePermAuthKeyId, err = d.Int64()
+			if err != nil {
+				return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field source_perm_auth_key_id: %w", err)
+			}
+		}
+
+		if (flags & (1 << 2)) != 0 {
+			m.ClearDraftBeforeDate = new(int32)
+			*m.ClearDraftBeforeDate, err = d.Int32()
+			if err != nil {
+				return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field clear_draft_before_date: %w", err)
+			}
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return fmt.Errorf("unable to decode msg_sendMessageV2#0xf4ca7cc4: field peer_type: %w", err)
+			return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode msg_sendMessageV2#0xf4ca7cc4: field peer_id: %w", err)
+			return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field peer_id: %w", err)
 		}
-		l5, err3 := d.VectorHeader()
+		l9, err3 := d.VectorHeader()
 		if err3 != nil {
-			return fmt.Errorf("unable to decode msg_sendMessageV2#0xf4ca7cc4: field message: %w", err3)
+			return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field message: %w", err3)
 		}
-		if l5 > bin.MaxVectorLen {
-			return fmt.Errorf("unable to decode msg_sendMessageV2#0xf4ca7cc4: field message: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l5)})
+		if l9 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field message: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l9)})
 		}
-		prealloc5 := int(l5)
-		if prealloc5 > bin.PreallocateLimit {
-			prealloc5 = bin.PreallocateLimit
+		prealloc9 := int(l9)
+		if prealloc9 > bin.PreallocateLimit {
+			prealloc9 = bin.PreallocateLimit
 		}
-		v5 := make([]OutboxMessageClazz, 0, prealloc5)
-		for i := int32(0); i < l5; i++ {
-			vv5, err3 := DecodeOutboxMessageClazz(d)
+		v9 := make([]OutboxMessageClazz, 0, prealloc9)
+		for i := int32(0); i < l9; i++ {
+			vv9, err3 := DecodeOutboxMessageClazz(d)
 			if err3 != nil {
-				return fmt.Errorf("unable to decode msg_sendMessageV2#0xf4ca7cc4: field message: %w", err3)
+				return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field message: %w", err3)
 			}
-			v5 = append(v5, vv5)
+			v9 = append(v9, vv9)
 		}
-		m.Message = v5
+		m.Message = v9
 
 		return nil
 	default:

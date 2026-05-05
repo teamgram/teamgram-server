@@ -18,14 +18,34 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
 )
 
 // DialogClearAllDrafts
 // dialog.clearAllDrafts user_id:long = Vector<PeerWithDraftMessage>;
 func (c *DialogCore) DialogClearAllDrafts(in *dialog.TLDialogClearAllDrafts) (*dialog.VectorPeerWithDraftMessage, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.clearAllDrafts - error: method DialogClearAllDrafts not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if in == nil {
+		return nil, dialog.ErrDialogInvalid
+	}
+	cleared, err := c.svcCtx.Repo.ClearAllDrafts(c.ctx, repository.ClearAllDraftsInput{
+		UserID:              in.UserId,
+		SourcePermAuthKeyID: in.SourcePermAuthKeyId,
+		OperationID:         in.OperationId,
+		OutboxIDs:           in.OutboxIds,
+	})
+	if err != nil {
+		return nil, err
+	}
+	out := &dialog.VectorPeerWithDraftMessage{Datas: make([]dialog.PeerWithDraftMessageClazz, 0, len(cleared))}
+	for _, row := range cleared {
+		peer, err := repository.SplitPeerDialogID(row.PeerDialogID)
+		if err != nil {
+			return nil, err
+		}
+		out.Datas = append(out.Datas, dialog.MakeTLUpdateDraftMessage(&dialog.TLUpdateDraftMessage{
+			Peer:  tgPeer(peer.PeerType, peer.PeerID),
+			Draft: tgDraftEmpty(),
+		}))
+	}
+	return out, nil
 }

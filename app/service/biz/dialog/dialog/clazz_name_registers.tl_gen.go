@@ -71,10 +71,10 @@ func init() {
 	iface.RegisterClazzName(ClazzName_dialogFilterExt, 0, 0xa6d498fe)                          // a6d498fe
 	iface.RegisterClazzName(ClazzName_simpleDialogsData, 0, 0x1d59b45d)                        // 1d59b45d
 	iface.RegisterClazzName(ClazzName_savedDialogList, 0, 0x778fe85a)                          // 778fe85a
-	iface.RegisterClazzName(ClazzName_dialog_saveDraftMessage, 0, 0x4ecad99a)                  // 4ecad99a
-	iface.RegisterClazzName(ClazzName_dialog_clearDraftMessage, 0, 0xfb70b29a)                 // fb70b29a
+	iface.RegisterClazzName(ClazzName_dialog_saveDraftMessage, 0, 0x3bfb9d31)                  // 3bfb9d31
+	iface.RegisterClazzName(ClazzName_dialog_clearDraftMessage, 0, 0x9390695)                  // 9390695
 	iface.RegisterClazzName(ClazzName_dialog_getAllDrafts, 0, 0xacde4fe6)                      // acde4fe6
-	iface.RegisterClazzName(ClazzName_dialog_clearAllDrafts, 0, 0x41b890fc)                    // 41b890fc
+	iface.RegisterClazzName(ClazzName_dialog_clearAllDrafts, 0, 0x8432b418)                    // 8432b418
 	iface.RegisterClazzName(ClazzName_dialog_markDialogUnread, 0, 0x4532910e)                  // 4532910e
 	iface.RegisterClazzName(ClazzName_dialog_toggleDialogPin, 0, 0x867ee52f)                   // 867ee52f
 	iface.RegisterClazzName(ClazzName_dialog_getDialogUnreadMarkList, 0, 0xcabc38f4)           // cabc38f4
@@ -119,10 +119,10 @@ func init() {
 	iface.RegisterClazzIDName(ClazzName_dialogFilterExt, 0xa6d498fe)                          // a6d498fe
 	iface.RegisterClazzIDName(ClazzName_simpleDialogsData, 0x1d59b45d)                        // 1d59b45d
 	iface.RegisterClazzIDName(ClazzName_savedDialogList, 0x778fe85a)                          // 778fe85a
-	iface.RegisterClazzIDName(ClazzName_dialog_saveDraftMessage, 0x4ecad99a)                  // 4ecad99a
-	iface.RegisterClazzIDName(ClazzName_dialog_clearDraftMessage, 0xfb70b29a)                 // fb70b29a
+	iface.RegisterClazzIDName(ClazzName_dialog_saveDraftMessage, 0x3bfb9d31)                  // 3bfb9d31
+	iface.RegisterClazzIDName(ClazzName_dialog_clearDraftMessage, 0x9390695)                  // 9390695
 	iface.RegisterClazzIDName(ClazzName_dialog_getAllDrafts, 0xacde4fe6)                      // acde4fe6
-	iface.RegisterClazzIDName(ClazzName_dialog_clearAllDrafts, 0x41b890fc)                    // 41b890fc
+	iface.RegisterClazzIDName(ClazzName_dialog_clearAllDrafts, 0x8432b418)                    // 8432b418
 	iface.RegisterClazzIDName(ClazzName_dialog_markDialogUnread, 0x4532910e)                  // 4532910e
 	iface.RegisterClazzIDName(ClazzName_dialog_toggleDialogPin, 0x867ee52f)                   // 867ee52f
 	iface.RegisterClazzIDName(ClazzName_dialog_getDialogUnreadMarkList, 0xcabc38f4)           // cabc38f4

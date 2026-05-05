@@ -21,7 +21,7 @@ import (
 var _ *tg.Bool
 
 // DialogSaveDraftMessage
-// dialog.saveDraftMessage user_id:long peer_type:int peer_id:long message:DraftMessage = Bool;
+// dialog.saveDraftMessage user_id:long peer_type:int peer_id:long message:DraftMessage source_perm_auth_key_id:long operation_id:string outbox_id:long = Bool;
 func (s *Service) DialogSaveDraftMessage(ctx context.Context, request *dialog.TLDialogSaveDraftMessage) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("dialog.saveDraftMessage - request: %s", request)
@@ -37,7 +37,7 @@ func (s *Service) DialogSaveDraftMessage(ctx context.Context, request *dialog.TL
 }
 
 // DialogClearDraftMessage
-// dialog.clearDraftMessage user_id:long peer_type:int peer_id:long = Bool;
+// dialog.clearDraftMessage user_id:long peer_type:int peer_id:long source_perm_auth_key_id:long operation_id:string outbox_id:long = Bool;
 func (s *Service) DialogClearDraftMessage(ctx context.Context, request *dialog.TLDialogClearDraftMessage) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("dialog.clearDraftMessage - request: %s", request)
@@ -69,7 +69,7 @@ func (s *Service) DialogGetAllDrafts(ctx context.Context, request *dialog.TLDial
 }
 
 // DialogClearAllDrafts
-// dialog.clearAllDrafts user_id:long = Vector<PeerWithDraftMessage>;
+// dialog.clearAllDrafts user_id:long source_perm_auth_key_id:long operation_id:string outbox_ids:Vector<long> = Vector<PeerWithDraftMessage>;
 func (s *Service) DialogClearAllDrafts(ctx context.Context, request *dialog.TLDialogClearAllDrafts) (*dialog.VectorPeerWithDraftMessage, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("dialog.clearAllDrafts - request: %s", request)

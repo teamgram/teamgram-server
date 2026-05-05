@@ -18,14 +18,27 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // DialogClearDraftMessage
 // dialog.clearDraftMessage user_id:long peer_type:int peer_id:long = Bool;
 func (c *DialogCore) DialogClearDraftMessage(in *dialog.TLDialogClearDraftMessage) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.clearDraftMessage - error: method DialogClearDraftMessage not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if in == nil {
+		return nil, dialog.ErrDialogInvalid
+	}
+	_, err := c.svcCtx.Repo.ClearDraft(c.ctx, repository.ClearDraftInput{
+		UserID:              in.UserId,
+		PeerType:            in.PeerType,
+		PeerID:              in.PeerId,
+		SourcePermAuthKeyID: in.SourcePermAuthKeyId,
+		OperationID:         in.OperationId,
+		OutboxID:            in.OutboxId,
+		EventType:           "dialog.draftCleared",
+	})
+	if err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

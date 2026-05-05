@@ -78,13 +78,13 @@ func NewDialogClient(cli client.Client) DialogClient {
 }
 
 // DialogSaveDraftMessage
-// dialog.saveDraftMessage user_id:long peer_type:int peer_id:long message:DraftMessage = Bool;
+// dialog.saveDraftMessage user_id:long peer_type:int peer_id:long message:DraftMessage source_perm_auth_key_id:long operation_id:string outbox_id:long = Bool;
 func (m *defaultDialogClient) DialogSaveDraftMessage(ctx context.Context, in *dialog.TLDialogSaveDraftMessage) (*tg.Bool, error) {
 	return m.rpc.DialogSaveDraftMessage(ctx, in)
 }
 
 // DialogClearDraftMessage
-// dialog.clearDraftMessage user_id:long peer_type:int peer_id:long = Bool;
+// dialog.clearDraftMessage user_id:long peer_type:int peer_id:long source_perm_auth_key_id:long operation_id:string outbox_id:long = Bool;
 func (m *defaultDialogClient) DialogClearDraftMessage(ctx context.Context, in *dialog.TLDialogClearDraftMessage) (*tg.Bool, error) {
 	return m.rpc.DialogClearDraftMessage(ctx, in)
 }
@@ -96,7 +96,7 @@ func (m *defaultDialogClient) DialogGetAllDrafts(ctx context.Context, in *dialog
 }
 
 // DialogClearAllDrafts
-// dialog.clearAllDrafts user_id:long = Vector<PeerWithDraftMessage>;
+// dialog.clearAllDrafts user_id:long source_perm_auth_key_id:long operation_id:string outbox_ids:Vector<long> = Vector<PeerWithDraftMessage>;
 func (m *defaultDialogClient) DialogClearAllDrafts(ctx context.Context, in *dialog.TLDialogClearAllDrafts) (*dialog.VectorPeerWithDraftMessage, error) {
 	return m.rpc.DialogClearAllDrafts(ctx, in)
 }

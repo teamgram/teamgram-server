@@ -30,6 +30,7 @@ func (c *DraftsCore) MessagesSaveDraft(in *tg.TLMessagesSaveDraft) (*tg.Bool, er
 		peer                = tg.FromInputPeer2(c.MD.UserId, in.Peer)
 		isDraftMessageEmpty = true
 		date                = int32(time.Now().Unix())
+		token               = int64(date)
 	)
 
 	if c.svcCtx == nil || c.svcCtx.Repo == nil || c.svcCtx.Repo.DialogClient == nil {
@@ -47,10 +48,14 @@ func (c *DraftsCore) MessagesSaveDraft(in *tg.TLMessagesSaveDraft) (*tg.Bool, er
 	}
 
 	if isDraftMessageEmpty {
+		operationID := draftOperationID("clear", c.MD.UserId, peer.PeerType, peer.PeerId, token)
 		if _, err := c.svcCtx.Repo.DialogClient.DialogClearDraftMessage(c.ctx, &repository.DialogClearDraft{
-			UserId:   c.MD.UserId,
-			PeerType: peer.PeerType,
-			PeerId:   peer.PeerId,
+			UserId:              c.MD.UserId,
+			PeerType:            peer.PeerType,
+			PeerId:              peer.PeerId,
+			SourcePermAuthKeyId: c.MD.PermAuthKeyId,
+			OperationId:         operationID,
+			OutboxId:            draftOutboxID(operationID),
 		}); err != nil {
 			return nil, err
 		}
@@ -66,11 +71,15 @@ func (c *DraftsCore) MessagesSaveDraft(in *tg.TLMessagesSaveDraft) (*tg.Bool, er
 			Effect:      in.Effect,
 		})
 
+		operationID := draftOperationID("save", c.MD.UserId, peer.PeerType, peer.PeerId, int64(date))
 		if _, err := c.svcCtx.Repo.DialogClient.DialogSaveDraftMessage(c.ctx, &repository.DialogSaveDraft{
-			UserId:   c.MD.UserId,
-			PeerType: peer.PeerType,
-			PeerId:   peer.PeerId,
-			Message:  draft,
+			UserId:              c.MD.UserId,
+			PeerType:            peer.PeerType,
+			PeerId:              peer.PeerId,
+			Message:             draft,
+			SourcePermAuthKeyId: c.MD.PermAuthKeyId,
+			OperationId:         operationID,
+			OutboxId:            draftOutboxID(operationID),
 		}); err != nil {
 			return nil, err
 		}

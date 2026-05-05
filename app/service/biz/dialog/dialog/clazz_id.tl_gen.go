@@ -17,10 +17,10 @@ const (
 	ClazzID_dialogFilterExt                          = 0xa6d498fe // a6d498fe
 	ClazzID_simpleDialogsData                        = 0x1d59b45d // 1d59b45d
 	ClazzID_savedDialogList                          = 0x778fe85a // 778fe85a
-	ClazzID_dialog_saveDraftMessage                  = 0x4ecad99a // 4ecad99a
-	ClazzID_dialog_clearDraftMessage                 = 0xfb70b29a // fb70b29a
+	ClazzID_dialog_saveDraftMessage                  = 0x3bfb9d31 // 3bfb9d31
+	ClazzID_dialog_clearDraftMessage                 = 0x9390695  // 9390695
 	ClazzID_dialog_getAllDrafts                      = 0xacde4fe6 // acde4fe6
-	ClazzID_dialog_clearAllDrafts                    = 0x41b890fc // 41b890fc
+	ClazzID_dialog_clearAllDrafts                    = 0x8432b418 // 8432b418
 	ClazzID_dialog_markDialogUnread                  = 0x4532910e // 4532910e
 	ClazzID_dialog_toggleDialogPin                   = 0x867ee52f // 867ee52f
 	ClazzID_dialog_getDialogUnreadMarkList           = 0xcabc38f4 // cabc38f4

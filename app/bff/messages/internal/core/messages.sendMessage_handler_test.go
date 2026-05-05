@@ -110,6 +110,38 @@ func TestMessagesSendMessage_Success(t *testing.T) {
 	}
 }
 
+func TestSendMessageClearDraftCarriesSourcePermAuthKey(t *testing.T) {
+	var got *msg.TLMsgSendMessageV2
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+			got = in
+			return testUpdates(), nil
+		},
+	}, 100, 200)
+
+	_, err := c.MessagesSendMessage(&tg.TLMessagesSendMessage{
+		ClearDraft: true,
+		Peer:       inputPeerUser(300),
+		Message:    "hello",
+		RandomId:   42,
+	})
+	if err != nil {
+		t.Fatalf("MessagesSendMessage error = %v", err)
+	}
+	if got == nil {
+		t.Fatal("msg service was not called")
+	}
+	if !got.ClearDraft {
+		t.Fatal("ClearDraft = false, want true")
+	}
+	if got.SourcePermAuthKeyId == nil || *got.SourcePermAuthKeyId != 200 {
+		t.Fatalf("SourcePermAuthKeyId = %v, want 200", got.SourcePermAuthKeyId)
+	}
+	if got.ClearDraftBeforeDate == nil || *got.ClearDraftBeforeDate == 0 {
+		t.Fatalf("ClearDraftBeforeDate = %v, want non-zero", got.ClearDraftBeforeDate)
+	}
+}
+
 func TestMessagesGetHistory_UserPeerSuccess(t *testing.T) {
 	var got *msg.TLMsgGetHistory
 	reply := tg.MakeTLMessagesMessages(&tg.TLMessagesMessages{

@@ -124,6 +124,19 @@ type DraftMutationResult struct {
 	Cleared      bool
 }
 
+type DraftRecord struct {
+	UserID          int64
+	PeerType        int32
+	PeerID          int64
+	PeerDialogID    int64
+	DraftKind       int32
+	Message         string
+	EntitiesPayload []byte
+	ReplyToPeerSeq  int64
+	DraftPayload    []byte
+	Date            time.Time
+}
+
 type SavedDialogTopInput struct {
 	UserID                int64
 	PeerType              int32
