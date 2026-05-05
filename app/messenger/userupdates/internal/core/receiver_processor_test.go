@@ -88,6 +88,10 @@ func (f *fakeReceiverProcessorRepository) GetDialogProjectionsByPeers(context.Co
 	return nil, nil
 }
 
+func (f *fakeReceiverProcessorRepository) GetMessageViewsByPeerSeqs(context.Context, int64, []repository.MessageViewPeerSeq) (map[repository.MessageViewPeerSeq]repository.MessageView, error) {
+	return nil, nil
+}
+
 func (f *fakeReceiverProcessorRepository) CountVisibleDialogs(context.Context, int64) (int32, error) {
 	return 0, nil
 }

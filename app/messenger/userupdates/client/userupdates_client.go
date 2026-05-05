@@ -30,6 +30,7 @@ type UserupdatesClient interface {
 	UserupdatesListDialogs(ctx context.Context, in *userupdates.TLUserupdatesListDialogs) (*userupdates.DialogProjectionList, error)
 	UserupdatesGetDialogsByPeers(ctx context.Context, in *userupdates.TLUserupdatesGetDialogsByPeers) (*userupdates.VectorDialogProjection, error)
 	UserupdatesGetDialogCount(ctx context.Context, in *userupdates.TLUserupdatesGetDialogCount) (*tg.Int32, error)
+	UserupdatesGetMessageViewsByPeerSeqs(ctx context.Context, in *userupdates.TLUserupdatesGetMessageViewsByPeerSeqs) (*userupdates.MessageViewList, error)
 	UserupdatesAppendDialogAuthSeqSideEffect(ctx context.Context, in *userupdates.TLUserupdatesAppendDialogAuthSeqSideEffect) (*userupdates.UserAuthSeqAppendResult, error)
 	UserupdatesAppendDialogPtsSideEffect(ctx context.Context, in *userupdates.TLUserupdatesAppendDialogPtsSideEffect) (*userupdates.UserPtsAppendResult, error)
 }
@@ -86,6 +87,12 @@ func (m *defaultUserupdatesClient) UserupdatesGetDialogsByPeers(ctx context.Cont
 // userupdates.getDialogCount user_id:long = Int32;
 func (m *defaultUserupdatesClient) UserupdatesGetDialogCount(ctx context.Context, in *userupdates.TLUserupdatesGetDialogCount) (*tg.Int32, error) {
 	return m.rpc.UserupdatesGetDialogCount(ctx, in)
+}
+
+// UserupdatesGetMessageViewsByPeerSeqs
+// userupdates.getMessageViewsByPeerSeqs user_id:long peers:Vector<MessageViewPeerSeq> = MessageViewList;
+func (m *defaultUserupdatesClient) UserupdatesGetMessageViewsByPeerSeqs(ctx context.Context, in *userupdates.TLUserupdatesGetMessageViewsByPeerSeqs) (*userupdates.MessageViewList, error) {
+	return m.rpc.UserupdatesGetMessageViewsByPeerSeqs(ctx, in)
 }
 
 // UserupdatesAppendDialogAuthSeqSideEffect

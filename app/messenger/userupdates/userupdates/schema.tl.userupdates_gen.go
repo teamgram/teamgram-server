@@ -631,6 +631,291 @@ func (m *TLDialogProjectionPeer) Decode(d *bin.Decoder) (err error) {
 // DialogProjectionPeer <--
 type DialogProjectionPeer = TLDialogProjectionPeer
 
+// MessageViewListClazz <--
+//   - TL_MessageViewList
+type MessageViewListClazz = *TLMessageViewList
+
+func DecodeMessageViewListClazz(d *bin.Decoder) (MessageViewListClazz, error) {
+	// id, err := d.PeekClazzID()
+	id, err := d.ClazzID()
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode MessageViewList: constructor: %w", err)
+	}
+
+	switch id {
+	case 0x3127345e:
+		x := &TLMessageViewList{ClazzID: id, ClazzName2: ClazzName_messageViewList}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
+		return x, nil
+	default:
+		return nil, fmt.Errorf("unable to decode MessageViewList: invalid constructor %x", id)
+	}
+
+}
+
+// TLMessageViewList <--
+type TLMessageViewList struct {
+	ClazzID    uint32            `json:"_id"`
+	ClazzName2 string            `json:"_name"`
+	Messages   []tg.MessageClazz `json:"messages"`
+}
+
+func MakeTLMessageViewList(m *TLMessageViewList) *TLMessageViewList {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_messageViewList
+
+	return m
+}
+
+func (m *TLMessageViewList) String() string {
+	return iface.DebugStringWithName("messageViewList", m)
+}
+
+func (m *TLMessageViewList) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("messageViewList", m)
+}
+
+// MessageViewListClazzName <--
+func (m *TLMessageViewList) MessageViewListClazzName() string {
+	return ClazzName_messageViewList
+}
+
+// ClazzName <--
+func (m *TLMessageViewList) ClazzName() string {
+	return m.ClazzName2
+}
+
+// ToMessageViewList <--
+func (m *TLMessageViewList) ToMessageViewList() *MessageViewList {
+	if m == nil {
+		return nil
+	}
+
+	return m
+
+}
+
+func (m *TLMessageViewList) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messageViewList, int(layer)); clazzId {
+	case 0x3127345e:
+		size := 4
+		size += iface.CalcObjectListSize(m.Messages, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessageViewList) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messageViewList, int(layer)); clazzId {
+	case 0x3127345e:
+		if err := iface.ValidateRequiredSlice("messages", m.Messages); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode messageViewList: unsupported layer %d", layer)
+	}
+}
+
+// Encode <--
+func (m *TLMessageViewList) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messageViewList, int(layer)); clazzId {
+	case 0x3127345e:
+		x.PutClazzID(0x3127345e)
+
+		if err := iface.EncodeObjectList(x, m.Messages, layer); err != nil {
+			return fmt.Errorf("unable to encode messageViewList#0x3127345e: field messages: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode messageViewList: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLMessageViewList) Decode(d *bin.Decoder) (err error) {
+	switch m.ClazzID {
+	case 0x3127345e:
+		l0, err3 := d.VectorHeader()
+		if err3 != nil {
+			return fmt.Errorf("unable to decode messageViewList#0x3127345e: field messages: %w", err3)
+		}
+		if l0 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode messageViewList#0x3127345e: field messages: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l0)})
+		}
+		prealloc0 := int(l0)
+		if prealloc0 > bin.PreallocateLimit {
+			prealloc0 = bin.PreallocateLimit
+		}
+		v0 := make([]tg.MessageClazz, 0, prealloc0)
+		for i := int32(0); i < l0; i++ {
+			vv0, err3 := tg.DecodeMessageClazz(d)
+			if err3 != nil {
+				return fmt.Errorf("unable to decode messageViewList#0x3127345e: field messages: %w", err3)
+			}
+			v0 = append(v0, vv0)
+		}
+		m.Messages = v0
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode messageViewList: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// MessageViewList <--
+type MessageViewList = TLMessageViewList
+
+// MessageViewPeerSeqClazz <--
+//   - TL_MessageViewPeerSeq
+type MessageViewPeerSeqClazz = *TLMessageViewPeerSeq
+
+func DecodeMessageViewPeerSeqClazz(d *bin.Decoder) (MessageViewPeerSeqClazz, error) {
+	// id, err := d.PeekClazzID()
+	id, err := d.ClazzID()
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode MessageViewPeerSeq: constructor: %w", err)
+	}
+
+	switch id {
+	case 0x8bf3b9a4:
+		x := &TLMessageViewPeerSeq{ClazzID: id, ClazzName2: ClazzName_messageViewPeerSeq}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
+		return x, nil
+	default:
+		return nil, fmt.Errorf("unable to decode MessageViewPeerSeq: invalid constructor %x", id)
+	}
+
+}
+
+// TLMessageViewPeerSeq <--
+type TLMessageViewPeerSeq struct {
+	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
+	PeerType   int32  `json:"peer_type"`
+	PeerId     int64  `json:"peer_id"`
+	PeerSeq    int64  `json:"peer_seq"`
+}
+
+func MakeTLMessageViewPeerSeq(m *TLMessageViewPeerSeq) *TLMessageViewPeerSeq {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_messageViewPeerSeq
+
+	return m
+}
+
+func (m *TLMessageViewPeerSeq) String() string {
+	return iface.DebugStringWithName("messageViewPeerSeq", m)
+}
+
+func (m *TLMessageViewPeerSeq) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("messageViewPeerSeq", m)
+}
+
+// MessageViewPeerSeqClazzName <--
+func (m *TLMessageViewPeerSeq) MessageViewPeerSeqClazzName() string {
+	return ClazzName_messageViewPeerSeq
+}
+
+// ClazzName <--
+func (m *TLMessageViewPeerSeq) ClazzName() string {
+	return m.ClazzName2
+}
+
+// ToMessageViewPeerSeq <--
+func (m *TLMessageViewPeerSeq) ToMessageViewPeerSeq() *MessageViewPeerSeq {
+	if m == nil {
+		return nil
+	}
+
+	return m
+
+}
+
+func (m *TLMessageViewPeerSeq) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messageViewPeerSeq, int(layer)); clazzId {
+	case 0x8bf3b9a4:
+		size := 4
+		size += 4
+		size += 8
+		size += 8
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessageViewPeerSeq) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messageViewPeerSeq, int(layer)); clazzId {
+	case 0x8bf3b9a4:
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode messageViewPeerSeq: unsupported layer %d", layer)
+	}
+}
+
+// Encode <--
+func (m *TLMessageViewPeerSeq) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messageViewPeerSeq, int(layer)); clazzId {
+	case 0x8bf3b9a4:
+		x.PutClazzID(0x8bf3b9a4)
+
+		x.PutInt32(m.PeerType)
+		x.PutInt64(m.PeerId)
+		x.PutInt64(m.PeerSeq)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode messageViewPeerSeq: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLMessageViewPeerSeq) Decode(d *bin.Decoder) (err error) {
+	switch m.ClazzID {
+	case 0x8bf3b9a4:
+		m.PeerType, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode messageViewPeerSeq#0x8bf3b9a4: field peer_type: %w", err)
+		}
+		m.PeerId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode messageViewPeerSeq#0x8bf3b9a4: field peer_id: %w", err)
+		}
+		m.PeerSeq, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode messageViewPeerSeq#0x8bf3b9a4: field peer_seq: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode messageViewPeerSeq: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// MessageViewPeerSeq <--
+type MessageViewPeerSeq = TLMessageViewPeerSeq
+
 // UserAuthSeqAppendResultClazz <--
 //   - TL_UserAuthSeqAppendResult
 type UserAuthSeqAppendResultClazz = *TLUserAuthSeqAppendResult

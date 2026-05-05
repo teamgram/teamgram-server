@@ -22,6 +22,8 @@ func init() {
 	iface.RegisterClazzID(0xb9bc23fd, func() iface.TLObject { return &TLDialogProjection{ClazzID: 0xb9bc23fd} })        // 0xb9bc23fd
 	iface.RegisterClazzID(0x4e60f01f, func() iface.TLObject { return &TLDialogProjectionList{ClazzID: 0x4e60f01f} })    // 0x4e60f01f
 	iface.RegisterClazzID(0x6d7ec124, func() iface.TLObject { return &TLDialogProjectionPeer{ClazzID: 0x6d7ec124} })    // 0x6d7ec124
+	iface.RegisterClazzID(0x3127345e, func() iface.TLObject { return &TLMessageViewList{ClazzID: 0x3127345e} })         // 0x3127345e
+	iface.RegisterClazzID(0x8bf3b9a4, func() iface.TLObject { return &TLMessageViewPeerSeq{ClazzID: 0x8bf3b9a4} })      // 0x8bf3b9a4
 	iface.RegisterClazzID(0x55994646, func() iface.TLObject { return &TLUserAuthSeqAppendResult{ClazzID: 0x55994646} }) // 0x55994646
 	iface.RegisterClazzID(0xb38ac177, func() iface.TLObject { return &TLUserDifferenceEmpty{ClazzID: 0xb38ac177} })     // 0xb38ac177
 	iface.RegisterClazzID(0xb15cb08d, func() iface.TLObject { return &TLUserDifference{ClazzID: 0xb15cb08d} })          // 0xb15cb08d
@@ -40,6 +42,7 @@ func init() {
 	iface.RegisterClazzID(0x53638fcc, func() iface.TLObject { return &TLUserupdatesListDialogs{ClazzID: 0x53638fcc} })                   // 0x53638fcc
 	iface.RegisterClazzID(0xc6a9626f, func() iface.TLObject { return &TLUserupdatesGetDialogsByPeers{ClazzID: 0xc6a9626f} })             // 0xc6a9626f
 	iface.RegisterClazzID(0x12060b16, func() iface.TLObject { return &TLUserupdatesGetDialogCount{ClazzID: 0x12060b16} })                // 0x12060b16
+	iface.RegisterClazzID(0x528a3e52, func() iface.TLObject { return &TLUserupdatesGetMessageViewsByPeerSeqs{ClazzID: 0x528a3e52} })     // 0x528a3e52
 	iface.RegisterClazzID(0x170844e5, func() iface.TLObject { return &TLUserupdatesAppendDialogAuthSeqSideEffect{ClazzID: 0x170844e5} }) // 0x170844e5
 	iface.RegisterClazzID(0xe93427fd, func() iface.TLObject { return &TLUserupdatesAppendDialogPtsSideEffect{ClazzID: 0xe93427fd} })     // 0xe93427fd
 }

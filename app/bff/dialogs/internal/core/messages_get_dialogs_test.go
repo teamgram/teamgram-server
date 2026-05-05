@@ -79,10 +79,11 @@ func (f *dialogsFakeMessageClient) MessageGetUserMessageList(ctx context.Context
 
 type dialogsFakeUserupdatesClient struct {
 	userupdatesclient.UserupdatesClient
-	getState          func(context.Context, *userupdates.TLUserupdatesGetState) (*userupdates.UserState, error)
-	getDifference     func(context.Context, *userupdates.TLUserupdatesGetDifference) (*userupdates.UserDifference, error)
-	getDialogsByPeers func(context.Context, *userupdates.TLUserupdatesGetDialogsByPeers) (*userupdates.VectorDialogProjection, error)
-	processOperation  func(context.Context, *userupdates.TLUserupdatesProcessUserOperation) (*userupdates.UserOperationResult, error)
+	getState                  func(context.Context, *userupdates.TLUserupdatesGetState) (*userupdates.UserState, error)
+	getDifference             func(context.Context, *userupdates.TLUserupdatesGetDifference) (*userupdates.UserDifference, error)
+	getDialogsByPeers         func(context.Context, *userupdates.TLUserupdatesGetDialogsByPeers) (*userupdates.VectorDialogProjection, error)
+	getMessageViewsByPeerSeqs func(context.Context, *userupdates.TLUserupdatesGetMessageViewsByPeerSeqs) (*userupdates.MessageViewList, error)
+	processOperation          func(context.Context, *userupdates.TLUserupdatesProcessUserOperation) (*userupdates.UserOperationResult, error)
 }
 
 func (f *dialogsFakeUserupdatesClient) UserupdatesGetState(ctx context.Context, in *userupdates.TLUserupdatesGetState) (*userupdates.UserState, error) {
@@ -95,6 +96,13 @@ func (f *dialogsFakeUserupdatesClient) UserupdatesGetDifference(ctx context.Cont
 
 func (f *dialogsFakeUserupdatesClient) UserupdatesGetDialogsByPeers(ctx context.Context, in *userupdates.TLUserupdatesGetDialogsByPeers) (*userupdates.VectorDialogProjection, error) {
 	return f.getDialogsByPeers(ctx, in)
+}
+
+func (f *dialogsFakeUserupdatesClient) UserupdatesGetMessageViewsByPeerSeqs(ctx context.Context, in *userupdates.TLUserupdatesGetMessageViewsByPeerSeqs) (*userupdates.MessageViewList, error) {
+	if f.getMessageViewsByPeerSeqs == nil {
+		return userupdates.MakeTLMessageViewList(&userupdates.TLMessageViewList{Messages: []tg.MessageClazz{}}).ToMessageViewList(), nil
+	}
+	return f.getMessageViewsByPeerSeqs(ctx, in)
 }
 
 func (f *dialogsFakeUserupdatesClient) UserupdatesProcessUserOperation(ctx context.Context, in *userupdates.TLUserupdatesProcessUserOperation) (*userupdates.UserOperationResult, error) {
@@ -190,7 +198,7 @@ func TestMessagesGetPeerDialogsEmptyVectorReturnsEmptyPeerDialogs(t *testing.T) 
 func TestMessagesGetPeerDialogsHydratesTopMessagesUsersChats(t *testing.T) {
 	const selfID int64 = 100
 	var gotPeerDialogs *dialogpb.TLDialogGetPeerDialogsV2
-	var gotMessages *messagepb.TLMessageGetUserMessageList
+	var gotMessageViews *userupdates.TLUserupdatesGetMessageViewsByPeerSeqs
 	var gotUsers *userpb.TLUserGetMutableUsersV2
 	var gotChats *chatpb.TLChatGetChatListByIdList
 
@@ -214,13 +222,13 @@ func TestMessagesGetPeerDialogsHydratesTopMessagesUsersChats(t *testing.T) {
 				}}, nil
 			},
 		},
-		MessageClient: &dialogsFakeMessageClient{
-			getUserMessageList: func(_ context.Context, in *messagepb.TLMessageGetUserMessageList) (*messagepb.VectorMessageBox, error) {
-				gotMessages = in
-				return &messagepb.VectorMessageBox{Datas: []tg.MessageBoxClazz{
-					tg.MakeTLMessageBox(&tg.TLMessageBox{UserId: selfID, MessageId: 7, Message: tg.MakeTLMessage(&tg.TLMessage{Id: 7, PeerId: tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 200}), Message: "u"})}),
-					tg.MakeTLMessageBox(&tg.TLMessageBox{UserId: selfID, MessageId: 8, Message: tg.MakeTLMessage(&tg.TLMessage{Id: 8, PeerId: tg.MakeTLPeerChat(&tg.TLPeerChat{ChatId: 300}), Message: "c"})}),
-				}}, nil
+		UserupdatesClient: &dialogsFakeUserupdatesClient{
+			getMessageViewsByPeerSeqs: func(_ context.Context, in *userupdates.TLUserupdatesGetMessageViewsByPeerSeqs) (*userupdates.MessageViewList, error) {
+				gotMessageViews = in
+				return userupdates.MakeTLMessageViewList(&userupdates.TLMessageViewList{Messages: []tg.MessageClazz{
+					tg.MakeTLMessage(&tg.TLMessage{Id: 7, PeerId: tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 200}), Message: "u"}),
+					tg.MakeTLMessage(&tg.TLMessage{Id: 8, PeerId: tg.MakeTLPeerChat(&tg.TLPeerChat{ChatId: 300}), Message: "c"}),
+				}}).ToMessageViewList(), nil
 			},
 		},
 		UserClient: &dialogsFakeUserClient{
@@ -251,8 +259,10 @@ func TestMessagesGetPeerDialogsHydratesTopMessagesUsersChats(t *testing.T) {
 	if gotPeerDialogs == nil || len(gotPeerDialogs.Peers) != 2 {
 		t.Fatalf("DialogGetPeerDialogsV2 request = %+v", gotPeerDialogs)
 	}
-	if gotMessages == nil || len(gotMessages.IdList) != 2 || gotMessages.IdList[0] != 7 || gotMessages.IdList[1] != 8 {
-		t.Fatalf("MessageGetUserMessageList request = %+v", gotMessages)
+	if gotMessageViews == nil || gotMessageViews.UserId != selfID || len(gotMessageViews.Peers) != 2 ||
+		gotMessageViews.Peers[0].PeerType != dialogPeerTypeUser || gotMessageViews.Peers[0].PeerId != 200 || gotMessageViews.Peers[0].PeerSeq != 7 ||
+		gotMessageViews.Peers[1].PeerType != dialogPeerTypeChat || gotMessageViews.Peers[1].PeerId != 300 || gotMessageViews.Peers[1].PeerSeq != 8 {
+		t.Fatalf("UserupdatesGetMessageViewsByPeerSeqs request = %+v", gotMessageViews)
 	}
 	if gotUsers == nil || len(gotUsers.Id) != 1 || gotUsers.Id[0] != 200 {
 		t.Fatalf("UserGetMutableUsersV2 request = %+v", gotUsers)
@@ -308,20 +318,16 @@ func TestMessagesGetPinnedDialogsHydratesFacadeProjection(t *testing.T) {
 				}}, nil
 			},
 		},
-		MessageClient: &dialogsFakeMessageClient{
-			getUserMessageList: func(context.Context, *messagepb.TLMessageGetUserMessageList) (*messagepb.VectorMessageBox, error) {
-				return &messagepb.VectorMessageBox{Datas: []tg.MessageBoxClazz{
-					tg.MakeTLMessageBox(&tg.TLMessageBox{
-						UserId:    100,
-						MessageId: 7,
-						Message: tg.MakeTLMessage(&tg.TLMessage{
-							Id:      7,
-							PeerId:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 200}),
-							Message: "hello",
-							Date:    123,
-						}),
+		UserupdatesClient: &dialogsFakeUserupdatesClient{
+			getMessageViewsByPeerSeqs: func(context.Context, *userupdates.TLUserupdatesGetMessageViewsByPeerSeqs) (*userupdates.MessageViewList, error) {
+				return userupdates.MakeTLMessageViewList(&userupdates.TLMessageViewList{Messages: []tg.MessageClazz{
+					tg.MakeTLMessage(&tg.TLMessage{
+						Id:      7,
+						PeerId:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 200}),
+						Message: "hello",
+						Date:    123,
 					}),
-				}}, nil
+				}}).ToMessageViewList(), nil
 			},
 		},
 		UserClient: &dialogsFakeUserClient{
@@ -477,7 +483,7 @@ func TestMessagesGetPeerSettingsReturnsDefaultSettings(t *testing.T) {
 
 func TestMessagesGetDialogsMapsUserDialogAndTopMessage(t *testing.T) {
 	const selfID int64 = 100
-	var gotMessages *messagepb.TLMessageGetUserMessageList
+	var gotMessageViews *userupdates.TLUserupdatesGetMessageViewsByPeerSeqs
 	var gotUsers *userpb.TLUserGetMutableUsersV2
 
 	c := newDialogsGetDialogsCore(&repository.Repository{
@@ -497,21 +503,22 @@ func TestMessagesGetDialogsMapsUserDialogAndTopMessage(t *testing.T) {
 		},
 		MessageClient: &dialogsFakeMessageClient{
 			getUserMessageList: func(_ context.Context, in *messagepb.TLMessageGetUserMessageList) (*messagepb.VectorMessageBox, error) {
-				gotMessages = in
-				return &messagepb.VectorMessageBox{Datas: []tg.MessageBoxClazz{
-					tg.MakeTLMessageBox(&tg.TLMessageBox{
-						UserId:    selfID,
-						MessageId: 7,
-						Message: tg.MakeTLMessage(&tg.TLMessage{
-							Out:     true,
-							Id:      7,
-							PeerId:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 200}),
-							Message: "hello",
-							Date:    123,
-						}),
-						Reaction: "",
+				t.Fatalf("legacy MessageGetUserMessageList must not be called: %+v", in)
+				return nil, tg.ErrMethodNotImpl
+			},
+		},
+		UserupdatesClient: &dialogsFakeUserupdatesClient{
+			getMessageViewsByPeerSeqs: func(_ context.Context, in *userupdates.TLUserupdatesGetMessageViewsByPeerSeqs) (*userupdates.MessageViewList, error) {
+				gotMessageViews = in
+				return userupdates.MakeTLMessageViewList(&userupdates.TLMessageViewList{Messages: []tg.MessageClazz{
+					tg.MakeTLMessage(&tg.TLMessage{
+						Out:     true,
+						Id:      7,
+						PeerId:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 200}),
+						Message: "hello",
+						Date:    123,
 					}),
-				}}, nil
+				}}).ToMessageViewList(), nil
 			},
 		},
 		UserClient: &dialogsFakeUserClient{
@@ -546,8 +553,9 @@ func TestMessagesGetDialogsMapsUserDialogAndTopMessage(t *testing.T) {
 	if err != nil {
 		t.Fatalf("MessagesGetDialogs error = %v", err)
 	}
-	if gotMessages == nil || gotMessages.UserId != selfID || len(gotMessages.IdList) != 1 || gotMessages.IdList[0] != 7 {
-		t.Fatalf("MessageGetUserMessageList request = %+v, want self top message 7", gotMessages)
+	if gotMessageViews == nil || gotMessageViews.UserId != selfID || len(gotMessageViews.Peers) != 1 ||
+		gotMessageViews.Peers[0].PeerType != dialogPeerTypeUser || gotMessageViews.Peers[0].PeerId != 200 || gotMessageViews.Peers[0].PeerSeq != 7 {
+		t.Fatalf("UserupdatesGetMessageViewsByPeerSeqs request = %+v, want self/user/200 seq 7", gotMessageViews)
 	}
 	if gotUsers == nil || len(gotUsers.Id) != 1 || gotUsers.Id[0] != 200 || !gotUsers.Privacy || !gotUsers.HasTo || len(gotUsers.To) != 1 || gotUsers.To[0] != selfID {
 		t.Fatalf("UserGetMutableUsersV2 request = %+v, want peer user 200 with privacy to self", gotUsers)

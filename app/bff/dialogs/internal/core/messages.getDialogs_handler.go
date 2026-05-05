@@ -20,9 +20,9 @@ import (
 	"math"
 	"strconv"
 
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
-	messagepb "github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -99,6 +99,12 @@ type hydratedDialogV2Result struct {
 	Users    []tg.UserClazz
 }
 
+type dialogTopMessageRef struct {
+	PeerType int32
+	PeerID   int64
+	PeerSeq  int64
+}
+
 func vectorDialogExtV2s(page *dialogpb.DialogPage) []dialogpb.DialogExtV2Clazz {
 	if page == nil {
 		return nil
@@ -149,7 +155,7 @@ func (c *DialogsCore) hydrateDialogExtV2s(operation string, dialogExts []dialogp
 	dialogs := make([]tg.DialogClazz, 0, len(dialogExts))
 	userIDs := make([]int64, 0, len(dialogExts))
 	chatIDs := make([]int64, 0, len(dialogExts))
-	topMessageIDs := make([]int32, 0, len(dialogExts))
+	topMessageRefs := make([]dialogTopMessageRef, 0, len(dialogExts))
 	notifyPeers := make([]tg.PeerUtilClazz, 0, len(dialogExts))
 	notifyKeys := make([]string, 0, len(dialogExts))
 
@@ -173,7 +179,11 @@ func (c *DialogsCore) hydrateDialogExtV2s(operation string, dialogExts []dialogp
 		dialog := makePublicDialogFromExtV2(dialogExt, topMessageID, tg.MakeTLPeerNotifySettings(&tg.TLPeerNotifySettings{}))
 		dialogs = append(dialogs, dialog)
 		if topMessageID > 0 {
-			topMessageIDs = append(topMessageIDs, topMessageID)
+			topMessageRefs = append(topMessageRefs, dialogTopMessageRef{
+				PeerType: dialogExt.PeerType,
+				PeerID:   dialogExt.PeerId,
+				PeerSeq:  dialogExt.TopPeerSeq,
+			})
 		}
 		switch dialogExt.PeerType {
 		case dialogPeerTypeUser:
@@ -197,7 +207,7 @@ func (c *DialogsCore) hydrateDialogExtV2s(operation string, dialogExts []dialogp
 		}
 	}
 
-	messages, err := c.fetchDialogTopMessages(topMessageIDs)
+	messages, err := c.fetchDialogTopMessages(operation, topMessageRefs)
 	if err != nil {
 		return nil, err
 	}
@@ -327,31 +337,32 @@ func uniquePeerUtils(peers []tg.PeerUtilClazz) []tg.PeerUtilClazz {
 	return out
 }
 
-func (c *DialogsCore) fetchDialogTopMessages(ids []int32) ([]tg.MessageClazz, error) {
-	ids = uniqueInt32s(ids)
-	if len(ids) == 0 {
+func (c *DialogsCore) fetchDialogTopMessages(operation string, refs []dialogTopMessageRef) ([]tg.MessageClazz, error) {
+	refs = uniqueDialogTopMessageRefs(refs)
+	if len(refs) == 0 {
 		return []tg.MessageClazz{}, nil
 	}
 
-	boxes, err := c.svcCtx.Repo.MessageClient.MessageGetUserMessageList(c.ctx, &messagepb.TLMessageGetUserMessageList{
+	peers := make([]userupdates.MessageViewPeerSeqClazz, 0, len(refs))
+	for _, ref := range refs {
+		peers = append(peers, userupdates.MakeTLMessageViewPeerSeq(&userupdates.TLMessageViewPeerSeq{
+			PeerType: ref.PeerType,
+			PeerId:   ref.PeerID,
+			PeerSeq:  ref.PeerSeq,
+		}))
+	}
+	views, err := c.svcCtx.Repo.UserupdatesClient.UserupdatesGetMessageViewsByPeerSeqs(c.ctx, &userupdates.TLUserupdatesGetMessageViewsByPeerSeqs{
 		UserId: c.MD.UserId,
-		IdList: ids,
+		Peers:  peers,
 	})
 	if err != nil {
-		c.Logger.Errorf("messages.getDialogs - message.getUserMessageList failed: user_id: %d, id_list: %v, err: %v", c.MD.UserId, ids, err)
+		c.Logger.Errorf("%s - userupdates.getMessageViewsByPeerSeqs failed: user_id: %d, refs: %+v, err: %v", operation, c.MD.UserId, refs, err)
 		return nil, tg.ErrInternalServerError
 	}
-
-	messages := make([]tg.MessageClazz, 0, len(ids))
-	if boxes == nil {
-		return messages, nil
+	if views == nil {
+		return []tg.MessageClazz{}, nil
 	}
-	for _, box := range boxes.Datas {
-		if box != nil && box.Message != nil {
-			messages = append(messages, box.Message)
-		}
-	}
-	return messages, nil
+	return views.Messages, nil
 }
 
 func (c *DialogsCore) fetchDialogUsers(ids []int64) ([]tg.UserClazz, error) {
@@ -460,18 +471,18 @@ func (c *DialogsCore) fetchDialogChats(ids []int64) ([]tg.ChatClazz, error) {
 	return out, nil
 }
 
-func uniqueInt32s(ids []int32) []int32 {
-	seen := make(map[int32]struct{}, len(ids))
-	out := make([]int32, 0, len(ids))
-	for _, id := range ids {
-		if id == 0 {
+func uniqueDialogTopMessageRefs(refs []dialogTopMessageRef) []dialogTopMessageRef {
+	seen := make(map[dialogTopMessageRef]struct{}, len(refs))
+	out := make([]dialogTopMessageRef, 0, len(refs))
+	for _, ref := range refs {
+		if ref.PeerType == 0 || ref.PeerID == 0 || ref.PeerSeq == 0 {
 			continue
 		}
-		if _, ok := seen[id]; ok {
+		if _, ok := seen[ref]; ok {
 			continue
 		}
-		seen[id] = struct{}{}
-		out = append(out, id)
+		seen[ref] = struct{}{}
+		out = append(out, ref)
 	}
 	return out
 }

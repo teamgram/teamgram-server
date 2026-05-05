@@ -121,8 +121,7 @@ func eventToTLUpdate(event repository.UserEvent) (tg.MessageClazz, tg.UpdateClaz
 	if messageEvent.EventKind != payload.EventKindNewMessage {
 		return nil, nil, fmt.Errorf("%w: unsupported event kind=%s schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.EventKind, messageEvent.SchemaVersion)
 	}
-
-	messageID, err := int64ToInt32(messageEvent.MessageID, "message id")
+	message, err := messageEventToTLMessage(messageEvent)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -130,20 +129,50 @@ func eventToTLUpdate(event repository.UserEvent) (tg.MessageClazz, tg.UpdateClaz
 	if err != nil {
 		return nil, nil, err
 	}
-	message := tg.MakeTLMessage(&tg.TLMessage{
-		Out:     messageEvent.Out,
-		Id:      messageID,
-		FromId:  peerFromUser(messageEvent.FromUserID),
-		PeerId:  peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
-		Date:    messageEvent.Date,
-		Message: messageEvent.MessageText,
-	})
 	update := tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
 		Message:  message,
 		Pts:      pts,
 		PtsCount: event.PtsCount,
 	})
 	return message, update, nil
+}
+
+func messageViewToTLMessage(view repository.MessageView) (tg.MessageClazz, error) {
+	if view.MessageStatus != repository.MessageStatusLive {
+		return nil, nil
+	}
+	if view.ViewSchemaVersion != payload.MessageEventSchemaVersion {
+		return nil, fmt.Errorf("%w: unsupported message view schema=%d", userupdates.ErrUserupdatesStorage, view.ViewSchemaVersion)
+	}
+	var messageEvent payload.MessageEventV1
+	if err := json.Unmarshal(view.ViewPayload, &messageEvent); err != nil {
+		return nil, fmt.Errorf("%w: decode message view payload: %v", userupdates.ErrUserupdatesStorage, err)
+	}
+	if messageEvent.SchemaVersion != payload.MessageEventSchemaVersion {
+		return nil, fmt.Errorf("%w: unsupported message view event schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.SchemaVersion)
+	}
+	if messageEvent.PeerType != view.PeerType || messageEvent.PeerID != view.PeerID || messageEvent.MessageID != view.PeerSeq {
+		return nil, fmt.Errorf("%w: message view payload mismatch", userupdates.ErrUserupdatesStorage)
+	}
+	return messageEventToTLMessage(messageEvent)
+}
+
+func messageEventToTLMessage(messageEvent payload.MessageEventV1) (tg.MessageClazz, error) {
+	if messageEvent.EventKind != payload.EventKindNewMessage {
+		return nil, fmt.Errorf("%w: unsupported event kind=%s schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.EventKind, messageEvent.SchemaVersion)
+	}
+	messageID, err := int64ToInt32(messageEvent.MessageID, "message id")
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLMessage(&tg.TLMessage{
+		Out:     messageEvent.Out,
+		Id:      messageID,
+		FromId:  peerFromUser(messageEvent.FromUserID),
+		PeerId:  peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
+		Date:    messageEvent.Date,
+		Message: messageEvent.MessageText,
+	}), nil
 }
 
 func authSeqEventToTLUpdate(event repository.AuthSeqEvent) (tg.UpdateClazz, error) {

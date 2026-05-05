@@ -104,6 +104,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"/userupdates.RPCUserupdates/userupdates.getMessageViewsByPeerSeqs": kitex.NewMethodInfo(
+		getMessageViewsByPeerSeqsHandler,
+		newGetMessageViewsByPeerSeqsArgs,
+		newGetMessageViewsByPeerSeqsResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 	"/userupdates.RPCUserupdates/userupdates.appendDialogAuthSeqSideEffect": kitex.NewMethodInfo(
 		appendDialogAuthSeqSideEffectHandler,
 		newAppendDialogAuthSeqSideEffectArgs,
@@ -1129,6 +1136,140 @@ func (p *GetDialogCountResult) GetResult() interface{} {
 	return p.Success
 }
 
+func getMessageViewsByPeerSeqsHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*GetMessageViewsByPeerSeqsArgs)
+	realResult := result.(*GetMessageViewsByPeerSeqsResult)
+	success, err := handler.(userupdates.RPCUserupdates).UserupdatesGetMessageViewsByPeerSeqs(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newGetMessageViewsByPeerSeqsArgs() interface{} {
+	return &GetMessageViewsByPeerSeqsArgs{}
+}
+
+func newGetMessageViewsByPeerSeqsResult() interface{} {
+	return &GetMessageViewsByPeerSeqsResult{}
+}
+
+type GetMessageViewsByPeerSeqsArgs struct {
+	Req *userupdates.TLUserupdatesGetMessageViewsByPeerSeqs
+}
+
+func (p *GetMessageViewsByPeerSeqsArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in GetMessageViewsByPeerSeqsArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *GetMessageViewsByPeerSeqsArgs) Unmarshal(in []byte) error {
+	msg := new(userupdates.TLUserupdatesGetMessageViewsByPeerSeqs)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *GetMessageViewsByPeerSeqsArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in GetMessageViewsByPeerSeqsArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *GetMessageViewsByPeerSeqsArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(userupdates.TLUserupdatesGetMessageViewsByPeerSeqs)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetMessageViewsByPeerSeqsArgs_Req_DEFAULT *userupdates.TLUserupdatesGetMessageViewsByPeerSeqs
+
+func (p *GetMessageViewsByPeerSeqsArgs) GetReq() *userupdates.TLUserupdatesGetMessageViewsByPeerSeqs {
+	if !p.IsSetReq() {
+		return GetMessageViewsByPeerSeqsArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetMessageViewsByPeerSeqsArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type GetMessageViewsByPeerSeqsResult struct {
+	Success *userupdates.MessageViewList
+}
+
+var GetMessageViewsByPeerSeqsResult_Success_DEFAULT *userupdates.MessageViewList
+
+func (p *GetMessageViewsByPeerSeqsResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in GetMessageViewsByPeerSeqsResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *GetMessageViewsByPeerSeqsResult) Unmarshal(in []byte) error {
+	msg := new(userupdates.MessageViewList)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetMessageViewsByPeerSeqsResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in GetMessageViewsByPeerSeqsResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *GetMessageViewsByPeerSeqsResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(userupdates.MessageViewList)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetMessageViewsByPeerSeqsResult) GetSuccess() *userupdates.MessageViewList {
+	if !p.IsSetSuccess() {
+		return GetMessageViewsByPeerSeqsResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetMessageViewsByPeerSeqsResult) SetSuccess(x interface{}) {
+	p.Success = x.(*userupdates.MessageViewList)
+}
+
+func (p *GetMessageViewsByPeerSeqsResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetMessageViewsByPeerSeqsResult) GetResult() interface{} {
+	return p.Success
+}
+
 func appendDialogAuthSeqSideEffectHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*AppendDialogAuthSeqSideEffectArgs)
 	realResult := result.(*AppendDialogAuthSeqSideEffectResult)
@@ -1485,6 +1626,18 @@ func (p *kClient) UserupdatesGetDialogCount(ctx context.Context, req *userupdate
 	var _result GetDialogCountResult
 
 	if err = p.c.Call(ctx, "/userupdates.RPCUserupdates/userupdates.getDialogCount", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) UserupdatesGetMessageViewsByPeerSeqs(ctx context.Context, req *userupdates.TLUserupdatesGetMessageViewsByPeerSeqs) (r *userupdates.MessageViewList, err error) {
+	// var _args GetMessageViewsByPeerSeqsArgs
+	// _args.Req = req
+	var _result GetMessageViewsByPeerSeqsResult
+
+	if err = p.c.Call(ctx, "/userupdates.RPCUserupdates/userupdates.getMessageViewsByPeerSeqs", req, &_result); err != nil {
 		return
 	}
 

@@ -132,6 +132,22 @@ func (s *Service) UserupdatesGetDialogCount(ctx context.Context, request *userup
 	return r, err
 }
 
+// UserupdatesGetMessageViewsByPeerSeqs
+// userupdates.getMessageViewsByPeerSeqs user_id:long peers:Vector<MessageViewPeerSeq> = MessageViewList;
+func (s *Service) UserupdatesGetMessageViewsByPeerSeqs(ctx context.Context, request *userupdates.TLUserupdatesGetMessageViewsByPeerSeqs) (*userupdates.MessageViewList, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("userupdates.getMessageViewsByPeerSeqs - request: %s", request)
+
+	r, err := c.UserupdatesGetMessageViewsByPeerSeqs(request)
+	if err != nil {
+		c.Logger.Errorf("userupdates.getMessageViewsByPeerSeqs - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("userupdates.getMessageViewsByPeerSeqs - reply: %s", r)
+	return r, err
+}
+
 // UserupdatesAppendDialogAuthSeqSideEffect
 // userupdates.appendDialogAuthSeqSideEffect flags:# user_id:long source_perm_auth_key_id:long operation_id:string target_auth_policy:string public_update_type:string peer_type:int peer_id:long payload_schema_version:int payload:bytes payload_hash:bytes = UserAuthSeqAppendResult;
 func (s *Service) UserupdatesAppendDialogAuthSeqSideEffect(ctx context.Context, request *userupdates.TLUserupdatesAppendDialogAuthSeqSideEffect) (*userupdates.UserAuthSeqAppendResult, error) {

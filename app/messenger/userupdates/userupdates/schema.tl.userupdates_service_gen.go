@@ -479,6 +479,76 @@ func (m *TLUserupdatesGetDialogCount) Decode(d *bin.Decoder) (err error) {
 	}
 }
 
+// TLUserupdatesGetMessageViewsByPeerSeqs <--
+type TLUserupdatesGetMessageViewsByPeerSeqs struct {
+	ClazzID uint32                    `json:"_id"`
+	UserId  int64                     `json:"user_id"`
+	Peers   []MessageViewPeerSeqClazz `json:"peers"`
+}
+
+func (m *TLUserupdatesGetMessageViewsByPeerSeqs) String() string {
+	return iface.DebugStringWithName(ClazzName_userupdates_getMessageViewsByPeerSeqs, m)
+}
+
+// Encode <--
+func (m *TLUserupdatesGetMessageViewsByPeerSeqs) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_userupdates_getMessageViewsByPeerSeqs, int(layer)); clazzId {
+	case 0x528a3e52:
+		x.PutClazzID(0x528a3e52)
+
+		x.PutInt64(m.UserId)
+
+		if err := iface.EncodeObjectList(x, m.Peers, layer); err != nil {
+			return fmt.Errorf("unable to encode userupdates_getMessageViewsByPeerSeqs#0x528a3e52: field peers: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode userupdates_getMessageViewsByPeerSeqs: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLUserupdatesGetMessageViewsByPeerSeqs) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return fmt.Errorf("unable to decode userupdates_getMessageViewsByPeerSeqs: constructor: %w", err)
+		}
+	}
+	switch m.ClazzID {
+	case 0x528a3e52:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode userupdates_getMessageViewsByPeerSeqs#0x528a3e52: field user_id: %w", err)
+		}
+		l2, err3 := d.VectorHeader()
+		if err3 != nil {
+			return fmt.Errorf("unable to decode userupdates_getMessageViewsByPeerSeqs#0x528a3e52: field peers: %w", err3)
+		}
+		if l2 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode userupdates_getMessageViewsByPeerSeqs#0x528a3e52: field peers: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l2)})
+		}
+		prealloc2 := int(l2)
+		if prealloc2 > bin.PreallocateLimit {
+			prealloc2 = bin.PreallocateLimit
+		}
+		v2 := make([]MessageViewPeerSeqClazz, 0, prealloc2)
+		for i := int32(0); i < l2; i++ {
+			vv2, err3 := DecodeMessageViewPeerSeqClazz(d)
+			if err3 != nil {
+				return fmt.Errorf("unable to decode userupdates_getMessageViewsByPeerSeqs#0x528a3e52: field peers: %w", err3)
+			}
+			v2 = append(v2, vv2)
+		}
+		m.Peers = v2
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode userupdates_getMessageViewsByPeerSeqs: invalid constructor %x", m.ClazzID)
+	}
+}
+
 // TLUserupdatesAppendDialogAuthSeqSideEffect <--
 type TLUserupdatesAppendDialogAuthSeqSideEffect struct {
 	ClazzID              uint32 `json:"_id"`
@@ -746,6 +816,7 @@ type RPCUserupdates interface {
 	UserupdatesListDialogs(ctx context.Context, in *TLUserupdatesListDialogs) (*DialogProjectionList, error)
 	UserupdatesGetDialogsByPeers(ctx context.Context, in *TLUserupdatesGetDialogsByPeers) (*VectorDialogProjection, error)
 	UserupdatesGetDialogCount(ctx context.Context, in *TLUserupdatesGetDialogCount) (*tg.Int32, error)
+	UserupdatesGetMessageViewsByPeerSeqs(ctx context.Context, in *TLUserupdatesGetMessageViewsByPeerSeqs) (*MessageViewList, error)
 	UserupdatesAppendDialogAuthSeqSideEffect(ctx context.Context, in *TLUserupdatesAppendDialogAuthSeqSideEffect) (*UserAuthSeqAppendResult, error)
 	UserupdatesAppendDialogPtsSideEffect(ctx context.Context, in *TLUserupdatesAppendDialogPtsSideEffect) (*UserPtsAppendResult, error)
 }

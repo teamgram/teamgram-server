@@ -177,6 +177,63 @@ func TestGetDifferenceBuildsVisibleMessageFromEventPayload(t *testing.T) {
 	}
 }
 
+func TestGetMessageViewsByPeerSeqsBuildsMessagesFromViews(t *testing.T) {
+	eventPayload := mustMarshalMessageEvent(t, payload.MessageEventV1{
+		SchemaVersion:      payload.MessageEventSchemaVersion,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: 2001,
+		MessageID:          7,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             1002,
+		FromUserID:         1001,
+		ToUserID:           1002,
+		Date:               1_772_000_000,
+		Out:                true,
+		MessageText:        "dialog top",
+	})
+	peer := repository.MessageViewPeerSeq{PeerType: payload.PeerTypeUser, PeerID: 1002, PeerSeq: 7}
+	repo := &fakeUserUpdatesRepository{
+		messageViews: map[repository.MessageViewPeerSeq]repository.MessageView{
+			peer: {
+				UserID:             1001,
+				PeerType:           payload.PeerTypeUser,
+				PeerID:             1002,
+				PeerSeq:            7,
+				CanonicalMessageID: 2001,
+				FromUserID:         1001,
+				Outgoing:           true,
+				MessageStatus:      repository.MessageStatusLive,
+				ViewSchemaVersion:  payload.MessageEventSchemaVersion,
+				ViewPayload:        eventPayload,
+			},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.UserupdatesGetMessageViewsByPeerSeqs(&userupdates.TLUserupdatesGetMessageViewsByPeerSeqs{
+		UserId: 1001,
+		Peers: []userupdates.MessageViewPeerSeqClazz{
+			userupdates.MakeTLMessageViewPeerSeq(&userupdates.TLMessageViewPeerSeq{PeerType: payload.PeerTypeUser, PeerId: 1002, PeerSeq: 7}),
+		},
+	})
+	if err != nil {
+		t.Fatalf("GetMessageViewsByPeerSeqs returned error: %v", err)
+	}
+	if repo.messageViewUserID != 1001 || len(repo.messageViewPeers) != 1 || repo.messageViewPeers[0] != peer {
+		t.Fatalf("unexpected repository message view request: user_id=%d peers=%+v", repo.messageViewUserID, repo.messageViewPeers)
+	}
+	if got == nil || len(got.Messages) != 1 {
+		t.Fatalf("expected one message, got %+v", got)
+	}
+	message, ok := got.Messages[0].(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("expected TLMessage, got %T", got.Messages[0])
+	}
+	if message.Id != 7 || message.Message != "dialog top" || !message.Out {
+		t.Fatalf("unexpected message view projection: %+v", message)
+	}
+}
+
 func TestGetStateReturnsRepositoryState(t *testing.T) {
 	repo := &fakeUserUpdatesRepository{
 		state: &repository.UserState{UserID: 1001, Pts: 55},
@@ -504,6 +561,9 @@ type fakeUserUpdatesRepository struct {
 	dialogPeerUserID   int64
 	dialogPeers        []repository.DialogProjectionPeer
 	dialogPeerMap      map[repository.DialogProjectionPeer]repository.DialogProjection
+	messageViewUserID  int64
+	messageViewPeers   []repository.MessageViewPeerSeq
+	messageViews       map[repository.MessageViewPeerSeq]repository.MessageView
 	dialogCountUserID  int64
 	dialogCount        int32
 }
@@ -547,6 +607,12 @@ func (f *fakeUserUpdatesRepository) GetDialogProjectionsByPeers(_ context.Contex
 	f.dialogPeerUserID = userID
 	f.dialogPeers = peers
 	return f.dialogPeerMap, nil
+}
+
+func (f *fakeUserUpdatesRepository) GetMessageViewsByPeerSeqs(_ context.Context, userID int64, peers []repository.MessageViewPeerSeq) (map[repository.MessageViewPeerSeq]repository.MessageView, error) {
+	f.messageViewUserID = userID
+	f.messageViewPeers = peers
+	return f.messageViews, nil
 }
 
 func (f *fakeUserUpdatesRepository) CountVisibleDialogs(_ context.Context, userID int64) (int32, error) {

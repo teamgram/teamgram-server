@@ -39,6 +39,7 @@ type UserUpdatesRepository interface {
 	AppendDialogPtsSideEffect(ctx context.Context, in repository.DialogSideEffectAppendInput) (*repository.PtsAppendResult, error)
 	ListDialogProjections(ctx context.Context, userID int64, cursor repository.DialogProjectionCursor, limit int32) ([]repository.DialogProjection, error)
 	GetDialogProjectionsByPeers(ctx context.Context, userID int64, peers []repository.DialogProjectionPeer) (map[repository.DialogProjectionPeer]repository.DialogProjection, error)
+	GetMessageViewsByPeerSeqs(ctx context.Context, userID int64, peers []repository.MessageViewPeerSeq) (map[repository.MessageViewPeerSeq]repository.MessageView, error)
 	CountVisibleDialogs(ctx context.Context, userID int64) (int32, error)
 }
 

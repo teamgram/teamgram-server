@@ -21,6 +21,8 @@ const (
 	ClazzID_dialogProjectionPeer                      = 0x6d7ec124 // 6d7ec124
 	ClazzID_dialogProjection                          = 0xb9bc23fd // b9bc23fd
 	ClazzID_dialogProjectionList                      = 0x4e60f01f // 4e60f01f
+	ClazzID_messageViewPeerSeq                        = 0x8bf3b9a4 // 8bf3b9a4
+	ClazzID_messageViewList                           = 0x3127345e // 3127345e
 	ClazzID_userAuthSeqAppendResult                   = 0x55994646 // 55994646
 	ClazzID_userPtsAppendResult                       = 0xaa3fff4f // aa3fff4f
 	ClazzID_userupdates_processUserOperation          = 0xc200ea59 // c200ea59
@@ -30,6 +32,7 @@ const (
 	ClazzID_userupdates_listDialogs                   = 0x53638fcc // 53638fcc
 	ClazzID_userupdates_getDialogsByPeers             = 0xc6a9626f // c6a9626f
 	ClazzID_userupdates_getDialogCount                = 0x12060b16 // 12060b16
+	ClazzID_userupdates_getMessageViewsByPeerSeqs     = 0x528a3e52 // 528a3e52
 	ClazzID_userupdates_appendDialogAuthSeqSideEffect = 0x170844e5 // 170844e5
 	ClazzID_userupdates_appendDialogPtsSideEffect     = 0xe93427fd // e93427fd
 )
