@@ -68,6 +68,33 @@ func TestNewClientReturnsResolverError(t *testing.T) {
 	}
 }
 
+func TestNewClientAppliesShortConnectionOption(t *testing.T) {
+	base := captureClientOptionCount(t, false)
+	short := captureClientOptionCount(t, true)
+	if short != base+1 {
+		t.Fatalf("expected short connection to add one client option, base=%d short=%d", base, short)
+	}
+}
+
+func captureClientOptionCount(t *testing.T, shortConnection bool) int {
+	t.Helper()
+
+	var captured []client.Option
+	_, err := NewClient(RpcClientConf{
+		DestService:     "svc.test",
+		ServiceName:     "svc.test",
+		Endpoints:       []string{"127.0.0.1:1"},
+		ShortConnection: shortConnection,
+	}, func(opts ...client.Option) (Client, error) {
+		captured = append(captured, opts...)
+		return &closableClient{}, nil
+	})
+	if err != nil {
+		t.Fatalf("NewClient returned error: %v", err)
+	}
+	return len(captured)
+}
+
 func TestNewServerInitializesTelemetryForTracingLogs(t *testing.T) {
 	orig := otel.GetTracerProvider()
 	otel.SetTracerProvider(noop.NewTracerProvider())

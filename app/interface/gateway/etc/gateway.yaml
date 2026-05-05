@@ -18,6 +18,9 @@ AuthsessionClient:
   DestService: service.authsession
   ServiceName: RPCAuthsession
   Codec: zrpc
+  ShortConnection: true
+  Endpoints:
+    - 127.0.0.1:20450
   Etcd:
     Hosts:
       - 127.0.0.1:2379

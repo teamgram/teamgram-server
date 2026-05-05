@@ -55,6 +55,9 @@ func NewClient(c RpcClientConf, newF NewClientFn) (Client, error) {
 	if c.Codec == "zrpc" {
 		options = append(options, client.WithCodec(codec.NewZRpcCodec(false)))
 	}
+	if c.ShortConnection {
+		options = append(options, client.WithShortConnection())
+	}
 
 	// options = append(options, opts...)
 

@@ -1,5 +1,5 @@
 Name: service.authsession
-ListenOn: 0.0.0.0:20450
+ListenOn: 127.0.0.1:20450
 Etcd:
   #GoZero: true
   Hosts:
