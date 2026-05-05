@@ -2,10 +2,10 @@ package core
 
 import (
 	"context"
-	"errors"
 	"testing"
 	"time"
 
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/svc"
@@ -196,66 +196,62 @@ func (f fakeDialogRepo) EditPeerFolders(ctx context.Context, in repository.EditP
 	return f.editFoldersFn(ctx, in)
 }
 
-func TestDialogGetDialogsReturnsMappedVector(t *testing.T) {
-	repo := fakeDialogRepo{
-		listFn: func(_ context.Context, userID int64, excludePinned bool, folderID int32) ([]repository.DialogRecord, error) {
-			if userID != 1001 || !excludePinned || folderID != 2 {
-				t.Fatalf("request = userID:%d excludePinned:%t folderID:%d", userID, excludePinned, folderID)
-			}
-			return []repository.DialogRecord{testDialogRecord()}, nil
-		},
-	}
-	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
-
-	got, err := core.DialogGetDialogs(&dialogpb.TLDialogGetDialogs{
-		UserId:        1001,
-		ExcludePinned: tg.BoolTrueClazz,
-		FolderId:      2,
-	})
-	if err != nil {
-		t.Fatalf("DialogGetDialogs error = %v", err)
-	}
-	if len(got.Datas) != 1 {
-		t.Fatalf("len(Datas) = %d, want 1", len(got.Datas))
-	}
-	ext := got.Datas[0].ToDialogExt()
-	if ext.Order != 17 {
-		t.Fatalf("Order = %d, want 17", ext.Order)
-	}
-	if ext.ThemeEmoticon != "moon" {
-		t.Fatalf("ThemeEmoticon = %q, want moon", ext.ThemeEmoticon)
-	}
-	if ext.Dialog.(*tg.TLDialog).TopMessage != 99 {
-		t.Fatalf("TopMessage = %d, want 99", ext.Dialog.(*tg.TLDialog).TopMessage)
-	}
+type fakeDialogUserupdates struct {
+	listFn     func(context.Context, *userupdates.TLUserupdatesListDialogs) (*userupdates.DialogProjectionList, error)
+	byPeersFn  func(context.Context, *userupdates.TLUserupdatesGetDialogsByPeers) (*userupdates.VectorDialogProjection, error)
+	countFn    func(context.Context, *userupdates.TLUserupdatesGetDialogCount) (*tg.Int32, error)
+	listCalled bool
 }
 
-func TestDialogGetPinnedDialogsHonorsRepositoryOrder(t *testing.T) {
+func (f *fakeDialogUserupdates) UserupdatesListDialogs(ctx context.Context, in *userupdates.TLUserupdatesListDialogs) (*userupdates.DialogProjectionList, error) {
+	f.listCalled = true
+	return f.listFn(ctx, in)
+}
+
+func (f *fakeDialogUserupdates) UserupdatesGetDialogsByPeers(ctx context.Context, in *userupdates.TLUserupdatesGetDialogsByPeers) (*userupdates.VectorDialogProjection, error) {
+	return f.byPeersFn(ctx, in)
+}
+
+func (f *fakeDialogUserupdates) UserupdatesGetDialogCount(ctx context.Context, in *userupdates.TLUserupdatesGetDialogCount) (*tg.Int32, error) {
+	return f.countFn(ctx, in)
+}
+
+func TestDialogGetDialogsReturnsMappedVector(t *testing.T) {
 	repo := fakeDialogRepo{
-		listPinnedFn: func(_ context.Context, userID int64, folderID int32) ([]repository.DialogRecord, error) {
-			if userID != 1001 || folderID != 1 {
-				t.Fatalf("request = userID:%d folderID:%d", userID, folderID)
+		extrasFn: func(_ context.Context, userID int64, peers []repository.PeerRef) ([]repository.DialogExtrasRecord, error) {
+			if userID != 1001 || len(peers) != 1 || peers[0].PeerID != 2002 {
+				t.Fatalf("extras request = userID:%d peers:%+v", userID, peers)
 			}
-			first := testDialogRecord()
-			first.Order = 90
-			second := testDialogRecord()
-			second.PeerID = 2003
-			second.PeerDialogID = 18
-			second.Order = 80
-			return []repository.DialogRecord{first, second}, nil
+			return []repository.DialogExtrasRecord{{PeerType: tg.PEER_USER, PeerID: 2002, FolderID: 2, MainPinnedOrder: 17}}, nil
 		},
 	}
-	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+	updates := &fakeDialogUserupdates{
+		listFn: func(_ context.Context, in *userupdates.TLUserupdatesListDialogs) (*userupdates.DialogProjectionList, error) {
+			if in.UserId != 1001 || in.TopMessageDate != 10 || in.TopPeerSeq != 9 || in.PeerType != tg.PEER_USER || in.PeerId != 2002 || in.Limit != 20 {
+				t.Fatalf("list request = %+v", in)
+			}
+			return userupdates.MakeTLDialogProjectionList(&userupdates.TLDialogProjectionList{
+				Projections: []userupdates.DialogProjectionClazz{testDialogProjection()},
+				Exhausted:   tg.BoolTrueClazz,
+			}), nil
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo, Userupdates: updates})
 
-	got, err := core.DialogGetPinnedDialogs(&dialogpb.TLDialogGetPinnedDialogs{UserId: 1001, FolderId: 1})
+	got, err := core.DialogGetDialogsV2(&dialogpb.TLDialogGetDialogsV2{
+		UserId:        1001,
+		ExcludePinned: tg.BoolTrueClazz,
+		Limit:         20,
+		Cursor:        dialogpb.MakeTLDialogCursor(&dialogpb.TLDialogCursor{FolderId: 2, TopMessageDate: 10, TopPeerSeq: 9, PeerType: tg.PEER_USER, PeerId: 2002}),
+	})
 	if err != nil {
-		t.Fatalf("DialogGetPinnedDialogs error = %v", err)
+		t.Fatalf("DialogGetDialogsV2 error = %v", err)
 	}
-	if len(got.Datas) != 2 {
-		t.Fatalf("len(Datas) = %d, want 2", len(got.Datas))
+	if len(got.Dialogs) != 0 {
+		t.Fatalf("excluded pinned dialog count = %d, want 0", len(got.Dialogs))
 	}
-	if got.Datas[0].Order != 90 || got.Datas[1].Order != 80 {
-		t.Fatalf("orders = %d,%d; want 90,80", got.Datas[0].Order, got.Datas[1].Order)
+	if !updates.listCalled {
+		t.Fatal("userupdates list was not called")
 	}
 }
 
@@ -322,35 +318,36 @@ func TestDialogClearDraftAfterSendUsesSourceOperationID(t *testing.T) {
 	}
 }
 
-func TestDialogGetDialogsReturnsEmptyVector(t *testing.T) {
+func TestDialogGetPinnedDialogsHonorsRepositoryOrder(t *testing.T) {
 	repo := fakeDialogRepo{
-		listFn: func(context.Context, int64, bool, int32) ([]repository.DialogRecord, error) {
-			return []repository.DialogRecord{}, nil
+		listPinnedFn: func(_ context.Context, userID int64, folderID int32) ([]repository.DialogRecord, error) {
+			if userID != 1001 || folderID != 1 {
+				t.Fatalf("request = userID:%d folderID:%d", userID, folderID)
+			}
+			first := testDialogRecord()
+			second := testDialogRecord()
+			second.PeerID = 2003
+			return []repository.DialogRecord{first, second}, nil
 		},
 	}
-	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+	updates := &fakeDialogUserupdates{
+		byPeersFn: func(_ context.Context, in *userupdates.TLUserupdatesGetDialogsByPeers) (*userupdates.VectorDialogProjection, error) {
+			if len(in.Peers) != 2 || in.Peers[0].PeerId != 2002 || in.Peers[1].PeerId != 2003 {
+				t.Fatalf("peers = %+v", in.Peers)
+			}
+			second := testDialogProjection()
+			second.PeerId = 2003
+			return &userupdates.VectorDialogProjection{Datas: []userupdates.DialogProjectionClazz{testDialogProjection(), second}}, nil
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo, Userupdates: updates})
 
-	got, err := core.DialogGetDialogs(&dialogpb.TLDialogGetDialogs{UserId: 1001, ExcludePinned: tg.BoolFalseClazz})
+	got, err := core.DialogGetPinnedDialogsV2(&dialogpb.TLDialogGetPinnedDialogsV2{UserId: 1001, FolderId: 1})
 	if err != nil {
-		t.Fatalf("DialogGetDialogs error = %v", err)
+		t.Fatalf("DialogGetPinnedDialogsV2 error = %v", err)
 	}
-	if got == nil || len(got.Datas) != 0 {
-		t.Fatalf("DialogGetDialogs = %#v, want empty vector", got)
-	}
-}
-
-func TestDialogGetDialogsPassesThroughRepositoryError(t *testing.T) {
-	cause := errors.New("repository failed")
-	repo := fakeDialogRepo{
-		listFn: func(context.Context, int64, bool, int32) ([]repository.DialogRecord, error) {
-			return nil, cause
-		},
-	}
-	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
-
-	_, err := core.DialogGetDialogs(&dialogpb.TLDialogGetDialogs{UserId: 1001, ExcludePinned: tg.BoolFalseClazz})
-	if !errors.Is(err, cause) {
-		t.Fatalf("error = %v, want cause", err)
+	if len(got.Datas) != 2 || got.Datas[0].PeerId != 2002 || got.Datas[1].PeerId != 2003 {
+		t.Fatalf("pinned dialogs = %+v", got.Datas)
 	}
 }
 
@@ -378,80 +375,22 @@ func testDialogRecord() repository.DialogRecord {
 	}
 }
 
-func TestDialogGetDialogsCount(t *testing.T) {
-	repo := fakeDialogRepo{
-		countFn: func(_ context.Context, userID int64, excludePinned bool, folderID int32) (int32, error) {
-			if userID != 1001 || excludePinned || folderID != 7 {
-				t.Fatalf("request = userID:%d excludePinned:%t folderID:%d", userID, excludePinned, folderID)
-			}
-			return 4, nil
-		},
-	}
-	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
-
-	got, err := core.DialogGetDialogsCount(&dialogpb.TLDialogGetDialogsCount{
-		UserId:        1001,
-		ExcludePinned: tg.BoolFalseClazz,
-		FolderId:      7,
+func testDialogProjection() *userupdates.TLDialogProjection {
+	return userupdates.MakeTLDialogProjection(&userupdates.TLDialogProjection{
+		PeerType:                 tg.PEER_USER,
+		PeerId:                   2002,
+		TopPeerSeq:               99,
+		TopCanonicalMessageId:    7001,
+		TopMessageDate:           1710000000,
+		ReadInboxMaxPeerSeq:      12,
+		ReadOutboxMaxPeerSeq:     13,
+		UnreadCount:              2,
+		UnreadMentionsCount:      1,
+		UnreadReactionsCount:     3,
+		UnreadMark:               true,
+		PinnedPeerSeq:            33,
+		PinnedCanonicalMessageId: 33,
+		HasScheduled:             true,
+		AvailableMinPeerSeq:      1,
 	})
-	if err != nil {
-		t.Fatalf("DialogGetDialogsCount error = %v", err)
-	}
-	if got.V != 4 {
-		t.Fatalf("count = %d, want 4", got.V)
-	}
-}
-
-func TestDialogGetDialogById(t *testing.T) {
-	record := testDialogRecord()
-	repo := fakeDialogRepo{
-		getFn: func(_ context.Context, userID int64, peerType int32, peerID int64) (*repository.DialogRecord, error) {
-			if userID != 1001 || peerType != tg.PEER_USER || peerID != 2002 {
-				t.Fatalf("request = userID:%d peerType:%d peerID:%d", userID, peerType, peerID)
-			}
-			return &record, nil
-		},
-	}
-	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
-
-	got, err := core.DialogGetDialogById(&dialogpb.TLDialogGetDialogById{
-		UserId:   1001,
-		PeerType: tg.PEER_USER,
-		PeerId:   2002,
-	})
-	if err != nil {
-		t.Fatalf("DialogGetDialogById error = %v", err)
-	}
-	if got.Order != 17 {
-		t.Fatalf("Order = %d, want 17", got.Order)
-	}
-}
-
-func TestDialogGetDialogsByIdList(t *testing.T) {
-	repo := fakeDialogRepo{
-		idsFn: func(_ context.Context, userID int64, ids []int64) ([]repository.DialogRecord, error) {
-			if userID != 1001 {
-				t.Fatalf("userID = %d, want 1001", userID)
-			}
-			if len(ids) != 2 || ids[0] != 17 || ids[1] != 18 {
-				t.Fatalf("ids = %#v, want [17 18]", ids)
-			}
-			first := testDialogRecord()
-			second := testDialogRecord()
-			second.PeerDialogID = 18
-			return []repository.DialogRecord{first, second}, nil
-		},
-	}
-	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
-
-	got, err := core.DialogGetDialogsByIdList(&dialogpb.TLDialogGetDialogsByIdList{
-		UserId: 1001,
-		IdList: []int64{17, 18},
-	})
-	if err != nil {
-		t.Fatalf("DialogGetDialogsByIdList error = %v", err)
-	}
-	if len(got.Datas) != 2 {
-		t.Fatalf("len(Datas) = %d, want 2", len(got.Datas))
-	}
 }

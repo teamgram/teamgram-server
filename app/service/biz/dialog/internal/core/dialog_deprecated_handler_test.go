@@ -30,6 +30,41 @@ func TestDialogDeprecatedHandlersReturnDeprecatedMethod(t *testing.T) {
 				return err
 			},
 		},
+		{
+			name: "get dialogs",
+			call: func() error {
+				_, err := core.DialogGetDialogs(&dialogpb.TLDialogGetDialogs{})
+				return err
+			},
+		},
+		{
+			name: "get pinned dialogs",
+			call: func() error {
+				_, err := core.DialogGetPinnedDialogs(&dialogpb.TLDialogGetPinnedDialogs{})
+				return err
+			},
+		},
+		{
+			name: "get dialogs count",
+			call: func() error {
+				_, err := core.DialogGetDialogsCount(&dialogpb.TLDialogGetDialogsCount{})
+				return err
+			},
+		},
+		{
+			name: "get dialog by id",
+			call: func() error {
+				_, err := core.DialogGetDialogById(&dialogpb.TLDialogGetDialogById{})
+				return err
+			},
+		},
+		{
+			name: "get dialogs by id list",
+			call: func() error {
+				_, err := core.DialogGetDialogsByIdList(&dialogpb.TLDialogGetDialogsByIdList{})
+				return err
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -21,9 +21,11 @@ import (
 	"time"
 
 	userupdatesclient "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/client"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 type DialogRepository interface {
@@ -56,6 +58,12 @@ type DialogRepository interface {
 	EditPeerFolders(ctx context.Context, in repository.EditPeerFoldersInput) (*repository.PreferenceMutationResult, error)
 }
 
+type UserupdatesClient interface {
+	UserupdatesListDialogs(ctx context.Context, in *userupdates.TLUserupdatesListDialogs) (*userupdates.DialogProjectionList, error)
+	UserupdatesGetDialogsByPeers(ctx context.Context, in *userupdates.TLUserupdatesGetDialogsByPeers) (*userupdates.VectorDialogProjection, error)
+	UserupdatesGetDialogCount(ctx context.Context, in *userupdates.TLUserupdatesGetDialogCount) (*tg.Int32, error)
+}
+
 type backgroundWorker interface {
 	Run(ctx context.Context)
 	Stop()
@@ -66,11 +74,12 @@ type waitableBackgroundWorker interface {
 }
 
 type ServiceContext struct {
-	Config  config.Config
-	Repo    DialogRepository
-	workers []backgroundWorker
-	closers []interface{ Close() error }
-	cancel  context.CancelFunc
+	Config      config.Config
+	Repo        DialogRepository
+	Userupdates UserupdatesClient
+	workers     []backgroundWorker
+	closers     []interface{ Close() error }
+	cancel      context.CancelFunc
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -82,8 +91,12 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	if closer, ok := any(repo).(interface{ Close() error }); ok {
 		sc.closers = append(sc.closers, closer)
 	}
-	if c.DialogOutboxWorkers.Enabled && hasRPCClientConfig(c.Userupdates) {
+	if hasRPCClientConfig(c.Userupdates) {
 		updates := userupdatesclient.NewUserupdatesClient(userupdatesclient.MustNewKitexClient(c.Userupdates))
+		sc.Userupdates = updates
+		if !c.DialogOutboxWorkers.Enabled {
+			return sc
+		}
 		options := repository.DialogOutboxWorkerOptions{
 			BatchSize:    c.DialogOutboxWorkers.BatchSize,
 			LeaseSeconds: c.DialogOutboxWorkers.LeaseSeconds,

@@ -26,9 +26,5 @@ func (c *DialogCore) DialogGetPinnedDialogs(in *dialog.TLDialogGetPinnedDialogs)
 	if in == nil {
 		return nil, dialog.ErrDialogInvalid
 	}
-	records, err := c.svcCtx.Repo.ListPinnedDialogs(c.ctx, in.UserId, in.FolderId)
-	if err != nil {
-		return nil, err
-	}
-	return makeDialogExtVector(records), nil
+	return nil, dialog.ErrDeprecatedMethod
 }

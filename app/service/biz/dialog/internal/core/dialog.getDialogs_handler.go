@@ -16,17 +16,10 @@
 
 package core
 
-import (
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
-)
+import "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 
 // DialogGetDialogs
 // dialog.getDialogs user_id:long exclude_pinned:Bool folder_id:int = Vector<DialogExt>;
 func (c *DialogCore) DialogGetDialogs(in *dialog.TLDialogGetDialogs) (*dialog.VectorDialogExt, error) {
-	records, err := c.svcCtx.Repo.ListDialogs(c.ctx, in.UserId, tg.FromBoolClazz(in.ExcludePinned), in.FolderId)
-	if err != nil {
-		return nil, err
-	}
-	return makeDialogExtVector(records), nil
+	return nil, dialog.ErrDeprecatedMethod
 }

@@ -18,6 +18,9 @@
 package core
 
 import (
+	"errors"
+
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
 )
@@ -25,23 +28,23 @@ import (
 // DialogGetPeerDialogsV2
 // dialog.getPeerDialogsV2 user_id:long peers:Vector<DialogPeer> = Vector<DialogExtV2>;
 func (c *DialogCore) DialogGetPeerDialogsV2(in *dialog.TLDialogGetPeerDialogsV2) (*dialog.VectorDialogExtV2, error) {
+	if c.svcCtx.Userupdates == nil {
+		return nil, dialog.WrapDialogStorage("userupdates.getDialogsByPeers", errors.New("userupdates client is not configured"))
+	}
 	peers := make([]repository.PeerRef, 0, len(in.Peers))
-	ids := make([]int64, 0, len(in.Peers))
 	for _, peer := range in.Peers {
 		peers = append(peers, repository.PeerRef{PeerType: peer.PeerType, PeerID: peer.PeerId})
-		peerDialogID, err := repository.MakePeerDialogID(peer.PeerType, peer.PeerId)
-		if err != nil {
-			return nil, dialog.ErrDialogInvalid
-		}
-		ids = append(ids, peerDialogID)
 	}
-	records, err := c.svcCtx.Repo.ListDialogsByPeerDialogIDs(c.ctx, in.UserId, ids)
+	records, err := c.svcCtx.Userupdates.UserupdatesGetDialogsByPeers(c.ctx, &userupdates.TLUserupdatesGetDialogsByPeers{
+		UserId: in.UserId,
+		Peers:  dialogProjectionPeersFromRefs(peers),
+	})
 	if err != nil {
-		return nil, err
+		return nil, dialog.WrapDialogStorage("userupdates.getDialogsByPeers", err)
 	}
 	extras, err := c.svcCtx.Repo.BatchGetDialogExtras(c.ctx, in.UserId, peers)
 	if err != nil {
 		return nil, err
 	}
-	return makeDialogExtV2Vector(records, extras), nil
+	return makeDialogExtV2VectorFromProjections(records.Datas, extras), nil
 }

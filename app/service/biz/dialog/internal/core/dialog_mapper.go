@@ -1,6 +1,9 @@
 package core
 
 import (
+	"errors"
+
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -125,6 +128,67 @@ func makeDialogExtV2Vector(records []repository.DialogRecord, extras []repositor
 		out.Datas = append(out.Datas, makeDialogExtV2(record, extrasByPeer[repository.PeerRef{PeerType: record.PeerType, PeerID: record.PeerID}]))
 	}
 	return out
+}
+
+func makeDialogExtV2FromProjection(projection *userupdates.TLDialogProjection, extras *dialogpb.DialogExtras) *dialogpb.DialogExtV2 {
+	if extras == nil {
+		extras = makeDialogExtras(repository.DialogExtrasRecord{
+			PeerType: projection.PeerType,
+			PeerID:   projection.PeerId,
+		})
+	}
+	return dialogpb.MakeTLDialogExtV2(&dialogpb.TLDialogExtV2{
+		PeerType:                 projection.PeerType,
+		PeerId:                   projection.PeerId,
+		TopPeerSeq:               projection.TopPeerSeq,
+		TopCanonicalMessageId:    projection.TopCanonicalMessageId,
+		TopMessageDate:           projection.TopMessageDate,
+		UnreadCount:              projection.UnreadCount,
+		UnreadMentionsCount:      projection.UnreadMentionsCount,
+		UnreadReactionsCount:     projection.UnreadReactionsCount,
+		UnreadMark:               projection.UnreadMark,
+		PinnedPeerSeq:            projection.PinnedPeerSeq,
+		PinnedCanonicalMessageId: projection.PinnedCanonicalMessageId,
+		HasScheduled:             projection.HasScheduled,
+		AvailableMinPeerSeq:      projection.AvailableMinPeerSeq,
+		FolderId:                 extras.FolderId,
+		MainPinnedOrder:          extras.MainPinnedOrder,
+		FolderPinnedOrder:        extras.FolderPinnedOrder,
+		Extras:                   extras,
+	})
+}
+
+func makeDialogExtV2VectorFromProjections(projections []*userupdates.TLDialogProjection, extras []repository.DialogExtrasRecord) *dialogpb.VectorDialogExtV2 {
+	extrasByPeer := make(map[repository.PeerRef]*dialogpb.DialogExtras, len(extras))
+	for _, record := range extras {
+		extrasByPeer[repository.PeerRef{PeerType: record.PeerType, PeerID: record.PeerID}] = makeDialogExtras(record)
+	}
+	out := &dialogpb.VectorDialogExtV2{Datas: make([]dialogpb.DialogExtV2Clazz, 0, len(projections))}
+	for _, projection := range projections {
+		if projection == nil {
+			continue
+		}
+		out.Datas = append(out.Datas, makeDialogExtV2FromProjection(projection, extrasByPeer[repository.PeerRef{PeerType: projection.PeerType, PeerID: projection.PeerId}]))
+	}
+	return out
+}
+
+func dialogProjectionPeersFromRefs(peers []repository.PeerRef) []userupdates.DialogProjectionPeerClazz {
+	out := make([]userupdates.DialogProjectionPeerClazz, 0, len(peers))
+	for _, peer := range peers {
+		out = append(out, userupdates.MakeTLDialogProjectionPeer(&userupdates.TLDialogProjectionPeer{
+			PeerType: peer.PeerType,
+			PeerId:   peer.PeerID,
+		}))
+	}
+	return out
+}
+
+func projectionPeerRef(projection *userupdates.TLDialogProjection) (repository.PeerRef, error) {
+	if projection == nil {
+		return repository.PeerRef{}, errors.New("nil dialog projection")
+	}
+	return repository.PeerRef{PeerType: projection.PeerType, PeerID: projection.PeerId}, nil
 }
 
 func makeDialogFilterExt(record repository.DialogFilterRecord) *dialogpb.DialogFilterExt {

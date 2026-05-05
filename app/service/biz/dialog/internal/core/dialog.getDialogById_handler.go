@@ -23,9 +23,5 @@ import (
 // DialogGetDialogById
 // dialog.getDialogById user_id:long peer_type:int peer_id:long = DialogExt;
 func (c *DialogCore) DialogGetDialogById(in *dialog.TLDialogGetDialogById) (*dialog.DialogExt, error) {
-	record, err := c.svcCtx.Repo.GetDialogByPeer(c.ctx, in.UserId, in.PeerType, in.PeerId)
-	if err != nil {
-		return nil, err
-	}
-	return makeDialogExt(*record), nil
+	return nil, dialog.ErrDeprecatedMethod
 }
