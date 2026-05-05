@@ -430,7 +430,20 @@ func TestMsgGetHistoryPassesViewerUserID(t *testing.T) {
 }
 
 func TestMsgReadHistoryV2ReturnsAffectedMessagesAck(t *testing.T) {
-	core := New(context.Background(), &svc.ServiceContext{Repo: &fakeMsgRepository{}})
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:      1001,
+			OperationId: readHistoryOperationID(1001, 1002, 2, 9001),
+			Status:      1,
+			Pts:         15,
+			PtsCount:    1,
+			CurrentPts:  15,
+		}),
+	}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:        &fakeMsgRepository{},
+		UserUpdates: updatesClient,
+	})
 
 	got, err := core.MsgReadHistoryV2(&msgpb.TLMsgReadHistoryV2{
 		UserId:    1001,
@@ -445,8 +458,24 @@ func TestMsgReadHistoryV2ReturnsAffectedMessagesAck(t *testing.T) {
 	if got == nil {
 		t.Fatal("MsgReadHistoryV2() returned nil")
 	}
-	if got.Pts != 0 || got.PtsCount != 0 {
-		t.Fatalf("affected messages = %+v, want zero-pts ack", got)
+	if got.Pts != 15 || got.PtsCount != 1 {
+		t.Fatalf("affected messages = %+v, want pts=15 pts_count=1", got)
+	}
+	if updatesClient.processed == nil {
+		t.Fatal("read history operation was not sent to userupdates")
+	}
+	if updatesClient.processed.OperationId != readHistoryOperationID(1001, 1002, 2, 9001) {
+		t.Fatalf("operation_id = %q", updatesClient.processed.OperationId)
+	}
+	if updatesClient.processed.AuthKeyIdExclude == nil || *updatesClient.processed.AuthKeyIdExclude != 9001 {
+		t.Fatalf("auth_key_id_exclude = %v, want 9001", updatesClient.processed.AuthKeyIdExclude)
+	}
+	var op payload.MessageOperationV1
+	if err := json.Unmarshal(updatesClient.processed.Payload, &op); err != nil {
+		t.Fatalf("decode read history payload: %v", err)
+	}
+	if op.OperationKind != payload.OperationKindReadHistory || op.PeerID != 1002 || op.ReadInboxMaxPeerSeq != 2 || op.ReadOutboxMaxPeerSeq != 2 {
+		t.Fatalf("unexpected read history payload: %+v", op)
 	}
 }
 
