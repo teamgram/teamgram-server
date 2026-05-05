@@ -18,14 +18,34 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // DialogSetChatTheme
 // dialog.setChatTheme user_id:long peer_type:int peer_id:long theme_emoticon:string = Bool;
 func (c *DialogCore) DialogSetChatTheme(in *dialog.TLDialogSetChatTheme) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.setChatTheme - error: method DialogSetChatTheme not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if in.PeerType != repository.PeerTypeUser {
+		return nil, dialog.ErrWrongOwner
+	}
+	sourceAuth, err := c.sourcePermAuthKeyID()
+	if err != nil {
+		return nil, err
+	}
+	operationID := deterministicOperationID("set_private_theme", in.UserId, in.PeerId, in.ThemeEmoticon)
+	if _, err := c.svcCtx.Repo.SetPrivatePeerPolicy(c.ctx, repository.PrivatePeerPolicyInput{
+		UserID:              in.UserId,
+		PeerUserID:          in.PeerId,
+		ThemeEmoticon:       in.ThemeEmoticon,
+		SourcePermAuthKeyID: sourceAuth,
+		OperationID:         operationID,
+		ActorOutboxID:       deterministicOutboxID(operationID, "actor"),
+		PeerOutboxID:        deterministicOutboxID(operationID, "peer"),
+		DeliveryPath:        repository.DeliveryPathUserupdatesPTS,
+		PublicUpdateType:    "messageActionSetChatTheme",
+		Payload:             []byte(`{"schema_version":1}`),
+	}); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

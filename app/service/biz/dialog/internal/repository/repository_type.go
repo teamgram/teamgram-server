@@ -213,3 +213,47 @@ type PeerWallpaperInput struct {
 	EventType           string
 	Payload             []byte
 }
+
+type DialogFilterRecord struct {
+	UserID              int64
+	DialogFilterID      int32
+	Slug                string
+	Title               string
+	OrderValue          int64
+	Enabled             bool
+	FilterSchemaVersion int32
+	FilterPayload       []byte
+}
+
+type SaveDialogFilterInput struct {
+	UserID              int64
+	DialogFilterID      int32
+	Slug                string
+	Title               string
+	OrderValue          int64
+	Enabled             bool
+	FilterSchemaVersion int32
+	FilterPayload       []byte
+	SourcePermAuthKeyID int64
+	OperationID         string
+	OutboxID            int64
+	EventType           string
+}
+
+type DeleteDialogFilterInput struct {
+	UserID              int64
+	DialogFilterID      int32
+	SourcePermAuthKeyID int64
+	OperationID         string
+	OutboxID            int64
+	EventType           string
+}
+
+type ReorderDialogFiltersInput struct {
+	UserID              int64
+	Order               []int32
+	SourcePermAuthKeyID int64
+	OperationID         string
+	OutboxID            int64
+	EventType           string
+}

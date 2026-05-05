@@ -18,6 +18,14 @@ type fakeDialogRepo struct {
 	getFn         func(context.Context, int64, int32, int64) (*repository.DialogRecord, error)
 	idsFn         func(context.Context, int64, []int64) ([]repository.DialogRecord, error)
 	extrasFn      func(context.Context, int64, []repository.PeerRef) ([]repository.DialogExtrasRecord, error)
+	filterListFn  func(context.Context, int64) ([]repository.DialogFilterRecord, error)
+	filterGetFn   func(context.Context, int64, int32) (*repository.DialogFilterRecord, error)
+	filterSlugFn  func(context.Context, int64, string) (*repository.DialogFilterRecord, error)
+	filterSaveFn  func(context.Context, repository.SaveDialogFilterInput) (*repository.DialogFilterRecord, error)
+	filterDelFn   func(context.Context, repository.DeleteDialogFilterInput) error
+	filterOrderFn func(context.Context, repository.ReorderDialogFiltersInput) error
+	wallpaperFn   func(context.Context, repository.PeerWallpaperInput) error
+	policyFn      func(context.Context, repository.PrivatePeerPolicyInput) (*repository.PrivatePeerPolicyResult, error)
 	saveDraftFn   func(context.Context, repository.SaveDraftInput) (*repository.DraftMutationResult, error)
 	clearDraftFn  func(context.Context, repository.ClearDraftInput) (*repository.DraftMutationResult, error)
 	clearAfterFn  func(context.Context, repository.ClearDraftAfterSendInput) (*repository.DraftMutationResult, error)
@@ -57,6 +65,62 @@ func (f fakeDialogRepo) BatchGetDialogExtras(ctx context.Context, userID int64, 
 		out = append(out, repository.DialogExtrasRecord{PeerType: peer.PeerType, PeerID: peer.PeerID})
 	}
 	return out, nil
+}
+
+func (f fakeDialogRepo) ListDialogFilters(ctx context.Context, userID int64) ([]repository.DialogFilterRecord, error) {
+	if f.filterListFn != nil {
+		return f.filterListFn(ctx, userID)
+	}
+	return []repository.DialogFilterRecord{}, nil
+}
+
+func (f fakeDialogRepo) GetDialogFilter(ctx context.Context, userID int64, filterID int32) (*repository.DialogFilterRecord, error) {
+	if f.filterGetFn != nil {
+		return f.filterGetFn(ctx, userID, filterID)
+	}
+	return &repository.DialogFilterRecord{UserID: userID, DialogFilterID: filterID}, nil
+}
+
+func (f fakeDialogRepo) GetDialogFilterBySlug(ctx context.Context, userID int64, slug string) (*repository.DialogFilterRecord, error) {
+	if f.filterSlugFn != nil {
+		return f.filterSlugFn(ctx, userID, slug)
+	}
+	return &repository.DialogFilterRecord{UserID: userID, Slug: slug}, nil
+}
+
+func (f fakeDialogRepo) SaveDialogFilter(ctx context.Context, in repository.SaveDialogFilterInput) (*repository.DialogFilterRecord, error) {
+	if f.filterSaveFn != nil {
+		return f.filterSaveFn(ctx, in)
+	}
+	return &repository.DialogFilterRecord{UserID: in.UserID, DialogFilterID: in.DialogFilterID, Slug: in.Slug, Title: in.Title, OrderValue: in.OrderValue}, nil
+}
+
+func (f fakeDialogRepo) DeleteDialogFilter(ctx context.Context, in repository.DeleteDialogFilterInput) error {
+	if f.filterDelFn != nil {
+		return f.filterDelFn(ctx, in)
+	}
+	return nil
+}
+
+func (f fakeDialogRepo) ReorderDialogFilters(ctx context.Context, in repository.ReorderDialogFiltersInput) error {
+	if f.filterOrderFn != nil {
+		return f.filterOrderFn(ctx, in)
+	}
+	return nil
+}
+
+func (f fakeDialogRepo) SetPeerWallpaper(ctx context.Context, in repository.PeerWallpaperInput) error {
+	if f.wallpaperFn != nil {
+		return f.wallpaperFn(ctx, in)
+	}
+	return nil
+}
+
+func (f fakeDialogRepo) SetPrivatePeerPolicy(ctx context.Context, in repository.PrivatePeerPolicyInput) (*repository.PrivatePeerPolicyResult, error) {
+	if f.policyFn != nil {
+		return f.policyFn(ctx, in)
+	}
+	return &repository.PrivatePeerPolicyResult{}, nil
 }
 
 func (f fakeDialogRepo) SaveDraft(ctx context.Context, in repository.SaveDraftInput) (*repository.DraftMutationResult, error) {

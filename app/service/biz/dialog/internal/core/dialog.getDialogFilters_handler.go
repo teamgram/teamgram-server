@@ -18,14 +18,14 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // DialogGetDialogFilters
 // dialog.getDialogFilters user_id:long = Vector<DialogFilterExt>;
 func (c *DialogCore) DialogGetDialogFilters(in *dialog.TLDialogGetDialogFilters) (*dialog.VectorDialogFilterExt, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.getDialogFilters - error: method DialogGetDialogFilters not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	records, err := c.svcCtx.Repo.ListDialogFilters(c.ctx, in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	return makeDialogFilterExtVector(records), nil
 }

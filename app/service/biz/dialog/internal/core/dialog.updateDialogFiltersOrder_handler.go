@@ -18,14 +18,27 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // DialogUpdateDialogFiltersOrder
 // dialog.updateDialogFiltersOrder user_id:long order:Vector<int> = Bool;
 func (c *DialogCore) DialogUpdateDialogFiltersOrder(in *dialog.TLDialogUpdateDialogFiltersOrder) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.updateDialogFiltersOrder - error: method DialogUpdateDialogFiltersOrder not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	sourceAuth, err := c.sourcePermAuthKeyID()
+	if err != nil {
+		return nil, err
+	}
+	operationID := deterministicOperationID("reorder_filters", in.UserId, in.Order)
+	if err := c.svcCtx.Repo.ReorderDialogFilters(c.ctx, repository.ReorderDialogFiltersInput{
+		UserID:              in.UserId,
+		Order:               in.Order,
+		SourcePermAuthKeyID: sourceAuth,
+		OperationID:         operationID,
+		OutboxID:            deterministicOutboxID(operationID, "filter"),
+		EventType:           "dialog.filtersOrderUpdated",
+	}); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

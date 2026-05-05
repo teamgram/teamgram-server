@@ -33,6 +33,14 @@ type DialogRepository interface {
 	GetDialogByPeer(ctx context.Context, userID int64, peerType int32, peerID int64) (*repository.DialogRecord, error)
 	ListDialogsByPeerDialogIDs(ctx context.Context, userID int64, ids []int64) ([]repository.DialogRecord, error)
 	BatchGetDialogExtras(ctx context.Context, userID int64, peers []repository.PeerRef) ([]repository.DialogExtrasRecord, error)
+	ListDialogFilters(ctx context.Context, userID int64) ([]repository.DialogFilterRecord, error)
+	GetDialogFilter(ctx context.Context, userID int64, filterID int32) (*repository.DialogFilterRecord, error)
+	GetDialogFilterBySlug(ctx context.Context, userID int64, slug string) (*repository.DialogFilterRecord, error)
+	SaveDialogFilter(ctx context.Context, in repository.SaveDialogFilterInput) (*repository.DialogFilterRecord, error)
+	DeleteDialogFilter(ctx context.Context, in repository.DeleteDialogFilterInput) error
+	ReorderDialogFilters(ctx context.Context, in repository.ReorderDialogFiltersInput) error
+	SetPeerWallpaper(ctx context.Context, in repository.PeerWallpaperInput) error
+	SetPrivatePeerPolicy(ctx context.Context, in repository.PrivatePeerPolicyInput) (*repository.PrivatePeerPolicyResult, error)
 	SaveDraft(ctx context.Context, in repository.SaveDraftInput) (*repository.DraftMutationResult, error)
 	ClearDraft(ctx context.Context, in repository.ClearDraftInput) (*repository.DraftMutationResult, error)
 	ClearDraftAfterSend(ctx context.Context, in repository.ClearDraftAfterSendInput) (*repository.DraftMutationResult, error)

@@ -126,3 +126,30 @@ func makeDialogExtV2Vector(records []repository.DialogRecord, extras []repositor
 	}
 	return out
 }
+
+func makeDialogFilterExt(record repository.DialogFilterRecord) *dialogpb.DialogFilterExt {
+	filter := tg.MakeTLDialogFilter(&tg.TLDialogFilter{
+		Id: record.DialogFilterID,
+		Title: tg.MakeTLTextWithEntities(&tg.TLTextWithEntities{
+			Text:     record.Title,
+			Entities: []tg.MessageEntityClazz{},
+		}),
+		PinnedPeers:  []tg.InputPeerClazz{},
+		IncludePeers: []tg.InputPeerClazz{},
+		ExcludePeers: []tg.InputPeerClazz{},
+	})
+	return dialogpb.MakeTLDialogFilterExt(&dialogpb.TLDialogFilterExt{
+		Id:           record.DialogFilterID,
+		Slug:         record.Slug,
+		DialogFilter: filter,
+		Order:        record.OrderValue,
+	})
+}
+
+func makeDialogFilterExtVector(records []repository.DialogFilterRecord) *dialogpb.VectorDialogFilterExt {
+	out := &dialogpb.VectorDialogFilterExt{Datas: make([]dialogpb.DialogFilterExtClazz, 0, len(records))}
+	for _, record := range records {
+		out.Datas = append(out.Datas, makeDialogFilterExt(record))
+	}
+	return out
+}

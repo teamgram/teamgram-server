@@ -18,14 +18,27 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // DialogDeleteDialogFilter
 // dialog.deleteDialogFilter user_id:long id:int = Bool;
 func (c *DialogCore) DialogDeleteDialogFilter(in *dialog.TLDialogDeleteDialogFilter) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.deleteDialogFilter - error: method DialogDeleteDialogFilter not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	sourceAuth, err := c.sourcePermAuthKeyID()
+	if err != nil {
+		return nil, err
+	}
+	operationID := deterministicOperationID("delete_filter", in.UserId, in.Id)
+	if err := c.svcCtx.Repo.DeleteDialogFilter(c.ctx, repository.DeleteDialogFilterInput{
+		UserID:              in.UserId,
+		DialogFilterID:      in.Id,
+		SourcePermAuthKeyID: sourceAuth,
+		OperationID:         operationID,
+		OutboxID:            deterministicOutboxID(operationID, "filter"),
+		EventType:           "dialog.filterDeleted",
+	}); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

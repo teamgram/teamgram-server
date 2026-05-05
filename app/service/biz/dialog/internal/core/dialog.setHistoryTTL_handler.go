@@ -18,14 +18,34 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // DialogSetHistoryTTL
 // dialog.setHistoryTTL user_id:long peer_type:int peer_id:long ttl_period:int = Bool;
 func (c *DialogCore) DialogSetHistoryTTL(in *dialog.TLDialogSetHistoryTTL) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.setHistoryTTL - error: method DialogSetHistoryTTL not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if in.PeerType != repository.PeerTypeUser {
+		return nil, dialog.ErrWrongOwner
+	}
+	sourceAuth, err := c.sourcePermAuthKeyID()
+	if err != nil {
+		return nil, err
+	}
+	operationID := deterministicOperationID("set_private_ttl", in.UserId, in.PeerId, in.TtlPeriod)
+	if _, err := c.svcCtx.Repo.SetPrivatePeerPolicy(c.ctx, repository.PrivatePeerPolicyInput{
+		UserID:              in.UserId,
+		PeerUserID:          in.PeerId,
+		TTLPeriod:           in.TtlPeriod,
+		SourcePermAuthKeyID: sourceAuth,
+		OperationID:         operationID,
+		ActorOutboxID:       deterministicOutboxID(operationID, "actor"),
+		PeerOutboxID:        deterministicOutboxID(operationID, "peer"),
+		DeliveryPath:        repository.DeliveryPathUserupdatesAuthSeq,
+		PublicUpdateType:    "updatePeerHistoryTTL",
+		Payload:             []byte(`{"schema_version":1}`),
+	}); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }
