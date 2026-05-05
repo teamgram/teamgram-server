@@ -250,7 +250,7 @@ func testOutboxOptions(owner string) DialogOutboxWorkerOptions {
 func newAuthSeqOutboxRow(base int64, operationID string) *model.DialogAuthSeqOutbox {
 	payload := []byte(`{"schema_version":1}`)
 	return &model.DialogAuthSeqOutbox{
-		OutboxId:             -(base%1_000_000_000 + 10_000_000),
+		OutboxId:             -base,
 		UserId:               base%1_000_000_000 + 101,
 		SourcePermAuthKeyId:  base%1_000_000_000 + 201,
 		TargetAuthPolicy:     TargetAuthPolicyNotSourcePermAuthKey,
@@ -271,7 +271,7 @@ func newAuthSeqOutboxRow(base int64, operationID string) *model.DialogAuthSeqOut
 func newPublicUpdateOutboxRow(base int64, operationID string, deliveryPath string) *model.DialogPublicUpdateOutbox {
 	payload := []byte(`{"schema_version":1}`)
 	return &model.DialogPublicUpdateOutbox{
-		OutboxId:             -(base%1_000_000_000 + 20_000_000),
+		OutboxId:             -base,
 		SourceUserId:         base%1_000_000_000 + 401,
 		SourcePermAuthKeyId:  base%1_000_000_000 + 501,
 		TargetUserId:         base%1_000_000_000 + 601,
