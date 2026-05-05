@@ -17,14 +17,38 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesDeleteHistory
 // messages.deleteHistory#b08f922a flags:# just_clear:flags.0?true revoke:flags.1?true peer:InputPeer max_id:int min_date:flags.2?int max_date:flags.3?int = messages.AffectedHistory;
 func (c *MessagesCore) MessagesDeleteHistory(in *tg.TLMessagesDeleteHistory) (*tg.MessagesAffectedHistory, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.deleteHistory - error: method MessagesDeleteHistory not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	md := c.MD
+	if md == nil || md.UserId <= 0 {
+		return nil, tg.ErrUserIdInvalid
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	peerUserID, ok := resolveUserPeerID(in.Peer, md.UserId)
+	if !ok {
+		return nil, tg.Err400PeerIdInvalid
+	}
+	var deleteClient deleteHistoryClient = c.svcCtx.Repo.MsgClient
+	r, err := deleteClient.MsgDeleteHistory(c.ctx, &msg.TLMsgDeleteHistory{
+		UserId:    md.UserId,
+		AuthKeyId: md.PermAuthKeyId,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    peerUserID,
+		JustClear: in.JustClear,
+		Revoke:    in.Revoke,
+		MaxId:     in.MaxId,
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.deleteHistory - msg error: self_user_id: %d, peer_id: %d, max_id: %d, err: %v", md.UserId, peerUserID, in.MaxId, err)
+		return nil, mapMsgSendError(err)
+	}
+	return r, nil
 }

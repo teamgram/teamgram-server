@@ -29,11 +29,14 @@ const (
 	EventTypeUpdatePinnedMessage int32 = 3
 	EventTypeMarkDialogUnread    int32 = 4
 	EventTypeScheduledMarker     int32 = 5
+	EventTypeDeleteMessages      int32 = 6
+	EventTypeDeleteHistory       int32 = 7
 
 	OperationResultStatusCompleted int32 = 1
 
-	MessageKindText   int32 = 1
-	MessageStatusLive int32 = 1
+	MessageKindText      int32 = 1
+	MessageStatusLive    int32 = 1
+	MessageStatusDeleted int32 = 2
 
 	PushTypeUserUpdate    int32 = 1
 	PushTaskStatusPending int32 = 1

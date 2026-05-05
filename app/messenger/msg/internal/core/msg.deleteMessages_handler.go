@@ -18,15 +18,59 @@
 package core
 
 import (
+	"encoding/json"
+	"fmt"
+	"time"
+
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MsgDeleteMessages
 // msg.deleteMessages flags:# user_id:long auth_key_id:long peer_type:int peer_id:long revoke:flags.1?true id:Vector<int> = messages.AffectedMessages;
 func (c *MsgCore) MsgDeleteMessages(in *msg.TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error) {
-	// TODO: not impl
-	c.Logger.Errorf("msg.deleteMessages - error: method MsgDeleteMessages not impl")
+	if in == nil || in.UserId <= 0 || in.PeerId <= 0 || len(in.Id) == 0 {
+		return nil, fmt.Errorf("%w: invalid delete messages request", msg.ErrSendStateConflict)
+	}
+	if in.PeerType != payload.PeerTypeUser {
+		return nil, fmt.Errorf("%w: delete messages first slice only supports user peer", msg.ErrSendStateConflict)
+	}
+	if c.svcCtx.UserUpdates == nil {
+		return nil, msg.ErrSenderSyncFailed
+	}
+	deletePeerSeqs := make([]int64, 0, len(in.Id))
+	for _, id := range in.Id {
+		if id <= 0 {
+			return nil, fmt.Errorf("%w: invalid message id", msg.ErrSendStateConflict)
+		}
+		deletePeerSeqs = append(deletePeerSeqs, int64(id))
+	}
+	body, err := json.Marshal(payload.MessageOperationV1{
+		SchemaVersion:  payload.MessageOperationSchemaVersion,
+		OperationKind:  payload.OperationKindDeleteMessages,
+		PeerType:       in.PeerType,
+		PeerID:         in.PeerId,
+		FromUserID:     in.UserId,
+		ToUserID:       in.UserId,
+		Date:           int32(time.Now().Unix()),
+		DeletePeerSeqs: deletePeerSeqs,
+		Revoke:         in.Revoke,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("%w: marshal delete messages operation user_id=%d peer_id=%d", msg.ErrMsgStorage, in.UserId, in.PeerId)
+	}
+	result, err := c.processUserDialogOperation(in.UserId, in.AuthKeyId, in.PeerType, in.PeerId, deleteMessagesOperationID(in.UserId, in.PeerId, in.Id, in.Revoke, in.AuthKeyId), body)
+	if err != nil {
+		return nil, err
+	}
+	pts, err := int64ToInt32(result.Pts, "pts")
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLMessagesAffectedMessages(&tg.TLMessagesAffectedMessages{Pts: pts, PtsCount: result.PtsCount}).ToMessagesAffectedMessages(), nil
+}
 
-	return nil, tg.ErrMethodNotImpl
+func deleteMessagesOperationID(userID int64, peerID int64, ids []int32, revoke bool, authKeyID int64) string {
+	return fmt.Sprintf("v1:dialog:delete_messages:user:%d:peer:%d:ids:%v:revoke:%t:auth:%d", userID, peerID, ids, revoke, authKeyID)
 }

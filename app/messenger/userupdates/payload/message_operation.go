@@ -26,6 +26,10 @@ type MessageOperationV1 struct {
 	SavedDialogSideEffect    bool              `json:"saved_dialog_side_effect,omitempty"`
 	ReadInboxMaxPeerSeq      int64             `json:"read_inbox_max_peer_seq,omitempty"`
 	ReadOutboxMaxPeerSeq     int64             `json:"read_outbox_max_peer_seq,omitempty"`
+	DeletePeerSeqs           []int64           `json:"delete_peer_seqs,omitempty"`
+	DeleteMaxPeerSeq         int64             `json:"delete_max_peer_seq,omitempty"`
+	JustClear                bool              `json:"just_clear,omitempty"`
+	Revoke                   bool              `json:"revoke,omitempty"`
 	UnreadMark               *bool             `json:"unread_mark,omitempty"`
 	PinnedPeerSeq            int64             `json:"pinned_peer_seq,omitempty"`
 	PinnedCanonicalMessageID int64             `json:"pinned_canonical_message_id,omitempty"`

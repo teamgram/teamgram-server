@@ -533,6 +533,77 @@ func TestMsgUpdatePinnedMessageRoutesProjectionOperation(t *testing.T) {
 	}
 }
 
+func TestMsgDeleteMessagesRoutesProjectionOperation(t *testing.T) {
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:      1001,
+			OperationId: deleteMessagesOperationID(1001, 1002, []int32{7, 8}, false, 9001),
+			Status:      1,
+			Pts:         31,
+			PtsCount:    1,
+			CurrentPts:  31,
+		}),
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: &fakeMsgRepository{}, UserUpdates: updatesClient})
+
+	got, err := core.MsgDeleteMessages(&msgpb.TLMsgDeleteMessages{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    1002,
+		Id:        []int32{7, 8},
+	})
+	if err != nil {
+		t.Fatalf("MsgDeleteMessages() error = %v", err)
+	}
+	if got.Pts != 31 || got.PtsCount != 1 {
+		t.Fatalf("affected = %+v", got)
+	}
+	var op payload.MessageOperationV1
+	if err := json.Unmarshal(updatesClient.processed.Payload, &op); err != nil {
+		t.Fatalf("decode delete payload: %v", err)
+	}
+	if op.OperationKind != payload.OperationKindDeleteMessages || len(op.DeletePeerSeqs) != 2 || op.DeletePeerSeqs[0] != 7 {
+		t.Fatalf("unexpected delete payload: %+v", op)
+	}
+}
+
+func TestMsgDeleteHistoryRoutesProjectionOperation(t *testing.T) {
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:      1001,
+			OperationId: deleteHistoryOperationID(1001, 1002, 9, true, false, 9001),
+			Status:      1,
+			Pts:         32,
+			PtsCount:    1,
+			CurrentPts:  32,
+		}),
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: &fakeMsgRepository{}, UserUpdates: updatesClient})
+
+	got, err := core.MsgDeleteHistory(&msgpb.TLMsgDeleteHistory{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    1002,
+		JustClear: true,
+		MaxId:     9,
+	})
+	if err != nil {
+		t.Fatalf("MsgDeleteHistory() error = %v", err)
+	}
+	if got.Pts != 32 || got.PtsCount != 1 {
+		t.Fatalf("affected history = %+v", got)
+	}
+	var op payload.MessageOperationV1
+	if err := json.Unmarshal(updatesClient.processed.Payload, &op); err != nil {
+		t.Fatalf("decode delete history payload: %v", err)
+	}
+	if op.OperationKind != payload.OperationKindDeleteHistory || op.DeleteMaxPeerSeq != 9 || !op.JustClear {
+		t.Fatalf("unexpected delete history payload: %+v", op)
+	}
+}
+
 type fakeMsgRepository struct {
 	sendState              *repository.SendState
 	canonical              *repository.CanonicalMessageResult

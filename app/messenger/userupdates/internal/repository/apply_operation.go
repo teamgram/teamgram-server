@@ -150,6 +150,14 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 		if err := applyReadHistory(txModels, in, op, nextPTS); err != nil {
 			return nil, err
 		}
+	case payload.OperationKindDeleteMessages:
+		if err := applyDeleteMessages(tx, txModels, in, op, nextPTS); err != nil {
+			return nil, err
+		}
+	case payload.OperationKindDeleteHistory:
+		if err := applyDeleteHistory(tx, txModels, in, op, nextPTS); err != nil {
+			return nil, err
+		}
 	case payload.OperationKindUpdatePinnedMessage:
 		if err := applyUpdatePinnedMessage(txModels, in, op, nextPTS); err != nil {
 			return nil, err
@@ -329,6 +337,76 @@ func applyReadHistory(txModels *model.TxModels, in ApplyUserOperationInput, op p
 	return nil
 }
 
+func applyDeleteMessages(tx *sqlx.Tx, txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, nextPTS int64) error {
+	deletedAt := mysqlNow()
+	for _, peerSeq := range op.DeletePeerSeqs {
+		row, err := txModels.UserMessageViewsModel.SelectByUserPeerSeq(in.UserID, op.PeerType, op.PeerID, peerSeq)
+		if err != nil {
+			if errors.Is(err, model.ErrNotFound) {
+				continue
+			}
+			return storageError("select message before delete", err)
+		}
+		row.MessageStatus = MessageStatusDeleted
+		row.ViewPayload = []byte(`{"schema_version":1,"deleted":true}`)
+		if _, _, err := txModels.UserMessageViewsModel.InsertOrUpdate(row); err != nil {
+			return storageError("mark message deleted", err)
+		}
+		_ = deletedAt
+	}
+	return recomputeDialogTop(tx, in.UserID, op.PeerType, op.PeerID, nextPTS)
+}
+
+func applyDeleteHistory(tx *sqlx.Tx, txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, nextPTS int64) error {
+	maxPeerSeq := op.DeleteMaxPeerSeq
+	if maxPeerSeq == 0 {
+		maxPeerSeq = op.PeerSeq
+	}
+	if maxPeerSeq <= 0 {
+		if row, err := txModels.UserDialogsModel.SelectByUserPeer(in.UserID, op.PeerType, op.PeerID); err == nil {
+			maxPeerSeq = row.TopPeerSeq
+		} else if !errors.Is(err, model.ErrNotFound) {
+			return storageError("select dialog before delete history", err)
+		}
+	}
+	if maxPeerSeq > 0 {
+		query := "update user_message_views set message_status = ?, view_payload = ? where user_id = ? and peer_type = ? and peer_id = ? and peer_seq <= ?"
+		if _, err := tx.Exec(query, MessageStatusDeleted, []byte(`{"schema_version":1,"deleted":true}`), in.UserID, op.PeerType, op.PeerID, maxPeerSeq); err != nil {
+			return storageError("mark history deleted", err)
+		}
+	}
+	if err := recomputeDialogTop(tx, in.UserID, op.PeerType, op.PeerID, nextPTS); err != nil {
+		return err
+	}
+	if op.JustClear || maxPeerSeq > 0 {
+		query := "update user_dialogs set available_min_peer_seq = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
+		if _, err := tx.Exec(query, maxPeerSeq, nextPTS, mysqlNow(), in.UserID, op.PeerType, op.PeerID); err != nil {
+			return storageError("update dialog available min peer seq", err)
+		}
+	}
+	return nil
+}
+
+func recomputeDialogTop(tx *sqlx.Tx, userID int64, peerType int32, peerID int64, nextPTS int64) error {
+	var top model.UserMessageViews
+	query := "select user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, `date`, view_schema_version, view_payload from user_message_views where user_id = ? and peer_type = ? and peer_id = ? and message_status = ? order by peer_seq desc limit 1"
+	if err := tx.QueryRowPartial(&top, query, userID, peerType, peerID, MessageStatusLive); err != nil {
+		if !errors.Is(err, sqlx.ErrNotFound) && !errors.Is(err, model.ErrNotFound) {
+			return storageError("select top message after delete", err)
+		}
+		update := "update user_dialogs set top_peer_seq = 0, top_canonical_message_id = 0, top_message_status = ?, hidden = 1, deleted_at = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
+		if _, execErr := tx.Exec(update, MessageStatusDeleted, mysqlNow(), nextPTS, mysqlNow(), userID, peerType, peerID); execErr != nil {
+			return storageError("clear dialog top after delete", execErr)
+		}
+		return nil
+	}
+	update := "update user_dialogs set top_peer_seq = ?, top_canonical_message_id = ?, top_message_date = ?, top_message_status = ?, hidden = 0, deleted_at = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
+	if _, err := tx.Exec(update, top.PeerSeq, top.CanonicalMessageId, top.Date, top.MessageStatus, mysqlZeroTime(), nextPTS, mysqlNow(), userID, peerType, peerID); err != nil {
+		return storageError("update dialog top after delete", err)
+	}
+	return nil
+}
+
 func applyUpdatePinnedMessage(txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, nextPTS int64) error {
 	pinnedPeerSeq := op.PinnedPeerSeq
 	if pinnedPeerSeq == 0 {
@@ -417,6 +495,10 @@ func insertPTSEvent(txModels *model.TxModels, in ApplyUserOperationInput, op pay
 	switch op.OperationKind {
 	case payload.OperationKindReadHistory:
 		eventType = EventTypeReadHistory
+	case payload.OperationKindDeleteMessages:
+		eventType = EventTypeDeleteMessages
+	case payload.OperationKindDeleteHistory:
+		eventType = EventTypeDeleteHistory
 	case payload.OperationKindUpdatePinnedMessage:
 		eventType = EventTypeUpdatePinnedMessage
 	case payload.OperationKindMarkDialogUnread:
