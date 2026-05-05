@@ -33,6 +33,24 @@ func TestListDialogsOrdersByTopDatePeerSeqAndSkipsHidden(t *testing.T) {
 	}
 }
 
+func TestListDialogsHandlesLegacyNullDeletedAt(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	userID := base + 1501
+	repo := NewForTest(db, &testIDGenerator{next: base + 15_000}, "local-userupdates")
+
+	insertUserDialogProjectionWithDeletedAt(t, repo, userID, payload.PeerTypeUser, 10, 1, "2026-05-05 10:00:00.000000", false, nil)
+
+	rows, err := repo.ListDialogProjections(ctx, userID, DialogProjectionCursor{}, 10)
+	if err != nil {
+		t.Fatalf("ListDialogProjections() error = %v", err)
+	}
+	if len(rows) != 1 || rows[0].PeerID != 10 {
+		t.Fatalf("rows = %+v, want peer 10", rows)
+	}
+}
+
 func TestGetDialogsByPeersPreservesRequestedPeerCoverage(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)
@@ -78,6 +96,12 @@ func TestCountVisibleDialogsSkipsHidden(t *testing.T) {
 
 func insertUserDialogProjection(t *testing.T, repo *Repository, userID int64, peerType int32, peerID int64, topPeerSeq int64, topMessageDate string, hidden bool) {
 	t.Helper()
+	deletedAt := any(mysqlZeroTime())
+	insertUserDialogProjectionWithDeletedAt(t, repo, userID, peerType, peerID, topPeerSeq, topMessageDate, hidden, deletedAt)
+}
+
+func insertUserDialogProjectionWithDeletedAt(t *testing.T, repo *Repository, userID int64, peerType int32, peerID int64, topPeerSeq int64, topMessageDate string, hidden bool, deletedAt any) {
+	t.Helper()
 	_, err := repo.db.Exec(context.Background(), `
 INSERT INTO user_dialogs
 	(user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id,
@@ -107,7 +131,7 @@ VALUES
 		false,
 		int64(0),
 		hidden,
-		mysqlZeroTime(),
+		deletedAt,
 		topPeerSeq,
 		topMessageDate,
 		int32(1),
