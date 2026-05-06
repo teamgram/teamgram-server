@@ -506,21 +506,36 @@ func TestMsgReadHistoryV2ReturnsAffectedMessagesAck(t *testing.T) {
 	if got.Pts != 15 || got.PtsCount != 1 {
 		t.Fatalf("affected messages = %+v, want pts=15 pts_count=1", got)
 	}
-	if updatesClient.processed == nil {
-		t.Fatal("read history operation was not sent to userupdates")
+	if len(updatesClient.processedList) != 2 {
+		t.Fatalf("processed operations = %d, want reader inbox and peer outbox updates", len(updatesClient.processedList))
 	}
-	if updatesClient.processed.OperationId != readHistoryOperationID(1001, 1002, 2, 9001) {
-		t.Fatalf("operation_id = %q", updatesClient.processed.OperationId)
+	readerOperation := updatesClient.processedList[0]
+	if readerOperation.OperationId != readHistoryOperationID(1001, 1002, 2, 9001) {
+		t.Fatalf("reader operation_id = %q", readerOperation.OperationId)
 	}
-	if updatesClient.processed.AuthKeyIdExclude == nil || *updatesClient.processed.AuthKeyIdExclude != 9001 {
-		t.Fatalf("auth_key_id_exclude = %v, want 9001", updatesClient.processed.AuthKeyIdExclude)
+	if readerOperation.AuthKeyIdExclude == nil || *readerOperation.AuthKeyIdExclude != 9001 {
+		t.Fatalf("auth_key_id_exclude = %v, want 9001", readerOperation.AuthKeyIdExclude)
 	}
-	var op payload.MessageOperationV1
-	if err := json.Unmarshal(updatesClient.processed.Payload, &op); err != nil {
+	var readerOp payload.MessageOperationV1
+	if err := json.Unmarshal(readerOperation.Payload, &readerOp); err != nil {
 		t.Fatalf("decode read history payload: %v", err)
 	}
-	if op.OperationKind != payload.OperationKindReadHistory || op.PeerID != 1002 || op.ReadInboxMaxPeerSeq != 2 || op.ReadOutboxMaxPeerSeq != 2 {
-		t.Fatalf("unexpected read history payload: %+v", op)
+	if readerOp.OperationKind != payload.OperationKindReadHistory || readerOp.PeerID != 1002 || readerOp.ReadInboxMaxPeerSeq != 2 || readerOp.ReadOutboxMaxPeerSeq != 0 || readerOp.Out {
+		t.Fatalf("unexpected reader read history payload: %+v", readerOp)
+	}
+	peerOperation := updatesClient.processedList[1]
+	if peerOperation.UserId != 1002 || peerOperation.PeerId != 1001 {
+		t.Fatalf("unexpected peer operation routing: %+v", peerOperation)
+	}
+	if peerOperation.AuthKeyIdExclude != nil {
+		t.Fatalf("peer operation auth_key_id_exclude = %v, want nil", peerOperation.AuthKeyIdExclude)
+	}
+	var peerOp payload.MessageOperationV1
+	if err := json.Unmarshal(peerOperation.Payload, &peerOp); err != nil {
+		t.Fatalf("decode peer read outbox payload: %v", err)
+	}
+	if peerOp.OperationKind != payload.OperationKindReadHistory || peerOp.PeerID != 1001 || peerOp.ReadInboxMaxPeerSeq != 0 || peerOp.ReadOutboxMaxPeerSeq != 2 || !peerOp.Out {
+		t.Fatalf("unexpected peer read outbox payload: %+v", peerOp)
 	}
 }
 
@@ -716,6 +731,7 @@ func (f *fakeMsgRepository) MarkRetryableFailure(context.Context, repository.Mar
 
 type fakeUserUpdatesClient struct {
 	processed               *userupdates.TLUserOperation
+	processedList           []*userupdates.TLUserOperation
 	processResult           *userupdates.UserOperationResult
 	getResult               *userupdates.UserOperationResult
 	getOperationResultCalls int
@@ -723,6 +739,7 @@ type fakeUserUpdatesClient struct {
 
 func (f *fakeUserUpdatesClient) UserupdatesProcessUserOperation(_ context.Context, in *userupdates.TLUserupdatesProcessUserOperation) (*userupdates.UserOperationResult, error) {
 	f.processed = in.Operation
+	f.processedList = append(f.processedList, in.Operation)
 	return f.processResult, nil
 }
 

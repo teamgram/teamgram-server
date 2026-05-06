@@ -95,6 +95,9 @@ func (f *dialogsFakeUserupdatesClient) UserupdatesGetDifference(ctx context.Cont
 }
 
 func (f *dialogsFakeUserupdatesClient) UserupdatesGetDialogsByPeers(ctx context.Context, in *userupdates.TLUserupdatesGetDialogsByPeers) (*userupdates.VectorDialogProjection, error) {
+	if f.getDialogsByPeers == nil {
+		return &userupdates.VectorDialogProjection{Datas: []userupdates.DialogProjectionClazz{}}, nil
+	}
 	return f.getDialogsByPeers(ctx, in)
 }
 
@@ -319,6 +322,27 @@ func TestMessagesGetPinnedDialogsHydratesFacadeProjection(t *testing.T) {
 			},
 		},
 		UserupdatesClient: &dialogsFakeUserupdatesClient{
+			getDialogsByPeers: func(_ context.Context, in *userupdates.TLUserupdatesGetDialogsByPeers) (*userupdates.VectorDialogProjection, error) {
+				if len(in.Peers) != 1 || in.Peers[0].PeerType != dialogPeerTypeUser || in.Peers[0].PeerId != 200 {
+					t.Fatalf("UserupdatesGetDialogsByPeers request = %+v, want user/200", in)
+				}
+				return &userupdates.VectorDialogProjection{Datas: []userupdates.DialogProjectionClazz{
+					userupdates.MakeTLDialogProjection(&userupdates.TLDialogProjection{
+						PeerType:                 dialogPeerTypeUser,
+						PeerId:                   200,
+						ReadInboxMaxPeerSeq:      3,
+						ReadOutboxMaxPeerSeq:     0,
+						DialogSchemaVersion:      1,
+						TopPeerSeq:               7,
+						TopCanonicalMessageId:    7,
+						TopMessageDate:           123,
+						PinnedPeerSeq:            0,
+						PinnedCanonicalMessageId: 0,
+						LastPts:                  1,
+						LastPtsAt:                123,
+					}),
+				}}, nil
+			},
 			getMessageViewsByPeerSeqs: func(context.Context, *userupdates.TLUserupdatesGetMessageViewsByPeerSeqs) (*userupdates.MessageViewList, error) {
 				return userupdates.MakeTLMessageViewList(&userupdates.TLMessageViewList{Messages: []tg.MessageClazz{
 					tg.MakeTLMessage(&tg.TLMessage{
@@ -352,8 +376,8 @@ func TestMessagesGetPinnedDialogsHydratesFacadeProjection(t *testing.T) {
 		t.Fatalf("reply lens = dialogs:%d messages:%d users:%d", len(r.Dialogs), len(r.Messages), len(r.Users))
 	}
 	dialog, ok := (&tg.Dialog{Clazz: r.Dialogs[0]}).ToDialog()
-	if !ok || dialog.TopMessage != 7 || dialog.UnreadCount != 2 {
-		t.Fatalf("dialog = %+v ok=%v, want hydrated top/unread", dialog, ok)
+	if !ok || dialog.TopMessage != 7 || dialog.ReadInboxMaxId != 3 || dialog.ReadOutboxMaxId != 0 || dialog.UnreadCount != 2 {
+		t.Fatalf("dialog = %+v ok=%v, want hydrated top/read/unread", dialog, ok)
 	}
 }
 
@@ -568,8 +592,8 @@ func TestMessagesGetDialogsMapsUserDialogAndTopMessage(t *testing.T) {
 	if slice.Count != 1 || len(slice.Dialogs) != 1 || len(slice.Messages) != 1 || len(slice.Users) != 1 {
 		t.Fatalf("reply lens = count:%d dialogs:%d messages:%d users:%d", slice.Count, len(slice.Dialogs), len(slice.Messages), len(slice.Users))
 	}
-	if dialog, ok := (&tg.Dialog{Clazz: slice.Dialogs[0]}).ToDialog(); !ok || dialog.TopMessage != 7 {
-		t.Fatalf("dialog = %+v, ok=%v, want top_message=7", dialog, ok)
+	if dialog, ok := (&tg.Dialog{Clazz: slice.Dialogs[0]}).ToDialog(); !ok || dialog.TopMessage != 7 || dialog.ReadInboxMaxId != 0 || dialog.ReadOutboxMaxId != 0 {
+		t.Fatalf("dialog = %+v, ok=%v, want top_message=7 and unread read state", dialog, ok)
 	} else if settings := dialog.NotifySettings; settings == nil || settings.MuteUntil == nil || *settings.MuteUntil != 99 {
 		t.Fatalf("notify settings = %+v, want batched mute_until=99", dialog.NotifySettings)
 	}

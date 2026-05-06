@@ -105,6 +105,11 @@ type dialogTopMessageRef struct {
 	PeerSeq  int64
 }
 
+type dialogReadState struct {
+	ReadInboxMaxPeerSeq  int64
+	ReadOutboxMaxPeerSeq int64
+}
+
 func vectorDialogExtV2s(page *dialogpb.DialogPage) []dialogpb.DialogExtV2Clazz {
 	if page == nil {
 		return nil
@@ -158,6 +163,8 @@ func (c *DialogsCore) hydrateDialogExtV2s(operation string, dialogExts []dialogp
 	topMessageRefs := make([]dialogTopMessageRef, 0, len(dialogExts))
 	notifyPeers := make([]tg.PeerUtilClazz, 0, len(dialogExts))
 	notifyKeys := make([]string, 0, len(dialogExts))
+	projectionPeers := make([]userupdates.DialogProjectionPeerClazz, 0, len(dialogExts))
+	projectionKeys := make([]string, 0, len(dialogExts))
 
 	for _, dialogExt := range dialogExts {
 		if dialogExt == nil {
@@ -175,6 +182,11 @@ func (c *DialogsCore) hydrateDialogExtV2s(operation string, dialogExts []dialogp
 		}
 		notifyPeers = append(notifyPeers, notifyPeer)
 		notifyKeys = append(notifyKeys, notifySettingsKey(notifyPeer.PeerType, notifyPeer.PeerId))
+		projectionPeers = append(projectionPeers, userupdates.MakeTLDialogProjectionPeer(&userupdates.TLDialogProjectionPeer{
+			PeerType: dialogExt.PeerType,
+			PeerId:   dialogExt.PeerId,
+		}))
+		projectionKeys = append(projectionKeys, dialogProjectionKey(dialogExt.PeerType, dialogExt.PeerId))
 
 		dialog := makePublicDialogFromExtV2(dialogExt, topMessageID, tg.MakeTLPeerNotifySettings(&tg.TLPeerNotifySettings{}))
 		dialogs = append(dialogs, dialog)
@@ -190,6 +202,21 @@ func (c *DialogsCore) hydrateDialogExtV2s(operation string, dialogExts []dialogp
 			userIDs = append(userIDs, dialogExt.PeerId)
 		case dialogPeerTypeChat, dialogPeerTypeChannel:
 			chatIDs = append(chatIDs, dialogExt.PeerId)
+		}
+	}
+
+	readStates, err := c.fetchDialogReadStates(operation, projectionPeers)
+	if err != nil {
+		return nil, err
+	}
+	for i, dialogClazz := range dialogs {
+		dialog, ok := (&tg.Dialog{Clazz: dialogClazz}).ToDialog()
+		if !ok {
+			continue
+		}
+		if state, ok := readStates[projectionKeys[i]]; ok {
+			dialog.ReadInboxMaxId = int64ToInt32Saturating(state.ReadInboxMaxPeerSeq)
+			dialog.ReadOutboxMaxId = int64ToInt32Saturating(state.ReadOutboxMaxPeerSeq)
 		}
 	}
 
@@ -238,8 +265,8 @@ func makePublicDialogFromExtV2(dialogExt *dialogpb.TLDialogExtV2, topMessageID i
 		UnreadMark:           dialogExt.UnreadMark,
 		Peer:                 makePublicPeerFromDialogFacade(dialogExt.PeerType, dialogExt.PeerId),
 		TopMessage:           topMessageID,
-		ReadInboxMaxId:       int64ToInt32Saturating(dialogExt.TopPeerSeq),
-		ReadOutboxMaxId:      int64ToInt32Saturating(dialogExt.TopPeerSeq),
+		ReadInboxMaxId:       0,
+		ReadOutboxMaxId:      0,
 		UnreadCount:          dialogExt.UnreadCount,
 		UnreadMentionsCount:  dialogExt.UnreadMentionsCount,
 		UnreadReactionsCount: dialogExt.UnreadReactionsCount,
@@ -289,6 +316,56 @@ func notifyPeerFromDialogFacade(selfID int64, peerType int32, peerID int64) (tg.
 
 func notifySettingsKey(peerType int32, peerID int64) string {
 	return strconv.FormatInt(int64(peerType), 10) + ":" + strconv.FormatInt(peerID, 10)
+}
+
+func dialogProjectionKey(peerType int32, peerID int64) string {
+	return strconv.FormatInt(int64(peerType), 10) + ":" + strconv.FormatInt(peerID, 10)
+}
+
+func (c *DialogsCore) fetchDialogReadStates(operation string, peers []userupdates.DialogProjectionPeerClazz) (map[string]dialogReadState, error) {
+	out := make(map[string]dialogReadState, len(peers))
+	peers = uniqueDialogProjectionPeers(peers)
+	if len(peers) == 0 {
+		return out, nil
+	}
+	projections, err := c.svcCtx.Repo.UserupdatesClient.UserupdatesGetDialogsByPeers(c.ctx, &userupdates.TLUserupdatesGetDialogsByPeers{
+		UserId: c.MD.UserId,
+		Peers:  peers,
+	})
+	if err != nil {
+		c.Logger.Errorf("%s - userupdates.getDialogsByPeers failed: user_id: %d, peer_count: %d, err: %v", operation, c.MD.UserId, len(peers), err)
+		return nil, tg.ErrInternalServerError
+	}
+	if projections == nil {
+		return out, nil
+	}
+	for _, projection := range projections.Datas {
+		if projection == nil {
+			continue
+		}
+		out[dialogProjectionKey(projection.PeerType, projection.PeerId)] = dialogReadState{
+			ReadInboxMaxPeerSeq:  projection.ReadInboxMaxPeerSeq,
+			ReadOutboxMaxPeerSeq: projection.ReadOutboxMaxPeerSeq,
+		}
+	}
+	return out, nil
+}
+
+func uniqueDialogProjectionPeers(peers []userupdates.DialogProjectionPeerClazz) []userupdates.DialogProjectionPeerClazz {
+	seen := make(map[string]struct{}, len(peers))
+	out := make([]userupdates.DialogProjectionPeerClazz, 0, len(peers))
+	for _, peer := range peers {
+		if peer == nil || peer.PeerId <= 0 {
+			continue
+		}
+		key := dialogProjectionKey(peer.PeerType, peer.PeerId)
+		if _, ok := seen[key]; ok {
+			continue
+		}
+		seen[key] = struct{}{}
+		out = append(out, peer)
+	}
+	return out
 }
 
 func (c *DialogsCore) fetchDialogNotifySettings(operation string, peers []tg.PeerUtilClazz) (map[string]tg.PeerNotifySettingsClazz, error) {

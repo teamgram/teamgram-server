@@ -144,3 +144,60 @@ func TestPushTaskDispatcherSkipsExcludedAuthKey(t *testing.T) {
 		t.Fatalf("pushed perm_auth_key_id = %d, want 222", gatewayClient.requests[0].PermAuthKeyId)
 	}
 }
+
+func TestPushTaskDispatcherRoutesReadHistoryOutboxUpdate(t *testing.T) {
+	eventPayload, err := json.Marshal(payload.MessageEventV1{
+		SchemaVersion: payload.MessageEventSchemaVersion,
+		EventKind:     payload.OperationKindReadHistory,
+		MessageID:     42,
+		PeerType:      payload.PeerTypeUser,
+		PeerID:        1001,
+		Date:          1777781234,
+		Out:           true,
+	})
+	if err != nil {
+		t.Fatalf("marshal event payload: %v", err)
+	}
+	body, err := payload.MarshalPushTaskKafkaMessage(payload.PushTaskKafkaMessageV1{
+		SchemaVersion: payload.PushTaskKafkaMessageSchemaVersion,
+		TaskID:        2,
+		UserID:        2002,
+		Pts:           39,
+		PushType:      1,
+		PeerType:      payload.PeerTypeUser,
+		PeerID:        1001,
+		OperationID:   "read-outbox",
+		Payload:       eventPayload,
+	})
+	if err != nil {
+		t.Fatalf("marshal push task: %v", err)
+	}
+	auth := &fakePushAuthsession{keys: []int64{333}}
+	gatewayClient := &fakePushGateway{}
+	dispatcher := NewPushTaskDispatcher(auth, gatewayClient)
+
+	if err := dispatcher.HandlePushTaskKafkaRecord(context.Background(), PushTaskKafkaRecord{Value: body}); err != nil {
+		t.Fatalf("HandlePushTaskKafkaRecord() error = %v", err)
+	}
+	if len(gatewayClient.requests) != 1 {
+		t.Fatalf("gateway push count = %d, want 1", len(gatewayClient.requests))
+	}
+	updates, ok := gatewayClient.requests[0].Updates.(*tg.TLUpdates)
+	if !ok {
+		t.Fatalf("updates = %T, want *tg.TLUpdates", gatewayClient.requests[0].Updates)
+	}
+	if len(updates.Updates) != 1 {
+		t.Fatalf("updates payload = %+v", updates)
+	}
+	update, ok := updates.Updates[0].(*tg.TLUpdateReadHistoryOutbox)
+	if !ok {
+		t.Fatalf("update = %T, want *tg.TLUpdateReadHistoryOutbox", updates.Updates[0])
+	}
+	peer, ok := update.Peer.(*tg.TLPeerUser)
+	if !ok || peer.UserId != 1001 {
+		t.Fatalf("peer = %+v ok=%v", update.Peer, ok)
+	}
+	if update.MaxId != 42 || update.Pts != 39 || update.PtsCount != 1 {
+		t.Fatalf("read outbox update = %+v", update)
+	}
+}

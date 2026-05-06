@@ -82,7 +82,13 @@ func pushTaskUpdates(msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, *int
 	if err := json.Unmarshal(msg.Payload, &event); err != nil {
 		return nil, nil, fmt.Errorf("decode message event: %w", err)
 	}
-	if event.SchemaVersion != payload.MessageEventSchemaVersion || event.EventKind != payload.EventKindNewMessage {
+	if event.SchemaVersion != payload.MessageEventSchemaVersion {
+		return nil, nil, fmt.Errorf("unsupported message event schema=%d kind=%s", event.SchemaVersion, event.EventKind)
+	}
+	if event.EventKind == payload.OperationKindReadHistory {
+		return readHistoryUpdates(msg, event)
+	}
+	if event.EventKind != payload.EventKindNewMessage {
 		return nil, nil, fmt.Errorf("unsupported message event schema=%d kind=%s", event.SchemaVersion, event.EventKind)
 	}
 	messageID, err := int64ToInt32(event.MessageID, "message id")
@@ -122,6 +128,42 @@ func pushTaskUpdates(msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, *int
 		Chats: []tg.ChatClazz{},
 		Date:  event.Date,
 		Seq:   pts,
+	}), event.AuthKeyIdExclude, nil
+}
+
+func readHistoryUpdates(msg *payload.PushTaskKafkaMessageV1, event payload.MessageEventV1) (tg.UpdatesClazz, *int64, error) {
+	maxID, err := int64ToInt32(event.MessageID, "message id")
+	if err != nil {
+		return nil, nil, err
+	}
+	pts, err := int64ToInt32(msg.Pts, "pts")
+	if err != nil {
+		return nil, nil, err
+	}
+	peer := peerFromEvent(event.PeerType, event.PeerID)
+	var update tg.UpdateClazz
+	if event.Out {
+		update = tg.MakeTLUpdateReadHistoryOutbox(&tg.TLUpdateReadHistoryOutbox{
+			Peer:     peer,
+			MaxId:    maxID,
+			Pts:      pts,
+			PtsCount: 1,
+		})
+	} else {
+		update = tg.MakeTLUpdateReadHistoryInbox(&tg.TLUpdateReadHistoryInbox{
+			Peer:             peer,
+			MaxId:            maxID,
+			StillUnreadCount: 0,
+			Pts:              pts,
+			PtsCount:         1,
+		})
+	}
+	return tg.MakeTLUpdates(&tg.TLUpdates{
+		Updates: []tg.UpdateClazz{update},
+		Users:   []tg.UserClazz{},
+		Chats:   []tg.ChatClazz{},
+		Date:    event.Date,
+		Seq:     pts,
 	}), event.AuthKeyIdExclude, nil
 }
 

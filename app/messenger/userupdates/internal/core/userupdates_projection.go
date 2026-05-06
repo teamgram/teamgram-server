@@ -118,6 +118,10 @@ func eventToTLUpdate(event repository.UserEvent) (tg.MessageClazz, tg.UpdateClaz
 		update, err := dialogEventToTLUpdate(dialogEventFromMessageEvent(event, messageEvent), event.Pts, event.PtsCount)
 		return nil, update, err
 	}
+	if messageEvent.EventKind == payload.OperationKindReadHistory {
+		update, err := readHistoryEventToTLUpdate(event, messageEvent)
+		return nil, update, err
+	}
 	if messageEvent.EventKind != payload.EventKindNewMessage {
 		return nil, nil, fmt.Errorf("%w: unsupported event kind=%s schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.EventKind, messageEvent.SchemaVersion)
 	}
@@ -135,6 +139,33 @@ func eventToTLUpdate(event repository.UserEvent) (tg.MessageClazz, tg.UpdateClaz
 		PtsCount: event.PtsCount,
 	})
 	return message, update, nil
+}
+
+func readHistoryEventToTLUpdate(event repository.UserEvent, messageEvent payload.MessageEventV1) (tg.UpdateClazz, error) {
+	maxID, err := int64ToInt32(messageEvent.MessageID, "message id")
+	if err != nil {
+		return nil, err
+	}
+	pts, err := int64ToInt32(event.Pts, "pts")
+	if err != nil {
+		return nil, err
+	}
+	peer := peerFromEvent(messageEvent.PeerType, messageEvent.PeerID)
+	if messageEvent.Out {
+		return tg.MakeTLUpdateReadHistoryOutbox(&tg.TLUpdateReadHistoryOutbox{
+			Peer:     peer,
+			MaxId:    maxID,
+			Pts:      pts,
+			PtsCount: event.PtsCount,
+		}), nil
+	}
+	return tg.MakeTLUpdateReadHistoryInbox(&tg.TLUpdateReadHistoryInbox{
+		Peer:             peer,
+		MaxId:            maxID,
+		StillUnreadCount: 0,
+		Pts:              pts,
+		PtsCount:         event.PtsCount,
+	}), nil
 }
 
 func messageViewToTLMessage(view repository.MessageView) (tg.MessageClazz, error) {

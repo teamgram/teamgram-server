@@ -318,15 +318,24 @@ func upsertUserDialog(txModels *model.TxModels, in ApplyUserOperationInput, op p
 
 func applyReadHistory(txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, nextPTS int64) error {
 	readInbox := op.ReadInboxMaxPeerSeq
-	if readInbox == 0 {
-		readInbox = op.PeerSeq
-	}
 	readOutbox := op.ReadOutboxMaxPeerSeq
-	if readOutbox == 0 {
+	if readInbox == 0 || readOutbox == 0 {
 		if row, err := txModels.UserDialogsModel.SelectByUserPeer(in.UserID, op.PeerType, op.PeerID); err == nil {
-			readOutbox = row.ReadOutboxMaxPeerSeq
+			if readInbox == 0 {
+				readInbox = row.ReadInboxMaxPeerSeq
+			}
+			if readOutbox == 0 {
+				readOutbox = row.ReadOutboxMaxPeerSeq
+			}
 		} else if !errors.Is(err, model.ErrNotFound) {
 			return storageError("select dialog before read history", err)
+		}
+	}
+	if readInbox == 0 && readOutbox == 0 {
+		if op.Out {
+			readOutbox = op.PeerSeq
+		} else {
+			readInbox = op.PeerSeq
 		}
 	}
 	_, err := txModels.UserDialogsModel.UpdateReadState(0, 0, 0, false, readInbox, readOutbox, nextPTS, mysqlNullNow(), in.UserID, op.PeerType, op.PeerID)

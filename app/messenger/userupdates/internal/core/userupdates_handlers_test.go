@@ -177,6 +177,69 @@ func TestGetDifferenceBuildsVisibleMessageFromEventPayload(t *testing.T) {
 	}
 }
 
+func TestGetDifferenceBuildsReadHistoryOutboxUpdate(t *testing.T) {
+	eventPayload := mustMarshalMessageEvent(t, payload.MessageEventV1{
+		SchemaVersion: payload.MessageEventSchemaVersion,
+		EventKind:     payload.OperationKindReadHistory,
+		MessageID:     66,
+		PeerType:      payload.PeerTypeUser,
+		PeerID:        1571766987,
+		Date:          1_778_029_828,
+		Out:           true,
+	})
+	repo := &fakeUserUpdatesRepository{
+		difference: &repository.GetDifferenceResult{
+			State: repository.UserState{UserID: 1571766986, Pts: 157},
+			Events: []repository.UserEvent{
+				{
+					UserID:             1571766986,
+					Pts:                157,
+					PtsCount:           1,
+					OperationID:        "read-outbox",
+					EventType:          repository.EventTypeReadHistory,
+					PeerType:           payload.PeerTypeUser,
+					PeerID:             1571766987,
+					PeerSeq:            66,
+					ActorUserID:        1571766987,
+					EventSchemaVersion: payload.MessageEventSchemaVersion,
+					EventCodec:         repository.PayloadCodecJSON,
+					EventPayload:       eventPayload,
+					EventPayloadHash:   payload.HashBytes(eventPayload),
+				},
+			},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.UserupdatesGetDifference(&userupdates.TLUserupdatesGetDifference{
+		UserId:        1571766986,
+		AuthKeyId:     9002,
+		Pts:           156,
+		PtsTotalLimit: int32Ptr(10),
+	})
+	if err != nil {
+		t.Fatalf("GetDifference returned error: %v", err)
+	}
+	diff, ok := got.ToUserDifference()
+	if !ok {
+		t.Fatalf("expected userDifference, got %s", got.ClazzName())
+	}
+	if len(diff.NewMessages) != 0 || len(diff.OtherUpdates) != 1 {
+		t.Fatalf("unexpected difference lens: new=%d updates=%d", len(diff.NewMessages), len(diff.OtherUpdates))
+	}
+	update, ok := diff.OtherUpdates[0].(*tg.TLUpdateReadHistoryOutbox)
+	if !ok {
+		t.Fatalf("expected TLUpdateReadHistoryOutbox, got %T", diff.OtherUpdates[0])
+	}
+	peer, ok := update.Peer.(*tg.TLPeerUser)
+	if !ok || peer.UserId != 1571766987 {
+		t.Fatalf("unexpected peer: %+v ok=%v", update.Peer, ok)
+	}
+	if update.MaxId != 66 || update.Pts != 157 || update.PtsCount != 1 {
+		t.Fatalf("unexpected read outbox update: %+v", update)
+	}
+}
+
 func TestGetMessageViewsByPeerSeqsBuildsMessagesFromViews(t *testing.T) {
 	eventPayload := mustMarshalMessageEvent(t, payload.MessageEventV1{
 		SchemaVersion:      payload.MessageEventSchemaVersion,

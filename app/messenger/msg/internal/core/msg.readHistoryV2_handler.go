@@ -46,16 +46,15 @@ func (c *MsgCore) MsgReadHistoryV2(in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffe
 
 	date := int32(time.Now().Unix())
 	body, err := json.Marshal(payload.MessageOperationV1{
-		SchemaVersion:        payload.MessageOperationSchemaVersion,
-		OperationKind:        payload.OperationKindReadHistory,
-		PeerType:             in.PeerType,
-		PeerID:               in.PeerId,
-		PeerSeq:              int64(in.MaxId),
-		FromUserID:           in.UserId,
-		ToUserID:             in.UserId,
-		Date:                 date,
-		ReadInboxMaxPeerSeq:  int64(in.MaxId),
-		ReadOutboxMaxPeerSeq: int64(in.MaxId),
+		SchemaVersion:       payload.MessageOperationSchemaVersion,
+		OperationKind:       payload.OperationKindReadHistory,
+		PeerType:            in.PeerType,
+		PeerID:              in.PeerId,
+		PeerSeq:             int64(in.MaxId),
+		FromUserID:          in.UserId,
+		ToUserID:            in.UserId,
+		Date:                date,
+		ReadInboxMaxPeerSeq: int64(in.MaxId),
 	})
 	if err != nil {
 		return nil, fmt.Errorf("%w: marshal read history operation user_id=%d peer_id=%d", msg.ErrMsgStorage, in.UserId, in.PeerId)
@@ -91,6 +90,12 @@ func (c *MsgCore) MsgReadHistoryV2(in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffe
 	if result == nil {
 		return nil, msg.ErrSenderSyncFailed
 	}
+	if in.UserId != in.PeerId {
+		if err := c.processPeerReadOutboxOperation(in, date); err != nil {
+			c.Logger.Errorf("msg.readHistoryV2 - peer read outbox update failed: user_id=%d peer_id=%d max_id=%d err=%v",
+				in.UserId, in.PeerId, in.MaxId, err)
+		}
+	}
 	pts, err := int64ToInt32(result.Pts, "pts")
 	if err != nil {
 		return nil, err
@@ -99,6 +104,50 @@ func (c *MsgCore) MsgReadHistoryV2(in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffe
 		Pts:      pts,
 		PtsCount: result.PtsCount,
 	}).ToMessagesAffectedMessages(), nil
+}
+
+func (c *MsgCore) processPeerReadOutboxOperation(in *msg.TLMsgReadHistoryV2, date int32) error {
+	body, err := json.Marshal(payload.MessageOperationV1{
+		SchemaVersion:        payload.MessageOperationSchemaVersion,
+		OperationKind:        payload.OperationKindReadHistory,
+		PeerType:             in.PeerType,
+		PeerID:               in.UserId,
+		PeerSeq:              int64(in.MaxId),
+		FromUserID:           in.UserId,
+		ToUserID:             in.PeerId,
+		Date:                 date,
+		Out:                  true,
+		ReadOutboxMaxPeerSeq: int64(in.MaxId),
+	})
+	if err != nil {
+		return fmt.Errorf("%w: marshal peer read outbox operation user_id=%d peer_id=%d", msg.ErrMsgStorage, in.UserId, in.PeerId)
+	}
+	hashBytes := payload.HashBytes(body)
+	route := payload.RouteUser(in.PeerId)
+	operationID := readHistoryOperationID(in.PeerId, in.UserId, in.MaxId, 0)
+	_, err = c.svcCtx.UserUpdates.UserupdatesProcessUserOperation(c.ctx, &userupdates.TLUserupdatesProcessUserOperation{
+		Operation: userupdates.MakeTLUserOperation(&userupdates.TLUserOperation{
+			UserId:               in.PeerId,
+			BucketId:             int32(route.BucketID),
+			PartitionId:          int32(route.ReceiverPartitionID),
+			OperationId:          operationID,
+			OpType:               payload.OpTypeSendMessage,
+			OpSource:             0,
+			ActorUserId:          in.UserId,
+			PeerType:             in.PeerType,
+			PeerId:               in.UserId,
+			CanonicalPeerSeq:     int64Ptr(int64(in.MaxId)),
+			CanonicalDate:        int64Ptr(int64(date)),
+			PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+			PayloadCodec:         payload.PayloadCodecJSON,
+			PayloadHash:          hashBytes,
+			Payload:              body,
+		}),
+	})
+	if err != nil {
+		return fmt.Errorf("%w: %v", msg.ErrSenderSyncFailed, err)
+	}
+	return nil
 }
 
 func readHistoryOperationID(userID int64, peerID int64, maxID int32, authKeyID int64) string {

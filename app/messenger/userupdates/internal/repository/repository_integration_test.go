@@ -365,6 +365,28 @@ func TestApplyReadHistoryUpdatesReadStateUnreadMarkAndPTS(t *testing.T) {
 	if row.UnreadCount != 0 || row.UnreadMark || row.ReadInboxMaxPeerSeq != 1 || row.LastPts != 2 {
 		t.Fatalf("dialog read state = %+v, want unread cleared, read_inbox=1, last_pts=2", row)
 	}
+	readOutbox := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion:        payload.MessageOperationSchemaVersion,
+		OperationKind:        payload.OperationKindReadHistory,
+		PeerType:             payload.PeerTypeUser,
+		PeerID:               peerID,
+		PeerSeq:              2,
+		ReadOutboxMaxPeerSeq: 2,
+		FromUserID:           peerID,
+		ToUserID:             userID,
+		Date:                 int32(time.Now().Unix()),
+		Out:                  true,
+	}, "read-outbox")
+	if _, err := repo.ApplyUserOperation(ctx, readOutbox); err != nil {
+		t.Fatalf("ApplyUserOperation(read outbox) error = %v", err)
+	}
+	row, err = repo.models.UserDialogsModel.SelectByUserPeer(ctx, userID, payload.PeerTypeUser, peerID)
+	if err != nil {
+		t.Fatalf("SelectByUserPeer() after read outbox error = %v", err)
+	}
+	if row.ReadInboxMaxPeerSeq != 1 || row.ReadOutboxMaxPeerSeq != 2 || row.LastPts != 3 {
+		t.Fatalf("dialog outbox read state = %+v, want read_inbox preserved and read_outbox=2", row)
+	}
 }
 
 func TestApplyUpdatePinnedMessageWritesProjectionAndPTSEvent(t *testing.T) {
