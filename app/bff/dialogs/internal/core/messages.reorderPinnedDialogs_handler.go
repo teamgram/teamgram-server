@@ -27,7 +27,7 @@ func (c *DialogsCore) MessagesReorderPinnedDialogs(in *tg.TLMessagesReorderPinne
 	if c.MD == nil || c.MD.UserId <= 0 {
 		return nil, tg.ErrUserIdInvalid
 	}
-	if c.MD.PermAuthKeyId <= 0 {
+	if c.MD.PermAuthKeyId == 0 {
 		return nil, tg.ErrAuthKeyPermEmpty
 	}
 	if in == nil {

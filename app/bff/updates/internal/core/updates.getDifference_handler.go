@@ -55,7 +55,7 @@ func (c *UpdatesCore) requireUserAndPermAuthKey() (int64, int64, error) {
 	if c.MD == nil || c.MD.UserId <= 0 {
 		return 0, 0, tg.ErrUserIdInvalid
 	}
-	if c.MD.PermAuthKeyId <= 0 {
+	if c.MD.PermAuthKeyId == 0 {
 		return 0, 0, tg.ErrAuthKeyPermEmpty
 	}
 	return c.MD.UserId, c.MD.PermAuthKeyId, nil

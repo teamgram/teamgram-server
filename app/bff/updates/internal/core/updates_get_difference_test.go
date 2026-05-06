@@ -62,6 +62,24 @@ func TestUpdatesGetStateReturnsUserupdatesState(t *testing.T) {
 	}
 }
 
+func TestUpdatesGetStateAcceptsNegativePermAuthKeyID(t *testing.T) {
+	const permAuthKeyID = int64(-4149588253508792542)
+	client := &fakeUserupdatesClient{state: userupdates.MakeTLUserState(&userupdates.TLUserState{
+		Pts: 1,
+		Qts: -1,
+	}).ToUserState()}
+	core := newUpdatesCore(client)
+	core.MD.PermAuthKeyId = permAuthKeyID
+
+	_, err := core.UpdatesGetState(&tg.TLUpdatesGetState{})
+	if err != nil {
+		t.Fatalf("UpdatesGetState() error = %v", err)
+	}
+	if client.gotState == nil || client.gotState.AuthKeyId != permAuthKeyID {
+		t.Fatalf("userupdates auth key id = %#v, want %d", client.gotState, permAuthKeyID)
+	}
+}
+
 func TestUpdatesGetDifferenceReturnsNonEmptyDifference(t *testing.T) {
 	client := &fakeUserupdatesClient{difference: userupdates.MakeTLUserDifference(&userupdates.TLUserDifference{
 		NewMessages: []tg.MessageClazz{
