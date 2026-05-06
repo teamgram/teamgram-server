@@ -17,14 +17,37 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesGetOutboxReadDate
 // messages.getOutboxReadDate#8c4bfe5d peer:InputPeer msg_id:int = OutboxReadDate;
 func (c *MessagesCore) MessagesGetOutboxReadDate(in *tg.TLMessagesGetOutboxReadDate) (*tg.OutboxReadDate, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.getOutboxReadDate - error: method MessagesGetOutboxReadDate not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if c.MD == nil || c.MD.UserId <= 0 {
+		return nil, tg.ErrUserIdInvalid
+	}
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+	peerUserID, ok := resolveUserPeerID(in.Peer, c.MD.UserId)
+	if !ok {
+		return nil, tg.Err400PeerIdInvalid
+	}
+	if in.MsgId <= 0 {
+		return nil, tg.ErrMessageIdInvalid
+	}
+	r, err := c.svcCtx.Repo.UserupdatesClient.UserupdatesGetOutboxReadDate(c.ctx, &userupdates.TLUserupdatesGetOutboxReadDate{
+		UserId:   c.MD.UserId,
+		PeerType: payload.PeerTypeUser,
+		PeerId:   peerUserID,
+		MsgId:    in.MsgId,
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.getOutboxReadDate - userupdates error: self_user_id: %d, peer_id: %d, msg_id: %d, err: %v",
+			c.MD.UserId, peerUserID, in.MsgId, err)
+		return nil, err
+	}
+	return r, nil
 }

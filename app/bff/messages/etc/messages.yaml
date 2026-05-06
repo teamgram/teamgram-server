@@ -16,3 +16,11 @@ MsgClient:
     Hosts:
       - 127.0.0.1:2379
     Key: messenger.msg
+UserupdatesClient:
+  DestService: messenger.userupdates
+  ServiceName: RPCUserupdates
+  # Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: messenger.userupdates

@@ -272,6 +272,36 @@ CREATE TABLE IF NOT EXISTS user_message_views (
   KEY idx_user_date (user_id, date)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE IF NOT EXISTS hash_tags (
+  id                   BIGINT NOT NULL AUTO_INCREMENT,
+  user_id              BIGINT NOT NULL,
+  peer_type            INT NOT NULL,
+  peer_id              BIGINT NOT NULL,
+  hash_tag             VARCHAR(255) NOT NULL,
+  hash_tag_message_id  BIGINT NOT NULL,
+  deleted              BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at           TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at           TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_hash_tag_message (user_id, peer_type, peer_id, hash_tag, hash_tag_message_id),
+  KEY idx_hash_tag_peer (user_id, peer_type, peer_id, hash_tag, deleted, hash_tag_message_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE IF NOT EXISTS message_read_outbox (
+  id                       BIGINT NOT NULL AUTO_INCREMENT,
+  user_id                  BIGINT NOT NULL,
+  peer_type                INT NOT NULL,
+  peer_id                  BIGINT NOT NULL,
+  read_user_id             BIGINT NOT NULL,
+  read_outbox_max_id       BIGINT NOT NULL,
+  read_outbox_max_date     DATETIME(6) NOT NULL,
+  created_at               TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at               TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_outbox_read (user_id, peer_type, peer_id, read_user_id, read_outbox_max_id),
+  KEY idx_outbox_read_lookup (user_id, peer_type, peer_id, read_user_id, read_outbox_max_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE IF NOT EXISTS user_dialogs (
   user_id               BIGINT NOT NULL,
   peer_type             INT NOT NULL,

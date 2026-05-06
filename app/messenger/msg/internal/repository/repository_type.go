@@ -98,6 +98,15 @@ type ListHistoryMessagesInput struct {
 	Limit     int32
 }
 
+type SearchHashTagMessagesInput struct {
+	UserID   int64
+	PeerType int32
+	PeerID   int64
+	HashTag  string
+	OffsetID int32
+	Limit    int32
+}
+
 type HistoryMessage struct {
 	CanonicalMessageID int64
 	PeerSeq            int64

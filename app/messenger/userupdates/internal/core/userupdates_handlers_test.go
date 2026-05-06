@@ -608,27 +608,51 @@ func TestDifferenceRejectsUnknownDialogAuthSeqEvent(t *testing.T) {
 	}
 }
 
+func TestGetOutboxReadDateRoutesToRepository(t *testing.T) {
+	repo := &fakeUserUpdatesRepository{outboxReadDate: 123456}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.UserupdatesGetOutboxReadDate(&userupdates.TLUserupdatesGetOutboxReadDate{
+		UserId:   1001,
+		PeerType: payload.PeerTypeUser,
+		PeerId:   1002,
+		MsgId:    9,
+	})
+	if err != nil {
+		t.Fatalf("UserupdatesGetOutboxReadDate error = %v", err)
+	}
+	if got.Date != 123456 {
+		t.Fatalf("date = %d, want 123456", got.Date)
+	}
+	if repo.outboxReadDateInput.UserID != 1001 || repo.outboxReadDateInput.PeerType != payload.PeerTypeUser ||
+		repo.outboxReadDateInput.PeerID != 1002 || repo.outboxReadDateInput.MsgID != 9 {
+		t.Fatalf("repository input = %+v", repo.outboxReadDateInput)
+	}
+}
+
 type fakeUserUpdatesRepository struct {
-	applyInput         repository.ApplyUserOperationInput
-	applyResult        *repository.ApplyUserOperationResult
-	operationResult    *repository.OperationResult
-	stateUserID        int64
-	statePermAuthKeyID int64
-	state              *repository.UserState
-	differenceInput    repository.GetDifferenceInput
-	difference         *repository.GetDifferenceResult
-	dialogListUserID   int64
-	dialogListCursor   repository.DialogProjectionCursor
-	dialogListLimit    int32
-	dialogProjections  []repository.DialogProjection
-	dialogPeerUserID   int64
-	dialogPeers        []repository.DialogProjectionPeer
-	dialogPeerMap      map[repository.DialogProjectionPeer]repository.DialogProjection
-	messageViewUserID  int64
-	messageViewPeers   []repository.MessageViewPeerSeq
-	messageViews       map[repository.MessageViewPeerSeq]repository.MessageView
-	dialogCountUserID  int64
-	dialogCount        int32
+	applyInput          repository.ApplyUserOperationInput
+	applyResult         *repository.ApplyUserOperationResult
+	operationResult     *repository.OperationResult
+	stateUserID         int64
+	statePermAuthKeyID  int64
+	state               *repository.UserState
+	differenceInput     repository.GetDifferenceInput
+	difference          *repository.GetDifferenceResult
+	dialogListUserID    int64
+	dialogListCursor    repository.DialogProjectionCursor
+	dialogListLimit     int32
+	dialogProjections   []repository.DialogProjection
+	dialogPeerUserID    int64
+	dialogPeers         []repository.DialogProjectionPeer
+	dialogPeerMap       map[repository.DialogProjectionPeer]repository.DialogProjection
+	messageViewUserID   int64
+	messageViewPeers    []repository.MessageViewPeerSeq
+	messageViews        map[repository.MessageViewPeerSeq]repository.MessageView
+	dialogCountUserID   int64
+	dialogCount         int32
+	outboxReadDate      int32
+	outboxReadDateInput repository.OutboxReadDateInput
 }
 
 func (f *fakeUserUpdatesRepository) ApplyUserOperation(_ context.Context, in repository.ApplyUserOperationInput) (*repository.ApplyUserOperationResult, error) {
@@ -681,6 +705,11 @@ func (f *fakeUserUpdatesRepository) GetMessageViewsByPeerSeqs(_ context.Context,
 func (f *fakeUserUpdatesRepository) CountVisibleDialogs(_ context.Context, userID int64) (int32, error) {
 	f.dialogCountUserID = userID
 	return f.dialogCount, nil
+}
+
+func (f *fakeUserUpdatesRepository) GetOutboxReadDate(_ context.Context, in repository.OutboxReadDateInput) (int32, error) {
+	f.outboxReadDateInput = in
+	return f.outboxReadDate, nil
 }
 
 func mustMarshalMessageEvent(t *testing.T, event payload.MessageEventV1) []byte {

@@ -208,6 +208,13 @@ type GetDifferenceInput struct {
 	Date          *int64
 }
 
+type OutboxReadDateInput struct {
+	UserID   int64
+	PeerType int32
+	PeerID   int64
+	MsgID    int32
+}
+
 type GetDifferenceResult struct {
 	State         UserState
 	Events        []UserEvent

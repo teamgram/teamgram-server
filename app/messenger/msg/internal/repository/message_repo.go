@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"math"
+	"strings"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
@@ -119,6 +120,67 @@ func (r *Repository) ListHistoryMessages(ctx context.Context, in ListHistoryMess
 		if in.MinID > 0 && row.PeerSeq <= int64(in.MinID) {
 			continue
 		}
+		out = append(out, historyMessageRowToMessage(row))
+	}
+	return out, nil
+}
+
+func (r *Repository) SearchHashTagMessages(ctx context.Context, in SearchHashTagMessagesInput) ([]HistoryMessage, error) {
+	if _, err := r.requireDB(); err != nil {
+		return nil, err
+	}
+
+	tag := strings.ToLower(strings.TrimPrefix(strings.TrimSpace(in.HashTag), "#"))
+	if tag == "" {
+		return []HistoryMessage{}, nil
+	}
+	limit := pagination.NormalizeLimit(in.Limit)
+	query := `
+SELECT DISTINCT
+	v.canonical_message_id,
+	v.peer_seq,
+	c.from_user_id,
+	v.outgoing,
+	v.peer_type,
+	v.peer_id,
+	v.message_kind,
+	c.message_text,
+	v.date AS message_date
+FROM
+	user_message_views v
+JOIN
+	canonical_messages c
+ON
+	c.canonical_message_id = v.canonical_message_id
+LEFT JOIN
+	hash_tags h
+ON
+	h.user_id = v.user_id
+	AND h.peer_type = v.peer_type
+	AND h.peer_id = v.peer_id
+	AND h.hash_tag_message_id = v.peer_seq
+	AND h.hash_tag = ?
+	AND h.deleted = 0
+WHERE
+	v.user_id = ?
+	AND v.peer_type = ?
+	AND v.peer_id = ?
+	AND v.message_status = ?
+	AND (? <= 0 OR v.peer_seq < ?)
+	AND (
+		h.hash_tag_message_id IS NOT NULL
+		OR c.message_text LIKE ?
+	)
+ORDER BY
+	v.peer_seq DESC
+LIMIT ?`
+	var rows []model.HistoryMessageRow
+	likeTag := "%#" + tag + "%"
+	if err := r.db.QueryRowsPartial(ctx, &rows, query, tag, in.UserID, in.PeerType, in.PeerID, MessageStatusLive, in.OffsetID, in.OffsetID, likeTag, limit); err != nil {
+		return nil, storageError("search hashtag messages", err)
+	}
+	out := make([]HistoryMessage, 0, len(rows))
+	for _, row := range rows {
 		out = append(out, historyMessageRowToMessage(row))
 	}
 	return out, nil

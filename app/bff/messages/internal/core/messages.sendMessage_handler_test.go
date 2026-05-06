@@ -10,6 +10,8 @@ import (
 	msgclient "github.com/teamgram/teamgram-server/v2/app/messenger/msg/client"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	userupdatesclient "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/client"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -22,6 +24,7 @@ type messagesFakeMsgClient struct {
 	updatePinnedMessage func(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error)
 	deleteMessages      func(ctx context.Context, in *msg.TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error)
 	deleteHistory       func(ctx context.Context, in *msg.TLMsgDeleteHistory) (*tg.MessagesAffectedHistory, error)
+	searchHashtag       func(ctx context.Context, in *msg.TLMsgSearchHashtag) (*tg.MessagesMessages, error)
 }
 
 func (f *messagesFakeMsgClient) MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
@@ -48,10 +51,32 @@ func (f *messagesFakeMsgClient) MsgDeleteHistory(ctx context.Context, in *msg.TL
 	return f.deleteHistory(ctx, in)
 }
 
+func (f *messagesFakeMsgClient) MsgSearchHashtag(ctx context.Context, in *msg.TLMsgSearchHashtag) (*tg.MessagesMessages, error) {
+	return f.searchHashtag(ctx, in)
+}
+
+type messagesFakeUserupdatesClient struct {
+	userupdatesclient.UserupdatesClient
+	getOutboxReadDate func(ctx context.Context, in *userupdates.TLUserupdatesGetOutboxReadDate) (*tg.OutboxReadDate, error)
+}
+
+func (f *messagesFakeUserupdatesClient) UserupdatesGetOutboxReadDate(ctx context.Context, in *userupdates.TLUserupdatesGetOutboxReadDate) (*tg.OutboxReadDate, error) {
+	return f.getOutboxReadDate(ctx, in)
+}
+
 func newSendMsgCore(client msgclient.MsgClient, selfID, authKeyID int64) *MessagesCore {
 	c := New(context.Background(), &svc.ServiceContext{
 		Repo: &repository.Repository{MsgClient: client},
 	})
+	c.MD = &metadata.RpcMetadata{
+		UserId:        selfID,
+		PermAuthKeyId: authKeyID,
+	}
+	return c
+}
+
+func newMessagesCoreWithRepo(repo *repository.Repository, selfID, authKeyID int64) *MessagesCore {
+	c := New(context.Background(), &svc.ServiceContext{Repo: repo})
 	c.MD = &metadata.RpcMetadata{
 		UserId:        selfID,
 		PermAuthKeyId: authKeyID,
@@ -246,6 +271,39 @@ func TestMessagesSearchPinnedReturnsEmptyMessages(t *testing.T) {
 	}
 }
 
+func TestMessagesSearchHashtagRoutesToMsg(t *testing.T) {
+	var got *msg.TLMsgSearchHashtag
+	reply := tg.MakeTLMessagesMessages(&tg.TLMessagesMessages{
+		Messages: []tg.MessageClazz{
+			tg.MakeTLMessage(&tg.TLMessage{Id: 7, Message: "#tag hello"}),
+		},
+		Chats: []tg.ChatClazz{},
+		Users: []tg.UserClazz{},
+	}).ToMessagesMessages()
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		searchHashtag: func(_ context.Context, in *msg.TLMsgSearchHashtag) (*tg.MessagesMessages, error) {
+			got = in
+			return reply, nil
+		},
+	}, 100, 200)
+
+	r, err := c.MessagesSearch(&tg.TLMessagesSearch{
+		Peer:   inputPeerUser(300),
+		Q:      "#tag",
+		Limit:  20,
+		Filter: tg.MakeTLInputMessagesFilterEmpty(&tg.TLInputMessagesFilterEmpty{}),
+	})
+	if err != nil {
+		t.Fatalf("MessagesSearch error = %v", err)
+	}
+	if r != reply {
+		t.Fatalf("reply mismatch: got %p want %p", r, reply)
+	}
+	if got == nil || got.UserId != 100 || got.AuthKeyId != 200 || got.PeerType != payload.PeerTypeUser || got.PeerId != 300 || got.HashTag != "tag" || got.Limit != 20 {
+		t.Fatalf("MsgSearchHashtag request = %+v", got)
+	}
+}
+
 func TestMessagesSearchEmptyQueryRejectedForEmptyFilter(t *testing.T) {
 	c := newSendMsgCore(&messagesFakeMsgClient{}, 100, 200)
 
@@ -255,6 +313,33 @@ func TestMessagesSearchEmptyQueryRejectedForEmptyFilter(t *testing.T) {
 	})
 	if err != tg.ErrSearchQueryEmpty {
 		t.Fatalf("MessagesSearch error = %v, want %v", err, tg.ErrSearchQueryEmpty)
+	}
+}
+
+func TestMessagesGetOutboxReadDateRoutesToUserupdates(t *testing.T) {
+	var got *userupdates.TLUserupdatesGetOutboxReadDate
+	reply := tg.MakeTLOutboxReadDate(&tg.TLOutboxReadDate{Date: 123456}).ToOutboxReadDate()
+	c := newMessagesCoreWithRepo(&repository.Repository{
+		UserupdatesClient: &messagesFakeUserupdatesClient{
+			getOutboxReadDate: func(_ context.Context, in *userupdates.TLUserupdatesGetOutboxReadDate) (*tg.OutboxReadDate, error) {
+				got = in
+				return reply, nil
+			},
+		},
+	}, 100, 200)
+
+	r, err := c.MessagesGetOutboxReadDate(&tg.TLMessagesGetOutboxReadDate{
+		Peer:  inputPeerUser(300),
+		MsgId: 7,
+	})
+	if err != nil {
+		t.Fatalf("MessagesGetOutboxReadDate error = %v", err)
+	}
+	if r != reply {
+		t.Fatalf("reply mismatch: got %p want %p", r, reply)
+	}
+	if got == nil || got.UserId != 100 || got.PeerType != payload.PeerTypeUser || got.PeerId != 300 || got.MsgId != 7 {
+		t.Fatalf("UserupdatesGetOutboxReadDate request = %+v", got)
 	}
 }
 

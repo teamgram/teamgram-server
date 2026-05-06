@@ -138,9 +138,10 @@ func buildDraftsConfig(c config.Config) draftshelper.Config {
 
 func buildMessagesConfig(c config.Config) messageshelper.Config {
 	return messageshelper.Config{
-		RpcServerConf: c.RpcServerConf,
-		ChatClient:    withServiceName(c.BizServiceClient, "RPCChat"),
-		MsgClient:     withServiceName(c.MsgClient, "RPCMsg"),
+		RpcServerConf:     c.RpcServerConf,
+		ChatClient:        withServiceName(c.BizServiceClient, "RPCChat"),
+		MsgClient:         withServiceName(c.MsgClient, "RPCMsg"),
+		UserupdatesClient: withServiceName(c.UserupdatesClient, "RPCUserupdates"),
 	}
 }
 

@@ -33,6 +33,7 @@ type Client interface {
 	UserupdatesGetDialogsByPeers(ctx context.Context, req *userupdates.TLUserupdatesGetDialogsByPeers, callOptions ...callopt.Option) (r *userupdates.VectorDialogProjection, err error)
 	UserupdatesGetDialogCount(ctx context.Context, req *userupdates.TLUserupdatesGetDialogCount, callOptions ...callopt.Option) (r *tg.Int32, err error)
 	UserupdatesGetMessageViewsByPeerSeqs(ctx context.Context, req *userupdates.TLUserupdatesGetMessageViewsByPeerSeqs, callOptions ...callopt.Option) (r *userupdates.MessageViewList, err error)
+	UserupdatesGetOutboxReadDate(ctx context.Context, req *userupdates.TLUserupdatesGetOutboxReadDate, callOptions ...callopt.Option) (r *tg.OutboxReadDate, err error)
 	UserupdatesAppendDialogAuthSeqSideEffect(ctx context.Context, req *userupdates.TLUserupdatesAppendDialogAuthSeqSideEffect, callOptions ...callopt.Option) (r *userupdates.UserAuthSeqAppendResult, err error)
 	UserupdatesAppendDialogPtsSideEffect(ctx context.Context, req *userupdates.TLUserupdatesAppendDialogPtsSideEffect, callOptions ...callopt.Option) (r *userupdates.UserPtsAppendResult, err error)
 }
@@ -112,6 +113,11 @@ func (p *kUserupdatesClient) UserupdatesGetDialogCount(ctx context.Context, req 
 func (p *kUserupdatesClient) UserupdatesGetMessageViewsByPeerSeqs(ctx context.Context, req *userupdates.TLUserupdatesGetMessageViewsByPeerSeqs, callOptions ...callopt.Option) (r *userupdates.MessageViewList, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.UserupdatesGetMessageViewsByPeerSeqs(ctx, req)
+}
+
+func (p *kUserupdatesClient) UserupdatesGetOutboxReadDate(ctx context.Context, req *userupdates.TLUserupdatesGetOutboxReadDate, callOptions ...callopt.Option) (r *tg.OutboxReadDate, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserupdatesGetOutboxReadDate(ctx, req)
 }
 
 func (p *kUserupdatesClient) UserupdatesAppendDialogAuthSeqSideEffect(ctx context.Context, req *userupdates.TLUserupdatesAppendDialogAuthSeqSideEffect, callOptions ...callopt.Option) (r *userupdates.UserAuthSeqAppendResult, err error) {

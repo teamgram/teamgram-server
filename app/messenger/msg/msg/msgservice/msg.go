@@ -132,6 +132,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"/msg.RPCMsg/msg.searchHashtag": kitex.NewMethodInfo(
+		searchHashtagHandler,
+		newSearchHashtagArgs,
+		newSearchHashtagResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 	"/msg.RPCMsg/msg.updatePinnedMessage": kitex.NewMethodInfo(
 		updatePinnedMessageHandler,
 		newUpdatePinnedMessageArgs,
@@ -1693,6 +1700,140 @@ func (p *GetHistoryResult) GetResult() interface{} {
 	return p.Success
 }
 
+func searchHashtagHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*SearchHashtagArgs)
+	realResult := result.(*SearchHashtagResult)
+	success, err := handler.(msg.RPCMsg).MsgSearchHashtag(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newSearchHashtagArgs() interface{} {
+	return &SearchHashtagArgs{}
+}
+
+func newSearchHashtagResult() interface{} {
+	return &SearchHashtagResult{}
+}
+
+type SearchHashtagArgs struct {
+	Req *msg.TLMsgSearchHashtag
+}
+
+func (p *SearchHashtagArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in SearchHashtagArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *SearchHashtagArgs) Unmarshal(in []byte) error {
+	msg := new(msg.TLMsgSearchHashtag)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *SearchHashtagArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in SearchHashtagArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *SearchHashtagArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(msg.TLMsgSearchHashtag)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var SearchHashtagArgs_Req_DEFAULT *msg.TLMsgSearchHashtag
+
+func (p *SearchHashtagArgs) GetReq() *msg.TLMsgSearchHashtag {
+	if !p.IsSetReq() {
+		return SearchHashtagArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *SearchHashtagArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type SearchHashtagResult struct {
+	Success *tg.MessagesMessages
+}
+
+var SearchHashtagResult_Success_DEFAULT *tg.MessagesMessages
+
+func (p *SearchHashtagResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in SearchHashtagResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *SearchHashtagResult) Unmarshal(in []byte) error {
+	msg := new(tg.MessagesMessages)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *SearchHashtagResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in SearchHashtagResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *SearchHashtagResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.MessagesMessages)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *SearchHashtagResult) GetSuccess() *tg.MessagesMessages {
+	if !p.IsSetSuccess() {
+		return SearchHashtagResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *SearchHashtagResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.MessagesMessages)
+}
+
+func (p *SearchHashtagResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *SearchHashtagResult) GetResult() interface{} {
+	return p.Success
+}
+
 func updatePinnedMessageHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*UpdatePinnedMessageArgs)
 	realResult := result.(*UpdatePinnedMessageResult)
@@ -2097,6 +2238,18 @@ func (p *kClient) MsgGetHistory(ctx context.Context, req *msg.TLMsgGetHistory) (
 	var _result GetHistoryResult
 
 	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.getHistory", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) MsgSearchHashtag(ctx context.Context, req *msg.TLMsgSearchHashtag) (r *tg.MessagesMessages, err error) {
+	// var _args SearchHashtagArgs
+	// _args.Req = req
+	var _result SearchHashtagResult
+
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.searchHashtag", req, &_result); err != nil {
 		return
 	}
 

@@ -196,6 +196,22 @@ func (s *Service) MsgGetHistory(ctx context.Context, request *msg.TLMsgGetHistor
 	return r, err
 }
 
+// MsgSearchHashtag
+// msg.searchHashtag user_id:long auth_key_id:long peer_type:int peer_id:long hash_tag:string offset_id:int limit:int = messages.Messages;
+func (s *Service) MsgSearchHashtag(ctx context.Context, request *msg.TLMsgSearchHashtag) (*tg.MessagesMessages, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("msg.searchHashtag - request: %s", request)
+
+	r, err := c.MsgSearchHashtag(request)
+	if err != nil {
+		c.Logger.Errorf("msg.searchHashtag - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("msg.searchHashtag - reply: %s", r)
+	return r, err
+}
+
 // MsgUpdatePinnedMessage
 // msg.updatePinnedMessage flags:# user_id:long auth_key_id:long silent:flags.0?true unpin:flags.1?true pm_oneside:flags.2?true peer_type:int peer_id:long id:int = Updates;
 func (s *Service) MsgUpdatePinnedMessage(ctx context.Context, request *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error) {

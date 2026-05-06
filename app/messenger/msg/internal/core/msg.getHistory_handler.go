@@ -50,6 +50,10 @@ func (c *MsgCore) MsgGetHistory(in *msg.TLMsgGetHistory) (*tg.MessagesMessages, 
 		}).ToMessagesMessages(), nil
 	}
 
+	return messagesFromHistory(history), nil
+}
+
+func messagesFromHistory(history []repository.HistoryMessage) *tg.MessagesMessages {
 	messages := make([]tg.MessageClazz, 0, len(history))
 	for _, item := range history {
 		if item.MessageKind != repository.MessageKindText {
@@ -64,12 +68,15 @@ func (c *MsgCore) MsgGetHistory(in *msg.TLMsgGetHistory) (*tg.MessagesMessages, 
 			Message: item.MessageText,
 		}))
 	}
-
 	return tg.MakeTLMessagesMessages(&tg.TLMessagesMessages{
 		Messages: messages,
 		Chats:    []tg.ChatClazz{},
 		Users:    []tg.UserClazz{},
-	}).ToMessagesMessages(), nil
+	}).ToMessagesMessages()
+}
+
+func emptyMsgMessages() *tg.MessagesMessages {
+	return messagesFromHistory(nil)
 }
 
 func historyMessageIDs(history []repository.HistoryMessage) []int64 {

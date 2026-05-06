@@ -17,6 +17,10 @@
 package core
 
 import (
+	"strings"
+
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -30,14 +34,46 @@ func (c *MessagesCore) MessagesSearch(in *tg.TLMessagesSearch) (*tg.MessagesMess
 		return nil, tg.ErrInputRequestInvalid
 	}
 
-	if _, ok := resolveUserPeerID(in.Peer, c.MD.UserId); !ok {
+	peerUserID, ok := resolveUserPeerID(in.Peer, c.MD.UserId)
+	if !ok {
 		return nil, tg.Err400PeerIdInvalid
 	}
 	if _, ok := in.Filter.(*tg.TLInputMessagesFilterEmpty); ok && in.Q == "" && in.FromId == nil {
 		return nil, tg.ErrSearchQueryEmpty
 	}
+	if _, ok := in.Filter.(*tg.TLInputMessagesFilterEmpty); ok {
+		if tag, ok := normalizeSearchHashTag(in.Q); ok {
+			r, err := c.svcCtx.Repo.MsgClient.MsgSearchHashtag(c.ctx, &msg.TLMsgSearchHashtag{
+				UserId:    c.MD.UserId,
+				AuthKeyId: c.MD.PermAuthKeyId,
+				PeerType:  payload.PeerTypeUser,
+				PeerId:    peerUserID,
+				HashTag:   tag,
+				OffsetId:  in.OffsetId,
+				Limit:     in.Limit,
+			})
+			if err != nil {
+				c.Logger.Errorf("messages.search hashtag - msg error: self_user_id: %d, peer_id: %d, tag: %s, err: %v",
+					c.MD.UserId, peerUserID, tag, err)
+				return nil, mapMsgSendError(err)
+			}
+			return r, nil
+		}
+	}
 
 	return emptyMessagesMessages(), nil
+}
+
+func normalizeSearchHashTag(q string) (string, bool) {
+	q = strings.TrimSpace(q)
+	if !strings.HasPrefix(q, "#") || len(q) <= 1 {
+		return "", false
+	}
+	tag := strings.TrimPrefix(q, "#")
+	if tag == "" || strings.ContainsAny(tag, " \t\r\n") {
+		return "", false
+	}
+	return tag, true
 }
 
 func emptyMessagesMessages() *tg.MessagesMessages {

@@ -11,7 +11,7 @@
 package msg
 
 import (
-	"context"
+    "context"
 	"encoding/json"
 	"fmt"
 
@@ -21,1167 +21,1129 @@ import (
 )
 
 var (
-	_ iface.TLObject
-	_ fmt.Stringer
-	_ *tg.Bool
-	_ bin.Fields
-	_ json.Marshaler
+    _ iface.TLObject
+    _ fmt.Stringer
+    _ *tg.Bool
+    _ bin.Fields
+    _ json.Marshaler
 )
 
-// TLMsgPushUserMessage <--
+ // TLMsgPushUserMessage <--
 type TLMsgPushUserMessage struct {
-	ClazzID   uint32             `json:"_id"`
-	UserId    int64              `json:"user_id"`
-	AuthKeyId int64              `json:"auth_key_id"`
-	PeerType  int32              `json:"peer_type"`
-	PeerId    int64              `json:"peer_id"`
-	PushType  int32              `json:"push_type"`
-	Message   OutboxMessageClazz `json:"message"`
+    ClazzID uint32 `json:"_id"`
+UserId int64 `json:"user_id"`
+AuthKeyId int64 `json:"auth_key_id"`
+PeerType int32 `json:"peer_type"`
+PeerId int64 `json:"peer_id"`
+PushType int32 `json:"push_type"`
+Message OutboxMessageClazz `json:"message"`
 }
 
 func (m *TLMsgPushUserMessage) String() string {
-	return iface.DebugStringWithName(ClazzName_msg_pushUserMessage, m)
+    return iface.DebugStringWithName(ClazzName_msg_pushUserMessage, m)
 }
 
 // Encode <--
 func (m *TLMsgPushUserMessage) Encode(x *bin.Encoder, layer int32) error {
-	switch clazzId := iface.GetClazzIDByName(ClazzName_msg_pushUserMessage, int(layer)); clazzId {
-	case 0x35d0fa1a:
-		x.PutClazzID(0x35d0fa1a)
+    switch clazzId := iface.GetClazzIDByName(ClazzName_msg_pushUserMessage, int(layer)); clazzId {
+        case 0x35d0fa1a:
+            x.PutClazzID(0x35d0fa1a)
 
-		x.PutInt64(m.UserId)
-		x.PutInt64(m.AuthKeyId)
-		x.PutInt32(m.PeerType)
-		x.PutInt64(m.PeerId)
-		x.PutInt32(m.PushType)
-		if m.Message == nil {
-			return fmt.Errorf("unable to encode msg_pushUserMessage#0x35d0fa1a: field message is nil")
-		}
-		if err := m.Message.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to encode msg_pushUserMessage#0x35d0fa1a: field message: %w", err)
-		}
+            
+			
 
-		return nil
-	default:
-		return fmt.Errorf("unable to encode msg_pushUserMessage: unsupported layer %d", layer)
-	}
+			   x.PutInt64(m.UserId)
+               x.PutInt64(m.AuthKeyId)
+               x.PutInt32(m.PeerType)
+               x.PutInt64(m.PeerId)
+               x.PutInt32(m.PushType)
+              if m.Message == nil { return fmt.Errorf("unable to encode msg_pushUserMessage#0x35d0fa1a: field message is nil") }
+if err := m.Message.Encode(x, layer); err != nil { return fmt.Errorf("unable to encode msg_pushUserMessage#0x35d0fa1a: field message: %w", err) }
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to encode msg_pushUserMessage: unsupported layer %d", layer)
+    }
 }
 
 // Decode <--
 func (m *TLMsgPushUserMessage) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_pushUserMessage: constructor: %w", err)
-		}
+        if err != nil { return fmt.Errorf("unable to decode msg_pushUserMessage: constructor: %w", err) }
 	}
-	switch m.ClazzID {
-	case 0x35d0fa1a:
-		m.UserId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_pushUserMessage#0x35d0fa1a: field user_id: %w", err)
-		}
-		m.AuthKeyId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_pushUserMessage#0x35d0fa1a: field auth_key_id: %w", err)
-		}
-		m.PeerType, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_pushUserMessage#0x35d0fa1a: field peer_type: %w", err)
-		}
-		m.PeerId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_pushUserMessage#0x35d0fa1a: field peer_id: %w", err)
-		}
-		m.PushType, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_pushUserMessage#0x35d0fa1a: field push_type: %w", err)
-		}
+    switch m.ClazzID {
+        case 0x35d0fa1a:
+              m.UserId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_pushUserMessage#0x35d0fa1a: field user_id: %w", err) }
+              m.AuthKeyId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_pushUserMessage#0x35d0fa1a: field auth_key_id: %w", err) }
+              m.PeerType, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_pushUserMessage#0x35d0fa1a: field peer_type: %w", err) }
+              m.PeerId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_pushUserMessage#0x35d0fa1a: field peer_id: %w", err) }
+              m.PushType, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_pushUserMessage#0x35d0fa1a: field push_type: %w", err) }
+              
+    m.Message, err = DecodeOutboxMessageClazz(d)
+    if err != nil { return fmt.Errorf("unable to decode msg_pushUserMessage#0x35d0fa1a: field message: %w", err) }
 
-		m.Message, err = DecodeOutboxMessageClazz(d)
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_pushUserMessage#0x35d0fa1a: field message: %w", err)
-		}
-
-		return nil
-	default:
-		return fmt.Errorf("unable to decode msg_pushUserMessage: invalid constructor %x", m.ClazzID)
-	}
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to decode msg_pushUserMessage: invalid constructor %x", m.ClazzID)
+    }
 }
 
-// TLMsgReadMessageContents <--
+ // TLMsgReadMessageContents <--
 type TLMsgReadMessageContents struct {
-	ClazzID   uint32                `json:"_id"`
-	UserId    int64                 `json:"user_id"`
-	AuthKeyId int64                 `json:"auth_key_id"`
-	PeerType  int32                 `json:"peer_type"`
-	PeerId    int64                 `json:"peer_id"`
-	Id        []ContentMessageClazz `json:"id"`
+    ClazzID uint32 `json:"_id"`
+UserId int64 `json:"user_id"`
+AuthKeyId int64 `json:"auth_key_id"`
+PeerType int32 `json:"peer_type"`
+PeerId int64 `json:"peer_id"`
+Id []ContentMessageClazz `json:"id"`
 }
 
 func (m *TLMsgReadMessageContents) String() string {
-	return iface.DebugStringWithName(ClazzName_msg_readMessageContents, m)
+    return iface.DebugStringWithName(ClazzName_msg_readMessageContents, m)
 }
 
 // Encode <--
 func (m *TLMsgReadMessageContents) Encode(x *bin.Encoder, layer int32) error {
-	switch clazzId := iface.GetClazzIDByName(ClazzName_msg_readMessageContents, int(layer)); clazzId {
-	case 0x282484d4:
-		x.PutClazzID(0x282484d4)
+    switch clazzId := iface.GetClazzIDByName(ClazzName_msg_readMessageContents, int(layer)); clazzId {
+        case 0x282484d4:
+            x.PutClazzID(0x282484d4)
 
-		x.PutInt64(m.UserId)
-		x.PutInt64(m.AuthKeyId)
-		x.PutInt32(m.PeerType)
-		x.PutInt64(m.PeerId)
+            
+			
 
-		if err := iface.EncodeObjectList(x, m.Id, layer); err != nil {
-			return fmt.Errorf("unable to encode msg_readMessageContents#0x282484d4: field id: %w", err)
-		}
+			   x.PutInt64(m.UserId)
+               x.PutInt64(m.AuthKeyId)
+               x.PutInt32(m.PeerType)
+               x.PutInt64(m.PeerId)
+              
+    if err := iface.EncodeObjectList(x, m.Id, layer); err != nil { return fmt.Errorf("unable to encode msg_readMessageContents#0x282484d4: field id: %w", err) }
 
-		return nil
-	default:
-		return fmt.Errorf("unable to encode msg_readMessageContents: unsupported layer %d", layer)
-	}
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to encode msg_readMessageContents: unsupported layer %d", layer)
+    }
 }
 
 // Decode <--
 func (m *TLMsgReadMessageContents) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_readMessageContents: constructor: %w", err)
-		}
+        if err != nil { return fmt.Errorf("unable to decode msg_readMessageContents: constructor: %w", err) }
 	}
-	switch m.ClazzID {
-	case 0x282484d4:
-		m.UserId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_readMessageContents#0x282484d4: field user_id: %w", err)
-		}
-		m.AuthKeyId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_readMessageContents#0x282484d4: field auth_key_id: %w", err)
-		}
-		m.PeerType, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_readMessageContents#0x282484d4: field peer_type: %w", err)
-		}
-		m.PeerId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_readMessageContents#0x282484d4: field peer_id: %w", err)
-		}
-		l5, err3 := d.VectorHeader()
-		if err3 != nil {
-			return fmt.Errorf("unable to decode msg_readMessageContents#0x282484d4: field id: %w", err3)
-		}
-		if l5 > bin.MaxVectorLen {
-			return fmt.Errorf("unable to decode msg_readMessageContents#0x282484d4: field id: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l5)})
-		}
-		prealloc5 := int(l5)
-		if prealloc5 > bin.PreallocateLimit {
-			prealloc5 = bin.PreallocateLimit
-		}
-		v5 := make([]ContentMessageClazz, 0, prealloc5)
-		for i := int32(0); i < l5; i++ {
-			vv5, err3 := DecodeContentMessageClazz(d)
-			if err3 != nil {
-				return fmt.Errorf("unable to decode msg_readMessageContents#0x282484d4: field id: %w", err3)
-			}
-			v5 = append(v5, vv5)
-		}
-		m.Id = v5
+    switch m.ClazzID {
+        case 0x282484d4:
+              m.UserId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_readMessageContents#0x282484d4: field user_id: %w", err) }
+              m.AuthKeyId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_readMessageContents#0x282484d4: field auth_key_id: %w", err) }
+              m.PeerType, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_readMessageContents#0x282484d4: field peer_type: %w", err) }
+              m.PeerId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_readMessageContents#0x282484d4: field peer_id: %w", err) }
+                 l5, err3 := d.VectorHeader()
+    if err3 != nil { return fmt.Errorf("unable to decode msg_readMessageContents#0x282484d4: field id: %w", err3) }
+    if l5 > bin.MaxVectorLen {
+        return fmt.Errorf("unable to decode msg_readMessageContents#0x282484d4: field id: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l5)})
+    }
+    prealloc5 := int(l5)
+    if prealloc5 > bin.PreallocateLimit {
+        prealloc5 = bin.PreallocateLimit
+    }
+    v5 := make([]ContentMessageClazz, 0, prealloc5)
+    for i := int32(0); i < l5; i++ {
+        vv5, err3 := DecodeContentMessageClazz(d)
+        if err3 != nil { return fmt.Errorf("unable to decode msg_readMessageContents#0x282484d4: field id: %w", err3) }
+        v5 = append(v5, vv5)
+    }
+    m.Id = v5
 
-		return nil
-	default:
-		return fmt.Errorf("unable to decode msg_readMessageContents: invalid constructor %x", m.ClazzID)
-	}
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to decode msg_readMessageContents: invalid constructor %x", m.ClazzID)
+    }
 }
 
-// TLMsgSendMessageV2 <--
+ // TLMsgSendMessageV2 <--
 type TLMsgSendMessageV2 struct {
-	ClazzID              uint32               `json:"_id"`
-	ClearDraft           bool                 `json:"clear_draft"`
-	UserId               int64                `json:"user_id"`
-	AuthKeyId            int64                `json:"auth_key_id"`
-	SourcePermAuthKeyId  *int64               `json:"source_perm_auth_key_id"`
-	ClearDraftBeforeDate *int32               `json:"clear_draft_before_date"`
-	PeerType             int32                `json:"peer_type"`
-	PeerId               int64                `json:"peer_id"`
-	Message              []OutboxMessageClazz `json:"message"`
+    ClazzID uint32 `json:"_id"`
+ClearDraft bool `json:"clear_draft"`
+UserId int64 `json:"user_id"`
+AuthKeyId int64 `json:"auth_key_id"`
+SourcePermAuthKeyId *int64 `json:"source_perm_auth_key_id"`
+ClearDraftBeforeDate *int32 `json:"clear_draft_before_date"`
+PeerType int32 `json:"peer_type"`
+PeerId int64 `json:"peer_id"`
+Message []OutboxMessageClazz `json:"message"`
 }
 
 func (m *TLMsgSendMessageV2) String() string {
-	return iface.DebugStringWithName(ClazzName_msg_sendMessageV2, m)
+    return iface.DebugStringWithName(ClazzName_msg_sendMessageV2, m)
 }
 
 // Encode <--
 func (m *TLMsgSendMessageV2) Encode(x *bin.Encoder, layer int32) error {
-	switch clazzId := iface.GetClazzIDByName(ClazzName_msg_sendMessageV2, int(layer)); clazzId {
-	case 0x1c17890c:
-		x.PutClazzID(0x1c17890c)
+    switch clazzId := iface.GetClazzIDByName(ClazzName_msg_sendMessageV2, int(layer)); clazzId {
+        case 0x1c17890c:
+            x.PutClazzID(0x1c17890c)
 
-		// set flags
-		var getFlags = func() uint32 {
-			var flags uint32 = 0
+             // set flags
+            var getFlags = func() uint32 {
+                var flags uint32 = 0
+                 
+                 if m.ClearDraft  == true  {
+					flags |= 1 << 0 
+				} 
+                 
+                 
+                 if m.SourcePermAuthKeyId  != nil  {
+					flags |= 1 << 1 
+				} 
+                 if m.ClearDraftBeforeDate  != nil  {
+					flags |= 1 << 2 
+				} 
+                 
+                 
+                 
+                
+                return flags
+            }
+			
 
-			if m.ClearDraft == true {
-				flags |= 1 << 0
-			}
+			 // set flags
+                var flags = getFlags()
+                x.PutUint32(flags)
+			   x.PutInt64(m.UserId)
+               x.PutInt64(m.AuthKeyId)
+              if m.SourcePermAuthKeyId != nil { x.PutInt64(*m.SourcePermAuthKeyId) }
 
-			if m.SourcePermAuthKeyId != nil {
-				flags |= 1 << 1
-			}
-			if m.ClearDraftBeforeDate != nil {
-				flags |= 1 << 2
-			}
+              if m.ClearDraftBeforeDate != nil { x.PutInt32(*m.ClearDraftBeforeDate) }
 
-			return flags
-		}
+               x.PutInt32(m.PeerType)
+               x.PutInt64(m.PeerId)
+              
+    if err := iface.EncodeObjectList(x, m.Message, layer); err != nil { return fmt.Errorf("unable to encode msg_sendMessageV2#0x1c17890c: field message: %w", err) }
 
-		// set flags
-		var flags = getFlags()
-		x.PutUint32(flags)
-		x.PutInt64(m.UserId)
-		x.PutInt64(m.AuthKeyId)
-		if m.SourcePermAuthKeyId != nil {
-			x.PutInt64(*m.SourcePermAuthKeyId)
-		}
-
-		if m.ClearDraftBeforeDate != nil {
-			x.PutInt32(*m.ClearDraftBeforeDate)
-		}
-
-		x.PutInt32(m.PeerType)
-		x.PutInt64(m.PeerId)
-
-		if err := iface.EncodeObjectList(x, m.Message, layer); err != nil {
-			return fmt.Errorf("unable to encode msg_sendMessageV2#0x1c17890c: field message: %w", err)
-		}
-
-		return nil
-	default:
-		return fmt.Errorf("unable to encode msg_sendMessageV2: unsupported layer %d", layer)
-	}
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to encode msg_sendMessageV2: unsupported layer %d", layer)
+    }
 }
 
 // Decode <--
 func (m *TLMsgSendMessageV2) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_sendMessageV2: constructor: %w", err)
-		}
+        if err != nil { return fmt.Errorf("unable to decode msg_sendMessageV2: constructor: %w", err) }
 	}
-	switch m.ClazzID {
-	case 0x1c17890c:
-		flags, err := d.Uint32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_sendMessageV2: field flags: %w", err)
-		}
-		_ = flags
-		if (flags & (1 << 0)) != 0 {
-			m.ClearDraft = true
-		}
-		m.UserId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field user_id: %w", err)
-		}
-		m.AuthKeyId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field auth_key_id: %w", err)
-		}
-		if (flags & (1 << 1)) != 0 {
-			m.SourcePermAuthKeyId = new(int64)
-			*m.SourcePermAuthKeyId, err = d.Int64()
-			if err != nil {
-				return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field source_perm_auth_key_id: %w", err)
-			}
-		}
+    switch m.ClazzID {
+        case 0x1c17890c:
+             flags, err := d.Uint32()
+            if err != nil { return fmt.Errorf("unable to decode msg_sendMessageV2: field flags: %w", err) }
+            _ = flags
+			 if (flags & (1 << 0)) != 0 { m.ClearDraft = true }
+              m.UserId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field user_id: %w", err) }
+              m.AuthKeyId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field auth_key_id: %w", err) }
+              if (flags & (1 << 1)) != 0 { m.SourcePermAuthKeyId = new(int64); *m.SourcePermAuthKeyId, err = d.Int64(); if err != nil { return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field source_perm_auth_key_id: %w", err) } }
 
-		if (flags & (1 << 2)) != 0 {
-			m.ClearDraftBeforeDate = new(int32)
-			*m.ClearDraftBeforeDate, err = d.Int32()
-			if err != nil {
-				return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field clear_draft_before_date: %w", err)
-			}
-		}
-		m.PeerType, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field peer_type: %w", err)
-		}
-		m.PeerId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field peer_id: %w", err)
-		}
-		l9, err3 := d.VectorHeader()
-		if err3 != nil {
-			return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field message: %w", err3)
-		}
-		if l9 > bin.MaxVectorLen {
-			return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field message: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l9)})
-		}
-		prealloc9 := int(l9)
-		if prealloc9 > bin.PreallocateLimit {
-			prealloc9 = bin.PreallocateLimit
-		}
-		v9 := make([]OutboxMessageClazz, 0, prealloc9)
-		for i := int32(0); i < l9; i++ {
-			vv9, err3 := DecodeOutboxMessageClazz(d)
-			if err3 != nil {
-				return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field message: %w", err3)
-			}
-			v9 = append(v9, vv9)
-		}
-		m.Message = v9
+              if (flags & (1 << 2)) != 0 {
+    m.ClearDraftBeforeDate = new(int32)
+    *m.ClearDraftBeforeDate, err = d.Int32()
+    if err != nil { return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field clear_draft_before_date: %w", err) }
+}
+              m.PeerType, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field peer_type: %w", err) }
+              m.PeerId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field peer_id: %w", err) }
+                 l9, err3 := d.VectorHeader()
+    if err3 != nil { return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field message: %w", err3) }
+    if l9 > bin.MaxVectorLen {
+        return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field message: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l9)})
+    }
+    prealloc9 := int(l9)
+    if prealloc9 > bin.PreallocateLimit {
+        prealloc9 = bin.PreallocateLimit
+    }
+    v9 := make([]OutboxMessageClazz, 0, prealloc9)
+    for i := int32(0); i < l9; i++ {
+        vv9, err3 := DecodeOutboxMessageClazz(d)
+        if err3 != nil { return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field message: %w", err3) }
+        v9 = append(v9, vv9)
+    }
+    m.Message = v9
 
-		return nil
-	default:
-		return fmt.Errorf("unable to decode msg_sendMessageV2: invalid constructor %x", m.ClazzID)
-	}
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to decode msg_sendMessageV2: invalid constructor %x", m.ClazzID)
+    }
 }
 
-// TLMsgEditMessageV2 <--
+ // TLMsgEditMessageV2 <--
 type TLMsgEditMessageV2 struct {
-	ClazzID    uint32             `json:"_id"`
-	UserId     int64              `json:"user_id"`
-	AuthKeyId  int64              `json:"auth_key_id"`
-	PeerType   int32              `json:"peer_type"`
-	PeerId     int64              `json:"peer_id"`
-	EditType   int32              `json:"edit_type"`
-	NewMessage OutboxMessageClazz `json:"new_message"`
-	DstMessage tg.MessageBoxClazz `json:"dst_message"`
+    ClazzID uint32 `json:"_id"`
+UserId int64 `json:"user_id"`
+AuthKeyId int64 `json:"auth_key_id"`
+PeerType int32 `json:"peer_type"`
+PeerId int64 `json:"peer_id"`
+EditType int32 `json:"edit_type"`
+NewMessage OutboxMessageClazz `json:"new_message"`
+DstMessage tg.MessageBoxClazz `json:"dst_message"`
 }
 
 func (m *TLMsgEditMessageV2) String() string {
-	return iface.DebugStringWithName(ClazzName_msg_editMessageV2, m)
+    return iface.DebugStringWithName(ClazzName_msg_editMessageV2, m)
 }
 
 // Encode <--
 func (m *TLMsgEditMessageV2) Encode(x *bin.Encoder, layer int32) error {
-	switch clazzId := iface.GetClazzIDByName(ClazzName_msg_editMessageV2, int(layer)); clazzId {
-	case 0x69fe5fe1:
-		x.PutClazzID(0x69fe5fe1)
+    switch clazzId := iface.GetClazzIDByName(ClazzName_msg_editMessageV2, int(layer)); clazzId {
+        case 0x69fe5fe1:
+            x.PutClazzID(0x69fe5fe1)
 
-		x.PutInt64(m.UserId)
-		x.PutInt64(m.AuthKeyId)
-		x.PutInt32(m.PeerType)
-		x.PutInt64(m.PeerId)
-		x.PutInt32(m.EditType)
-		if m.NewMessage == nil {
-			return fmt.Errorf("unable to encode msg_editMessageV2#0x69fe5fe1: field new_message is nil")
-		}
-		if err := m.NewMessage.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to encode msg_editMessageV2#0x69fe5fe1: field new_message: %w", err)
-		}
-		if m.DstMessage == nil {
-			return fmt.Errorf("unable to encode msg_editMessageV2#0x69fe5fe1: field dst_message is nil")
-		}
-		if err := m.DstMessage.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to encode msg_editMessageV2#0x69fe5fe1: field dst_message: %w", err)
-		}
+            
+			
 
-		return nil
-	default:
-		return fmt.Errorf("unable to encode msg_editMessageV2: unsupported layer %d", layer)
-	}
+			   x.PutInt64(m.UserId)
+               x.PutInt64(m.AuthKeyId)
+               x.PutInt32(m.PeerType)
+               x.PutInt64(m.PeerId)
+               x.PutInt32(m.EditType)
+              if m.NewMessage == nil { return fmt.Errorf("unable to encode msg_editMessageV2#0x69fe5fe1: field new_message is nil") }
+if err := m.NewMessage.Encode(x, layer); err != nil { return fmt.Errorf("unable to encode msg_editMessageV2#0x69fe5fe1: field new_message: %w", err) }
+              if m.DstMessage == nil { return fmt.Errorf("unable to encode msg_editMessageV2#0x69fe5fe1: field dst_message is nil") }
+if err := m.DstMessage.Encode(x, layer); err != nil { return fmt.Errorf("unable to encode msg_editMessageV2#0x69fe5fe1: field dst_message: %w", err) }
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to encode msg_editMessageV2: unsupported layer %d", layer)
+    }
 }
 
 // Decode <--
 func (m *TLMsgEditMessageV2) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_editMessageV2: constructor: %w", err)
-		}
+        if err != nil { return fmt.Errorf("unable to decode msg_editMessageV2: constructor: %w", err) }
 	}
-	switch m.ClazzID {
-	case 0x69fe5fe1:
-		m.UserId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_editMessageV2#0x69fe5fe1: field user_id: %w", err)
-		}
-		m.AuthKeyId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_editMessageV2#0x69fe5fe1: field auth_key_id: %w", err)
-		}
-		m.PeerType, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_editMessageV2#0x69fe5fe1: field peer_type: %w", err)
-		}
-		m.PeerId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_editMessageV2#0x69fe5fe1: field peer_id: %w", err)
-		}
-		m.EditType, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_editMessageV2#0x69fe5fe1: field edit_type: %w", err)
-		}
+    switch m.ClazzID {
+        case 0x69fe5fe1:
+              m.UserId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_editMessageV2#0x69fe5fe1: field user_id: %w", err) }
+              m.AuthKeyId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_editMessageV2#0x69fe5fe1: field auth_key_id: %w", err) }
+              m.PeerType, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_editMessageV2#0x69fe5fe1: field peer_type: %w", err) }
+              m.PeerId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_editMessageV2#0x69fe5fe1: field peer_id: %w", err) }
+              m.EditType, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_editMessageV2#0x69fe5fe1: field edit_type: %w", err) }
+              
+    m.NewMessage, err = DecodeOutboxMessageClazz(d)
+    if err != nil { return fmt.Errorf("unable to decode msg_editMessageV2#0x69fe5fe1: field new_message: %w", err) }
 
-		m.NewMessage, err = DecodeOutboxMessageClazz(d)
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_editMessageV2#0x69fe5fe1: field new_message: %w", err)
-		}
+              
+    m.DstMessage, err = tg.DecodeMessageBoxClazz(d)
+    if err != nil { return fmt.Errorf("unable to decode msg_editMessageV2#0x69fe5fe1: field dst_message: %w", err) }
 
-		m.DstMessage, err = tg.DecodeMessageBoxClazz(d)
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_editMessageV2#0x69fe5fe1: field dst_message: %w", err)
-		}
-
-		return nil
-	default:
-		return fmt.Errorf("unable to decode msg_editMessageV2: invalid constructor %x", m.ClazzID)
-	}
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to decode msg_editMessageV2: invalid constructor %x", m.ClazzID)
+    }
 }
 
-// TLMsgDeleteMessages <--
+ // TLMsgDeleteMessages <--
 type TLMsgDeleteMessages struct {
-	ClazzID   uint32  `json:"_id"`
-	UserId    int64   `json:"user_id"`
-	AuthKeyId int64   `json:"auth_key_id"`
-	PeerType  int32   `json:"peer_type"`
-	PeerId    int64   `json:"peer_id"`
-	Revoke    bool    `json:"revoke"`
-	Id        []int32 `json:"id"`
+    ClazzID uint32 `json:"_id"`
+UserId int64 `json:"user_id"`
+AuthKeyId int64 `json:"auth_key_id"`
+PeerType int32 `json:"peer_type"`
+PeerId int64 `json:"peer_id"`
+Revoke bool `json:"revoke"`
+Id []int32 `json:"id"`
 }
 
 func (m *TLMsgDeleteMessages) String() string {
-	return iface.DebugStringWithName(ClazzName_msg_deleteMessages, m)
+    return iface.DebugStringWithName(ClazzName_msg_deleteMessages, m)
 }
 
 // Encode <--
 func (m *TLMsgDeleteMessages) Encode(x *bin.Encoder, layer int32) error {
-	switch clazzId := iface.GetClazzIDByName(ClazzName_msg_deleteMessages, int(layer)); clazzId {
-	case 0x21e80a1d:
-		x.PutClazzID(0x21e80a1d)
+    switch clazzId := iface.GetClazzIDByName(ClazzName_msg_deleteMessages, int(layer)); clazzId {
+        case 0x21e80a1d:
+            x.PutClazzID(0x21e80a1d)
 
-		// set flags
-		var getFlags = func() uint32 {
-			var flags uint32 = 0
+             // set flags
+            var getFlags = func() uint32 {
+                var flags uint32 = 0
+                 
+                 
+                 
+                 
+                 
+                 if m.Revoke  == true  {
+					flags |= 1 << 1 
+				} 
+                 
+                
+                return flags
+            }
+			
 
-			if m.Revoke == true {
-				flags |= 1 << 1
-			}
+			 // set flags
+                var flags = getFlags()
+                x.PutUint32(flags)
+			   x.PutInt64(m.UserId)
+               x.PutInt64(m.AuthKeyId)
+               x.PutInt32(m.PeerType)
+               x.PutInt64(m.PeerId)
+              
+    iface.EncodeInt32List(x, m.Id)
 
-			return flags
-		}
-
-		// set flags
-		var flags = getFlags()
-		x.PutUint32(flags)
-		x.PutInt64(m.UserId)
-		x.PutInt64(m.AuthKeyId)
-		x.PutInt32(m.PeerType)
-		x.PutInt64(m.PeerId)
-
-		iface.EncodeInt32List(x, m.Id)
-
-		return nil
-	default:
-		return fmt.Errorf("unable to encode msg_deleteMessages: unsupported layer %d", layer)
-	}
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to encode msg_deleteMessages: unsupported layer %d", layer)
+    }
 }
 
 // Decode <--
 func (m *TLMsgDeleteMessages) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_deleteMessages: constructor: %w", err)
-		}
+        if err != nil { return fmt.Errorf("unable to decode msg_deleteMessages: constructor: %w", err) }
 	}
-	switch m.ClazzID {
-	case 0x21e80a1d:
-		flags, err := d.Uint32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_deleteMessages: field flags: %w", err)
-		}
-		_ = flags
-		m.UserId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_deleteMessages#0x21e80a1d: field user_id: %w", err)
-		}
-		m.AuthKeyId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_deleteMessages#0x21e80a1d: field auth_key_id: %w", err)
-		}
-		m.PeerType, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_deleteMessages#0x21e80a1d: field peer_type: %w", err)
-		}
-		m.PeerId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_deleteMessages#0x21e80a1d: field peer_id: %w", err)
-		}
-		if (flags & (1 << 1)) != 0 {
-			m.Revoke = true
-		}
-
-		m.Id, err = iface.DecodeInt32List(d)
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_deleteMessages#0x21e80a1d: field id: %w", err)
-		}
-
-		return nil
-	default:
-		return fmt.Errorf("unable to decode msg_deleteMessages: invalid constructor %x", m.ClazzID)
-	}
+    switch m.ClazzID {
+        case 0x21e80a1d:
+             flags, err := d.Uint32()
+            if err != nil { return fmt.Errorf("unable to decode msg_deleteMessages: field flags: %w", err) }
+            _ = flags
+			  m.UserId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_deleteMessages#0x21e80a1d: field user_id: %w", err) }
+              m.AuthKeyId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_deleteMessages#0x21e80a1d: field auth_key_id: %w", err) }
+              m.PeerType, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_deleteMessages#0x21e80a1d: field peer_type: %w", err) }
+              m.PeerId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_deleteMessages#0x21e80a1d: field peer_id: %w", err) }
+             if (flags & (1 << 1)) != 0 { m.Revoke = true }
+                
+    m.Id, err = iface.DecodeInt32List(d)
+    if err != nil { return fmt.Errorf("unable to decode msg_deleteMessages#0x21e80a1d: field id: %w", err) }
+    
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to decode msg_deleteMessages: invalid constructor %x", m.ClazzID)
+    }
 }
 
-// TLMsgDeleteHistory <--
+ // TLMsgDeleteHistory <--
 type TLMsgDeleteHistory struct {
-	ClazzID   uint32 `json:"_id"`
-	UserId    int64  `json:"user_id"`
-	AuthKeyId int64  `json:"auth_key_id"`
-	PeerType  int32  `json:"peer_type"`
-	PeerId    int64  `json:"peer_id"`
-	JustClear bool   `json:"just_clear"`
-	Revoke    bool   `json:"revoke"`
-	MaxId     int32  `json:"max_id"`
+    ClazzID uint32 `json:"_id"`
+UserId int64 `json:"user_id"`
+AuthKeyId int64 `json:"auth_key_id"`
+PeerType int32 `json:"peer_type"`
+PeerId int64 `json:"peer_id"`
+JustClear bool `json:"just_clear"`
+Revoke bool `json:"revoke"`
+MaxId int32 `json:"max_id"`
 }
 
 func (m *TLMsgDeleteHistory) String() string {
-	return iface.DebugStringWithName(ClazzName_msg_deleteHistory, m)
+    return iface.DebugStringWithName(ClazzName_msg_deleteHistory, m)
 }
 
 // Encode <--
 func (m *TLMsgDeleteHistory) Encode(x *bin.Encoder, layer int32) error {
-	switch clazzId := iface.GetClazzIDByName(ClazzName_msg_deleteHistory, int(layer)); clazzId {
-	case 0x75c0e8ca:
-		x.PutClazzID(0x75c0e8ca)
+    switch clazzId := iface.GetClazzIDByName(ClazzName_msg_deleteHistory, int(layer)); clazzId {
+        case 0x75c0e8ca:
+            x.PutClazzID(0x75c0e8ca)
 
-		// set flags
-		var getFlags = func() uint32 {
-			var flags uint32 = 0
+             // set flags
+            var getFlags = func() uint32 {
+                var flags uint32 = 0
+                 
+                 
+                 
+                 
+                 
+                 if m.JustClear  == true  {
+					flags |= 1 << 0 
+				} 
+                 if m.Revoke  == true  {
+					flags |= 1 << 1 
+				} 
+                 
+                
+                return flags
+            }
+			
 
-			if m.JustClear == true {
-				flags |= 1 << 0
-			}
-			if m.Revoke == true {
-				flags |= 1 << 1
-			}
-
-			return flags
-		}
-
-		// set flags
-		var flags = getFlags()
-		x.PutUint32(flags)
-		x.PutInt64(m.UserId)
-		x.PutInt64(m.AuthKeyId)
-		x.PutInt32(m.PeerType)
-		x.PutInt64(m.PeerId)
-		x.PutInt32(m.MaxId)
-
-		return nil
-	default:
-		return fmt.Errorf("unable to encode msg_deleteHistory: unsupported layer %d", layer)
-	}
+			 // set flags
+                var flags = getFlags()
+                x.PutUint32(flags)
+			   x.PutInt64(m.UserId)
+               x.PutInt64(m.AuthKeyId)
+               x.PutInt32(m.PeerType)
+               x.PutInt64(m.PeerId)
+               x.PutInt32(m.MaxId)
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to encode msg_deleteHistory: unsupported layer %d", layer)
+    }
 }
 
 // Decode <--
 func (m *TLMsgDeleteHistory) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_deleteHistory: constructor: %w", err)
-		}
+        if err != nil { return fmt.Errorf("unable to decode msg_deleteHistory: constructor: %w", err) }
 	}
-	switch m.ClazzID {
-	case 0x75c0e8ca:
-		flags, err := d.Uint32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_deleteHistory: field flags: %w", err)
-		}
-		_ = flags
-		m.UserId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_deleteHistory#0x75c0e8ca: field user_id: %w", err)
-		}
-		m.AuthKeyId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_deleteHistory#0x75c0e8ca: field auth_key_id: %w", err)
-		}
-		m.PeerType, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_deleteHistory#0x75c0e8ca: field peer_type: %w", err)
-		}
-		m.PeerId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_deleteHistory#0x75c0e8ca: field peer_id: %w", err)
-		}
-		if (flags & (1 << 0)) != 0 {
-			m.JustClear = true
-		}
-		if (flags & (1 << 1)) != 0 {
-			m.Revoke = true
-		}
-		m.MaxId, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_deleteHistory#0x75c0e8ca: field max_id: %w", err)
-		}
-
-		return nil
-	default:
-		return fmt.Errorf("unable to decode msg_deleteHistory: invalid constructor %x", m.ClazzID)
-	}
+    switch m.ClazzID {
+        case 0x75c0e8ca:
+             flags, err := d.Uint32()
+            if err != nil { return fmt.Errorf("unable to decode msg_deleteHistory: field flags: %w", err) }
+            _ = flags
+			  m.UserId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_deleteHistory#0x75c0e8ca: field user_id: %w", err) }
+              m.AuthKeyId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_deleteHistory#0x75c0e8ca: field auth_key_id: %w", err) }
+              m.PeerType, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_deleteHistory#0x75c0e8ca: field peer_type: %w", err) }
+              m.PeerId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_deleteHistory#0x75c0e8ca: field peer_id: %w", err) }
+             if (flags & (1 << 0)) != 0 { m.JustClear = true }
+             if (flags & (1 << 1)) != 0 { m.Revoke = true }
+              m.MaxId, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_deleteHistory#0x75c0e8ca: field max_id: %w", err) }
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to decode msg_deleteHistory: invalid constructor %x", m.ClazzID)
+    }
 }
 
-// TLMsgDeletePhoneCallHistory <--
+ // TLMsgDeletePhoneCallHistory <--
 type TLMsgDeletePhoneCallHistory struct {
-	ClazzID   uint32 `json:"_id"`
-	UserId    int64  `json:"user_id"`
-	AuthKeyId int64  `json:"auth_key_id"`
-	Revoke    bool   `json:"revoke"`
+    ClazzID uint32 `json:"_id"`
+UserId int64 `json:"user_id"`
+AuthKeyId int64 `json:"auth_key_id"`
+Revoke bool `json:"revoke"`
 }
 
 func (m *TLMsgDeletePhoneCallHistory) String() string {
-	return iface.DebugStringWithName(ClazzName_msg_deletePhoneCallHistory, m)
+    return iface.DebugStringWithName(ClazzName_msg_deletePhoneCallHistory, m)
 }
 
 // Encode <--
 func (m *TLMsgDeletePhoneCallHistory) Encode(x *bin.Encoder, layer int32) error {
-	switch clazzId := iface.GetClazzIDByName(ClazzName_msg_deletePhoneCallHistory, int(layer)); clazzId {
-	case 0x26b7a13e:
-		x.PutClazzID(0x26b7a13e)
+    switch clazzId := iface.GetClazzIDByName(ClazzName_msg_deletePhoneCallHistory, int(layer)); clazzId {
+        case 0x26b7a13e:
+            x.PutClazzID(0x26b7a13e)
 
-		// set flags
-		var getFlags = func() uint32 {
-			var flags uint32 = 0
+             // set flags
+            var getFlags = func() uint32 {
+                var flags uint32 = 0
+                 
+                 
+                 
+                 if m.Revoke  == true  {
+					flags |= 1 << 1 
+				} 
+                
+                return flags
+            }
+			
 
-			if m.Revoke == true {
-				flags |= 1 << 1
-			}
-
-			return flags
-		}
-
-		// set flags
-		var flags = getFlags()
-		x.PutUint32(flags)
-		x.PutInt64(m.UserId)
-		x.PutInt64(m.AuthKeyId)
-
-		return nil
-	default:
-		return fmt.Errorf("unable to encode msg_deletePhoneCallHistory: unsupported layer %d", layer)
-	}
+			 // set flags
+                var flags = getFlags()
+                x.PutUint32(flags)
+			   x.PutInt64(m.UserId)
+               x.PutInt64(m.AuthKeyId)
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to encode msg_deletePhoneCallHistory: unsupported layer %d", layer)
+    }
 }
 
 // Decode <--
 func (m *TLMsgDeletePhoneCallHistory) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_deletePhoneCallHistory: constructor: %w", err)
-		}
+        if err != nil { return fmt.Errorf("unable to decode msg_deletePhoneCallHistory: constructor: %w", err) }
 	}
-	switch m.ClazzID {
-	case 0x26b7a13e:
-		flags, err := d.Uint32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_deletePhoneCallHistory: field flags: %w", err)
-		}
-		_ = flags
-		m.UserId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_deletePhoneCallHistory#0x26b7a13e: field user_id: %w", err)
-		}
-		m.AuthKeyId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_deletePhoneCallHistory#0x26b7a13e: field auth_key_id: %w", err)
-		}
-		if (flags & (1 << 1)) != 0 {
-			m.Revoke = true
-		}
-
-		return nil
-	default:
-		return fmt.Errorf("unable to decode msg_deletePhoneCallHistory: invalid constructor %x", m.ClazzID)
-	}
+    switch m.ClazzID {
+        case 0x26b7a13e:
+             flags, err := d.Uint32()
+            if err != nil { return fmt.Errorf("unable to decode msg_deletePhoneCallHistory: field flags: %w", err) }
+            _ = flags
+			  m.UserId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_deletePhoneCallHistory#0x26b7a13e: field user_id: %w", err) }
+              m.AuthKeyId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_deletePhoneCallHistory#0x26b7a13e: field auth_key_id: %w", err) }
+             if (flags & (1 << 1)) != 0 { m.Revoke = true }
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to decode msg_deletePhoneCallHistory: invalid constructor %x", m.ClazzID)
+    }
 }
 
-// TLMsgDeleteChatHistory <--
+ // TLMsgDeleteChatHistory <--
 type TLMsgDeleteChatHistory struct {
-	ClazzID      uint32 `json:"_id"`
-	ChatId       int64  `json:"chat_id"`
-	DeleteUserId int64  `json:"delete_user_id"`
+    ClazzID uint32 `json:"_id"`
+ChatId int64 `json:"chat_id"`
+DeleteUserId int64 `json:"delete_user_id"`
 }
 
 func (m *TLMsgDeleteChatHistory) String() string {
-	return iface.DebugStringWithName(ClazzName_msg_deleteChatHistory, m)
+    return iface.DebugStringWithName(ClazzName_msg_deleteChatHistory, m)
 }
 
 // Encode <--
 func (m *TLMsgDeleteChatHistory) Encode(x *bin.Encoder, layer int32) error {
-	switch clazzId := iface.GetClazzIDByName(ClazzName_msg_deleteChatHistory, int(layer)); clazzId {
-	case 0xef1f62db:
-		x.PutClazzID(0xef1f62db)
+    switch clazzId := iface.GetClazzIDByName(ClazzName_msg_deleteChatHistory, int(layer)); clazzId {
+        case 0xef1f62db:
+            x.PutClazzID(0xef1f62db)
 
-		x.PutInt64(m.ChatId)
-		x.PutInt64(m.DeleteUserId)
+            
+			
 
-		return nil
-	default:
-		return fmt.Errorf("unable to encode msg_deleteChatHistory: unsupported layer %d", layer)
-	}
+			   x.PutInt64(m.ChatId)
+               x.PutInt64(m.DeleteUserId)
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to encode msg_deleteChatHistory: unsupported layer %d", layer)
+    }
 }
 
 // Decode <--
 func (m *TLMsgDeleteChatHistory) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_deleteChatHistory: constructor: %w", err)
-		}
+        if err != nil { return fmt.Errorf("unable to decode msg_deleteChatHistory: constructor: %w", err) }
 	}
-	switch m.ClazzID {
-	case 0xef1f62db:
-		m.ChatId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_deleteChatHistory#0xef1f62db: field chat_id: %w", err)
-		}
-		m.DeleteUserId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_deleteChatHistory#0xef1f62db: field delete_user_id: %w", err)
-		}
-
-		return nil
-	default:
-		return fmt.Errorf("unable to decode msg_deleteChatHistory: invalid constructor %x", m.ClazzID)
-	}
+    switch m.ClazzID {
+        case 0xef1f62db:
+              m.ChatId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_deleteChatHistory#0xef1f62db: field chat_id: %w", err) }
+              m.DeleteUserId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_deleteChatHistory#0xef1f62db: field delete_user_id: %w", err) }
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to decode msg_deleteChatHistory: invalid constructor %x", m.ClazzID)
+    }
 }
 
-// TLMsgReadHistory <--
+ // TLMsgReadHistory <--
 type TLMsgReadHistory struct {
-	ClazzID   uint32 `json:"_id"`
-	UserId    int64  `json:"user_id"`
-	AuthKeyId int64  `json:"auth_key_id"`
-	PeerType  int32  `json:"peer_type"`
-	PeerId    int64  `json:"peer_id"`
-	MaxId     int32  `json:"max_id"`
+    ClazzID uint32 `json:"_id"`
+UserId int64 `json:"user_id"`
+AuthKeyId int64 `json:"auth_key_id"`
+PeerType int32 `json:"peer_type"`
+PeerId int64 `json:"peer_id"`
+MaxId int32 `json:"max_id"`
 }
 
 func (m *TLMsgReadHistory) String() string {
-	return iface.DebugStringWithName(ClazzName_msg_readHistory, m)
+    return iface.DebugStringWithName(ClazzName_msg_readHistory, m)
 }
 
 // Encode <--
 func (m *TLMsgReadHistory) Encode(x *bin.Encoder, layer int32) error {
-	switch clazzId := iface.GetClazzIDByName(ClazzName_msg_readHistory, int(layer)); clazzId {
-	case 0x5a0f6e12:
-		x.PutClazzID(0x5a0f6e12)
+    switch clazzId := iface.GetClazzIDByName(ClazzName_msg_readHistory, int(layer)); clazzId {
+        case 0x5a0f6e12:
+            x.PutClazzID(0x5a0f6e12)
 
-		x.PutInt64(m.UserId)
-		x.PutInt64(m.AuthKeyId)
-		x.PutInt32(m.PeerType)
-		x.PutInt64(m.PeerId)
-		x.PutInt32(m.MaxId)
+            
+			
 
-		return nil
-	default:
-		return fmt.Errorf("unable to encode msg_readHistory: unsupported layer %d", layer)
-	}
+			   x.PutInt64(m.UserId)
+               x.PutInt64(m.AuthKeyId)
+               x.PutInt32(m.PeerType)
+               x.PutInt64(m.PeerId)
+               x.PutInt32(m.MaxId)
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to encode msg_readHistory: unsupported layer %d", layer)
+    }
 }
 
 // Decode <--
 func (m *TLMsgReadHistory) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_readHistory: constructor: %w", err)
-		}
+        if err != nil { return fmt.Errorf("unable to decode msg_readHistory: constructor: %w", err) }
 	}
-	switch m.ClazzID {
-	case 0x5a0f6e12:
-		m.UserId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_readHistory#0x5a0f6e12: field user_id: %w", err)
-		}
-		m.AuthKeyId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_readHistory#0x5a0f6e12: field auth_key_id: %w", err)
-		}
-		m.PeerType, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_readHistory#0x5a0f6e12: field peer_type: %w", err)
-		}
-		m.PeerId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_readHistory#0x5a0f6e12: field peer_id: %w", err)
-		}
-		m.MaxId, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_readHistory#0x5a0f6e12: field max_id: %w", err)
-		}
-
-		return nil
-	default:
-		return fmt.Errorf("unable to decode msg_readHistory: invalid constructor %x", m.ClazzID)
-	}
+    switch m.ClazzID {
+        case 0x5a0f6e12:
+              m.UserId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_readHistory#0x5a0f6e12: field user_id: %w", err) }
+              m.AuthKeyId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_readHistory#0x5a0f6e12: field auth_key_id: %w", err) }
+              m.PeerType, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_readHistory#0x5a0f6e12: field peer_type: %w", err) }
+              m.PeerId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_readHistory#0x5a0f6e12: field peer_id: %w", err) }
+              m.MaxId, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_readHistory#0x5a0f6e12: field max_id: %w", err) }
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to decode msg_readHistory: invalid constructor %x", m.ClazzID)
+    }
 }
 
-// TLMsgReadHistoryV2 <--
+ // TLMsgReadHistoryV2 <--
 type TLMsgReadHistoryV2 struct {
-	ClazzID   uint32 `json:"_id"`
-	UserId    int64  `json:"user_id"`
-	AuthKeyId int64  `json:"auth_key_id"`
-	PeerType  int32  `json:"peer_type"`
-	PeerId    int64  `json:"peer_id"`
-	MaxId     int32  `json:"max_id"`
+    ClazzID uint32 `json:"_id"`
+UserId int64 `json:"user_id"`
+AuthKeyId int64 `json:"auth_key_id"`
+PeerType int32 `json:"peer_type"`
+PeerId int64 `json:"peer_id"`
+MaxId int32 `json:"max_id"`
 }
 
 func (m *TLMsgReadHistoryV2) String() string {
-	return iface.DebugStringWithName(ClazzName_msg_readHistoryV2, m)
+    return iface.DebugStringWithName(ClazzName_msg_readHistoryV2, m)
 }
 
 // Encode <--
 func (m *TLMsgReadHistoryV2) Encode(x *bin.Encoder, layer int32) error {
-	switch clazzId := iface.GetClazzIDByName(ClazzName_msg_readHistoryV2, int(layer)); clazzId {
-	case 0xfb9b206:
-		x.PutClazzID(0xfb9b206)
+    switch clazzId := iface.GetClazzIDByName(ClazzName_msg_readHistoryV2, int(layer)); clazzId {
+        case 0xfb9b206:
+            x.PutClazzID(0xfb9b206)
 
-		x.PutInt64(m.UserId)
-		x.PutInt64(m.AuthKeyId)
-		x.PutInt32(m.PeerType)
-		x.PutInt64(m.PeerId)
-		x.PutInt32(m.MaxId)
+            
+			
 
-		return nil
-	default:
-		return fmt.Errorf("unable to encode msg_readHistoryV2: unsupported layer %d", layer)
-	}
+			   x.PutInt64(m.UserId)
+               x.PutInt64(m.AuthKeyId)
+               x.PutInt32(m.PeerType)
+               x.PutInt64(m.PeerId)
+               x.PutInt32(m.MaxId)
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to encode msg_readHistoryV2: unsupported layer %d", layer)
+    }
 }
 
 // Decode <--
 func (m *TLMsgReadHistoryV2) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_readHistoryV2: constructor: %w", err)
-		}
+        if err != nil { return fmt.Errorf("unable to decode msg_readHistoryV2: constructor: %w", err) }
 	}
-	switch m.ClazzID {
-	case 0xfb9b206:
-		m.UserId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_readHistoryV2#0xfb9b206: field user_id: %w", err)
-		}
-		m.AuthKeyId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_readHistoryV2#0xfb9b206: field auth_key_id: %w", err)
-		}
-		m.PeerType, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_readHistoryV2#0xfb9b206: field peer_type: %w", err)
-		}
-		m.PeerId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_readHistoryV2#0xfb9b206: field peer_id: %w", err)
-		}
-		m.MaxId, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_readHistoryV2#0xfb9b206: field max_id: %w", err)
-		}
-
-		return nil
-	default:
-		return fmt.Errorf("unable to decode msg_readHistoryV2: invalid constructor %x", m.ClazzID)
-	}
+    switch m.ClazzID {
+        case 0xfb9b206:
+              m.UserId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_readHistoryV2#0xfb9b206: field user_id: %w", err) }
+              m.AuthKeyId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_readHistoryV2#0xfb9b206: field auth_key_id: %w", err) }
+              m.PeerType, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_readHistoryV2#0xfb9b206: field peer_type: %w", err) }
+              m.PeerId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_readHistoryV2#0xfb9b206: field peer_id: %w", err) }
+              m.MaxId, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_readHistoryV2#0xfb9b206: field max_id: %w", err) }
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to decode msg_readHistoryV2: invalid constructor %x", m.ClazzID)
+    }
 }
 
-// TLMsgGetHistory <--
+ // TLMsgGetHistory <--
 type TLMsgGetHistory struct {
-	ClazzID    uint32 `json:"_id"`
-	UserId     int64  `json:"user_id"`
-	AuthKeyId  int64  `json:"auth_key_id"`
-	PeerType   int32  `json:"peer_type"`
-	PeerId     int64  `json:"peer_id"`
-	OffsetId   int32  `json:"offset_id"`
-	OffsetDate int32  `json:"offset_date"`
-	AddOffset  int32  `json:"add_offset"`
-	Limit      int32  `json:"limit"`
-	MaxId      int32  `json:"max_id"`
-	MinId      int32  `json:"min_id"`
-	Hash       int64  `json:"hash"`
+    ClazzID uint32 `json:"_id"`
+UserId int64 `json:"user_id"`
+AuthKeyId int64 `json:"auth_key_id"`
+PeerType int32 `json:"peer_type"`
+PeerId int64 `json:"peer_id"`
+OffsetId int32 `json:"offset_id"`
+OffsetDate int32 `json:"offset_date"`
+AddOffset int32 `json:"add_offset"`
+Limit int32 `json:"limit"`
+MaxId int32 `json:"max_id"`
+MinId int32 `json:"min_id"`
+Hash int64 `json:"hash"`
 }
 
 func (m *TLMsgGetHistory) String() string {
-	return iface.DebugStringWithName(ClazzName_msg_getHistory, m)
+    return iface.DebugStringWithName(ClazzName_msg_getHistory, m)
 }
 
 // Encode <--
 func (m *TLMsgGetHistory) Encode(x *bin.Encoder, layer int32) error {
-	switch clazzId := iface.GetClazzIDByName(ClazzName_msg_getHistory, int(layer)); clazzId {
-	case 0x7f4083df:
-		x.PutClazzID(0x7f4083df)
+    switch clazzId := iface.GetClazzIDByName(ClazzName_msg_getHistory, int(layer)); clazzId {
+        case 0x7f4083df:
+            x.PutClazzID(0x7f4083df)
 
-		x.PutInt64(m.UserId)
-		x.PutInt64(m.AuthKeyId)
-		x.PutInt32(m.PeerType)
-		x.PutInt64(m.PeerId)
-		x.PutInt32(m.OffsetId)
-		x.PutInt32(m.OffsetDate)
-		x.PutInt32(m.AddOffset)
-		x.PutInt32(m.Limit)
-		x.PutInt32(m.MaxId)
-		x.PutInt32(m.MinId)
-		x.PutInt64(m.Hash)
+            
+			
 
-		return nil
-	default:
-		return fmt.Errorf("unable to encode msg_getHistory: unsupported layer %d", layer)
-	}
+			   x.PutInt64(m.UserId)
+               x.PutInt64(m.AuthKeyId)
+               x.PutInt32(m.PeerType)
+               x.PutInt64(m.PeerId)
+               x.PutInt32(m.OffsetId)
+               x.PutInt32(m.OffsetDate)
+               x.PutInt32(m.AddOffset)
+               x.PutInt32(m.Limit)
+               x.PutInt32(m.MaxId)
+               x.PutInt32(m.MinId)
+               x.PutInt64(m.Hash)
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to encode msg_getHistory: unsupported layer %d", layer)
+    }
 }
 
 // Decode <--
 func (m *TLMsgGetHistory) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_getHistory: constructor: %w", err)
-		}
+        if err != nil { return fmt.Errorf("unable to decode msg_getHistory: constructor: %w", err) }
 	}
-	switch m.ClazzID {
-	case 0x7f4083df:
-		m.UserId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field user_id: %w", err)
-		}
-		m.AuthKeyId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field auth_key_id: %w", err)
-		}
-		m.PeerType, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field peer_type: %w", err)
-		}
-		m.PeerId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field peer_id: %w", err)
-		}
-		m.OffsetId, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field offset_id: %w", err)
-		}
-		m.OffsetDate, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field offset_date: %w", err)
-		}
-		m.AddOffset, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field add_offset: %w", err)
-		}
-		m.Limit, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field limit: %w", err)
-		}
-		m.MaxId, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field max_id: %w", err)
-		}
-		m.MinId, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field min_id: %w", err)
-		}
-		m.Hash, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field hash: %w", err)
-		}
-
-		return nil
-	default:
-		return fmt.Errorf("unable to decode msg_getHistory: invalid constructor %x", m.ClazzID)
-	}
+    switch m.ClazzID {
+        case 0x7f4083df:
+              m.UserId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field user_id: %w", err) }
+              m.AuthKeyId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field auth_key_id: %w", err) }
+              m.PeerType, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field peer_type: %w", err) }
+              m.PeerId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field peer_id: %w", err) }
+              m.OffsetId, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field offset_id: %w", err) }
+              m.OffsetDate, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field offset_date: %w", err) }
+              m.AddOffset, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field add_offset: %w", err) }
+              m.Limit, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field limit: %w", err) }
+              m.MaxId, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field max_id: %w", err) }
+              m.MinId, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field min_id: %w", err) }
+              m.Hash, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_getHistory#0x7f4083df: field hash: %w", err) }
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to decode msg_getHistory: invalid constructor %x", m.ClazzID)
+    }
 }
 
-// TLMsgUpdatePinnedMessage <--
+ // TLMsgSearchHashtag <--
+type TLMsgSearchHashtag struct {
+    ClazzID uint32 `json:"_id"`
+UserId int64 `json:"user_id"`
+AuthKeyId int64 `json:"auth_key_id"`
+PeerType int32 `json:"peer_type"`
+PeerId int64 `json:"peer_id"`
+HashTag string `json:"hash_tag"`
+OffsetId int32 `json:"offset_id"`
+Limit int32 `json:"limit"`
+}
+
+func (m *TLMsgSearchHashtag) String() string {
+    return iface.DebugStringWithName(ClazzName_msg_searchHashtag, m)
+}
+
+// Encode <--
+func (m *TLMsgSearchHashtag) Encode(x *bin.Encoder, layer int32) error {
+    switch clazzId := iface.GetClazzIDByName(ClazzName_msg_searchHashtag, int(layer)); clazzId {
+        case 0x7e39bca9:
+            x.PutClazzID(0x7e39bca9)
+
+            
+			
+
+			   x.PutInt64(m.UserId)
+               x.PutInt64(m.AuthKeyId)
+               x.PutInt32(m.PeerType)
+               x.PutInt64(m.PeerId)
+               x.PutString(m.HashTag)
+               x.PutInt32(m.OffsetId)
+               x.PutInt32(m.Limit)
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to encode msg_searchHashtag: unsupported layer %d", layer)
+    }
+}
+
+// Decode <--
+func (m *TLMsgSearchHashtag) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+        if err != nil { return fmt.Errorf("unable to decode msg_searchHashtag: constructor: %w", err) }
+	}
+    switch m.ClazzID {
+        case 0x7e39bca9:
+              m.UserId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_searchHashtag#0x7e39bca9: field user_id: %w", err) }
+              m.AuthKeyId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_searchHashtag#0x7e39bca9: field auth_key_id: %w", err) }
+              m.PeerType, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_searchHashtag#0x7e39bca9: field peer_type: %w", err) }
+              m.PeerId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_searchHashtag#0x7e39bca9: field peer_id: %w", err) }
+              m.HashTag, err = d.String()
+if err != nil { return fmt.Errorf("unable to decode msg_searchHashtag#0x7e39bca9: field hash_tag: %w", err) }
+              m.OffsetId, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_searchHashtag#0x7e39bca9: field offset_id: %w", err) }
+              m.Limit, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_searchHashtag#0x7e39bca9: field limit: %w", err) }
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to decode msg_searchHashtag: invalid constructor %x", m.ClazzID)
+    }
+}
+
+ // TLMsgUpdatePinnedMessage <--
 type TLMsgUpdatePinnedMessage struct {
-	ClazzID   uint32 `json:"_id"`
-	UserId    int64  `json:"user_id"`
-	AuthKeyId int64  `json:"auth_key_id"`
-	Silent    bool   `json:"silent"`
-	Unpin     bool   `json:"unpin"`
-	PmOneside bool   `json:"pm_oneside"`
-	PeerType  int32  `json:"peer_type"`
-	PeerId    int64  `json:"peer_id"`
-	Id        int32  `json:"id"`
+    ClazzID uint32 `json:"_id"`
+UserId int64 `json:"user_id"`
+AuthKeyId int64 `json:"auth_key_id"`
+Silent bool `json:"silent"`
+Unpin bool `json:"unpin"`
+PmOneside bool `json:"pm_oneside"`
+PeerType int32 `json:"peer_type"`
+PeerId int64 `json:"peer_id"`
+Id int32 `json:"id"`
 }
 
 func (m *TLMsgUpdatePinnedMessage) String() string {
-	return iface.DebugStringWithName(ClazzName_msg_updatePinnedMessage, m)
+    return iface.DebugStringWithName(ClazzName_msg_updatePinnedMessage, m)
 }
 
 // Encode <--
 func (m *TLMsgUpdatePinnedMessage) Encode(x *bin.Encoder, layer int32) error {
-	switch clazzId := iface.GetClazzIDByName(ClazzName_msg_updatePinnedMessage, int(layer)); clazzId {
-	case 0xe5ae51a9:
-		x.PutClazzID(0xe5ae51a9)
+    switch clazzId := iface.GetClazzIDByName(ClazzName_msg_updatePinnedMessage, int(layer)); clazzId {
+        case 0xe5ae51a9:
+            x.PutClazzID(0xe5ae51a9)
 
-		// set flags
-		var getFlags = func() uint32 {
-			var flags uint32 = 0
+             // set flags
+            var getFlags = func() uint32 {
+                var flags uint32 = 0
+                 
+                 
+                 
+                 if m.Silent  == true  {
+					flags |= 1 << 0 
+				} 
+                 if m.Unpin  == true  {
+					flags |= 1 << 1 
+				} 
+                 if m.PmOneside  == true  {
+					flags |= 1 << 2 
+				} 
+                 
+                 
+                 
+                
+                return flags
+            }
+			
 
-			if m.Silent == true {
-				flags |= 1 << 0
-			}
-			if m.Unpin == true {
-				flags |= 1 << 1
-			}
-			if m.PmOneside == true {
-				flags |= 1 << 2
-			}
-
-			return flags
-		}
-
-		// set flags
-		var flags = getFlags()
-		x.PutUint32(flags)
-		x.PutInt64(m.UserId)
-		x.PutInt64(m.AuthKeyId)
-		x.PutInt32(m.PeerType)
-		x.PutInt64(m.PeerId)
-		x.PutInt32(m.Id)
-
-		return nil
-	default:
-		return fmt.Errorf("unable to encode msg_updatePinnedMessage: unsupported layer %d", layer)
-	}
+			 // set flags
+                var flags = getFlags()
+                x.PutUint32(flags)
+			   x.PutInt64(m.UserId)
+               x.PutInt64(m.AuthKeyId)
+               x.PutInt32(m.PeerType)
+               x.PutInt64(m.PeerId)
+               x.PutInt32(m.Id)
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to encode msg_updatePinnedMessage: unsupported layer %d", layer)
+    }
 }
 
 // Decode <--
 func (m *TLMsgUpdatePinnedMessage) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_updatePinnedMessage: constructor: %w", err)
-		}
+        if err != nil { return fmt.Errorf("unable to decode msg_updatePinnedMessage: constructor: %w", err) }
 	}
-	switch m.ClazzID {
-	case 0xe5ae51a9:
-		flags, err := d.Uint32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_updatePinnedMessage: field flags: %w", err)
-		}
-		_ = flags
-		m.UserId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_updatePinnedMessage#0xe5ae51a9: field user_id: %w", err)
-		}
-		m.AuthKeyId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_updatePinnedMessage#0xe5ae51a9: field auth_key_id: %w", err)
-		}
-		if (flags & (1 << 0)) != 0 {
-			m.Silent = true
-		}
-		if (flags & (1 << 1)) != 0 {
-			m.Unpin = true
-		}
-		if (flags & (1 << 2)) != 0 {
-			m.PmOneside = true
-		}
-		m.PeerType, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_updatePinnedMessage#0xe5ae51a9: field peer_type: %w", err)
-		}
-		m.PeerId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_updatePinnedMessage#0xe5ae51a9: field peer_id: %w", err)
-		}
-		m.Id, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_updatePinnedMessage#0xe5ae51a9: field id: %w", err)
-		}
-
-		return nil
-	default:
-		return fmt.Errorf("unable to decode msg_updatePinnedMessage: invalid constructor %x", m.ClazzID)
-	}
+    switch m.ClazzID {
+        case 0xe5ae51a9:
+             flags, err := d.Uint32()
+            if err != nil { return fmt.Errorf("unable to decode msg_updatePinnedMessage: field flags: %w", err) }
+            _ = flags
+			  m.UserId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_updatePinnedMessage#0xe5ae51a9: field user_id: %w", err) }
+              m.AuthKeyId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_updatePinnedMessage#0xe5ae51a9: field auth_key_id: %w", err) }
+             if (flags & (1 << 0)) != 0 { m.Silent = true }
+             if (flags & (1 << 1)) != 0 { m.Unpin = true }
+             if (flags & (1 << 2)) != 0 { m.PmOneside = true }
+              m.PeerType, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_updatePinnedMessage#0xe5ae51a9: field peer_type: %w", err) }
+              m.PeerId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_updatePinnedMessage#0xe5ae51a9: field peer_id: %w", err) }
+              m.Id, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_updatePinnedMessage#0xe5ae51a9: field id: %w", err) }
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to decode msg_updatePinnedMessage: invalid constructor %x", m.ClazzID)
+    }
 }
 
-// TLMsgUnpinAllMessages <--
+ // TLMsgUnpinAllMessages <--
 type TLMsgUnpinAllMessages struct {
-	ClazzID   uint32 `json:"_id"`
-	UserId    int64  `json:"user_id"`
-	AuthKeyId int64  `json:"auth_key_id"`
-	PeerType  int32  `json:"peer_type"`
-	PeerId    int64  `json:"peer_id"`
+    ClazzID uint32 `json:"_id"`
+UserId int64 `json:"user_id"`
+AuthKeyId int64 `json:"auth_key_id"`
+PeerType int32 `json:"peer_type"`
+PeerId int64 `json:"peer_id"`
 }
 
 func (m *TLMsgUnpinAllMessages) String() string {
-	return iface.DebugStringWithName(ClazzName_msg_unpinAllMessages, m)
+    return iface.DebugStringWithName(ClazzName_msg_unpinAllMessages, m)
 }
 
 // Encode <--
 func (m *TLMsgUnpinAllMessages) Encode(x *bin.Encoder, layer int32) error {
-	switch clazzId := iface.GetClazzIDByName(ClazzName_msg_unpinAllMessages, int(layer)); clazzId {
-	case 0xb8865f25:
-		x.PutClazzID(0xb8865f25)
+    switch clazzId := iface.GetClazzIDByName(ClazzName_msg_unpinAllMessages, int(layer)); clazzId {
+        case 0xb8865f25:
+            x.PutClazzID(0xb8865f25)
 
-		x.PutInt64(m.UserId)
-		x.PutInt64(m.AuthKeyId)
-		x.PutInt32(m.PeerType)
-		x.PutInt64(m.PeerId)
+            
+			
 
-		return nil
-	default:
-		return fmt.Errorf("unable to encode msg_unpinAllMessages: unsupported layer %d", layer)
-	}
+			   x.PutInt64(m.UserId)
+               x.PutInt64(m.AuthKeyId)
+               x.PutInt32(m.PeerType)
+               x.PutInt64(m.PeerId)
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to encode msg_unpinAllMessages: unsupported layer %d", layer)
+    }
 }
 
 // Decode <--
 func (m *TLMsgUnpinAllMessages) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_unpinAllMessages: constructor: %w", err)
-		}
+        if err != nil { return fmt.Errorf("unable to decode msg_unpinAllMessages: constructor: %w", err) }
 	}
-	switch m.ClazzID {
-	case 0xb8865f25:
-		m.UserId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_unpinAllMessages#0xb8865f25: field user_id: %w", err)
-		}
-		m.AuthKeyId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_unpinAllMessages#0xb8865f25: field auth_key_id: %w", err)
-		}
-		m.PeerType, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_unpinAllMessages#0xb8865f25: field peer_type: %w", err)
-		}
-		m.PeerId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode msg_unpinAllMessages#0xb8865f25: field peer_id: %w", err)
-		}
-
-		return nil
-	default:
-		return fmt.Errorf("unable to decode msg_unpinAllMessages: invalid constructor %x", m.ClazzID)
-	}
+    switch m.ClazzID {
+        case 0xb8865f25:
+              m.UserId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_unpinAllMessages#0xb8865f25: field user_id: %w", err) }
+              m.AuthKeyId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_unpinAllMessages#0xb8865f25: field auth_key_id: %w", err) }
+              m.PeerType, err = d.Int32()
+if err != nil { return fmt.Errorf("unable to decode msg_unpinAllMessages#0xb8865f25: field peer_type: %w", err) }
+              m.PeerId, err = d.Int64()
+if err != nil { return fmt.Errorf("unable to decode msg_unpinAllMessages#0xb8865f25: field peer_id: %w", err) }
+            
+            return nil
+        default:
+        return fmt.Errorf("unable to decode msg_unpinAllMessages: invalid constructor %x", m.ClazzID)
+    }
 }
+
+
 
 // Vector api result type
 // ----------------------------------------------------------------------------
 // VectorResList <--
 
+
+
 // ----------------------------------------------------------------------------
 // rpc
 
 type RPCMsg interface {
-	MsgPushUserMessage(ctx context.Context, in *TLMsgPushUserMessage) (*tg.Bool, error)
-	MsgReadMessageContents(ctx context.Context, in *TLMsgReadMessageContents) (*tg.MessagesAffectedMessages, error)
-	MsgSendMessageV2(ctx context.Context, in *TLMsgSendMessageV2) (*tg.Updates, error)
-	MsgEditMessageV2(ctx context.Context, in *TLMsgEditMessageV2) (*tg.Updates, error)
-	MsgDeleteMessages(ctx context.Context, in *TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error)
-	MsgDeleteHistory(ctx context.Context, in *TLMsgDeleteHistory) (*tg.MessagesAffectedHistory, error)
-	MsgDeletePhoneCallHistory(ctx context.Context, in *TLMsgDeletePhoneCallHistory) (*tg.MessagesAffectedFoundMessages, error)
-	MsgDeleteChatHistory(ctx context.Context, in *TLMsgDeleteChatHistory) (*tg.Bool, error)
-	MsgReadHistory(ctx context.Context, in *TLMsgReadHistory) (*tg.MessagesAffectedMessages, error)
-	MsgReadHistoryV2(ctx context.Context, in *TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error)
-	MsgGetHistory(ctx context.Context, in *TLMsgGetHistory) (*tg.MessagesMessages, error)
-	MsgUpdatePinnedMessage(ctx context.Context, in *TLMsgUpdatePinnedMessage) (*tg.Updates, error)
-	MsgUnpinAllMessages(ctx context.Context, in *TLMsgUnpinAllMessages) (*tg.MessagesAffectedHistory, error)
+    MsgPushUserMessage(ctx context.Context, in *TLMsgPushUserMessage) (*tg.Bool, error)
+    MsgReadMessageContents(ctx context.Context, in *TLMsgReadMessageContents) (*tg.MessagesAffectedMessages, error)
+    MsgSendMessageV2(ctx context.Context, in *TLMsgSendMessageV2) (*tg.Updates, error)
+    MsgEditMessageV2(ctx context.Context, in *TLMsgEditMessageV2) (*tg.Updates, error)
+    MsgDeleteMessages(ctx context.Context, in *TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error)
+    MsgDeleteHistory(ctx context.Context, in *TLMsgDeleteHistory) (*tg.MessagesAffectedHistory, error)
+    MsgDeletePhoneCallHistory(ctx context.Context, in *TLMsgDeletePhoneCallHistory) (*tg.MessagesAffectedFoundMessages, error)
+    MsgDeleteChatHistory(ctx context.Context, in *TLMsgDeleteChatHistory) (*tg.Bool, error)
+    MsgReadHistory(ctx context.Context, in *TLMsgReadHistory) (*tg.MessagesAffectedMessages, error)
+    MsgReadHistoryV2(ctx context.Context, in *TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error)
+    MsgGetHistory(ctx context.Context, in *TLMsgGetHistory) (*tg.MessagesMessages, error)
+    MsgSearchHashtag(ctx context.Context, in *TLMsgSearchHashtag) (*tg.MessagesMessages, error)
+    MsgUpdatePinnedMessage(ctx context.Context, in *TLMsgUpdatePinnedMessage) (*tg.Updates, error)
+    MsgUnpinAllMessages(ctx context.Context, in *TLMsgUnpinAllMessages) (*tg.MessagesAffectedHistory, error)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

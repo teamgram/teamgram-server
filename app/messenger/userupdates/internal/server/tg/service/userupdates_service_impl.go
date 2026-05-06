@@ -148,6 +148,22 @@ func (s *Service) UserupdatesGetMessageViewsByPeerSeqs(ctx context.Context, requ
 	return r, err
 }
 
+// UserupdatesGetOutboxReadDate
+// userupdates.getOutboxReadDate user_id:long peer_type:int peer_id:long msg_id:int = OutboxReadDate;
+func (s *Service) UserupdatesGetOutboxReadDate(ctx context.Context, request *userupdates.TLUserupdatesGetOutboxReadDate) (*tg.OutboxReadDate, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("userupdates.getOutboxReadDate - request: %s", request)
+
+	r, err := c.UserupdatesGetOutboxReadDate(request)
+	if err != nil {
+		c.Logger.Errorf("userupdates.getOutboxReadDate - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("userupdates.getOutboxReadDate - reply: %s", r)
+	return r, err
+}
+
 // UserupdatesAppendDialogAuthSeqSideEffect
 // userupdates.appendDialogAuthSeqSideEffect flags:# user_id:long source_perm_auth_key_id:long operation_id:string target_auth_policy:string public_update_type:string peer_type:int peer_id:long payload_schema_version:int payload:bytes payload_hash:bytes = UserAuthSeqAppendResult;
 func (s *Service) UserupdatesAppendDialogAuthSeqSideEffect(ctx context.Context, request *userupdates.TLUserupdatesAppendDialogAuthSeqSideEffect) (*userupdates.UserAuthSeqAppendResult, error) {

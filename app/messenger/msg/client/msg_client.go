@@ -34,6 +34,7 @@ type MsgClient interface {
 	MsgReadHistory(ctx context.Context, in *msg.TLMsgReadHistory) (*tg.MessagesAffectedMessages, error)
 	MsgReadHistoryV2(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error)
 	MsgGetHistory(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error)
+	MsgSearchHashtag(ctx context.Context, in *msg.TLMsgSearchHashtag) (*tg.MessagesMessages, error)
 	MsgUpdatePinnedMessage(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error)
 	MsgUnpinAllMessages(ctx context.Context, in *msg.TLMsgUnpinAllMessages) (*tg.MessagesAffectedHistory, error)
 }
@@ -114,6 +115,12 @@ func (m *defaultMsgClient) MsgReadHistoryV2(ctx context.Context, in *msg.TLMsgRe
 // msg.getHistory user_id:long auth_key_id:long peer_type:int peer_id:long offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
 func (m *defaultMsgClient) MsgGetHistory(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error) {
 	return m.rpc.MsgGetHistory(ctx, in)
+}
+
+// MsgSearchHashtag
+// msg.searchHashtag user_id:long auth_key_id:long peer_type:int peer_id:long hash_tag:string offset_id:int limit:int = messages.Messages;
+func (m *defaultMsgClient) MsgSearchHashtag(ctx context.Context, in *msg.TLMsgSearchHashtag) (*tg.MessagesMessages, error) {
+	return m.rpc.MsgSearchHashtag(ctx, in)
 }
 
 // MsgUpdatePinnedMessage

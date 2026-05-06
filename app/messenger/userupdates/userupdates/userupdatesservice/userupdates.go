@@ -111,6 +111,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"/userupdates.RPCUserupdates/userupdates.getOutboxReadDate": kitex.NewMethodInfo(
+		getOutboxReadDateHandler,
+		newGetOutboxReadDateArgs,
+		newGetOutboxReadDateResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 	"/userupdates.RPCUserupdates/userupdates.appendDialogAuthSeqSideEffect": kitex.NewMethodInfo(
 		appendDialogAuthSeqSideEffectHandler,
 		newAppendDialogAuthSeqSideEffectArgs,
@@ -1270,6 +1277,140 @@ func (p *GetMessageViewsByPeerSeqsResult) GetResult() interface{} {
 	return p.Success
 }
 
+func getOutboxReadDateHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*GetOutboxReadDateArgs)
+	realResult := result.(*GetOutboxReadDateResult)
+	success, err := handler.(userupdates.RPCUserupdates).UserupdatesGetOutboxReadDate(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newGetOutboxReadDateArgs() interface{} {
+	return &GetOutboxReadDateArgs{}
+}
+
+func newGetOutboxReadDateResult() interface{} {
+	return &GetOutboxReadDateResult{}
+}
+
+type GetOutboxReadDateArgs struct {
+	Req *userupdates.TLUserupdatesGetOutboxReadDate
+}
+
+func (p *GetOutboxReadDateArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in GetOutboxReadDateArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *GetOutboxReadDateArgs) Unmarshal(in []byte) error {
+	msg := new(userupdates.TLUserupdatesGetOutboxReadDate)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *GetOutboxReadDateArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in GetOutboxReadDateArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *GetOutboxReadDateArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(userupdates.TLUserupdatesGetOutboxReadDate)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetOutboxReadDateArgs_Req_DEFAULT *userupdates.TLUserupdatesGetOutboxReadDate
+
+func (p *GetOutboxReadDateArgs) GetReq() *userupdates.TLUserupdatesGetOutboxReadDate {
+	if !p.IsSetReq() {
+		return GetOutboxReadDateArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetOutboxReadDateArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type GetOutboxReadDateResult struct {
+	Success *tg.OutboxReadDate
+}
+
+var GetOutboxReadDateResult_Success_DEFAULT *tg.OutboxReadDate
+
+func (p *GetOutboxReadDateResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in GetOutboxReadDateResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *GetOutboxReadDateResult) Unmarshal(in []byte) error {
+	msg := new(tg.OutboxReadDate)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetOutboxReadDateResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in GetOutboxReadDateResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *GetOutboxReadDateResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.OutboxReadDate)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetOutboxReadDateResult) GetSuccess() *tg.OutboxReadDate {
+	if !p.IsSetSuccess() {
+		return GetOutboxReadDateResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetOutboxReadDateResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.OutboxReadDate)
+}
+
+func (p *GetOutboxReadDateResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetOutboxReadDateResult) GetResult() interface{} {
+	return p.Success
+}
+
 func appendDialogAuthSeqSideEffectHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*AppendDialogAuthSeqSideEffectArgs)
 	realResult := result.(*AppendDialogAuthSeqSideEffectResult)
@@ -1638,6 +1779,18 @@ func (p *kClient) UserupdatesGetMessageViewsByPeerSeqs(ctx context.Context, req 
 	var _result GetMessageViewsByPeerSeqsResult
 
 	if err = p.c.Call(ctx, "/userupdates.RPCUserupdates/userupdates.getMessageViewsByPeerSeqs", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) UserupdatesGetOutboxReadDate(ctx context.Context, req *userupdates.TLUserupdatesGetOutboxReadDate) (r *tg.OutboxReadDate, err error) {
+	// var _args GetOutboxReadDateArgs
+	// _args.Req = req
+	var _result GetOutboxReadDateResult
+
+	if err = p.c.Call(ctx, "/userupdates.RPCUserupdates/userupdates.getOutboxReadDate", req, &_result); err != nil {
 		return
 	}
 

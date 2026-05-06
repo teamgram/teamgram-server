@@ -41,3 +41,16 @@ func TestBuildEventAndResponseCarriesAuthKeyExclude(t *testing.T) {
 		t.Fatalf("auth_key_id_exclude = %v, want %d", event.AuthKeyIdExclude, authKeyIDExclude)
 	}
 }
+
+func TestExtractHashTagsNormalizesAndDeduplicates(t *testing.T) {
+	got := extractHashTags("hello #Go #go #team_gram #中文 ok #")
+	want := []string{"go", "team_gram", "中文"}
+	if len(got) != len(want) {
+		t.Fatalf("extractHashTags len = %d, want %d: %#v", len(got), len(want), got)
+	}
+	for i := range want {
+		if got[i] != want[i] {
+			t.Fatalf("extractHashTags[%d] = %q, want %q; all=%#v", i, got[i], want[i], got)
+		}
+	}
+}
