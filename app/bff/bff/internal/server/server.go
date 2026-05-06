@@ -127,6 +127,15 @@ func buildDialogsConfig(c config.Config) dialogshelper.Config {
 	}
 }
 
+func buildDraftsConfig(c config.Config) draftshelper.Config {
+	return draftshelper.Config{
+		RpcServerConf: c.RpcServerConf,
+		DialogClient:  withServiceName(c.BizServiceClient, "RPCDialog"),
+		UserClient:    withServiceName(c.BizServiceClient, "RPCUser"),
+		ChatClient:    withServiceName(c.BizServiceClient, "RPCChat"),
+	}
+}
+
 func buildMessagesConfig(c config.Config) messageshelper.Config {
 	return messageshelper.Config{
 		RpcServerConf: c.RpcServerConf,
@@ -316,13 +325,7 @@ func (s *Server) Initialize() error {
 			// draftshelper
 			_ = draftsservice.RegisterService(
 				s,
-				draftshelper.New(draftshelper.Config{
-					RpcServerConf: c.RpcServerConf,
-					//DialogClient:  c.BizServiceClient,
-					//UserClient:    c.BizServiceClient,
-					//SyncClient:    c.SyncClient,
-					//ChatClient:    c.BizServiceClient,
-				}))
+				draftshelper.New(buildDraftsConfig(c)))
 
 			// autodownloadhelper
 			_ = autodownloadservice.RegisterService(

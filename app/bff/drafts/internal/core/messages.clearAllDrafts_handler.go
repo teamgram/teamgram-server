@@ -27,11 +27,12 @@ import (
 // MessagesClearAllDrafts
 // messages.clearAllDrafts#7e58ee9c = Bool;
 func (c *DraftsCore) MessagesClearAllDrafts(in *tg.TLMessagesClearAllDrafts) (*tg.Bool, error) {
-	if c.svcCtx == nil || c.svcCtx.Repo == nil || c.svcCtx.Repo.DialogClient == nil {
-		return tg.BoolTrue, nil
+	dialogClient, err := c.dialogClient()
+	if err != nil {
+		return nil, err
 	}
 
-	existing, err := c.svcCtx.Repo.DialogClient.DialogGetAllDrafts(c.ctx, &repository.DialogGetAllDrafts{
+	existing, err := dialogClient.DialogGetAllDrafts(c.ctx, &repository.DialogGetAllDrafts{
 		UserId: c.MD.UserId,
 	})
 	if err != nil {
@@ -52,7 +53,7 @@ func (c *DraftsCore) MessagesClearAllDrafts(in *tg.TLMessagesClearAllDrafts) (*t
 		outboxIDs = append(outboxIDs, draftOutboxID(draftOperationID("clear_all", c.MD.UserId, peer.PeerType, peer.PeerId, int64(len(outboxIDs)+1))+"|"+operationID))
 	}
 
-	rValues, err := c.svcCtx.Repo.DialogClient.DialogClearAllDrafts(c.ctx, &repository.DialogClearAll{
+	rValues, err := dialogClient.DialogClearAllDrafts(c.ctx, &repository.DialogClearAll{
 		UserId:              c.MD.UserId,
 		SourcePermAuthKeyId: c.MD.PermAuthKeyId,
 		OperationId:         operationID,

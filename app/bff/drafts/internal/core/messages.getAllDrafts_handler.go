@@ -28,11 +28,12 @@ import (
 func (c *DraftsCore) MessagesGetAllDrafts(in *tg.TLMessagesGetAllDrafts) (*tg.Updates, error) {
 	_ = in
 
-	if c.svcCtx == nil || c.svcCtx.Repo == nil || c.svcCtx.Repo.DialogClient == nil {
-		return tg.MakeTLUpdates(&tg.TLUpdates{}).ToUpdates(), nil
+	dialogClient, err := c.dialogClient()
+	if err != nil {
+		return nil, err
 	}
 
-	drafts, err := c.svcCtx.Repo.DialogClient.DialogGetAllDrafts(c.ctx, &repository.DialogGetAllDrafts{
+	drafts, err := dialogClient.DialogGetAllDrafts(c.ctx, &repository.DialogGetAllDrafts{
 		UserId: c.MD.UserId,
 	})
 	if err != nil {

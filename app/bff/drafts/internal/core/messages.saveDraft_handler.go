@@ -33,8 +33,9 @@ func (c *DraftsCore) MessagesSaveDraft(in *tg.TLMessagesSaveDraft) (*tg.Bool, er
 		token               = int64(date)
 	)
 
-	if c.svcCtx == nil || c.svcCtx.Repo == nil || c.svcCtx.Repo.DialogClient == nil {
-		return tg.BoolTrue, nil
+	dialogClient, err := c.dialogClient()
+	if err != nil {
+		return nil, err
 	}
 
 	if in.NoWebpage == true {
@@ -49,7 +50,7 @@ func (c *DraftsCore) MessagesSaveDraft(in *tg.TLMessagesSaveDraft) (*tg.Bool, er
 
 	if isDraftMessageEmpty {
 		operationID := draftOperationID("clear", c.MD.UserId, peer.PeerType, peer.PeerId, token)
-		if _, err := c.svcCtx.Repo.DialogClient.DialogClearDraftMessage(c.ctx, &repository.DialogClearDraft{
+		if _, err := dialogClient.DialogClearDraftMessage(c.ctx, &repository.DialogClearDraft{
 			UserId:              c.MD.UserId,
 			PeerType:            peer.PeerType,
 			PeerId:              peer.PeerId,
@@ -72,7 +73,7 @@ func (c *DraftsCore) MessagesSaveDraft(in *tg.TLMessagesSaveDraft) (*tg.Bool, er
 		})
 
 		operationID := draftOperationID("save", c.MD.UserId, peer.PeerType, peer.PeerId, int64(date))
-		if _, err := c.svcCtx.Repo.DialogClient.DialogSaveDraftMessage(c.ctx, &repository.DialogSaveDraft{
+		if _, err := dialogClient.DialogSaveDraftMessage(c.ctx, &repository.DialogSaveDraft{
 			UserId:              c.MD.UserId,
 			PeerType:            peer.PeerType,
 			PeerId:              peer.PeerId,
