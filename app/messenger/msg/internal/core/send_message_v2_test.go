@@ -82,7 +82,7 @@ func TestMsgSendMessageV2SingleUserPublishesReceiverOperation(t *testing.T) {
 	if err := json.Unmarshal(updatesClient.processed.Payload, &senderOp); err != nil {
 		t.Fatalf("decode sender payload: %v", err)
 	}
-	if !senderOp.Out || senderOp.PeerID != 1002 || senderOp.MessageText != "hello" {
+	if !senderOp.Out || senderOp.PeerID != 1002 || senderOp.FromUserID != 1001 || senderOp.ToUserID != 1002 || senderOp.MessageText != "hello" {
 		t.Fatalf("unexpected sender payload: %+v", senderOp)
 	}
 }
@@ -312,6 +312,7 @@ func TestMsgGetHistoryReturnsCanonicalTextMessages(t *testing.T) {
 				CanonicalMessageID: 9001,
 				PeerSeq:            2,
 				FromUserID:         1001,
+				Outgoing:           true,
 				PeerType:           payload.PeerTypeUser,
 				PeerID:             1002,
 				MessageKind:        repository.MessageKindText,
@@ -322,6 +323,7 @@ func TestMsgGetHistoryReturnsCanonicalTextMessages(t *testing.T) {
 				CanonicalMessageID: 9000,
 				PeerSeq:            1,
 				FromUserID:         1001,
+				Outgoing:           true,
 				PeerType:           payload.PeerTypeUser,
 				PeerID:             1002,
 				MessageKind:        repository.MessageKindText,
@@ -365,6 +367,49 @@ func TestMsgGetHistoryReturnsCanonicalTextMessages(t *testing.T) {
 		repo.historyInput.AddOffset != -2 ||
 		repo.historyInput.Limit != 20 {
 		t.Fatalf("unexpected history input: %+v", repo.historyInput)
+	}
+}
+
+func TestMsgGetHistoryUsesViewerScopedOutgoingFlag(t *testing.T) {
+	repo := &fakeMsgRepository{
+		history: []repository.HistoryMessage{
+			{
+				CanonicalMessageID: 9201,
+				PeerSeq:            3,
+				FromUserID:         1002,
+				Outgoing:           false,
+				PeerType:           payload.PeerTypeUser,
+				PeerID:             1001,
+				MessageKind:        repository.MessageKindText,
+				MessageText:        "saved from self as incoming projection",
+				MessageDate:        1_772_000_030,
+			},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.MsgGetHistory(&msgpb.TLMsgGetHistory{
+		UserId:   1002,
+		PeerType: payload.PeerTypeUser,
+		PeerId:   1001,
+		Limit:    20,
+	})
+	if err != nil {
+		t.Fatalf("MsgGetHistory() error = %v", err)
+	}
+	messages, ok := got.ToMessagesMessages()
+	if !ok {
+		t.Fatalf("expected messages.messages, got %s", got.ClazzName())
+	}
+	if len(messages.Messages) != 1 {
+		t.Fatalf("messages len = %d, want 1", len(messages.Messages))
+	}
+	message, ok := messages.Messages[0].(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("message[0] = %T, want *tg.TLMessage", messages.Messages[0])
+	}
+	if message.Out {
+		t.Fatalf("message.Out = true, want false from viewer-scoped projection: %+v", message)
 	}
 }
 

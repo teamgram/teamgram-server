@@ -56,7 +56,7 @@ func (c *MsgCore) MsgGetHistory(in *msg.TLMsgGetHistory) (*tg.MessagesMessages, 
 			continue
 		}
 		messages = append(messages, tg.MakeTLMessage(&tg.TLMessage{
-			Out:     item.FromUserID == in.UserId,
+			Out:     item.Outgoing,
 			Id:      int32(item.PeerSeq),
 			FromId:  tg.MakePeerUser(item.FromUserID),
 			PeerId:  tg.MakePeerUser(item.PeerID),

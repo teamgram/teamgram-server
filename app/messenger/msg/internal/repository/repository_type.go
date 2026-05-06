@@ -102,6 +102,7 @@ type HistoryMessage struct {
 	CanonicalMessageID int64
 	PeerSeq            int64
 	FromUserID         int64
+	Outgoing           bool
 	PeerType           int32
 	PeerID             int64
 	MessageKind        int32

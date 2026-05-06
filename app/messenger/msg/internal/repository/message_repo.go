@@ -153,15 +153,25 @@ func (r *Repository) historySliceOffset(ctx context.Context, in ListHistoryMessa
 SELECT
 	COUNT(*)
 FROM
-	user_message_views
+	user_message_views v
+JOIN
+	user_message_views cur
+ON
+	cur.user_id = ?
+	AND cur.peer_type = ?
+	AND cur.peer_id = ?
+	AND cur.peer_seq = ?
 WHERE
-	user_id = ?
-	AND peer_type = ?
-	AND peer_id = ?
-	AND message_status = ?
-	AND peer_seq >= ?`
+	v.user_id = ?
+	AND v.peer_type = ?
+	AND v.peer_id = ?
+	AND v.message_status = ?
+	AND (
+		v.date > cur.date
+		OR (v.date = cur.date AND v.peer_seq >= cur.peer_seq)
+	)`
 	var offsetFromID int64
-	if err := r.db.QueryRow(ctx, &offsetFromID, query, in.UserID, in.PeerType, in.PeerID, MessageStatusLive, in.OffsetID); err != nil {
+	if err := r.db.QueryRow(ctx, &offsetFromID, query, in.UserID, in.PeerType, in.PeerID, in.OffsetID, in.UserID, in.PeerType, in.PeerID, MessageStatusLive); err != nil {
 		return 0, storageError("count history offset", err)
 	}
 
@@ -176,7 +186,8 @@ func (r *Repository) selectHistoryMessagesSlice(ctx context.Context, in ListHist
 SELECT
 	v.canonical_message_id,
 	v.peer_seq,
-	v.from_user_id,
+	c.from_user_id,
+	v.outgoing,
 	v.peer_type,
 	v.peer_id,
 	v.message_kind,
@@ -194,6 +205,7 @@ WHERE
 	AND v.peer_id = ?
 	AND v.message_status = ?
 ORDER BY
+	v.date DESC,
 	v.peer_seq DESC
 LIMIT ?, ?`
 	var rows []model.HistoryMessageRow
@@ -209,6 +221,7 @@ func historyMessageRowToMessage(r model.HistoryMessageRow) HistoryMessage {
 		CanonicalMessageID: r.CanonicalMessageID,
 		PeerSeq:            r.PeerSeq,
 		FromUserID:         r.FromUserID,
+		Outgoing:           r.Outgoing,
 		PeerType:           r.PeerType,
 		PeerID:             r.PeerID,
 		MessageKind:        r.MessageKind,

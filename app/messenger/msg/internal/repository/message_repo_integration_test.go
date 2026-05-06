@@ -284,8 +284,180 @@ func TestMessageRepositoryListHistoryMessagesUsesViewerScopedViews(t *testing.T)
 	if history[0].CanonicalMessageID != direct.CanonicalMessageID || history[0].MessageText != "direct to viewer" {
 		t.Fatalf("ListHistoryMessages() = %+v, want direct message %+v", history[0], direct)
 	}
+	if history[0].FromUserID != peerID {
+		t.Fatalf("ListHistoryMessages() from_user_id = %d, want canonical sender %d", history[0].FromUserID, peerID)
+	}
+	if history[0].Outgoing {
+		t.Fatalf("ListHistoryMessages() outgoing = true, want false for receiver view: %+v", history[0])
+	}
 	if history[0].CanonicalMessageID == peerSelf.CanonicalMessageID || history[0].MessageText == "peer self" {
 		t.Fatalf("viewer history leaked peer self message: %+v", history[0])
+	}
+}
+
+func TestMessageRepositoryListHistoryMessagesUsesCanonicalSender(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	repo := NewForTest(db, &testIDGenerator{next: base + 60_000})
+
+	senderID := base + 601
+	receiverID := base + 602
+	canonical := createCanonicalMessageForTest(t, ctx, repo, senderID, receiverID, base+603, "canonical sender", int32(time.Now().Unix()))
+	updateUserMessageViewFromForTest(t, ctx, db, senderID, payload.PeerTypeUser, receiverID, canonical.PeerSeq, receiverID)
+
+	history, err := repo.ListHistoryMessages(ctx, ListHistoryMessagesInput{
+		UserID:   senderID,
+		PeerType: payload.PeerTypeUser,
+		PeerID:   receiverID,
+		Limit:    10,
+	})
+	if err != nil {
+		t.Fatalf("ListHistoryMessages() error = %v", err)
+	}
+	if len(history) != 1 {
+		t.Fatalf("ListHistoryMessages() len = %d, want 1: %+v", len(history), history)
+	}
+	if history[0].FromUserID != senderID {
+		t.Fatalf("ListHistoryMessages() from_user_id = %d, want canonical sender %d", history[0].FromUserID, senderID)
+	}
+}
+
+func TestMessageRepositoryListHistoryMessagesOffsetsByViewerTimeline(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	repo := NewForTest(db, &testIDGenerator{next: base + 70_000})
+
+	viewerID := base + 701
+	peerID := base + 702
+	now := int32(time.Now().Unix())
+	olderSent := createCanonicalMessageForTest(t, ctx, repo, viewerID, peerID, base+703, "older sent high id", now)
+	updateUserMessageViewSeqForTest(t, ctx, db, viewerID, payload.PeerTypeUser, peerID, olderSent.PeerSeq, 100)
+	newerIncoming := createCanonicalMessageForTest(t, ctx, repo, peerID, viewerID, base+704, "newer incoming low id", now+10)
+	insertUserMessageViewWithSeqForTest(t, ctx, db, viewerID, payload.PeerTypeUser, peerID, newerIncoming, 50, peerID, false)
+
+	history, err := repo.ListHistoryMessages(ctx, ListHistoryMessagesInput{
+		UserID:   viewerID,
+		PeerType: payload.PeerTypeUser,
+		PeerID:   peerID,
+		OffsetID: 50,
+		Limit:    10,
+	})
+	if err != nil {
+		t.Fatalf("ListHistoryMessages() error = %v", err)
+	}
+	if len(history) != 1 || history[0].CanonicalMessageID != olderSent.CanonicalMessageID {
+		t.Fatalf("ListHistoryMessages() = %+v, want older sent message after newer offset", history)
+	}
+}
+
+func updateUserMessageViewSeqForTest(
+	t *testing.T,
+	ctx context.Context,
+	db *sqlx.DB,
+	userID int64,
+	peerType int32,
+	peerID int64,
+	oldPeerSeq int64,
+	newPeerSeq int64,
+) {
+	t.Helper()
+	result, err := db.Exec(ctx, `
+UPDATE user_message_views
+SET peer_seq = ?
+WHERE user_id = ? AND peer_type = ? AND peer_id = ? AND peer_seq = ?`,
+		newPeerSeq,
+		userID,
+		peerType,
+		peerID,
+		oldPeerSeq,
+	)
+	if err != nil {
+		t.Fatalf("update user_message_views peer_seq: %v", err)
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		t.Fatalf("update user_message_views peer_seq RowsAffected: %v", err)
+	}
+	if rows != 1 {
+		t.Fatalf("update user_message_views peer_seq rows = %d, want 1", rows)
+	}
+}
+
+func updateUserMessageViewFromForTest(
+	t *testing.T,
+	ctx context.Context,
+	db *sqlx.DB,
+	userID int64,
+	peerType int32,
+	peerID int64,
+	peerSeq int64,
+	fromUserID int64,
+) {
+	t.Helper()
+	result, err := db.Exec(ctx, `
+UPDATE user_message_views
+SET from_user_id = ?
+WHERE user_id = ? AND peer_type = ? AND peer_id = ? AND peer_seq = ?`,
+		fromUserID,
+		userID,
+		peerType,
+		peerID,
+		peerSeq,
+	)
+	if err != nil {
+		t.Fatalf("update user_message_views from_user_id: %v", err)
+	}
+	rows, err := result.RowsAffected()
+	if err != nil {
+		t.Fatalf("update user_message_views RowsAffected: %v", err)
+	}
+	if rows != 1 {
+		t.Fatalf("update user_message_views rows = %d, want 1", rows)
+	}
+}
+
+func insertUserMessageViewWithSeqForTest(
+	t *testing.T,
+	ctx context.Context,
+	db *sqlx.DB,
+	userID int64,
+	peerType int32,
+	peerID int64,
+	canonical *CanonicalMessageResult,
+	peerSeq int64,
+	fromUserID int64,
+	outgoing bool,
+) {
+	t.Helper()
+	if db == nil {
+		t.Fatal("test db is nil")
+	}
+	if canonical == nil {
+		t.Fatal("canonical is nil")
+	}
+	_, err := db.Exec(ctx, `
+INSERT INTO user_message_views
+	(user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload)
+VALUES
+	(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		userID,
+		peerType,
+		peerID,
+		peerSeq,
+		canonical.CanonicalMessageID,
+		fromUserID,
+		outgoing,
+		MessageKindText,
+		MessageStatusLive,
+		0,
+		mysqlDate(canonical.MessageDate),
+		1,
+		nil,
+	)
+	if err != nil {
+		t.Fatalf("insert user_message_views user_id=%d peer_id=%d peer_seq=%d canonical=%d: %v", userID, peerID, peerSeq, canonical.CanonicalMessageID, err)
 	}
 }
 

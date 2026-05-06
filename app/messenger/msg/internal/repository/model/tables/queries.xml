@@ -11,6 +11,7 @@
         <field name="CanonicalMessageID" type="int64" db="canonical_message_id"/>
         <field name="PeerSeq" type="int64" db="peer_seq"/>
         <field name="FromUserID" type="int64" db="from_user_id"/>
+        <field name="Outgoing" type="bool" db="outgoing"/>
         <field name="PeerType" type="int32" db="peer_type"/>
         <field name="PeerID" type="int64" db="peer_id"/>
         <field name="MessageKind" type="int32" db="message_kind"/>
@@ -75,7 +76,8 @@
             SELECT
                 v.canonical_message_id,
                 v.peer_seq,
-                v.from_user_id,
+                c.from_user_id,
+                v.outgoing,
                 v.peer_type,
                 v.peer_id,
                 v.message_kind,
@@ -95,6 +97,7 @@
                 AND v.peer_seq &gt; :min_peer_seq
                 AND v.peer_seq &lt; :max_peer_seq
             ORDER BY
+                v.date DESC,
                 v.peer_seq DESC
             LIMIT :limit
         </sql>
