@@ -23,6 +23,8 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
+	"reflect"
+	"strings"
 
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -41,6 +43,7 @@ const (
 	zrpcMagicNumber     = uint32(0x5A525043)
 	defaultMaxFrameSize = 16 << 20
 	defaultTLLayer      = int32(223)
+	internalTLLayer     = int32(0)
 )
 
 const (
@@ -74,7 +77,51 @@ func (c *ZRpcCodec) resolveEncodeLayer(obj iface.TLObject) int32 {
 		}
 	}
 
+	if usesInternalTLLayer(obj) {
+		return internalTLLayer
+	}
+
 	return c.defaultLayer
+}
+
+func usesInternalTLLayer(obj iface.TLObject) bool {
+	if obj == nil {
+		return false
+	}
+
+	t := reflect.TypeOf(obj)
+	for t.Kind() == reflect.Ptr {
+		t = t.Elem()
+	}
+	pkgPath := t.PkgPath()
+	if pkgPath == "" {
+		return false
+	}
+
+	return usesInternalTLLayerForType(pkgPath, t.Name())
+}
+
+func usesInternalTLLayerForType(pkgPath, typeName string) bool {
+	if strings.HasSuffix(pkgPath, "/app/service/biz/dialog/dialog") {
+		switch typeName {
+		case "TLDialogPeer",
+			"TLDialogGetPeerDialogsV2",
+			"TLDialogGetDialogByPeerV2",
+			"TLDialogBatchGetDialogExtras":
+			return true
+		}
+	}
+
+	if strings.HasSuffix(pkgPath, "/app/service/biz/dialog/dialog/dialogservice") {
+		switch typeName {
+		case "GetPeerDialogsV2Args",
+			"GetDialogByPeerV2Args",
+			"BatchGetDialogExtrasArgs":
+			return true
+		}
+	}
+
+	return false
 }
 
 func (c *ZRpcCodec) Encode(ctx context.Context, message remote.Message, out remote.ByteBuffer) error {

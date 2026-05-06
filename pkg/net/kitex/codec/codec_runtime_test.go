@@ -9,9 +9,11 @@ import (
 
 	"github.com/cloudwego/kitex/pkg/remote"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
+	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface/ecode"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 type testTLObject struct {
@@ -161,6 +163,47 @@ func TestEncodeUsesDefaultTLLayer(t *testing.T) {
 	}
 	if obj.seenLayer != defaultTLLayer {
 		t.Fatalf("expected layer %d, got %d", defaultTLLayer, obj.seenLayer)
+	}
+}
+
+func TestEncodeUsesInternalTLLayerForServiceSchema(t *testing.T) {
+	c := NewZRpcCodec(false)
+	obj := dialogpb.MakeTLDialogPeer(&dialogpb.TLDialogPeer{PeerType: 1, PeerId: 777000})
+
+	if err := c.Encode(context.Background(), newTestMessage(obj), &testByteBuffer{}); err != nil {
+		t.Fatalf("encode failed: %v", err)
+	}
+}
+
+func TestEncodeUsesDefaultTLLayerForTGSchema(t *testing.T) {
+	c := NewZRpcCodec(false)
+	obj := tg.MakeTLDialogPeer(&tg.TLDialogPeer{
+		Peer: tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 777000}),
+	})
+
+	if err := c.Encode(context.Background(), newTestMessage(obj), &testByteBuffer{}); err != nil {
+		t.Fatalf("encode failed: %v", err)
+	}
+}
+
+func TestInternalTLLayerIncludesGeneratedDialogPeerServiceArgs(t *testing.T) {
+	if !usesInternalTLLayerForType(
+		"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog/dialogservice",
+		"GetPeerDialogsV2Args",
+	) {
+		t.Fatal("expected generated dialog peer args package to use internal TL layer")
+	}
+	if usesInternalTLLayerForType(
+		"github.com/teamgram/teamgram-server/v2/app/bff/dialogs/dialogs/dialogsservice",
+		"GetPeerDialogsArgs",
+	) {
+		t.Fatal("expected bff service args package to use default TG TL layer")
+	}
+	if usesInternalTLLayerForType(
+		"github.com/teamgram/teamgram-server/v2/app/service/media/media/mediaservice",
+		"UploadPhotoFileArgs",
+	) {
+		t.Fatal("expected media service args with nested TG schema to use default TG TL layer")
 	}
 }
 

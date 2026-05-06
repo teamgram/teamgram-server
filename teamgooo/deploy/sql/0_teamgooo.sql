@@ -691,14 +691,16 @@ CREATE TABLE IF NOT EXISTS `message_peer_sequences` (
 CREATE TABLE IF NOT EXISTS `message_read_outbox` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `user_id` bigint NOT NULL,
-  `peer_dialog_id` bigint NOT NULL,
+  `peer_type` int NOT NULL,
+  `peer_id` bigint NOT NULL,
   `read_user_id` bigint NOT NULL,
   `read_outbox_max_id` int NOT NULL,
-  `read_outbox_max_date` bigint NOT NULL,
+  `read_outbox_max_date` datetime(6) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `user_id` (`user_id`,`peer_dialog_id`,`read_user_id`,`read_outbox_max_id`)
+  UNIQUE KEY `uk_outbox_read` (`user_id`,`peer_type`,`peer_id`,`read_user_id`,`read_outbox_max_id`),
+  KEY `idx_outbox_read_lookup` (`user_id`,`peer_type`,`peer_id`,`read_user_id`,`read_outbox_max_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1336,4 +1338,3 @@ CREATE TABLE IF NOT EXISTS `video_sizes` (
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
