@@ -220,7 +220,7 @@ func TestOutboxBlockedAfterAge(t *testing.T) {
 	base := time.Now().UnixNano()
 	row := newPublicUpdateOutboxRow(base, fmt.Sprintf("public-age-block-%d", base), DeliveryPathUserupdatesPTS)
 	old := time.Now().UTC().Add(-time.Duration(OutboxWorkerBlockedAgeSeconds+1) * time.Second)
-	row.NextRetryAt = old
+	row.NextRetryAt = mysqlDateTimeForBind(old)
 	if _, _, err := repo.model.DialogPublicUpdateOutboxModel.Insert(ctx, row); err != nil {
 		t.Fatalf("insert public update outbox: %v", err)
 	}

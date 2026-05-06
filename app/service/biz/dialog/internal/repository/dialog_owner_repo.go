@@ -241,7 +241,7 @@ func (r *Repository) SaveDraft(ctx context.Context, in SaveDraftInput) (*DraftMu
 			ReplyToPeerSeq:            in.ReplyToPeerSeq,
 			DraftPayloadSchemaVersion: 1,
 			DraftPayload:              draftPayload,
-			Date:                      in.Date.UTC(),
+			Date:                      mysqlDateTimeForBind(in.Date),
 		})
 		if err != nil {
 			return storageError("save draft", err)
@@ -428,7 +428,7 @@ func (r *Repository) UpsertSavedDialogFromMessage(ctx context.Context, in SavedD
 		PeerId:                in.PeerID,
 		TopPeerSeq:            in.TopPeerSeq,
 		TopCanonicalMessageId: in.TopCanonicalMessageID,
-		TopMessageDate:        in.TopMessageDate.UTC(),
+		TopMessageDate:        mysqlDateTimeForBind(in.TopMessageDate),
 		SavedSchemaVersion:    1,
 		SavedPayload:          in.Payload,
 	})
@@ -450,7 +450,7 @@ func (r *Repository) ListSavedDialogs(ctx context.Context, userID int64, exclude
 		offsetDate = time.Date(9999, 12, 31, 23, 59, 59, 0, time.UTC)
 	}
 	if !excludePinned {
-		rows, err := models.SavedDialogsModel.SelectDialogs(ctx, userID, offsetDate.UTC(), limit)
+		rows, err := models.SavedDialogsModel.SelectDialogs(ctx, userID, mysqlDateTimeForBind(offsetDate), limit)
 		if err != nil {
 			return nil, storageError("select saved dialogs", err)
 		}
@@ -792,7 +792,7 @@ func insertAuthSeqOutbox(txModels *model.TxModels, in authSeqOutboxInput) (bool,
 		PayloadHash:          hashPayload(in.Payload),
 		Status:               OutboxStatusPending,
 		AttemptCount:         0,
-		NextRetryAt:          time.Now().UTC(),
+		NextRetryAt:          mysqlDateTimeForBind(time.Now().UTC()),
 		LeaseOwner:           "",
 		LeaseUntil:           mysqlZeroDateTime(),
 		LastErrorKind:        "",
@@ -888,7 +888,7 @@ func insertPublicUpdateOutbox(txModels *model.TxModels, in publicUpdateOutboxInp
 		PayloadHash:          hashPayload(in.Payload),
 		Status:               OutboxStatusPending,
 		AttemptCount:         0,
-		NextRetryAt:          time.Now().UTC(),
+		NextRetryAt:          mysqlDateTimeForBind(time.Now().UTC()),
 		LeaseOwner:           "",
 		LeaseUntil:           mysqlZeroDateTime(),
 		PublishedPts:         0,
@@ -971,7 +971,21 @@ func mysqlZeroTime() string {
 }
 
 func mysqlZeroDateTime() time.Time {
-	return time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC)
+	return mysqlDateTimeForBind(time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC))
+}
+
+func mysqlDriverLocation() *time.Location {
+	return time.FixedZone("Asia/Shanghai", 8*60*60)
+}
+
+func mysqlDateTimeForBind(t time.Time) time.Time {
+	if t.IsZero() {
+		return time.Time{}
+	}
+	t = t.UTC()
+	year, month, day := t.Date()
+	hour, minute, second := t.Clock()
+	return time.Date(year, month, day, hour, minute, second, t.Nanosecond(), mysqlDriverLocation())
 }
 
 func mysqlDateTimeString(t time.Time) string {
