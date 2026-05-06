@@ -1,10 +1,10 @@
 # init database
-## init teamgram
+## init teamgooo
 
-- create database teamgram
+- create database teamgooo
 
-- init teamgram data
+- init teamgooo data
 
 ```
-mysql -uroot teamgram < teamgram2.sql
+mysql -uroot teamgooo < teamgooo.sql
 ```
