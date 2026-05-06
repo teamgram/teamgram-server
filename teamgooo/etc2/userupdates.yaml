@@ -10,7 +10,7 @@ Log:
   Path: ../logs/userupdates
   Level: debug
 Mysql:
-  DSN: root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true
+  DSN: root:@tcp(127.0.0.1:3306)/teamgooo?charset=utf8mb4&parseTime=true
   Active: 64
   Idle: 64
   IdleTimeout: 4h
