@@ -46,6 +46,8 @@ type (
 		TopCanonicalMessageId    int64        `db:"top_canonical_message_id" json:"top_canonical_message_id"`
 		TopMessageDate           sql.NullTime `db:"top_message_date" json:"top_message_date"`
 		TopMessageStatus         int32        `db:"top_message_status" json:"top_message_status"`
+		ReadInboxMaxPeerSeq      int64        `db:"read_inbox_max_peer_seq" json:"read_inbox_max_peer_seq"`
+		ReadOutboxMaxPeerSeq     int64        `db:"read_outbox_max_peer_seq" json:"read_outbox_max_peer_seq"`
 		UnreadCount              int32        `db:"unread_count" json:"unread_count"`
 		UnreadMentionsCount      int32        `db:"unread_mentions_count" json:"unread_mentions_count"`
 		UnreadReactionsCount     int32        `db:"unread_reactions_count" json:"unread_reactions_count"`
@@ -58,8 +60,6 @@ type (
 		DeletedAt                sql.NullTime `db:"deleted_at" json:"deleted_at"`
 		LastPts                  int64        `db:"last_pts" json:"last_pts"`
 		LastPtsAt                sql.NullTime `db:"last_pts_at" json:"last_pts_at"`
-		ReadInboxMaxPeerSeq      int64        `db:"read_inbox_max_peer_seq" json:"read_inbox_max_peer_seq"`
-		ReadOutboxMaxPeerSeq     int64        `db:"read_outbox_max_peer_seq" json:"read_outbox_max_peer_seq"`
 		DialogSchemaVersion      int32        `db:"dialog_schema_version" json:"dialog_schema_version"`
 		DialogPayload            []byte       `db:"dialog_payload" json:"dialog_payload"`
 	}
@@ -75,7 +75,7 @@ func (m *defaultUserDialogsModel) Insert2(ctx context.Context, data *UserDialogs
 	tableName := "user_dialogs"
 	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName, userDialogsRowsExpectAutoSet)
 
-	r, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.TopPeerSeq, data.TopCanonicalMessageId, data.TopMessageDate, data.TopMessageStatus, data.UnreadCount, data.UnreadMentionsCount, data.UnreadReactionsCount, data.UnreadMark, data.PinnedPeerSeq, data.PinnedCanonicalMessageId, data.HasScheduled, data.AvailableMinPeerSeq, data.Hidden, data.DeletedAt, data.LastPts, data.LastPtsAt, data.ReadInboxMaxPeerSeq, data.ReadOutboxMaxPeerSeq, data.DialogSchemaVersion, data.DialogPayload)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.TopPeerSeq, data.TopCanonicalMessageId, data.TopMessageDate, data.TopMessageStatus, data.ReadInboxMaxPeerSeq, data.ReadOutboxMaxPeerSeq, data.UnreadCount, data.UnreadMentionsCount, data.UnreadReactionsCount, data.UnreadMark, data.PinnedPeerSeq, data.PinnedCanonicalMessageId, data.HasScheduled, data.AvailableMinPeerSeq, data.Hidden, data.DeletedAt, data.LastPts, data.LastPtsAt, data.DialogSchemaVersion, data.DialogPayload)
 	if err != nil {
 		return nil, fmt.Errorf("user_dialogs.Insert2 exec: %w", err)
 	}

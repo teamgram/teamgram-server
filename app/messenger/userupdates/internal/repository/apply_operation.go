@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"strings"
 	"time"
 	"unicode"
@@ -139,7 +140,7 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 	}
 	switch op.OperationKind {
 	case payload.OperationKindSendMessage:
-		if err := insertUserMessageView(tx, txModels, in, op, eventPayload); err != nil {
+		if err := insertUserMessageView(txModels, in, op, eventPayload); err != nil {
 			return nil, err
 		}
 		if err := upsertUserDialog(txModels, in, op, nextPTS, eventPayload); err != nil {
@@ -149,7 +150,7 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 			return nil, err
 		}
 	case payload.OperationKindReadHistory:
-		if err := applyReadHistory(tx, txModels, in, op, nextPTS); err != nil {
+		if err := applyReadHistory(txModels, in, op, nextPTS); err != nil {
 			return nil, err
 		}
 	case payload.OperationKindDeleteMessages:
@@ -258,7 +259,7 @@ func buildEventAndResponse(in ApplyUserOperationInput, op payload.MessageOperati
 	return eventPayload, payload.HashBytes(eventPayload), responsePayload, payload.HashBytes(responsePayload), nil
 }
 
-func insertUserMessageView(tx *sqlx.Tx, txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, viewPayload []byte) error {
+func insertUserMessageView(txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, viewPayload []byte) error {
 	_, _, err := txModels.UserMessageViewsModel.InsertOrUpdate(&model.UserMessageViews{
 		UserId:             in.UserID,
 		PeerType:           op.PeerType,
@@ -279,7 +280,7 @@ func insertUserMessageView(tx *sqlx.Tx, txModels *model.TxModels, in ApplyUserOp
 	if err != nil {
 		return storageError("insert user message view", err)
 	}
-	if err := insertHashTagsTx(tx, in.UserID, op); err != nil {
+	if err := insertHashTagsTx(txModels, in.UserID, op); err != nil {
 		return err
 	}
 	return nil
@@ -322,7 +323,7 @@ func upsertUserDialog(txModels *model.TxModels, in ApplyUserOperationInput, op p
 	return nil
 }
 
-func applyReadHistory(tx *sqlx.Tx, txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, nextPTS int64) error {
+func applyReadHistory(txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, nextPTS int64) error {
 	readInbox := op.ReadInboxMaxPeerSeq
 	readOutbox := op.ReadOutboxMaxPeerSeq
 	if readInbox == 0 || readOutbox == 0 {
@@ -349,45 +350,50 @@ func applyReadHistory(tx *sqlx.Tx, txModels *model.TxModels, in ApplyUserOperati
 		return storageError("apply read history", err)
 	}
 	if op.Out && readOutbox > 0 {
-		if err := insertOutboxReadDateTx(tx, in.UserID, op.PeerType, op.PeerID, op.PeerID, readOutbox, op.Date); err != nil {
+		if err := insertOutboxReadDateTx(txModels, in.UserID, op.PeerType, op.PeerID, op.PeerID, readOutbox, op.Date); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func insertHashTagsTx(tx *sqlx.Tx, userID int64, op payload.MessageOperationV1) error {
+func insertHashTagsTx(txModels *model.TxModels, userID int64, op payload.MessageOperationV1) error {
 	tags := extractHashTags(op.MessageText)
 	if len(tags) == 0 || op.PeerSeq <= 0 {
 		return nil
 	}
-	query := `
-INSERT INTO hash_tags
-	(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id)
-VALUES
-	(?, ?, ?, ?, ?)
-ON DUPLICATE KEY UPDATE
-	deleted = 0`
+	if op.PeerSeq > math.MaxInt32 {
+		return storageError("index hashtag", fmt.Errorf("peer seq out of int32 range: %d", op.PeerSeq))
+	}
 	for _, tag := range tags {
-		if _, err := tx.Exec(query, userID, op.PeerType, op.PeerID, tag, op.PeerSeq); err != nil {
+		if _, _, err := txModels.HashTagsModel.InsertOrUpdate(&model.HashTags{
+			UserId:           userID,
+			PeerType:         op.PeerType,
+			PeerId:           op.PeerID,
+			HashTag:          tag,
+			HashTagMessageId: int32(op.PeerSeq),
+		}); err != nil {
 			return storageError("index hashtag", err)
 		}
 	}
 	return nil
 }
 
-func insertOutboxReadDateTx(tx *sqlx.Tx, userID int64, peerType int32, peerID int64, readUserID int64, maxPeerSeq int64, date int32) error {
+func insertOutboxReadDateTx(txModels *model.TxModels, userID int64, peerType int32, peerID int64, readUserID int64, maxPeerSeq int64, date int32) error {
+	if maxPeerSeq > math.MaxInt32 {
+		return storageError("insert outbox read date", fmt.Errorf("peer seq out of int32 range: %d", maxPeerSeq))
+	}
 	if date <= 0 {
 		date = int32(time.Now().Unix())
 	}
-	query := `
-INSERT INTO message_read_outbox
-	(user_id, peer_type, peer_id, read_user_id, read_outbox_max_id, read_outbox_max_date)
-VALUES
-	(?, ?, ?, ?, ?, ?)
-ON DUPLICATE KEY UPDATE
-	read_outbox_max_date = VALUES(read_outbox_max_date)`
-	if _, err := tx.Exec(query, userID, peerType, peerID, readUserID, maxPeerSeq, mysqlDate(date)); err != nil {
+	if _, _, err := txModels.MessageReadOutboxModel.InsertOrUpdate(&model.MessageReadOutbox{
+		UserId:            userID,
+		PeerType:          peerType,
+		PeerId:            peerID,
+		ReadUserId:        readUserID,
+		ReadOutboxMaxId:   int32(maxPeerSeq),
+		ReadOutboxMaxDate: mysqlDate(date),
+	}); err != nil {
 		return storageError("insert outbox read date", err)
 	}
 	return nil

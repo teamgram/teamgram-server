@@ -11,4 +11,6 @@ var (
 	ErrUserupdatesStorage       = errors.New("userupdates: storage failure")
 	ErrDialogQueryTooLarge      = errors.New("userupdates: dialog query too large")
 	ErrAuthSeqLedgerUnavailable = errors.New("userupdates: auth seq ledger unavailable")
+	ErrOutboxReadMessageInvalid = errors.New("userupdates: outbox read message invalid")
+	ErrOutboxReadDateNotFound   = errors.New("userupdates: outbox read date not found")
 )

@@ -3,11 +3,9 @@ package repository
 import (
 	"context"
 	"errors"
-	"time"
 
-	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/model"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 )
 
 type MessageViewPeerSeq struct {
@@ -81,47 +79,24 @@ func (r *Repository) GetOutboxReadDate(ctx context.Context, in OutboxReadDateInp
 	if _, err := r.requireDB(); err != nil {
 		return 0, err
 	}
-	var exists int32
-	existsQuery := `
-SELECT
-	1
-FROM
-	user_message_views
-WHERE
-	user_id = ?
-	AND peer_type = ?
-	AND peer_id = ?
-	AND peer_seq = ?
-	AND outgoing = 1
-	AND message_status = ?
-LIMIT 1`
-	if err := r.db.QueryRow(ctx, &exists, existsQuery, in.UserID, in.PeerType, in.PeerID, in.MsgID, MessageStatusLive); err != nil {
-		if errors.Is(err, sqlx.ErrNotFound) || errors.Is(err, model.ErrNotFound) {
-			return 0, tg.ErrMessageIdInvalid
+
+	view, err := r.models.UserMessageViewsModel.SelectByUserPeerSeq(ctx, in.UserID, in.PeerType, in.PeerID, int64(in.MsgID))
+	if err != nil {
+		if errors.Is(err, model.ErrNotFound) {
+			return 0, userupdates.ErrOutboxReadMessageInvalid
 		}
 		return 0, storageError("validate outbox read message", err)
 	}
+	if !view.Outgoing || view.MessageStatus != MessageStatusLive {
+		return 0, userupdates.ErrOutboxReadMessageInvalid
+	}
 
-	query := `
-SELECT
-	read_outbox_max_date
-FROM
-	message_read_outbox
-WHERE
-	user_id = ?
-	AND peer_type = ?
-	AND peer_id = ?
-	AND read_user_id = ?
-	AND read_outbox_max_id >= ?
-ORDER BY
-	read_outbox_max_id ASC
-LIMIT 1`
-	var readDate time.Time
-	if err := r.db.QueryRow(ctx, &readDate, query, in.UserID, in.PeerType, in.PeerID, in.PeerID, in.MsgID); err != nil {
-		if errors.Is(err, sqlx.ErrNotFound) || errors.Is(err, model.ErrNotFound) {
-			return 0, tg.ErrMessageNotReadYet
-		}
+	rows, err := r.models.MessageReadOutboxModel.SelectFirstReadDate(ctx, in.UserID, in.PeerType, in.PeerID, in.PeerID, int64(in.MsgID), 1)
+	if err != nil {
 		return 0, storageError("get outbox read date", err)
 	}
-	return int32(readDate.Unix()), nil
+	if len(rows) == 0 {
+		return 0, userupdates.ErrOutboxReadDateNotFound
+	}
+	return int32(rows[0].ReadOutboxMaxDate.Unix()), nil
 }

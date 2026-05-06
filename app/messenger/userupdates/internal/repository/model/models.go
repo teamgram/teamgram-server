@@ -17,6 +17,8 @@ import (
 type Models struct {
 	DeliveryFailedOperationsModel   DeliveryFailedOperationsModel
 	DialogSideEffectOutboxModel     DialogSideEffectOutboxModel
+	HashTagsModel                   HashTagsModel
+	MessageReadOutboxModel          MessageReadOutboxModel
 	PushTaskOutboxModel             PushTaskOutboxModel
 	UserAuthSeqEventsModel          UserAuthSeqEventsModel
 	UserAuthSeqStateModel           UserAuthSeqStateModel
@@ -31,6 +33,8 @@ type Models struct {
 type TxModels struct {
 	DeliveryFailedOperationsModel   DeliveryFailedOperationsTxModel
 	DialogSideEffectOutboxModel     DialogSideEffectOutboxTxModel
+	HashTagsModel                   HashTagsTxModel
+	MessageReadOutboxModel          MessageReadOutboxTxModel
 	PushTaskOutboxModel             PushTaskOutboxTxModel
 	UserAuthSeqEventsModel          UserAuthSeqEventsTxModel
 	UserAuthSeqStateModel           UserAuthSeqStateTxModel
@@ -46,6 +50,8 @@ func NewModels(db *sqlx.DB) *Models {
 	return &Models{
 		DeliveryFailedOperationsModel:   NewDeliveryFailedOperationsModel(db),
 		DialogSideEffectOutboxModel:     NewDialogSideEffectOutboxModel(db),
+		HashTagsModel:                   NewHashTagsModel(db),
+		MessageReadOutboxModel:          NewMessageReadOutboxModel(db),
 		PushTaskOutboxModel:             NewPushTaskOutboxModel(db),
 		UserAuthSeqEventsModel:          NewUserAuthSeqEventsModel(db),
 		UserAuthSeqStateModel:           NewUserAuthSeqStateModel(db),
@@ -62,6 +68,8 @@ func (m *Models) WithTx(tx *sqlx.Tx) *TxModels {
 	return &TxModels{
 		DeliveryFailedOperationsModel:   NewDeliveryFailedOperationsTxModel(tx),
 		DialogSideEffectOutboxModel:     NewDialogSideEffectOutboxTxModel(tx),
+		HashTagsModel:                   NewHashTagsTxModel(tx),
+		MessageReadOutboxModel:          NewMessageReadOutboxTxModel(tx),
 		PushTaskOutboxModel:             NewPushTaskOutboxTxModel(tx),
 		UserAuthSeqEventsModel:          NewUserAuthSeqEventsTxModel(tx),
 		UserAuthSeqStateModel:           NewUserAuthSeqStateTxModel(tx),

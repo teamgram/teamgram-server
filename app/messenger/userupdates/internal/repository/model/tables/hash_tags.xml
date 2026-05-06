@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="hash_tags">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO hash_tags
+                (user_id, peer_type, peer_id, hash_tag, hash_tag_message_id)
+            VALUES
+                (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id)
+            ON DUPLICATE KEY UPDATE
+                deleted = 0
+        </sql>
+    </operation>
+</table>

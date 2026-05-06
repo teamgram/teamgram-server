@@ -19,6 +19,7 @@ package core
 
 import (
 	"context"
+	"errors"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
@@ -47,6 +48,12 @@ func (c *UserupdatesCore) UserupdatesGetOutboxReadDate(in *userupdates.TLUserupd
 		MsgID:    in.MsgId,
 	})
 	if err != nil {
+		if errors.Is(err, userupdates.ErrOutboxReadMessageInvalid) {
+			return nil, tg.ErrMessageIdInvalid
+		}
+		if errors.Is(err, userupdates.ErrOutboxReadDateNotFound) {
+			return nil, tg.ErrMessageNotReadYet
+		}
 		return nil, err
 	}
 	return tg.MakeTLOutboxReadDate(&tg.TLOutboxReadDate{
