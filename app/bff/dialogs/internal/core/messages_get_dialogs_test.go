@@ -14,8 +14,6 @@ import (
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	dialogclient "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/client"
 	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
-	messageclient "github.com/teamgram/teamgram-server/v2/app/service/biz/message/client"
-	messagepb "github.com/teamgram/teamgram-server/v2/app/service/biz/message/message"
 	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
@@ -66,15 +64,6 @@ func (f *dialogsFakeUserClient) UserGetNotifySettingsList(ctx context.Context, i
 		return &userpb.VectorPeerPeerNotifySettings{}, nil
 	}
 	return f.getNotifySettingsList(ctx, in)
-}
-
-type dialogsFakeMessageClient struct {
-	messageclient.MessageClient
-	getUserMessageList func(context.Context, *messagepb.TLMessageGetUserMessageList) (*messagepb.VectorMessageBox, error)
-}
-
-func (f *dialogsFakeMessageClient) MessageGetUserMessageList(ctx context.Context, in *messagepb.TLMessageGetUserMessageList) (*messagepb.VectorMessageBox, error) {
-	return f.getUserMessageList(ctx, in)
 }
 
 type dialogsFakeUserupdatesClient struct {
@@ -536,12 +525,6 @@ func TestMessagesGetDialogsMapsUserDialogAndTopMessage(t *testing.T) {
 						}),
 					}),
 				}, Exhausted: tg.BoolTrueClazz}), nil
-			},
-		},
-		MessageClient: &dialogsFakeMessageClient{
-			getUserMessageList: func(_ context.Context, in *messagepb.TLMessageGetUserMessageList) (*messagepb.VectorMessageBox, error) {
-				t.Fatalf("legacy MessageGetUserMessageList must not be called: %+v", in)
-				return nil, tg.ErrMethodNotImpl
 			},
 		},
 		UserupdatesClient: &dialogsFakeUserupdatesClient{

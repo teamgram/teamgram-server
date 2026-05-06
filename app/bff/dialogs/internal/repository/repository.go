@@ -26,7 +26,6 @@ import (
 	userupdatesclient "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/client"
 	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
 	dialogclient "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/client"
-	messageclient "github.com/teamgram/teamgram-server/v2/app/service/biz/message/client"
 	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/identity"
@@ -37,7 +36,6 @@ import (
 type Repository struct {
 	ChatClient        chatclient.ChatClient
 	DialogClient      dialogclient.DialogClient
-	MessageClient     messageclient.MessageClient
 	MsgClient         msgclient.MsgClient
 	SyncClient        syncclient.SyncClient
 	UserupdatesClient userupdatesclient.UserupdatesClient
@@ -49,7 +47,6 @@ func NewRepository(c config.Config) *Repository {
 	r := &Repository{
 		ChatClient:        chatclient.NewChatClient(chatclient.MustNewKitexClient(c.ChatClient)),
 		DialogClient:      dialogclient.NewDialogClient(dialogclient.MustNewKitexClient(c.DialogClient)),
-		MessageClient:     messageclient.NewMessageClient(messageclient.MustNewKitexClient(c.MessageClient)),
 		MsgClient:         msgclient.NewMsgClient(msgclient.MustNewKitexClient(c.MsgClient)),
 		UserupdatesClient: userupdatesclient.NewUserupdatesClient(userupdatesclient.MustNewKitexClient(c.UserupdatesClient)),
 		UserClient:        userclient.NewUserClient(userclient.MustNewKitexClient(c.UserClient)),

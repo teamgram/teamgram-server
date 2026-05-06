@@ -25,7 +25,6 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat/chatservice"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/code/code/codeservice"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog/dialogservice"
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message/messageservice"
 	userhelper "github.com/teamgram/teamgram-server/v2/app/service/biz/user"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user/userservice"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
@@ -34,7 +33,6 @@ import (
 	chathelper "github.com/teamgram/teamgram-server/v2/app/service/biz/chat"
 	codehelper "github.com/teamgram/teamgram-server/v2/app/service/biz/code"
 	dialoghelper "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog"
-	messagehelper "github.com/teamgram/teamgram-server/v2/app/service/biz/message"
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -105,17 +103,6 @@ func (s *Server) Initialize() error {
 			_ = dialogservice.RegisterService(
 				s,
 				dialoghelper.New(buildDialogConfig(c)))
-
-			// messagehelper
-			_ = messageservice.RegisterService(
-				s,
-				messagehelper.New(
-					messagehelper.Config{
-						RpcServerConf: c.RpcServerConf,
-						//Mysql:           c.Mysql,
-						//Cache:           c.Cache,
-						//MessageSharding: c.MessageSharding,
-					}))
 
 			// userhelper
 			_ = userservice.RegisterService(

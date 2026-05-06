@@ -1,6 +1,7 @@
 package server
 
 import (
+	"reflect"
 	"testing"
 
 	bffconfig "github.com/teamgram/teamgram-server/v2/app/bff/bff/internal/config"
@@ -71,11 +72,8 @@ func TestBuildBizBackedConfigSetsConcreteKitexClients(t *testing.T) {
 	if dialogs.UserClient.ServiceName != "RPCUser" {
 		t.Fatalf("expected dialogs user client service name RPCUser, got %#v", dialogs.UserClient)
 	}
-	if dialogs.MessageClient.DestService != "service.biz_service" {
-		t.Fatalf("expected dialogs message client dest service to be forwarded, got %#v", dialogs.MessageClient)
-	}
-	if dialogs.MessageClient.ServiceName != "RPCMessage" {
-		t.Fatalf("expected dialogs message client service name RPCMessage, got %#v", dialogs.MessageClient)
+	if _, ok := reflect.TypeOf(dialogs).FieldByName("MessageClient"); ok {
+		t.Fatal("dialogs config must not expose legacy MessageClient")
 	}
 	if dialogs.MsgClient.DestService != "messenger.msg" {
 		t.Fatalf("expected dialogs msg client dest service to be forwarded, got %#v", dialogs.MsgClient)
