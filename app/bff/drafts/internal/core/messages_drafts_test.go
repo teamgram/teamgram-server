@@ -73,6 +73,35 @@ func TestMessagesSaveDraftCarriesSourceAuthAndOutbox(t *testing.T) {
 	if got.SourcePermAuthKeyId != 9001 || got.OperationId == "" || got.OutboxId == 0 {
 		t.Fatalf("dialog save draft request = %+v", got)
 	}
+	if got.PeerType != 1 || got.PeerId != 200 {
+		t.Fatalf("dialog save draft peer = (%d,%d), want (1,200)", got.PeerType, got.PeerId)
+	}
+}
+
+func TestMessagesSaveDraftMapsSelfPeerToUserDialogPeer(t *testing.T) {
+	var got *dialogpb.TLDialogSaveDraftMessage
+	c := newDraftsCoreForTest(&repository.Repository{
+		DialogClient: fakeDraftDialogClient{
+			save: func(_ context.Context, in *dialogpb.TLDialogSaveDraftMessage) (*tg.Bool, error) {
+				got = in
+				return tg.BoolTrue, nil
+			},
+		},
+	}, 100)
+
+	_, err := c.MessagesSaveDraft(&tg.TLMessagesSaveDraft{
+		Peer:    tg.MakeTLInputPeerSelf(&tg.TLInputPeerSelf{}),
+		Message: "self draft",
+	})
+	if err != nil {
+		t.Fatalf("MessagesSaveDraft error = %v", err)
+	}
+	if got == nil {
+		t.Fatal("dialog.saveDraftMessage was not called")
+	}
+	if got.PeerType != 1 || got.PeerId != 100 {
+		t.Fatalf("dialog save draft peer = (%d,%d), want (1,100)", got.PeerType, got.PeerId)
+	}
 }
 
 func TestMessagesGetAllDraftsFailsWhenDialogClientIsNotConfigured(t *testing.T) {

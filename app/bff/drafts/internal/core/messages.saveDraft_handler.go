@@ -27,11 +27,15 @@ import (
 // messages.saveDraft#54ae308e flags:# no_webpage:flags.1?true invert_media:flags.6?true reply_to:flags.4?InputReplyTo peer:InputPeer message:string entities:flags.3?Vector<MessageEntity> media:flags.5?InputMedia effect:flags.7?long suggested_post:flags.8?SuggestedPost = Bool;
 func (c *DraftsCore) MessagesSaveDraft(in *tg.TLMessagesSaveDraft) (*tg.Bool, error) {
 	var (
-		peer                = tg.FromInputPeer2(c.MD.UserId, in.Peer)
 		isDraftMessageEmpty = true
 		date                = int32(time.Now().Unix())
 		token               = int64(date)
 	)
+
+	peer, err := resolveDraftDialogPeer(c.MD.UserId, in.Peer)
+	if err != nil {
+		return nil, err
+	}
 
 	dialogClient, err := c.dialogClient()
 	if err != nil {
@@ -49,11 +53,11 @@ func (c *DraftsCore) MessagesSaveDraft(in *tg.TLMessagesSaveDraft) (*tg.Bool, er
 	}
 
 	if isDraftMessageEmpty {
-		operationID := draftOperationID("clear", c.MD.UserId, peer.PeerType, peer.PeerId, token)
+		operationID := draftOperationID("clear", c.MD.UserId, peer.PeerType, peer.PeerID, token)
 		if _, err := dialogClient.DialogClearDraftMessage(c.ctx, &repository.DialogClearDraft{
 			UserId:              c.MD.UserId,
 			PeerType:            peer.PeerType,
-			PeerId:              peer.PeerId,
+			PeerId:              peer.PeerID,
 			SourcePermAuthKeyId: c.MD.PermAuthKeyId,
 			OperationId:         operationID,
 			OutboxId:            draftOutboxID(operationID),
@@ -72,11 +76,11 @@ func (c *DraftsCore) MessagesSaveDraft(in *tg.TLMessagesSaveDraft) (*tg.Bool, er
 			Effect:      in.Effect,
 		})
 
-		operationID := draftOperationID("save", c.MD.UserId, peer.PeerType, peer.PeerId, int64(date))
+		operationID := draftOperationID("save", c.MD.UserId, peer.PeerType, peer.PeerID, int64(date))
 		if _, err := dialogClient.DialogSaveDraftMessage(c.ctx, &repository.DialogSaveDraft{
 			UserId:              c.MD.UserId,
 			PeerType:            peer.PeerType,
-			PeerId:              peer.PeerId,
+			PeerId:              peer.PeerID,
 			Message:             draft,
 			SourcePermAuthKeyId: c.MD.PermAuthKeyId,
 			OperationId:         operationID,
