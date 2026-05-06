@@ -32,16 +32,6 @@ func (c *client2) Close() error {
 	return nil
 }
 
-/*
-	cli := kitex.MustNewClient(
-		"interface.session",
-		c,
-		func(destService string, opts ...client.Option) (client.Client, error) {
-			return client.NewClient(sessionservice.NewServiceInfoForClient(), opts...)
-		},
-		client.WithCodec(codec.NewZRpcCodec(true)))
-*/
-
 func newCachedClient(c RpcClientConf) (io.Closer, error) {
 	cli, err := newClientWithServiceInfo(c, iface.GetKitexServiceInfoForClient(c.ServiceName))
 	if err != nil {
