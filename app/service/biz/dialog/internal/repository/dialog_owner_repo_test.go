@@ -293,6 +293,36 @@ func TestDialogDraftsClearAfterSendSkipsNewerDraft(t *testing.T) {
 	}
 }
 
+func TestDialogDraftsSaveDefaultsNilPayloads(t *testing.T) {
+	ctx := context.Background()
+	repo := NewRepositoryWithDBForTest(openDialogIntegrationDB(t))
+	base := time.Now().UnixNano()
+	userID := base%1_000_000_000 + 601
+	peerID := base%1_000_000_000 + 701
+	save := SaveDraftInput{
+		UserID:              userID,
+		PeerType:            PeerTypeUser,
+		PeerID:              peerID,
+		DraftKind:           1,
+		Message:             "plain draft",
+		Date:                time.Now().UTC(),
+		SourcePermAuthKeyID: base%1_000_000_000 + 801,
+		OperationID:         fmt.Sprintf("draft-save-nil-payloads-%d", base),
+		OutboxID:            base%1_000_000_000 + 901,
+		EventType:           "dialog.draftSaved",
+	}
+	if _, err := repo.SaveDraft(ctx, save); err != nil {
+		t.Fatalf("SaveDraft() error = %v", err)
+	}
+	row, err := repo.model.DialogDraftsModel.SelectByUserPeer(ctx, userID, PeerTypeUser, peerID)
+	if err != nil {
+		t.Fatalf("SelectByUserPeer() error = %v", err)
+	}
+	if row.EntitiesPayload == nil || row.DraftPayload == nil {
+		t.Fatalf("payloads = entities:%v draft:%v, want non-nil blobs", row.EntitiesPayload, row.DraftPayload)
+	}
+}
+
 func TestDialogDraftsClearAllCreatesOneOutboxPerClearedPeer(t *testing.T) {
 	ctx := context.Background()
 	repo := NewRepositoryWithDBForTest(openDialogIntegrationDB(t))

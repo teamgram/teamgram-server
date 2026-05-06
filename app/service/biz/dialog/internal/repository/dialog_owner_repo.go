@@ -207,6 +207,14 @@ func (r *Repository) SaveDraft(ctx context.Context, in SaveDraftInput) (*DraftMu
 	if err != nil {
 		return nil, err
 	}
+	entitiesPayload := in.EntitiesPayload
+	if entitiesPayload == nil {
+		entitiesPayload = []byte{}
+	}
+	draftPayload := in.DraftPayload
+	if draftPayload == nil {
+		draftPayload = []byte{}
+	}
 	err = db.Transact(ctx, func(tx *sqlx.Tx) error {
 		txModels := r.model.WithTx(tx)
 		duplicate, err := insertAuthSeqOutbox(txModels, authSeqOutboxInput{
@@ -217,7 +225,7 @@ func (r *Repository) SaveDraft(ctx context.Context, in SaveDraftInput) (*DraftMu
 			EventType:           in.EventType,
 			PeerType:            in.PeerType,
 			PeerID:              in.PeerID,
-			Payload:             in.DraftPayload,
+			Payload:             draftPayload,
 		})
 		if err != nil || duplicate {
 			return err
@@ -229,10 +237,10 @@ func (r *Repository) SaveDraft(ctx context.Context, in SaveDraftInput) (*DraftMu
 			PeerDialogId:              peerDialogID,
 			DraftKind:                 in.DraftKind,
 			Message:                   in.Message,
-			EntitiesPayload:           in.EntitiesPayload,
+			EntitiesPayload:           entitiesPayload,
 			ReplyToPeerSeq:            in.ReplyToPeerSeq,
 			DraftPayloadSchemaVersion: 1,
-			DraftPayload:              in.DraftPayload,
+			DraftPayload:              draftPayload,
 			Date:                      mysqlTimestamp(in.Date),
 		})
 		if err != nil {

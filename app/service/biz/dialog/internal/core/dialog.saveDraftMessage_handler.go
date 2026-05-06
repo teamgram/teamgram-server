@@ -36,13 +36,20 @@ func (c *DialogCore) DialogSaveDraftMessage(in *dialog.TLDialogSaveDraftMessage)
 		return nil, dialog.WrapDialogStorage("marshal draft payload", err)
 	}
 	var (
-		draftKind int32 = 1
-		message   string
-		date      = time.Now().UTC()
+		draftKind       int32 = 1
+		message         string
+		entitiesPayload = []byte{}
+		date            = time.Now().UTC()
 	)
 	if draft, ok := in.Message.(*tg.TLDraftMessage); ok {
 		message = draft.Message
 		date = time.Unix(int64(draft.Date), 0).UTC()
+		if draft.Entities != nil {
+			entitiesPayload, err = json.Marshal(draft.Entities)
+			if err != nil {
+				return nil, dialog.WrapDialogStorage("marshal draft entities", err)
+			}
+		}
 	}
 	if _, ok := in.Message.(*tg.TLDraftMessageEmpty); ok {
 		draftKind = 0
@@ -54,6 +61,7 @@ func (c *DialogCore) DialogSaveDraftMessage(in *dialog.TLDialogSaveDraftMessage)
 		PeerID:              in.PeerId,
 		DraftKind:           draftKind,
 		Message:             message,
+		EntitiesPayload:     entitiesPayload,
 		DraftPayload:        payload,
 		Date:                date,
 		SourcePermAuthKeyID: in.SourcePermAuthKeyId,
