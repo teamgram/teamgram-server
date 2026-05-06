@@ -17,33 +17,22 @@ func (r *Repository) CountDialogs(ctx context.Context, userID int64, excludePinn
 }
 
 func (r *Repository) ListPinnedDialogs(ctx context.Context, userID int64, folderID int32) ([]DialogRecord, error) {
-	if r == nil || r.db == nil {
-		return nil, wrapReadStorage("list pinned dialogs", errors.New("dialog mysql is not configured"))
+	if r == nil || r.model == nil {
+		return nil, wrapReadStorage("list pinned dialogs", errors.New("dialog models are not configured"))
 	}
-	orderColumn := "main_pinned_order"
-	where := "user_id = ? AND main_pinned_order > 0"
-	args := []interface{}{userID}
+	var (
+		rows     []model.DialogPreferences
+		pinOrder func(model.DialogPreferences) int64
+		err      error
+	)
 	if folderID != 0 {
-		orderColumn = "folder_pinned_order"
-		where = "user_id = ? AND folder_id = ? AND folder_pinned_order > 0"
-		args = []interface{}{userID, folderID}
+		rows, err = r.model.DialogPreferencesModel.SelectFolderPinned(ctx, userID, folderID)
+		pinOrder = func(row model.DialogPreferences) int64 { return row.FolderPinnedOrder }
+	} else {
+		rows, err = r.model.DialogPreferencesModel.SelectMainPinned(ctx, userID)
+		pinOrder = func(row model.DialogPreferences) int64 { return row.MainPinnedOrder }
 	}
-	query := `
-SELECT
-	user_id, peer_type, peer_id, peer_dialog_id, folder_id, ` + orderColumn + ` AS pin_order
-FROM dialog_preferences
-WHERE ` + where + `
-ORDER BY ` + orderColumn + ` DESC`
-	type pinnedDialogRow struct {
-		UserID       int64 `db:"user_id"`
-		PeerType     int32 `db:"peer_type"`
-		PeerID       int64 `db:"peer_id"`
-		PeerDialogID int64 `db:"peer_dialog_id"`
-		FolderID     int32 `db:"folder_id"`
-		PinOrder     int64 `db:"pin_order"`
-	}
-	var rows []pinnedDialogRow
-	if err := r.db.QueryRowsPartial(ctx, &rows, query, args...); err != nil {
+	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
 			return []DialogRecord{}, nil
 		}
@@ -52,13 +41,13 @@ ORDER BY ` + orderColumn + ` DESC`
 	records := make([]DialogRecord, 0, len(rows))
 	for _, row := range rows {
 		records = append(records, DialogRecord{
-			UserID:       row.UserID,
+			UserID:       row.UserId,
 			PeerType:     row.PeerType,
-			PeerID:       row.PeerID,
-			PeerDialogID: row.PeerDialogID,
-			FolderID:     row.FolderID,
-			Pinned:       row.PinOrder,
-			Order:        row.PinOrder,
+			PeerID:       row.PeerId,
+			PeerDialogID: row.PeerDialogId,
+			FolderID:     row.FolderId,
+			Pinned:       pinOrder(row),
+			Order:        pinOrder(row),
 		})
 	}
 	return records, nil

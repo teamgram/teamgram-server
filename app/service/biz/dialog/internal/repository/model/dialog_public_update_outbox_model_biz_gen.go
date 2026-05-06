@@ -16,6 +16,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 )
@@ -31,12 +32,24 @@ type bizDialogPublicUpdateOutboxModel interface {
 	Insert(ctx context.Context, data *DialogPublicUpdateOutbox) (lastInsertId, rowsAffected int64, err error)
 	InsertIgnore(ctx context.Context, data *DialogPublicUpdateOutbox) (lastInsertId, rowsAffected int64, err error)
 	SelectByTargetOperation(ctx context.Context, targetUserId int64, operationId string, deliveryPath string, publicUpdateType string) (*DialogPublicUpdateOutbox, error)
+	MarkPublishing(ctx context.Context, status int32, leaseOwner string, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error)
+	MarkPublishedPTS(ctx context.Context, status int32, publishedPts int64, publishedPtsCount int32, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error)
+	MarkPublishedAuthSeq(ctx context.Context, status int32, publishedSeq int64, publishedDate int32, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error)
+	MarkRetryable(ctx context.Context, status int32, attemptCount int32, nextRetryAt time.Time, leaseUntil time.Time, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error)
+	MarkBlocked(ctx context.Context, status int32, leaseUntil time.Time, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error)
+	ResetBlocked(ctx context.Context, status int32, nextRetryAt time.Time, leaseUntil time.Time, oldStatus int32, outboxId int64) (rowsAffected int64, err error)
 }
 
 type DialogPublicUpdateOutboxTxModel interface {
 	Insert(data *DialogPublicUpdateOutbox) (lastInsertId, rowsAffected int64, err error)
 	InsertIgnore(data *DialogPublicUpdateOutbox) (lastInsertId, rowsAffected int64, err error)
 	SelectByTargetOperation(targetUserId int64, operationId string, deliveryPath string, publicUpdateType string) (*DialogPublicUpdateOutbox, error)
+	MarkPublishing(status int32, leaseOwner string, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error)
+	MarkPublishedPTS(status int32, publishedPts int64, publishedPtsCount int32, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error)
+	MarkPublishedAuthSeq(status int32, publishedSeq int64, publishedDate int32, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error)
+	MarkRetryable(status int32, attemptCount int32, nextRetryAt time.Time, leaseUntil time.Time, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error)
+	MarkBlocked(status int32, leaseUntil time.Time, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error)
+	ResetBlocked(status int32, nextRetryAt time.Time, leaseUntil time.Time, oldStatus int32, outboxId int64) (rowsAffected int64, err error)
 }
 
 type defaultDialogPublicUpdateOutboxTxModel struct {
@@ -205,6 +218,294 @@ func (m *defaultDialogPublicUpdateOutboxTxModel) SelectByTargetOperation(targetU
 		return
 	}
 	rValue = do
+
+	return
+}
+
+// MarkPublishing
+// update dialog_public_update_outbox set `status` = :status, lease_owner = :lease_owner, lease_until = :lease_until where outbox_id = :outbox_id
+func (m *defaultDialogPublicUpdateOutboxModel) MarkPublishing(ctx context.Context, status int32, leaseOwner string, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error) {
+
+	var (
+		query   = "update dialog_public_update_outbox set `status` = ?, lease_owner = ?, lease_until = ? where outbox_id = ?"
+		rResult sql.Result
+	)
+
+	rResult, err = m.db.Exec(ctx, query, status, leaseOwner, leaseUntil, outboxId)
+
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.MarkPublishing exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.MarkPublishing rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// MarkPublishing
+// update dialog_public_update_outbox set `status` = :status, lease_owner = :lease_owner, lease_until = :lease_until where outbox_id = :outbox_id
+func (m *defaultDialogPublicUpdateOutboxTxModel) MarkPublishing(status int32, leaseOwner string, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update dialog_public_update_outbox set `status` = ?, lease_owner = ?, lease_until = ? where outbox_id = ?"
+		rResult sql.Result
+	)
+	rResult, err = m.tx.Exec(query, status, leaseOwner, leaseUntil, outboxId)
+
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.MarkPublishing exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.MarkPublishing rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// MarkPublishedPTS
+// update dialog_public_update_outbox set `status` = :status, published_pts = :published_pts, published_pts_count = :published_pts_count, lease_owner = ”, lease_until = :lease_until, last_error_kind = ”, last_error_message = ” where outbox_id = :outbox_id
+func (m *defaultDialogPublicUpdateOutboxModel) MarkPublishedPTS(ctx context.Context, status int32, publishedPts int64, publishedPtsCount int32, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error) {
+
+	var (
+		query   = "update dialog_public_update_outbox set `status` = ?, published_pts = ?, published_pts_count = ?, lease_owner = '', lease_until = ?, last_error_kind = '', last_error_message = '' where outbox_id = ?"
+		rResult sql.Result
+	)
+
+	rResult, err = m.db.Exec(ctx, query, status, publishedPts, publishedPtsCount, leaseUntil, outboxId)
+
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.MarkPublishedPTS exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.MarkPublishedPTS rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// MarkPublishedPTS
+// update dialog_public_update_outbox set `status` = :status, published_pts = :published_pts, published_pts_count = :published_pts_count, lease_owner = ”, lease_until = :lease_until, last_error_kind = ”, last_error_message = ” where outbox_id = :outbox_id
+func (m *defaultDialogPublicUpdateOutboxTxModel) MarkPublishedPTS(status int32, publishedPts int64, publishedPtsCount int32, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update dialog_public_update_outbox set `status` = ?, published_pts = ?, published_pts_count = ?, lease_owner = '', lease_until = ?, last_error_kind = '', last_error_message = '' where outbox_id = ?"
+		rResult sql.Result
+	)
+	rResult, err = m.tx.Exec(query, status, publishedPts, publishedPtsCount, leaseUntil, outboxId)
+
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.MarkPublishedPTS exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.MarkPublishedPTS rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// MarkPublishedAuthSeq
+// update dialog_public_update_outbox set `status` = :status, published_seq = :published_seq, published_date = :published_date, lease_owner = ”, lease_until = :lease_until, last_error_kind = ”, last_error_message = ” where outbox_id = :outbox_id
+func (m *defaultDialogPublicUpdateOutboxModel) MarkPublishedAuthSeq(ctx context.Context, status int32, publishedSeq int64, publishedDate int32, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error) {
+
+	var (
+		query   = "update dialog_public_update_outbox set `status` = ?, published_seq = ?, published_date = ?, lease_owner = '', lease_until = ?, last_error_kind = '', last_error_message = '' where outbox_id = ?"
+		rResult sql.Result
+	)
+
+	rResult, err = m.db.Exec(ctx, query, status, publishedSeq, publishedDate, leaseUntil, outboxId)
+
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.MarkPublishedAuthSeq exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.MarkPublishedAuthSeq rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// MarkPublishedAuthSeq
+// update dialog_public_update_outbox set `status` = :status, published_seq = :published_seq, published_date = :published_date, lease_owner = ”, lease_until = :lease_until, last_error_kind = ”, last_error_message = ” where outbox_id = :outbox_id
+func (m *defaultDialogPublicUpdateOutboxTxModel) MarkPublishedAuthSeq(status int32, publishedSeq int64, publishedDate int32, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update dialog_public_update_outbox set `status` = ?, published_seq = ?, published_date = ?, lease_owner = '', lease_until = ?, last_error_kind = '', last_error_message = '' where outbox_id = ?"
+		rResult sql.Result
+	)
+	rResult, err = m.tx.Exec(query, status, publishedSeq, publishedDate, leaseUntil, outboxId)
+
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.MarkPublishedAuthSeq exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.MarkPublishedAuthSeq rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// MarkRetryable
+// update dialog_public_update_outbox set `status` = :status, attempt_count = :attempt_count, next_retry_at = :next_retry_at, lease_owner = ”, lease_until = :lease_until, last_error_kind = :last_error_kind, last_error_message = :last_error_message where outbox_id = :outbox_id
+func (m *defaultDialogPublicUpdateOutboxModel) MarkRetryable(ctx context.Context, status int32, attemptCount int32, nextRetryAt time.Time, leaseUntil time.Time, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error) {
+
+	var (
+		query   = "update dialog_public_update_outbox set `status` = ?, attempt_count = ?, next_retry_at = ?, lease_owner = '', lease_until = ?, last_error_kind = ?, last_error_message = ? where outbox_id = ?"
+		rResult sql.Result
+	)
+
+	rResult, err = m.db.Exec(ctx, query, status, attemptCount, nextRetryAt, leaseUntil, lastErrorKind, lastErrorMessage, outboxId)
+
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.MarkRetryable exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.MarkRetryable rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// MarkRetryable
+// update dialog_public_update_outbox set `status` = :status, attempt_count = :attempt_count, next_retry_at = :next_retry_at, lease_owner = ”, lease_until = :lease_until, last_error_kind = :last_error_kind, last_error_message = :last_error_message where outbox_id = :outbox_id
+func (m *defaultDialogPublicUpdateOutboxTxModel) MarkRetryable(status int32, attemptCount int32, nextRetryAt time.Time, leaseUntil time.Time, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update dialog_public_update_outbox set `status` = ?, attempt_count = ?, next_retry_at = ?, lease_owner = '', lease_until = ?, last_error_kind = ?, last_error_message = ? where outbox_id = ?"
+		rResult sql.Result
+	)
+	rResult, err = m.tx.Exec(query, status, attemptCount, nextRetryAt, leaseUntil, lastErrorKind, lastErrorMessage, outboxId)
+
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.MarkRetryable exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.MarkRetryable rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// MarkBlocked
+// update dialog_public_update_outbox set `status` = :status, lease_owner = ”, lease_until = :lease_until, last_error_kind = :last_error_kind, last_error_message = :last_error_message where outbox_id = :outbox_id
+func (m *defaultDialogPublicUpdateOutboxModel) MarkBlocked(ctx context.Context, status int32, leaseUntil time.Time, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error) {
+
+	var (
+		query   = "update dialog_public_update_outbox set `status` = ?, lease_owner = '', lease_until = ?, last_error_kind = ?, last_error_message = ? where outbox_id = ?"
+		rResult sql.Result
+	)
+
+	rResult, err = m.db.Exec(ctx, query, status, leaseUntil, lastErrorKind, lastErrorMessage, outboxId)
+
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.MarkBlocked exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.MarkBlocked rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// MarkBlocked
+// update dialog_public_update_outbox set `status` = :status, lease_owner = ”, lease_until = :lease_until, last_error_kind = :last_error_kind, last_error_message = :last_error_message where outbox_id = :outbox_id
+func (m *defaultDialogPublicUpdateOutboxTxModel) MarkBlocked(status int32, leaseUntil time.Time, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update dialog_public_update_outbox set `status` = ?, lease_owner = '', lease_until = ?, last_error_kind = ?, last_error_message = ? where outbox_id = ?"
+		rResult sql.Result
+	)
+	rResult, err = m.tx.Exec(query, status, leaseUntil, lastErrorKind, lastErrorMessage, outboxId)
+
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.MarkBlocked exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.MarkBlocked rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// ResetBlocked
+// update dialog_public_update_outbox set `status` = :status, attempt_count = 0, next_retry_at = :next_retry_at, lease_owner = ”, lease_until = :lease_until, last_error_kind = ”, last_error_message = ” where `status` = :old_status and outbox_id = :outbox_id
+func (m *defaultDialogPublicUpdateOutboxModel) ResetBlocked(ctx context.Context, status int32, nextRetryAt time.Time, leaseUntil time.Time, oldStatus int32, outboxId int64) (rowsAffected int64, err error) {
+
+	var (
+		query   = "update dialog_public_update_outbox set `status` = ?, attempt_count = 0, next_retry_at = ?, lease_owner = '', lease_until = ?, last_error_kind = '', last_error_message = '' where `status` = ? and outbox_id = ?"
+		rResult sql.Result
+	)
+
+	rResult, err = m.db.Exec(ctx, query, status, nextRetryAt, leaseUntil, oldStatus, outboxId)
+
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.ResetBlocked exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.ResetBlocked rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// ResetBlocked
+// update dialog_public_update_outbox set `status` = :status, attempt_count = 0, next_retry_at = :next_retry_at, lease_owner = ”, lease_until = :lease_until, last_error_kind = ”, last_error_message = ” where `status` = :old_status and outbox_id = :outbox_id
+func (m *defaultDialogPublicUpdateOutboxTxModel) ResetBlocked(status int32, nextRetryAt time.Time, leaseUntil time.Time, oldStatus int32, outboxId int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update dialog_public_update_outbox set `status` = ?, attempt_count = 0, next_retry_at = ?, lease_owner = '', lease_until = ?, last_error_kind = '', last_error_message = '' where `status` = ? and outbox_id = ?"
+		rResult sql.Result
+	)
+	rResult, err = m.tx.Exec(query, status, nextRetryAt, leaseUntil, oldStatus, outboxId)
+
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.ResetBlocked exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_public_update_outbox.ResetBlocked rows affected: %w", err)
+		return
+	}
 
 	return
 }

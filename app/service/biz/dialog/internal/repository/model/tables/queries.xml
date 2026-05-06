@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<queries namespace="DialogRepositoryQueries">
+    <result name="SavedDialogNextPinOrderRow">
+        <field name="NextPinOrder" type="int64" db="next_pin_order"/>
+    </result>
+
+    <result name="DialogAuthSeqOutboxRow">
+        <field name="OutboxId" type="int64" db="outbox_id"/>
+        <field name="UserId" type="int64" db="user_id"/>
+        <field name="SourcePermAuthKeyId" type="int64" db="source_perm_auth_key_id"/>
+        <field name="TargetAuthPolicy" type="string" db="target_auth_policy"/>
+        <field name="OperationId" type="string" db="operation_id"/>
+        <field name="EventType" type="string" db="event_type"/>
+        <field name="PeerType" type="int32" db="peer_type"/>
+        <field name="PeerId" type="int64" db="peer_id"/>
+        <field name="PayloadSchemaVersion" type="int32" db="payload_schema_version"/>
+        <field name="Payload" type="[]byte" db="payload"/>
+        <field name="PayloadHash" type="[]byte" db="payload_hash"/>
+        <field name="Status" type="int32" db="status"/>
+        <field name="AttemptCount" type="int32" db="attempt_count"/>
+        <field name="NextRetryAt" type="time.Time" db="next_retry_at"/>
+        <field name="LeaseOwner" type="string" db="lease_owner"/>
+        <field name="LeaseUntil" type="time.Time" db="lease_until"/>
+        <field name="PublishedSeq" type="int64" db="published_seq"/>
+        <field name="PublishedDate" type="int32" db="published_date"/>
+        <field name="LastErrorKind" type="string" db="last_error_kind"/>
+        <field name="LastErrorMessage" type="string" db="last_error_message"/>
+    </result>
+
+    <result name="DialogPublicUpdateOutboxRow">
+        <field name="OutboxId" type="int64" db="outbox_id"/>
+        <field name="SourceUserId" type="int64" db="source_user_id"/>
+        <field name="SourcePermAuthKeyId" type="int64" db="source_perm_auth_key_id"/>
+        <field name="TargetUserId" type="int64" db="target_user_id"/>
+        <field name="TargetAuthPolicy" type="string" db="target_auth_policy"/>
+        <field name="OperationId" type="string" db="operation_id"/>
+        <field name="DeliveryPath" type="string" db="delivery_path"/>
+        <field name="PublicUpdateType" type="string" db="public_update_type"/>
+        <field name="PeerType" type="int32" db="peer_type"/>
+        <field name="PeerId" type="int64" db="peer_id"/>
+        <field name="PayloadSchemaVersion" type="int32" db="payload_schema_version"/>
+        <field name="Payload" type="[]byte" db="payload"/>
+        <field name="PayloadHash" type="[]byte" db="payload_hash"/>
+        <field name="Status" type="int32" db="status"/>
+        <field name="AttemptCount" type="int32" db="attempt_count"/>
+        <field name="NextRetryAt" type="time.Time" db="next_retry_at"/>
+        <field name="LeaseOwner" type="string" db="lease_owner"/>
+        <field name="LeaseUntil" type="time.Time" db="lease_until"/>
+        <field name="PublishedPts" type="int64" db="published_pts"/>
+        <field name="PublishedPtsCount" type="int32" db="published_pts_count"/>
+        <field name="PublishedSeq" type="int64" db="published_seq"/>
+        <field name="PublishedDate" type="int32" db="published_date"/>
+        <field name="LastErrorKind" type="string" db="last_error_kind"/>
+        <field name="LastErrorMessage" type="string" db="last_error_message"/>
+    </result>
+
+    <query name="SelectSavedDialogNextPinOrder" result="SavedDialogNextPinOrderRow">
+        <sql>
+            SELECT
+                COALESCE(MAX(pin_order), 0) + 1 AS next_pin_order
+            FROM
+                saved_dialogs
+            WHERE
+                user_id = :user_id AND pinned = 1 AND deleted = 0
+            LIMIT 1
+        </sql>
+    </query>
+
+    <query name="SelectAuthSeqOutboxClaimCandidates" result="DialogAuthSeqOutboxRow" result_set="list">
+        <params>
+            <param name="pending_status" type="int32"/>
+            <param name="failed_retryable_status" type="int32"/>
+            <param name="ready_before" type="time.Time"/>
+            <param name="publishing_status" type="int32"/>
+            <param name="lease_expired_before" type="time.Time"/>
+            <param name="limit" type="int32"/>
+        </params>
+        <sql>
+            SELECT
+                outbox_id, user_id, source_perm_auth_key_id, target_auth_policy, operation_id, event_type,
+                peer_type, peer_id, payload_schema_version, payload, payload_hash, status, attempt_count,
+                next_retry_at, lease_owner, lease_until, published_seq, published_date, last_error_kind,
+                last_error_message
+            FROM
+                dialog_auth_seq_outbox
+            WHERE
+                ((status IN (:pending_status, :failed_retryable_status) AND next_retry_at &lt;= :ready_before)
+                OR (status = :publishing_status AND lease_until &lt;= :lease_expired_before))
+            ORDER BY
+                next_retry_at ASC, outbox_id ASC
+            LIMIT :limit
+            FOR UPDATE
+        </sql>
+    </query>
+
+    <query name="SelectPublicUpdateOutboxClaimCandidates" result="DialogPublicUpdateOutboxRow" result_set="list">
+        <params>
+            <param name="pending_status" type="int32"/>
+            <param name="failed_retryable_status" type="int32"/>
+            <param name="ready_before" type="time.Time"/>
+            <param name="publishing_status" type="int32"/>
+            <param name="lease_expired_before" type="time.Time"/>
+            <param name="limit" type="int32"/>
+        </params>
+        <sql>
+            SELECT
+                outbox_id, source_user_id, source_perm_auth_key_id, target_user_id, target_auth_policy,
+                operation_id, delivery_path, public_update_type, peer_type, peer_id, payload_schema_version,
+                payload, payload_hash, status, attempt_count, next_retry_at, lease_owner, lease_until,
+                published_pts, published_pts_count, published_seq, published_date, last_error_kind,
+                last_error_message
+            FROM
+                dialog_public_update_outbox
+            WHERE
+                ((status IN (:pending_status, :failed_retryable_status) AND next_retry_at &lt;= :ready_before)
+                OR (status = :publishing_status AND lease_until &lt;= :lease_expired_before))
+            ORDER BY
+                next_retry_at ASC, outbox_id ASC
+            LIMIT :limit
+            FOR UPDATE
+        </sql>
+    </query>
+</queries>

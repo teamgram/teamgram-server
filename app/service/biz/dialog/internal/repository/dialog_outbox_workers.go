@@ -280,11 +280,8 @@ func nextOutboxRetry(attempt int32) time.Duration {
 	return time.Duration(seconds) * time.Second
 }
 
-func outboxRetryAgeExceeded(firstRetryAtText string, now time.Time) bool {
-	firstRetryAt, err := parseMysqlTimestamp(firstRetryAtText)
-	if err != nil {
-		return false
-	}
+func outboxRetryAgeExceeded(firstRetryAt time.Time, now time.Time) bool {
+	firstRetryAt = mysqlDateTimeToUTC(firstRetryAt)
 	if firstRetryAt.IsZero() || firstRetryAt.Year() <= 1971 {
 		return false
 	}

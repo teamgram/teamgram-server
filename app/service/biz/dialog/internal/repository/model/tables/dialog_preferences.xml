@@ -61,4 +61,80 @@
                 user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id LIMIT 1
         </sql>
     </operation>
+
+    <operation name="SelectMainPinned" result_set="list">
+        <sql>
+            SELECT
+                user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version
+            FROM
+                dialog_preferences
+            WHERE
+                user_id = :user_id AND main_pinned_order &gt; 0
+            ORDER BY
+                main_pinned_order DESC
+        </sql>
+    </operation>
+
+    <operation name="SelectFolderPinned" result_set="list">
+        <sql>
+            SELECT
+                user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version
+            FROM
+                dialog_preferences
+            WHERE
+                user_id = :user_id AND folder_id = :folder_id AND folder_pinned_order &gt; 0
+            ORDER BY
+                folder_pinned_order DESC
+        </sql>
+    </operation>
+
+    <operation name="ClearMainPinned">
+        <sql>
+            UPDATE
+                dialog_preferences
+            SET
+                main_pinned_order = 0
+            WHERE
+                user_id = :user_id AND main_pinned_order &gt; 0
+        </sql>
+    </operation>
+
+    <operation name="ClearMainPinnedExcept">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            UPDATE
+                dialog_preferences
+            SET
+                main_pinned_order = 0
+            WHERE
+                user_id = :user_id AND main_pinned_order &gt; 0 AND peer_dialog_id NOT IN (:idList)
+        </sql>
+    </operation>
+
+    <operation name="ClearFolderPinned">
+        <sql>
+            UPDATE
+                dialog_preferences
+            SET
+                folder_pinned_order = 0
+            WHERE
+                user_id = :user_id AND folder_id = :folder_id AND folder_pinned_order &gt; 0
+        </sql>
+    </operation>
+
+    <operation name="ClearFolderPinnedExcept">
+        <params>
+            <param name="idList" type="[]int64" />
+        </params>
+        <sql>
+            UPDATE
+                dialog_preferences
+            SET
+                folder_pinned_order = 0
+            WHERE
+                user_id = :user_id AND folder_id = :folder_id AND folder_pinned_order &gt; 0 AND peer_dialog_id NOT IN (:idList)
+        </sql>
+    </operation>
 </table>

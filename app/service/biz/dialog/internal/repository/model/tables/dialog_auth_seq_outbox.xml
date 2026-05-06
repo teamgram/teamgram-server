@@ -28,4 +28,86 @@
                 user_id = :user_id AND operation_id = :operation_id LIMIT 1
         </sql>
     </operation>
+
+    <operation name="MarkPublishing">
+        <sql>
+            UPDATE
+                dialog_auth_seq_outbox
+            SET
+                status = :status,
+                lease_owner = :lease_owner,
+                lease_until = :lease_until
+            WHERE
+                outbox_id = :outbox_id
+        </sql>
+    </operation>
+
+    <operation name="MarkPublished">
+        <sql>
+            UPDATE
+                dialog_auth_seq_outbox
+            SET
+                status = :status,
+                published_seq = :published_seq,
+                published_date = :published_date,
+                lease_owner = '',
+                lease_until = :lease_until,
+                last_error_kind = '',
+                last_error_message = ''
+            WHERE
+                outbox_id = :outbox_id
+        </sql>
+    </operation>
+
+    <operation name="MarkRetryable">
+        <sql>
+            UPDATE
+                dialog_auth_seq_outbox
+            SET
+                status = :status,
+                attempt_count = :attempt_count,
+                next_retry_at = :next_retry_at,
+                lease_owner = '',
+                lease_until = :lease_until,
+                last_error_kind = :last_error_kind,
+                last_error_message = :last_error_message
+            WHERE
+                outbox_id = :outbox_id
+        </sql>
+    </operation>
+
+    <operation name="MarkBlocked">
+        <sql>
+            UPDATE
+                dialog_auth_seq_outbox
+            SET
+                status = :status,
+                lease_owner = '',
+                lease_until = :lease_until,
+                last_error_kind = :last_error_kind,
+                last_error_message = :last_error_message
+            WHERE
+                outbox_id = :outbox_id
+        </sql>
+    </operation>
+
+    <operation name="ResetBlocked">
+        <params>
+            <param name="old_status" type="int32"/>
+        </params>
+        <sql>
+            UPDATE
+                dialog_auth_seq_outbox
+            SET
+                status = :status,
+                attempt_count = 0,
+                next_retry_at = :next_retry_at,
+                lease_owner = '',
+                lease_until = :lease_until,
+                last_error_kind = '',
+                last_error_message = ''
+            WHERE
+                status = :old_status AND outbox_id = :outbox_id
+        </sql>
+    </operation>
 </table>

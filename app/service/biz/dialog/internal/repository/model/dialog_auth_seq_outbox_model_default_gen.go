@@ -16,6 +16,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 
@@ -46,26 +47,26 @@ type (
 	}
 
 	DialogAuthSeqOutbox struct {
-		OutboxId             int64  `db:"outbox_id" json:"outbox_id"`
-		UserId               int64  `db:"user_id" json:"user_id"`
-		SourcePermAuthKeyId  int64  `db:"source_perm_auth_key_id" json:"source_perm_auth_key_id"`
-		TargetAuthPolicy     string `db:"target_auth_policy" json:"target_auth_policy"`
-		OperationId          string `db:"operation_id" json:"operation_id"`
-		EventType            string `db:"event_type" json:"event_type"`
-		PeerType             int32  `db:"peer_type" json:"peer_type"`
-		PeerId               int64  `db:"peer_id" json:"peer_id"`
-		PayloadSchemaVersion int32  `db:"payload_schema_version" json:"payload_schema_version"`
-		Payload              []byte `db:"payload" json:"payload"`
-		PayloadHash          []byte `db:"payload_hash" json:"payload_hash"`
-		Status               int32  `db:"status" json:"status"`
-		AttemptCount         int32  `db:"attempt_count" json:"attempt_count"`
-		NextRetryAt          string `db:"next_retry_at" json:"next_retry_at"`
-		LeaseOwner           string `db:"lease_owner" json:"lease_owner"`
-		LeaseUntil           string `db:"lease_until" json:"lease_until"`
-		PublishedSeq         int64  `db:"published_seq" json:"published_seq"`
-		PublishedDate        int32  `db:"published_date" json:"published_date"`
-		LastErrorKind        string `db:"last_error_kind" json:"last_error_kind"`
-		LastErrorMessage     string `db:"last_error_message" json:"last_error_message"`
+		OutboxId             int64     `db:"outbox_id" json:"outbox_id"`
+		UserId               int64     `db:"user_id" json:"user_id"`
+		SourcePermAuthKeyId  int64     `db:"source_perm_auth_key_id" json:"source_perm_auth_key_id"`
+		TargetAuthPolicy     string    `db:"target_auth_policy" json:"target_auth_policy"`
+		OperationId          string    `db:"operation_id" json:"operation_id"`
+		EventType            string    `db:"event_type" json:"event_type"`
+		PeerType             int32     `db:"peer_type" json:"peer_type"`
+		PeerId               int64     `db:"peer_id" json:"peer_id"`
+		PayloadSchemaVersion int32     `db:"payload_schema_version" json:"payload_schema_version"`
+		Payload              []byte    `db:"payload" json:"payload"`
+		PayloadHash          []byte    `db:"payload_hash" json:"payload_hash"`
+		Status               int32     `db:"status" json:"status"`
+		AttemptCount         int32     `db:"attempt_count" json:"attempt_count"`
+		NextRetryAt          time.Time `db:"next_retry_at" json:"next_retry_at"`
+		LeaseOwner           string    `db:"lease_owner" json:"lease_owner"`
+		LeaseUntil           time.Time `db:"lease_until" json:"lease_until"`
+		PublishedSeq         int64     `db:"published_seq" json:"published_seq"`
+		PublishedDate        int32     `db:"published_date" json:"published_date"`
+		LastErrorKind        string    `db:"last_error_kind" json:"last_error_kind"`
+		LastErrorMessage     string    `db:"last_error_message" json:"last_error_message"`
 	}
 )
 

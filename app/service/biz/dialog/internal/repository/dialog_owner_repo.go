@@ -6,7 +6,6 @@ import (
 	"crypto/sha256"
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
@@ -121,7 +120,7 @@ func (r *Repository) ReorderPinnedDialogs(ctx context.Context, in ReorderPinnedD
 				}
 			}
 		}
-		if err := clearOmittedPinnedPreferences(tx, in.UserID, in.FolderID, peerDialogIDs); err != nil {
+		if err := clearOmittedPinnedPreferences(txModels, in.UserID, in.FolderID, peerDialogIDs); err != nil {
 			return err
 		}
 		if err := incrementPreferenceVersion(txModels, in.UserID, scope, in.FolderID); err != nil {
@@ -241,7 +240,7 @@ func (r *Repository) SaveDraft(ctx context.Context, in SaveDraftInput) (*DraftMu
 			ReplyToPeerSeq:            in.ReplyToPeerSeq,
 			DraftPayloadSchemaVersion: 1,
 			DraftPayload:              draftPayload,
-			Date:                      mysqlTimestamp(in.Date),
+			Date:                      mysqlDateTimeForBind(in.Date),
 		})
 		if err != nil {
 			return storageError("save draft", err)
@@ -298,7 +297,7 @@ func (r *Repository) ClearDraftAfterSend(ctx context.Context, in ClearDraftAfter
 			return err
 		}
 		affected, err = txModels.DialogDraftsModel.ClearByUserPeerBeforeDate(
-			[]byte{}, 1, []byte(`{"schema_version":1}`), mysqlZeroTime(), in.UserID, peerDialogID, mysqlTimestamp(in.ClearBeforeDate),
+			[]byte{}, 1, []byte(`{"schema_version":1}`), mysqlZeroDateTime(), in.UserID, peerDialogID, mysqlTimestamp(in.ClearBeforeDate),
 		)
 		if err != nil {
 			return storageError("clear draft after send", err)
@@ -360,7 +359,7 @@ func (r *Repository) ClearAllDrafts(ctx context.Context, in ClearAllDraftsInput)
 				continue
 			}
 			affected, err := txModels.DialogDraftsModel.ClearByUserPeerBeforeDate(
-				[]byte{}, 1, []byte(`{"schema_version":1}`), mysqlZeroTime(), in.UserID, draft.PeerDialogId, draft.Date,
+				[]byte{}, 1, []byte(`{"schema_version":1}`), mysqlZeroDateTime(), in.UserID, draft.PeerDialogId, mysqlDateTimeString(draft.Date),
 			)
 			if err != nil {
 				return storageError("clear all drafts", err)
@@ -397,10 +396,6 @@ func (r *Repository) ListActiveDrafts(ctx context.Context, userID int64) ([]Draf
 	out := make([]DraftRecord, 0, len(rows))
 	for i := range rows {
 		row := rows[i]
-		date, err := parseMysqlTimestamp(row.Date)
-		if err != nil {
-			return nil, storageError("parse draft date", err)
-		}
 		out = append(out, DraftRecord{
 			UserID:          row.UserId,
 			PeerType:        row.PeerType,
@@ -411,7 +406,7 @@ func (r *Repository) ListActiveDrafts(ctx context.Context, userID int64) ([]Draf
 			EntitiesPayload: row.EntitiesPayload,
 			ReplyToPeerSeq:  row.ReplyToPeerSeq,
 			DraftPayload:    row.DraftPayload,
-			Date:            date,
+			Date:            mysqlDateTimeToUTC(row.Date),
 		})
 	}
 	return out, nil
@@ -432,7 +427,7 @@ func (r *Repository) UpsertSavedDialogFromMessage(ctx context.Context, in SavedD
 		PeerId:                in.PeerID,
 		TopPeerSeq:            in.TopPeerSeq,
 		TopCanonicalMessageId: in.TopCanonicalMessageID,
-		TopMessageDate:        mysqlTimestamp(in.TopMessageDate),
+		TopMessageDate:        mysqlDateTimeForBind(in.TopMessageDate),
 		SavedSchemaVersion:    1,
 		SavedPayload:          in.Payload,
 	})
@@ -454,22 +449,14 @@ func (r *Repository) ListSavedDialogs(ctx context.Context, userID int64, exclude
 		offsetDate = time.Date(9999, 12, 31, 23, 59, 59, 0, time.UTC)
 	}
 	if !excludePinned {
-		rows, err := models.SavedDialogsModel.SelectDialogs(ctx, userID, mysqlTimestamp(offsetDate), limit)
+		rows, err := models.SavedDialogsModel.SelectDialogs(ctx, userID, mysqlDateTimeForBind(offsetDate), limit)
 		if err != nil {
 			return nil, storageError("select saved dialogs", err)
 		}
 		return makeSavedDialogRecords(rows)
 	}
-	rows := make([]model.SavedDialogs, 0)
-	query := `
-SELECT
-	user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload
-FROM
-	saved_dialogs
-WHERE
-	user_id = ? AND deleted = 0 AND pinned = 0 AND top_message_date < ?
-ORDER BY top_message_date DESC LIMIT ?`
-	if err := r.db.QueryRowsPartial(ctx, &rows, query, userID, mysqlTimestamp(offsetDate), limit); err != nil {
+	rows, err := models.SavedDialogsModel.SelectUnpinnedDialogs(ctx, userID, mysqlDateTimeForBind(offsetDate), limit)
+	if err != nil {
 		return nil, storageError("select unpinned saved dialogs", err)
 	}
 	return makeSavedDialogRecords(rows)
@@ -515,12 +502,13 @@ func (r *Repository) ToggleSavedDialogPin(ctx context.Context, in SavedDialogPin
 			pinOrder = 0
 		} else {
 			if pinOrder <= 0 {
-				if err := tx.QueryRowPartial(&pinOrder, "SELECT COALESCE(MAX(pin_order), 0) + 1 FROM saved_dialogs WHERE user_id = ? AND pinned = 1 AND deleted = 0", in.UserID); err != nil {
+				row, err := txModels.DialogRepositoryQueries.SelectSavedDialogNextPinOrder(in.UserID)
+				if err != nil {
 					return storageError("select next saved dialog pin order", err)
 				}
+				pinOrder = row.NextPinOrder
 			}
-			if _, err := tx.Exec("UPDATE saved_dialogs SET pinned = 0, pin_order = 0 WHERE user_id = ? AND pin_order = ? AND NOT (peer_type = ? AND peer_id = ?) AND deleted = 0",
-				in.UserID, pinOrder, in.PeerType, in.PeerID); err != nil {
+			if _, err := txModels.SavedDialogsModel.ClearDuplicatePinOrder(in.UserID, pinOrder, in.PeerType, in.PeerID); err != nil {
 				return storageError("clear duplicate saved dialog pin order", err)
 			}
 		}
@@ -535,17 +523,13 @@ func makeSavedDialogRecords(rows []model.SavedDialogs) ([]SavedDialogRecord, err
 	out := make([]SavedDialogRecord, 0, len(rows))
 	for i := range rows {
 		row := rows[i]
-		date, err := parseMysqlTimestamp(row.TopMessageDate)
-		if err != nil {
-			return nil, storageError("parse saved dialog top date", err)
-		}
 		out = append(out, SavedDialogRecord{
 			UserID:                row.UserId,
 			PeerType:              row.PeerType,
 			PeerID:                row.PeerId,
 			TopPeerSeq:            row.TopPeerSeq,
 			TopCanonicalMessageID: row.TopCanonicalMessageId,
-			TopMessageDate:        date,
+			TopMessageDate:        mysqlDateTimeToUTC(row.TopMessageDate),
 			Pinned:                row.Pinned,
 			PinOrder:              row.PinOrder,
 			SavedPayload:          row.SavedPayload,
@@ -800,9 +784,9 @@ func insertAuthSeqOutbox(txModels *model.TxModels, in authSeqOutboxInput) (bool,
 		PayloadHash:          hashPayload(in.Payload),
 		Status:               OutboxStatusPending,
 		AttemptCount:         0,
-		NextRetryAt:          mysqlTimestamp(time.Now().UTC()),
+		NextRetryAt:          mysqlDateTimeForBind(time.Now().UTC()),
 		LeaseOwner:           "",
-		LeaseUntil:           mysqlZeroTime(),
+		LeaseUntil:           mysqlZeroDateTime(),
 		LastErrorKind:        "",
 		LastErrorMessage:     "",
 	}
@@ -896,9 +880,9 @@ func insertPublicUpdateOutbox(txModels *model.TxModels, in publicUpdateOutboxInp
 		PayloadHash:          hashPayload(in.Payload),
 		Status:               OutboxStatusPending,
 		AttemptCount:         0,
-		NextRetryAt:          mysqlTimestamp(time.Now().UTC()),
+		NextRetryAt:          mysqlDateTimeForBind(time.Now().UTC()),
 		LeaseOwner:           "",
-		LeaseUntil:           mysqlZeroTime(),
+		LeaseUntil:           mysqlZeroDateTime(),
 		PublishedPts:         0,
 		PublishedPtsCount:    0,
 		PublishedSeq:         0,
@@ -935,25 +919,27 @@ func hashPayload(b []byte) []byte {
 	return out
 }
 
-func clearOmittedPinnedPreferences(tx *sqlx.Tx, userID int64, folderID int32, keepPeerDialogIDs []int64) error {
-	column := "main_pinned_order"
-	query := "UPDATE dialog_preferences SET main_pinned_order = 0 WHERE user_id = ? AND main_pinned_order > 0"
-	args := []interface{}{userID}
+func clearOmittedPinnedPreferences(txModels *model.TxModels, userID int64, folderID int32, keepPeerDialogIDs []int64) error {
 	if folderID != 0 {
-		column = "folder_pinned_order"
-		query = "UPDATE dialog_preferences SET folder_pinned_order = 0 WHERE user_id = ? AND folder_id = ? AND folder_pinned_order > 0"
-		args = []interface{}{userID, folderID}
-	}
-	if len(keepPeerDialogIDs) > 0 {
-		placeholders := make([]string, 0, len(keepPeerDialogIDs))
-		for _, id := range keepPeerDialogIDs {
-			placeholders = append(placeholders, "?")
-			args = append(args, id)
+		if len(keepPeerDialogIDs) == 0 {
+			if _, err := txModels.DialogPreferencesModel.ClearFolderPinned(userID, folderID); err != nil {
+				return storageError("clear omitted folder_pinned_order", err)
+			}
+			return nil
 		}
-		query += " AND peer_dialog_id NOT IN (" + strings.Join(placeholders, ",") + ")"
+		if _, err := txModels.DialogPreferencesModel.ClearFolderPinnedExcept(userID, folderID, keepPeerDialogIDs); err != nil {
+			return storageError("clear omitted folder_pinned_order", err)
+		}
+		return nil
 	}
-	if _, err := tx.Exec(query, args...); err != nil {
-		return storageError("clear omitted "+column, err)
+	if len(keepPeerDialogIDs) == 0 {
+		if _, err := txModels.DialogPreferencesModel.ClearMainPinned(userID); err != nil {
+			return storageError("clear omitted main_pinned_order", err)
+		}
+		return nil
+	}
+	if _, err := txModels.DialogPreferencesModel.ClearMainPinnedExcept(userID, keepPeerDialogIDs); err != nil {
+		return storageError("clear omitted main_pinned_order", err)
 	}
 	return nil
 }
@@ -976,4 +962,38 @@ func parseMysqlTimestamp(s string) (time.Time, error) {
 
 func mysqlZeroTime() string {
 	return "1970-01-01 00:00:00.000000"
+}
+
+func mysqlZeroDateTime() time.Time {
+	return mysqlDateTimeForBind(time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC))
+}
+
+func mysqlDriverLocation() *time.Location {
+	return time.FixedZone("Asia/Shanghai", 8*60*60)
+}
+
+func mysqlDateTimeForBind(t time.Time) time.Time {
+	if t.IsZero() {
+		return time.Time{}
+	}
+	t = t.UTC()
+	year, month, day := t.Date()
+	hour, minute, second := t.Clock()
+	return time.Date(year, month, day, hour, minute, second, t.Nanosecond(), mysqlDriverLocation())
+}
+
+func mysqlDateTimeString(t time.Time) string {
+	if t.IsZero() {
+		return ""
+	}
+	return t.Format("2006-01-02 15:04:05.000000")
+}
+
+func mysqlDateTimeToUTC(t time.Time) time.Time {
+	if t.IsZero() {
+		return time.Time{}
+	}
+	year, month, day := t.Date()
+	hour, minute, second := t.Clock()
+	return time.Date(year, month, day, hour, minute, second, t.Nanosecond(), time.UTC)
 }
