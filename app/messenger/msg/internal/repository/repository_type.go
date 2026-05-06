@@ -140,7 +140,7 @@ type MarkRetryableFailureInput struct {
 
 type MessageRepository interface {
 	CreateOrGetByClientRandom(ctx context.Context, in CreateCanonicalMessageInput) (*CanonicalMessageResult, error)
-	GetCanonicalMessageByPeerSeq(ctx context.Context, peerType int32, peerID int64, peerSeq int64) (*CanonicalMessage, error)
+	GetCanonicalMessageByPeerSeq(ctx context.Context, userID int64, peerType int32, peerID int64, peerSeq int64) (*CanonicalMessage, error)
 	ListHistoryMessages(ctx context.Context, in ListHistoryMessagesInput) ([]HistoryMessage, error)
 }
 

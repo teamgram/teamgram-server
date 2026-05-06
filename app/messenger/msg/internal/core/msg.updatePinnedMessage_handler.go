@@ -48,7 +48,7 @@ func (c *MsgCore) MsgUpdatePinnedMessage(in *msg.TLMsgUpdatePinnedMessage) (*tg.
 	var canonical *repository.CanonicalMessage
 	if !in.Unpin {
 		var err error
-		canonical, err = c.svcCtx.Repo.GetCanonicalMessageByPeerSeq(c.ctx, in.PeerType, in.PeerId, int64(in.Id))
+		canonical, err = c.svcCtx.Repo.GetCanonicalMessageByPeerSeq(c.ctx, in.UserId, in.PeerType, in.PeerId, int64(in.Id))
 		if err != nil {
 			return nil, err
 		}

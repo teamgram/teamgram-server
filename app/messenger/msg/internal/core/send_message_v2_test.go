@@ -687,7 +687,7 @@ func (f *fakeMsgRepository) CreateOrGetByClientRandom(context.Context, repositor
 	return f.canonical, nil
 }
 
-func (f *fakeMsgRepository) GetCanonicalMessageByPeerSeq(context.Context, int32, int64, int64) (*repository.CanonicalMessage, error) {
+func (f *fakeMsgRepository) GetCanonicalMessageByPeerSeq(context.Context, int64, int32, int64, int64) (*repository.CanonicalMessage, error) {
 	if f.canonicalByPeerSeq == nil {
 		return nil, msgpb.ErrSendStateConflict
 	}

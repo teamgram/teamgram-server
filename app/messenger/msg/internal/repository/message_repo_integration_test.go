@@ -323,6 +323,43 @@ func TestMessageRepositoryListHistoryMessagesUsesCanonicalSender(t *testing.T) {
 	}
 }
 
+func TestMessageRepositoryCreateCanonicalUsesConversationScopedPeerSeq(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	repo := NewForTest(db, &testIDGenerator{next: base + 65_000})
+
+	userA := base + 651
+	userB := base + 652
+	now := int32(time.Now().Unix())
+	first := createCanonicalMessageForTest(t, ctx, repo, userA, userB, base+653, "a to b", now)
+	second := createCanonicalMessageForTest(t, ctx, repo, userB, userA, base+654, "b to a", now+1)
+	insertUserMessageViewForTest(t, ctx, db, userA, payload.PeerTypeUser, userB, second, userB, false)
+
+	if second.PeerSeq <= first.PeerSeq {
+		t.Fatalf("reverse message peer_seq = %d, want greater than first direction peer_seq %d", second.PeerSeq, first.PeerSeq)
+	}
+
+	history, err := repo.ListHistoryMessages(ctx, ListHistoryMessagesInput{
+		UserID:   userA,
+		PeerType: payload.PeerTypeUser,
+		PeerID:   userB,
+		Limit:    10,
+	})
+	if err != nil {
+		t.Fatalf("ListHistoryMessages() error = %v", err)
+	}
+	if len(history) != 2 {
+		t.Fatalf("ListHistoryMessages() len = %d, want 2: %+v", len(history), history)
+	}
+	if history[0].CanonicalMessageID != second.CanonicalMessageID || history[0].PeerSeq != second.PeerSeq || history[0].Outgoing {
+		t.Fatalf("newest history row = %+v, want incoming reverse message %+v", history[0], second)
+	}
+	if history[1].CanonicalMessageID != first.CanonicalMessageID || history[1].PeerSeq != first.PeerSeq || !history[1].Outgoing {
+		t.Fatalf("older history row = %+v, want outgoing first message %+v", history[1], first)
+	}
+}
+
 func TestMessageRepositoryListHistoryMessagesOffsetsByViewerTimeline(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)

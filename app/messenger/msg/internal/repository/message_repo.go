@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"math"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/pkg/pagination"
 )
 
@@ -52,7 +54,15 @@ func (r *Repository) CreateOrGetByClientRandom(ctx context.Context, in CreateCan
 			return nil
 		}
 
-		peerSeq, err := nextPeerSeqTx(txModels, in.PeerType, in.PeerID)
+		sequencePeerID, sequenceScoped := messageSequencePeerID(in.PeerType, in.SenderUserID, in.PeerID)
+		var minNextPeerSeq int64
+		if sequenceScoped {
+			minNextPeerSeq, err = nextConversationViewPeerSeqFloorTx(tx, in.PeerType, in.SenderUserID, in.PeerID)
+			if err != nil {
+				return err
+			}
+		}
+		peerSeq, err := nextPeerSeqTx(txModels, in.PeerType, sequencePeerID, minNextPeerSeq)
 		if err != nil {
 			return err
 		}
@@ -64,7 +74,7 @@ func (r *Repository) CreateOrGetByClientRandom(ctx context.Context, in CreateCan
 		if messageDate == 0 {
 			messageDate = int32(time.Now().Unix())
 		}
-		if err := insertCanonicalMessageTx(txModels, canonicalID, peerSeq, messageDate, in); err != nil {
+		if err := insertCanonicalMessageTx(txModels, canonicalID, sequencePeerID, peerSeq, messageDate, in); err != nil {
 			return err
 		}
 		if err := insertClientRandomTx(txModels, canonicalID, peerSeq, messageDate, in); err != nil {
@@ -114,11 +124,23 @@ func (r *Repository) ListHistoryMessages(ctx context.Context, in ListHistoryMess
 	return out, nil
 }
 
-func (r *Repository) GetCanonicalMessageByPeerSeq(ctx context.Context, peerType int32, peerID int64, peerSeq int64) (*CanonicalMessage, error) {
+func (r *Repository) GetCanonicalMessageByPeerSeq(ctx context.Context, userID int64, peerType int32, peerID int64, peerSeq int64) (*CanonicalMessage, error) {
 	if _, err := r.requireDB(); err != nil {
 		return nil, err
 	}
+	viewRow, err := r.selectCanonicalMessageByUserView(ctx, userID, peerType, peerID, peerSeq)
+	if err == nil {
+		return viewRow, nil
+	}
+	if !errors.Is(err, sqlx.ErrNotFound) {
+		return nil, storageError("select canonical by user view", err)
+	}
+
+	sequencePeerID, _ := messageSequencePeerID(peerType, userID, peerID)
 	row, err := r.models.CanonicalMessagesModel.SelectByPeerSeq(ctx, peerType, peerID, peerSeq)
+	if err != nil && sequencePeerID != peerID {
+		row, err = r.models.CanonicalMessagesModel.SelectByPeerSeq(ctx, peerType, sequencePeerID, peerSeq)
+	}
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
 			return nil, msg.ErrSendStateConflict
@@ -138,6 +160,46 @@ func (r *Repository) GetCanonicalMessageByPeerSeq(ctx context.Context, peerType 
 		MessageKind:        row.MessageKind,
 		MessageText:        row.MessageText,
 		MessageDate:        int32(parsedDate.Unix()),
+	}, nil
+}
+
+func (r *Repository) selectCanonicalMessageByUserView(ctx context.Context, userID int64, peerType int32, peerID int64, peerSeq int64) (*CanonicalMessage, error) {
+	query := `
+SELECT
+	c.canonical_message_id,
+	v.peer_seq,
+	c.from_user_id,
+	v.peer_type,
+	v.peer_id,
+	v.message_kind,
+	c.message_text,
+	v.date AS message_date
+FROM
+	user_message_views v
+JOIN
+	canonical_messages c
+ON
+	c.canonical_message_id = v.canonical_message_id
+WHERE
+	v.user_id = ?
+	AND v.peer_type = ?
+	AND v.peer_id = ?
+	AND v.peer_seq = ?
+	AND v.message_status = ?
+LIMIT 1`
+	var row model.HistoryMessageRow
+	if err := r.db.QueryRowPartial(ctx, &row, query, userID, peerType, peerID, peerSeq, MessageStatusLive); err != nil {
+		return nil, err
+	}
+	return &CanonicalMessage{
+		CanonicalMessageID: row.CanonicalMessageID,
+		PeerSeq:            row.PeerSeq,
+		FromUserID:         row.FromUserID,
+		PeerType:           row.PeerType,
+		PeerID:             row.PeerID,
+		MessageKind:        row.MessageKind,
+		MessageText:        row.MessageText,
+		MessageDate:        int32(time.Date(row.MessageDate.Year(), row.MessageDate.Month(), row.MessageDate.Day(), row.MessageDate.Hour(), row.MessageDate.Minute(), row.MessageDate.Second(), row.MessageDate.Nanosecond(), time.UTC).Unix()),
 	}, nil
 }
 
@@ -249,11 +311,14 @@ func selectCanonicalByIDTx(txModels *model.TxModels, canonicalMessageID int64, r
 	return canonicalMessageRowToResult(row, false), nil
 }
 
-func nextPeerSeqTx(txModels *model.TxModels, peerType int32, peerID int64) (int64, error) {
+func nextPeerSeqTx(txModels *model.TxModels, peerType int32, peerID int64, minNextPeerSeq int64) (int64, error) {
+	if minNextPeerSeq < 1 {
+		minNextPeerSeq = 1
+	}
 	if _, _, err := txModels.MessagePeerSequencesModel.InsertIgnore(&model.MessagePeerSequences{
 		PeerType:    peerType,
 		PeerId:      peerID,
-		NextPeerSeq: 1,
+		NextPeerSeq: minNextPeerSeq,
 	}); err != nil {
 		return 0, storageError("init peer sequence", err)
 	}
@@ -261,19 +326,23 @@ func nextPeerSeqTx(txModels *model.TxModels, peerType int32, peerID int64) (int6
 	if err != nil {
 		return 0, storageError("lock peer sequence", err)
 	}
-	if affected, err := txModels.MessagePeerSequencesModel.UpdateNextPeerSeq(row.NextPeerSeq+1, peerType, peerID); err != nil {
+	peerSeq := row.NextPeerSeq
+	if peerSeq < minNextPeerSeq {
+		peerSeq = minNextPeerSeq
+	}
+	if affected, err := txModels.MessagePeerSequencesModel.UpdateNextPeerSeq(peerSeq+1, peerType, peerID); err != nil {
 		return 0, storageError("advance peer sequence", err)
 	} else if affected == 0 {
 		return 0, msg.ErrSendStateConflict
 	}
-	return row.NextPeerSeq, nil
+	return peerSeq, nil
 }
 
-func insertCanonicalMessageTx(txModels *model.TxModels, canonicalID int64, peerSeq int64, messageDate int32, in CreateCanonicalMessageInput) error {
+func insertCanonicalMessageTx(txModels *model.TxModels, canonicalID int64, canonicalPeerID int64, peerSeq int64, messageDate int32, in CreateCanonicalMessageInput) error {
 	_, _, err := txModels.CanonicalMessagesModel.Insert(&model.CanonicalMessages{
 		CanonicalMessageId:           canonicalID,
 		PeerType:                     in.PeerType,
-		PeerId:                       in.PeerID,
+		PeerId:                       canonicalPeerID,
 		PeerSeq:                      peerSeq,
 		FromUserId:                   in.SenderUserID,
 		MessageKind:                  MessageKindText,
@@ -295,6 +364,39 @@ func insertCanonicalMessageTx(txModels *model.TxModels, canonicalID int64, peerS
 		return storageError("insert canonical message", err)
 	}
 	return nil
+}
+
+func nextConversationViewPeerSeqFloorTx(tx *sqlx.Tx, peerType int32, userID int64, peerID int64) (int64, error) {
+	var maxPeerSeq int64
+	query := `
+SELECT
+	COALESCE(MAX(peer_seq), 0)
+FROM
+	user_message_views
+WHERE
+	peer_type = ?
+	AND (
+		(user_id = ? AND peer_id = ?)
+		OR (user_id = ? AND peer_id = ?)
+	)`
+	if err := tx.QueryRow(&maxPeerSeq, query, peerType, userID, peerID, peerID, userID); err != nil {
+		return 0, storageError("select conversation view peer seq floor", err)
+	}
+	return maxPeerSeq + 1, nil
+}
+
+func messageSequencePeerID(peerType int32, userID int64, peerID int64) (int64, bool) {
+	if peerType != payload.PeerTypeUser || userID <= 0 || peerID <= 0 || userID == peerID {
+		return peerID, false
+	}
+	if userID > math.MaxUint32 || peerID > math.MaxUint32 {
+		return peerID, false
+	}
+	lo, hi := userID, peerID
+	if lo > hi {
+		lo, hi = hi, lo
+	}
+	return int64((uint64(lo) << 32) | uint64(hi)), true
 }
 
 func insertClientRandomTx(txModels *model.TxModels, canonicalID int64, _ int64, _ int32, in CreateCanonicalMessageInput) error {
