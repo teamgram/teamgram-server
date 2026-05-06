@@ -26,7 +26,6 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/code/code/codeservice"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog/dialogservice"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/message/message/messageservice"
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/updates/updates/updatesservice"
 	userhelper "github.com/teamgram/teamgram-server/v2/app/service/biz/user"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user/userservice"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
@@ -36,7 +35,6 @@ import (
 	codehelper "github.com/teamgram/teamgram-server/v2/app/service/biz/code"
 	dialoghelper "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog"
 	messagehelper "github.com/teamgram/teamgram-server/v2/app/service/biz/message"
-	updateshelper "github.com/teamgram/teamgram-server/v2/app/service/biz/updates"
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -118,16 +116,6 @@ func (s *Server) Initialize() error {
 						//Cache:           c.Cache,
 						//MessageSharding: c.MessageSharding,
 					}))
-
-			// updateshelper
-			_ = updatesservice.RegisterService(
-				s,
-				updateshelper.New(updateshelper.Config{
-					RpcServerConf: c.RpcServerConf,
-					//Mysql:         c.Mysql,
-					//KV:            c.KV,
-					//IdgenClient:   c.IdgenClient,
-				}))
 
 			// userhelper
 			_ = userservice.RegisterService(
