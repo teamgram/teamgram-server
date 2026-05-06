@@ -17,6 +17,7 @@
 package core
 
 import (
+	"encoding/json"
 	"math"
 	"strconv"
 
@@ -188,7 +189,12 @@ func (c *DialogsCore) hydrateDialogExtV2s(operation string, dialogExts []dialogp
 		}))
 		projectionKeys = append(projectionKeys, dialogProjectionKey(dialogExt.PeerType, dialogExt.PeerId))
 
-		dialog := makePublicDialogFromExtV2(dialogExt, topMessageID, tg.MakeTLPeerNotifySettings(&tg.TLPeerNotifySettings{}))
+		dialog, err := makePublicDialogFromExtV2(dialogExt, topMessageID, tg.MakeTLPeerNotifySettings(&tg.TLPeerNotifySettings{}))
+		if err != nil {
+			c.Logger.Errorf("%s - invalid dialog draft payload: user_id: %d, peer_type: %d, peer_id: %d, err: %v",
+				operation, c.MD.UserId, dialogExt.PeerType, dialogExt.PeerId, err)
+			return nil, tg.ErrInternalServerError
+		}
 		dialogs = append(dialogs, dialog)
 		if topMessageID > 0 {
 			topMessageRefs = append(topMessageRefs, dialogTopMessageRef{
@@ -254,11 +260,19 @@ func (c *DialogsCore) hydrateDialogExtV2s(operation string, dialogExts []dialogp
 	return result, nil
 }
 
-func makePublicDialogFromExtV2(dialogExt *dialogpb.TLDialogExtV2, topMessageID int32, notifySettings tg.PeerNotifySettingsClazz) tg.DialogClazz {
+func makePublicDialogFromExtV2(dialogExt *dialogpb.TLDialogExtV2, topMessageID int32, notifySettings tg.PeerNotifySettingsClazz) (tg.DialogClazz, error) {
 	folderID := dialogExt.FolderId
 	ttlPeriod := int32(0)
+	var draft tg.DraftMessageClazz
 	if extras := dialogExt.Extras; extras != nil && extras.PrivateTtlPeriod != nil {
 		ttlPeriod = *extras.PrivateTtlPeriod
+	}
+	if extras := dialogExt.Extras; extras != nil {
+		parsedDraft, err := draftMessageFromPayload(extras.DraftPayload)
+		if err != nil {
+			return nil, err
+		}
+		draft = parsedDraft
 	}
 	return tg.MakeTLDialog(&tg.TLDialog{
 		Pinned:               dialogExt.MainPinnedOrder > 0 || dialogExt.FolderPinnedOrder > 0,
@@ -271,9 +285,53 @@ func makePublicDialogFromExtV2(dialogExt *dialogpb.TLDialogExtV2, topMessageID i
 		UnreadMentionsCount:  dialogExt.UnreadMentionsCount,
 		UnreadReactionsCount: dialogExt.UnreadReactionsCount,
 		NotifySettings:       notifySettings,
+		Draft:                draft,
 		FolderId:             &folderID,
 		TtlPeriod:            &ttlPeriod,
-	})
+	}), nil
+}
+
+type draftPayloadEnvelope struct {
+	Name   string             `json:"_name"`
+	Object draftPayloadObject `json:"_object"`
+}
+
+type draftPayloadObject struct {
+	NoWebpage   bool   `json:"no_webpage"`
+	InvertMedia bool   `json:"invert_media"`
+	Message     string `json:"message"`
+	Date        int32  `json:"date"`
+	Effect      *int64 `json:"effect"`
+}
+
+func draftMessageFromPayload(raw []byte) (tg.DraftMessageClazz, error) {
+	if len(raw) == 0 {
+		return nil, nil
+	}
+	var env draftPayloadEnvelope
+	if err := json.Unmarshal(raw, &env); err != nil {
+		return nil, err
+	}
+	switch env.Name {
+	case "", tg.ClazzName_draftMessage:
+		obj := env.Object
+		if env.Name == "" {
+			if err := json.Unmarshal(raw, &obj); err != nil {
+				return nil, err
+			}
+		}
+		return tg.MakeTLDraftMessage(&tg.TLDraftMessage{
+			NoWebpage:   obj.NoWebpage,
+			InvertMedia: obj.InvertMedia,
+			Message:     obj.Message,
+			Date:        obj.Date,
+			Effect:      obj.Effect,
+		}), nil
+	case tg.ClazzName_draftMessageEmpty:
+		return tg.MakeTLDraftMessageEmpty(&tg.TLDraftMessageEmpty{}), nil
+	default:
+		return nil, tg.ErrInternalServerError
+	}
 }
 
 func int64ToDialogMessageID(v int64) (int32, error) {

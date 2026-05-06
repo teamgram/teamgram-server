@@ -513,6 +513,14 @@ func TestMessagesGetDialogsMapsUserDialogAndTopMessage(t *testing.T) {
 	c := newDialogsGetDialogsCore(&repository.Repository{
 		DialogClient: &dialogsFakeDialogClient{
 			getDialogsV2: func(context.Context, *dialogpb.TLDialogGetDialogsV2) (*dialogpb.DialogPage, error) {
+				draftPayload, err := json.Marshal(tg.MakeTLDraftMessage(&tg.TLDraftMessage{
+					NoWebpage: true,
+					Message:   "draft text",
+					Date:      456,
+				}))
+				if err != nil {
+					t.Fatalf("marshal draft payload: %v", err)
+				}
 				return dialogpb.MakeTLDialogPage(&dialogpb.TLDialogPage{Dialogs: []dialogpb.DialogExtV2Clazz{
 					dialogpb.MakeTLDialogExtV2(&dialogpb.TLDialogExtV2{
 						PeerType:              dialogPeerTypeUser,
@@ -521,6 +529,11 @@ func TestMessagesGetDialogsMapsUserDialogAndTopMessage(t *testing.T) {
 						TopCanonicalMessageId: 2051345931852316672,
 						TopMessageDate:        123,
 						UnreadCount:           1,
+						Extras: dialogpb.MakeTLDialogExtras(&dialogpb.TLDialogExtras{
+							PeerType:     dialogPeerTypeUser,
+							PeerId:       200,
+							DraftPayload: draftPayload,
+						}),
 					}),
 				}, Exhausted: tg.BoolTrueClazz}), nil
 			},
@@ -596,6 +609,8 @@ func TestMessagesGetDialogsMapsUserDialogAndTopMessage(t *testing.T) {
 		t.Fatalf("dialog = %+v, ok=%v, want top_message=7 and unread read state", dialog, ok)
 	} else if settings := dialog.NotifySettings; settings == nil || settings.MuteUntil == nil || *settings.MuteUntil != 99 {
 		t.Fatalf("notify settings = %+v, want batched mute_until=99", dialog.NotifySettings)
+	} else if draft, ok := (&tg.DraftMessage{Clazz: dialog.Draft}).ToDraftMessage(); !ok || !draft.NoWebpage || draft.Message != "draft text" || draft.Date != 456 {
+		t.Fatalf("draft = %+v, ok=%v, want saved draft payload", draft, ok)
 	}
 	if user, ok := (&tg.User{Clazz: slice.Users[0]}).ToUser(); !ok || user.Id != 200 || user.FirstName == nil || *user.FirstName != "Alice" {
 		t.Fatalf("user = %+v, ok=%v, want Alice/200", user, ok)
