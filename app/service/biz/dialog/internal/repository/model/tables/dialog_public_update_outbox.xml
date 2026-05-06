@@ -28,4 +28,103 @@
                 target_user_id = :target_user_id AND operation_id = :operation_id AND delivery_path = :delivery_path AND public_update_type = :public_update_type LIMIT 1
         </sql>
     </operation>
+
+    <operation name="MarkPublishing">
+        <sql>
+            UPDATE
+                dialog_public_update_outbox
+            SET
+                status = :status,
+                lease_owner = :lease_owner,
+                lease_until = :lease_until
+            WHERE
+                outbox_id = :outbox_id
+        </sql>
+    </operation>
+
+    <operation name="MarkPublishedPTS">
+        <sql>
+            UPDATE
+                dialog_public_update_outbox
+            SET
+                status = :status,
+                published_pts = :published_pts,
+                published_pts_count = :published_pts_count,
+                lease_owner = '',
+                lease_until = :lease_until,
+                last_error_kind = '',
+                last_error_message = ''
+            WHERE
+                outbox_id = :outbox_id
+        </sql>
+    </operation>
+
+    <operation name="MarkPublishedAuthSeq">
+        <sql>
+            UPDATE
+                dialog_public_update_outbox
+            SET
+                status = :status,
+                published_seq = :published_seq,
+                published_date = :published_date,
+                lease_owner = '',
+                lease_until = :lease_until,
+                last_error_kind = '',
+                last_error_message = ''
+            WHERE
+                outbox_id = :outbox_id
+        </sql>
+    </operation>
+
+    <operation name="MarkRetryable">
+        <sql>
+            UPDATE
+                dialog_public_update_outbox
+            SET
+                status = :status,
+                attempt_count = :attempt_count,
+                next_retry_at = :next_retry_at,
+                lease_owner = '',
+                lease_until = :lease_until,
+                last_error_kind = :last_error_kind,
+                last_error_message = :last_error_message
+            WHERE
+                outbox_id = :outbox_id
+        </sql>
+    </operation>
+
+    <operation name="MarkBlocked">
+        <sql>
+            UPDATE
+                dialog_public_update_outbox
+            SET
+                status = :status,
+                lease_owner = '',
+                lease_until = :lease_until,
+                last_error_kind = :last_error_kind,
+                last_error_message = :last_error_message
+            WHERE
+                outbox_id = :outbox_id
+        </sql>
+    </operation>
+
+    <operation name="ResetBlocked">
+        <params>
+            <param name="old_status" type="int32"/>
+        </params>
+        <sql>
+            UPDATE
+                dialog_public_update_outbox
+            SET
+                status = :status,
+                attempt_count = 0,
+                next_retry_at = :next_retry_at,
+                lease_owner = '',
+                lease_until = :lease_until,
+                last_error_kind = '',
+                last_error_message = ''
+            WHERE
+                status = :old_status AND outbox_id = :outbox_id
+        </sql>
+    </operation>
 </table>
