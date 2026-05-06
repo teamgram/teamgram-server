@@ -49,7 +49,7 @@ func (r *Repository) ClaimDialogAuthSeqOutbox(ctx context.Context, owner string,
 			if _, err := txModels.DialogAuthSeqOutboxModel.MarkPublishing(OutboxStatusPublishing, owner, claimedLeaseUntil, row.OutboxId); err != nil {
 				return storageError("claim dialog auth seq outbox", err)
 			}
-			rows = append(rows, makeClaimedDialogAuthSeqOutbox(row, owner, claimedLeaseUntil))
+			rows = append(rows, authSeqOutboxRowToModel(row, owner, claimedLeaseUntil))
 		}
 		return nil
 	})
@@ -137,7 +137,7 @@ func (r *Repository) ClaimDialogPublicUpdateOutbox(ctx context.Context, owner st
 			if _, err := txModels.DialogPublicUpdateOutboxModel.MarkPublishing(OutboxStatusPublishing, owner, claimedLeaseUntil, row.OutboxId); err != nil {
 				return storageError("claim dialog public update outbox", err)
 			}
-			rows = append(rows, makeClaimedDialogPublicUpdateOutbox(row, owner, claimedLeaseUntil))
+			rows = append(rows, publicUpdateOutboxRowToModel(row, owner, claimedLeaseUntil))
 		}
 		return nil
 	})
@@ -204,7 +204,7 @@ func (r *Repository) ResetDialogPublicUpdateOutboxBlocked(ctx context.Context, i
 	return nil
 }
 
-func makeClaimedDialogAuthSeqOutbox(row model.DialogAuthSeqOutboxRow, owner string, leaseUntil time.Time) model.DialogAuthSeqOutbox {
+func authSeqOutboxRowToModel(row model.DialogAuthSeqOutboxRow, owner string, leaseUntil time.Time) model.DialogAuthSeqOutbox {
 	return model.DialogAuthSeqOutbox{
 		OutboxId:             row.OutboxId,
 		UserId:               row.UserId,
@@ -229,7 +229,7 @@ func makeClaimedDialogAuthSeqOutbox(row model.DialogAuthSeqOutboxRow, owner stri
 	}
 }
 
-func makeClaimedDialogPublicUpdateOutbox(row model.DialogPublicUpdateOutboxRow, owner string, leaseUntil time.Time) model.DialogPublicUpdateOutbox {
+func publicUpdateOutboxRowToModel(row model.DialogPublicUpdateOutboxRow, owner string, leaseUntil time.Time) model.DialogPublicUpdateOutbox {
 	return model.DialogPublicUpdateOutbox{
 		OutboxId:             row.OutboxId,
 		SourceUserId:         row.SourceUserId,
