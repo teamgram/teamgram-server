@@ -99,6 +99,10 @@ func pushTaskUpdates(msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, *int
 	if err != nil {
 		return nil, nil, err
 	}
+	replyTo, err := replyHeaderFromPeerSeq(event.ReplyToPeerSeq)
+	if err != nil {
+		return nil, nil, err
+	}
 	if event.PeerType == payload.PeerTypeUser {
 		return tg.MakeTLUpdateShortMessage(&tg.TLUpdateShortMessage{
 			Out:      event.Out,
@@ -108,6 +112,7 @@ func pushTaskUpdates(msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, *int
 			Pts:      pts,
 			PtsCount: 1,
 			Date:     event.Date,
+			ReplyTo:  replyTo,
 		}), event.AuthKeyIdExclude, nil
 	}
 	message := tg.MakeTLMessage(&tg.TLMessage{
@@ -115,6 +120,7 @@ func pushTaskUpdates(msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, *int
 		Id:      messageID,
 		FromId:  peerFromUser(event.FromUserID),
 		PeerId:  peerFromEvent(event.PeerType, event.PeerID),
+		ReplyTo: replyTo,
 		Date:    event.Date,
 		Message: event.MessageText,
 	})
@@ -129,6 +135,17 @@ func pushTaskUpdates(msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, *int
 		Date:  event.Date,
 		Seq:   pts,
 	}), event.AuthKeyIdExclude, nil
+}
+
+func replyHeaderFromPeerSeq(peerSeq int64) (tg.MessageReplyHeaderClazz, error) {
+	if peerSeq <= 0 {
+		return nil, nil
+	}
+	replyToMsgID, err := int64ToInt32(peerSeq, "reply peer seq")
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLMessageReplyHeader(&tg.TLMessageReplyHeader{ReplyToMsgId: &replyToMsgID}), nil
 }
 
 func readHistoryUpdates(msg *payload.PushTaskKafkaMessageV1, event payload.MessageEventV1) (tg.UpdatesClazz, *int64, error) {

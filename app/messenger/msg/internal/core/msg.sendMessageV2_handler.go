@@ -19,6 +19,7 @@ package core
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math"
 	"time"
@@ -40,7 +41,12 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 		return nil, fmt.Errorf("%w: first slice only supports user peer", msg.ErrSendStateConflict)
 	}
 	outbox := in.Message[0]
-	messageText, err := outboxMessageText(outbox)
+	outboxTLMessage, err := outboxTLMessage(outbox)
+	if err != nil {
+		return nil, err
+	}
+	messageText := outboxTLMessage.Message
+	replyToCanonicalMessageID, err := c.replyToCanonicalMessageID(in, outboxTLMessage)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +58,7 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 	if in.ClearDraftBeforeDate != nil {
 		clearDraftBeforeDate = *in.ClearDraftBeforeDate
 	}
-	_, requestHash, err := marshalSendRequest(in.UserId, in.PeerType, in.PeerId, outbox.RandomId, messageText, in.ClearDraft, sourcePermAuthKeyID, clearDraftBeforeDate)
+	_, requestHash, err := marshalSendRequest(in.UserId, in.PeerType, in.PeerId, outbox.RandomId, messageText, replyToCanonicalMessageID, in.ClearDraft, sourcePermAuthKeyID, clearDraftBeforeDate)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +101,7 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 		senderResult = senderResultFromSendState(sendState)
 	} else {
 		var senderHash []byte
-		senderResult, senderHash, err = c.processSenderOperation(in, canonical, senderOperationID, messageText)
+		senderResult, senderHash, err = c.processSenderOperation(in, canonical, senderOperationID, messageText, replyToCanonicalMessageID)
 		if err != nil {
 			return nil, err
 		}
@@ -115,7 +121,7 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 	}
 
 	if in.UserId != in.PeerId && sendState.Status < repository.SendStateStatusReceiverAcked {
-		receiverOp, err := buildReceiverOperation(in, canonical, messageText)
+		receiverOp, err := buildReceiverOperation(in, canonical, messageText, replyToCanonicalMessageID)
 		if err != nil {
 			return nil, err
 		}
@@ -166,28 +172,30 @@ func senderResultFromSendState(sendState *repository.SendState) *userupdates.Use
 }
 
 type sendRequestPayloadV1 struct {
-	SchemaVersion        int    `json:"schema_version"`
-	SenderUserID         int64  `json:"sender_user_id"`
-	PeerType             int32  `json:"peer_type"`
-	PeerID               int64  `json:"peer_id"`
-	ClientRandomID       int64  `json:"client_random_id"`
-	MessageText          string `json:"message_text"`
-	ClearDraft           bool   `json:"clear_draft,omitempty"`
-	SourcePermAuthKeyID  int64  `json:"source_perm_auth_key_id,omitempty"`
-	ClearDraftBeforeDate int32  `json:"clear_draft_before_date,omitempty"`
+	SchemaVersion             int    `json:"schema_version"`
+	SenderUserID              int64  `json:"sender_user_id"`
+	PeerType                  int32  `json:"peer_type"`
+	PeerID                    int64  `json:"peer_id"`
+	ClientRandomID            int64  `json:"client_random_id"`
+	MessageText               string `json:"message_text"`
+	ReplyToCanonicalMessageID int64  `json:"reply_to_canonical_message_id,omitempty"`
+	ClearDraft                bool   `json:"clear_draft,omitempty"`
+	SourcePermAuthKeyID       int64  `json:"source_perm_auth_key_id,omitempty"`
+	ClearDraftBeforeDate      int32  `json:"clear_draft_before_date,omitempty"`
 }
 
-func marshalSendRequest(senderUserID int64, peerType int32, peerID int64, randomID int64, text string, clearDraft bool, sourcePermAuthKeyID int64, clearDraftBeforeDate int32) ([]byte, []byte, error) {
+func marshalSendRequest(senderUserID int64, peerType int32, peerID int64, randomID int64, text string, replyToCanonicalMessageID int64, clearDraft bool, sourcePermAuthKeyID int64, clearDraftBeforeDate int32) ([]byte, []byte, error) {
 	body, err := json.Marshal(sendRequestPayloadV1{
-		SchemaVersion:        payload.MessageOperationSchemaVersion,
-		SenderUserID:         senderUserID,
-		PeerType:             peerType,
-		PeerID:               peerID,
-		ClientRandomID:       randomID,
-		MessageText:          text,
-		ClearDraft:           clearDraft,
-		SourcePermAuthKeyID:  sourcePermAuthKeyID,
-		ClearDraftBeforeDate: clearDraftBeforeDate,
+		SchemaVersion:             payload.MessageOperationSchemaVersion,
+		SenderUserID:              senderUserID,
+		PeerType:                  peerType,
+		PeerID:                    peerID,
+		ClientRandomID:            randomID,
+		MessageText:               text,
+		ReplyToCanonicalMessageID: replyToCanonicalMessageID,
+		ClearDraft:                clearDraft,
+		SourcePermAuthKeyID:       sourcePermAuthKeyID,
+		ClearDraftBeforeDate:      clearDraftBeforeDate,
 	})
 	if err != nil {
 		return nil, nil, fmt.Errorf("%w: marshal send request: %v", msg.ErrMsgStorage, err)
@@ -195,18 +203,39 @@ func marshalSendRequest(senderUserID int64, peerType int32, peerID int64, random
 	return body, payload.HashBytes(body), nil
 }
 
-func outboxMessageText(outbox *msg.TLOutboxMessage) (string, error) {
+func outboxTLMessage(outbox *msg.TLOutboxMessage) (*tg.TLMessage, error) {
 	if outbox == nil || outbox.Message == nil {
-		return "", fmt.Errorf("%w: missing outbox message", msg.ErrSendStateConflict)
+		return nil, fmt.Errorf("%w: missing outbox message", msg.ErrSendStateConflict)
 	}
 	message, ok := outbox.Message.(*tg.TLMessage)
 	if !ok {
-		return "", fmt.Errorf("%w: first slice only supports text message", msg.ErrSendStateConflict)
+		return nil, fmt.Errorf("%w: first slice only supports text message", msg.ErrSendStateConflict)
 	}
-	return message.Message, nil
+	return message, nil
 }
 
-func (c *MsgCore) processSenderOperation(in *msg.TLMsgSendMessageV2, canonical *repository.CanonicalMessageResult, operationID string, text string) (*userupdates.UserOperationResult, []byte, error) {
+func (c *MsgCore) replyToCanonicalMessageID(in *msg.TLMsgSendMessageV2, message *tg.TLMessage) (int64, error) {
+	if message == nil || message.ReplyTo == nil {
+		return 0, nil
+	}
+	replyHeader, ok := message.ReplyTo.(*tg.TLMessageReplyHeader)
+	if !ok || replyHeader.ReplyToMsgId == nil || *replyHeader.ReplyToMsgId <= 0 {
+		return 0, msg.ErrReplyToInvalid
+	}
+	replyTo, err := c.svcCtx.Repo.GetCanonicalMessageByPeerSeq(c.ctx, in.UserId, in.PeerType, in.PeerId, int64(*replyHeader.ReplyToMsgId))
+	if err != nil {
+		if errors.Is(err, msg.ErrSendStateConflict) {
+			return 0, msg.ErrReplyToInvalid
+		}
+		return 0, err
+	}
+	if replyTo == nil || replyTo.CanonicalMessageID == 0 {
+		return 0, msg.ErrReplyToInvalid
+	}
+	return replyTo.CanonicalMessageID, nil
+}
+
+func (c *MsgCore) processSenderOperation(in *msg.TLMsgSendMessageV2, canonical *repository.CanonicalMessageResult, operationID string, text string, replyToCanonicalMessageID int64) (*userupdates.UserOperationResult, []byte, error) {
 	var sourcePermAuthKeyID int64
 	if in.SourcePermAuthKeyId != nil {
 		sourcePermAuthKeyID = *in.SourcePermAuthKeyId
@@ -215,7 +244,7 @@ func (c *MsgCore) processSenderOperation(in *msg.TLMsgSendMessageV2, canonical *
 	if in.ClearDraftBeforeDate != nil {
 		clearDraftBeforeDate = *in.ClearDraftBeforeDate
 	}
-	body, _, hashBytes, err := buildMessageOperationPayload(in.UserId, in.PeerId, in.PeerId, true, canonical, text, in.ClearDraft, sourcePermAuthKeyID, clearDraftBeforeDate)
+	body, _, hashBytes, err := buildMessageOperationPayload(in.UserId, in.PeerId, in.PeerId, true, canonical, text, replyToCanonicalMessageID, in.ClearDraft, sourcePermAuthKeyID, clearDraftBeforeDate)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -278,9 +307,9 @@ func (c *MsgCore) markSenderCommitted(canonical *repository.CanonicalMessageResu
 	})
 }
 
-func buildReceiverOperation(in *msg.TLMsgSendMessageV2, canonical *repository.CanonicalMessageResult, text string) (repository.ReceiverOperation, error) {
+func buildReceiverOperation(in *msg.TLMsgSendMessageV2, canonical *repository.CanonicalMessageResult, text string, replyToCanonicalMessageID int64) (repository.ReceiverOperation, error) {
 	operationID := payload.ReceiverOperationID(canonical.CanonicalMessageID, in.PeerId)
-	body, hashHex, _, err := buildMessageOperationPayload(in.UserId, in.PeerId, in.UserId, false, canonical, text, false, 0, 0)
+	body, hashHex, _, err := buildMessageOperationPayload(in.UserId, in.PeerId, in.UserId, false, canonical, text, replyToCanonicalMessageID, false, 0, 0)
 	if err != nil {
 		return repository.ReceiverOperation{}, err
 	}
@@ -299,22 +328,23 @@ func buildReceiverOperation(in *msg.TLMsgSendMessageV2, canonical *repository.Ca
 	}, nil
 }
 
-func buildMessageOperationPayload(fromUserID int64, toUserID int64, peerID int64, out bool, canonical *repository.CanonicalMessageResult, text string, clearDraft bool, sourcePermAuthKeyID int64, clearDraftBeforeDate int32) ([]byte, []byte, []byte, error) {
+func buildMessageOperationPayload(fromUserID int64, toUserID int64, peerID int64, out bool, canonical *repository.CanonicalMessageResult, text string, replyToCanonicalMessageID int64, clearDraft bool, sourcePermAuthKeyID int64, clearDraftBeforeDate int32) ([]byte, []byte, []byte, error) {
 	body, err := json.Marshal(payload.MessageOperationV1{
-		SchemaVersion:        payload.MessageOperationSchemaVersion,
-		OperationKind:        payload.OperationKindSendMessage,
-		CanonicalMessageID:   canonical.CanonicalMessageID,
-		PeerType:             payload.PeerTypeUser,
-		PeerID:               peerID,
-		PeerSeq:              canonical.PeerSeq,
-		FromUserID:           fromUserID,
-		ToUserID:             toUserID,
-		Date:                 canonical.MessageDate,
-		Out:                  out,
-		MessageText:          text,
-		ClearDraft:           clearDraft,
-		SourcePermAuthKeyID:  sourcePermAuthKeyID,
-		ClearDraftBeforeDate: clearDraftBeforeDate,
+		SchemaVersion:             payload.MessageOperationSchemaVersion,
+		OperationKind:             payload.OperationKindSendMessage,
+		CanonicalMessageID:        canonical.CanonicalMessageID,
+		PeerType:                  payload.PeerTypeUser,
+		PeerID:                    peerID,
+		PeerSeq:                   canonical.PeerSeq,
+		FromUserID:                fromUserID,
+		ToUserID:                  toUserID,
+		Date:                      canonical.MessageDate,
+		Out:                       out,
+		MessageText:               text,
+		ReplyToCanonicalMessageID: replyToCanonicalMessageID,
+		ClearDraft:                clearDraft,
+		SourcePermAuthKeyID:       sourcePermAuthKeyID,
+		ClearDraftBeforeDate:      clearDraftBeforeDate,
 	})
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("%w: marshal message operation from_user_id=%d peer_id=%d", msg.ErrMsgStorage, fromUserID, peerID)

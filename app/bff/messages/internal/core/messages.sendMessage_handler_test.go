@@ -9,8 +9,8 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/messages/internal/svc"
 	msgclient "github.com/teamgram/teamgram-server/v2/app/messenger/msg/client"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	userupdatesclient "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/client"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -179,6 +179,42 @@ func TestSendMessageClearDraftCarriesSourcePermAuthKey(t *testing.T) {
 	}
 	if got.ClearDraftBeforeDate == nil || *got.ClearDraftBeforeDate == 0 {
 		t.Fatalf("ClearDraftBeforeDate = %v, want non-zero", got.ClearDraftBeforeDate)
+	}
+}
+
+func TestMessagesSendMessage_InputReplyToMessageSetsReplyHeader(t *testing.T) {
+	var got *msg.TLMsgSendMessageV2
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+			got = in
+			return testUpdates(), nil
+		},
+	}, 100, 200)
+
+	_, err := c.MessagesSendMessage(&tg.TLMessagesSendMessage{
+		Peer:     inputPeerUser(300),
+		Message:  "reply body",
+		RandomId: 42,
+		ReplyTo: tg.MakeTLInputReplyToMessage(&tg.TLInputReplyToMessage{
+			ReplyToMsgId: 7,
+		}),
+	})
+	if err != nil {
+		t.Fatalf("MessagesSendMessage error = %v", err)
+	}
+	if got == nil || len(got.Message) != 1 || got.Message[0] == nil {
+		t.Fatalf("msg request missing outbox: %+v", got)
+	}
+	outboxMessage, ok := got.Message[0].Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("outbox message type = %T, want *tg.TLMessage", got.Message[0].Message)
+	}
+	reply, ok := outboxMessage.ReplyTo.(*tg.TLMessageReplyHeader)
+	if !ok {
+		t.Fatalf("ReplyTo = %T, want *tg.TLMessageReplyHeader", outboxMessage.ReplyTo)
+	}
+	if reply.ReplyToMsgId == nil || *reply.ReplyToMsgId != 7 {
+		t.Fatalf("ReplyToMsgId = %v, want 7", reply.ReplyToMsgId)
 	}
 }
 

@@ -50,9 +50,6 @@ func checkUnsupportedFields(in *tg.TLMessagesSendMessage) error {
 	if len(in.Entities) > 0 {
 		return tg.ErrInputRequestInvalid
 	}
-	if in.ReplyTo != nil {
-		return tg.ErrInputRequestInvalid
-	}
 	if in.ReplyMarkup != nil {
 		return tg.ErrInputRequestInvalid
 	}
@@ -80,6 +77,34 @@ func checkUnsupportedFields(in *tg.TLMessagesSendMessage) error {
 	return nil
 }
 
+func makeMessageReplyHeader(replyTo tg.InputReplyToClazz) (tg.MessageReplyHeaderClazz, error) {
+	if replyTo == nil {
+		return nil, nil
+	}
+	replyToMessage, ok := replyTo.(*tg.TLInputReplyToMessage)
+	if !ok {
+		return nil, tg.ErrReplyToInvalid
+	}
+	if replyToMessage.ReplyToMsgId <= 0 ||
+		replyToMessage.ReplyToPeerId != nil ||
+		replyToMessage.MonoforumPeerId != nil ||
+		replyToMessage.TodoItemId != nil ||
+		replyToMessage.PollOption != nil {
+		return nil, tg.ErrReplyToInvalid
+	}
+	header := tg.MakeTLMessageReplyHeader(&tg.TLMessageReplyHeader{
+		ReplyToMsgId:  &replyToMessage.ReplyToMsgId,
+		ReplyToTopId:  replyToMessage.TopMsgId,
+		QuoteText:     replyToMessage.QuoteText,
+		QuoteEntities: replyToMessage.QuoteEntities,
+		QuoteOffset:   replyToMessage.QuoteOffset,
+	})
+	if replyToMessage.QuoteText != nil {
+		header.Quote = true
+	}
+	return header, nil
+}
+
 func mapMsgSendError(err error) error {
 	if err == nil {
 		return nil
@@ -89,6 +114,8 @@ func mapMsgSendError(err error) error {
 		return tg.ErrTimeout
 	case errors.Is(err, msg.ErrRandomIdConflict):
 		return tg.ErrRandomIdDuplicate
+	case errors.Is(err, msg.ErrReplyToInvalid):
+		return tg.ErrReplyToInvalid
 	case errors.Is(err, msg.ErrReceiverBackpressure),
 		errors.Is(err, msg.ErrSenderSyncFailed),
 		errors.Is(err, msg.ErrMsgStorage),

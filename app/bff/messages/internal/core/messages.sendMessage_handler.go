@@ -54,11 +54,16 @@ func (c *MessagesCore) MessagesSendMessage(in *tg.TLMessagesSendMessage) (*tg.Up
 	if err := checkUnsupportedFields(in); err != nil {
 		return nil, err
 	}
+	replyHeader, err := makeMessageReplyHeader(in.ReplyTo)
+	if err != nil {
+		return nil, err
+	}
 
 	outgoingMsg := tg.MakeTLMessage(&tg.TLMessage{
 		Out:     true,
 		FromId:  tg.MakePeerUser(selfUserID),
 		PeerId:  tg.MakePeerUser(peerUserID),
+		ReplyTo: replyHeader,
 		Date:    int32(time.Now().Unix()),
 		Message: in.Message,
 	})

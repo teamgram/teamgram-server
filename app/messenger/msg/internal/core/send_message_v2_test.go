@@ -138,6 +138,73 @@ func TestMsgSendMessageV2ClearDraftWritesSenderOperationPayload(t *testing.T) {
 	}
 }
 
+func TestMsgSendMessageV2ReplyToPayloadUsesCanonicalMessageID(t *testing.T) {
+	responsePayload := []byte(`{"schema_version":1,"pts":16,"pts_count":1}`)
+	responseHash := mustHashBytes(t, responsePayload)
+	repo := &fakeMsgRepository{
+		sendState: &repository.SendState{SendStateID: 1, Status: repository.SendStateStatusInitialized},
+		canonical: &repository.CanonicalMessageResult{
+			SendStateID:        1,
+			CanonicalMessageID: 8001,
+			PeerSeq:            10,
+			MessageDate:        1_772_000_060,
+			RequestPayloadHash: payload.HashBytes([]byte("request")),
+			CreatedNew:         true,
+		},
+		canonicalByPeerSeq: &repository.CanonicalMessage{
+			CanonicalMessageID: 7001,
+			PeerSeq:            7,
+			FromUserID:         1002,
+			PeerType:           payload.PeerTypeUser,
+			PeerID:             1002,
+			MessageText:        "reply target",
+		},
+	}
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:              1001,
+			OperationId:         payload.SenderOperationID(8001, 1001),
+			Status:              1,
+			Pts:                 16,
+			PtsCount:            1,
+			CurrentPts:          16,
+			ResponsePayload:     responsePayload,
+			ResponsePayloadHash: responseHash,
+		}),
+	}
+	publisher := &fakeReceiverPublisher{}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:              repo,
+		UserUpdates:       updatesClient,
+		ReceiverPublisher: publisher,
+	})
+
+	req := sendMessageRequest(1001, 1002, 9001, "reply body")
+	replyToMsgID := int32(7)
+	req.Message[0].Message.(*tg.TLMessage).ReplyTo = tg.MakeTLMessageReplyHeader(&tg.TLMessageReplyHeader{
+		ReplyToMsgId: &replyToMsgID,
+	})
+
+	if _, err := core.MsgSendMessageV2(req); err != nil {
+		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	}
+	for name, body := range map[string][]byte{
+		"sender":   updatesClient.processed.Payload,
+		"receiver": publisher.published.Payload,
+	} {
+		var raw map[string]any
+		if err := json.Unmarshal(body, &raw); err != nil {
+			t.Fatalf("decode %s payload: %v", name, err)
+		}
+		if raw["reply_to_canonical_message_id"] != float64(7001) {
+			t.Fatalf("%s reply_to_canonical_message_id = %v, want 7001; payload=%s", name, raw["reply_to_canonical_message_id"], string(body))
+		}
+		if _, ok := raw["reply_to_peer_seq"]; ok {
+			t.Fatalf("%s payload leaked view peer_seq before projection: %s", name, string(body))
+		}
+	}
+}
+
 func TestMsgSendMessageV2RecoversSenderCommitFromUserUpdatesResult(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":1,"pts":12,"pts_count":1}`)
 	responseHash := mustHashBytes(t, responsePayload)

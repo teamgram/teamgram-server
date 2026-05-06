@@ -131,6 +131,16 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 	if op.ClearDraft && op.SourcePermAuthKeyID == 0 {
 		return nil, fmt.Errorf("%w: clear draft side effect requires source permanent auth key", userupdates.ErrOperationTerminal)
 	}
+	if op.ReplyToCanonicalMessageID != 0 {
+		row, err := txModels.UserMessageViewsModel.SelectByUserCanonical(in.UserID, op.ReplyToCanonicalMessageID)
+		if err != nil {
+			if errors.Is(err, model.ErrNotFound) {
+				return nil, fmt.Errorf("%w: reply target canonical_message_id=%d not visible to user_id=%d", userupdates.ErrOperationTerminal, op.ReplyToCanonicalMessageID, in.UserID)
+			}
+			return nil, storageError("select reply target view", err)
+		}
+		op.ReplyToPeerSeq = row.PeerSeq
+	}
 
 	nextPTS := state.Pts + 1
 	ptsCount := int32(1)
@@ -239,6 +249,7 @@ func buildEventAndResponse(in ApplyUserOperationInput, op payload.MessageOperati
 		Out:                op.Out,
 		MessageText:        op.MessageText,
 		Entities:           op.Entities,
+		ReplyToPeerSeq:     op.ReplyToPeerSeq,
 		AuthKeyIdExclude:   in.AuthKeyIDExclude,
 	}
 	eventPayload, err := json.Marshal(event)

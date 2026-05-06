@@ -196,14 +196,30 @@ func messageEventToTLMessage(messageEvent payload.MessageEventV1) (tg.MessageCla
 	if err != nil {
 		return nil, err
 	}
+	replyTo, err := replyHeaderFromPeerSeq(messageEvent.ReplyToPeerSeq)
+	if err != nil {
+		return nil, err
+	}
 	return tg.MakeTLMessage(&tg.TLMessage{
 		Out:     messageEvent.Out,
 		Id:      messageID,
 		FromId:  peerFromUser(messageEvent.FromUserID),
 		PeerId:  peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
+		ReplyTo: replyTo,
 		Date:    messageEvent.Date,
 		Message: messageEvent.MessageText,
 	}), nil
+}
+
+func replyHeaderFromPeerSeq(peerSeq int64) (tg.MessageReplyHeaderClazz, error) {
+	if peerSeq <= 0 {
+		return nil, nil
+	}
+	replyToMsgID, err := int64ToInt32(peerSeq, "reply peer seq")
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLMessageReplyHeader(&tg.TLMessageReplyHeader{ReplyToMsgId: &replyToMsgID}), nil
 }
 
 func authSeqEventToTLUpdate(event repository.AuthSeqEvent) (tg.UpdateClazz, error) {

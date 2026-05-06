@@ -114,6 +114,12 @@ func TestGetDifferenceBuildsVisibleMessageFromEventPayload(t *testing.T) {
 		Out:                false,
 		MessageText:        "hello from event payload",
 	})
+	var eventWithReply map[string]any
+	if err := json.Unmarshal(eventPayload, &eventWithReply); err != nil {
+		t.Fatalf("decode event payload: %v", err)
+	}
+	eventWithReply["reply_to_peer_seq"] = float64(55)
+	eventPayload = mustMarshalJSONMap(t, eventWithReply)
 	repo := &fakeUserUpdatesRepository{
 		difference: &repository.GetDifferenceResult{
 			State: repository.UserState{UserID: 1001, Pts: 18},
@@ -164,6 +170,13 @@ func TestGetDifferenceBuildsVisibleMessageFromEventPayload(t *testing.T) {
 	}
 	if message.Id != 9 || message.Message != "hello from event payload" || message.Out {
 		t.Fatalf("unexpected message projection: %+v", message)
+	}
+	reply, ok := message.ReplyTo.(*tg.TLMessageReplyHeader)
+	if !ok {
+		t.Fatalf("reply header = %T, want *tg.TLMessageReplyHeader", message.ReplyTo)
+	}
+	if reply.ReplyToMsgId == nil || *reply.ReplyToMsgId != 55 {
+		t.Fatalf("reply_to_msg_id = %v, want receiver-local 55", reply.ReplyToMsgId)
 	}
 	if len(diff.OtherUpdates) != 1 {
 		t.Fatalf("expected one update, got %d", len(diff.OtherUpdates))
@@ -726,6 +739,15 @@ func mustMarshalDialogEvent(t *testing.T, event payload.DialogEventV1) []byte {
 	b, err := json.Marshal(event)
 	if err != nil {
 		t.Fatalf("marshal dialog event: %v", err)
+	}
+	return b
+}
+
+func mustMarshalJSONMap(t *testing.T, m map[string]any) []byte {
+	t.Helper()
+	b, err := json.Marshal(m)
+	if err != nil {
+		t.Fatalf("marshal json map: %v", err)
 	}
 	return b
 }

@@ -217,7 +217,7 @@ func assertDifferenceMessage(t *testing.T, ctx context.Context, kit *userupdates
 
 func deleteCanonicalMessage(t *testing.T, ctx context.Context, db *sqlx.DB, repo *msgrepo.Repository, senderID, receiverID, randomID int64, text string) {
 	t.Helper()
-	_, requestHash, err := marshalSendRequest(senderID, payload.PeerTypeUser, receiverID, randomID, text)
+	_, requestHash, err := marshalSendRequest(senderID, payload.PeerTypeUser, receiverID, randomID, text, 0, false, 0, 0)
 	if err != nil {
 		t.Fatalf("marshal request: %v", err)
 	}
