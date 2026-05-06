@@ -33,6 +33,14 @@ type bizDialogPreferencesModel interface {
 	UpsertFolderPin(ctx context.Context, data *DialogPreferences) (lastInsertId, rowsAffected int64, err error)
 	UpsertFolderMembership(ctx context.Context, data *DialogPreferences) (lastInsertId, rowsAffected int64, err error)
 	SelectByUserPeer(ctx context.Context, userId int64, peerType int32, peerId int64) (*DialogPreferences, error)
+	SelectMainPinned(ctx context.Context, userId int64) ([]DialogPreferences, error)
+	SelectMainPinnedWithCB(ctx context.Context, userId int64, cb func(sz, i int, v *DialogPreferences)) ([]DialogPreferences, error)
+	SelectFolderPinned(ctx context.Context, userId int64, folderId int32) ([]DialogPreferences, error)
+	SelectFolderPinnedWithCB(ctx context.Context, userId int64, folderId int32, cb func(sz, i int, v *DialogPreferences)) ([]DialogPreferences, error)
+	ClearMainPinned(ctx context.Context, userId int64) (rowsAffected int64, err error)
+	ClearMainPinnedExcept(ctx context.Context, userId int64, idList []int64) (rowsAffected int64, err error)
+	ClearFolderPinned(ctx context.Context, userId int64, folderId int32) (rowsAffected int64, err error)
+	ClearFolderPinnedExcept(ctx context.Context, userId int64, folderId int32, idList []int64) (rowsAffected int64, err error)
 }
 
 type DialogPreferencesTxModel interface {
@@ -41,6 +49,12 @@ type DialogPreferencesTxModel interface {
 	UpsertFolderPin(data *DialogPreferences) (lastInsertId, rowsAffected int64, err error)
 	UpsertFolderMembership(data *DialogPreferences) (lastInsertId, rowsAffected int64, err error)
 	SelectByUserPeer(userId int64, peerType int32, peerId int64) (*DialogPreferences, error)
+	SelectMainPinned(userId int64) ([]DialogPreferences, error)
+	SelectFolderPinned(userId int64, folderId int32) ([]DialogPreferences, error)
+	ClearMainPinned(userId int64) (rowsAffected int64, err error)
+	ClearMainPinnedExcept(userId int64, idList []int64) (rowsAffected int64, err error)
+	ClearFolderPinned(userId int64, folderId int32) (rowsAffected int64, err error)
+	ClearFolderPinnedExcept(userId int64, folderId int32, idList []int64) (rowsAffected int64, err error)
 }
 
 type defaultDialogPreferencesTxModel struct {
@@ -319,6 +333,374 @@ func (m *defaultDialogPreferencesTxModel) SelectByUserPeer(userId int64, peerTyp
 		return
 	}
 	rValue = do
+
+	return
+}
+
+// SelectMainPinned
+// select user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version from dialog_preferences where user_id = :user_id and main_pinned_order > 0 order by main_pinned_order desc
+func (m *defaultDialogPreferencesModel) SelectMainPinned(ctx context.Context, userId int64) (rList []DialogPreferences, err error) {
+	var (
+		query  = "select user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version from dialog_preferences where user_id = ? and main_pinned_order > 0 order by main_pinned_order desc"
+		values []DialogPreferences
+	)
+	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []DialogPreferences{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("dialog_preferences.SelectMainPinned: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectMainPinned
+// select user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version from dialog_preferences where user_id = :user_id and main_pinned_order > 0 order by main_pinned_order desc
+func (m *defaultDialogPreferencesTxModel) SelectMainPinned(userId int64) (rList []DialogPreferences, err error) {
+	var (
+		query  = "select user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version from dialog_preferences where user_id = ? and main_pinned_order > 0 order by main_pinned_order desc"
+		values []DialogPreferences
+	)
+	err = m.tx.QueryRowsPartial(&values, query, userId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []DialogPreferences{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("dialog_preferences.SelectMainPinned: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectMainPinnedWithCB
+// select user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version from dialog_preferences where user_id = :user_id and main_pinned_order > 0 order by main_pinned_order desc
+func (m *defaultDialogPreferencesModel) SelectMainPinnedWithCB(ctx context.Context, userId int64, cb func(sz, i int, v *DialogPreferences)) (rList []DialogPreferences, err error) {
+	var (
+		query  = "select user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version from dialog_preferences where user_id = ? and main_pinned_order > 0 order by main_pinned_order desc"
+		values []DialogPreferences
+	)
+	err = m.db.QueryRowsPartial(ctx, &values, query, userId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []DialogPreferences{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("dialog_preferences.SelectMainPinnedWithCB: %w", err)
+		return
+	}
+
+	rList = values
+
+	if cb != nil {
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
+		}
+	}
+
+	return
+}
+
+// SelectFolderPinned
+// select user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version from dialog_preferences where user_id = :user_id and folder_id = :folder_id and folder_pinned_order > 0 order by folder_pinned_order desc
+func (m *defaultDialogPreferencesModel) SelectFolderPinned(ctx context.Context, userId int64, folderId int32) (rList []DialogPreferences, err error) {
+	var (
+		query  = "select user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version from dialog_preferences where user_id = ? and folder_id = ? and folder_pinned_order > 0 order by folder_pinned_order desc"
+		values []DialogPreferences
+	)
+	err = m.db.QueryRowsPartial(ctx, &values, query, userId, folderId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []DialogPreferences{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("dialog_preferences.SelectFolderPinned: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectFolderPinned
+// select user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version from dialog_preferences where user_id = :user_id and folder_id = :folder_id and folder_pinned_order > 0 order by folder_pinned_order desc
+func (m *defaultDialogPreferencesTxModel) SelectFolderPinned(userId int64, folderId int32) (rList []DialogPreferences, err error) {
+	var (
+		query  = "select user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version from dialog_preferences where user_id = ? and folder_id = ? and folder_pinned_order > 0 order by folder_pinned_order desc"
+		values []DialogPreferences
+	)
+	err = m.tx.QueryRowsPartial(&values, query, userId, folderId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []DialogPreferences{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("dialog_preferences.SelectFolderPinned: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectFolderPinnedWithCB
+// select user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version from dialog_preferences where user_id = :user_id and folder_id = :folder_id and folder_pinned_order > 0 order by folder_pinned_order desc
+func (m *defaultDialogPreferencesModel) SelectFolderPinnedWithCB(ctx context.Context, userId int64, folderId int32, cb func(sz, i int, v *DialogPreferences)) (rList []DialogPreferences, err error) {
+	var (
+		query  = "select user_id, peer_type, peer_id, peer_dialog_id, folder_id, main_pinned_order, folder_pinned_order, preferences_version from dialog_preferences where user_id = ? and folder_id = ? and folder_pinned_order > 0 order by folder_pinned_order desc"
+		values []DialogPreferences
+	)
+	err = m.db.QueryRowsPartial(ctx, &values, query, userId, folderId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []DialogPreferences{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("dialog_preferences.SelectFolderPinnedWithCB: %w", err)
+		return
+	}
+
+	rList = values
+
+	if cb != nil {
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
+		}
+	}
+
+	return
+}
+
+// ClearMainPinned
+// update dialog_preferences set main_pinned_order = 0 where user_id = :user_id and main_pinned_order > 0
+func (m *defaultDialogPreferencesModel) ClearMainPinned(ctx context.Context, userId int64) (rowsAffected int64, err error) {
+
+	var (
+		query   = "update dialog_preferences set main_pinned_order = 0 where user_id = ? and main_pinned_order > 0"
+		rResult sql.Result
+	)
+
+	rResult, err = m.db.Exec(ctx, query, userId)
+
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.ClearMainPinned exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.ClearMainPinned rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// ClearMainPinned
+// update dialog_preferences set main_pinned_order = 0 where user_id = :user_id and main_pinned_order > 0
+func (m *defaultDialogPreferencesTxModel) ClearMainPinned(userId int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update dialog_preferences set main_pinned_order = 0 where user_id = ? and main_pinned_order > 0"
+		rResult sql.Result
+	)
+	rResult, err = m.tx.Exec(query, userId)
+
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.ClearMainPinned exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.ClearMainPinned rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// ClearMainPinnedExcept
+// update dialog_preferences set main_pinned_order = 0 where user_id = :user_id and main_pinned_order > 0 and peer_dialog_id not in (:idList)
+func (m *defaultDialogPreferencesModel) ClearMainPinnedExcept(ctx context.Context, userId int64, idList []int64) (rowsAffected int64, err error) {
+
+	var (
+		query   = fmt.Sprintf("update dialog_preferences set main_pinned_order = 0 where user_id = ? and main_pinned_order > 0 and peer_dialog_id not in (%s)", sqlx.InInt64List(idList))
+		rResult sql.Result
+	)
+
+	if len(idList) == 0 {
+		return
+	}
+
+	rResult, err = m.db.Exec(ctx, query, userId)
+
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.ClearMainPinnedExcept exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.ClearMainPinnedExcept rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// ClearMainPinnedExcept
+// update dialog_preferences set main_pinned_order = 0 where user_id = :user_id and main_pinned_order > 0 and peer_dialog_id not in (:idList)
+func (m *defaultDialogPreferencesTxModel) ClearMainPinnedExcept(userId int64, idList []int64) (rowsAffected int64, err error) {
+	var (
+		query   = fmt.Sprintf("update dialog_preferences set main_pinned_order = 0 where user_id = ? and main_pinned_order > 0 and peer_dialog_id not in (%s)", sqlx.InInt64List(idList))
+		rResult sql.Result
+	)
+
+	if len(idList) == 0 {
+		return
+	}
+
+	rResult, err = m.tx.Exec(query, userId)
+
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.ClearMainPinnedExcept exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.ClearMainPinnedExcept rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// ClearFolderPinned
+// update dialog_preferences set folder_pinned_order = 0 where user_id = :user_id and folder_id = :folder_id and folder_pinned_order > 0
+func (m *defaultDialogPreferencesModel) ClearFolderPinned(ctx context.Context, userId int64, folderId int32) (rowsAffected int64, err error) {
+
+	var (
+		query   = "update dialog_preferences set folder_pinned_order = 0 where user_id = ? and folder_id = ? and folder_pinned_order > 0"
+		rResult sql.Result
+	)
+
+	rResult, err = m.db.Exec(ctx, query, userId, folderId)
+
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.ClearFolderPinned exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.ClearFolderPinned rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// ClearFolderPinned
+// update dialog_preferences set folder_pinned_order = 0 where user_id = :user_id and folder_id = :folder_id and folder_pinned_order > 0
+func (m *defaultDialogPreferencesTxModel) ClearFolderPinned(userId int64, folderId int32) (rowsAffected int64, err error) {
+	var (
+		query   = "update dialog_preferences set folder_pinned_order = 0 where user_id = ? and folder_id = ? and folder_pinned_order > 0"
+		rResult sql.Result
+	)
+	rResult, err = m.tx.Exec(query, userId, folderId)
+
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.ClearFolderPinned exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.ClearFolderPinned rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// ClearFolderPinnedExcept
+// update dialog_preferences set folder_pinned_order = 0 where user_id = :user_id and folder_id = :folder_id and folder_pinned_order > 0 and peer_dialog_id not in (:idList)
+func (m *defaultDialogPreferencesModel) ClearFolderPinnedExcept(ctx context.Context, userId int64, folderId int32, idList []int64) (rowsAffected int64, err error) {
+
+	var (
+		query   = fmt.Sprintf("update dialog_preferences set folder_pinned_order = 0 where user_id = ? and folder_id = ? and folder_pinned_order > 0 and peer_dialog_id not in (%s)", sqlx.InInt64List(idList))
+		rResult sql.Result
+	)
+
+	if len(idList) == 0 {
+		return
+	}
+
+	rResult, err = m.db.Exec(ctx, query, userId, folderId)
+
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.ClearFolderPinnedExcept exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.ClearFolderPinnedExcept rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// ClearFolderPinnedExcept
+// update dialog_preferences set folder_pinned_order = 0 where user_id = :user_id and folder_id = :folder_id and folder_pinned_order > 0 and peer_dialog_id not in (:idList)
+func (m *defaultDialogPreferencesTxModel) ClearFolderPinnedExcept(userId int64, folderId int32, idList []int64) (rowsAffected int64, err error) {
+	var (
+		query   = fmt.Sprintf("update dialog_preferences set folder_pinned_order = 0 where user_id = ? and folder_id = ? and folder_pinned_order > 0 and peer_dialog_id not in (%s)", sqlx.InInt64List(idList))
+		rResult sql.Result
+	)
+
+	if len(idList) == 0 {
+		return
+	}
+
+	rResult, err = m.tx.Exec(query, userId, folderId)
+
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.ClearFolderPinnedExcept exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("dialog_preferences.ClearFolderPinnedExcept rows affected: %w", err)
+		return
+	}
 
 	return
 }
