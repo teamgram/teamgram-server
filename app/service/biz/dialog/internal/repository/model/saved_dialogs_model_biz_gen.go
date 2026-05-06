@@ -16,6 +16,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 )
@@ -33,10 +34,13 @@ type bizSavedDialogsModel interface {
 	Select(ctx context.Context, userId int64, peerType int32, peerId int64) (*SavedDialogs, error)
 	SelectPinnedDialogs(ctx context.Context, userId int64) ([]SavedDialogs, error)
 	SelectPinnedDialogsWithCB(ctx context.Context, userId int64, cb func(sz, i int, v *SavedDialogs)) ([]SavedDialogs, error)
-	SelectDialogs(ctx context.Context, userId int64, topMessageDate string, limit int32) ([]SavedDialogs, error)
-	SelectDialogsWithCB(ctx context.Context, userId int64, topMessageDate string, limit int32, cb func(sz, i int, v *SavedDialogs)) ([]SavedDialogs, error)
+	SelectDialogs(ctx context.Context, userId int64, topMessageDate time.Time, limit int32) ([]SavedDialogs, error)
+	SelectDialogsWithCB(ctx context.Context, userId int64, topMessageDate time.Time, limit int32, cb func(sz, i int, v *SavedDialogs)) ([]SavedDialogs, error)
 	UpdateUserUnPinned(ctx context.Context, userId int64) (rowsAffected int64, err error)
 	UpdateUserPeerPinned(ctx context.Context, pinned bool, pinOrder int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	SelectUnpinnedDialogs(ctx context.Context, userId int64, topMessageDate time.Time, limit int32) ([]SavedDialogs, error)
+	SelectUnpinnedDialogsWithCB(ctx context.Context, userId int64, topMessageDate time.Time, limit int32, cb func(sz, i int, v *SavedDialogs)) ([]SavedDialogs, error)
+	ClearDuplicatePinOrder(ctx context.Context, userId int64, pinOrder int64, peerType int32, peerId int64) (rowsAffected int64, err error)
 }
 
 type SavedDialogsTxModel interface {
@@ -44,9 +48,11 @@ type SavedDialogsTxModel interface {
 	UpsertTopFromMessage(data *SavedDialogs) (lastInsertId, rowsAffected int64, err error)
 	Select(userId int64, peerType int32, peerId int64) (*SavedDialogs, error)
 	SelectPinnedDialogs(userId int64) ([]SavedDialogs, error)
-	SelectDialogs(userId int64, topMessageDate string, limit int32) ([]SavedDialogs, error)
+	SelectDialogs(userId int64, topMessageDate time.Time, limit int32) ([]SavedDialogs, error)
 	UpdateUserUnPinned(userId int64) (rowsAffected int64, err error)
 	UpdateUserPeerPinned(pinned bool, pinOrder int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	SelectUnpinnedDialogs(userId int64, topMessageDate time.Time, limit int32) ([]SavedDialogs, error)
+	ClearDuplicatePinOrder(userId int64, pinOrder int64, peerType int32, peerId int64) (rowsAffected int64, err error)
 }
 
 type defaultSavedDialogsTxModel struct {
@@ -300,7 +306,7 @@ func (m *defaultSavedDialogsModel) SelectPinnedDialogsWithCB(ctx context.Context
 
 // SelectDialogs
 // select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload from saved_dialogs where user_id = :user_id and deleted = 0 and top_message_date < :top_message_date order by top_message_date desc limit :limit
-func (m *defaultSavedDialogsModel) SelectDialogs(ctx context.Context, userId int64, topMessageDate string, limit int32) (rList []SavedDialogs, err error) {
+func (m *defaultSavedDialogsModel) SelectDialogs(ctx context.Context, userId int64, topMessageDate time.Time, limit int32) (rList []SavedDialogs, err error) {
 	var (
 		query  = "select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload from saved_dialogs where user_id = ? and deleted = 0 and top_message_date < ? order by top_message_date desc limit ?"
 		values []SavedDialogs
@@ -324,7 +330,7 @@ func (m *defaultSavedDialogsModel) SelectDialogs(ctx context.Context, userId int
 
 // SelectDialogs
 // select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload from saved_dialogs where user_id = :user_id and deleted = 0 and top_message_date < :top_message_date order by top_message_date desc limit :limit
-func (m *defaultSavedDialogsTxModel) SelectDialogs(userId int64, topMessageDate string, limit int32) (rList []SavedDialogs, err error) {
+func (m *defaultSavedDialogsTxModel) SelectDialogs(userId int64, topMessageDate time.Time, limit int32) (rList []SavedDialogs, err error) {
 	var (
 		query  = "select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload from saved_dialogs where user_id = ? and deleted = 0 and top_message_date < ? order by top_message_date desc limit ?"
 		values []SavedDialogs
@@ -348,7 +354,7 @@ func (m *defaultSavedDialogsTxModel) SelectDialogs(userId int64, topMessageDate 
 
 // SelectDialogsWithCB
 // select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload from saved_dialogs where user_id = :user_id and deleted = 0 and top_message_date < :top_message_date order by top_message_date desc limit :limit
-func (m *defaultSavedDialogsModel) SelectDialogsWithCB(ctx context.Context, userId int64, topMessageDate string, limit int32, cb func(sz, i int, v *SavedDialogs)) (rList []SavedDialogs, err error) {
+func (m *defaultSavedDialogsModel) SelectDialogsWithCB(ctx context.Context, userId int64, topMessageDate time.Time, limit int32, cb func(sz, i int, v *SavedDialogs)) (rList []SavedDialogs, err error) {
 	var (
 		query  = "select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload from saved_dialogs where user_id = ? and deleted = 0 and top_message_date < ? order by top_message_date desc limit ?"
 		values []SavedDialogs
@@ -467,6 +473,133 @@ func (m *defaultSavedDialogsTxModel) UpdateUserPeerPinned(pinned bool, pinOrder 
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("saved_dialogs.UpdateUserPeerPinned rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// SelectUnpinnedDialogs
+// select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload from saved_dialogs where user_id = :user_id and deleted = 0 and pinned = 0 and top_message_date < :top_message_date order by top_message_date desc limit :limit
+func (m *defaultSavedDialogsModel) SelectUnpinnedDialogs(ctx context.Context, userId int64, topMessageDate time.Time, limit int32) (rList []SavedDialogs, err error) {
+	var (
+		query  = "select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload from saved_dialogs where user_id = ? and deleted = 0 and pinned = 0 and top_message_date < ? order by top_message_date desc limit ?"
+		values []SavedDialogs
+	)
+	err = m.db.QueryRowsPartial(ctx, &values, query, userId, topMessageDate, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []SavedDialogs{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("saved_dialogs.SelectUnpinnedDialogs: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectUnpinnedDialogs
+// select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload from saved_dialogs where user_id = :user_id and deleted = 0 and pinned = 0 and top_message_date < :top_message_date order by top_message_date desc limit :limit
+func (m *defaultSavedDialogsTxModel) SelectUnpinnedDialogs(userId int64, topMessageDate time.Time, limit int32) (rList []SavedDialogs, err error) {
+	var (
+		query  = "select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload from saved_dialogs where user_id = ? and deleted = 0 and pinned = 0 and top_message_date < ? order by top_message_date desc limit ?"
+		values []SavedDialogs
+	)
+	err = m.tx.QueryRowsPartial(&values, query, userId, topMessageDate, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []SavedDialogs{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("saved_dialogs.SelectUnpinnedDialogs: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectUnpinnedDialogsWithCB
+// select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload from saved_dialogs where user_id = :user_id and deleted = 0 and pinned = 0 and top_message_date < :top_message_date order by top_message_date desc limit :limit
+func (m *defaultSavedDialogsModel) SelectUnpinnedDialogsWithCB(ctx context.Context, userId int64, topMessageDate time.Time, limit int32, cb func(sz, i int, v *SavedDialogs)) (rList []SavedDialogs, err error) {
+	var (
+		query  = "select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload from saved_dialogs where user_id = ? and deleted = 0 and pinned = 0 and top_message_date < ? order by top_message_date desc limit ?"
+		values []SavedDialogs
+	)
+	err = m.db.QueryRowsPartial(ctx, &values, query, userId, topMessageDate, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []SavedDialogs{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("saved_dialogs.SelectUnpinnedDialogsWithCB: %w", err)
+		return
+	}
+
+	rList = values
+
+	if cb != nil {
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
+		}
+	}
+
+	return
+}
+
+// ClearDuplicatePinOrder
+// update saved_dialogs set pinned = 0, pin_order = 0 where user_id = :user_id and pin_order = :pin_order and not (peer_type = :peer_type and peer_id = :peer_id) and deleted = 0
+func (m *defaultSavedDialogsModel) ClearDuplicatePinOrder(ctx context.Context, userId int64, pinOrder int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+
+	var (
+		query   = "update saved_dialogs set pinned = 0, pin_order = 0 where user_id = ? and pin_order = ? and not (peer_type = ? and peer_id = ?) and deleted = 0"
+		rResult sql.Result
+	)
+
+	rResult, err = m.db.Exec(ctx, query, userId, pinOrder, peerType, peerId)
+
+	if err != nil {
+		err = fmt.Errorf("saved_dialogs.ClearDuplicatePinOrder exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("saved_dialogs.ClearDuplicatePinOrder rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// ClearDuplicatePinOrder
+// update saved_dialogs set pinned = 0, pin_order = 0 where user_id = :user_id and pin_order = :pin_order and not (peer_type = :peer_type and peer_id = :peer_id) and deleted = 0
+func (m *defaultSavedDialogsTxModel) ClearDuplicatePinOrder(userId int64, pinOrder int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update saved_dialogs set pinned = 0, pin_order = 0 where user_id = ? and pin_order = ? and not (peer_type = ? and peer_id = ?) and deleted = 0"
+		rResult sql.Result
+	)
+	rResult, err = m.tx.Exec(query, userId, pinOrder, peerType, peerId)
+
+	if err != nil {
+		err = fmt.Errorf("saved_dialogs.ClearDuplicatePinOrder exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("saved_dialogs.ClearDuplicatePinOrder rows affected: %w", err)
 		return
 	}
 

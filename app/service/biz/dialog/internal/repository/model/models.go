@@ -26,6 +26,7 @@ type Models struct {
 	DialogsModel                  DialogsModel
 	DraftsModel                   DraftsModel
 	SavedDialogsModel             SavedDialogsModel
+	DialogRepositoryQueries       DialogRepositoryQueriesModel
 }
 
 type TxModels struct {
@@ -40,6 +41,7 @@ type TxModels struct {
 	DialogsModel                  DialogsTxModel
 	DraftsModel                   DraftsTxModel
 	SavedDialogsModel             SavedDialogsTxModel
+	DialogRepositoryQueries       DialogRepositoryQueriesTxModel
 }
 
 func NewModels(db *sqlx.DB) *Models {
@@ -55,6 +57,7 @@ func NewModels(db *sqlx.DB) *Models {
 		DialogsModel:                  NewDialogsModel(db),
 		DraftsModel:                   NewDraftsModel(db),
 		SavedDialogsModel:             NewSavedDialogsModel(db),
+		DialogRepositoryQueries:       NewDialogRepositoryQueriesModel(db),
 	}
 }
 
@@ -71,5 +74,6 @@ func (m *Models) WithTx(tx *sqlx.Tx) *TxModels {
 		DialogsModel:                  NewDialogsTxModel(tx),
 		DraftsModel:                   NewDraftsTxModel(tx),
 		SavedDialogsModel:             NewSavedDialogsTxModel(tx),
+		DialogRepositoryQueries:       NewDialogRepositoryQueriesTxModel(tx),
 	}
 }

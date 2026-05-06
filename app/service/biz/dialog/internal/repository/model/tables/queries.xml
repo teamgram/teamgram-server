@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<queries namespace="DialogRepositoryQueries">
+    <result name="SavedDialogNextPinOrderRow">
+        <field name="NextPinOrder" type="int64" db="next_pin_order"/>
+    </result>
+
+    <query name="SelectSavedDialogNextPinOrder" result="SavedDialogNextPinOrderRow">
+        <sql>
+            SELECT
+                COALESCE(MAX(pin_order), 0) + 1 AS next_pin_order
+            FROM
+                saved_dialogs
+            WHERE
+                user_id = :user_id AND pinned = 1 AND deleted = 0
+            LIMIT 1
+        </sql>
+    </query>
+</queries>

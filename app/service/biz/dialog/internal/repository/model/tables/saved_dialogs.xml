@@ -99,4 +99,33 @@
                 user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id
         </sql>
     </operation>
+
+    <operation name="SelectUnpinnedDialogs" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            <![CDATA[
+            SELECT
+                user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload
+            FROM
+                saved_dialogs
+            WHERE
+                user_id = :user_id AND deleted = 0 AND pinned = 0 AND top_message_date < :top_message_date
+            ORDER BY top_message_date DESC LIMIT :limit
+            ]]>
+        </sql>
+    </operation>
+
+    <operation name="ClearDuplicatePinOrder">
+        <sql>
+            UPDATE
+                saved_dialogs
+            SET
+                pinned = 0,
+                pin_order = 0
+            WHERE
+                user_id = :user_id AND pin_order = :pin_order AND NOT (peer_type = :peer_type AND peer_id = :peer_id) AND deleted = 0
+        </sql>
+    </operation>
 </table>

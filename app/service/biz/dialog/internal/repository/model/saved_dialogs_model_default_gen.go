@@ -15,6 +15,7 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 
@@ -39,17 +40,17 @@ type (
 	}
 
 	SavedDialogs struct {
-		UserId                int64  `db:"user_id" json:"user_id"`
-		PeerType              int32  `db:"peer_type" json:"peer_type"`
-		PeerId                int64  `db:"peer_id" json:"peer_id"`
-		TopPeerSeq            int64  `db:"top_peer_seq" json:"top_peer_seq"`
-		TopCanonicalMessageId int64  `db:"top_canonical_message_id" json:"top_canonical_message_id"`
-		TopMessageDate        string `db:"top_message_date" json:"top_message_date"`
-		Pinned                bool   `db:"pinned" json:"pinned"`
-		PinOrder              int64  `db:"pin_order" json:"pin_order"`
-		Deleted               bool   `db:"deleted" json:"deleted"`
-		SavedSchemaVersion    int32  `db:"saved_schema_version" json:"saved_schema_version"`
-		SavedPayload          []byte `db:"saved_payload" json:"saved_payload"`
+		UserId                int64     `db:"user_id" json:"user_id"`
+		PeerType              int32     `db:"peer_type" json:"peer_type"`
+		PeerId                int64     `db:"peer_id" json:"peer_id"`
+		TopPeerSeq            int64     `db:"top_peer_seq" json:"top_peer_seq"`
+		TopCanonicalMessageId int64     `db:"top_canonical_message_id" json:"top_canonical_message_id"`
+		TopMessageDate        time.Time `db:"top_message_date" json:"top_message_date"`
+		Pinned                bool      `db:"pinned" json:"pinned"`
+		PinOrder              int64     `db:"pin_order" json:"pin_order"`
+		Deleted               bool      `db:"deleted" json:"deleted"`
+		SavedSchemaVersion    int32     `db:"saved_schema_version" json:"saved_schema_version"`
+		SavedPayload          []byte    `db:"saved_payload" json:"saved_payload"`
 	}
 )
 
