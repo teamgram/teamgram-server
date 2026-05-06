@@ -378,6 +378,7 @@ func TestMsgGetHistoryReturnsCanonicalTextMessages(t *testing.T) {
 			{
 				CanonicalMessageID: 9001,
 				PeerSeq:            2,
+				ReplyToPeerSeq:     1,
 				FromUserID:         1001,
 				Outgoing:           true,
 				PeerType:           payload.PeerTypeUser,
@@ -426,6 +427,13 @@ func TestMsgGetHistoryReturnsCanonicalTextMessages(t *testing.T) {
 	}
 	if newest.Id != 2 || newest.Message != "second" || newest.Date != 1_772_000_020 || !newest.Out {
 		t.Fatalf("unexpected newest message: %+v", newest)
+	}
+	reply, ok := newest.ReplyTo.(*tg.TLMessageReplyHeader)
+	if !ok {
+		t.Fatalf("newest ReplyTo = %T, want *tg.TLMessageReplyHeader", newest.ReplyTo)
+	}
+	if reply.ReplyToMsgId == nil || *reply.ReplyToMsgId != 1 {
+		t.Fatalf("reply_to_msg_id = %v, want 1", reply.ReplyToMsgId)
 	}
 	if repo.historyInput.PeerType != payload.PeerTypeUser ||
 		repo.historyInput.UserID != 1001 ||

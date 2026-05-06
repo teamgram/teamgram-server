@@ -5,6 +5,7 @@ package repository
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"os"
 	"testing"
@@ -295,6 +296,49 @@ func TestMessageRepositoryListHistoryMessagesUsesViewerScopedViews(t *testing.T)
 	}
 }
 
+func TestMessageRepositoryListHistoryMessagesCarriesReplyToPeerSeqFromViewPayload(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	repo := NewForTest(db, &testIDGenerator{next: base + 55_000})
+
+	senderID := base + 551
+	receiverID := base + 552
+	now := int32(time.Now().Unix())
+	target := createCanonicalMessageForTest(t, ctx, repo, receiverID, senderID, base+553, "target", now)
+	reply := createCanonicalMessageForTest(t, ctx, repo, senderID, receiverID, base+554, "reply", now+1)
+	insertUserMessageViewWithPayloadForTest(t, ctx, db, receiverID, payload.PeerTypeUser, senderID, reply, 11, senderID, false, payload.MessageEventV1{
+		SchemaVersion:      payload.MessageEventSchemaVersion,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: reply.CanonicalMessageID,
+		MessageID:          11,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             senderID,
+		FromUserID:         senderID,
+		ToUserID:           receiverID,
+		Date:               now + 1,
+		Out:                false,
+		MessageText:        "reply",
+		ReplyToPeerSeq:     target.PeerSeq,
+	})
+
+	history, err := repo.ListHistoryMessages(ctx, ListHistoryMessagesInput{
+		UserID:   receiverID,
+		PeerType: payload.PeerTypeUser,
+		PeerID:   senderID,
+		Limit:    10,
+	})
+	if err != nil {
+		t.Fatalf("ListHistoryMessages() error = %v", err)
+	}
+	if len(history) == 0 {
+		t.Fatal("ListHistoryMessages() returned no messages")
+	}
+	if history[0].CanonicalMessageID != reply.CanonicalMessageID || history[0].ReplyToPeerSeq != target.PeerSeq {
+		t.Fatalf("history[0] = %+v, want reply_to_peer_seq %d", history[0], target.PeerSeq)
+	}
+}
+
 func TestMessageRepositoryListHistoryMessagesUsesCanonicalSender(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)
@@ -495,6 +539,48 @@ VALUES
 	)
 	if err != nil {
 		t.Fatalf("insert user_message_views user_id=%d peer_id=%d peer_seq=%d canonical=%d: %v", userID, peerID, peerSeq, canonical.CanonicalMessageID, err)
+	}
+}
+
+func insertUserMessageViewWithPayloadForTest(
+	t *testing.T,
+	ctx context.Context,
+	db *sqlx.DB,
+	userID int64,
+	peerType int32,
+	peerID int64,
+	canonical *CanonicalMessageResult,
+	peerSeq int64,
+	fromUserID int64,
+	outgoing bool,
+	event payload.MessageEventV1,
+) {
+	t.Helper()
+	viewPayload, err := json.Marshal(event)
+	if err != nil {
+		t.Fatalf("marshal view payload: %v", err)
+	}
+	_, err = db.Exec(ctx, `
+INSERT INTO user_message_views
+	(user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload)
+VALUES
+	(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		userID,
+		peerType,
+		peerID,
+		peerSeq,
+		canonical.CanonicalMessageID,
+		fromUserID,
+		outgoing,
+		MessageKindText,
+		MessageStatusLive,
+		0,
+		mysqlDate(canonical.MessageDate),
+		payload.MessageEventSchemaVersion,
+		viewPayload,
+	)
+	if err != nil {
+		t.Fatalf("insert user_message_views payload user_id=%d peer_id=%d peer_seq=%d canonical=%d: %v", userID, peerID, peerSeq, canonical.CanonicalMessageID, err)
 	}
 }
 

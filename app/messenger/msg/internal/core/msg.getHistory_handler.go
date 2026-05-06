@@ -64,6 +64,7 @@ func messagesFromHistory(history []repository.HistoryMessage) *tg.MessagesMessag
 			Id:      int32(item.PeerSeq),
 			FromId:  tg.MakePeerUser(item.FromUserID),
 			PeerId:  tg.MakePeerUser(item.PeerID),
+			ReplyTo: historyReplyHeader(item.ReplyToPeerSeq),
 			Date:    item.MessageDate,
 			Message: item.MessageText,
 		}))
@@ -73,6 +74,14 @@ func messagesFromHistory(history []repository.HistoryMessage) *tg.MessagesMessag
 		Chats:    []tg.ChatClazz{},
 		Users:    []tg.UserClazz{},
 	}).ToMessagesMessages()
+}
+
+func historyReplyHeader(peerSeq int64) tg.MessageReplyHeaderClazz {
+	if peerSeq <= 0 {
+		return nil
+	}
+	replyToMsgID := int32(peerSeq)
+	return tg.MakeTLMessageReplyHeader(&tg.TLMessageReplyHeader{ReplyToMsgId: &replyToMsgID})
 }
 
 func emptyMsgMessages() *tg.MessagesMessages {

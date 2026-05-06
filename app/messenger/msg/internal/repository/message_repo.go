@@ -3,6 +3,7 @@ package repository
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"math"
 	"strings"
@@ -120,7 +121,11 @@ func (r *Repository) ListHistoryMessages(ctx context.Context, in ListHistoryMess
 		if in.MinID > 0 && row.PeerSeq <= int64(in.MinID) {
 			continue
 		}
-		out = append(out, historyMessageRowToMessage(row))
+		item, err := historyMessageRowToMessage(row)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, item)
 	}
 	return out, nil
 }
@@ -145,7 +150,8 @@ SELECT DISTINCT
 	v.peer_id,
 	v.message_kind,
 	c.message_text,
-	v.date AS message_date
+	v.date AS message_date,
+	v.view_payload
 FROM
 	user_message_views v
 JOIN
@@ -181,7 +187,11 @@ LIMIT ?`
 	}
 	out := make([]HistoryMessage, 0, len(rows))
 	for _, row := range rows {
-		out = append(out, historyMessageRowToMessage(row))
+		item, err := historyMessageRowToMessage(row)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, item)
 	}
 	return out, nil
 }
@@ -235,7 +245,8 @@ SELECT
 	v.peer_id,
 	v.message_kind,
 	c.message_text,
-	v.date AS message_date
+	v.date AS message_date,
+	v.view_payload
 FROM
 	user_message_views v
 JOIN
@@ -316,7 +327,8 @@ SELECT
 	v.peer_id,
 	v.message_kind,
 	c.message_text,
-	v.date AS message_date
+	v.date AS message_date,
+	v.view_payload
 FROM
 	user_message_views v
 JOIN
@@ -339,7 +351,15 @@ LIMIT ?, ?`
 	return rows, nil
 }
 
-func historyMessageRowToMessage(r model.HistoryMessageRow) HistoryMessage {
+func historyMessageRowToMessage(r model.HistoryMessageRow) (HistoryMessage, error) {
+	var replyToPeerSeq int64
+	if len(r.ViewPayload) > 0 {
+		var event payload.MessageEventV1
+		if err := json.Unmarshal(r.ViewPayload, &event); err != nil {
+			return HistoryMessage{}, storageError("decode history view payload", err)
+		}
+		replyToPeerSeq = event.ReplyToPeerSeq
+	}
 	messageDate := time.Date(r.MessageDate.Year(), r.MessageDate.Month(), r.MessageDate.Day(), r.MessageDate.Hour(), r.MessageDate.Minute(), r.MessageDate.Second(), r.MessageDate.Nanosecond(), time.UTC)
 	return HistoryMessage{
 		CanonicalMessageID: r.CanonicalMessageID,
@@ -351,7 +371,8 @@ func historyMessageRowToMessage(r model.HistoryMessageRow) HistoryMessage {
 		MessageKind:        r.MessageKind,
 		MessageText:        r.MessageText,
 		MessageDate:        int32(messageDate.Unix()),
-	}
+		ReplyToPeerSeq:     replyToPeerSeq,
+	}, nil
 }
 
 func selectCanonicalByRandomTx(txModels *model.TxModels, senderUserID int64, peerType int32, peerID int64, clientRandomID int64) (*CanonicalMessageResult, bool, error) {

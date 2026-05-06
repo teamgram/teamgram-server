@@ -110,6 +110,7 @@ type SearchHashTagMessagesInput struct {
 type HistoryMessage struct {
 	CanonicalMessageID int64
 	PeerSeq            int64
+	ReplyToPeerSeq     int64
 	FromUserID         int64
 	Outgoing           bool
 	PeerType           int32

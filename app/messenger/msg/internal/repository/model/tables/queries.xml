@@ -17,6 +17,7 @@
         <field name="MessageKind" type="int32" db="message_kind"/>
         <field name="MessageText" type="string" db="message_text"/>
         <field name="MessageDate" type="time.Time" db="message_date"/>
+        <field name="ViewPayload" type="[]byte" db="view_payload"/>
     </result>
 
     <query name="SelectCanonicalByRandom" result="CanonicalMessageRow">
@@ -82,7 +83,8 @@
                 v.peer_id,
                 v.message_kind,
                 c.message_text,
-                v.date AS message_date
+                v.date AS message_date,
+                v.view_payload
             FROM
                 user_message_views v
             JOIN

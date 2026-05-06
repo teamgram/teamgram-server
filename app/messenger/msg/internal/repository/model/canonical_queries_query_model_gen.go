@@ -39,6 +39,7 @@ type HistoryMessageRow struct {
 	MessageKind        int32     `db:"message_kind"`
 	MessageText        string    `db:"message_text"`
 	MessageDate        time.Time `db:"message_date"`
+	ViewPayload        []byte    `db:"view_payload"`
 }
 
 type CanonicalQueriesModel interface {
@@ -115,7 +116,7 @@ func (m *defaultCanonicalQueriesTxModel) SelectCanonicalByID(sendStateId int64, 
 
 func (m *defaultCanonicalQueriesModel) SelectHistoryMessages(ctx context.Context, userId int64, peerType int32, peerId int64, messageStatus int32, minPeerSeq int64, maxPeerSeq int64, limit int32) ([]HistoryMessageRow, error) {
 	var rList []HistoryMessageRow
-	query := "select v.canonical_message_id, v.peer_seq, c.from_user_id, v.outgoing, v.peer_type, v.peer_id, v.message_kind, c.message_text, v.`date` as message_date from user_message_views as v join canonical_messages as c on c.canonical_message_id = v.canonical_message_id where v.user_id = ? and v.peer_type = ? and v.peer_id = ? and v.message_status = ? and v.peer_seq > ? and v.peer_seq < ? order by v.`date` desc, v.peer_seq desc limit ?"
+	query := "select v.canonical_message_id, v.peer_seq, c.from_user_id, v.outgoing, v.peer_type, v.peer_id, v.message_kind, c.message_text, v.`date` as message_date, v.view_payload from user_message_views as v join canonical_messages as c on c.canonical_message_id = v.canonical_message_id where v.user_id = ? and v.peer_type = ? and v.peer_id = ? and v.message_status = ? and v.peer_seq > ? and v.peer_seq < ? order by v.`date` desc, v.peer_seq desc limit ?"
 
 	err := m.db.QueryRowsPartial(ctx, &rList, query, userId, peerType, peerId, messageStatus, minPeerSeq, maxPeerSeq, limit)
 	if err != nil {
@@ -126,7 +127,7 @@ func (m *defaultCanonicalQueriesModel) SelectHistoryMessages(ctx context.Context
 
 func (m *defaultCanonicalQueriesTxModel) SelectHistoryMessages(userId int64, peerType int32, peerId int64, messageStatus int32, minPeerSeq int64, maxPeerSeq int64, limit int32) ([]HistoryMessageRow, error) {
 	var rList []HistoryMessageRow
-	query := "select v.canonical_message_id, v.peer_seq, c.from_user_id, v.outgoing, v.peer_type, v.peer_id, v.message_kind, c.message_text, v.`date` as message_date from user_message_views as v join canonical_messages as c on c.canonical_message_id = v.canonical_message_id where v.user_id = ? and v.peer_type = ? and v.peer_id = ? and v.message_status = ? and v.peer_seq > ? and v.peer_seq < ? order by v.`date` desc, v.peer_seq desc limit ?"
+	query := "select v.canonical_message_id, v.peer_seq, c.from_user_id, v.outgoing, v.peer_type, v.peer_id, v.message_kind, c.message_text, v.`date` as message_date, v.view_payload from user_message_views as v join canonical_messages as c on c.canonical_message_id = v.canonical_message_id where v.user_id = ? and v.peer_type = ? and v.peer_id = ? and v.message_status = ? and v.peer_seq > ? and v.peer_seq < ? order by v.`date` desc, v.peer_seq desc limit ?"
 
 	err := m.tx.QueryRowsPartial(&rList, query, userId, peerType, peerId, messageStatus, minPeerSeq, maxPeerSeq, limit)
 	if err != nil {
