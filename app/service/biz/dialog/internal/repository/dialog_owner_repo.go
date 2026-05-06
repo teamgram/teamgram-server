@@ -241,7 +241,7 @@ func (r *Repository) SaveDraft(ctx context.Context, in SaveDraftInput) (*DraftMu
 			ReplyToPeerSeq:            in.ReplyToPeerSeq,
 			DraftPayloadSchemaVersion: 1,
 			DraftPayload:              draftPayload,
-			Date:                      mysqlTimestamp(in.Date),
+			Date:                      in.Date.UTC(),
 		})
 		if err != nil {
 			return storageError("save draft", err)
@@ -298,7 +298,7 @@ func (r *Repository) ClearDraftAfterSend(ctx context.Context, in ClearDraftAfter
 			return err
 		}
 		affected, err = txModels.DialogDraftsModel.ClearByUserPeerBeforeDate(
-			[]byte{}, 1, []byte(`{"schema_version":1}`), mysqlZeroTime(), in.UserID, peerDialogID, mysqlTimestamp(in.ClearBeforeDate),
+			[]byte{}, 1, []byte(`{"schema_version":1}`), mysqlZeroDateTime(), in.UserID, peerDialogID, mysqlTimestamp(in.ClearBeforeDate),
 		)
 		if err != nil {
 			return storageError("clear draft after send", err)
@@ -360,7 +360,7 @@ func (r *Repository) ClearAllDrafts(ctx context.Context, in ClearAllDraftsInput)
 				continue
 			}
 			affected, err := txModels.DialogDraftsModel.ClearByUserPeerBeforeDate(
-				[]byte{}, 1, []byte(`{"schema_version":1}`), mysqlZeroTime(), in.UserID, draft.PeerDialogId, draft.Date,
+				[]byte{}, 1, []byte(`{"schema_version":1}`), mysqlZeroDateTime(), in.UserID, draft.PeerDialogId, mysqlDateTimeString(draft.Date),
 			)
 			if err != nil {
 				return storageError("clear all drafts", err)
@@ -397,10 +397,6 @@ func (r *Repository) ListActiveDrafts(ctx context.Context, userID int64) ([]Draf
 	out := make([]DraftRecord, 0, len(rows))
 	for i := range rows {
 		row := rows[i]
-		date, err := parseMysqlTimestamp(row.Date)
-		if err != nil {
-			return nil, storageError("parse draft date", err)
-		}
 		out = append(out, DraftRecord{
 			UserID:          row.UserId,
 			PeerType:        row.PeerType,
@@ -411,7 +407,7 @@ func (r *Repository) ListActiveDrafts(ctx context.Context, userID int64) ([]Draf
 			EntitiesPayload: row.EntitiesPayload,
 			ReplyToPeerSeq:  row.ReplyToPeerSeq,
 			DraftPayload:    row.DraftPayload,
-			Date:            date,
+			Date:            mysqlDateTimeToUTC(row.Date),
 		})
 	}
 	return out, nil
@@ -432,7 +428,7 @@ func (r *Repository) UpsertSavedDialogFromMessage(ctx context.Context, in SavedD
 		PeerId:                in.PeerID,
 		TopPeerSeq:            in.TopPeerSeq,
 		TopCanonicalMessageId: in.TopCanonicalMessageID,
-		TopMessageDate:        mysqlTimestamp(in.TopMessageDate),
+		TopMessageDate:        in.TopMessageDate.UTC(),
 		SavedSchemaVersion:    1,
 		SavedPayload:          in.Payload,
 	})
@@ -454,7 +450,7 @@ func (r *Repository) ListSavedDialogs(ctx context.Context, userID int64, exclude
 		offsetDate = time.Date(9999, 12, 31, 23, 59, 59, 0, time.UTC)
 	}
 	if !excludePinned {
-		rows, err := models.SavedDialogsModel.SelectDialogs(ctx, userID, mysqlTimestamp(offsetDate), limit)
+		rows, err := models.SavedDialogsModel.SelectDialogs(ctx, userID, offsetDate.UTC(), limit)
 		if err != nil {
 			return nil, storageError("select saved dialogs", err)
 		}
@@ -535,17 +531,13 @@ func makeSavedDialogRecords(rows []model.SavedDialogs) ([]SavedDialogRecord, err
 	out := make([]SavedDialogRecord, 0, len(rows))
 	for i := range rows {
 		row := rows[i]
-		date, err := parseMysqlTimestamp(row.TopMessageDate)
-		if err != nil {
-			return nil, storageError("parse saved dialog top date", err)
-		}
 		out = append(out, SavedDialogRecord{
 			UserID:                row.UserId,
 			PeerType:              row.PeerType,
 			PeerID:                row.PeerId,
 			TopPeerSeq:            row.TopPeerSeq,
 			TopCanonicalMessageID: row.TopCanonicalMessageId,
-			TopMessageDate:        date,
+			TopMessageDate:        mysqlDateTimeToUTC(row.TopMessageDate),
 			Pinned:                row.Pinned,
 			PinOrder:              row.PinOrder,
 			SavedPayload:          row.SavedPayload,
@@ -800,9 +792,9 @@ func insertAuthSeqOutbox(txModels *model.TxModels, in authSeqOutboxInput) (bool,
 		PayloadHash:          hashPayload(in.Payload),
 		Status:               OutboxStatusPending,
 		AttemptCount:         0,
-		NextRetryAt:          mysqlTimestamp(time.Now().UTC()),
+		NextRetryAt:          time.Now().UTC(),
 		LeaseOwner:           "",
-		LeaseUntil:           mysqlZeroTime(),
+		LeaseUntil:           mysqlZeroDateTime(),
 		LastErrorKind:        "",
 		LastErrorMessage:     "",
 	}
@@ -896,9 +888,9 @@ func insertPublicUpdateOutbox(txModels *model.TxModels, in publicUpdateOutboxInp
 		PayloadHash:          hashPayload(in.Payload),
 		Status:               OutboxStatusPending,
 		AttemptCount:         0,
-		NextRetryAt:          mysqlTimestamp(time.Now().UTC()),
+		NextRetryAt:          time.Now().UTC(),
 		LeaseOwner:           "",
-		LeaseUntil:           mysqlZeroTime(),
+		LeaseUntil:           mysqlZeroDateTime(),
 		PublishedPts:         0,
 		PublishedPtsCount:    0,
 		PublishedSeq:         0,
@@ -976,4 +968,24 @@ func parseMysqlTimestamp(s string) (time.Time, error) {
 
 func mysqlZeroTime() string {
 	return "1970-01-01 00:00:00.000000"
+}
+
+func mysqlZeroDateTime() time.Time {
+	return time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC)
+}
+
+func mysqlDateTimeString(t time.Time) string {
+	if t.IsZero() {
+		return ""
+	}
+	return t.Format("2006-01-02 15:04:05.000000")
+}
+
+func mysqlDateTimeToUTC(t time.Time) time.Time {
+	if t.IsZero() {
+		return time.Time{}
+	}
+	year, month, day := t.Date()
+	hour, minute, second := t.Clock()
+	return time.Date(year, month, day, hour, minute, second, t.Nanosecond(), time.UTC)
 }

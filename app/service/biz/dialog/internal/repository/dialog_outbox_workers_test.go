@@ -55,7 +55,7 @@ func (f *fakeDialogOutboxUserupdatesClient) UserupdatesAppendDialogPtsSideEffect
 
 func TestDialogAuthSeqOutboxWorkerPublishesAndMarksPublished(t *testing.T) {
 	ctx := context.Background()
-	repo := NewRepositoryWithDBForTest(openDialogIntegrationDB(t))
+	repo := newDialogOutboxWorkerTestRepo(t)
 	base := time.Now().UnixNano()
 	row := newAuthSeqOutboxRow(base, fmt.Sprintf("auth-publish-%d", base))
 	if _, _, err := repo.model.DialogAuthSeqOutboxModel.Insert(ctx, row); err != nil {
@@ -85,7 +85,7 @@ func TestDialogAuthSeqOutboxWorkerPublishesAndMarksPublished(t *testing.T) {
 
 func TestDialogAuthSeqOutboxWorkerBlocksMissingSourceForNotSourcePolicy(t *testing.T) {
 	ctx := context.Background()
-	repo := NewRepositoryWithDBForTest(openDialogIntegrationDB(t))
+	repo := newDialogOutboxWorkerTestRepo(t)
 	base := time.Now().UnixNano()
 	row := newAuthSeqOutboxRow(base, fmt.Sprintf("auth-block-%d", base))
 	row.SourcePermAuthKeyId = 0
@@ -113,7 +113,7 @@ func TestDialogAuthSeqOutboxWorkerBlocksMissingSourceForNotSourcePolicy(t *testi
 
 func TestDialogPublicUpdateOutboxWorkerPublishesPTS(t *testing.T) {
 	ctx := context.Background()
-	repo := NewRepositoryWithDBForTest(openDialogIntegrationDB(t))
+	repo := newDialogOutboxWorkerTestRepo(t)
 	base := time.Now().UnixNano()
 	row := newPublicUpdateOutboxRow(base, fmt.Sprintf("public-pts-%d", base), DeliveryPathUserupdatesPTS)
 	if _, _, err := repo.model.DialogPublicUpdateOutboxModel.Insert(ctx, row); err != nil {
@@ -140,7 +140,7 @@ func TestDialogPublicUpdateOutboxWorkerPublishesPTS(t *testing.T) {
 
 func TestDialogPublicUpdateOutboxWorkerPublishesAuthSeq(t *testing.T) {
 	ctx := context.Background()
-	repo := NewRepositoryWithDBForTest(openDialogIntegrationDB(t))
+	repo := newDialogOutboxWorkerTestRepo(t)
 	base := time.Now().UnixNano()
 	row := newPublicUpdateOutboxRow(base, fmt.Sprintf("public-auth-%d", base), DeliveryPathUserupdatesAuthSeq)
 	if _, _, err := repo.model.DialogPublicUpdateOutboxModel.Insert(ctx, row); err != nil {
@@ -167,7 +167,7 @@ func TestDialogPublicUpdateOutboxWorkerPublishesAuthSeq(t *testing.T) {
 
 func TestDialogOutboxWorkerRetryAndBlockedState(t *testing.T) {
 	ctx := context.Background()
-	repo := NewRepositoryWithDBForTest(openDialogIntegrationDB(t))
+	repo := newDialogOutboxWorkerTestRepo(t)
 	base := time.Now().UnixNano()
 	retryRow := newPublicUpdateOutboxRow(base, fmt.Sprintf("public-retry-%d", base), DeliveryPathUserupdatesPTS)
 	blockRow := newPublicUpdateOutboxRow(base+1, fmt.Sprintf("public-block-%d", base), DeliveryPathUserupdatesPTS)
@@ -216,11 +216,11 @@ func TestOutboxRetryDelayIsCapped(t *testing.T) {
 
 func TestOutboxBlockedAfterAge(t *testing.T) {
 	ctx := context.Background()
-	repo := NewRepositoryWithDBForTest(openDialogIntegrationDB(t))
+	repo := newDialogOutboxWorkerTestRepo(t)
 	base := time.Now().UnixNano()
 	row := newPublicUpdateOutboxRow(base, fmt.Sprintf("public-age-block-%d", base), DeliveryPathUserupdatesPTS)
 	old := time.Now().UTC().Add(-time.Duration(OutboxWorkerBlockedAgeSeconds+1) * time.Second)
-	row.NextRetryAt = mysqlTimestamp(old)
+	row.NextRetryAt = old
 	if _, _, err := repo.model.DialogPublicUpdateOutboxModel.Insert(ctx, row); err != nil {
 		t.Fatalf("insert public update outbox: %v", err)
 	}
@@ -241,7 +241,7 @@ func TestOutboxBlockedAfterAge(t *testing.T) {
 
 func TestOutboxResetBlockedToPendingPreservesOperationID(t *testing.T) {
 	ctx := context.Background()
-	repo := NewRepositoryWithDBForTest(openDialogIntegrationDB(t))
+	repo := newDialogOutboxWorkerTestRepo(t)
 	base := time.Now().UnixNano()
 	row := newPublicUpdateOutboxRow(base, fmt.Sprintf("public-reset-%d", base), DeliveryPathUserupdatesPTS)
 	row.Status = OutboxStatusBlocked
@@ -298,7 +298,7 @@ func TestOutboxMetricsDoNotUsePayloadAsLabel(t *testing.T) {
 
 func TestDialogOutboxClaimLeasePreventsDoubleClaim(t *testing.T) {
 	ctx := context.Background()
-	repo := NewRepositoryWithDBForTest(openDialogIntegrationDB(t))
+	repo := newDialogOutboxWorkerTestRepo(t)
 	base := time.Now().UnixNano()
 	row := newAuthSeqOutboxRow(base, fmt.Sprintf("auth-lease-%d", base))
 	if _, _, err := repo.model.DialogAuthSeqOutboxModel.Insert(ctx, row); err != nil {
@@ -341,6 +341,31 @@ func testOutboxOptions(owner string) DialogOutboxWorkerOptions {
 	}
 }
 
+func newDialogOutboxWorkerTestRepo(t *testing.T) *Repository {
+	t.Helper()
+	repo := NewRepositoryWithDBForTest(openDialogIntegrationDB(t))
+	cleanupDialogOutboxWorkerRows(t, repo)
+	t.Cleanup(func() {
+		cleanupDialogOutboxWorkerRows(t, repo)
+	})
+	return repo
+}
+
+func cleanupDialogOutboxWorkerRows(t *testing.T, repo *Repository) {
+	t.Helper()
+	db, err := repo.requireDB()
+	if err != nil {
+		t.Fatalf("require db: %v", err)
+	}
+	ctx := context.Background()
+	if _, err := db.Exec(ctx, "DELETE FROM dialog_auth_seq_outbox WHERE operation_id LIKE 'auth-%'"); err != nil {
+		t.Fatalf("cleanup auth seq outbox worker rows: %v", err)
+	}
+	if _, err := db.Exec(ctx, "DELETE FROM dialog_public_update_outbox WHERE operation_id LIKE 'public-%'"); err != nil {
+		t.Fatalf("cleanup public update outbox worker rows: %v", err)
+	}
+}
+
 func newAuthSeqOutboxRow(base int64, operationID string) *model.DialogAuthSeqOutbox {
 	payload := []byte(`{"schema_version":1}`)
 	return &model.DialogAuthSeqOutbox{
@@ -357,8 +382,8 @@ func newAuthSeqOutboxRow(base int64, operationID string) *model.DialogAuthSeqOut
 		PayloadHash:          hashPayload(payload),
 		Status:               OutboxStatusPending,
 		AttemptCount:         0,
-		NextRetryAt:          mysqlZeroTime(),
-		LeaseUntil:           mysqlZeroTime(),
+		NextRetryAt:          mysqlZeroDateTime(),
+		LeaseUntil:           mysqlZeroDateTime(),
 	}
 }
 
@@ -380,7 +405,7 @@ func newPublicUpdateOutboxRow(base int64, operationID string, deliveryPath strin
 		PayloadHash:          hashPayload(payload),
 		Status:               OutboxStatusPending,
 		AttemptCount:         0,
-		NextRetryAt:          mysqlZeroTime(),
-		LeaseUntil:           mysqlZeroTime(),
+		NextRetryAt:          mysqlZeroDateTime(),
+		LeaseUntil:           mysqlZeroDateTime(),
 	}
 }
