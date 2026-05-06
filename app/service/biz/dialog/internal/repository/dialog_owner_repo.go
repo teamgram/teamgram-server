@@ -6,7 +6,6 @@ import (
 	"crypto/sha256"
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
@@ -121,7 +120,7 @@ func (r *Repository) ReorderPinnedDialogs(ctx context.Context, in ReorderPinnedD
 				}
 			}
 		}
-		if err := clearOmittedPinnedPreferences(tx, in.UserID, in.FolderID, peerDialogIDs); err != nil {
+		if err := clearOmittedPinnedPreferences(txModels, in.UserID, in.FolderID, peerDialogIDs); err != nil {
 			return err
 		}
 		if err := incrementPreferenceVersion(txModels, in.UserID, scope, in.FolderID); err != nil {
@@ -456,16 +455,8 @@ func (r *Repository) ListSavedDialogs(ctx context.Context, userID int64, exclude
 		}
 		return makeSavedDialogRecords(rows)
 	}
-	rows := make([]model.SavedDialogs, 0)
-	query := `
-SELECT
-	user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, pinned, pin_order, deleted, saved_schema_version, saved_payload
-FROM
-	saved_dialogs
-WHERE
-	user_id = ? AND deleted = 0 AND pinned = 0 AND top_message_date < ?
-ORDER BY top_message_date DESC LIMIT ?`
-	if err := r.db.QueryRowsPartial(ctx, &rows, query, userID, mysqlTimestamp(offsetDate), limit); err != nil {
+	rows, err := models.SavedDialogsModel.SelectUnpinnedDialogs(ctx, userID, mysqlDateTimeForBind(offsetDate), limit)
+	if err != nil {
 		return nil, storageError("select unpinned saved dialogs", err)
 	}
 	return makeSavedDialogRecords(rows)
@@ -511,12 +502,13 @@ func (r *Repository) ToggleSavedDialogPin(ctx context.Context, in SavedDialogPin
 			pinOrder = 0
 		} else {
 			if pinOrder <= 0 {
-				if err := tx.QueryRowPartial(&pinOrder, "SELECT COALESCE(MAX(pin_order), 0) + 1 FROM saved_dialogs WHERE user_id = ? AND pinned = 1 AND deleted = 0", in.UserID); err != nil {
+				row, err := txModels.DialogRepositoryQueries.SelectSavedDialogNextPinOrder(in.UserID)
+				if err != nil {
 					return storageError("select next saved dialog pin order", err)
 				}
+				pinOrder = row.NextPinOrder
 			}
-			if _, err := tx.Exec("UPDATE saved_dialogs SET pinned = 0, pin_order = 0 WHERE user_id = ? AND pin_order = ? AND NOT (peer_type = ? AND peer_id = ?) AND deleted = 0",
-				in.UserID, pinOrder, in.PeerType, in.PeerID); err != nil {
+			if _, err := txModels.SavedDialogsModel.ClearDuplicatePinOrder(in.UserID, pinOrder, in.PeerType, in.PeerID); err != nil {
 				return storageError("clear duplicate saved dialog pin order", err)
 			}
 		}
@@ -927,25 +919,27 @@ func hashPayload(b []byte) []byte {
 	return out
 }
 
-func clearOmittedPinnedPreferences(tx *sqlx.Tx, userID int64, folderID int32, keepPeerDialogIDs []int64) error {
-	column := "main_pinned_order"
-	query := "UPDATE dialog_preferences SET main_pinned_order = 0 WHERE user_id = ? AND main_pinned_order > 0"
-	args := []interface{}{userID}
+func clearOmittedPinnedPreferences(txModels *model.TxModels, userID int64, folderID int32, keepPeerDialogIDs []int64) error {
 	if folderID != 0 {
-		column = "folder_pinned_order"
-		query = "UPDATE dialog_preferences SET folder_pinned_order = 0 WHERE user_id = ? AND folder_id = ? AND folder_pinned_order > 0"
-		args = []interface{}{userID, folderID}
-	}
-	if len(keepPeerDialogIDs) > 0 {
-		placeholders := make([]string, 0, len(keepPeerDialogIDs))
-		for _, id := range keepPeerDialogIDs {
-			placeholders = append(placeholders, "?")
-			args = append(args, id)
+		if len(keepPeerDialogIDs) == 0 {
+			if _, err := txModels.DialogPreferencesModel.ClearFolderPinned(userID, folderID); err != nil {
+				return storageError("clear omitted folder_pinned_order", err)
+			}
+			return nil
 		}
-		query += " AND peer_dialog_id NOT IN (" + strings.Join(placeholders, ",") + ")"
+		if _, err := txModels.DialogPreferencesModel.ClearFolderPinnedExcept(userID, folderID, keepPeerDialogIDs); err != nil {
+			return storageError("clear omitted folder_pinned_order", err)
+		}
+		return nil
 	}
-	if _, err := tx.Exec(query, args...); err != nil {
-		return storageError("clear omitted "+column, err)
+	if len(keepPeerDialogIDs) == 0 {
+		if _, err := txModels.DialogPreferencesModel.ClearMainPinned(userID); err != nil {
+			return storageError("clear omitted main_pinned_order", err)
+		}
+		return nil
+	}
+	if _, err := txModels.DialogPreferencesModel.ClearMainPinnedExcept(userID, keepPeerDialogIDs); err != nil {
+		return storageError("clear omitted main_pinned_order", err)
 	}
 	return nil
 }
