@@ -21,6 +21,7 @@ import (
 	msgclient "github.com/teamgram/teamgram-server/v2/app/messenger/msg/client"
 	userupdatesclient "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/client"
 	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
+	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
 )
 
 // Repository is the dependency container for repository instances.
@@ -28,6 +29,7 @@ type Repository struct {
 	ChatClient        chatclient.ChatClient
 	MsgClient         msgclient.MsgClient
 	UserupdatesClient userupdatesclient.UserupdatesClient
+	UserClient        userclient.UserClient
 }
 
 // NewRepository creates a new Repository.
@@ -36,5 +38,6 @@ func NewRepository(c config.Config) *Repository {
 		ChatClient:        chatclient.NewChatClient(chatclient.MustNewKitexClient(c.ChatClient)),
 		MsgClient:         msgclient.NewMsgClient(msgclient.MustNewKitexClient(c.MsgClient)),
 		UserupdatesClient: userupdatesclient.NewUserupdatesClient(userupdatesclient.MustNewKitexClient(c.UserupdatesClient)),
+		UserClient:        userclient.NewUserClient(userclient.MustNewKitexClient(c.UserClient)),
 	}
 }
