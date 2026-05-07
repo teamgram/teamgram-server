@@ -757,7 +757,7 @@ func TestMsgEditMessageV2UpdatesCanonicalAndRoutesOperations(t *testing.T) {
 			PeerSeq:            7,
 			FromUserID:         1001,
 			PeerType:           payload.PeerTypeUser,
-			PeerID:             1002,
+			PeerID:             4294968298,
 			MessageText:        "edited",
 			MessageDate:        1_772_000_010,
 			EditDate:           1_772_000_100,
@@ -804,6 +804,13 @@ func TestMsgEditMessageV2UpdatesCanonicalAndRoutesOperations(t *testing.T) {
 	if edit.Pts != 41 || edit.PtsCount != 1 {
 		t.Fatalf("unexpected edit update pts: %+v", edit)
 	}
+	editMessage, ok := edit.Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("edit message type = %T, want *tg.TLMessage", edit.Message)
+	}
+	if peer, ok := editMessage.PeerId.(*tg.TLPeerUser); !ok || peer.UserId != 1002 {
+		t.Fatalf("edit response peer_id = %#v, want peerUser(1002)", editMessage.PeerId)
+	}
 	if repo.editInput.NewMessageText != "edited" || repo.editInput.ActorUserID != 1001 || repo.editInput.PeerSeq != 7 {
 		t.Fatalf("unexpected edit input: %+v", repo.editInput)
 	}
@@ -827,6 +834,9 @@ func TestMsgEditMessageV2OperationIDIncludesEditVersion(t *testing.T) {
 	second := editMessageOperationID(7001, 2, 1001)
 	if first == second {
 		t.Fatalf("edit operation ids must differ across edit versions: %q", first)
+	}
+	if first != "v1:msg:7001:edit:1:1001" || second != "v1:msg:7001:edit:2:1001" {
+		t.Fatalf("unexpected edit operation ids: first=%q second=%q", first, second)
 	}
 }
 

@@ -215,7 +215,22 @@ func (r *Repository) EditCanonicalMessage(ctx context.Context, in EditCanonicalM
 			return msg.ErrMessageAuthorRequired
 		}
 		if row.MessageText == in.NewMessageText {
-			return msg.ErrMessageNotModified
+			if row.EditVersion <= 0 {
+				return msg.ErrMessageNotModified
+			}
+			out = &EditMessageResult{
+				CanonicalMessageID: row.CanonicalMessageID,
+				PeerSeq:            row.PeerSeq,
+				FromUserID:         row.FromUserID,
+				PeerType:           row.PeerType,
+				PeerID:             row.PeerID,
+				MessageKind:        row.MessageKind,
+				MessageText:        row.MessageText,
+				MessageDate:        mysqlTimeUnix(row.MessageDate),
+				EditDate:           mysqlTimeUnix(row.EditDate),
+				EditVersion:        row.EditVersion,
+			}
+			return nil
 		}
 
 		editDate := in.RequestEditDate
@@ -238,7 +253,7 @@ func (r *Repository) EditCanonicalMessage(ctx context.Context, in EditCanonicalM
 			PeerID:             row.PeerID,
 			MessageKind:        row.MessageKind,
 			MessageText:        in.NewMessageText,
-			MessageDate:        int32(time.Date(row.MessageDate.Year(), row.MessageDate.Month(), row.MessageDate.Day(), row.MessageDate.Hour(), row.MessageDate.Minute(), row.MessageDate.Second(), row.MessageDate.Nanosecond(), time.UTC).Unix()),
+			MessageDate:        mysqlTimeUnix(row.MessageDate),
 			EditDate:           editDate,
 			EditVersion:        editVersion,
 		}
@@ -267,8 +282,12 @@ func historyRowToCanonicalMessage(row model.HistoryMessageRow) *CanonicalMessage
 		PeerID:             row.PeerID,
 		MessageKind:        row.MessageKind,
 		MessageText:        row.MessageText,
-		MessageDate:        int32(time.Date(row.MessageDate.Year(), row.MessageDate.Month(), row.MessageDate.Day(), row.MessageDate.Hour(), row.MessageDate.Minute(), row.MessageDate.Second(), row.MessageDate.Nanosecond(), time.UTC).Unix()),
+		MessageDate:        mysqlTimeUnix(row.MessageDate),
 	}
+}
+
+func mysqlTimeUnix(t time.Time) int32 {
+	return int32(time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), time.UTC).Unix())
 }
 
 func (r *Repository) historySliceOffset(ctx context.Context, in ListHistoryMessagesInput) (int64, error) {

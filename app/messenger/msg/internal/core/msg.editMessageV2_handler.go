@@ -84,7 +84,7 @@ func (c *MsgCore) MsgEditMessageV2(in *msg.TLMsgEditMessageV2) (*tg.Updates, err
 		}
 	}
 
-	return shortEditMessage(edited, senderResult, senderHash)
+	return shortEditMessage(edited, senderResult, senderHash, in.PeerId)
 }
 
 func (c *MsgCore) processEditSenderOperation(in *msg.TLMsgEditMessageV2, edited *repository.EditMessageResult) (*userupdates.UserOperationResult, []byte, error) {
@@ -166,7 +166,7 @@ func buildEditMessageOperationPayload(fromUserID int64, toUserID int64, peerID i
 	return body, payload.HashBytes(body), nil
 }
 
-func shortEditMessage(edited *repository.EditMessageResult, result *userupdates.UserOperationResult, _ []byte) (*tg.Updates, error) {
+func shortEditMessage(edited *repository.EditMessageResult, result *userupdates.UserOperationResult, _ []byte, peerID int64) (*tg.Updates, error) {
 	if edited == nil || result == nil {
 		return nil, msg.ErrSenderSyncFailed
 	}
@@ -182,7 +182,7 @@ func shortEditMessage(edited *repository.EditMessageResult, result *userupdates.
 		Out:      true,
 		Id:       peerSeq,
 		FromId:   tg.MakePeerUser(edited.FromUserID),
-		PeerId:   tg.MakePeerUser(edited.PeerID),
+		PeerId:   tg.MakePeerUser(peerID),
 		Date:     edited.MessageDate,
 		Message:  edited.MessageText,
 		EditDate: &edited.EditDate,

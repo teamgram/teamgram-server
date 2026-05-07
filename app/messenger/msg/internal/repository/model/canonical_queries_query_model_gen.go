@@ -51,6 +51,7 @@ type EditableMessageRow struct {
 	MessageKind        int32     `db:"message_kind"`
 	MessageText        string    `db:"message_text"`
 	MessageDate        time.Time `db:"message_date"`
+	EditDate           time.Time `db:"edit_date"`
 	EditVersion        int32     `db:"edit_version"`
 }
 
@@ -214,7 +215,7 @@ func (m *defaultCanonicalQueriesTxModel) SelectCanonicalByUserView(userId int64,
 
 func (m *defaultCanonicalQueriesModel) SelectEditableMessageForUpdate(ctx context.Context, actorUserId int64, peerType int32, peerId int64, peerSeq int64, messageStatus int32) (*EditableMessageRow, error) {
 	var rValue EditableMessageRow
-	query := "select c.canonical_message_id, c.peer_seq, c.from_user_id, c.peer_type, c.peer_id, c.message_kind, c.message_text, c.`date` as message_date, c.edit_version from user_message_views as v join canonical_messages as c on c.canonical_message_id = v.canonical_message_id where v.user_id = ? and v.peer_type = ? and v.peer_id = ? and v.peer_seq = ? and v.message_status = ? limit 1 for update"
+	query := "select c.canonical_message_id, c.peer_seq, c.from_user_id, c.peer_type, c.peer_id, c.message_kind, c.message_text, c.`date` as message_date, COALESCE(c.edit_date, c.`date`) as edit_date, c.edit_version from user_message_views as v join canonical_messages as c on c.canonical_message_id = v.canonical_message_id where v.user_id = ? and v.peer_type = ? and v.peer_id = ? and v.peer_seq = ? and v.message_status = ? limit 1 for update"
 
 	err := m.db.QueryRowPartial(ctx, &rValue, query, actorUserId, peerType, peerId, peerSeq, messageStatus)
 	if err != nil {
@@ -225,7 +226,7 @@ func (m *defaultCanonicalQueriesModel) SelectEditableMessageForUpdate(ctx contex
 
 func (m *defaultCanonicalQueriesTxModel) SelectEditableMessageForUpdate(actorUserId int64, peerType int32, peerId int64, peerSeq int64, messageStatus int32) (*EditableMessageRow, error) {
 	var rValue EditableMessageRow
-	query := "select c.canonical_message_id, c.peer_seq, c.from_user_id, c.peer_type, c.peer_id, c.message_kind, c.message_text, c.`date` as message_date, c.edit_version from user_message_views as v join canonical_messages as c on c.canonical_message_id = v.canonical_message_id where v.user_id = ? and v.peer_type = ? and v.peer_id = ? and v.peer_seq = ? and v.message_status = ? limit 1 for update"
+	query := "select c.canonical_message_id, c.peer_seq, c.from_user_id, c.peer_type, c.peer_id, c.message_kind, c.message_text, c.`date` as message_date, COALESCE(c.edit_date, c.`date`) as edit_date, c.edit_version from user_message_views as v join canonical_messages as c on c.canonical_message_id = v.canonical_message_id where v.user_id = ? and v.peer_type = ? and v.peer_id = ? and v.peer_seq = ? and v.message_status = ? limit 1 for update"
 
 	err := m.tx.QueryRowPartial(&rValue, query, actorUserId, peerType, peerId, peerSeq, messageStatus)
 	if err != nil {

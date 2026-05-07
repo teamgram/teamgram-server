@@ -29,6 +29,7 @@
         <field name="MessageKind" type="int32" db="message_kind"/>
         <field name="MessageText" type="string" db="message_text"/>
         <field name="MessageDate" type="time.Time" db="message_date"/>
+        <field name="EditDate" type="time.Time" db="edit_date"/>
         <field name="EditVersion" type="int32" db="edit_version"/>
     </result>
 
@@ -230,6 +231,7 @@
                 c.message_kind,
                 c.message_text,
                 c.date AS message_date,
+                COALESCE(c.edit_date, c.date) AS edit_date,
                 c.edit_version
             FROM
                 user_message_views v
