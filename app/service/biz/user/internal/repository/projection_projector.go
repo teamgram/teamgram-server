@@ -1,6 +1,10 @@
 package repository
 
-import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+import (
+	"time"
+
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
 
 type projectionFacts struct {
 	Users     map[int64]*projectionUserFact
@@ -10,8 +14,10 @@ type projectionFacts struct {
 }
 
 type projectionUserFact struct {
-	User  tg.UserDataClazz
-	IsBot bool
+	User      tg.UserDataClazz
+	IsBot     bool
+	PhotoId   int64
+	Usernames []tg.UsernameClazz
 }
 
 type projectionContactFact struct {
@@ -75,6 +81,12 @@ func projectUserForViewer(viewerUserId, targetUserId int64, facts projectionFact
 	} else if projectionAllowsPrivacy(viewerUserId, targetUserId, tg.PHONE_NUMBER, facts, false) {
 		user.Phone = stringPtr(userData.Phone)
 	}
+	if projectionAllowsPrivacy(viewerUserId, targetUserId, tg.PROFILE_PHOTO, facts, false) {
+		user.Photo = projectionUserProfilePhoto(fact)
+	}
+	if projectionAllowsPrivacy(viewerUserId, targetUserId, tg.STATUS_TIMESTAMP, facts, false) {
+		user.Status = projectionUserStatus(facts.Presences[targetUserId])
+	}
 	return user
 }
 
@@ -84,6 +96,8 @@ func projectSelfUser(userData *tg.UserData, fact *projectionUserFact, presence *
 	user.Contact = true
 	user.MutualContact = true
 	user.Phone = stringPtr(userData.Phone)
+	user.Photo = projectionUserProfilePhoto(fact)
+	user.Status = projectionUserStatus(presence)
 	return user
 }
 
@@ -103,7 +117,7 @@ func projectBaseUser(userData *tg.UserData, fact *projectionUserFact) *tg.TLUser
 		Fake:              userData.Fake,
 		Premium:           userData.Premium,
 		EmojiStatus:       userData.EmojiStatus,
-		Usernames:         tgUsernameList(userData.Username, true),
+		Usernames:         projectionUsernames(userData, fact),
 		Color:             userData.Color,
 		ProfileColor:      userData.ProfileColor,
 	})
@@ -122,6 +136,34 @@ func projectBaseUser(userData *tg.UserData, fact *projectionUserFact) *tg.TLUser
 		user.BotActiveUsers = bot.BotActiveUsers
 	}
 	return user
+}
+
+func projectionUserProfilePhoto(fact *projectionUserFact) tg.UserProfilePhotoClazz {
+	if fact == nil || fact.PhotoId == 0 {
+		return nil
+	}
+	return tg.MakeTLUserProfilePhoto(&tg.TLUserProfilePhoto{PhotoId: fact.PhotoId})
+}
+
+func projectionUserStatus(presence *projectionPresenceFact) tg.UserStatusClazz {
+	if presence == nil {
+		return nil
+	}
+	now := int32(time.Now().Unix())
+	if presence.Expires > now {
+		return tg.MakeTLUserStatusOnline(&tg.TLUserStatusOnline{Expires: presence.Expires})
+	}
+	if presence.LastSeenAt > 0 {
+		return tg.MakeTLUserStatusOffline(&tg.TLUserStatusOffline{WasOnline: int32(presence.LastSeenAt)})
+	}
+	return nil
+}
+
+func projectionUsernames(userData *tg.UserData, fact *projectionUserFact) []tg.UsernameClazz {
+	if fact != nil && len(fact.Usernames) > 0 {
+		return append([]tg.UsernameClazz(nil), fact.Usernames...)
+	}
+	return tgUsernameList(userData.Username, true)
 }
 
 func projectionAllowsPrivacy(viewerUserId, targetUserId int64, keyType int32, facts projectionFacts, defaultAllow bool) bool {
