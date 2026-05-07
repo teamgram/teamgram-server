@@ -9,6 +9,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/gateway"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,13 +30,18 @@ type PushTaskGateway interface {
 	GatewayPushUpdatesData(ctx context.Context, in *gateway.TLGatewayPushUpdatesData) (*tg.Bool, error)
 }
 
+type PushTaskUserProjector interface {
+	UserGetUserProjectionBundle(ctx context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error)
+}
+
 type PushTaskDispatcher struct {
 	authsession PushTaskAuthKeyRouter
 	gateway     PushTaskGateway
+	user        PushTaskUserProjector
 }
 
-func NewPushTaskDispatcher(authsession PushTaskAuthKeyRouter, gateway PushTaskGateway) *PushTaskDispatcher {
-	return &PushTaskDispatcher{authsession: authsession, gateway: gateway}
+func NewPushTaskDispatcher(authsession PushTaskAuthKeyRouter, gateway PushTaskGateway, user PushTaskUserProjector) *PushTaskDispatcher {
+	return &PushTaskDispatcher{authsession: authsession, gateway: gateway, user: user}
 }
 
 func (d *PushTaskDispatcher) HandlePushTaskKafkaRecord(ctx context.Context, record PushTaskKafkaRecord) error {
@@ -52,6 +58,9 @@ func (d *PushTaskDispatcher) HandlePushTaskKafkaRecord(ctx context.Context, reco
 	if err != nil {
 		logx.WithContext(ctx).Errorf("push task terminal: task_id=%d user_id=%d code=payload_projection_failed err=%v", msg.TaskID, msg.UserID, err)
 		return nil
+	}
+	if err := d.projectPushUsers(ctx, msg, updates); err != nil {
+		return err
 	}
 	if d.authsession == nil || d.gateway == nil {
 		return fmt.Errorf("push task dispatcher dependencies are nil")
@@ -75,6 +84,74 @@ func (d *PushTaskDispatcher) HandlePushTaskKafkaRecord(ctx context.Context, reco
 		}
 	}
 	return nil
+}
+
+func (d *PushTaskDispatcher) projectPushUsers(ctx context.Context, msg *payload.PushTaskKafkaMessageV1, updates tg.UpdatesClazz) error {
+	full, combined, wrapper := fullUpdatesFromClazz(updates)
+	if wrapper == nil {
+		return nil
+	}
+	ids := pushProjectionTargetIDs(msg.UserID, wrapper)
+	if len(ids) == 0 {
+		return nil
+	}
+	if d.user == nil {
+		return fmt.Errorf("push task user projection dependency is nil")
+	}
+	bundle, err := d.user.UserGetUserProjectionBundle(ctx, &userpb.TLUserGetUserProjectionBundle{
+		ViewerUserIds: []int64{msg.UserID},
+		TargetUserIds: ids,
+	})
+	if err != nil {
+		return fmt.Errorf("push task project users: task_id=%d user_id=%d: %w", msg.TaskID, msg.UserID, err)
+	}
+	if bundle == nil {
+		return fmt.Errorf("push task project users: task_id=%d user_id=%d: nil bundle", msg.TaskID, msg.UserID)
+	}
+	if len(bundle.MissingUserIds) > 0 {
+		logx.WithContext(ctx).Errorf("push task degraded: task_id=%d user_id=%d code=missing_user_refs count=%d", msg.TaskID, msg.UserID, len(bundle.MissingUserIds))
+	}
+	users := []tg.UserClazz{}
+	for _, viewer := range bundle.ViewerUsers {
+		if viewer != nil && viewer.ViewerUserId == msg.UserID {
+			users = viewer.Users
+			break
+		}
+	}
+	if full != nil {
+		full.Users = users
+	}
+	if combined != nil {
+		combined.Users = users
+	}
+	return nil
+}
+
+func fullUpdatesFromClazz(updates tg.UpdatesClazz) (*tg.TLUpdates, *tg.TLUpdatesCombined, *tg.Updates) {
+	switch u := updates.(type) {
+	case *tg.TLUpdates:
+		return u, nil, u.ToUpdates()
+	case *tg.TLUpdatesCombined:
+		return nil, u, u.ToUpdates()
+	default:
+		return nil, nil, nil
+	}
+}
+
+func pushProjectionTargetIDs(viewerUserID int64, updates *tg.Updates) []int64 {
+	ids := tg.CollectUserIDsFromUpdates(updates)
+	if len(ids) == 0 {
+		return ids
+	}
+	for _, id := range ids {
+		if id == viewerUserID {
+			return ids
+		}
+	}
+	if viewerUserID > 0 {
+		ids = append(ids, viewerUserID)
+	}
+	return ids
 }
 
 func pushTaskUpdates(msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, *int64, error) {
@@ -215,21 +292,11 @@ func editMessageUpdates(msg *payload.PushTaskKafkaMessageV1, event payload.Messa
 			Pts:      pts,
 			PtsCount: 1,
 		})},
-		Users: editMessageUsers(event.FromUserID, event.ToUserID),
+		Users: []tg.UserClazz{},
 		Chats: []tg.ChatClazz{},
 		Date:  editDate - 1,
 		Seq:   0,
 	}), event.AuthKeyIdExclude, nil
-}
-
-func editMessageUsers(fromUserID, toUserID int64) []tg.UserClazz {
-	if fromUserID == toUserID {
-		return []tg.UserClazz{tg.MakeTLUser(&tg.TLUser{Id: fromUserID})}
-	}
-	return []tg.UserClazz{
-		tg.MakeTLUser(&tg.TLUser{Id: fromUserID}),
-		tg.MakeTLUser(&tg.TLUser{Id: toUserID}),
-	}
 }
 
 func shortMessageUserID(event payload.MessageEventV1) int64 {

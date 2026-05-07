@@ -27,6 +27,7 @@ import (
 	receiverevent "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/event"
 	authsessionclient "github.com/teamgram/teamgram-server/v2/app/service/authsession/client"
 	dialogclient "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/client"
+	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
@@ -96,7 +97,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	if c.PushTaskConsumer != nil {
 		authsessionClient := authsessionclient.NewAuthsessionClient(authsessionclient.MustNewKitexClient(c.Authsession))
 		gatewayClient := gatewayclient.NewGatewayClient(gatewayclient.MustNewKitexClient(c.Gateway))
-		consumer, err := receiverevent.NewPushTaskConsumer(c.PushTaskConsumer, receiverevent.NewPushTaskDispatcher(authsessionClient, gatewayClient))
+		userClient := userclient.NewUserClient(userclient.MustNewKitexClient(c.UserClient))
+		consumer, err := receiverevent.NewPushTaskConsumer(c.PushTaskConsumer, receiverevent.NewPushTaskDispatcher(authsessionClient, gatewayClient, userClient))
 		if err != nil {
 			panic(err)
 		}
