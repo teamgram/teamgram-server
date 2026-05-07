@@ -31,10 +31,10 @@ type Config struct {
 }
 
 type ProjectionConf struct {
-	SQLInChunkSize         int  `json:",default=500"`
-	MaxViewerUserIds       int  `json:",default=8"`
-	MaxTargetUserIds       int  `json:",default=1000"`
-	MaxProjectionPairs     int  `json:",default=5000"`
-	ContactMapCacheEnabled bool `json:",default=true"`
-	ContactMapMaxEntries   int  `json:",default=1000"`
+	SQLInChunkSize          int  `json:",default=500"`
+	MaxViewerUserIds        int  `json:",default=8"`
+	MaxTargetUserIds        int  `json:",default=1000"`
+	MaxProjectionPairs      int  `json:",default=5000"`
+	ContactMapCacheDisabled bool `json:",optional"`
+	ContactMapMaxEntries    int  `json:",default=1000"`
 }

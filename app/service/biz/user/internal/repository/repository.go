@@ -40,15 +40,19 @@ func NewRepository(c config.Config, mediaReader MediaReader) *Repository {
 		db:          db,
 		model:       model.NewModels(db),
 		mediaReader: mediaReader,
-		projection: normalizeProjectionConfig(ProjectionConfig{
-			SQLInChunkSize:         c.Projection.SQLInChunkSize,
-			MaxViewerUserIds:       c.Projection.MaxViewerUserIds,
-			MaxTargetUserIds:       c.Projection.MaxTargetUserIds,
-			MaxProjectionPairs:     c.Projection.MaxProjectionPairs,
-			ContactMapCacheEnabled: c.Projection.ContactMapCacheEnabled,
-			ContactMapMaxEntries:   c.Projection.ContactMapMaxEntries,
-		}),
+		projection:  projectionConfigFromConfig(c.Projection),
 	}
+}
+
+func projectionConfigFromConfig(c config.ProjectionConf) ProjectionConfig {
+	return normalizeProjectionConfig(ProjectionConfig{
+		SQLInChunkSize:         c.SQLInChunkSize,
+		MaxViewerUserIds:       c.MaxViewerUserIds,
+		MaxTargetUserIds:       c.MaxTargetUserIds,
+		MaxProjectionPairs:     c.MaxProjectionPairs,
+		ContactMapCacheEnabled: !c.ContactMapCacheDisabled,
+		ContactMapMaxEntries:   c.ContactMapMaxEntries,
+	})
 }
 
 func (r *Repository) Close() error {

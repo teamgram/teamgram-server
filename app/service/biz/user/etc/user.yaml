@@ -23,5 +23,5 @@ Projection:
   MaxViewerUserIds: 8
   MaxTargetUserIds: 1000
   MaxProjectionPairs: 5000
-  ContactMapCacheEnabled: true
+  ContactMapCacheDisabled: false
   ContactMapMaxEntries: 1000

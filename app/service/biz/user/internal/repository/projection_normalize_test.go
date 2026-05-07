@@ -4,6 +4,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/config"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 )
 
@@ -59,6 +60,20 @@ func TestChunkInt64sUsesConfiguredSize(t *testing.T) {
 	got := chunkInt64s([]int64{1, 2, 3, 4, 5}, 2)
 	if len(got) != 3 || len(got[0]) != 2 || len(got[1]) != 2 || len(got[2]) != 1 || got[2][0] != 5 {
 		t.Fatalf("chunks = %#v", got)
+	}
+}
+
+func TestProjectionConfigDefaultsContactMapCacheEnabled(t *testing.T) {
+	got := projectionConfigFromConfig(config.ProjectionConf{})
+	if !got.ContactMapCacheEnabled {
+		t.Fatalf("contact map cache enabled = false, want true")
+	}
+}
+
+func TestProjectionConfigMapsContactMapCacheDisabled(t *testing.T) {
+	got := projectionConfigFromConfig(config.ProjectionConf{ContactMapCacheDisabled: true})
+	if got.ContactMapCacheEnabled {
+		t.Fatalf("contact map cache enabled = true, want false")
 	}
 }
 
