@@ -377,8 +377,10 @@ func upsertUserDialog(txModels *model.TxModels, in ApplyUserOperationInput, op p
 func applyReadHistory(txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, nextPTS int64) error {
 	readInbox := op.ReadInboxMaxPeerSeq
 	readOutbox := op.ReadOutboxMaxPeerSeq
-	if readInbox == 0 || readOutbox == 0 {
-		if row, err := txModels.UserDialogsModel.SelectByUserPeer(in.UserID, op.PeerType, op.PeerID); err == nil {
+	var row *model.UserDialogs
+	if readInbox == 0 || readOutbox == 0 || op.Out {
+		if current, err := txModels.UserDialogsModel.SelectByUserPeer(in.UserID, op.PeerType, op.PeerID); err == nil {
+			row = current
 			if readInbox == 0 {
 				readInbox = row.ReadInboxMaxPeerSeq
 			}
@@ -396,7 +398,17 @@ func applyReadHistory(txModels *model.TxModels, in ApplyUserOperationInput, op p
 			readInbox = op.PeerSeq
 		}
 	}
-	_, err := txModels.UserDialogsModel.UpdateReadState(0, 0, 0, false, readInbox, readOutbox, nextPTS, unixNow(), in.UserID, op.PeerType, op.PeerID)
+	unreadCount := int32(0)
+	unreadMentionsCount := int32(0)
+	unreadReactionsCount := int32(0)
+	unreadMark := false
+	if op.Out && row != nil {
+		unreadCount = row.UnreadCount
+		unreadMentionsCount = row.UnreadMentionsCount
+		unreadReactionsCount = row.UnreadReactionsCount
+		unreadMark = row.UnreadMark
+	}
+	_, err := txModels.UserDialogsModel.UpdateReadState(unreadCount, unreadMentionsCount, unreadReactionsCount, unreadMark, readInbox, readOutbox, nextPTS, unixNow(), in.UserID, op.PeerType, op.PeerID)
 	if err != nil {
 		return storageError("apply read history", err)
 	}

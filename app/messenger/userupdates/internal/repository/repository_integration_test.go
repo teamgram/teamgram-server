@@ -447,6 +447,64 @@ func TestApplyReadHistoryUpdatesReadStateUnreadMarkAndPTS(t *testing.T) {
 	}
 }
 
+func TestApplyReadOutboxPreservesIncomingUnreadCount(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	userID := base + 2151
+	peerID := base + 2152
+	repo := NewForTest(db, &testIDGenerator{next: base + 21500}, "local-userupdates")
+	send := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion:      payload.MessageOperationSchemaVersion,
+		OperationKind:      payload.OperationKindSendMessage,
+		CanonicalMessageID: userID*10 + 1,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             peerID,
+		PeerSeq:            1,
+		FromUserID:         peerID,
+		ToUserID:           userID,
+		Date:               int32(time.Now().Unix()),
+		Out:                false,
+		MessageText:        "incoming",
+	}, "send")
+	if _, err := repo.ClaimPartitionOwner(ctx, send.PartitionID); err != nil {
+		t.Fatalf("ClaimPartitionOwner() error = %v", err)
+	}
+	if _, err := repo.ApplyUserOperation(ctx, send); err != nil {
+		t.Fatalf("ApplyUserOperation(send) error = %v", err)
+	}
+
+	readOutbox := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion:        payload.MessageOperationSchemaVersion,
+		OperationKind:        payload.OperationKindReadHistory,
+		PeerType:             payload.PeerTypeUser,
+		PeerID:               peerID,
+		PeerSeq:              1,
+		ReadOutboxMaxPeerSeq: 1,
+		FromUserID:           peerID,
+		ToUserID:             userID,
+		Date:                 int32(time.Now().Unix()),
+		Out:                  true,
+	}, "read-outbox")
+	if _, err := repo.ApplyUserOperation(ctx, readOutbox); err != nil {
+		t.Fatalf("ApplyUserOperation(read outbox) error = %v", err)
+	}
+	row, err := repo.models.UserDialogsModel.SelectByUserPeer(ctx, userID, payload.PeerTypeUser, peerID)
+	if err != nil {
+		t.Fatalf("SelectByUserPeer() error = %v", err)
+	}
+	if row.UnreadCount != 1 || row.ReadInboxMaxPeerSeq != 0 || row.ReadOutboxMaxPeerSeq != 1 || row.LastPts != 2 {
+		t.Fatalf("dialog read outbox state = %+v, want unread preserved, read_inbox=0, read_outbox=1, last_pts=2", row)
+	}
+	state, err := repo.GetState(ctx, userID, 0)
+	if err != nil {
+		t.Fatalf("GetState() error = %v", err)
+	}
+	if state.UnreadCount != 1 {
+		t.Fatalf("state unread_count = %d, want 1", state.UnreadCount)
+	}
+}
+
 func TestApplyUpdatePinnedMessageWritesProjectionAndPTSEvent(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)
