@@ -4,10 +4,12 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlc"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/repository/model"
 )
 
 func TestProjectionCacheKeysAreVersioned(t *testing.T) {
@@ -93,6 +95,26 @@ func TestProjectionComponentCacheBulkRead(t *testing.T) {
 	}
 }
 
+func TestProjectionComponentCacheBulkReadDeletesInvalidEnvelope(t *testing.T) {
+	cache := newFakeProjectionBatchCache()
+	r := &Repository{CachedConn: sqlc.NewConnWithCache(nil, cache)}
+	ctx := context.Background()
+	key := projectionPresenceCacheKey(42)
+	cache.values[key] = projectionCacheEnvelope[projectionPresenceCacheDTO]{
+		SchemaVersion: 0,
+		Data:          projectionPresenceCacheDTO{UserID: 42},
+	}
+
+	got := getProjectionComponentCaches[projectionPresenceCacheDTO](r, ctx, []string{key})
+	if len(got) != 0 {
+		t.Fatalf("stale cache returned hit: %#v", got)
+	}
+	var dto projectionPresenceCacheDTO
+	if err := cache.GetCtx(ctx, key, &dto); err != sql.ErrNoRows {
+		t.Fatalf("stale cache key still present: err=%v dto=%+v", err, dto)
+	}
+}
+
 func TestProjectionCacheIdentityMismatchDeletesKey(t *testing.T) {
 	cache := newFakeProjectionBatchCache()
 	r := &Repository{CachedConn: sqlc.NewConnWithCache(nil, cache)}
@@ -105,6 +127,44 @@ func TestProjectionCacheIdentityMismatchDeletesKey(t *testing.T) {
 	var got projectionPresenceCacheDTO
 	if err := cache.GetCtx(ctx, key, &got); err != sql.ErrNoRows {
 		t.Fatalf("cache key still present after mismatch delete: err=%v got=%+v", err, got)
+	}
+}
+
+func TestProjectionBotFactsDoNotCarryToken(t *testing.T) {
+	const token = "bot-secret-token"
+	bot := botDataFromModel(&model.Bots{BotId: 42, Token: token, BotInfoVersion: 7}).ToBotData()
+	if bot.Token != "" {
+		t.Fatalf("botDataFromModel carried token: %+v", bot)
+	}
+	dto := botCacheDTOFromData(bot)
+	raw, err := json.Marshal(dto)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(raw), token) || strings.Contains(string(raw), "token") {
+		t.Fatalf("bot cache dto carried token: %s", raw)
+	}
+	if got := botDataFromCacheDTO(dto).ToBotData(); got.Token != "" {
+		t.Fatalf("botDataFromCacheDTO carried token: %+v", got)
+	}
+}
+
+func TestProjectionContactMapCoverageIsExplicitForPartialMaps(t *testing.T) {
+	dto := projectionContactMapCacheDTO{
+		OwnerUserID:       1,
+		Contacts:          map[int64]projectionContactFact{2: {FirstName: "A"}},
+		CoveredContactIDs: []int64{2},
+	}
+	if !projectionContactMapCovers(dto, []int64{2}) {
+		t.Fatalf("expected contact map to cover requested id")
+	}
+	if projectionContactMapCovers(dto, []int64{2, 3}) {
+		t.Fatalf("partial contact map covered an unknown requested id")
+	}
+
+	required := projectionRequiredContactIDs(1, int64Set([]int64{1}), int64Set([]int64{2}), []int64{1}, []int64{2})
+	if len(required) != 1 || required[0] != 2 {
+		t.Fatalf("required ids = %v, want [2]", required)
 	}
 }
 

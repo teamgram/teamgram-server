@@ -91,8 +91,8 @@ func (r *Repository) loadProjectionContactFacts(ctx context.Context, viewerIds [
 		return nil
 	}
 	ownerIds := unionInt64s(viewerIds, targetIds)
-	contactIds := unionInt64s(targetIds, viewerIds)
-	contactSet := int64Set(contactIds)
+	viewerSet := int64Set(viewerIds)
+	targetSet := int64Set(targetIds)
 	fallbackOwnerIds := ownerIds
 	if cfg.ContactMapCacheEnabled {
 		fallbackOwnerIds = make([]int64, 0, len(ownerIds))
@@ -119,13 +119,12 @@ func (r *Repository) loadProjectionContactFacts(ctx context.Context, viewerIds [
 				fallbackOwnerIds = append(fallbackOwnerIds, ownerID)
 				continue
 			}
-			for contactID, contact := range dto.Contacts {
-				if _, ok := contactSet[contactID]; !ok {
-					continue
-				}
-				c := contact
-				facts.Contacts[contactKey{OwnerUserId: ownerID, ContactUserId: contactID}] = &c
+			requiredContactIDs := projectionRequiredContactIDs(ownerID, viewerSet, targetSet, viewerIds, targetIds)
+			addProjectionContactCacheFacts(ownerID, requiredContactIDs, dto.Contacts, facts)
+			if projectionContactMapCovers(dto, requiredContactIDs) {
+				continue
 			}
+			fallbackOwnerIds = append(fallbackOwnerIds, ownerID)
 		}
 	}
 	return r.loadProjectionContactEdges(ctx, fallbackOwnerIds, viewerIds, targetIds, cfg, facts)
@@ -137,15 +136,40 @@ func (r *Repository) loadProjectionContactEdges(ctx context.Context, ownerIds, v
 		return nil
 	}
 	ownerSet := int64Set(ownerIds)
+	viewerSet := int64Set(viewerIds)
+	targetSet := int64Set(targetIds)
 	viewerOwners := filterInt64s(viewerIds, ownerSet)
 	targetOwners := filterInt64s(targetIds, ownerSet)
-	if err := r.loadProjectionContactDirection(ctx, viewerOwners, targetIds, cfg, facts); err != nil {
+	loadedByOwner := make(map[int64]map[int64]projectionContactFact, len(ownerIds))
+	if err := r.loadProjectionContactDirection(ctx, viewerOwners, targetIds, cfg, facts, loadedByOwner); err != nil {
 		return err
 	}
-	return r.loadProjectionContactDirection(ctx, targetOwners, viewerIds, cfg, facts)
+	if err := r.loadProjectionContactDirection(ctx, targetOwners, viewerIds, cfg, facts, loadedByOwner); err != nil {
+		return err
+	}
+	if cfg.ContactMapCacheEnabled {
+		for _, ownerID := range ownerIds {
+			requiredContactIDs := projectionRequiredContactIDs(ownerID, viewerSet, targetSet, viewerIds, targetIds)
+			if len(requiredContactIDs) > cfg.ContactMapMaxEntries {
+				r.deleteProjectionComponentCaches(ctx, projectionContactMapCacheKey(ownerID))
+				continue
+			}
+			contacts := loadedByOwner[ownerID]
+			if len(contacts) > cfg.ContactMapMaxEntries {
+				r.deleteProjectionComponentCaches(ctx, projectionContactMapCacheKey(ownerID))
+				continue
+			}
+			r.setProjectionComponentCache(ctx, projectionContactMapCacheKey(ownerID), projectionContactMapCacheDTO{
+				OwnerUserID:       ownerID,
+				Contacts:          contacts,
+				CoveredContactIDs: requiredContactIDs,
+			})
+		}
+	}
+	return nil
 }
 
-func (r *Repository) loadProjectionContactDirection(ctx context.Context, ownerIds, contactIds []int64, cfg ProjectionConfig, facts projectionFacts) error {
+func (r *Repository) loadProjectionContactDirection(ctx context.Context, ownerIds, contactIds []int64, cfg ProjectionConfig, facts projectionFacts, loadedByOwner map[int64]map[int64]projectionContactFact) error {
 	if len(ownerIds) == 0 || len(contactIds) == 0 {
 		return nil
 	}
@@ -155,10 +179,63 @@ func (r *Repository) loadProjectionContactDirection(ctx context.Context, ownerId
 			if err != nil {
 				return fmt.Errorf("%w: projection load contact edges: %w", userpb.ErrUserStorage, err)
 			}
-			addProjectionContactFacts(contacts, facts)
+			addProjectionContactFacts(contacts, facts, loadedByOwner)
 		}
 	}
 	return nil
+}
+
+func projectionRequiredContactIDs(ownerID int64, viewerSet, targetSet map[int64]bool, viewerIds, targetIds []int64) []int64 {
+	var out []int64
+	seen := make(map[int64]struct{}, len(viewerIds)+len(targetIds))
+	if viewerSet[ownerID] {
+		out = appendUniqueInt64s(out, seen, targetIds)
+	}
+	if targetSet[ownerID] {
+		out = appendUniqueInt64s(out, seen, viewerIds)
+	}
+	return out
+}
+
+func appendUniqueInt64s(out []int64, seen map[int64]struct{}, values []int64) []int64 {
+	for _, value := range values {
+		if value <= 0 {
+			continue
+		}
+		if _, ok := seen[value]; ok {
+			continue
+		}
+		seen[value] = struct{}{}
+		out = append(out, value)
+	}
+	return out
+}
+
+func projectionContactMapCovers(dto projectionContactMapCacheDTO, requiredContactIDs []int64) bool {
+	if len(requiredContactIDs) == 0 {
+		return true
+	}
+	if len(dto.CoveredContactIDs) == 0 {
+		return true
+	}
+	covered := int64Set(dto.CoveredContactIDs)
+	for _, id := range requiredContactIDs {
+		if !covered[id] {
+			return false
+		}
+	}
+	return true
+}
+
+func addProjectionContactCacheFacts(ownerID int64, contactIDs []int64, contacts map[int64]projectionContactFact, facts projectionFacts) {
+	for _, contactID := range contactIDs {
+		contact, ok := contacts[contactID]
+		if !ok {
+			continue
+		}
+		c := contact
+		facts.Contacts[contactKey{OwnerUserId: ownerID, ContactUserId: contactID}] = &c
+	}
 }
 
 func filterInt64s(values []int64, allowed map[int64]bool) []int64 {
@@ -309,11 +386,18 @@ func (r *Repository) loadProjectionUsernameFacts(ctx context.Context, ids []int6
 	return nil
 }
 
-func addProjectionContactFacts(contacts []model.UserContacts, facts projectionFacts) {
+func addProjectionContactFacts(contacts []model.UserContacts, facts projectionFacts, loadedByOwner map[int64]map[int64]projectionContactFact) {
 	for i := range contacts {
 		c := contacts[i]
 		fact := projectionContactFactFromModel(&c)
 		facts.Contacts[contactKey{OwnerUserId: c.OwnerUserId, ContactUserId: c.ContactUserId}] = &fact
+		if loadedByOwner == nil {
+			continue
+		}
+		if loadedByOwner[c.OwnerUserId] == nil {
+			loadedByOwner[c.OwnerUserId] = make(map[int64]projectionContactFact)
+		}
+		loadedByOwner[c.OwnerUserId][c.ContactUserId] = fact
 	}
 }
 
@@ -440,7 +524,6 @@ func botDataFromModel(bot *model.Bots) tg.BotDataClazz {
 		Id:                   bot.BotId,
 		BotType:              bot.BotType,
 		Creator:              bot.CreatorUserId,
-		Token:                bot.Token,
 		Description:          bot.Description,
 		BotChatHistory:       bot.BotChatHistory,
 		BotNochats:           bot.BotNochats,
@@ -464,7 +547,6 @@ func botDataFromCacheDTO(dto *projectionBotCacheDTO) tg.BotDataClazz {
 		Id:                   dto.ID,
 		BotType:              dto.BotType,
 		Creator:              dto.Creator,
-		Token:                dto.Token,
 		Description:          dto.Description,
 		BotChatHistory:       dto.BotChatHistory,
 		BotNochats:           dto.BotNochats,
@@ -488,7 +570,6 @@ func botCacheDTOFromData(bot *tg.BotData) *projectionBotCacheDTO {
 		ID:                   bot.Id,
 		BotType:              bot.BotType,
 		Creator:              bot.Creator,
-		Token:                bot.Token,
 		Description:          bot.Description,
 		BotChatHistory:       bot.BotChatHistory,
 		BotNochats:           bot.BotNochats,

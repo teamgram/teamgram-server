@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
-	"fmt"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 
@@ -66,7 +65,6 @@ type projectionBotCacheDTO struct {
 	ID                   int64   `json:"id"`
 	BotType              int32   `json:"bot_type,omitempty"`
 	Creator              int64   `json:"creator,omitempty"`
-	Token                string  `json:"token,omitempty"`
 	Description          string  `json:"description,omitempty"`
 	BotChatHistory       bool    `json:"bot_chat_history,omitempty"`
 	BotNochats           bool    `json:"bot_nochats,omitempty"`
@@ -100,8 +98,9 @@ type projectionPrivacyCacheDTO struct {
 }
 
 type projectionContactMapCacheDTO struct {
-	OwnerUserID int64                           `json:"owner_user_id"`
-	Contacts    map[int64]projectionContactFact `json:"contacts"`
+	OwnerUserID       int64                           `json:"owner_user_id"`
+	Contacts          map[int64]projectionContactFact `json:"contacts"`
+	CoveredContactIDs []int64                         `json:"covered_contact_ids,omitempty"`
 }
 
 type projectionPresenceCacheDTO struct {
@@ -180,13 +179,16 @@ func getProjectionComponentCaches[T any](r *Repository, ctx context.Context, key
 			return nil, sql.ErrNoRows
 		case projectionCacheDecodeStale:
 			r.logProjectionCacheDecodeMiss(ctx, key, status)
-			return nil, fmt.Errorf("projection cache stale schema")
+			r.deleteProjectionComponentCaches(ctx, key)
+			return nil, nil
 		case projectionCacheDecodeCorrupt:
 			r.logProjectionCacheDecodeMiss(ctx, key, status)
-			return nil, fmt.Errorf("projection cache corrupt payload")
+			r.deleteProjectionComponentCaches(ctx, key)
+			return nil, nil
 		default:
 			r.logProjectionCacheDecodeMiss(ctx, key, status)
-			return nil, fmt.Errorf("projection cache unknown decode status %d", status)
+			r.deleteProjectionComponentCaches(ctx, key)
+			return nil, nil
 		}
 	}, keys...); err != nil {
 		logx.WithContext(ctx).Errorf("user projection cache bulk get failed: keys=%d err=%v", len(keys), err)
