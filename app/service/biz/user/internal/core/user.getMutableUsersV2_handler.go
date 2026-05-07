@@ -24,9 +24,29 @@ import (
 // UserGetMutableUsersV2
 // user.getMutableUsersV2 flags:# id:Vector<long> privacy:flags.0?true has_to:flags.2?true to:flags.2?Vector<long> = MutableUsers;
 func (c *UserCore) UserGetMutableUsersV2(in *user.TLUserGetMutableUsersV2) (*tg.MutableUsers, error) {
-	users, err := c.svcCtx.Repo.GetMutableUsers(c.ctx, in.Id, in.Privacy, in.To)
+	viewers := append([]int64(nil), in.To...)
+	if len(viewers) == 0 {
+		// Legacy callers may omit `to`; production public users are migrated to viewer-aware projection RPCs instead.
+		if c.svcCtx.Repo == nil {
+			return nil, user.ErrUserStorage
+		}
+		users, err := c.svcCtx.Repo.GetMutableUsers(c.ctx, in.Id, in.Privacy, in.To)
+		if err != nil {
+			return nil, err
+		}
+		return tg.MakeTLMutableUsers(&tg.TLMutableUsers{Users: users}).ToMutableUsers(), nil
+	}
+
+	repo := c.svcCtx.UserProjectionRepo
+	if repo == nil {
+		repo = c.svcCtx.Repo
+	}
+	if repo == nil {
+		return nil, user.ErrUserStorage
+	}
+	bundle, err := repo.GetUserProjectionBundle(c.ctx, viewers, in.Id, true)
 	if err != nil {
 		return nil, err
 	}
-	return tg.MakeTLMutableUsers(&tg.TLMutableUsers{Users: users}).ToMutableUsers(), nil
+	return tg.MakeTLMutableUsers(&tg.TLMutableUsers{Users: bundle.Facts}).ToMutableUsers(), nil
 }

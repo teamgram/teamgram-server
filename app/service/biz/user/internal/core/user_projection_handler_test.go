@@ -69,3 +69,24 @@ func TestUserGetUserProjectionBundleMapsInvalidShape(t *testing.T) {
 		t.Fatalf("error = %v, want %v", err, userpb.ErrUserInvalidArgument)
 	}
 }
+
+func TestUserGetMutableUsersV2UsesProjectionBundleFacts(t *testing.T) {
+	repo := &projectionRepoStub{result: &repository.UserProjectionBundle{
+		Facts: []tg.ImmutableUserClazz{tg.MakeTLImmutableUser(&tg.TLImmutableUser{
+			User: tg.MakeTLUserData(&tg.TLUserData{Id: 1001, AccessHash: 11, FirstName: "A"}),
+		})},
+	}}
+	core := New(context.Background(), &svc.ServiceContext{UserProjectionRepo: repo})
+
+	got, err := core.UserGetMutableUsersV2(&userpb.TLUserGetMutableUsersV2{
+		Id:      []int64{1001},
+		Privacy: true,
+		To:      []int64{2001},
+	})
+	if err != nil {
+		t.Fatalf("UserGetMutableUsersV2() error = %v", err)
+	}
+	if len(got.Users) != 1 || len(repo.inViewerIds) != 1 || repo.inViewerIds[0] != 2001 || !repo.inWithFacts {
+		t.Fatalf("mutable=%#v repo viewer=%v target=%v withFacts=%v", got, repo.inViewerIds, repo.inTargetIds, repo.inWithFacts)
+	}
+}
