@@ -17,6 +17,9 @@
 package core
 
 import (
+	"errors"
+
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -33,46 +36,23 @@ func (c *ContactsCore) ContactsAddContact(in *tg.TLContactsAddContact) (*tg.Upda
 		return nil, tg.ErrContactIdInvalid
 	}
 
-	users, err := c.svcCtx.Repo.UserClient.UserGetMutableUsersV2(c.ctx, &userpb.TLUserGetMutableUsersV2{
-		Id:      []int64{c.MD.UserId, id.PeerId},
-		Privacy: true,
-		HasTo:   true,
-		To:      []int64{id.PeerId},
-	})
-	if err != nil {
-		return nil, tg.ErrContactIdInvalid
-	}
-
-	var immutableUsers []tg.ImmutableUserClazz
-	if users != nil {
-		immutableUsers = users.Users
-	}
-
-	contactUser := immutableUserByID(immutableUsers, id.PeerId)
-	if contactUser == nil {
-		return nil, tg.ErrContactIdInvalid
-	}
-
-	changeMutual, err := c.svcCtx.Repo.UserClient.UserAddContact(c.ctx, &userpb.TLUserAddContact{
+	if _, err := c.svcCtx.Repo.UserClient.UserAddContact(c.ctx, &userpb.TLUserAddContact{
 		UserId:                   c.MD.UserId,
 		AddPhonePrivacyException: tg.ToBoolClazz(in.AddPhonePrivacyException),
 		Id:                       id.PeerId,
 		FirstName:                in.FirstName,
 		LastName:                 in.LastName,
 		Phone:                    in.Phone,
-	})
-	if err != nil {
+	}); err != nil {
 		return nil, tg.ErrContactIdInvalid
 	}
 
-	selfUser := projectImmutableUser(immutableUserByID(immutableUsers, c.MD.UserId))
-	contact := projectImmutableUser(contactUser)
-	if user, ok := contact.(*tg.TLUser); ok {
-		user.Contact = true
-		user.MutualContact = tg.FromBool(changeMutual)
-		user.FirstName = nonEmptyStringPtr(in.FirstName)
-		user.LastName = nonEmptyStringPtr(in.LastName)
-		user.Phone = nonEmptyStringPtr(in.Phone)
+	users, err := c.projectUsers([]int64{c.MD.UserId, id.PeerId}, userprojection.MissingExplicitInput)
+	if err != nil {
+		if errors.Is(err, tg.ErrUserIdInvalid) {
+			return nil, tg.ErrContactIdInvalid
+		}
+		return nil, err
 	}
 
 	return tg.MakeTLUpdates(&tg.TLUpdates{
@@ -82,7 +62,7 @@ func (c *ContactsCore) ContactsAddContact(in *tg.TLContactsAddContact) (*tg.Upda
 				Settings: makePeerSettings(),
 			}),
 		},
-		Users: []tg.UserClazz{selfUser, contact},
+		Users: users,
 		Chats: []tg.ChatClazz{},
 	}).ToUpdates(), nil
 }

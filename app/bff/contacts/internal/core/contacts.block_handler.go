@@ -17,6 +17,9 @@
 package core
 
 import (
+	"errors"
+
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -32,23 +35,18 @@ func (c *ContactsCore) ContactsBlock(in *tg.TLContactsBlock) (*tg.Bool, error) {
 		return nil, tg.ErrContactIdInvalid
 	}
 
-	users, err := c.svcCtx.Repo.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
-		Id: []int64{c.MD.UserId, blockID.PeerId},
-		To: []int64{c.MD.UserId},
-	})
+	users, err := c.projectUsers([]int64{blockID.PeerId}, userprojection.MissingExplicitInput)
 	if err != nil {
+		if errors.Is(err, tg.ErrUserIdInvalid) {
+			return nil, tg.ErrContactIdInvalid
+		}
 		return nil, err
 	}
-
-	var immutableUsers []tg.ImmutableUserClazz
-	if users != nil {
-		immutableUsers = users.Datas
-	}
-	blocked := immutableUserByID(immutableUsers, blockID.PeerId)
+	blocked, _ := projectedUserByID(users, blockID.PeerId).(*tg.TLUser)
 	if blocked == nil {
 		return nil, tg.ErrContactIdInvalid
 	}
-	if blocked.User != nil && blocked.User.Deleted {
+	if blocked.Deleted {
 		return nil, tg.ErrInputUserDeactivated
 	}
 

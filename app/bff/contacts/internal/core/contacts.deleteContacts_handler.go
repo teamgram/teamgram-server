@@ -17,6 +17,7 @@
 package core
 
 import (
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -34,23 +35,9 @@ func (c *ContactsCore) ContactsDeleteContacts(in *tg.TLContactsDeleteContacts) (
 		userIDs = append(userIDs, peerID.PeerId)
 	}
 
-	users, err := c.svcCtx.Repo.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
-		Id: userIDs,
-		To: []int64{c.MD.UserId},
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	var immutableUsers []tg.ImmutableUserClazz
-	if users != nil {
-		immutableUsers = users.Datas
-	}
-
 	updates := make([]tg.UpdateClazz, 0, len(userIDs))
-	usersOut := make([]tg.UserClazz, 0, len(userIDs))
 	for _, id := range userIDs {
-		if _, err = c.svcCtx.Repo.UserClient.UserDeleteContact(c.ctx, &userpb.TLUserDeleteContact{
+		if _, err := c.svcCtx.Repo.UserClient.UserDeleteContact(c.ctx, &userpb.TLUserDeleteContact{
 			UserId: c.MD.UserId,
 			Id:     id,
 		}); err != nil {
@@ -61,13 +48,10 @@ func (c *ContactsCore) ContactsDeleteContacts(in *tg.TLContactsDeleteContacts) (
 			Peer:     tg.MakePeerUser(id),
 			Settings: makePeerSettings(),
 		}))
-
-		projected := projectImmutableUser(immutableUserByID(immutableUsers, id))
-		if user, ok := projected.(*tg.TLUser); ok {
-			user.Contact = false
-			user.MutualContact = false
-		}
-		usersOut = append(usersOut, projected)
+	}
+	usersOut, err := c.projectUsers(userIDs, userprojection.MissingStoredReference)
+	if err != nil {
+		return nil, err
 	}
 
 	rUpdates := tg.MakeTLUpdates(&tg.TLUpdates{
