@@ -2,8 +2,10 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"time"
 
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -104,14 +106,26 @@ func (w *DialogSideEffectWorker) publishSavedDialog(ctx context.Context, row Dia
 	if row.Kind != DialogSideEffectKindUpsertSavedDialogFromMessage {
 		return w.repo.MarkDialogSideEffectBlocked(ctx, row.SideEffectID, "unsupported_dialog_side_effect_kind")
 	}
-	_, err := w.dialog.DialogUpsertSavedDialogFromMessage(ctx, &dialogpb.TLDialogUpsertSavedDialogFromMessage{
+	topMessageDate, err := repositoryDateInt32FromUnixSeconds(row.SourceMessageDate, "saved dialog top message date")
+	if err != nil {
+		return err
+	}
+	_, err = w.dialog.DialogUpsertSavedDialogFromMessage(ctx, &dialogpb.TLDialogUpsertSavedDialogFromMessage{
 		UserId:                row.UserID,
 		PeerType:              row.PeerType,
 		PeerId:                row.PeerID,
 		TopPeerSeq:            row.SourcePeerSeq,
 		TopCanonicalMessageId: row.SourceCanonicalMessageID,
-		TopMessageDate:        int32(row.SourceMessageDate),
+		TopMessageDate:        topMessageDate,
 		Payload:               row.Payload,
 	})
 	return err
+}
+
+func repositoryDateInt32FromUnixSeconds(seconds int64, field string) (int32, error) {
+	date, err := tg.DateInt32FromUnixSeconds(seconds)
+	if err != nil {
+		return 0, fmt.Errorf("%w: convert %s: %v", userupdates.ErrUserupdatesStorage, field, err)
+	}
+	return date, nil
 }

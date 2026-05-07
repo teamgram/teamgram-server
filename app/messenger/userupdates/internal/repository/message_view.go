@@ -25,7 +25,7 @@ type MessageView struct {
 	MessageKind        int32
 	MessageStatus      int32
 	EditVersion        int32
-	Date               int32
+	Date               int64
 	ViewSchemaVersion  int32
 	ViewPayload        []byte
 }
@@ -69,7 +69,7 @@ func mapMessageViewRow(row *model.UserMessageViews) MessageView {
 		MessageKind:        row.MessageKind,
 		MessageStatus:      row.MessageStatus,
 		EditVersion:        row.EditVersion,
-		Date:               int32(row.Date),
+		Date:               row.Date,
 		ViewSchemaVersion:  row.ViewSchemaVersion,
 		ViewPayload:        row.ViewPayload,
 	}
