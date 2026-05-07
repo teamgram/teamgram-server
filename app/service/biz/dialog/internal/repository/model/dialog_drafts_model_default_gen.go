@@ -16,7 +16,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 
@@ -43,17 +42,17 @@ type (
 	}
 
 	DialogDrafts struct {
-		UserId                    int64     `db:"user_id" json:"user_id"`
-		PeerType                  int32     `db:"peer_type" json:"peer_type"`
-		PeerId                    int64     `db:"peer_id" json:"peer_id"`
-		PeerDialogId              int64     `db:"peer_dialog_id" json:"peer_dialog_id"`
-		DraftKind                 int32     `db:"draft_kind" json:"draft_kind"`
-		Message                   string    `db:"message" json:"message"`
-		EntitiesPayload           []byte    `db:"entities_payload" json:"entities_payload"`
-		ReplyToPeerSeq            int64     `db:"reply_to_peer_seq" json:"reply_to_peer_seq"`
-		DraftPayloadSchemaVersion int32     `db:"draft_payload_schema_version" json:"draft_payload_schema_version"`
-		DraftPayload              []byte    `db:"draft_payload" json:"draft_payload"`
-		Date                      time.Time `db:"date" json:"date"`
+		UserId                    int64  `db:"user_id" json:"user_id"`
+		PeerType                  int32  `db:"peer_type" json:"peer_type"`
+		PeerId                    int64  `db:"peer_id" json:"peer_id"`
+		PeerDialogId              int64  `db:"peer_dialog_id" json:"peer_dialog_id"`
+		DraftKind                 int32  `db:"draft_kind" json:"draft_kind"`
+		Message                   string `db:"message" json:"message"`
+		EntitiesPayload           []byte `db:"entities_payload" json:"entities_payload"`
+		ReplyToPeerSeq            int64  `db:"reply_to_peer_seq" json:"reply_to_peer_seq"`
+		DraftPayloadSchemaVersion int32  `db:"draft_payload_schema_version" json:"draft_payload_schema_version"`
+		DraftPayload              []byte `db:"draft_payload" json:"draft_payload"`
+		Date                      int64  `db:"date" json:"date"`
 	}
 )
 

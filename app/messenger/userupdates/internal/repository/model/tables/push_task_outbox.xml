@@ -11,7 +11,7 @@
 
     <operation name="SelectPending" result_set="list">
         <params>
-            <param name="availableAt" type="string" />
+            <param name="availableAt" type="int64" />
             <param name="limit" type="int32" />
         </params>
 	        <sql>
@@ -30,7 +30,7 @@
         <params>
             <param name="pending_status" type="int32" />
             <param name="failed_retryable_status" type="int32" />
-            <param name="availableAt" type="string" />
+            <param name="availableAt" type="int64" />
             <param name="limit" type="int32" />
         </params>
         <sql>
@@ -59,10 +59,10 @@
 
     <operation name="TryMarkPublishingDue">
         <params>
-            <param name="lease_expires_at" type="string" />
+            <param name="lease_expires_at" type="int64" />
             <param name="pending_status" type="int32" />
             <param name="failed_retryable_status" type="int32" />
-            <param name="now" type="string" />
+            <param name="now" type="int64" />
         </params>
         <sql>
             UPDATE
@@ -110,9 +110,9 @@
     <operation name="ResetExpiredPublishing">
         <params>
             <param name="pending_status" type="int32" />
-            <param name="availableAt" type="string" />
+            <param name="availableAt" type="int64" />
             <param name="publishing_status" type="int32" />
-            <param name="expired_at" type="string" />
+            <param name="expired_at" type="int64" />
             <param name="limit" type="int32" />
         </params>
         <sql>

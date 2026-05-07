@@ -32,25 +32,25 @@ type bizUserDialogsModel interface {
 	SelectByUserPeer(ctx context.Context, userId int64, peerType int32, peerId int64) (*UserDialogs, error)
 	SelectByUserPeers(ctx context.Context, userId int64, peerIdList []int64) ([]UserDialogs, error)
 	SelectByUserPeersWithCB(ctx context.Context, userId int64, peerIdList []int64, cb func(sz, i int, v *UserDialogs)) ([]UserDialogs, error)
-	SelectByUserCursor(ctx context.Context, userId int64, topMessageDate string, topPeerSeq int64, peerType int32, peerId int64, limit int32) ([]UserDialogs, error)
-	SelectByUserCursorWithCB(ctx context.Context, userId int64, topMessageDate string, topPeerSeq int64, peerType int32, peerId int64, limit int32, cb func(sz, i int, v *UserDialogs)) ([]UserDialogs, error)
-	UpdateReadState(ctx context.Context, unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, readInboxMaxPeerSeq int64, readOutboxMaxPeerSeq int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
-	UpdatePinnedMessage(ctx context.Context, pinnedPeerSeq int64, pinnedCanonicalMessageId int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
-	UpdateAvailableMinPeerSeq(ctx context.Context, availableMinPeerSeq int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
-	ClearDialogTopAfterDelete(ctx context.Context, topMessageStatus int32, deletedAt sql.NullTime, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
-	UpdateDialogTopAfterDelete(ctx context.Context, topPeerSeq int64, topCanonicalMessageId int64, topMessageDate sql.NullTime, topMessageStatus int32, deletedAt sql.NullTime, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	SelectByUserCursor(ctx context.Context, userId int64, topMessageDate int64, topPeerSeq int64, peerType int32, peerId int64, limit int32) ([]UserDialogs, error)
+	SelectByUserCursorWithCB(ctx context.Context, userId int64, topMessageDate int64, topPeerSeq int64, peerType int32, peerId int64, limit int32, cb func(sz, i int, v *UserDialogs)) ([]UserDialogs, error)
+	UpdateReadState(ctx context.Context, unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, readInboxMaxPeerSeq int64, readOutboxMaxPeerSeq int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	UpdatePinnedMessage(ctx context.Context, pinnedPeerSeq int64, pinnedCanonicalMessageId int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	UpdateAvailableMinPeerSeq(ctx context.Context, availableMinPeerSeq int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	ClearDialogTopAfterDelete(ctx context.Context, topMessageStatus int32, deletedAt int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	UpdateDialogTopAfterDelete(ctx context.Context, topPeerSeq int64, topCanonicalMessageId int64, topMessageDate int64, topMessageStatus int32, deletedAt int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
 }
 
 type UserDialogsTxModel interface {
 	InsertOrUpdateMessageEvent(data *UserDialogs) (lastInsertId, rowsAffected int64, err error)
 	SelectByUserPeer(userId int64, peerType int32, peerId int64) (*UserDialogs, error)
 	SelectByUserPeers(userId int64, peerIdList []int64) ([]UserDialogs, error)
-	SelectByUserCursor(userId int64, topMessageDate string, topPeerSeq int64, peerType int32, peerId int64, limit int32) ([]UserDialogs, error)
-	UpdateReadState(unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, readInboxMaxPeerSeq int64, readOutboxMaxPeerSeq int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
-	UpdatePinnedMessage(pinnedPeerSeq int64, pinnedCanonicalMessageId int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
-	UpdateAvailableMinPeerSeq(availableMinPeerSeq int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
-	ClearDialogTopAfterDelete(topMessageStatus int32, deletedAt sql.NullTime, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
-	UpdateDialogTopAfterDelete(topPeerSeq int64, topCanonicalMessageId int64, topMessageDate sql.NullTime, topMessageStatus int32, deletedAt sql.NullTime, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	SelectByUserCursor(userId int64, topMessageDate int64, topPeerSeq int64, peerType int32, peerId int64, limit int32) ([]UserDialogs, error)
+	UpdateReadState(unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, readInboxMaxPeerSeq int64, readOutboxMaxPeerSeq int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	UpdatePinnedMessage(pinnedPeerSeq int64, pinnedCanonicalMessageId int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	UpdateAvailableMinPeerSeq(availableMinPeerSeq int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	ClearDialogTopAfterDelete(topMessageStatus int32, deletedAt int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	UpdateDialogTopAfterDelete(topPeerSeq int64, topCanonicalMessageId int64, topMessageDate int64, topMessageStatus int32, deletedAt int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
 }
 
 type defaultUserDialogsTxModel struct {
@@ -263,10 +263,10 @@ func (m *defaultUserDialogsModel) SelectByUserPeersWithCB(ctx context.Context, u
 }
 
 // SelectByUserCursor
-// select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, top_message_status, read_inbox_max_peer_seq, read_outbox_max_peer_seq, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, pinned_peer_seq, pinned_canonical_message_id, has_scheduled, available_min_peer_seq, hidden, deleted_at, last_pts, last_pts_at, dialog_schema_version, dialog_payload from user_dialogs where user_id = :user_id and hidden = 0 and (:top_message_date = ” or top_message_date < :top_message_date or (top_message_date = :top_message_date and top_peer_seq < :top_peer_seq) or (top_message_date = :top_message_date and top_peer_seq = :top_peer_seq and peer_type > :peer_type) or (top_message_date = :top_message_date and top_peer_seq = :top_peer_seq and peer_type = :peer_type and peer_id > :peer_id)) order by top_message_date desc, top_peer_seq desc, peer_type asc, peer_id asc limit :limit
-func (m *defaultUserDialogsModel) SelectByUserCursor(ctx context.Context, userId int64, topMessageDate string, topPeerSeq int64, peerType int32, peerId int64, limit int32) (rList []UserDialogs, err error) {
+// select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, top_message_status, read_inbox_max_peer_seq, read_outbox_max_peer_seq, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, pinned_peer_seq, pinned_canonical_message_id, has_scheduled, available_min_peer_seq, hidden, deleted_at, last_pts, last_pts_at, dialog_schema_version, dialog_payload from user_dialogs where user_id = :user_id and hidden = 0 and (:top_message_date = 0 or top_message_date < :top_message_date or (top_message_date = :top_message_date and top_peer_seq < :top_peer_seq) or (top_message_date = :top_message_date and top_peer_seq = :top_peer_seq and peer_type > :peer_type) or (top_message_date = :top_message_date and top_peer_seq = :top_peer_seq and peer_type = :peer_type and peer_id > :peer_id)) order by top_message_date desc, top_peer_seq desc, peer_type asc, peer_id asc limit :limit
+func (m *defaultUserDialogsModel) SelectByUserCursor(ctx context.Context, userId int64, topMessageDate int64, topPeerSeq int64, peerType int32, peerId int64, limit int32) (rList []UserDialogs, err error) {
 	var (
-		query  = "select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, top_message_status, read_inbox_max_peer_seq, read_outbox_max_peer_seq, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, pinned_peer_seq, pinned_canonical_message_id, has_scheduled, available_min_peer_seq, hidden, deleted_at, last_pts, last_pts_at, dialog_schema_version, dialog_payload from user_dialogs where user_id = ? and hidden = 0 and (? = '' or top_message_date < ? or (top_message_date = ? and top_peer_seq < ?) or (top_message_date = ? and top_peer_seq = ? and peer_type > ?) or (top_message_date = ? and top_peer_seq = ? and peer_type = ? and peer_id > ?)) order by top_message_date desc, top_peer_seq desc, peer_type asc, peer_id asc limit ?"
+		query  = "select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, top_message_status, read_inbox_max_peer_seq, read_outbox_max_peer_seq, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, pinned_peer_seq, pinned_canonical_message_id, has_scheduled, available_min_peer_seq, hidden, deleted_at, last_pts, last_pts_at, dialog_schema_version, dialog_payload from user_dialogs where user_id = ? and hidden = 0 and (? = 0 or top_message_date < ? or (top_message_date = ? and top_peer_seq < ?) or (top_message_date = ? and top_peer_seq = ? and peer_type > ?) or (top_message_date = ? and top_peer_seq = ? and peer_type = ? and peer_id > ?)) order by top_message_date desc, top_peer_seq desc, peer_type asc, peer_id asc limit ?"
 		values []UserDialogs
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, topMessageDate, topMessageDate, topMessageDate, topPeerSeq, topMessageDate, topPeerSeq, peerType, topMessageDate, topPeerSeq, peerType, peerId, limit)
@@ -287,10 +287,10 @@ func (m *defaultUserDialogsModel) SelectByUserCursor(ctx context.Context, userId
 }
 
 // SelectByUserCursor
-// select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, top_message_status, read_inbox_max_peer_seq, read_outbox_max_peer_seq, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, pinned_peer_seq, pinned_canonical_message_id, has_scheduled, available_min_peer_seq, hidden, deleted_at, last_pts, last_pts_at, dialog_schema_version, dialog_payload from user_dialogs where user_id = :user_id and hidden = 0 and (:top_message_date = ” or top_message_date < :top_message_date or (top_message_date = :top_message_date and top_peer_seq < :top_peer_seq) or (top_message_date = :top_message_date and top_peer_seq = :top_peer_seq and peer_type > :peer_type) or (top_message_date = :top_message_date and top_peer_seq = :top_peer_seq and peer_type = :peer_type and peer_id > :peer_id)) order by top_message_date desc, top_peer_seq desc, peer_type asc, peer_id asc limit :limit
-func (m *defaultUserDialogsTxModel) SelectByUserCursor(userId int64, topMessageDate string, topPeerSeq int64, peerType int32, peerId int64, limit int32) (rList []UserDialogs, err error) {
+// select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, top_message_status, read_inbox_max_peer_seq, read_outbox_max_peer_seq, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, pinned_peer_seq, pinned_canonical_message_id, has_scheduled, available_min_peer_seq, hidden, deleted_at, last_pts, last_pts_at, dialog_schema_version, dialog_payload from user_dialogs where user_id = :user_id and hidden = 0 and (:top_message_date = 0 or top_message_date < :top_message_date or (top_message_date = :top_message_date and top_peer_seq < :top_peer_seq) or (top_message_date = :top_message_date and top_peer_seq = :top_peer_seq and peer_type > :peer_type) or (top_message_date = :top_message_date and top_peer_seq = :top_peer_seq and peer_type = :peer_type and peer_id > :peer_id)) order by top_message_date desc, top_peer_seq desc, peer_type asc, peer_id asc limit :limit
+func (m *defaultUserDialogsTxModel) SelectByUserCursor(userId int64, topMessageDate int64, topPeerSeq int64, peerType int32, peerId int64, limit int32) (rList []UserDialogs, err error) {
 	var (
-		query  = "select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, top_message_status, read_inbox_max_peer_seq, read_outbox_max_peer_seq, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, pinned_peer_seq, pinned_canonical_message_id, has_scheduled, available_min_peer_seq, hidden, deleted_at, last_pts, last_pts_at, dialog_schema_version, dialog_payload from user_dialogs where user_id = ? and hidden = 0 and (? = '' or top_message_date < ? or (top_message_date = ? and top_peer_seq < ?) or (top_message_date = ? and top_peer_seq = ? and peer_type > ?) or (top_message_date = ? and top_peer_seq = ? and peer_type = ? and peer_id > ?)) order by top_message_date desc, top_peer_seq desc, peer_type asc, peer_id asc limit ?"
+		query  = "select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, top_message_status, read_inbox_max_peer_seq, read_outbox_max_peer_seq, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, pinned_peer_seq, pinned_canonical_message_id, has_scheduled, available_min_peer_seq, hidden, deleted_at, last_pts, last_pts_at, dialog_schema_version, dialog_payload from user_dialogs where user_id = ? and hidden = 0 and (? = 0 or top_message_date < ? or (top_message_date = ? and top_peer_seq < ?) or (top_message_date = ? and top_peer_seq = ? and peer_type > ?) or (top_message_date = ? and top_peer_seq = ? and peer_type = ? and peer_id > ?)) order by top_message_date desc, top_peer_seq desc, peer_type asc, peer_id asc limit ?"
 		values []UserDialogs
 	)
 	err = m.tx.QueryRowsPartial(&values, query, userId, topMessageDate, topMessageDate, topMessageDate, topPeerSeq, topMessageDate, topPeerSeq, peerType, topMessageDate, topPeerSeq, peerType, peerId, limit)
@@ -311,10 +311,10 @@ func (m *defaultUserDialogsTxModel) SelectByUserCursor(userId int64, topMessageD
 }
 
 // SelectByUserCursorWithCB
-// select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, top_message_status, read_inbox_max_peer_seq, read_outbox_max_peer_seq, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, pinned_peer_seq, pinned_canonical_message_id, has_scheduled, available_min_peer_seq, hidden, deleted_at, last_pts, last_pts_at, dialog_schema_version, dialog_payload from user_dialogs where user_id = :user_id and hidden = 0 and (:top_message_date = ” or top_message_date < :top_message_date or (top_message_date = :top_message_date and top_peer_seq < :top_peer_seq) or (top_message_date = :top_message_date and top_peer_seq = :top_peer_seq and peer_type > :peer_type) or (top_message_date = :top_message_date and top_peer_seq = :top_peer_seq and peer_type = :peer_type and peer_id > :peer_id)) order by top_message_date desc, top_peer_seq desc, peer_type asc, peer_id asc limit :limit
-func (m *defaultUserDialogsModel) SelectByUserCursorWithCB(ctx context.Context, userId int64, topMessageDate string, topPeerSeq int64, peerType int32, peerId int64, limit int32, cb func(sz, i int, v *UserDialogs)) (rList []UserDialogs, err error) {
+// select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, top_message_status, read_inbox_max_peer_seq, read_outbox_max_peer_seq, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, pinned_peer_seq, pinned_canonical_message_id, has_scheduled, available_min_peer_seq, hidden, deleted_at, last_pts, last_pts_at, dialog_schema_version, dialog_payload from user_dialogs where user_id = :user_id and hidden = 0 and (:top_message_date = 0 or top_message_date < :top_message_date or (top_message_date = :top_message_date and top_peer_seq < :top_peer_seq) or (top_message_date = :top_message_date and top_peer_seq = :top_peer_seq and peer_type > :peer_type) or (top_message_date = :top_message_date and top_peer_seq = :top_peer_seq and peer_type = :peer_type and peer_id > :peer_id)) order by top_message_date desc, top_peer_seq desc, peer_type asc, peer_id asc limit :limit
+func (m *defaultUserDialogsModel) SelectByUserCursorWithCB(ctx context.Context, userId int64, topMessageDate int64, topPeerSeq int64, peerType int32, peerId int64, limit int32, cb func(sz, i int, v *UserDialogs)) (rList []UserDialogs, err error) {
 	var (
-		query  = "select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, top_message_status, read_inbox_max_peer_seq, read_outbox_max_peer_seq, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, pinned_peer_seq, pinned_canonical_message_id, has_scheduled, available_min_peer_seq, hidden, deleted_at, last_pts, last_pts_at, dialog_schema_version, dialog_payload from user_dialogs where user_id = ? and hidden = 0 and (? = '' or top_message_date < ? or (top_message_date = ? and top_peer_seq < ?) or (top_message_date = ? and top_peer_seq = ? and peer_type > ?) or (top_message_date = ? and top_peer_seq = ? and peer_type = ? and peer_id > ?)) order by top_message_date desc, top_peer_seq desc, peer_type asc, peer_id asc limit ?"
+		query  = "select user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, top_message_status, read_inbox_max_peer_seq, read_outbox_max_peer_seq, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, pinned_peer_seq, pinned_canonical_message_id, has_scheduled, available_min_peer_seq, hidden, deleted_at, last_pts, last_pts_at, dialog_schema_version, dialog_payload from user_dialogs where user_id = ? and hidden = 0 and (? = 0 or top_message_date < ? or (top_message_date = ? and top_peer_seq < ?) or (top_message_date = ? and top_peer_seq = ? and peer_type > ?) or (top_message_date = ? and top_peer_seq = ? and peer_type = ? and peer_id > ?)) order by top_message_date desc, top_peer_seq desc, peer_type asc, peer_id asc limit ?"
 		values []UserDialogs
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, userId, topMessageDate, topMessageDate, topMessageDate, topPeerSeq, topMessageDate, topPeerSeq, peerType, topMessageDate, topPeerSeq, peerType, peerId, limit)
@@ -343,7 +343,7 @@ func (m *defaultUserDialogsModel) SelectByUserCursorWithCB(ctx context.Context, 
 
 // UpdateReadState
 // update user_dialogs set unread_count = :unread_count, unread_mentions_count = :unread_mentions_count, unread_reactions_count = :unread_reactions_count, unread_mark = :unread_mark, read_inbox_max_peer_seq = :read_inbox_max_peer_seq, read_outbox_max_peer_seq = :read_outbox_max_peer_seq, last_pts = :last_pts, last_pts_at = :last_pts_at where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
-func (m *defaultUserDialogsModel) UpdateReadState(ctx context.Context, unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, readInboxMaxPeerSeq int64, readOutboxMaxPeerSeq int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+func (m *defaultUserDialogsModel) UpdateReadState(ctx context.Context, unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, readInboxMaxPeerSeq int64, readOutboxMaxPeerSeq int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update user_dialogs set unread_count = ?, unread_mentions_count = ?, unread_reactions_count = ?, unread_mark = ?, read_inbox_max_peer_seq = ?, read_outbox_max_peer_seq = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
@@ -368,7 +368,7 @@ func (m *defaultUserDialogsModel) UpdateReadState(ctx context.Context, unreadCou
 
 // UpdateReadState
 // update user_dialogs set unread_count = :unread_count, unread_mentions_count = :unread_mentions_count, unread_reactions_count = :unread_reactions_count, unread_mark = :unread_mark, read_inbox_max_peer_seq = :read_inbox_max_peer_seq, read_outbox_max_peer_seq = :read_outbox_max_peer_seq, last_pts = :last_pts, last_pts_at = :last_pts_at where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
-func (m *defaultUserDialogsTxModel) UpdateReadState(unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, readInboxMaxPeerSeq int64, readOutboxMaxPeerSeq int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+func (m *defaultUserDialogsTxModel) UpdateReadState(unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, readInboxMaxPeerSeq int64, readOutboxMaxPeerSeq int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update user_dialogs set unread_count = ?, unread_mentions_count = ?, unread_reactions_count = ?, unread_mark = ?, read_inbox_max_peer_seq = ?, read_outbox_max_peer_seq = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
 		rResult sql.Result
@@ -391,7 +391,7 @@ func (m *defaultUserDialogsTxModel) UpdateReadState(unreadCount int32, unreadMen
 
 // UpdatePinnedMessage
 // update user_dialogs set pinned_peer_seq = :pinned_peer_seq, pinned_canonical_message_id = :pinned_canonical_message_id, last_pts = :last_pts, last_pts_at = :last_pts_at where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
-func (m *defaultUserDialogsModel) UpdatePinnedMessage(ctx context.Context, pinnedPeerSeq int64, pinnedCanonicalMessageId int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+func (m *defaultUserDialogsModel) UpdatePinnedMessage(ctx context.Context, pinnedPeerSeq int64, pinnedCanonicalMessageId int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update user_dialogs set pinned_peer_seq = ?, pinned_canonical_message_id = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
@@ -416,7 +416,7 @@ func (m *defaultUserDialogsModel) UpdatePinnedMessage(ctx context.Context, pinne
 
 // UpdatePinnedMessage
 // update user_dialogs set pinned_peer_seq = :pinned_peer_seq, pinned_canonical_message_id = :pinned_canonical_message_id, last_pts = :last_pts, last_pts_at = :last_pts_at where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
-func (m *defaultUserDialogsTxModel) UpdatePinnedMessage(pinnedPeerSeq int64, pinnedCanonicalMessageId int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+func (m *defaultUserDialogsTxModel) UpdatePinnedMessage(pinnedPeerSeq int64, pinnedCanonicalMessageId int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update user_dialogs set pinned_peer_seq = ?, pinned_canonical_message_id = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
 		rResult sql.Result
@@ -439,7 +439,7 @@ func (m *defaultUserDialogsTxModel) UpdatePinnedMessage(pinnedPeerSeq int64, pin
 
 // UpdateAvailableMinPeerSeq
 // update user_dialogs set available_min_peer_seq = :available_min_peer_seq, last_pts = :last_pts, last_pts_at = :last_pts_at where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
-func (m *defaultUserDialogsModel) UpdateAvailableMinPeerSeq(ctx context.Context, availableMinPeerSeq int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+func (m *defaultUserDialogsModel) UpdateAvailableMinPeerSeq(ctx context.Context, availableMinPeerSeq int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update user_dialogs set available_min_peer_seq = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
@@ -464,7 +464,7 @@ func (m *defaultUserDialogsModel) UpdateAvailableMinPeerSeq(ctx context.Context,
 
 // UpdateAvailableMinPeerSeq
 // update user_dialogs set available_min_peer_seq = :available_min_peer_seq, last_pts = :last_pts, last_pts_at = :last_pts_at where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
-func (m *defaultUserDialogsTxModel) UpdateAvailableMinPeerSeq(availableMinPeerSeq int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+func (m *defaultUserDialogsTxModel) UpdateAvailableMinPeerSeq(availableMinPeerSeq int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update user_dialogs set available_min_peer_seq = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
 		rResult sql.Result
@@ -487,7 +487,7 @@ func (m *defaultUserDialogsTxModel) UpdateAvailableMinPeerSeq(availableMinPeerSe
 
 // ClearDialogTopAfterDelete
 // update user_dialogs set top_peer_seq = 0, top_canonical_message_id = 0, top_message_status = :top_message_status, hidden = 1, deleted_at = :deleted_at, last_pts = :last_pts, last_pts_at = :last_pts_at where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
-func (m *defaultUserDialogsModel) ClearDialogTopAfterDelete(ctx context.Context, topMessageStatus int32, deletedAt sql.NullTime, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+func (m *defaultUserDialogsModel) ClearDialogTopAfterDelete(ctx context.Context, topMessageStatus int32, deletedAt int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update user_dialogs set top_peer_seq = 0, top_canonical_message_id = 0, top_message_status = ?, hidden = 1, deleted_at = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
@@ -512,7 +512,7 @@ func (m *defaultUserDialogsModel) ClearDialogTopAfterDelete(ctx context.Context,
 
 // ClearDialogTopAfterDelete
 // update user_dialogs set top_peer_seq = 0, top_canonical_message_id = 0, top_message_status = :top_message_status, hidden = 1, deleted_at = :deleted_at, last_pts = :last_pts, last_pts_at = :last_pts_at where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
-func (m *defaultUserDialogsTxModel) ClearDialogTopAfterDelete(topMessageStatus int32, deletedAt sql.NullTime, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+func (m *defaultUserDialogsTxModel) ClearDialogTopAfterDelete(topMessageStatus int32, deletedAt int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update user_dialogs set top_peer_seq = 0, top_canonical_message_id = 0, top_message_status = ?, hidden = 1, deleted_at = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
 		rResult sql.Result
@@ -535,7 +535,7 @@ func (m *defaultUserDialogsTxModel) ClearDialogTopAfterDelete(topMessageStatus i
 
 // UpdateDialogTopAfterDelete
 // update user_dialogs set top_peer_seq = :top_peer_seq, top_canonical_message_id = :top_canonical_message_id, top_message_date = :top_message_date, top_message_status = :top_message_status, hidden = 0, deleted_at = :deleted_at, last_pts = :last_pts, last_pts_at = :last_pts_at where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
-func (m *defaultUserDialogsModel) UpdateDialogTopAfterDelete(ctx context.Context, topPeerSeq int64, topCanonicalMessageId int64, topMessageDate sql.NullTime, topMessageStatus int32, deletedAt sql.NullTime, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+func (m *defaultUserDialogsModel) UpdateDialogTopAfterDelete(ctx context.Context, topPeerSeq int64, topCanonicalMessageId int64, topMessageDate int64, topMessageStatus int32, deletedAt int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update user_dialogs set top_peer_seq = ?, top_canonical_message_id = ?, top_message_date = ?, top_message_status = ?, hidden = 0, deleted_at = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
@@ -560,7 +560,7 @@ func (m *defaultUserDialogsModel) UpdateDialogTopAfterDelete(ctx context.Context
 
 // UpdateDialogTopAfterDelete
 // update user_dialogs set top_peer_seq = :top_peer_seq, top_canonical_message_id = :top_canonical_message_id, top_message_date = :top_message_date, top_message_status = :top_message_status, hidden = 0, deleted_at = :deleted_at, last_pts = :last_pts, last_pts_at = :last_pts_at where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
-func (m *defaultUserDialogsTxModel) UpdateDialogTopAfterDelete(topPeerSeq int64, topCanonicalMessageId int64, topMessageDate sql.NullTime, topMessageStatus int32, deletedAt sql.NullTime, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+func (m *defaultUserDialogsTxModel) UpdateDialogTopAfterDelete(topPeerSeq int64, topCanonicalMessageId int64, topMessageDate int64, topMessageStatus int32, deletedAt int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update user_dialogs set top_peer_seq = ?, top_canonical_message_id = ?, top_message_date = ?, top_message_status = ?, hidden = 0, deleted_at = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
 		rResult sql.Result

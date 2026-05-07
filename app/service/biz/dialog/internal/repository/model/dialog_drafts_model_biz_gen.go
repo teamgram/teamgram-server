@@ -16,7 +16,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 )
@@ -33,14 +32,14 @@ type bizDialogDraftsModel interface {
 	SelectByUserPeer(ctx context.Context, userId int64, peerType int32, peerId int64) (*DialogDrafts, error)
 	SelectActiveByUser(ctx context.Context, userId int64) ([]DialogDrafts, error)
 	SelectActiveByUserWithCB(ctx context.Context, userId int64, cb func(sz, i int, v *DialogDrafts)) ([]DialogDrafts, error)
-	ClearByUserPeerBeforeDate(ctx context.Context, entitiesPayload []byte, draftPayloadSchemaVersion int32, draftPayload []byte, date time.Time, userId int64, peerDialogId int64, clearBeforeDate string) (rowsAffected int64, err error)
+	ClearByUserPeerBeforeDate(ctx context.Context, entitiesPayload []byte, draftPayloadSchemaVersion int32, draftPayload []byte, date int64, userId int64, peerDialogId int64, clearBeforeDate int64) (rowsAffected int64, err error)
 }
 
 type DialogDraftsTxModel interface {
 	InsertOrUpdate(data *DialogDrafts) (lastInsertId, rowsAffected int64, err error)
 	SelectByUserPeer(userId int64, peerType int32, peerId int64) (*DialogDrafts, error)
 	SelectActiveByUser(userId int64) ([]DialogDrafts, error)
-	ClearByUserPeerBeforeDate(entitiesPayload []byte, draftPayloadSchemaVersion int32, draftPayload []byte, date time.Time, userId int64, peerDialogId int64, clearBeforeDate string) (rowsAffected int64, err error)
+	ClearByUserPeerBeforeDate(entitiesPayload []byte, draftPayloadSchemaVersion int32, draftPayload []byte, date int64, userId int64, peerDialogId int64, clearBeforeDate int64) (rowsAffected int64, err error)
 }
 
 type defaultDialogDraftsTxModel struct {
@@ -239,7 +238,7 @@ func (m *defaultDialogDraftsModel) SelectActiveByUserWithCB(ctx context.Context,
 
 // ClearByUserPeerBeforeDate
 // update dialog_drafts set draft_kind = 0, message = ”, entities_payload = :entities_payload, reply_to_peer_seq = 0, draft_payload_schema_version = :draft_payload_schema_version, draft_payload = :draft_payload, `date` = :date where user_id = :user_id and peer_dialog_id = :peer_dialog_id and `date` <= :clear_before_date
-func (m *defaultDialogDraftsModel) ClearByUserPeerBeforeDate(ctx context.Context, entitiesPayload []byte, draftPayloadSchemaVersion int32, draftPayload []byte, date time.Time, userId int64, peerDialogId int64, clearBeforeDate string) (rowsAffected int64, err error) {
+func (m *defaultDialogDraftsModel) ClearByUserPeerBeforeDate(ctx context.Context, entitiesPayload []byte, draftPayloadSchemaVersion int32, draftPayload []byte, date int64, userId int64, peerDialogId int64, clearBeforeDate int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update dialog_drafts set draft_kind = 0, message = '', entities_payload = ?, reply_to_peer_seq = 0, draft_payload_schema_version = ?, draft_payload = ?, `date` = ? where user_id = ? and peer_dialog_id = ? and `date` <= ?"
@@ -264,7 +263,7 @@ func (m *defaultDialogDraftsModel) ClearByUserPeerBeforeDate(ctx context.Context
 
 // ClearByUserPeerBeforeDate
 // update dialog_drafts set draft_kind = 0, message = ”, entities_payload = :entities_payload, reply_to_peer_seq = 0, draft_payload_schema_version = :draft_payload_schema_version, draft_payload = :draft_payload, `date` = :date where user_id = :user_id and peer_dialog_id = :peer_dialog_id and `date` <= :clear_before_date
-func (m *defaultDialogDraftsTxModel) ClearByUserPeerBeforeDate(entitiesPayload []byte, draftPayloadSchemaVersion int32, draftPayload []byte, date time.Time, userId int64, peerDialogId int64, clearBeforeDate string) (rowsAffected int64, err error) {
+func (m *defaultDialogDraftsTxModel) ClearByUserPeerBeforeDate(entitiesPayload []byte, draftPayloadSchemaVersion int32, draftPayload []byte, date int64, userId int64, peerDialogId int64, clearBeforeDate int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialog_drafts set draft_kind = 0, message = '', entities_payload = ?, reply_to_peer_seq = 0, draft_payload_schema_version = ?, draft_payload = ?, `date` = ? where user_id = ? and peer_dialog_id = ? and `date` <= ?"
 		rResult sql.Result

@@ -16,7 +16,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 )
@@ -32,24 +31,24 @@ type bizDialogPublicUpdateOutboxModel interface {
 	Insert(ctx context.Context, data *DialogPublicUpdateOutbox) (lastInsertId, rowsAffected int64, err error)
 	InsertIgnore(ctx context.Context, data *DialogPublicUpdateOutbox) (lastInsertId, rowsAffected int64, err error)
 	SelectByTargetOperation(ctx context.Context, targetUserId int64, operationId string, deliveryPath string, publicUpdateType string) (*DialogPublicUpdateOutbox, error)
-	MarkPublishing(ctx context.Context, status int32, leaseOwner string, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error)
-	MarkPublishedPTS(ctx context.Context, status int32, publishedPts int64, publishedPtsCount int32, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error)
-	MarkPublishedAuthSeq(ctx context.Context, status int32, publishedSeq int64, publishedDate int32, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error)
-	MarkRetryable(ctx context.Context, status int32, attemptCount int32, nextRetryAt time.Time, leaseUntil time.Time, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error)
-	MarkBlocked(ctx context.Context, status int32, leaseUntil time.Time, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error)
-	ResetBlocked(ctx context.Context, status int32, nextRetryAt time.Time, leaseUntil time.Time, oldStatus int32, outboxId int64) (rowsAffected int64, err error)
+	MarkPublishing(ctx context.Context, status int32, leaseOwner string, leaseUntil int64, outboxId int64) (rowsAffected int64, err error)
+	MarkPublishedPTS(ctx context.Context, status int32, publishedPts int64, publishedPtsCount int32, leaseUntil int64, outboxId int64) (rowsAffected int64, err error)
+	MarkPublishedAuthSeq(ctx context.Context, status int32, publishedSeq int64, publishedDate int32, leaseUntil int64, outboxId int64) (rowsAffected int64, err error)
+	MarkRetryable(ctx context.Context, status int32, attemptCount int32, nextRetryAt int64, leaseUntil int64, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error)
+	MarkBlocked(ctx context.Context, status int32, leaseUntil int64, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error)
+	ResetBlocked(ctx context.Context, status int32, nextRetryAt int64, leaseUntil int64, oldStatus int32, outboxId int64) (rowsAffected int64, err error)
 }
 
 type DialogPublicUpdateOutboxTxModel interface {
 	Insert(data *DialogPublicUpdateOutbox) (lastInsertId, rowsAffected int64, err error)
 	InsertIgnore(data *DialogPublicUpdateOutbox) (lastInsertId, rowsAffected int64, err error)
 	SelectByTargetOperation(targetUserId int64, operationId string, deliveryPath string, publicUpdateType string) (*DialogPublicUpdateOutbox, error)
-	MarkPublishing(status int32, leaseOwner string, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error)
-	MarkPublishedPTS(status int32, publishedPts int64, publishedPtsCount int32, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error)
-	MarkPublishedAuthSeq(status int32, publishedSeq int64, publishedDate int32, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error)
-	MarkRetryable(status int32, attemptCount int32, nextRetryAt time.Time, leaseUntil time.Time, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error)
-	MarkBlocked(status int32, leaseUntil time.Time, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error)
-	ResetBlocked(status int32, nextRetryAt time.Time, leaseUntil time.Time, oldStatus int32, outboxId int64) (rowsAffected int64, err error)
+	MarkPublishing(status int32, leaseOwner string, leaseUntil int64, outboxId int64) (rowsAffected int64, err error)
+	MarkPublishedPTS(status int32, publishedPts int64, publishedPtsCount int32, leaseUntil int64, outboxId int64) (rowsAffected int64, err error)
+	MarkPublishedAuthSeq(status int32, publishedSeq int64, publishedDate int32, leaseUntil int64, outboxId int64) (rowsAffected int64, err error)
+	MarkRetryable(status int32, attemptCount int32, nextRetryAt int64, leaseUntil int64, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error)
+	MarkBlocked(status int32, leaseUntil int64, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error)
+	ResetBlocked(status int32, nextRetryAt int64, leaseUntil int64, oldStatus int32, outboxId int64) (rowsAffected int64, err error)
 }
 
 type defaultDialogPublicUpdateOutboxTxModel struct {
@@ -224,7 +223,7 @@ func (m *defaultDialogPublicUpdateOutboxTxModel) SelectByTargetOperation(targetU
 
 // MarkPublishing
 // update dialog_public_update_outbox set `status` = :status, lease_owner = :lease_owner, lease_until = :lease_until where outbox_id = :outbox_id
-func (m *defaultDialogPublicUpdateOutboxModel) MarkPublishing(ctx context.Context, status int32, leaseOwner string, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error) {
+func (m *defaultDialogPublicUpdateOutboxModel) MarkPublishing(ctx context.Context, status int32, leaseOwner string, leaseUntil int64, outboxId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update dialog_public_update_outbox set `status` = ?, lease_owner = ?, lease_until = ? where outbox_id = ?"
@@ -249,7 +248,7 @@ func (m *defaultDialogPublicUpdateOutboxModel) MarkPublishing(ctx context.Contex
 
 // MarkPublishing
 // update dialog_public_update_outbox set `status` = :status, lease_owner = :lease_owner, lease_until = :lease_until where outbox_id = :outbox_id
-func (m *defaultDialogPublicUpdateOutboxTxModel) MarkPublishing(status int32, leaseOwner string, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error) {
+func (m *defaultDialogPublicUpdateOutboxTxModel) MarkPublishing(status int32, leaseOwner string, leaseUntil int64, outboxId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialog_public_update_outbox set `status` = ?, lease_owner = ?, lease_until = ? where outbox_id = ?"
 		rResult sql.Result
@@ -272,7 +271,7 @@ func (m *defaultDialogPublicUpdateOutboxTxModel) MarkPublishing(status int32, le
 
 // MarkPublishedPTS
 // update dialog_public_update_outbox set `status` = :status, published_pts = :published_pts, published_pts_count = :published_pts_count, lease_owner = ”, lease_until = :lease_until, last_error_kind = ”, last_error_message = ” where outbox_id = :outbox_id
-func (m *defaultDialogPublicUpdateOutboxModel) MarkPublishedPTS(ctx context.Context, status int32, publishedPts int64, publishedPtsCount int32, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error) {
+func (m *defaultDialogPublicUpdateOutboxModel) MarkPublishedPTS(ctx context.Context, status int32, publishedPts int64, publishedPtsCount int32, leaseUntil int64, outboxId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update dialog_public_update_outbox set `status` = ?, published_pts = ?, published_pts_count = ?, lease_owner = '', lease_until = ?, last_error_kind = '', last_error_message = '' where outbox_id = ?"
@@ -297,7 +296,7 @@ func (m *defaultDialogPublicUpdateOutboxModel) MarkPublishedPTS(ctx context.Cont
 
 // MarkPublishedPTS
 // update dialog_public_update_outbox set `status` = :status, published_pts = :published_pts, published_pts_count = :published_pts_count, lease_owner = ”, lease_until = :lease_until, last_error_kind = ”, last_error_message = ” where outbox_id = :outbox_id
-func (m *defaultDialogPublicUpdateOutboxTxModel) MarkPublishedPTS(status int32, publishedPts int64, publishedPtsCount int32, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error) {
+func (m *defaultDialogPublicUpdateOutboxTxModel) MarkPublishedPTS(status int32, publishedPts int64, publishedPtsCount int32, leaseUntil int64, outboxId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialog_public_update_outbox set `status` = ?, published_pts = ?, published_pts_count = ?, lease_owner = '', lease_until = ?, last_error_kind = '', last_error_message = '' where outbox_id = ?"
 		rResult sql.Result
@@ -320,7 +319,7 @@ func (m *defaultDialogPublicUpdateOutboxTxModel) MarkPublishedPTS(status int32, 
 
 // MarkPublishedAuthSeq
 // update dialog_public_update_outbox set `status` = :status, published_seq = :published_seq, published_date = :published_date, lease_owner = ”, lease_until = :lease_until, last_error_kind = ”, last_error_message = ” where outbox_id = :outbox_id
-func (m *defaultDialogPublicUpdateOutboxModel) MarkPublishedAuthSeq(ctx context.Context, status int32, publishedSeq int64, publishedDate int32, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error) {
+func (m *defaultDialogPublicUpdateOutboxModel) MarkPublishedAuthSeq(ctx context.Context, status int32, publishedSeq int64, publishedDate int32, leaseUntil int64, outboxId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update dialog_public_update_outbox set `status` = ?, published_seq = ?, published_date = ?, lease_owner = '', lease_until = ?, last_error_kind = '', last_error_message = '' where outbox_id = ?"
@@ -345,7 +344,7 @@ func (m *defaultDialogPublicUpdateOutboxModel) MarkPublishedAuthSeq(ctx context.
 
 // MarkPublishedAuthSeq
 // update dialog_public_update_outbox set `status` = :status, published_seq = :published_seq, published_date = :published_date, lease_owner = ”, lease_until = :lease_until, last_error_kind = ”, last_error_message = ” where outbox_id = :outbox_id
-func (m *defaultDialogPublicUpdateOutboxTxModel) MarkPublishedAuthSeq(status int32, publishedSeq int64, publishedDate int32, leaseUntil time.Time, outboxId int64) (rowsAffected int64, err error) {
+func (m *defaultDialogPublicUpdateOutboxTxModel) MarkPublishedAuthSeq(status int32, publishedSeq int64, publishedDate int32, leaseUntil int64, outboxId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialog_public_update_outbox set `status` = ?, published_seq = ?, published_date = ?, lease_owner = '', lease_until = ?, last_error_kind = '', last_error_message = '' where outbox_id = ?"
 		rResult sql.Result
@@ -368,7 +367,7 @@ func (m *defaultDialogPublicUpdateOutboxTxModel) MarkPublishedAuthSeq(status int
 
 // MarkRetryable
 // update dialog_public_update_outbox set `status` = :status, attempt_count = :attempt_count, next_retry_at = :next_retry_at, lease_owner = ”, lease_until = :lease_until, last_error_kind = :last_error_kind, last_error_message = :last_error_message where outbox_id = :outbox_id
-func (m *defaultDialogPublicUpdateOutboxModel) MarkRetryable(ctx context.Context, status int32, attemptCount int32, nextRetryAt time.Time, leaseUntil time.Time, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error) {
+func (m *defaultDialogPublicUpdateOutboxModel) MarkRetryable(ctx context.Context, status int32, attemptCount int32, nextRetryAt int64, leaseUntil int64, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update dialog_public_update_outbox set `status` = ?, attempt_count = ?, next_retry_at = ?, lease_owner = '', lease_until = ?, last_error_kind = ?, last_error_message = ? where outbox_id = ?"
@@ -393,7 +392,7 @@ func (m *defaultDialogPublicUpdateOutboxModel) MarkRetryable(ctx context.Context
 
 // MarkRetryable
 // update dialog_public_update_outbox set `status` = :status, attempt_count = :attempt_count, next_retry_at = :next_retry_at, lease_owner = ”, lease_until = :lease_until, last_error_kind = :last_error_kind, last_error_message = :last_error_message where outbox_id = :outbox_id
-func (m *defaultDialogPublicUpdateOutboxTxModel) MarkRetryable(status int32, attemptCount int32, nextRetryAt time.Time, leaseUntil time.Time, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error) {
+func (m *defaultDialogPublicUpdateOutboxTxModel) MarkRetryable(status int32, attemptCount int32, nextRetryAt int64, leaseUntil int64, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialog_public_update_outbox set `status` = ?, attempt_count = ?, next_retry_at = ?, lease_owner = '', lease_until = ?, last_error_kind = ?, last_error_message = ? where outbox_id = ?"
 		rResult sql.Result
@@ -416,7 +415,7 @@ func (m *defaultDialogPublicUpdateOutboxTxModel) MarkRetryable(status int32, att
 
 // MarkBlocked
 // update dialog_public_update_outbox set `status` = :status, lease_owner = ”, lease_until = :lease_until, last_error_kind = :last_error_kind, last_error_message = :last_error_message where outbox_id = :outbox_id
-func (m *defaultDialogPublicUpdateOutboxModel) MarkBlocked(ctx context.Context, status int32, leaseUntil time.Time, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error) {
+func (m *defaultDialogPublicUpdateOutboxModel) MarkBlocked(ctx context.Context, status int32, leaseUntil int64, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update dialog_public_update_outbox set `status` = ?, lease_owner = '', lease_until = ?, last_error_kind = ?, last_error_message = ? where outbox_id = ?"
@@ -441,7 +440,7 @@ func (m *defaultDialogPublicUpdateOutboxModel) MarkBlocked(ctx context.Context, 
 
 // MarkBlocked
 // update dialog_public_update_outbox set `status` = :status, lease_owner = ”, lease_until = :lease_until, last_error_kind = :last_error_kind, last_error_message = :last_error_message where outbox_id = :outbox_id
-func (m *defaultDialogPublicUpdateOutboxTxModel) MarkBlocked(status int32, leaseUntil time.Time, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error) {
+func (m *defaultDialogPublicUpdateOutboxTxModel) MarkBlocked(status int32, leaseUntil int64, lastErrorKind string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialog_public_update_outbox set `status` = ?, lease_owner = '', lease_until = ?, last_error_kind = ?, last_error_message = ? where outbox_id = ?"
 		rResult sql.Result
@@ -464,7 +463,7 @@ func (m *defaultDialogPublicUpdateOutboxTxModel) MarkBlocked(status int32, lease
 
 // ResetBlocked
 // update dialog_public_update_outbox set `status` = :status, attempt_count = 0, next_retry_at = :next_retry_at, lease_owner = ”, lease_until = :lease_until, last_error_kind = ”, last_error_message = ” where `status` = :old_status and outbox_id = :outbox_id
-func (m *defaultDialogPublicUpdateOutboxModel) ResetBlocked(ctx context.Context, status int32, nextRetryAt time.Time, leaseUntil time.Time, oldStatus int32, outboxId int64) (rowsAffected int64, err error) {
+func (m *defaultDialogPublicUpdateOutboxModel) ResetBlocked(ctx context.Context, status int32, nextRetryAt int64, leaseUntil int64, oldStatus int32, outboxId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update dialog_public_update_outbox set `status` = ?, attempt_count = 0, next_retry_at = ?, lease_owner = '', lease_until = ?, last_error_kind = '', last_error_message = '' where `status` = ? and outbox_id = ?"
@@ -489,7 +488,7 @@ func (m *defaultDialogPublicUpdateOutboxModel) ResetBlocked(ctx context.Context,
 
 // ResetBlocked
 // update dialog_public_update_outbox set `status` = :status, attempt_count = 0, next_retry_at = :next_retry_at, lease_owner = ”, lease_until = :lease_until, last_error_kind = ”, last_error_message = ” where `status` = :old_status and outbox_id = :outbox_id
-func (m *defaultDialogPublicUpdateOutboxTxModel) ResetBlocked(status int32, nextRetryAt time.Time, leaseUntil time.Time, oldStatus int32, outboxId int64) (rowsAffected int64, err error) {
+func (m *defaultDialogPublicUpdateOutboxTxModel) ResetBlocked(status int32, nextRetryAt int64, leaseUntil int64, oldStatus int32, outboxId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update dialog_public_update_outbox set `status` = ?, attempt_count = 0, next_retry_at = ?, lease_owner = '', lease_until = ?, last_error_kind = '', last_error_message = '' where `status` = ? and outbox_id = ?"
 		rResult sql.Result

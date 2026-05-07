@@ -3,7 +3,7 @@
         <field name="SendStateID" type="int64" db="send_state_id"/>
         <field name="CanonicalMessageID" type="int64" db="canonical_message_id"/>
         <field name="PeerSeq" type="int64" db="peer_seq"/>
-        <field name="MessageDate" type="time.Time" db="message_date"/>
+        <field name="MessageDate" type="int64" db="message_date"/>
         <field name="RequestPayloadHash" type="[]byte" db="request_payload_hash"/>
     </result>
 
@@ -16,7 +16,7 @@
         <field name="PeerID" type="int64" db="peer_id"/>
         <field name="MessageKind" type="int32" db="message_kind"/>
         <field name="MessageText" type="string" db="message_text"/>
-        <field name="MessageDate" type="time.Time" db="message_date"/>
+        <field name="MessageDate" type="int64" db="message_date"/>
         <field name="ViewPayload" type="[]byte" db="view_payload"/>
     </result>
 
@@ -28,8 +28,8 @@
         <field name="PeerID" type="int64" db="peer_id"/>
         <field name="MessageKind" type="int32" db="message_kind"/>
         <field name="MessageText" type="string" db="message_text"/>
-        <field name="MessageDate" type="time.Time" db="message_date"/>
-        <field name="EditDate" type="time.Time" db="edit_date"/>
+        <field name="MessageDate" type="int64" db="message_date"/>
+        <field name="EditDate" type="int64" db="edit_date"/>
         <field name="EditVersion" type="int32" db="edit_version"/>
     </result>
 

@@ -15,7 +15,6 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 
@@ -40,19 +39,19 @@ type (
 	}
 
 	UserOperationResults struct {
-		UserId                int64     `db:"user_id" json:"user_id"`
-		OperationId           string    `db:"operation_id" json:"operation_id"`
-		OpType                int32     `db:"op_type" json:"op_type"`
-		Status                int32     `db:"status" json:"status"`
-		Pts                   int64     `db:"pts" json:"pts"`
-		PtsCount              int32     `db:"pts_count" json:"pts_count"`
-		PayloadHash           []byte    `db:"payload_hash" json:"payload_hash"`
-		ResponseSchemaVersion int32     `db:"response_schema_version" json:"response_schema_version"`
-		ResponseCodec         int32     `db:"response_codec" json:"response_codec"`
-		ResponsePayload       []byte    `db:"response_payload" json:"response_payload"`
-		ResponsePayloadHash   []byte    `db:"response_payload_hash" json:"response_payload_hash"`
-		TerminalErrorCode     string    `db:"terminal_error_code" json:"terminal_error_code"`
-		CompletedAt           time.Time `db:"completed_at" json:"completed_at"`
+		UserId                int64  `db:"user_id" json:"user_id"`
+		OperationId           string `db:"operation_id" json:"operation_id"`
+		OpType                int32  `db:"op_type" json:"op_type"`
+		Status                int32  `db:"status" json:"status"`
+		Pts                   int64  `db:"pts" json:"pts"`
+		PtsCount              int32  `db:"pts_count" json:"pts_count"`
+		PayloadHash           []byte `db:"payload_hash" json:"payload_hash"`
+		ResponseSchemaVersion int32  `db:"response_schema_version" json:"response_schema_version"`
+		ResponseCodec         int32  `db:"response_codec" json:"response_codec"`
+		ResponsePayload       []byte `db:"response_payload" json:"response_payload"`
+		ResponsePayloadHash   []byte `db:"response_payload_hash" json:"response_payload_hash"`
+		TerminalErrorCode     string `db:"terminal_error_code" json:"terminal_error_code"`
+		CompletedAt           int64  `db:"completed_at" json:"completed_at"`
 	}
 )
 

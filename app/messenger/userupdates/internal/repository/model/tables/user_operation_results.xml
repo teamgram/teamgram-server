@@ -22,7 +22,7 @@
 
     <operation name="SelectByStatusCompletedBefore" result_set="list">
         <params>
-            <param name="beforeCompletedAt" type="string" />
+            <param name="beforeCompletedAt" type="int64" />
             <param name="limit" type="int32" />
         </params>
         <sql>
@@ -31,7 +31,7 @@
             FROM
                 user_operation_results
             WHERE
-                status = :status AND completed_at &lt; :beforeCompletedAt
+                status = :status AND completed_at &gt; 0 AND completed_at &lt; :beforeCompletedAt
             ORDER BY
                 completed_at, user_id, operation_id LIMIT :limit
         </sql>

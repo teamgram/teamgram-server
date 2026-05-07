@@ -51,7 +51,7 @@
 
     <operation name="SelectByUserCursor" result_set="list">
         <params>
-            <param name="topMessageDate" type="string" />
+            <param name="topMessageDate" type="int64" />
             <param name="topPeerSeq" type="int64" />
             <param name="peerType" type="int32" />
             <param name="peerId" type="int64" />
@@ -65,7 +65,7 @@
             WHERE
                 user_id = :user_id AND hidden = 0
                 AND (
-                    :top_message_date = ''
+                    :top_message_date = 0
                     OR top_message_date &lt; :top_message_date
                     OR (top_message_date = :top_message_date AND top_peer_seq &lt; :top_peer_seq)
                     OR (top_message_date = :top_message_date AND top_peer_seq = :top_peer_seq AND peer_type &gt; :peer_type)

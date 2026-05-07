@@ -16,7 +16,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 
@@ -47,13 +46,13 @@ type (
 	}
 
 	MessageReadOutbox struct {
-		Id                int64     `db:"id" json:"id"`
-		UserId            int64     `db:"user_id" json:"user_id"`
-		PeerType          int32     `db:"peer_type" json:"peer_type"`
-		PeerId            int64     `db:"peer_id" json:"peer_id"`
-		ReadUserId        int64     `db:"read_user_id" json:"read_user_id"`
-		ReadOutboxMaxId   int32     `db:"read_outbox_max_id" json:"read_outbox_max_id"`
-		ReadOutboxMaxDate time.Time `db:"read_outbox_max_date" json:"read_outbox_max_date"`
+		Id                int64 `db:"id" json:"id"`
+		UserId            int64 `db:"user_id" json:"user_id"`
+		PeerType          int32 `db:"peer_type" json:"peer_type"`
+		PeerId            int64 `db:"peer_id" json:"peer_id"`
+		ReadUserId        int64 `db:"read_user_id" json:"read_user_id"`
+		ReadOutboxMaxId   int32 `db:"read_outbox_max_id" json:"read_outbox_max_id"`
+		ReadOutboxMaxDate int64 `db:"read_outbox_max_date" json:"read_outbox_max_date"`
 	}
 )
 

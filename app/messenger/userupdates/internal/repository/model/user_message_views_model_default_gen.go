@@ -16,7 +16,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 
@@ -43,21 +42,21 @@ type (
 	}
 
 	UserMessageViews struct {
-		UserId             int64        `db:"user_id" json:"user_id"`
-		PeerType           int32        `db:"peer_type" json:"peer_type"`
-		PeerId             int64        `db:"peer_id" json:"peer_id"`
-		PeerSeq            int64        `db:"peer_seq" json:"peer_seq"`
-		CanonicalMessageId int64        `db:"canonical_message_id" json:"canonical_message_id"`
-		FromUserId         int64        `db:"from_user_id" json:"from_user_id"`
-		Outgoing           bool         `db:"outgoing" json:"outgoing"`
-		MessageKind        int32        `db:"message_kind" json:"message_kind"`
-		MessageStatus      int32        `db:"message_status" json:"message_status"`
-		EditVersion        int32        `db:"edit_version" json:"edit_version"`
-		Date               time.Time    `db:"date" json:"date"`
-		EditDate           sql.NullTime `db:"edit_date" json:"edit_date"`
-		DeletedAt          sql.NullTime `db:"deleted_at" json:"deleted_at"`
-		ViewSchemaVersion  int32        `db:"view_schema_version" json:"view_schema_version"`
-		ViewPayload        []byte       `db:"view_payload" json:"view_payload"`
+		UserId             int64  `db:"user_id" json:"user_id"`
+		PeerType           int32  `db:"peer_type" json:"peer_type"`
+		PeerId             int64  `db:"peer_id" json:"peer_id"`
+		PeerSeq            int64  `db:"peer_seq" json:"peer_seq"`
+		CanonicalMessageId int64  `db:"canonical_message_id" json:"canonical_message_id"`
+		FromUserId         int64  `db:"from_user_id" json:"from_user_id"`
+		Outgoing           bool   `db:"outgoing" json:"outgoing"`
+		MessageKind        int32  `db:"message_kind" json:"message_kind"`
+		MessageStatus      int32  `db:"message_status" json:"message_status"`
+		EditVersion        int32  `db:"edit_version" json:"edit_version"`
+		Date               int64  `db:"date" json:"date"`
+		EditDate           int64  `db:"edit_date" json:"edit_date"`
+		DeletedAt          int64  `db:"deleted_at" json:"deleted_at"`
+		ViewSchemaVersion  int32  `db:"view_schema_version" json:"view_schema_version"`
+		ViewPayload        []byte `db:"view_payload" json:"view_payload"`
 	}
 )
 

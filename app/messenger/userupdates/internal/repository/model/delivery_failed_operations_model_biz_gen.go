@@ -34,7 +34,7 @@ type bizDeliveryFailedOperationsModel interface {
 	SelectByBucketStatus(ctx context.Context, bucketId int32, status int32, limit int32) ([]DeliveryFailedOperations, error)
 	SelectByBucketStatusWithCB(ctx context.Context, bucketId int32, status int32, limit int32, cb func(sz, i int, v *DeliveryFailedOperations)) ([]DeliveryFailedOperations, error)
 	MarkStatus(ctx context.Context, status int32, retryCount int32, failedId int64) (rowsAffected int64, err error)
-	MarkReplayed(ctx context.Context, status int32, replayedAt sql.NullTime, replayedBy string, failedId int64) (rowsAffected int64, err error)
+	MarkReplayed(ctx context.Context, status int32, replayedAt int64, replayedBy string, failedId int64) (rowsAffected int64, err error)
 }
 
 type DeliveryFailedOperationsTxModel interface {
@@ -43,7 +43,7 @@ type DeliveryFailedOperationsTxModel interface {
 	SelectByUserOperation(userId int64, operationId string) (*DeliveryFailedOperations, error)
 	SelectByBucketStatus(bucketId int32, status int32, limit int32) ([]DeliveryFailedOperations, error)
 	MarkStatus(status int32, retryCount int32, failedId int64) (rowsAffected int64, err error)
-	MarkReplayed(status int32, replayedAt sql.NullTime, replayedBy string, failedId int64) (rowsAffected int64, err error)
+	MarkReplayed(status int32, replayedAt int64, replayedBy string, failedId int64) (rowsAffected int64, err error)
 }
 
 type defaultDeliveryFailedOperationsTxModel struct {
@@ -342,7 +342,7 @@ func (m *defaultDeliveryFailedOperationsTxModel) MarkStatus(status int32, retryC
 
 // MarkReplayed
 // update delivery_failed_operations set `status` = :status, replayed_at = :replayed_at, replayed_by = :replayed_by where failed_id = :failed_id
-func (m *defaultDeliveryFailedOperationsModel) MarkReplayed(ctx context.Context, status int32, replayedAt sql.NullTime, replayedBy string, failedId int64) (rowsAffected int64, err error) {
+func (m *defaultDeliveryFailedOperationsModel) MarkReplayed(ctx context.Context, status int32, replayedAt int64, replayedBy string, failedId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update delivery_failed_operations set `status` = ?, replayed_at = ?, replayed_by = ? where failed_id = ?"
@@ -367,7 +367,7 @@ func (m *defaultDeliveryFailedOperationsModel) MarkReplayed(ctx context.Context,
 
 // MarkReplayed
 // update delivery_failed_operations set `status` = :status, replayed_at = :replayed_at, replayed_by = :replayed_by where failed_id = :failed_id
-func (m *defaultDeliveryFailedOperationsTxModel) MarkReplayed(status int32, replayedAt sql.NullTime, replayedBy string, failedId int64) (rowsAffected int64, err error) {
+func (m *defaultDeliveryFailedOperationsTxModel) MarkReplayed(status int32, replayedAt int64, replayedBy string, failedId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update delivery_failed_operations set `status` = ?, replayed_at = ?, replayed_by = ? where failed_id = ?"
 		rResult sql.Result

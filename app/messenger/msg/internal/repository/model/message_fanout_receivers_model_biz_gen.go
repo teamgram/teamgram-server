@@ -32,16 +32,16 @@ type bizMessageFanoutReceiversModel interface {
 	SelectByReceiverOperation(ctx context.Context, receiverUserId int64, operationId string) (*MessageFanoutReceivers, error)
 	SelectByManifest(ctx context.Context, manifestId int64) ([]MessageFanoutReceivers, error)
 	SelectByManifestWithCB(ctx context.Context, manifestId int64, cb func(sz, i int, v *MessageFanoutReceivers)) ([]MessageFanoutReceivers, error)
-	MarkPublished(ctx context.Context, kafkaTopic string, kafkaPartition int32, kafkaOffset int64, status int32, lastAttemptAt sql.NullTime, manifestId int64, receiverUserId int64) (rowsAffected int64, err error)
-	MarkRetryableFailure(ctx context.Context, status int32, nextRetryAt sql.NullTime, lastAttemptAt sql.NullTime, lastErrorCode string, manifestId int64, receiverUserId int64) (rowsAffected int64, err error)
+	MarkPublished(ctx context.Context, kafkaTopic string, kafkaPartition int32, kafkaOffset int64, status int32, lastAttemptAt int64, manifestId int64, receiverUserId int64) (rowsAffected int64, err error)
+	MarkRetryableFailure(ctx context.Context, status int32, nextRetryAt int64, lastAttemptAt int64, lastErrorCode string, manifestId int64, receiverUserId int64) (rowsAffected int64, err error)
 }
 
 type MessageFanoutReceiversTxModel interface {
 	Insert(data *MessageFanoutReceivers) (lastInsertId, rowsAffected int64, err error)
 	SelectByReceiverOperation(receiverUserId int64, operationId string) (*MessageFanoutReceivers, error)
 	SelectByManifest(manifestId int64) ([]MessageFanoutReceivers, error)
-	MarkPublished(kafkaTopic string, kafkaPartition int32, kafkaOffset int64, status int32, lastAttemptAt sql.NullTime, manifestId int64, receiverUserId int64) (rowsAffected int64, err error)
-	MarkRetryableFailure(status int32, nextRetryAt sql.NullTime, lastAttemptAt sql.NullTime, lastErrorCode string, manifestId int64, receiverUserId int64) (rowsAffected int64, err error)
+	MarkPublished(kafkaTopic string, kafkaPartition int32, kafkaOffset int64, status int32, lastAttemptAt int64, manifestId int64, receiverUserId int64) (rowsAffected int64, err error)
+	MarkRetryableFailure(status int32, nextRetryAt int64, lastAttemptAt int64, lastErrorCode string, manifestId int64, receiverUserId int64) (rowsAffected int64, err error)
 }
 
 type defaultMessageFanoutReceiversTxModel struct {
@@ -240,7 +240,7 @@ func (m *defaultMessageFanoutReceiversModel) SelectByManifestWithCB(ctx context.
 
 // MarkPublished
 // update message_fanout_receivers set kafka_topic = :kafka_topic, kafka_partition = :kafka_partition, kafka_offset = :kafka_offset, `status` = :status, last_attempt_at = :last_attempt_at where manifest_id = :manifest_id and receiver_user_id = :receiver_user_id
-func (m *defaultMessageFanoutReceiversModel) MarkPublished(ctx context.Context, kafkaTopic string, kafkaPartition int32, kafkaOffset int64, status int32, lastAttemptAt sql.NullTime, manifestId int64, receiverUserId int64) (rowsAffected int64, err error) {
+func (m *defaultMessageFanoutReceiversModel) MarkPublished(ctx context.Context, kafkaTopic string, kafkaPartition int32, kafkaOffset int64, status int32, lastAttemptAt int64, manifestId int64, receiverUserId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update message_fanout_receivers set kafka_topic = ?, kafka_partition = ?, kafka_offset = ?, `status` = ?, last_attempt_at = ? where manifest_id = ? and receiver_user_id = ?"
@@ -265,7 +265,7 @@ func (m *defaultMessageFanoutReceiversModel) MarkPublished(ctx context.Context, 
 
 // MarkPublished
 // update message_fanout_receivers set kafka_topic = :kafka_topic, kafka_partition = :kafka_partition, kafka_offset = :kafka_offset, `status` = :status, last_attempt_at = :last_attempt_at where manifest_id = :manifest_id and receiver_user_id = :receiver_user_id
-func (m *defaultMessageFanoutReceiversTxModel) MarkPublished(kafkaTopic string, kafkaPartition int32, kafkaOffset int64, status int32, lastAttemptAt sql.NullTime, manifestId int64, receiverUserId int64) (rowsAffected int64, err error) {
+func (m *defaultMessageFanoutReceiversTxModel) MarkPublished(kafkaTopic string, kafkaPartition int32, kafkaOffset int64, status int32, lastAttemptAt int64, manifestId int64, receiverUserId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update message_fanout_receivers set kafka_topic = ?, kafka_partition = ?, kafka_offset = ?, `status` = ?, last_attempt_at = ? where manifest_id = ? and receiver_user_id = ?"
 		rResult sql.Result
@@ -288,7 +288,7 @@ func (m *defaultMessageFanoutReceiversTxModel) MarkPublished(kafkaTopic string, 
 
 // MarkRetryableFailure
 // update message_fanout_receivers set `status` = :status, retry_count = retry_count + 1, next_retry_at = :next_retry_at, last_attempt_at = :last_attempt_at, last_error_code = :last_error_code where manifest_id = :manifest_id and receiver_user_id = :receiver_user_id
-func (m *defaultMessageFanoutReceiversModel) MarkRetryableFailure(ctx context.Context, status int32, nextRetryAt sql.NullTime, lastAttemptAt sql.NullTime, lastErrorCode string, manifestId int64, receiverUserId int64) (rowsAffected int64, err error) {
+func (m *defaultMessageFanoutReceiversModel) MarkRetryableFailure(ctx context.Context, status int32, nextRetryAt int64, lastAttemptAt int64, lastErrorCode string, manifestId int64, receiverUserId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update message_fanout_receivers set `status` = ?, retry_count = retry_count + 1, next_retry_at = ?, last_attempt_at = ?, last_error_code = ? where manifest_id = ? and receiver_user_id = ?"
@@ -313,7 +313,7 @@ func (m *defaultMessageFanoutReceiversModel) MarkRetryableFailure(ctx context.Co
 
 // MarkRetryableFailure
 // update message_fanout_receivers set `status` = :status, retry_count = retry_count + 1, next_retry_at = :next_retry_at, last_attempt_at = :last_attempt_at, last_error_code = :last_error_code where manifest_id = :manifest_id and receiver_user_id = :receiver_user_id
-func (m *defaultMessageFanoutReceiversTxModel) MarkRetryableFailure(status int32, nextRetryAt sql.NullTime, lastAttemptAt sql.NullTime, lastErrorCode string, manifestId int64, receiverUserId int64) (rowsAffected int64, err error) {
+func (m *defaultMessageFanoutReceiversTxModel) MarkRetryableFailure(status int32, nextRetryAt int64, lastAttemptAt int64, lastErrorCode string, manifestId int64, receiverUserId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update message_fanout_receivers set `status` = ?, retry_count = retry_count + 1, next_retry_at = ?, last_attempt_at = ?, last_error_code = ? where manifest_id = ? and receiver_user_id = ?"
 		rResult sql.Result

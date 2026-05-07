@@ -41,7 +41,7 @@
 
     <operation name="ClearByUserPeerBeforeDate">
         <params>
-            <param name="clear_before_date" type="string" />
+            <param name="clear_before_date" type="int64" />
         </params>
         <sql>
             UPDATE

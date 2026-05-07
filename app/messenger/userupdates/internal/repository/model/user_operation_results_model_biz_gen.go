@@ -30,14 +30,14 @@ var _ *sqlx.Tx
 type bizUserOperationResultsModel interface {
 	Insert(ctx context.Context, data *UserOperationResults) (lastInsertId, rowsAffected int64, err error)
 	SelectByOperation(ctx context.Context, userId int64, operationId string) (*UserOperationResults, error)
-	SelectByStatusCompletedBefore(ctx context.Context, status int32, beforeCompletedAt string, limit int32) ([]UserOperationResults, error)
-	SelectByStatusCompletedBeforeWithCB(ctx context.Context, status int32, beforeCompletedAt string, limit int32, cb func(sz, i int, v *UserOperationResults)) ([]UserOperationResults, error)
+	SelectByStatusCompletedBefore(ctx context.Context, status int32, beforeCompletedAt int64, limit int32) ([]UserOperationResults, error)
+	SelectByStatusCompletedBeforeWithCB(ctx context.Context, status int32, beforeCompletedAt int64, limit int32, cb func(sz, i int, v *UserOperationResults)) ([]UserOperationResults, error)
 }
 
 type UserOperationResultsTxModel interface {
 	Insert(data *UserOperationResults) (lastInsertId, rowsAffected int64, err error)
 	SelectByOperation(userId int64, operationId string) (*UserOperationResults, error)
-	SelectByStatusCompletedBefore(status int32, beforeCompletedAt string, limit int32) ([]UserOperationResults, error)
+	SelectByStatusCompletedBefore(status int32, beforeCompletedAt int64, limit int32) ([]UserOperationResults, error)
 }
 
 type defaultUserOperationResultsTxModel struct {
@@ -156,10 +156,10 @@ func (m *defaultUserOperationResultsTxModel) SelectByOperation(userId int64, ope
 }
 
 // SelectByStatusCompletedBefore
-// select user_id, operation_id, op_type, `status`, pts, pts_count, payload_hash, response_schema_version, response_codec, response_payload, response_payload_hash, terminal_error_code, completed_at from user_operation_results where `status` = :status and completed_at < :beforeCompletedAt order by completed_at asc, user_id asc, operation_id asc limit :limit
-func (m *defaultUserOperationResultsModel) SelectByStatusCompletedBefore(ctx context.Context, status int32, beforeCompletedAt string, limit int32) (rList []UserOperationResults, err error) {
+// select user_id, operation_id, op_type, `status`, pts, pts_count, payload_hash, response_schema_version, response_codec, response_payload, response_payload_hash, terminal_error_code, completed_at from user_operation_results where `status` = :status and completed_at > 0 and completed_at < :beforeCompletedAt order by completed_at asc, user_id asc, operation_id asc limit :limit
+func (m *defaultUserOperationResultsModel) SelectByStatusCompletedBefore(ctx context.Context, status int32, beforeCompletedAt int64, limit int32) (rList []UserOperationResults, err error) {
 	var (
-		query  = "select user_id, operation_id, op_type, `status`, pts, pts_count, payload_hash, response_schema_version, response_codec, response_payload, response_payload_hash, terminal_error_code, completed_at from user_operation_results where `status` = ? and completed_at < ? order by completed_at asc, user_id asc, operation_id asc limit ?"
+		query  = "select user_id, operation_id, op_type, `status`, pts, pts_count, payload_hash, response_schema_version, response_codec, response_payload, response_payload_hash, terminal_error_code, completed_at from user_operation_results where `status` = ? and completed_at > 0 and completed_at < ? order by completed_at asc, user_id asc, operation_id asc limit ?"
 		values []UserOperationResults
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, status, beforeCompletedAt, limit)
@@ -180,10 +180,10 @@ func (m *defaultUserOperationResultsModel) SelectByStatusCompletedBefore(ctx con
 }
 
 // SelectByStatusCompletedBefore
-// select user_id, operation_id, op_type, `status`, pts, pts_count, payload_hash, response_schema_version, response_codec, response_payload, response_payload_hash, terminal_error_code, completed_at from user_operation_results where `status` = :status and completed_at < :beforeCompletedAt order by completed_at asc, user_id asc, operation_id asc limit :limit
-func (m *defaultUserOperationResultsTxModel) SelectByStatusCompletedBefore(status int32, beforeCompletedAt string, limit int32) (rList []UserOperationResults, err error) {
+// select user_id, operation_id, op_type, `status`, pts, pts_count, payload_hash, response_schema_version, response_codec, response_payload, response_payload_hash, terminal_error_code, completed_at from user_operation_results where `status` = :status and completed_at > 0 and completed_at < :beforeCompletedAt order by completed_at asc, user_id asc, operation_id asc limit :limit
+func (m *defaultUserOperationResultsTxModel) SelectByStatusCompletedBefore(status int32, beforeCompletedAt int64, limit int32) (rList []UserOperationResults, err error) {
 	var (
-		query  = "select user_id, operation_id, op_type, `status`, pts, pts_count, payload_hash, response_schema_version, response_codec, response_payload, response_payload_hash, terminal_error_code, completed_at from user_operation_results where `status` = ? and completed_at < ? order by completed_at asc, user_id asc, operation_id asc limit ?"
+		query  = "select user_id, operation_id, op_type, `status`, pts, pts_count, payload_hash, response_schema_version, response_codec, response_payload, response_payload_hash, terminal_error_code, completed_at from user_operation_results where `status` = ? and completed_at > 0 and completed_at < ? order by completed_at asc, user_id asc, operation_id asc limit ?"
 		values []UserOperationResults
 	)
 	err = m.tx.QueryRowsPartial(&values, query, status, beforeCompletedAt, limit)
@@ -204,10 +204,10 @@ func (m *defaultUserOperationResultsTxModel) SelectByStatusCompletedBefore(statu
 }
 
 // SelectByStatusCompletedBeforeWithCB
-// select user_id, operation_id, op_type, `status`, pts, pts_count, payload_hash, response_schema_version, response_codec, response_payload, response_payload_hash, terminal_error_code, completed_at from user_operation_results where `status` = :status and completed_at < :beforeCompletedAt order by completed_at asc, user_id asc, operation_id asc limit :limit
-func (m *defaultUserOperationResultsModel) SelectByStatusCompletedBeforeWithCB(ctx context.Context, status int32, beforeCompletedAt string, limit int32, cb func(sz, i int, v *UserOperationResults)) (rList []UserOperationResults, err error) {
+// select user_id, operation_id, op_type, `status`, pts, pts_count, payload_hash, response_schema_version, response_codec, response_payload, response_payload_hash, terminal_error_code, completed_at from user_operation_results where `status` = :status and completed_at > 0 and completed_at < :beforeCompletedAt order by completed_at asc, user_id asc, operation_id asc limit :limit
+func (m *defaultUserOperationResultsModel) SelectByStatusCompletedBeforeWithCB(ctx context.Context, status int32, beforeCompletedAt int64, limit int32, cb func(sz, i int, v *UserOperationResults)) (rList []UserOperationResults, err error) {
 	var (
-		query  = "select user_id, operation_id, op_type, `status`, pts, pts_count, payload_hash, response_schema_version, response_codec, response_payload, response_payload_hash, terminal_error_code, completed_at from user_operation_results where `status` = ? and completed_at < ? order by completed_at asc, user_id asc, operation_id asc limit ?"
+		query  = "select user_id, operation_id, op_type, `status`, pts, pts_count, payload_hash, response_schema_version, response_codec, response_payload, response_payload_hash, terminal_error_code, completed_at from user_operation_results where `status` = ? and completed_at > 0 and completed_at < ? order by completed_at asc, user_id asc, operation_id asc limit ?"
 		values []UserOperationResults
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, status, beforeCompletedAt, limit)

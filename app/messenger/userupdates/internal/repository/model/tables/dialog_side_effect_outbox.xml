@@ -25,7 +25,7 @@
             <param name="pending_status" type="int32" />
             <param name="failed_retryable_status" type="int32" />
             <param name="publishing_status" type="int32" />
-            <param name="now" type="string" />
+            <param name="now" type="int64" />
             <param name="limit" type="int32" />
         </params>
         <sql>
@@ -35,8 +35,8 @@
                 dialog_side_effect_outbox
             WHERE
                 (
-                    (status IN (:pending_status, :failed_retryable_status) AND next_retry_at &lt;= :now)
-                    OR (status = :publishing_status AND lease_until &lt;= :now)
+                    (status IN (:pending_status, :failed_retryable_status) AND next_retry_at &gt; 0 AND next_retry_at &lt;= :now)
+                    OR (status = :publishing_status AND (lease_until = 0 OR lease_until &lt;= :now))
                 )
             ORDER BY
                 next_retry_at, side_effect_id
@@ -50,7 +50,7 @@
             <param name="pending_status" type="int32" />
             <param name="failed_retryable_status" type="int32" />
             <param name="publishing_status" type="int32" />
-            <param name="now" type="string" />
+            <param name="now" type="int64" />
             <param name="limit" type="int32" />
         </params>
         <sql>
@@ -61,8 +61,8 @@
             WHERE
                 kind = :kind
                 AND (
-                    (status IN (:pending_status, :failed_retryable_status) AND next_retry_at &lt;= :now)
-                    OR (status = :publishing_status AND lease_until &lt;= :now)
+                    (status IN (:pending_status, :failed_retryable_status) AND next_retry_at &gt; 0 AND next_retry_at &lt;= :now)
+                    OR (status = :publishing_status AND (lease_until = 0 OR lease_until &lt;= :now))
                 )
             ORDER BY
                 next_retry_at, side_effect_id
@@ -73,7 +73,7 @@
 
     <operation name="MarkBlockedIfOld">
         <params>
-            <param name="blocked_before" type="time.Time" />
+            <param name="blocked_before" type="int64" />
         </params>
         <sql>
             UPDATE

@@ -42,21 +42,21 @@ type (
 	}
 
 	MessageFanoutReceivers struct {
-		ManifestId                    int64        `db:"manifest_id" json:"manifest_id"`
-		ReceiverUserId                int64        `db:"receiver_user_id" json:"receiver_user_id"`
-		OperationId                   string       `db:"operation_id" json:"operation_id"`
-		OperationPayloadSchemaVersion int32        `db:"operation_payload_schema_version" json:"operation_payload_schema_version"`
-		OperationPayloadCodec         int32        `db:"operation_payload_codec" json:"operation_payload_codec"`
-		OperationPayload              []byte       `db:"operation_payload" json:"operation_payload"`
-		OperationPayloadHash          []byte       `db:"operation_payload_hash" json:"operation_payload_hash"`
-		KafkaTopic                    string       `db:"kafka_topic" json:"kafka_topic"`
-		KafkaPartition                int32        `db:"kafka_partition" json:"kafka_partition"`
-		KafkaOffset                   int64        `db:"kafka_offset" json:"kafka_offset"`
-		Status                        int32        `db:"status" json:"status"`
-		RetryCount                    int32        `db:"retry_count" json:"retry_count"`
-		NextRetryAt                   sql.NullTime `db:"next_retry_at" json:"next_retry_at"`
-		LastAttemptAt                 sql.NullTime `db:"last_attempt_at" json:"last_attempt_at"`
-		LastErrorCode                 string       `db:"last_error_code" json:"last_error_code"`
+		ManifestId                    int64  `db:"manifest_id" json:"manifest_id"`
+		ReceiverUserId                int64  `db:"receiver_user_id" json:"receiver_user_id"`
+		OperationId                   string `db:"operation_id" json:"operation_id"`
+		OperationPayloadSchemaVersion int32  `db:"operation_payload_schema_version" json:"operation_payload_schema_version"`
+		OperationPayloadCodec         int32  `db:"operation_payload_codec" json:"operation_payload_codec"`
+		OperationPayload              []byte `db:"operation_payload" json:"operation_payload"`
+		OperationPayloadHash          []byte `db:"operation_payload_hash" json:"operation_payload_hash"`
+		KafkaTopic                    string `db:"kafka_topic" json:"kafka_topic"`
+		KafkaPartition                int32  `db:"kafka_partition" json:"kafka_partition"`
+		KafkaOffset                   int64  `db:"kafka_offset" json:"kafka_offset"`
+		Status                        int32  `db:"status" json:"status"`
+		RetryCount                    int32  `db:"retry_count" json:"retry_count"`
+		NextRetryAt                   int64  `db:"next_retry_at" json:"next_retry_at"`
+		LastAttemptAt                 int64  `db:"last_attempt_at" json:"last_attempt_at"`
+		LastErrorCode                 string `db:"last_error_code" json:"last_error_code"`
 	}
 )
 

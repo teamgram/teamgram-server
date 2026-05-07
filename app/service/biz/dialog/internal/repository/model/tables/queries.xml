@@ -18,9 +18,9 @@
         <field name="PayloadHash" type="[]byte" db="payload_hash"/>
         <field name="Status" type="int32" db="status"/>
         <field name="AttemptCount" type="int32" db="attempt_count"/>
-        <field name="NextRetryAt" type="time.Time" db="next_retry_at"/>
+        <field name="NextRetryAt" type="int64" db="next_retry_at"/>
         <field name="LeaseOwner" type="string" db="lease_owner"/>
-        <field name="LeaseUntil" type="time.Time" db="lease_until"/>
+        <field name="LeaseUntil" type="int64" db="lease_until"/>
         <field name="PublishedSeq" type="int64" db="published_seq"/>
         <field name="PublishedDate" type="int32" db="published_date"/>
         <field name="LastErrorKind" type="string" db="last_error_kind"/>
@@ -43,9 +43,9 @@
         <field name="PayloadHash" type="[]byte" db="payload_hash"/>
         <field name="Status" type="int32" db="status"/>
         <field name="AttemptCount" type="int32" db="attempt_count"/>
-        <field name="NextRetryAt" type="time.Time" db="next_retry_at"/>
+        <field name="NextRetryAt" type="int64" db="next_retry_at"/>
         <field name="LeaseOwner" type="string" db="lease_owner"/>
-        <field name="LeaseUntil" type="time.Time" db="lease_until"/>
+        <field name="LeaseUntil" type="int64" db="lease_until"/>
         <field name="PublishedPts" type="int64" db="published_pts"/>
         <field name="PublishedPtsCount" type="int32" db="published_pts_count"/>
         <field name="PublishedSeq" type="int64" db="published_seq"/>
@@ -70,9 +70,9 @@
         <params>
             <param name="pending_status" type="int32"/>
             <param name="failed_retryable_status" type="int32"/>
-            <param name="ready_before" type="time.Time"/>
+            <param name="ready_before" type="int64"/>
             <param name="publishing_status" type="int32"/>
-            <param name="lease_expired_before" type="time.Time"/>
+            <param name="lease_expired_before" type="int64"/>
             <param name="limit" type="int32"/>
         </params>
         <sql>
@@ -84,8 +84,15 @@
             FROM
                 dialog_auth_seq_outbox
             WHERE
-                ((status IN (:pending_status, :failed_retryable_status) AND next_retry_at &lt;= :ready_before)
-                OR (status = :publishing_status AND lease_until &lt;= :lease_expired_before))
+                (
+                  status IN (:pending_status, :failed_retryable_status)
+                  AND next_retry_at &gt; 0
+                  AND next_retry_at &lt;= :ready_before
+                )
+                OR (
+                  status = :publishing_status
+                  AND (lease_until = 0 OR lease_until &lt;= :lease_expired_before)
+                )
             ORDER BY
                 next_retry_at ASC, outbox_id ASC
             LIMIT :limit
@@ -97,9 +104,9 @@
         <params>
             <param name="pending_status" type="int32"/>
             <param name="failed_retryable_status" type="int32"/>
-            <param name="ready_before" type="time.Time"/>
+            <param name="ready_before" type="int64"/>
             <param name="publishing_status" type="int32"/>
-            <param name="lease_expired_before" type="time.Time"/>
+            <param name="lease_expired_before" type="int64"/>
             <param name="limit" type="int32"/>
         </params>
         <sql>
@@ -112,8 +119,15 @@
             FROM
                 dialog_public_update_outbox
             WHERE
-                ((status IN (:pending_status, :failed_retryable_status) AND next_retry_at &lt;= :ready_before)
-                OR (status = :publishing_status AND lease_until &lt;= :lease_expired_before))
+                (
+                  status IN (:pending_status, :failed_retryable_status)
+                  AND next_retry_at &gt; 0
+                  AND next_retry_at &lt;= :ready_before
+                )
+                OR (
+                  status = :publishing_status
+                  AND (lease_until = 0 OR lease_until &lt;= :lease_expired_before)
+                )
             ORDER BY
                 next_retry_at ASC, outbox_id ASC
             LIMIT :limit

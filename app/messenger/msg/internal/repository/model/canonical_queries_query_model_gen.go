@@ -12,47 +12,45 @@ package model
 
 import (
 	"context"
-	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 )
 
 var _ *sqlx.DB
 var _ *sqlx.Tx
-var _ time.Time
 
 type CanonicalMessageRow struct {
-	SendStateID        int64     `db:"send_state_id"`
-	CanonicalMessageID int64     `db:"canonical_message_id"`
-	PeerSeq            int64     `db:"peer_seq"`
-	MessageDate        time.Time `db:"message_date"`
-	RequestPayloadHash []byte    `db:"request_payload_hash"`
+	SendStateID        int64  `db:"send_state_id"`
+	CanonicalMessageID int64  `db:"canonical_message_id"`
+	PeerSeq            int64  `db:"peer_seq"`
+	MessageDate        int64  `db:"message_date"`
+	RequestPayloadHash []byte `db:"request_payload_hash"`
 }
 
 type HistoryMessageRow struct {
-	CanonicalMessageID int64     `db:"canonical_message_id"`
-	PeerSeq            int64     `db:"peer_seq"`
-	FromUserID         int64     `db:"from_user_id"`
-	Outgoing           bool      `db:"outgoing"`
-	PeerType           int32     `db:"peer_type"`
-	PeerID             int64     `db:"peer_id"`
-	MessageKind        int32     `db:"message_kind"`
-	MessageText        string    `db:"message_text"`
-	MessageDate        time.Time `db:"message_date"`
-	ViewPayload        []byte    `db:"view_payload"`
+	CanonicalMessageID int64  `db:"canonical_message_id"`
+	PeerSeq            int64  `db:"peer_seq"`
+	FromUserID         int64  `db:"from_user_id"`
+	Outgoing           bool   `db:"outgoing"`
+	PeerType           int32  `db:"peer_type"`
+	PeerID             int64  `db:"peer_id"`
+	MessageKind        int32  `db:"message_kind"`
+	MessageText        string `db:"message_text"`
+	MessageDate        int64  `db:"message_date"`
+	ViewPayload        []byte `db:"view_payload"`
 }
 
 type EditableMessageRow struct {
-	CanonicalMessageID int64     `db:"canonical_message_id"`
-	PeerSeq            int64     `db:"peer_seq"`
-	FromUserID         int64     `db:"from_user_id"`
-	PeerType           int32     `db:"peer_type"`
-	PeerID             int64     `db:"peer_id"`
-	MessageKind        int32     `db:"message_kind"`
-	MessageText        string    `db:"message_text"`
-	MessageDate        time.Time `db:"message_date"`
-	EditDate           time.Time `db:"edit_date"`
-	EditVersion        int32     `db:"edit_version"`
+	CanonicalMessageID int64  `db:"canonical_message_id"`
+	PeerSeq            int64  `db:"peer_seq"`
+	FromUserID         int64  `db:"from_user_id"`
+	PeerType           int32  `db:"peer_type"`
+	PeerID             int64  `db:"peer_id"`
+	MessageKind        int32  `db:"message_kind"`
+	MessageText        string `db:"message_text"`
+	MessageDate        int64  `db:"message_date"`
+	EditDate           int64  `db:"edit_date"`
+	EditVersion        int32  `db:"edit_version"`
 }
 
 type HistoryOffsetRow struct {

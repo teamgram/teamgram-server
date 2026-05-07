@@ -31,14 +31,14 @@ type bizCanonicalMessagesModel interface {
 	Insert(ctx context.Context, data *CanonicalMessages) (lastInsertId, rowsAffected int64, err error)
 	SelectByCanonicalMessageId(ctx context.Context, canonicalMessageId int64) (*CanonicalMessages, error)
 	SelectByPeerSeq(ctx context.Context, peerType int32, peerId int64, peerSeq int64) (*CanonicalMessages, error)
-	UpdateMessageEdit(ctx context.Context, messageText string, editVersion int32, editDate sql.NullTime, canonicalMessageId int64, oldEditVersion int32) (rowsAffected int64, err error)
+	UpdateMessageEdit(ctx context.Context, messageText string, editVersion int32, editDate int64, canonicalMessageId int64, oldEditVersion int32) (rowsAffected int64, err error)
 }
 
 type CanonicalMessagesTxModel interface {
 	Insert(data *CanonicalMessages) (lastInsertId, rowsAffected int64, err error)
 	SelectByCanonicalMessageId(canonicalMessageId int64) (*CanonicalMessages, error)
 	SelectByPeerSeq(peerType int32, peerId int64, peerSeq int64) (*CanonicalMessages, error)
-	UpdateMessageEdit(messageText string, editVersion int32, editDate sql.NullTime, canonicalMessageId int64, oldEditVersion int32) (rowsAffected int64, err error)
+	UpdateMessageEdit(messageText string, editVersion int32, editDate int64, canonicalMessageId int64, oldEditVersion int32) (rowsAffected int64, err error)
 }
 
 type defaultCanonicalMessagesTxModel struct {
@@ -210,7 +210,7 @@ func (m *defaultCanonicalMessagesTxModel) SelectByPeerSeq(peerType int32, peerId
 
 // UpdateMessageEdit
 // update canonical_messages set message_text = :message_text, edit_version = :edit_version, edit_date = :edit_date where canonical_message_id = :canonical_message_id and edit_version = :old_edit_version
-func (m *defaultCanonicalMessagesModel) UpdateMessageEdit(ctx context.Context, messageText string, editVersion int32, editDate sql.NullTime, canonicalMessageId int64, oldEditVersion int32) (rowsAffected int64, err error) {
+func (m *defaultCanonicalMessagesModel) UpdateMessageEdit(ctx context.Context, messageText string, editVersion int32, editDate int64, canonicalMessageId int64, oldEditVersion int32) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update canonical_messages set message_text = ?, edit_version = ?, edit_date = ? where canonical_message_id = ? and edit_version = ?"
@@ -235,7 +235,7 @@ func (m *defaultCanonicalMessagesModel) UpdateMessageEdit(ctx context.Context, m
 
 // UpdateMessageEdit
 // update canonical_messages set message_text = :message_text, edit_version = :edit_version, edit_date = :edit_date where canonical_message_id = :canonical_message_id and edit_version = :old_edit_version
-func (m *defaultCanonicalMessagesTxModel) UpdateMessageEdit(messageText string, editVersion int32, editDate sql.NullTime, canonicalMessageId int64, oldEditVersion int32) (rowsAffected int64, err error) {
+func (m *defaultCanonicalMessagesTxModel) UpdateMessageEdit(messageText string, editVersion int32, editDate int64, canonicalMessageId int64, oldEditVersion int32) (rowsAffected int64, err error) {
 	var (
 		query   = "update canonical_messages set message_text = ?, edit_version = ?, edit_date = ? where canonical_message_id = ? and edit_version = ?"
 		rResult sql.Result

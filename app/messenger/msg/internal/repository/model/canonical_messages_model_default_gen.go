@@ -16,7 +16,6 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 
@@ -47,25 +46,25 @@ type (
 	}
 
 	CanonicalMessages struct {
-		CanonicalMessageId           int64        `db:"canonical_message_id" json:"canonical_message_id"`
-		PeerType                     int32        `db:"peer_type" json:"peer_type"`
-		PeerId                       int64        `db:"peer_id" json:"peer_id"`
-		PeerSeq                      int64        `db:"peer_seq" json:"peer_seq"`
-		FromUserId                   int64        `db:"from_user_id" json:"from_user_id"`
-		MessageKind                  int32        `db:"message_kind" json:"message_kind"`
-		MessageText                  string       `db:"message_text" json:"message_text"`
-		EntitiesPayloadSchemaVersion int32        `db:"entities_payload_schema_version" json:"entities_payload_schema_version"`
-		EntitiesPayload              []byte       `db:"entities_payload" json:"entities_payload"`
-		MediaRefSchemaVersion        int32        `db:"media_ref_schema_version" json:"media_ref_schema_version"`
-		MediaRefPayload              []byte       `db:"media_ref_payload" json:"media_ref_payload"`
-		ServiceActionSchemaVersion   int32        `db:"service_action_schema_version" json:"service_action_schema_version"`
-		ServiceActionPayload         []byte       `db:"service_action_payload" json:"service_action_payload"`
-		MessageStatus                int32        `db:"message_status" json:"message_status"`
-		EditVersion                  int32        `db:"edit_version" json:"edit_version"`
-		Date                         time.Time    `db:"date" json:"date"`
-		EditDate                     sql.NullTime `db:"edit_date" json:"edit_date"`
-		DeletedAt                    sql.NullTime `db:"deleted_at" json:"deleted_at"`
-		StorageSchemaVersion         int32        `db:"storage_schema_version" json:"storage_schema_version"`
+		CanonicalMessageId           int64  `db:"canonical_message_id" json:"canonical_message_id"`
+		PeerType                     int32  `db:"peer_type" json:"peer_type"`
+		PeerId                       int64  `db:"peer_id" json:"peer_id"`
+		PeerSeq                      int64  `db:"peer_seq" json:"peer_seq"`
+		FromUserId                   int64  `db:"from_user_id" json:"from_user_id"`
+		MessageKind                  int32  `db:"message_kind" json:"message_kind"`
+		MessageText                  string `db:"message_text" json:"message_text"`
+		EntitiesPayloadSchemaVersion int32  `db:"entities_payload_schema_version" json:"entities_payload_schema_version"`
+		EntitiesPayload              []byte `db:"entities_payload" json:"entities_payload"`
+		MediaRefSchemaVersion        int32  `db:"media_ref_schema_version" json:"media_ref_schema_version"`
+		MediaRefPayload              []byte `db:"media_ref_payload" json:"media_ref_payload"`
+		ServiceActionSchemaVersion   int32  `db:"service_action_schema_version" json:"service_action_schema_version"`
+		ServiceActionPayload         []byte `db:"service_action_payload" json:"service_action_payload"`
+		MessageStatus                int32  `db:"message_status" json:"message_status"`
+		EditVersion                  int32  `db:"edit_version" json:"edit_version"`
+		Date                         int64  `db:"date" json:"date"`
+		EditDate                     int64  `db:"edit_date" json:"edit_date"`
+		DeletedAt                    int64  `db:"deleted_at" json:"deleted_at"`
+		StorageSchemaVersion         int32  `db:"storage_schema_version" json:"storage_schema_version"`
 	}
 )
 

@@ -34,7 +34,7 @@ type bizUserMessageViewsModel interface {
 	SelectPeerSeqRange(ctx context.Context, userId int64, peerType int32, peerId int64, peerSeq int64, maxPeerSeq int64, limit int32) ([]UserMessageViews, error)
 	SelectPeerSeqRangeWithCB(ctx context.Context, userId int64, peerType int32, peerId int64, peerSeq int64, maxPeerSeq int64, limit int32, cb func(sz, i int, v *UserMessageViews)) ([]UserMessageViews, error)
 	MarkHistoryDeleted(ctx context.Context, messageStatus int32, viewPayload []byte, userId int64, peerType int32, peerId int64, peerSeq int64) (rowsAffected int64, err error)
-	UpdateEditDateByUserCanonical(ctx context.Context, editDate sql.NullTime, userId int64, canonicalMessageId int64) (rowsAffected int64, err error)
+	UpdateEditDateByUserCanonical(ctx context.Context, editDate int64, userId int64, canonicalMessageId int64) (rowsAffected int64, err error)
 	SelectTopLiveByUserPeer(ctx context.Context, userId int64, peerType int32, peerId int64, messageStatus int32) (*UserMessageViews, error)
 }
 
@@ -44,7 +44,7 @@ type UserMessageViewsTxModel interface {
 	SelectByUserPeerSeq(userId int64, peerType int32, peerId int64, peerSeq int64) (*UserMessageViews, error)
 	SelectPeerSeqRange(userId int64, peerType int32, peerId int64, peerSeq int64, maxPeerSeq int64, limit int32) ([]UserMessageViews, error)
 	MarkHistoryDeleted(messageStatus int32, viewPayload []byte, userId int64, peerType int32, peerId int64, peerSeq int64) (rowsAffected int64, err error)
-	UpdateEditDateByUserCanonical(editDate sql.NullTime, userId int64, canonicalMessageId int64) (rowsAffected int64, err error)
+	UpdateEditDateByUserCanonical(editDate int64, userId int64, canonicalMessageId int64) (rowsAffected int64, err error)
 	SelectTopLiveByUserPeer(userId int64, peerType int32, peerId int64, messageStatus int32) (*UserMessageViews, error)
 }
 
@@ -344,7 +344,7 @@ func (m *defaultUserMessageViewsTxModel) MarkHistoryDeleted(messageStatus int32,
 
 // UpdateEditDateByUserCanonical
 // update user_message_views set edit_date = :edit_date where user_id = :user_id and canonical_message_id = :canonical_message_id
-func (m *defaultUserMessageViewsModel) UpdateEditDateByUserCanonical(ctx context.Context, editDate sql.NullTime, userId int64, canonicalMessageId int64) (rowsAffected int64, err error) {
+func (m *defaultUserMessageViewsModel) UpdateEditDateByUserCanonical(ctx context.Context, editDate int64, userId int64, canonicalMessageId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update user_message_views set edit_date = ? where user_id = ? and canonical_message_id = ?"
@@ -369,7 +369,7 @@ func (m *defaultUserMessageViewsModel) UpdateEditDateByUserCanonical(ctx context
 
 // UpdateEditDateByUserCanonical
 // update user_message_views set edit_date = :edit_date where user_id = :user_id and canonical_message_id = :canonical_message_id
-func (m *defaultUserMessageViewsTxModel) UpdateEditDateByUserCanonical(editDate sql.NullTime, userId int64, canonicalMessageId int64) (rowsAffected int64, err error) {
+func (m *defaultUserMessageViewsTxModel) UpdateEditDateByUserCanonical(editDate int64, userId int64, canonicalMessageId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update user_message_views set edit_date = ? where user_id = ? and canonical_message_id = ?"
 		rResult sql.Result

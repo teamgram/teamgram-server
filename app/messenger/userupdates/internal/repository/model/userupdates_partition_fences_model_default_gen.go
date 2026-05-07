@@ -44,11 +44,11 @@ type (
 	}
 
 	UserupdatesPartitionFences struct {
-		PartitionId     int32        `db:"partition_id" json:"partition_id"`
-		OwnerEpoch      int64        `db:"owner_epoch" json:"owner_epoch"`
-		OwnerInstanceId string       `db:"owner_instance_id" json:"owner_instance_id"`
-		LeaseId         string       `db:"lease_id" json:"lease_id"`
-		LeaseExpiresAt  sql.NullTime `db:"lease_expires_at" json:"lease_expires_at"`
+		PartitionId     int32  `db:"partition_id" json:"partition_id"`
+		OwnerEpoch      int64  `db:"owner_epoch" json:"owner_epoch"`
+		OwnerInstanceId string `db:"owner_instance_id" json:"owner_instance_id"`
+		LeaseId         string `db:"lease_id" json:"lease_id"`
+		LeaseExpiresAt  int64  `db:"lease_expires_at" json:"lease_expires_at"`
 	}
 )
 
