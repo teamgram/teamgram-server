@@ -19,9 +19,11 @@ package repository
 import (
 	"context"
 	"fmt"
+
 	"github.com/teamgram/marmota/pkg/strings2"
 	"github.com/zeromicro/go-zero/core/logx"
 
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/app/bff/usernames/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/bff/usernames/plugin"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
@@ -199,22 +201,11 @@ func (r *Repository) ResolveUsername(ctx context.Context, selfId int64, username
 
 	switch p := rName.Clazz.(type) {
 	case *tg.TLPeerUser:
-		mUsers, err := r.UserClient.UserGetMutableUsersV2(ctx, &userpb.TLUserGetMutableUsersV2{
-			Id:      []int64{selfId, p.UserId},
-			Privacy: true,
-			HasTo:   true,
-			To:      []int64{selfId},
-		})
+		users, err := userprojection.ProjectUsers(ctx, r.UserClient, selfId, []int64{selfId, p.UserId}, userprojection.MissingExplicitInput)
 		if err != nil {
-			return nil, fmt.Errorf("usernames repository: resolve username: get mutable users: %w", err)
+			return nil, fmt.Errorf("usernames repository: resolve username: project users: %w", err)
 		}
-		if mUsers != nil {
-			for _, u := range mUsers.Users {
-				if u != nil {
-					resolvedPeer.Users = append(resolvedPeer.Users, buildSelfUser(u).Clazz)
-				}
-			}
-		}
+		resolvedPeer.Users = append(resolvedPeer.Users, users...)
 	case *tg.TLPeerChat:
 		chat, err := r.ChatClient.ChatGetChatBySelfId(ctx, &chatpb.TLChatGetChatBySelfId{
 			SelfId: selfId,
