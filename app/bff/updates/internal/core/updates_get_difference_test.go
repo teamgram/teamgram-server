@@ -10,6 +10,8 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/updates/internal/svc"
 	userupdatesclient "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/client"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -32,9 +34,26 @@ func (f *fakeUserupdatesClient) UserupdatesGetDifference(ctx context.Context, in
 	return f.difference, nil
 }
 
+type fakeDifferenceUserClient struct {
+	userclient.UserClient
+	in    *userpb.TLUserGetUserProjectionBundle
+	out   *userpb.UserProjectionBundle
+	calls int
+}
+
+func (f *fakeDifferenceUserClient) UserGetUserProjectionBundle(_ context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+	f.calls++
+	f.in = in
+	return f.out, nil
+}
+
 func newUpdatesCore(client userupdatesclient.UserupdatesClient) *UpdatesCore {
+	return newUpdatesCoreWithUser(client, nil)
+}
+
+func newUpdatesCoreWithUser(client userupdatesclient.UserupdatesClient, userClient userclient.UserClient) *UpdatesCore {
 	c := New(context.Background(), &svc.ServiceContext{
-		Repo: &repository.Repository{UserupdatesClient: client},
+		Repo: &repository.Repository{UserupdatesClient: client, UserClient: userClient},
 	})
 	c.MD = &metadata.RpcMetadata{UserId: 1001, PermAuthKeyId: 2002}
 	return c
@@ -108,6 +127,55 @@ func TestUpdatesGetDifferenceReturnsNonEmptyDifference(t *testing.T) {
 	}
 }
 
+func TestUpdatesGetDifferenceProjectsUsers(t *testing.T) {
+	client := &fakeUserupdatesClient{difference: userupdates.MakeTLUserDifference(&userupdates.TLUserDifference{
+		NewMessages: []tg.MessageClazz{
+			tg.MakeTLMessage(&tg.TLMessage{
+				Id:      9,
+				FromId:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 1001}),
+				PeerId:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 1002}),
+				Message: "hello",
+			}),
+		},
+		State: userupdates.MakeTLUserState(&userupdates.TLUserState{Pts: 18, Qts: -1, Date: 123, Seq: 0}),
+	}).ToUserDifference()}
+	userClient := &fakeDifferenceUserClient{out: userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+		ViewerUsers: []userpb.ViewerUsersClazz{
+			userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 1001, Users: []tg.UserClazz{
+				tg.MakeTLUser(&tg.TLUser{Id: 1001, Self: true}),
+				tg.MakeTLUser(&tg.TLUser{Id: 1002, Contact: true}),
+			}}),
+		},
+	}).ToUserProjectionBundle()}
+	core := newUpdatesCoreWithUser(client, userClient)
+
+	got, err := core.UpdatesGetDifference(&tg.TLUpdatesGetDifference{Pts: 17, Date: 1, Qts: -1})
+	if err != nil {
+		t.Fatalf("UpdatesGetDifference() error = %v", err)
+	}
+	diff, ok := got.ToUpdatesDifference()
+	if !ok {
+		t.Fatalf("got %s, want updates.difference", got.ClazzName())
+	}
+	if userClient.in == nil || len(userClient.in.ViewerUserIds) != 1 || userClient.in.ViewerUserIds[0] != 1001 {
+		t.Fatalf("projection viewer request = %#v", userClient.in)
+	}
+	if len(userClient.in.TargetUserIds) != 2 || userClient.in.TargetUserIds[0] != 1001 || userClient.in.TargetUserIds[1] != 1002 {
+		t.Fatalf("projection target request = %#v", userClient.in)
+	}
+	if len(diff.Users) != 2 {
+		t.Fatalf("users = %#v", diff.Users)
+	}
+	self, ok := diff.Users[0].(*tg.TLUser)
+	if !ok || self.Id != 1001 || !self.Self {
+		t.Fatalf("self user = %#v", diff.Users[0])
+	}
+	contact, ok := diff.Users[1].(*tg.TLUser)
+	if !ok || contact.Id != 1002 || !contact.Contact {
+		t.Fatalf("contact user = %#v", diff.Users[1])
+	}
+}
+
 func TestUpdatesGetDifferenceReturnsEmptyDifference(t *testing.T) {
 	client := &fakeUserupdatesClient{difference: userupdates.MakeTLUserDifferenceEmpty(&userupdates.TLUserDifferenceEmpty{
 		State: userupdates.MakeTLUserState(&userupdates.TLUserState{Pts: 17, Qts: -1, Date: 123, Seq: 0}),
@@ -124,6 +192,25 @@ func TestUpdatesGetDifferenceReturnsEmptyDifference(t *testing.T) {
 	}
 	if empty.Date != 123 || empty.Seq != 0 {
 		t.Fatalf("empty difference = %#v", empty)
+	}
+}
+
+func TestUpdatesGetDifferenceEmptyDoesNotProjectUsers(t *testing.T) {
+	client := &fakeUserupdatesClient{difference: userupdates.MakeTLUserDifferenceEmpty(&userupdates.TLUserDifferenceEmpty{
+		State: userupdates.MakeTLUserState(&userupdates.TLUserState{Pts: 17, Qts: -1, Date: 123, Seq: 0}),
+	}).ToUserDifference()}
+	userClient := &fakeDifferenceUserClient{}
+	core := newUpdatesCoreWithUser(client, userClient)
+
+	got, err := core.UpdatesGetDifference(&tg.TLUpdatesGetDifference{Pts: 17, Date: 1, Qts: -1})
+	if err != nil {
+		t.Fatalf("UpdatesGetDifference() error = %v", err)
+	}
+	if _, ok := got.ToUpdatesDifferenceEmpty(); !ok {
+		t.Fatalf("got %s, want updates.differenceEmpty", got.ClazzName())
+	}
+	if userClient.calls != 0 {
+		t.Fatalf("user projection calls = %d, want 0", userClient.calls)
 	}
 }
 

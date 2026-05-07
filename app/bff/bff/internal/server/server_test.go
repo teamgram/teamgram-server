@@ -58,6 +58,12 @@ func TestBuildBizBackedConfigSetsConcreteKitexClients(t *testing.T) {
 	if messages.MsgClient.ServiceName != "RPCMsg" {
 		t.Fatalf("expected msg client service name RPCMsg, got %#v", messages.MsgClient)
 	}
+	if messages.UserClient.DestService != "service.biz_service" {
+		t.Fatalf("expected messages user client dest service to be forwarded, got %#v", messages.UserClient)
+	}
+	if messages.UserClient.ServiceName != "RPCUser" {
+		t.Fatalf("expected messages user client service name RPCUser, got %#v", messages.UserClient)
+	}
 
 	dialogs := buildDialogsConfig(src)
 	if dialogs.DialogClient.DestService != "service.biz_service" {
@@ -146,6 +152,10 @@ func TestBuildUpdatesConfigUsesUserupdatesClient(t *testing.T) {
 		RpcServerConf: kitex.RpcServerConf{
 			ListenOn: "127.0.0.1:0",
 		},
+		BizServiceClient: kitex.RpcClientConf{
+			DestService: "service.biz_service",
+			ServiceName: "RPCBizservice",
+		},
 		UserupdatesClient: kitex.RpcClientConf{
 			DestService: "messenger.userupdates",
 			ServiceName: "RPCUserupdates",
@@ -158,5 +168,11 @@ func TestBuildUpdatesConfigUsesUserupdatesClient(t *testing.T) {
 	}
 	if got.UserupdatesClient.DestService != "messenger.userupdates" {
 		t.Fatalf("UserupdatesClient.DestService = %q, want messenger.userupdates", got.UserupdatesClient.DestService)
+	}
+	if got.UserClient.ServiceName != "RPCUser" {
+		t.Fatalf("UserClient.ServiceName = %q, want RPCUser", got.UserClient.ServiceName)
+	}
+	if got.UserClient.DestService != "service.biz_service" {
+		t.Fatalf("UserClient.DestService = %q, want service.biz_service", got.UserClient.DestService)
 	}
 }
