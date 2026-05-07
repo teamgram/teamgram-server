@@ -216,7 +216,7 @@ func projectionContactMapCovers(dto projectionContactMapCacheDTO, requiredContac
 		return true
 	}
 	if len(dto.CoveredContactIDs) == 0 {
-		return true
+		return false
 	}
 	covered := int64Set(dto.CoveredContactIDs)
 	for _, id := range requiredContactIDs {

@@ -161,6 +161,10 @@ func TestProjectionContactMapCoverageIsExplicitForPartialMaps(t *testing.T) {
 	if projectionContactMapCovers(dto, []int64{2, 3}) {
 		t.Fatalf("partial contact map covered an unknown requested id")
 	}
+	dto.CoveredContactIDs = nil
+	if projectionContactMapCovers(dto, []int64{2}) {
+		t.Fatalf("contact map without explicit coverage covered requested id")
+	}
 
 	required := projectionRequiredContactIDs(1, int64Set([]int64{1}), int64Set([]int64{2}), []int64{1}, []int64{2})
 	if len(required) != 1 || required[0] != 2 {
