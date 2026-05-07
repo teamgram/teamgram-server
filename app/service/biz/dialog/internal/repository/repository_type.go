@@ -16,8 +16,6 @@
 
 package repository
 
-import "time"
-
 const (
 	PreferenceScopeMainPin          = "main_pin"
 	PreferenceScopeFolderPin        = "folder_pin"
@@ -97,7 +95,7 @@ type SaveDraftInput struct {
 	EntitiesPayload     []byte
 	ReplyToPeerSeq      int64
 	DraftPayload        []byte
-	Date                time.Time
+	Date                int64
 	SourcePermAuthKeyID int64
 	OperationID         string
 	OutboxID            int64
@@ -118,7 +116,7 @@ type ClearDraftAfterSendInput struct {
 	UserID              int64
 	PeerType            int32
 	PeerID              int64
-	ClearBeforeDate     time.Time
+	ClearBeforeDate     int64
 	SourcePermAuthKeyID int64
 	OperationID         string
 	OutboxID            int64
@@ -149,7 +147,7 @@ type DraftRecord struct {
 	EntitiesPayload []byte
 	ReplyToPeerSeq  int64
 	DraftPayload    []byte
-	Date            time.Time
+	Date            int64
 }
 
 type SavedDialogTopInput struct {
@@ -158,7 +156,7 @@ type SavedDialogTopInput struct {
 	PeerID                int64
 	TopPeerSeq            int64
 	TopCanonicalMessageID int64
-	TopMessageDate        time.Time
+	TopMessageDate        int64
 	Payload               []byte
 }
 
@@ -181,7 +179,7 @@ type SavedDialogRecord struct {
 	PeerID                int64
 	TopPeerSeq            int64
 	TopCanonicalMessageID int64
-	TopMessageDate        time.Time
+	TopMessageDate        int64
 	Pinned                bool
 	PinOrder              int64
 	SavedPayload          []byte

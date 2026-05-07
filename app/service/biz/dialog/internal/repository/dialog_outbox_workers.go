@@ -132,12 +132,13 @@ func (w *DialogAuthSeqOutboxWorker) processRow(ctx context.Context, row model.Di
 
 func (w *DialogAuthSeqOutboxWorker) markAuthSeqFailure(ctx context.Context, row model.DialogAuthSeqOutbox, kind string, err error) error {
 	next := nextOutboxRetry(row.AttemptCount + 1)
-	if row.AttemptCount+1 >= w.options.BlockedAttempt || outboxRetryAgeExceeded(row.NextRetryAt, time.Now().UTC()) {
+	now := unixNow()
+	if row.AttemptCount+1 >= w.options.BlockedAttempt || outboxRetryAgeExceeded(row.NextRetryAt, now) {
 		return w.repo.MarkDialogAuthSeqOutboxBlocked(ctx, row.OutboxId, kind, err.Error())
 	}
 	return w.repo.MarkDialogAuthSeqOutboxRetryable(ctx, row.OutboxId, OutboxRetryState{
 		AttemptCount:     row.AttemptCount + 1,
-		NextRetryAt:      time.Now().UTC().Add(next),
+		NextRetryAt:      now + int64(next/time.Second),
 		LastErrorKind:    kind,
 		LastErrorMessage: err.Error(),
 	})
@@ -236,12 +237,13 @@ func (w *DialogPublicUpdateOutboxWorker) processRow(ctx context.Context, row mod
 
 func (w *DialogPublicUpdateOutboxWorker) markPublicUpdateFailure(ctx context.Context, row model.DialogPublicUpdateOutbox, kind string, err error) error {
 	next := nextOutboxRetry(row.AttemptCount + 1)
-	if row.AttemptCount+1 >= w.options.BlockedAttempt || outboxRetryAgeExceeded(row.NextRetryAt, time.Now().UTC()) {
+	now := unixNow()
+	if row.AttemptCount+1 >= w.options.BlockedAttempt || outboxRetryAgeExceeded(row.NextRetryAt, now) {
 		return w.repo.MarkDialogPublicUpdateOutboxBlocked(ctx, row.OutboxId, kind, err.Error())
 	}
 	return w.repo.MarkDialogPublicUpdateOutboxRetryable(ctx, row.OutboxId, OutboxRetryState{
 		AttemptCount:     row.AttemptCount + 1,
-		NextRetryAt:      time.Now().UTC().Add(next),
+		NextRetryAt:      now + int64(next/time.Second),
 		LastErrorKind:    kind,
 		LastErrorMessage: err.Error(),
 	})
@@ -280,10 +282,9 @@ func nextOutboxRetry(attempt int32) time.Duration {
 	return time.Duration(seconds) * time.Second
 }
 
-func outboxRetryAgeExceeded(firstRetryAt time.Time, now time.Time) bool {
-	firstRetryAt = mysqlDateTimeToUTC(firstRetryAt)
-	if firstRetryAt.IsZero() || firstRetryAt.Year() <= 1971 {
+func outboxRetryAgeExceeded(firstRetryAt int64, now int64) bool {
+	if firstRetryAt <= 0 {
 		return false
 	}
-	return now.Sub(firstRetryAt.UTC()) >= time.Duration(OutboxWorkerBlockedAgeSeconds)*time.Second
+	return now-firstRetryAt >= OutboxWorkerBlockedAgeSeconds
 }

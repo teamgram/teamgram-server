@@ -1,8 +1,6 @@
 package core
 
 import (
-	"time"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -23,11 +21,19 @@ func makeSavedDialogList(records []repository.SavedDialogRecord) *dialog.SavedDi
 	})
 }
 
-func unixOffsetDate(offsetDate int32) time.Time {
+func unixOffsetDate(offsetDate int32) int64 {
 	if offsetDate <= 0 {
-		return time.Time{}
+		return 0
 	}
-	return time.Unix(int64(offsetDate), 0).UTC()
+	return int64(offsetDate)
+}
+
+func dialogDateInt32FromUnixSeconds(seconds int64, field string) (int32, error) {
+	date, err := tg.DateInt32FromUnixSeconds(seconds)
+	if err != nil {
+		return 0, dialog.WrapDialogStorage("convert "+field, err)
+	}
+	return date, nil
 }
 
 func peerRefsFromPeerUtils(peers []tg.PeerUtilClazz) []repository.PeerRef {

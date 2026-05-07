@@ -254,7 +254,7 @@ func TestDialogDraftsClearAfterSendSkipsNewerDraft(t *testing.T) {
 		Message:             "new draft",
 		EntitiesPayload:     []byte(`[]`),
 		DraftPayload:        []byte(`{"schema_version":1}`),
-		Date:                draftDate,
+		Date:                unixFromTime(draftDate),
 		SourcePermAuthKeyID: base%1_000_000_000 + 701,
 		OperationID:         fmt.Sprintf("draft-save-%d", base),
 		OutboxID:            base%1_000_000_000 + 801,
@@ -267,7 +267,7 @@ func TestDialogDraftsClearAfterSendSkipsNewerDraft(t *testing.T) {
 		UserID:              userID,
 		PeerType:            PeerTypeUser,
 		PeerID:              peerID,
-		ClearBeforeDate:     draftDate.Add(-time.Second),
+		ClearBeforeDate:     unixFromTime(draftDate.Add(-time.Second)),
 		SourcePermAuthKeyID: save.SourcePermAuthKeyID,
 		OperationID:         fmt.Sprintf("draft-clear-%d", base),
 		OutboxID:            base%1_000_000_000 + 802,
@@ -305,7 +305,7 @@ func TestDialogDraftsSaveDefaultsNilPayloads(t *testing.T) {
 		PeerID:              peerID,
 		DraftKind:           1,
 		Message:             "plain draft",
-		Date:                time.Now().UTC(),
+		Date:                unixFromTime(time.Now().UTC()),
 		SourcePermAuthKeyID: base%1_000_000_000 + 801,
 		OperationID:         fmt.Sprintf("draft-save-nil-payloads-%d", base),
 		OutboxID:            base%1_000_000_000 + 901,
@@ -338,7 +338,7 @@ func TestDialogDraftsClearAllCreatesOneOutboxPerClearedPeer(t *testing.T) {
 			Message:             fmt.Sprintf("draft-%d", i),
 			EntitiesPayload:     []byte(`[]`),
 			DraftPayload:        []byte(`{"schema_version":1}`),
-			Date:                time.Now().UTC().Add(time.Duration(i) * time.Second),
+			Date:                unixFromTime(time.Now().UTC().Add(time.Duration(i) * time.Second)),
 			SourcePermAuthKeyID: sourceAuthKeyID,
 			OperationID:         fmt.Sprintf("draft-clear-all-save-%d-%d", base, i),
 			OutboxID:            base%1_000_000_000 + 720 + i,
@@ -422,7 +422,7 @@ func TestSavedDialogsPinnedFalseForcesZeroOrder(t *testing.T) {
 		PeerID:                peerID,
 		TopPeerSeq:            1,
 		TopCanonicalMessageID: base%1_000_000_000 + 1003,
-		TopMessageDate:        time.Now().UTC(),
+		TopMessageDate:        unixFromTime(time.Now().UTC()),
 		Payload:               []byte(`{"schema_version":1}`),
 	}); err != nil {
 		t.Fatalf("UpsertSavedDialogFromMessage() error = %v", err)
@@ -463,7 +463,7 @@ func TestSavedDialogsOlderMessageDoesNotOverwriteTopPayload(t *testing.T) {
 		PeerID:                peerID,
 		TopPeerSeq:            2,
 		TopCanonicalMessageID: base%1_000_000_000 + 1053,
-		TopMessageDate:        newer,
+		TopMessageDate:        unixFromTime(newer),
 		Payload:               []byte(`{"message":"newer"}`),
 	}); err != nil {
 		t.Fatalf("UpsertSavedDialogFromMessage(newer) error = %v", err)
@@ -474,7 +474,7 @@ func TestSavedDialogsOlderMessageDoesNotOverwriteTopPayload(t *testing.T) {
 		PeerID:                peerID,
 		TopPeerSeq:            1,
 		TopCanonicalMessageID: base%1_000_000_000 + 1054,
-		TopMessageDate:        newer.Add(-time.Minute),
+		TopMessageDate:        unixFromTime(newer.Add(-time.Minute)),
 		Payload:               []byte(`{"message":"older"}`),
 	}); err != nil {
 		t.Fatalf("UpsertSavedDialogFromMessage(older) error = %v", err)
@@ -501,7 +501,7 @@ func TestSavedDialogPinInvariant(t *testing.T) {
 			PeerID:                peerID,
 			TopPeerSeq:            int64(i + 1),
 			TopCanonicalMessageID: base%1_000_000_000 + int64(1074+i),
-			TopMessageDate:        time.Now().UTC().Add(time.Duration(i) * time.Second),
+			TopMessageDate:        unixFromTime(time.Now().UTC().Add(time.Duration(i) * time.Second)),
 			Payload:               []byte(`{"schema_version":1}`),
 		}); err != nil {
 			t.Fatalf("UpsertSavedDialogFromMessage(%d) error = %v", i, err)
@@ -552,7 +552,7 @@ func TestReorderPinnedSavedDialogsNoDuplicateOrder(t *testing.T) {
 			PeerID:                peerID,
 			TopPeerSeq:            int64(i + 1),
 			TopCanonicalMessageID: base%1_000_000_000 + int64(1095+i),
-			TopMessageDate:        time.Now().UTC().Add(time.Duration(i) * time.Second),
+			TopMessageDate:        unixFromTime(time.Now().UTC().Add(time.Duration(i) * time.Second)),
 			Payload:               []byte(`{"schema_version":1}`),
 		}); err != nil {
 			t.Fatalf("UpsertSavedDialogFromMessage(%d) error = %v", i, err)

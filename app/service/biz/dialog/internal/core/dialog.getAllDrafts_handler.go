@@ -33,11 +33,15 @@ func (c *DialogCore) DialogGetAllDrafts(in *dialog.TLDialogGetAllDrafts) (*dialo
 	}
 	out := &dialog.VectorPeerWithDraftMessage{Datas: make([]dialog.PeerWithDraftMessageClazz, 0, len(drafts))}
 	for _, draft := range drafts {
+		date, err := dialogDateInt32FromUnixSeconds(draft.Date, "draft date")
+		if err != nil {
+			return nil, err
+		}
 		out.Datas = append(out.Datas, dialog.MakeTLUpdateDraftMessage(&dialog.TLUpdateDraftMessage{
 			Peer: tgPeer(draft.PeerType, draft.PeerID),
 			Draft: tg.MakeTLDraftMessage(&tg.TLDraftMessage{
 				Message: draft.Message,
-				Date:    int32(draft.Date.Unix()),
+				Date:    date,
 			}),
 		}))
 	}

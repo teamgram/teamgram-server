@@ -12,7 +12,7 @@ import (
 
 type OutboxRetryState struct {
 	AttemptCount     int32
-	NextRetryAt      time.Time
+	NextRetryAt      int64
 	LastErrorKind    string
 	LastErrorMessage string
 }
@@ -25,16 +25,17 @@ func (r *Repository) ClaimDialogAuthSeqOutbox(ctx context.Context, owner string,
 	if err != nil {
 		return nil, err
 	}
-	claimedLeaseUntil := mysqlDateTimeForBind(leaseUntil)
+	readyBefore := unixFromTime(now)
+	claimedLeaseUntil := unixFromTime(leaseUntil)
 	rows := []model.DialogAuthSeqOutbox{}
 	err = db.Transact(ctx, func(tx *sqlx.Tx) error {
 		txModels := r.model.WithTx(tx)
 		candidates, err := txModels.DialogRepositoryQueries.SelectAuthSeqOutboxClaimCandidates(
 			OutboxStatusPending,
 			OutboxStatusFailedRetryable,
-			mysqlDateTimeForBind(now),
+			readyBefore,
 			OutboxStatusPublishing,
-			mysqlDateTimeForBind(now),
+			readyBefore,
 			limit,
 		)
 		if err != nil {
@@ -64,7 +65,7 @@ func (r *Repository) MarkDialogAuthSeqOutboxPublished(ctx context.Context, outbo
 	if err != nil {
 		return err
 	}
-	if _, err := r.model.DialogAuthSeqOutboxModel.MarkPublished(ctx, OutboxStatusPublished, seq, date, mysqlZeroDateTime(), outboxID); err != nil {
+	if _, err := r.model.DialogAuthSeqOutboxModel.MarkPublished(ctx, OutboxStatusPublished, seq, date, 0, outboxID); err != nil {
 		return storageError("mark dialog auth seq outbox published", err)
 	}
 	return nil
@@ -75,7 +76,7 @@ func (r *Repository) MarkDialogAuthSeqOutboxRetryable(ctx context.Context, outbo
 	if err != nil {
 		return err
 	}
-	if _, err := r.model.DialogAuthSeqOutboxModel.MarkRetryable(ctx, OutboxStatusFailedRetryable, retry.AttemptCount, mysqlDateTimeForBind(retry.NextRetryAt), mysqlZeroDateTime(), retry.LastErrorKind, truncateOutboxError(retry.LastErrorMessage), outboxID); err != nil {
+	if _, err := r.model.DialogAuthSeqOutboxModel.MarkRetryable(ctx, OutboxStatusFailedRetryable, retry.AttemptCount, unixOrZero(retry.NextRetryAt), 0, retry.LastErrorKind, truncateOutboxError(retry.LastErrorMessage), outboxID); err != nil {
 		return storageError("mark dialog auth seq outbox retryable", err)
 	}
 	return nil
@@ -86,7 +87,7 @@ func (r *Repository) MarkDialogAuthSeqOutboxBlocked(ctx context.Context, outboxI
 	if err != nil {
 		return err
 	}
-	if _, err := r.model.DialogAuthSeqOutboxModel.MarkBlocked(ctx, OutboxStatusBlocked, mysqlZeroDateTime(), kind, truncateOutboxError(message), outboxID); err != nil {
+	if _, err := r.model.DialogAuthSeqOutboxModel.MarkBlocked(ctx, OutboxStatusBlocked, 0, kind, truncateOutboxError(message), outboxID); err != nil {
 		return storageError("mark dialog auth seq outbox blocked", err)
 	}
 	return nil
@@ -98,7 +99,7 @@ func (r *Repository) ResetDialogAuthSeqOutboxBlocked(ctx context.Context, ids []
 		return err
 	}
 	for _, id := range ids {
-		if _, err := r.model.DialogAuthSeqOutboxModel.ResetBlocked(ctx, OutboxStatusPending, mysqlDateTimeForBind(time.Now().UTC()), mysqlZeroDateTime(), OutboxStatusBlocked, id); err != nil {
+		if _, err := r.model.DialogAuthSeqOutboxModel.ResetBlocked(ctx, OutboxStatusPending, unixNow(), 0, OutboxStatusBlocked, id); err != nil {
 			return storageError("reset dialog auth seq outbox blocked", err)
 		}
 	}
@@ -113,16 +114,17 @@ func (r *Repository) ClaimDialogPublicUpdateOutbox(ctx context.Context, owner st
 	if err != nil {
 		return nil, err
 	}
-	claimedLeaseUntil := mysqlDateTimeForBind(leaseUntil)
+	readyBefore := unixFromTime(now)
+	claimedLeaseUntil := unixFromTime(leaseUntil)
 	rows := []model.DialogPublicUpdateOutbox{}
 	err = db.Transact(ctx, func(tx *sqlx.Tx) error {
 		txModels := r.model.WithTx(tx)
 		candidates, err := txModels.DialogRepositoryQueries.SelectPublicUpdateOutboxClaimCandidates(
 			OutboxStatusPending,
 			OutboxStatusFailedRetryable,
-			mysqlDateTimeForBind(now),
+			readyBefore,
 			OutboxStatusPublishing,
-			mysqlDateTimeForBind(now),
+			readyBefore,
 			limit,
 		)
 		if err != nil {
@@ -152,7 +154,7 @@ func (r *Repository) MarkDialogPublicUpdateOutboxPublishedPTS(ctx context.Contex
 	if err != nil {
 		return err
 	}
-	if _, err := r.model.DialogPublicUpdateOutboxModel.MarkPublishedPTS(ctx, OutboxStatusPublished, pts, ptsCount, mysqlZeroDateTime(), outboxID); err != nil {
+	if _, err := r.model.DialogPublicUpdateOutboxModel.MarkPublishedPTS(ctx, OutboxStatusPublished, pts, ptsCount, 0, outboxID); err != nil {
 		return storageError("mark dialog public update outbox pts published", err)
 	}
 	return nil
@@ -163,7 +165,7 @@ func (r *Repository) MarkDialogPublicUpdateOutboxPublishedAuthSeq(ctx context.Co
 	if err != nil {
 		return err
 	}
-	if _, err := r.model.DialogPublicUpdateOutboxModel.MarkPublishedAuthSeq(ctx, OutboxStatusPublished, seq, date, mysqlZeroDateTime(), outboxID); err != nil {
+	if _, err := r.model.DialogPublicUpdateOutboxModel.MarkPublishedAuthSeq(ctx, OutboxStatusPublished, seq, date, 0, outboxID); err != nil {
 		return storageError("mark dialog public update outbox auth seq published", err)
 	}
 	return nil
@@ -174,7 +176,7 @@ func (r *Repository) MarkDialogPublicUpdateOutboxRetryable(ctx context.Context, 
 	if err != nil {
 		return err
 	}
-	if _, err := r.model.DialogPublicUpdateOutboxModel.MarkRetryable(ctx, OutboxStatusFailedRetryable, retry.AttemptCount, mysqlDateTimeForBind(retry.NextRetryAt), mysqlZeroDateTime(), retry.LastErrorKind, truncateOutboxError(retry.LastErrorMessage), outboxID); err != nil {
+	if _, err := r.model.DialogPublicUpdateOutboxModel.MarkRetryable(ctx, OutboxStatusFailedRetryable, retry.AttemptCount, unixOrZero(retry.NextRetryAt), 0, retry.LastErrorKind, truncateOutboxError(retry.LastErrorMessage), outboxID); err != nil {
 		return storageError("mark dialog public update outbox retryable", err)
 	}
 	return nil
@@ -185,7 +187,7 @@ func (r *Repository) MarkDialogPublicUpdateOutboxBlocked(ctx context.Context, ou
 	if err != nil {
 		return err
 	}
-	if _, err := r.model.DialogPublicUpdateOutboxModel.MarkBlocked(ctx, OutboxStatusBlocked, mysqlZeroDateTime(), kind, truncateOutboxError(message), outboxID); err != nil {
+	if _, err := r.model.DialogPublicUpdateOutboxModel.MarkBlocked(ctx, OutboxStatusBlocked, 0, kind, truncateOutboxError(message), outboxID); err != nil {
 		return storageError("mark dialog public update outbox blocked", err)
 	}
 	return nil
@@ -197,14 +199,14 @@ func (r *Repository) ResetDialogPublicUpdateOutboxBlocked(ctx context.Context, i
 		return err
 	}
 	for _, id := range ids {
-		if _, err := r.model.DialogPublicUpdateOutboxModel.ResetBlocked(ctx, OutboxStatusPending, mysqlDateTimeForBind(time.Now().UTC()), mysqlZeroDateTime(), OutboxStatusBlocked, id); err != nil {
+		if _, err := r.model.DialogPublicUpdateOutboxModel.ResetBlocked(ctx, OutboxStatusPending, unixNow(), 0, OutboxStatusBlocked, id); err != nil {
 			return storageError("reset dialog public update outbox blocked", err)
 		}
 	}
 	return nil
 }
 
-func authSeqOutboxRowToModel(row model.DialogAuthSeqOutboxRow, owner string, leaseUntil time.Time) model.DialogAuthSeqOutbox {
+func authSeqOutboxRowToModel(row model.DialogAuthSeqOutboxRow, owner string, leaseUntil int64) model.DialogAuthSeqOutbox {
 	return model.DialogAuthSeqOutbox{
 		OutboxId:             row.OutboxId,
 		UserId:               row.UserId,
@@ -229,7 +231,7 @@ func authSeqOutboxRowToModel(row model.DialogAuthSeqOutboxRow, owner string, lea
 	}
 }
 
-func publicUpdateOutboxRowToModel(row model.DialogPublicUpdateOutboxRow, owner string, leaseUntil time.Time) model.DialogPublicUpdateOutbox {
+func publicUpdateOutboxRowToModel(row model.DialogPublicUpdateOutboxRow, owner string, leaseUntil int64) model.DialogPublicUpdateOutbox {
 	return model.DialogPublicUpdateOutbox{
 		OutboxId:             row.OutboxId,
 		SourceUserId:         row.SourceUserId,

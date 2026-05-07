@@ -3,7 +3,6 @@ package core
 import (
 	"context"
 	"testing"
-	"time"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
@@ -33,7 +32,7 @@ type fakeDialogRepo struct {
 	clearAllFn     func(context.Context, repository.ClearAllDraftsInput) ([]repository.DraftMutationResult, error)
 	listDraftsFn   func(context.Context, int64) ([]repository.DraftRecord, error)
 	upsertSavedFn  func(context.Context, repository.SavedDialogTopInput) error
-	listSavedFn    func(context.Context, int64, bool, int32, int32) ([]repository.SavedDialogRecord, error)
+	listSavedFn    func(context.Context, int64, bool, int64, int32) ([]repository.SavedDialogRecord, error)
 	pinnedSavedFn  func(context.Context, int64) ([]repository.SavedDialogRecord, error)
 	toggleSavedFn  func(context.Context, repository.SavedDialogPinInput) error
 	reorderSavedFn func(context.Context, repository.ReorderPinnedSavedDialogsInput) error
@@ -156,9 +155,9 @@ func (f fakeDialogRepo) UpsertSavedDialogFromMessage(ctx context.Context, in rep
 	return nil
 }
 
-func (f fakeDialogRepo) ListSavedDialogs(ctx context.Context, userID int64, excludePinned bool, offsetDate time.Time, limit int32) ([]repository.SavedDialogRecord, error) {
+func (f fakeDialogRepo) ListSavedDialogs(ctx context.Context, userID int64, excludePinned bool, offsetDate int64, limit int32) ([]repository.SavedDialogRecord, error) {
 	if f.listSavedFn != nil {
-		return f.listSavedFn(ctx, userID, excludePinned, int32(offsetDate.Unix()), limit)
+		return f.listSavedFn(ctx, userID, excludePinned, offsetDate, limit)
 	}
 	return []repository.SavedDialogRecord{}, nil
 }
@@ -280,8 +279,8 @@ func TestDialogSaveDraftMessageCallsRepositoryWithSourceAuth(t *testing.T) {
 	if got.SourcePermAuthKeyID != 9001 || got.OperationID != "op-save" || got.OutboxID != 7001 {
 		t.Fatalf("repository input = %+v", got)
 	}
-	if got.Message != "draft" || got.Date.Unix() != 123 {
-		t.Fatalf("draft mapping = message:%q date:%v", got.Message, got.Date)
+	if got.Message != "draft" || got.Date != 123 {
+		t.Fatalf("draft mapping = message:%q date:%d", got.Message, got.Date)
 	}
 }
 
@@ -313,8 +312,8 @@ func TestDialogClearDraftAfterSendUsesSourceOperationID(t *testing.T) {
 	if got.SourcePermAuthKeyID != 9001 || got.OutboxID != 7001 {
 		t.Fatalf("repository input = %+v", got)
 	}
-	if got.ClearBeforeDate.Unix() != 123 {
-		t.Fatalf("ClearBeforeDate = %v, want unix 123", got.ClearBeforeDate)
+	if got.ClearBeforeDate != 123 {
+		t.Fatalf("ClearBeforeDate = %d, want 123", got.ClearBeforeDate)
 	}
 }
 

@@ -18,8 +18,6 @@
 package core
 
 import (
-	"time"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -38,7 +36,7 @@ func (c *DialogCore) DialogClearDraftAfterSend(in *dialog.TLDialogClearDraftAfte
 		UserID:              in.UserId,
 		PeerType:            in.PeerType,
 		PeerID:              in.PeerId,
-		ClearBeforeDate:     time.Unix(int64(in.ClearBeforeDate), 0).UTC(),
+		ClearBeforeDate:     int64(in.ClearBeforeDate),
 		SourcePermAuthKeyID: in.SourcePermAuthKeyId,
 		OperationID:         in.SourceOperationId,
 		OutboxID:            in.OutboxId,

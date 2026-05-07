@@ -18,7 +18,6 @@ package core
 
 import (
 	"encoding/json"
-	"time"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
@@ -39,11 +38,11 @@ func (c *DialogCore) DialogSaveDraftMessage(in *dialog.TLDialogSaveDraftMessage)
 		draftKind       int32 = 1
 		message         string
 		entitiesPayload = []byte{}
-		date            = time.Now().UTC()
+		date            int64
 	)
 	if draft, ok := in.Message.(*tg.TLDraftMessage); ok {
 		message = draft.Message
-		date = time.Unix(int64(draft.Date), 0).UTC()
+		date = int64(draft.Date)
 		if draft.Entities != nil {
 			entitiesPayload, err = json.Marshal(draft.Entities)
 			if err != nil {

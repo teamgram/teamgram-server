@@ -5,22 +5,16 @@ import (
 	"time"
 )
 
-func TestMysqlDateTimeForBindPreservesUTCWallClock(t *testing.T) {
+func TestUnixTimeHelpers(t *testing.T) {
 	original := time.Date(2026, 1, 1, 0, 2, 3, 456789000, time.UTC)
 
-	bound := mysqlDateTimeForBind(original)
-	got := bound.In(mysqlDriverLocation()).Format("2006-01-02 15:04:05.000000")
-	want := mysqlTimestamp(original)
-	if got != want {
-		t.Fatalf("mysqlDateTimeForBind formatted wall-clock = %q, want %q", got, want)
+	if got := unixFromTime(original); got != original.Unix() {
+		t.Fatalf("unixFromTime() = %d, want %d", got, original.Unix())
 	}
-
-	read := time.Date(2026, 1, 1, 0, 2, 3, 456789000, mysqlDriverLocation())
-	gotUTC := mysqlDateTimeToUTC(read)
-	if gotUTC.Location() != time.UTC {
-		t.Fatalf("mysqlDateTimeToUTC location = %v, want UTC", gotUTC.Location())
+	if got := unixOrZero(-1); got != 0 {
+		t.Fatalf("unixOrZero(-1) = %d, want 0", got)
 	}
-	if gotUTC.Format("2006-01-02 15:04:05.000000") != want {
-		t.Fatalf("mysqlDateTimeToUTC wall-clock = %q, want %q", gotUTC.Format("2006-01-02 15:04:05.000000"), want)
+	if got := timeFromUnixOrZero(original.Unix()); !got.Equal(time.Unix(original.Unix(), 0).UTC()) {
+		t.Fatalf("timeFromUnixOrZero() = %v, want unix UTC", got)
 	}
 }

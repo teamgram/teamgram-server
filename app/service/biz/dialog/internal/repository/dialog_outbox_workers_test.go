@@ -220,7 +220,7 @@ func TestOutboxBlockedAfterAge(t *testing.T) {
 	base := time.Now().UnixNano()
 	row := newPublicUpdateOutboxRow(base, fmt.Sprintf("public-age-block-%d", base), DeliveryPathUserupdatesPTS)
 	old := time.Now().UTC().Add(-time.Duration(OutboxWorkerBlockedAgeSeconds+1) * time.Second)
-	row.NextRetryAt = mysqlDateTimeForBind(old)
+	row.NextRetryAt = old.Unix()
 	if _, _, err := repo.model.DialogPublicUpdateOutboxModel.Insert(ctx, row); err != nil {
 		t.Fatalf("insert public update outbox: %v", err)
 	}
@@ -331,6 +331,48 @@ func TestDialogOutboxClaimLeasePreventsDoubleClaim(t *testing.T) {
 	}
 }
 
+func TestDialogAuthSeqOutboxClaimPredicatesUseUnixSeconds(t *testing.T) {
+	ctx := context.Background()
+	repo := newDialogOutboxWorkerTestRepo(t)
+	base := time.Now().UnixNano()
+	now := time.Unix(1700000100, 0).UTC()
+
+	pendingZero := newAuthSeqOutboxRow(base, fmt.Sprintf("auth-predicate-zero-%d", base))
+	pendingZero.NextRetryAt = 0
+	scheduledRetry := newAuthSeqOutboxRow(base+1, fmt.Sprintf("auth-predicate-retry-%d", base))
+	scheduledRetry.OutboxId = pendingZero.OutboxId - 1
+	scheduledRetry.Status = OutboxStatusFailedRetryable
+	scheduledRetry.NextRetryAt = now.Add(-time.Second).Unix()
+	publishingExpired := newAuthSeqOutboxRow(base+2, fmt.Sprintf("auth-predicate-publishing-%d", base))
+	publishingExpired.OutboxId = pendingZero.OutboxId - 2
+	publishingExpired.Status = OutboxStatusPublishing
+	publishingExpired.LeaseUntil = 0
+
+	for _, row := range []*model.DialogAuthSeqOutbox{pendingZero, scheduledRetry, publishingExpired} {
+		if _, _, err := repo.model.DialogAuthSeqOutboxModel.Insert(ctx, row); err != nil {
+			t.Fatalf("insert auth seq predicate row %s: %v", row.OperationId, err)
+		}
+	}
+
+	claimed, err := repo.ClaimDialogAuthSeqOutbox(ctx, "owner-predicate", now, now.Add(time.Minute), 10)
+	if err != nil {
+		t.Fatalf("ClaimDialogAuthSeqOutbox() error = %v", err)
+	}
+	claimedIDs := map[int64]bool{}
+	for _, row := range claimed {
+		claimedIDs[row.OutboxId] = true
+	}
+	if claimedIDs[pendingZero.OutboxId] {
+		t.Fatalf("pending next_retry_at=0 row was claimed")
+	}
+	if !claimedIDs[scheduledRetry.OutboxId] {
+		t.Fatalf("scheduled retry row was not claimed")
+	}
+	if !claimedIDs[publishingExpired.OutboxId] {
+		t.Fatalf("publishing lease_until=0 row was not claimed")
+	}
+}
+
 func testOutboxOptions(owner string) DialogOutboxWorkerOptions {
 	return DialogOutboxWorkerOptions{
 		Owner:          owner,
@@ -358,10 +400,10 @@ func cleanupDialogOutboxWorkerRows(t *testing.T, repo *Repository) {
 		t.Fatalf("require db: %v", err)
 	}
 	ctx := context.Background()
-	if _, err := db.Exec(ctx, "DELETE FROM dialog_auth_seq_outbox WHERE operation_id LIKE 'auth-%'"); err != nil {
+	if _, err := db.Exec(ctx, "DELETE FROM dialog_auth_seq_outbox"); err != nil {
 		t.Fatalf("cleanup auth seq outbox worker rows: %v", err)
 	}
-	if _, err := db.Exec(ctx, "DELETE FROM dialog_public_update_outbox WHERE operation_id LIKE 'public-%'"); err != nil {
+	if _, err := db.Exec(ctx, "DELETE FROM dialog_public_update_outbox"); err != nil {
 		t.Fatalf("cleanup public update outbox worker rows: %v", err)
 	}
 }
@@ -369,7 +411,7 @@ func cleanupDialogOutboxWorkerRows(t *testing.T, repo *Repository) {
 func newAuthSeqOutboxRow(base int64, operationID string) *model.DialogAuthSeqOutbox {
 	payload := []byte(`{"schema_version":1}`)
 	return &model.DialogAuthSeqOutbox{
-		OutboxId:             -base,
+		OutboxId:             base%1_000_000_000 + 101,
 		UserId:               base%1_000_000_000 + 101,
 		SourcePermAuthKeyId:  base%1_000_000_000 + 201,
 		TargetAuthPolicy:     TargetAuthPolicyNotSourcePermAuthKey,
@@ -382,15 +424,15 @@ func newAuthSeqOutboxRow(base int64, operationID string) *model.DialogAuthSeqOut
 		PayloadHash:          hashPayload(payload),
 		Status:               OutboxStatusPending,
 		AttemptCount:         0,
-		NextRetryAt:          mysqlZeroDateTime(),
-		LeaseUntil:           mysqlZeroDateTime(),
+		NextRetryAt:          unixNow(),
+		LeaseUntil:           0,
 	}
 }
 
 func newPublicUpdateOutboxRow(base int64, operationID string, deliveryPath string) *model.DialogPublicUpdateOutbox {
 	payload := []byte(`{"schema_version":1}`)
 	return &model.DialogPublicUpdateOutbox{
-		OutboxId:             -base,
+		OutboxId:             base%1_000_000_000 + 401,
 		SourceUserId:         base%1_000_000_000 + 401,
 		SourcePermAuthKeyId:  base%1_000_000_000 + 501,
 		TargetUserId:         base%1_000_000_000 + 601,
@@ -405,7 +447,7 @@ func newPublicUpdateOutboxRow(base int64, operationID string, deliveryPath strin
 		PayloadHash:          hashPayload(payload),
 		Status:               OutboxStatusPending,
 		AttemptCount:         0,
-		NextRetryAt:          mysqlZeroDateTime(),
-		LeaseUntil:           mysqlZeroDateTime(),
+		NextRetryAt:          unixNow(),
+		LeaseUntil:           0,
 	}
 }

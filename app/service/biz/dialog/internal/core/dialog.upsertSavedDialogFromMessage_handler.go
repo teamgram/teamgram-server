@@ -18,8 +18,6 @@
 package core
 
 import (
-	"time"
-
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -37,7 +35,7 @@ func (c *DialogCore) DialogUpsertSavedDialogFromMessage(in *dialog.TLDialogUpser
 		PeerID:                in.PeerId,
 		TopPeerSeq:            in.TopPeerSeq,
 		TopCanonicalMessageID: in.TopCanonicalMessageId,
-		TopMessageDate:        time.Unix(int64(in.TopMessageDate), 0).UTC(),
+		TopMessageDate:        int64(in.TopMessageDate),
 		Payload:               in.Payload,
 	}); err != nil {
 		return nil, err
