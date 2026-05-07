@@ -25,6 +25,7 @@ die() {
 }
 
 dry_run=0
+print_destructive_sql=0
 if [[ $# -gt 1 ]]; then
   usage
   exit 2
@@ -33,6 +34,9 @@ if [[ $# -eq 1 ]]; then
   case "$1" in
     --dry-run)
       dry_run=1
+      ;;
+    --print-destructive-sql)
+      print_destructive_sql=1
       ;;
     -h|--help)
       usage
@@ -76,12 +80,6 @@ if [[ -z "$database" || ! "$database" =~ ^[A-Za-z0-9_$]+$ ]]; then
   die "could not parse a safe database name from TEAMGOOO_RESET_DSN"
 fi
 
-script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-bootstrap_sql="${script_dir}/0_teamgooo.sql"
-if [[ ! -f "$bootstrap_sql" ]]; then
-  die "bootstrap SQL not found: $bootstrap_sql"
-fi
-
 mysql_args=(
   --protocol=tcp
   -h "$mysql_host"
@@ -104,6 +102,53 @@ WHERE TABLE_SCHEMA = '${database}'
 ORDER BY TABLE_NAME;
 SQL
 )
+
+seed_sql=$(
+  cat <<'SQL'
+DROP PROCEDURE IF EXISTS init_userupdates_partition_fences;
+
+DELIMITER //
+
+CREATE PROCEDURE init_userupdates_partition_fences()
+BEGIN
+  DECLARE i INT DEFAULT 0;
+
+  WHILE i < 256 DO
+    INSERT IGNORE INTO userupdates_partition_fences (
+      partition_id,
+      owner_epoch,
+      owner_instance_id,
+      lease_id,
+      lease_expires_at
+    ) VALUES (
+      i,
+      0,
+      'unassigned',
+      NULL,
+      0
+    );
+
+    SET i = i + 1;
+  END WHILE;
+END//
+
+DELIMITER ;
+
+CALL init_userupdates_partition_fences();
+DROP PROCEDURE init_userupdates_partition_fences;
+SQL
+)
+
+if [[ "$print_destructive_sql" -eq 1 ]]; then
+  cat <<SQL
+SET FOREIGN_KEY_CHECKS = 0;
+-- TRUNCATE statements are generated from information_schema base tables
+-- where TABLE_SCHEMA = '${database}' and TABLE_NAME <> 'users'.
+SET FOREIGN_KEY_CHECKS = 1;
+${seed_sql}
+SQL
+  exit 0
+fi
 
 tables=()
 while IFS= read -r table_name; do
@@ -160,4 +205,4 @@ mysql "${mysql_args[@]}" "$database" < <(
   mysql "${mysql_args[@]}" -e "$truncate_select_sql"
   echo "SET FOREIGN_KEY_CHECKS = 1;"
 )
-mysql "${mysql_args[@]}" "$database" < "$bootstrap_sql"
+mysql "${mysql_args[@]}" "$database" <<<"$seed_sql"
