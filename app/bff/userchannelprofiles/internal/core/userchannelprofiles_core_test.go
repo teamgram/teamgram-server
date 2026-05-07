@@ -26,6 +26,7 @@ type fakeUserClient struct {
 	getSavedMusicIDList    func(context.Context, *userpb.TLUserGetSavedMusicIdList) (*userpb.VectorLong, error)
 	getBirthdays           func(context.Context, *userpb.TLUserGetBirthdays) (*userpb.VectorContactBirthday, error)
 	getMutableUsersV2      func(context.Context, *userpb.TLUserGetMutableUsersV2) (*tg.MutableUsers, error)
+	getUserProjection      func(context.Context, *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error)
 	updateProfilePhoto     func(context.Context, *userpb.TLUserUpdateProfilePhoto) (*tg.Int64, error)
 	deleteProfilePhotos    func(context.Context, *userpb.TLUserDeleteProfilePhotos) (*tg.Int64, error)
 	getProfilePhotos       func(context.Context, *userpb.TLUserGetProfilePhotos) (*userpb.VectorLong, error)
@@ -80,6 +81,10 @@ func (f *fakeUserClient) UserGetBirthdays(ctx context.Context, in *userpb.TLUser
 
 func (f *fakeUserClient) UserGetMutableUsersV2(ctx context.Context, in *userpb.TLUserGetMutableUsersV2) (*tg.MutableUsers, error) {
 	return f.getMutableUsersV2(ctx, in)
+}
+
+func (f *fakeUserClient) UserGetUserProjectionBundle(ctx context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+	return f.getUserProjection(ctx, in)
 }
 
 func (f *fakeUserClient) UserUpdateProfilePhoto(ctx context.Context, in *userpb.TLUserUpdateProfilePhoto) (*tg.Int64, error) {
