@@ -15,10 +15,15 @@ type chatInvitesFakeUserClient struct {
 	userclient.UserClient
 
 	getMutableUsers func(context.Context, *userpb.TLUserGetMutableUsers) (*userpb.VectorImmutableUser, error)
+	getProjection   func(context.Context, *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error)
 }
 
 func (f *chatInvitesFakeUserClient) UserGetMutableUsers(ctx context.Context, in *userpb.TLUserGetMutableUsers) (*userpb.VectorImmutableUser, error) {
 	return f.getMutableUsers(ctx, in)
+}
+
+func (f *chatInvitesFakeUserClient) UserGetUserProjectionBundle(ctx context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+	return f.getProjection(ctx, in)
 }
 
 func TestMessagesCheckChatInviteValidatesHash(t *testing.T) {
@@ -36,7 +41,7 @@ func TestMessagesCheckChatInviteValidatesHash(t *testing.T) {
 }
 
 func TestMessagesCheckChatInviteProjectsInvite(t *testing.T) {
-	var gotUsersReq *userpb.TLUserGetMutableUsers
+	var gotUsersReq *userpb.TLUserGetUserProjectionBundle
 	c := newChatInvitesCoreWithClients(&chatInvitesFakeChatClient{
 		checkChatInvite: func(context.Context, *chatpb.TLChatCheckChatInvite) (*chatpb.ChatInviteExt, error) {
 			return chatpb.MakeTLChatInvite(&chatpb.TLChatInvite{
@@ -48,12 +53,16 @@ func TestMessagesCheckChatInviteProjectsInvite(t *testing.T) {
 			}).ToChatInviteExt(), nil
 		},
 	}, &chatInvitesFakeUserClient{
-		getMutableUsers: func(_ context.Context, in *userpb.TLUserGetMutableUsers) (*userpb.VectorImmutableUser, error) {
+		getProjection: func(_ context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
 			gotUsersReq = in
-			return &userpb.VectorImmutableUser{Datas: []tg.ImmutableUserClazz{
-				immutableUserForTest(200, "alice"),
-				immutableUserForTest(300, "bob"),
-			}}, nil
+			return userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+				ViewerUsers: []userpb.ViewerUsersClazz{
+					userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 100, Users: []tg.UserClazz{
+						tg.MakeTLUser(&tg.TLUser{Id: 200, FirstName: nonEmptyStringPtr("alice")}),
+						tg.MakeTLUser(&tg.TLUser{Id: 300, FirstName: nonEmptyStringPtr("bob")}),
+					}}),
+				},
+			}).ToUserProjectionBundle(), nil
 		},
 	}, 100)
 
@@ -65,8 +74,8 @@ func TestMessagesCheckChatInviteProjectsInvite(t *testing.T) {
 	if !ok || invite.Title != "chat" || !invite.RequestNeeded || len(invite.Participants) != 2 {
 		t.Fatalf("MessagesCheckChatInvite = %#v, want chatInvite with two participants", r)
 	}
-	if gotUsersReq == nil || !sameInt64s(gotUsersReq.Id, []int64{200, 300}) || !sameInt64s(gotUsersReq.To, []int64{100}) {
-		t.Fatalf("user request = %+v, want id=[200 300] to=[100]", gotUsersReq)
+	if gotUsersReq == nil || !sameInt64s(gotUsersReq.TargetUserIds, []int64{200, 300}) || !sameInt64s(gotUsersReq.ViewerUserIds, []int64{100}) {
+		t.Fatalf("user request = %+v, want target=[200 300] viewer=[100]", gotUsersReq)
 	}
 }
 
@@ -280,7 +289,7 @@ func TestChatInviteReadHandlersMapUserCompletionErrorToInternal(t *testing.T) {
 			}}, nil
 		},
 	}, &chatInvitesFakeUserClient{
-		getMutableUsers: func(context.Context, *userpb.TLUserGetMutableUsers) (*userpb.VectorImmutableUser, error) {
+		getProjection: func(context.Context, *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
 			return nil, userErr
 		},
 	}, 100)
@@ -297,12 +306,16 @@ func inputPeerChatForTest(chatID int64) tg.InputPeerClazz {
 
 func usersForTest(ids ...int64) userclient.UserClient {
 	return &chatInvitesFakeUserClient{
-		getMutableUsers: func(context.Context, *userpb.TLUserGetMutableUsers) (*userpb.VectorImmutableUser, error) {
-			users := make([]tg.ImmutableUserClazz, 0, len(ids))
+		getProjection: func(context.Context, *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+			users := make([]tg.UserClazz, 0, len(ids))
 			for _, id := range ids {
-				users = append(users, immutableUserForTest(id, "user"))
+				users = append(users, tg.MakeTLUser(&tg.TLUser{Id: id, FirstName: nonEmptyStringPtr("user")}))
 			}
-			return &userpb.VectorImmutableUser{Datas: users}, nil
+			return userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+				ViewerUsers: []userpb.ViewerUsersClazz{
+					userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 100, Users: users}),
+				},
+			}).ToUserProjectionBundle(), nil
 		},
 	}
 }

@@ -17,6 +17,7 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	codepb "github.com/teamgram/teamgram-server/v2/app/service/biz/code/code"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -86,8 +87,6 @@ func (c *AccountCore) AccountChangePhone(in *tg.TLAccountChangePhone) (*tg.User,
 	}); err != nil {
 		return nil, err
 	}
-	me.User.Phone = phone
-
 	if _, err = c.svcCtx.Repo.CodeClient.CodeDeletePhoneCode(c.ctx, &codepb.TLCodeDeletePhoneCode{
 		AuthKeyId:     accountAuthKeyID(c),
 		Phone:         phone,
@@ -98,5 +97,13 @@ func (c *AccountCore) AccountChangePhone(in *tg.TLAccountChangePhone) (*tg.User,
 	}
 
 	// TODO(v2 account): user/session update delivery is intentionally not migrated from master; route phone-change updates through userupdates/gateway when the v2 delivery contract is defined.
-	return &tg.User{Clazz: projectAccountSelfImmutableUser(me)}, nil
+	users, err := userprojection.ProjectUsers(c.ctx, c.svcCtx.Repo.UserClient, selfID, []int64{selfID}, userprojection.MissingExplicitInput)
+	if err != nil {
+		return nil, err
+	}
+	if len(users) == 0 {
+		return nil, tg.ErrUserIdInvalid
+	}
+
+	return &tg.User{Clazz: users[0]}, nil
 }

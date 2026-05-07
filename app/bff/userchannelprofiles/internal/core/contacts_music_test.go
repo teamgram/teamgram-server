@@ -19,13 +19,17 @@ func TestContactsGetBirthdays(t *testing.T) {
 				tg.MakeTLContactBirthday(&tg.TLContactBirthday{ContactId: 2002}),
 			}}, nil
 		},
-		getMutableUsersV2: func(_ context.Context, in *userpb.TLUserGetMutableUsersV2) (*tg.MutableUsers, error) {
-			if len(in.Id) != 1 || in.Id[0] != 2002 {
-				t.Fatalf("mutable users request = %+v", in)
+		getUserProjection: func(_ context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+			if len(in.ViewerUserIds) != 1 || in.ViewerUserIds[0] != 1001 || len(in.TargetUserIds) != 1 || in.TargetUserIds[0] != 2002 {
+				t.Fatalf("projection request = %+v", in)
 			}
-			return tg.MakeTLMutableUsers(&tg.TLMutableUsers{Users: []tg.ImmutableUserClazz{
-				immutableUserFixture(2002, "Ada", "", "ada"),
-			}}).ToMutableUsers(), nil
+			return userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+				ViewerUsers: []userpb.ViewerUsersClazz{
+					userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 1001, Users: []tg.UserClazz{
+						tg.MakeTLUser(&tg.TLUser{Id: 2002, Contact: true}),
+					}}),
+				},
+			}).ToUserProjectionBundle(), nil
 		},
 	}, nil, 1001)
 	got, err := core.ContactsGetBirthdays(&tg.TLContactsGetBirthdays{})

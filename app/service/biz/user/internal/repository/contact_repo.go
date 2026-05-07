@@ -159,6 +159,7 @@ func (r *Repository) EditCloseFriends(ctx context.Context, userID int64, idList 
 	}); err != nil {
 		return fmt.Errorf("%w: edit close friends %d: %w", userpb.ErrUserStorage, userID, err)
 	}
+	r.invalidateProjectionContactMapCaches(ctx, userID)
 	return r.invalidateUserDataCache(ctx, userID, "invalidate close friends cache")
 }
 
@@ -166,6 +167,7 @@ func (r *Repository) SetStoriesHidden(ctx context.Context, userID int64, contact
 	if _, err := r.model.UserContactsModel.UpdateStoriesHidden(ctx, hidden, userID, contactUserID); err != nil {
 		return fmt.Errorf("%w: set stories hidden %d/%d: %w", userpb.ErrUserStorage, userID, contactUserID, err)
 	}
+	r.invalidateProjectionContactMapCaches(ctx, userID)
 	return r.invalidateUserDataCache(ctx, userID, "invalidate stories hidden cache")
 }
 
@@ -210,6 +212,7 @@ func makeContactData(contactDO *model.UserContacts) tg.ContactDataClazz {
 }
 
 func (r *Repository) invalidateContactCaches(ctx context.Context, userID, contactUserID int64) error {
+	r.invalidateProjectionContactMapCaches(ctx, userID, contactUserID)
 	if err := r.invalidateUserDataCache(ctx, userID, "invalidate contact owner cache"); err != nil {
 		return err
 	}
@@ -220,6 +223,7 @@ func (r *Repository) invalidateContactCaches(ctx context.Context, userID, contac
 }
 
 func (r *Repository) invalidateUserDataCache(ctx context.Context, userID int64, operation string) error {
+	r.invalidateProjectionFactCache(ctx, userID)
 	if err := r.DelCache(ctx, userDataCacheKey(userID)); err != nil {
 		return fmt.Errorf("%w: %s %d: %w", userpb.ErrUserStorage, operation, userID, err)
 	}

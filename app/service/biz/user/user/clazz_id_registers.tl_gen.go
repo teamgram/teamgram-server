@@ -23,6 +23,7 @@ func init() {
 	iface.RegisterClazzID(0xb3b1a1df, func() iface.TLObject { return &TLLastSeenData{ClazzID: 0xb3b1a1df} })           // 0xb3b1a1df
 	iface.RegisterClazzID(0x70ea3fa9, func() iface.TLObject { return &TLPeerPeerNotifySettings{ClazzID: 0x70ea3fa9} }) // 0x70ea3fa9
 	iface.RegisterClazzID(0x4adf7bc0, func() iface.TLObject { return &TLUserImportedContacts{ClazzID: 0x4adf7bc0} })   // 0x4adf7bc0
+	iface.RegisterClazzID(0xc3baeed8, func() iface.TLObject { return &TLUserProjectionBundle{ClazzID: 0xc3baeed8} })   // 0xc3baeed8
 	iface.RegisterClazzID(0xaa4000bf, func() iface.TLObject { return &TLUsernameData{ClazzID: 0xaa4000bf} })           // 0xaa4000bf
 	iface.RegisterClazzID(0xcb3cfb6d, func() iface.TLObject { return &TLUsernameNotExisted{ClazzID: 0xcb3cfb6d} })     // 0xcb3cfb6d
 	iface.RegisterClazzID(0xace7f4cd, func() iface.TLObject { return &TLUsernameExisted{ClazzID: 0xace7f4cd} })        // 0xace7f4cd
@@ -30,6 +31,7 @@ func init() {
 	iface.RegisterClazzID(0x874e7771, func() iface.TLObject { return &TLUsernameExistedIsMe{ClazzID: 0x874e7771} })    // 0x874e7771
 	iface.RegisterClazzID(0x3fa3dbc7, func() iface.TLObject { return &TLUsersDataFound{ClazzID: 0x3fa3dbc7} })         // 0x3fa3dbc7
 	iface.RegisterClazzID(0x80c4adfa, func() iface.TLObject { return &TLUsersIdFound{ClazzID: 0x80c4adfa} })           // 0x80c4adfa
+	iface.RegisterClazzID(0x9aac1d89, func() iface.TLObject { return &TLViewerUsers{ClazzID: 0x9aac1d89} })            // 0x9aac1d89
 
 	// Method
 	iface.RegisterClazzID(0x7ca17e01, func() iface.TLObject { return &TLUserGetLastSeens{ClazzID: 0x7ca17e01} })                  // 0x7ca17e01
@@ -97,6 +99,7 @@ func init() {
 	iface.RegisterClazzID(0x60f35d28, func() iface.TLObject { return &TLUserUpdateBotData{ClazzID: 0x60f35d28} })                 // 0x60f35d28
 	iface.RegisterClazzID(0x300aba4c, func() iface.TLObject { return &TLUserGetImmutableUserV2{ClazzID: 0x300aba4c} })            // 0x300aba4c
 	iface.RegisterClazzID(0x94f98b28, func() iface.TLObject { return &TLUserGetMutableUsersV2{ClazzID: 0x94f98b28} })             // 0x94f98b28
+	iface.RegisterClazzID(0x3fc25f21, func() iface.TLObject { return &TLUserGetUserProjectionBundle{ClazzID: 0x3fc25f21} })       // 0x3fc25f21
 	iface.RegisterClazzID(0x4c6eccab, func() iface.TLObject { return &TLUserCreateNewTestUser{ClazzID: 0x4c6eccab} })             // 0x4c6eccab
 	iface.RegisterClazzID(0x86247b05, func() iface.TLObject { return &TLUserEditCloseFriends{ClazzID: 0x86247b05} })              // 0x86247b05
 	iface.RegisterClazzID(0x52f5b670, func() iface.TLObject { return &TLUserSetStoriesMaxId{ClazzID: 0x52f5b670} })               // 0x52f5b670

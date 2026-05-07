@@ -791,16 +791,11 @@ func TestMsgEditMessageV2UpdatesCanonicalAndRoutesOperations(t *testing.T) {
 	if !ok {
 		t.Fatalf("expected updates, got %s", got.ClazzName())
 	}
-	if updates.Date != 1_772_000_099 || updates.Seq != 0 || len(updates.Updates) != 1 || len(updates.Users) != 2 {
+	if updates.Date != 1_772_000_099 || updates.Seq != 0 || len(updates.Updates) != 1 || len(updates.Users) != 0 {
 		t.Fatalf("unexpected edit updates envelope: %+v", updates)
 	}
-	fromUser, ok := updates.Users[0].(*tg.TLUser)
-	if !ok || fromUser.Id != 1001 {
-		t.Fatalf("sender user = %+v", updates.Users[0])
-	}
-	toUser, ok := updates.Users[1].(*tg.TLUser)
-	if !ok || toUser.Id != 1002 {
-		t.Fatalf("receiver user = %+v", updates.Users[1])
+	if updates.Users == nil {
+		t.Fatalf("msg edit response must use an empty users vector, not nil, so BFF replacement is deterministic")
 	}
 	edit, ok := updates.Updates[0].(*tg.TLUpdateEditMessage)
 	if !ok {

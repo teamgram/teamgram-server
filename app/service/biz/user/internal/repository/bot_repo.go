@@ -101,6 +101,7 @@ func (r *Repository) UpdateBotData(ctx context.Context, botID int64, botChatHist
 	if err := r.model.BotsModel.Update2(ctx, botDO); err != nil {
 		return fmt.Errorf("%w: update bot data row %d: %w", userpb.ErrUserStorage, botID, err)
 	}
+	r.invalidateProjectionFactCache(ctx, botID)
 	return nil
 }
 

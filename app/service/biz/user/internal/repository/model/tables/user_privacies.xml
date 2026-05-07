@@ -56,7 +56,7 @@
     </operation>
     <operation name="SelectUsersPrivacyList" result_set="list">
         <params>
-            <param name="idList" type="[]int32" />
+            <param name="idList" type="[]int64" />
             <param name="keyList" type="[]int32" />
         </params>
         <sql>

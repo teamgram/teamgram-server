@@ -17,6 +17,7 @@
 package core
 
 import (
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	mediapb "github.com/teamgram/teamgram-server/v2/app/service/media/media"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -62,9 +63,13 @@ func (c *UserChannelProfilesCore) PhotosGetUserPhotos(in *tg.TLPhotosGetUserPhot
 			photos = append(photos, photo.Clazz)
 		}
 	}
+	users, err := userprojection.ProjectUsers(c.ctx, c.svcCtx.Repo.UserClient, selfID, []int64{targetID}, userprojection.MissingExplicitInput)
+	if err != nil {
+		return nil, err
+	}
 
 	return tg.MakeTLPhotosPhotos(&tg.TLPhotosPhotos{
 		Photos: photos,
-		Users:  []tg.UserClazz{},
+		Users:  users,
 	}).ToPhotosPhotos(), nil
 }

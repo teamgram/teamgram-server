@@ -20,55 +20,6 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-func projectImmutableUser(immutableUser tg.ImmutableUserClazz) tg.UserClazz {
-	if immutableUser == nil || immutableUser.User == nil {
-		return tg.MakeTLUserEmpty(&tg.TLUserEmpty{})
-	}
-
-	data := immutableUser.User
-	if data.Deleted {
-		return tg.MakeTLUser(&tg.TLUser{
-			Id:      data.Id,
-			Deleted: true,
-		})
-	}
-
-	accessHash := data.AccessHash
-	return tg.MakeTLUser(&tg.TLUser{
-		Id:                 data.Id,
-		AccessHash:         &accessHash,
-		FirstName:          nonEmptyStringPtr(data.FirstName),
-		LastName:           nonEmptyStringPtr(data.LastName),
-		Username:           nonEmptyStringPtr(data.Username),
-		Phone:              nonEmptyStringPtr(data.Phone),
-		Photo:              projectUserProfilePhoto(data.ProfilePhoto),
-		Status:             tg.MakeTLUserStatusEmpty(&tg.TLUserStatusEmpty{}),
-		Bot:                data.Bot != nil,
-		Verified:           data.Verified,
-		Restricted:         data.Restricted,
-		Scam:               data.Scam,
-		Fake:               data.Fake,
-		Premium:            data.Premium,
-		Support:            data.Support,
-		RestrictionReason:  data.RestrictionReason,
-		EmojiStatus:        data.EmojiStatus,
-		StoriesUnavailable: data.StoriesUnavailable,
-		Color:              data.Color,
-		ProfileColor:       data.ProfileColor,
-		StoriesMaxId:       recentStoryIDPtr(data.StoriesMaxId),
-	})
-}
-
-func projectUserProfilePhoto(photo tg.PhotoClazz) tg.UserProfilePhotoClazz {
-	if p, ok := photo.(*tg.TLPhoto); ok {
-		return tg.MakeTLUserProfilePhoto(&tg.TLUserProfilePhoto{
-			PhotoId: p.Id,
-			DcId:    p.DcId,
-		})
-	}
-	return nil
-}
-
 func projectMutableChat(chat *tg.MutableChat, selfID int64) tg.ChatClazz {
 	if chat == nil || chat.Chat == nil {
 		return nil
@@ -100,18 +51,4 @@ func projectChatPhoto(photo tg.PhotoClazz) tg.ChatPhotoClazz {
 	}
 
 	return tg.MakeTLChatPhotoEmpty(&tg.TLChatPhotoEmpty{})
-}
-
-func nonEmptyStringPtr(s string) *string {
-	if s == "" {
-		return nil
-	}
-	return &s
-}
-
-func recentStoryIDPtr(id int32) tg.RecentStoryClazz {
-	if id == 0 {
-		return nil
-	}
-	return tg.MakeTLRecentStory(&tg.TLRecentStory{MaxId: &id})
 }

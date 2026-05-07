@@ -17,20 +17,29 @@
 package svc
 
 import (
+	"context"
+
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/repository"
 	mediaclient "github.com/teamgram/teamgram-server/v2/app/service/media/client"
 )
 
+type UserProjectionRepository interface {
+	GetUserProjectionBundle(ctx context.Context, viewerUserIds []int64, targetUserIds []int64, withFacts bool) (*repository.UserProjectionBundle, error)
+}
+
 type ServiceContext struct {
-	Config config.Config
-	Repo   *repository.Repository
+	Config             config.Config
+	Repo               *repository.Repository
+	UserProjectionRepo UserProjectionRepository
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	mediaCli := mediaclient.NewMediaClient(mediaclient.MustNewKitexClient(c.MediaClient))
+	repo := repository.NewRepository(c, repository.NewMediaReader(mediaCli))
 	return &ServiceContext{
-		Config: c,
-		Repo:   repository.NewRepository(c, repository.NewMediaReader(mediaCli)),
+		Config:             c,
+		Repo:               repo,
+		UserProjectionRepo: repo,
 	}
 }

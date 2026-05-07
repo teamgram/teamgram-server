@@ -141,26 +141,12 @@ func makeSignupRequired() *tg.AuthAuthorization {
 	return tg.MakeTLAuthAuthorizationSignUpRequired(&tg.TLAuthAuthorizationSignUpRequired{}).ToAuthAuthorization()
 }
 
-func makeAuthAuthorization(user *tg.ImmutableUser) *tg.AuthAuthorization {
-	if user == nil || user.User == nil {
+func makeAuthAuthorization(user tg.UserClazz) *tg.AuthAuthorization {
+	if user == nil {
 		return nil
 	}
-	userData := user.User
 	return tg.MakeTLAuthAuthorization(&tg.TLAuthAuthorization{
-		User: tg.MakeTLUser(&tg.TLUser{
-			Self:       true,
-			Id:         userData.Id,
-			AccessHash: &userData.AccessHash,
-			FirstName:  stringPtr(userData.FirstName),
-			LastName:   stringPtr(userData.LastName),
-			Username:   optionalStringPtr(userData.Username),
-			Phone:      optionalStringPtr(userData.Phone),
-			Verified:   userData.Verified,
-			Support:    userData.Support,
-			Fake:       userData.Fake,
-			Premium:    userData.Premium,
-			Status:     tg.UserStatusEmptyClazz,
-		}),
+		User: user,
 	}).ToAuthAuthorization()
 }
 
@@ -193,15 +179,4 @@ func immutableUserID(user *tg.ImmutableUser) int64 {
 		return 0
 	}
 	return user.User.Id
-}
-
-func stringPtr(v string) *string {
-	return &v
-}
-
-func optionalStringPtr(v string) *string {
-	if v == "" {
-		return nil
-	}
-	return &v
 }

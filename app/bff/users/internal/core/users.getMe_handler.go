@@ -20,6 +20,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -50,5 +51,13 @@ func (c *UsersCore) UsersGetMe(in *tg.TLUsersGetMe) (*tg.User, error) {
 		return nil, tg.ErrTokenInvalid
 	}
 
-	return &tg.User{Clazz: projectSelfImmutableUser(immutableUser)}, nil
+	users, err := userprojection.ProjectUsers(c.ctx, c.svcCtx.Repo.UserClient, in.Id, []int64{in.Id}, userprojection.MissingExplicitInput)
+	if err != nil {
+		return nil, err
+	}
+	if len(users) == 0 {
+		return nil, tg.ErrUserIdInvalid
+	}
+
+	return &tg.User{Clazz: users[0]}, nil
 }

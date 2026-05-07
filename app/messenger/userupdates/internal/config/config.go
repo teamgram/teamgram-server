@@ -28,6 +28,7 @@ type Config struct {
 	Mysql              sqlx.Config                `json:",optional"`
 	Authsession        kitex.RpcClientConf        `json:",optional"`
 	Gateway            kitex.RpcClientConf        `json:",optional"`
+	UserClient         kitex.RpcClientConf        `json:",optional"`
 	DialogClient       kitex.RpcClientConf        `json:",optional"`
 	Idgen              kitex.RpcClientConf        `json:",optional"`
 	OwnerInstance      string                     `json:",default=local-userupdates"`

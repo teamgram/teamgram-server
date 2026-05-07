@@ -13,10 +13,21 @@ import (
 func TestPhotosUpdateProfilePhoto(t *testing.T) {
 	var gotUpdate *userpb.TLUserUpdateProfilePhoto
 	var gotPhoto *mediapb.TLMediaGetPhoto
+	var gotProjection *userpb.TLUserGetUserProjectionBundle
 	core := newUserChannelProfilesCoreForTest(&fakeUserClient{
 		updateProfilePhoto: func(_ context.Context, in *userpb.TLUserUpdateProfilePhoto) (*tg.Int64, error) {
 			gotUpdate = in
 			return &tg.Int64{V: 333}, nil
+		},
+		getUserProjection: func(_ context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+			gotProjection = in
+			return userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+				ViewerUsers: []userpb.ViewerUsersClazz{
+					userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 1001, Users: []tg.UserClazz{
+						tg.MakeTLUser(&tg.TLUser{Id: 1001, Self: true}),
+					}}),
+				},
+			}).ToUserProjectionBundle(), nil
 		},
 	}, &fakeMediaClient{
 		getPhoto: func(_ context.Context, in *mediapb.TLMediaGetPhoto) (*tg.Photo, error) {
@@ -34,7 +45,11 @@ func TestPhotosUpdateProfilePhoto(t *testing.T) {
 	if gotPhoto == nil || gotPhoto.PhotoId != 333 {
 		t.Fatalf("photo request = %+v", gotPhoto)
 	}
-	if got.Photo == nil || len(got.Users) != 0 {
+	if gotProjection == nil || len(gotProjection.ViewerUserIds) != 1 || gotProjection.ViewerUserIds[0] != 1001 ||
+		len(gotProjection.TargetUserIds) != 1 || gotProjection.TargetUserIds[0] != 1001 {
+		t.Fatalf("projection request = %+v, want viewer/target 1001", gotProjection)
+	}
+	if got.Photo == nil || len(got.Users) != 1 {
 		t.Fatalf("response = %+v", got)
 	}
 }
@@ -63,12 +78,23 @@ func TestPhotosDeletePhotosReturnsDeletedIDs(t *testing.T) {
 }
 
 func TestPhotosGetUserPhotosSkipsPerPhotoErrors(t *testing.T) {
+	var gotProjection *userpb.TLUserGetUserProjectionBundle
 	core := newUserChannelProfilesCoreForTest(&fakeUserClient{
 		getProfilePhotos: func(_ context.Context, in *userpb.TLUserGetProfilePhotos) (*userpb.VectorLong, error) {
 			if in.UserId != 2002 {
 				t.Fatalf("profile photos user id = %d, want 2002", in.UserId)
 			}
 			return &userpb.VectorLong{Datas: []int64{1, 2, 3}}, nil
+		},
+		getUserProjection: func(_ context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+			gotProjection = in
+			return userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+				ViewerUsers: []userpb.ViewerUsersClazz{
+					userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 1001, Users: []tg.UserClazz{
+						tg.MakeTLUser(&tg.TLUser{Id: 2002, Contact: true}),
+					}}),
+				},
+			}).ToUserProjectionBundle(), nil
 		},
 	}, &fakeMediaClient{
 		getPhoto: func(_ context.Context, in *mediapb.TLMediaGetPhoto) (*tg.Photo, error) {
@@ -82,8 +108,12 @@ func TestPhotosGetUserPhotosSkipsPerPhotoErrors(t *testing.T) {
 	if err != nil {
 		t.Fatalf("PhotosGetUserPhotos returned error: %v", err)
 	}
+	if gotProjection == nil || len(gotProjection.ViewerUserIds) != 1 || gotProjection.ViewerUserIds[0] != 1001 ||
+		len(gotProjection.TargetUserIds) != 1 || gotProjection.TargetUserIds[0] != 2002 {
+		t.Fatalf("projection request = %+v, want viewer 1001 target 2002", gotProjection)
+	}
 	photos, ok := got.Clazz.(*tg.TLPhotosPhotos)
-	if !ok || len(photos.Photos) != 2 || len(photos.Users) != 0 {
+	if !ok || len(photos.Photos) != 2 || len(photos.Users) != 1 {
 		t.Fatalf("photos response = %#v", got)
 	}
 }

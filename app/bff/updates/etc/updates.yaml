@@ -1,2 +1,18 @@
 Name: bff.updates
 ListenOn: 0.0.0.0:21290
+
+UserupdatesClient:
+  DestService: messenger.userupdates
+  ServiceName: RPCUserupdates
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: messenger.userupdates
+
+UserClient:
+  DestService: service.biz_service.user
+  ServiceName: RPCUser
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.biz_service.user

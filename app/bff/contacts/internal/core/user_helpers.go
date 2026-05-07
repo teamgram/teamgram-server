@@ -19,68 +19,9 @@ package core
 import (
 	"time"
 
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
-
-func projectImmutableUser(immutableUser tg.ImmutableUserClazz) tg.UserClazz {
-	if immutableUser == nil || immutableUser.User == nil {
-		return tg.MakeTLUserEmpty(&tg.TLUserEmpty{})
-	}
-
-	data := immutableUser.User
-	if data.Deleted {
-		return tg.MakeTLUser(&tg.TLUser{Id: data.Id, Deleted: true})
-	}
-
-	accessHash := data.AccessHash
-	return tg.MakeTLUser(&tg.TLUser{
-		Id:                 data.Id,
-		AccessHash:         &accessHash,
-		FirstName:          nonEmptyStringPtr(data.FirstName),
-		LastName:           nonEmptyStringPtr(data.LastName),
-		Username:           nonEmptyStringPtr(data.Username),
-		Phone:              nonEmptyStringPtr(data.Phone),
-		Photo:              projectUserProfilePhoto(data.ProfilePhoto),
-		Status:             tg.MakeTLUserStatusEmpty(&tg.TLUserStatusEmpty{}),
-		Bot:                data.Bot != nil,
-		Verified:           data.Verified,
-		Restricted:         data.Restricted,
-		Scam:               data.Scam,
-		Fake:               data.Fake,
-		Premium:            data.Premium,
-		Support:            data.Support,
-		RestrictionReason:  data.RestrictionReason,
-		EmojiStatus:        data.EmojiStatus,
-		StoriesUnavailable: data.StoriesUnavailable,
-		Color:              data.Color,
-		ProfileColor:       data.ProfileColor,
-		StoriesMaxId:       recentStoryIDPtr(data.StoriesMaxId),
-	})
-}
-
-func projectUserProfilePhoto(photo tg.PhotoClazz) tg.UserProfilePhotoClazz {
-	if p, ok := photo.(*tg.TLPhoto); ok {
-		return tg.MakeTLUserProfilePhoto(&tg.TLUserProfilePhoto{
-			PhotoId: p.Id,
-			DcId:    p.DcId,
-		})
-	}
-	return nil
-}
-
-func nonEmptyStringPtr(s string) *string {
-	if s == "" {
-		return nil
-	}
-	return &s
-}
-
-func recentStoryIDPtr(id int32) tg.RecentStoryClazz {
-	if id == 0 {
-		return nil
-	}
-	return tg.MakeTLRecentStory(&tg.TLRecentStory{MaxId: &id})
-}
 
 func userID(user tg.UserClazz) (int64, bool) {
 	switch u := user.(type) {
@@ -93,33 +34,17 @@ func userID(user tg.UserClazz) (int64, bool) {
 	}
 }
 
-func immutableUserByID(users []tg.ImmutableUserClazz, id int64) tg.ImmutableUserClazz {
-	for _, immutableUser := range users {
-		if immutableUser != nil && immutableUser.User != nil && immutableUser.User.Id == id {
-			return immutableUser
+func (c *ContactsCore) projectUsers(ids []int64, missing userprojection.MissingPolicy) ([]tg.UserClazz, error) {
+	return userprojection.ProjectUsers(c.ctx, c.svcCtx.Repo.UserClient, c.MD.UserId, ids, missing)
+}
+
+func projectedUserByID(users []tg.UserClazz, id int64) tg.UserClazz {
+	for _, user := range users {
+		if userID, ok := userID(user); ok && userID == id {
+			return user
 		}
 	}
 	return nil
-}
-
-func projectUsersByIDs(users []tg.ImmutableUserClazz, ids []int64) []tg.UserClazz {
-	byID := make(map[int64]tg.UserClazz, len(users))
-	for _, immutableUser := range users {
-		user := projectImmutableUser(immutableUser)
-		if id, ok := userID(user); ok {
-			byID[id] = user
-		}
-	}
-
-	result := make([]tg.UserClazz, 0, len(ids))
-	for _, id := range ids {
-		if user := byID[id]; user != nil {
-			result = append(result, user)
-		} else {
-			result = append(result, tg.MakeTLUserEmpty(&tg.TLUserEmpty{Id: id}))
-		}
-	}
-	return result
 }
 
 func contactDatasToContacts(datas []tg.ContactDataClazz) []tg.ContactClazz {

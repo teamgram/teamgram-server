@@ -17,6 +17,5 @@
 package model
 
 type (
-	extendBotsModel interface {
-	}
+	extendBotsModel interface{}
 )

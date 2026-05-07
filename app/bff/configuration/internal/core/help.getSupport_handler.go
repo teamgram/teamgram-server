@@ -64,12 +64,6 @@ var (
 func (c *ConfigurationCore) HelpGetSupport(in *tg.TLHelpGetSupport) (*tg.HelpSupport, error) {
 	_ = in
 
-	//mUser, _ := c.svcCtx.Dao.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
-	//	Id: []int64{c.MD.UserId, supportUserID},
-	//})
-	//
-	//me, _ := mUser.GetUnsafeUser(c.MD.UserId, supportUserID)
-
 	rValue := tg.MakeTLHelpSupport(&tg.TLHelpSupport{
 		PhoneNumber: supportPhoneNumber,
 		User:        supportUser,

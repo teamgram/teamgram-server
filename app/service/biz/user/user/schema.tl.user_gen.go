@@ -745,6 +745,219 @@ func (m *TLUserImportedContacts) Decode(d *bin.Decoder) (err error) {
 // UserImportedContacts <--
 type UserImportedContacts = TLUserImportedContacts
 
+// UserProjectionBundleClazz <--
+//   - TL_UserProjectionBundle
+type UserProjectionBundleClazz = *TLUserProjectionBundle
+
+func DecodeUserProjectionBundleClazz(d *bin.Decoder) (UserProjectionBundleClazz, error) {
+	// id, err := d.PeekClazzID()
+	id, err := d.ClazzID()
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode UserProjectionBundle: constructor: %w", err)
+	}
+
+	switch id {
+	case 0xc3baeed8:
+		x := &TLUserProjectionBundle{ClazzID: id, ClazzName2: ClazzName_userProjectionBundle}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
+		return x, nil
+	default:
+		return nil, fmt.Errorf("unable to decode UserProjectionBundle: invalid constructor %x", id)
+	}
+
+}
+
+// TLUserProjectionBundle <--
+type TLUserProjectionBundle struct {
+	ClazzID        uint32                  `json:"_id"`
+	ClazzName2     string                  `json:"_name"`
+	Facts          []tg.ImmutableUserClazz `json:"facts"`
+	ViewerUsers    []ViewerUsersClazz      `json:"viewer_users"`
+	MissingUserIds []int64                 `json:"missing_user_ids"`
+}
+
+func MakeTLUserProjectionBundle(m *TLUserProjectionBundle) *TLUserProjectionBundle {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_userProjectionBundle
+
+	return m
+}
+
+func (m *TLUserProjectionBundle) String() string {
+	return iface.DebugStringWithName("userProjectionBundle", m)
+}
+
+func (m *TLUserProjectionBundle) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("userProjectionBundle", m)
+}
+
+// UserProjectionBundleClazzName <--
+func (m *TLUserProjectionBundle) UserProjectionBundleClazzName() string {
+	return ClazzName_userProjectionBundle
+}
+
+// ClazzName <--
+func (m *TLUserProjectionBundle) ClazzName() string {
+	return m.ClazzName2
+}
+
+// ToUserProjectionBundle <--
+func (m *TLUserProjectionBundle) ToUserProjectionBundle() *UserProjectionBundle {
+	if m == nil {
+		return nil
+	}
+
+	return m
+
+}
+
+func (m *TLUserProjectionBundle) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_userProjectionBundle, int(layer)); clazzId {
+	case 0xc3baeed8:
+		size := 4
+		size += 4
+		if m.Facts != nil {
+			size += iface.CalcObjectListSize(m.Facts, layer)
+		}
+
+		size += iface.CalcObjectListSize(m.ViewerUsers, layer)
+		size += iface.CalcInt64ListSize(m.MissingUserIds)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUserProjectionBundle) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_userProjectionBundle, int(layer)); clazzId {
+	case 0xc3baeed8:
+
+		if err := iface.ValidateRequiredSlice("viewer_users", m.ViewerUsers); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("missing_user_ids", m.MissingUserIds); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode userProjectionBundle: unsupported layer %d", layer)
+	}
+}
+
+// Encode <--
+func (m *TLUserProjectionBundle) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_userProjectionBundle, int(layer)); clazzId {
+	case 0xc3baeed8:
+		x.PutClazzID(0xc3baeed8)
+
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
+
+			if m.Facts != nil {
+				flags |= 1 << 0
+			}
+
+			return flags
+		}
+
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+		if m.Facts != nil {
+			if err := iface.EncodeObjectList(x, m.Facts, layer); err != nil {
+				return fmt.Errorf("unable to encode userProjectionBundle#0xc3baeed8: field facts: %w", err)
+			}
+		}
+
+		if err := iface.EncodeObjectList(x, m.ViewerUsers, layer); err != nil {
+			return fmt.Errorf("unable to encode userProjectionBundle#0xc3baeed8: field viewer_users: %w", err)
+		}
+
+		iface.EncodeInt64List(x, m.MissingUserIds)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode userProjectionBundle: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLUserProjectionBundle) Decode(d *bin.Decoder) (err error) {
+	switch m.ClazzID {
+	case 0xc3baeed8:
+		flags, err := d.Uint32()
+		if err != nil {
+			return fmt.Errorf("unable to decode userProjectionBundle#0xc3baeed8: field flags: %w", err)
+		}
+		_ = flags
+		if (flags & (1 << 0)) != 0 {
+			l1, err3 := d.VectorHeader()
+			if err3 != nil {
+				return fmt.Errorf("unable to decode userProjectionBundle#0xc3baeed8: field facts: %w", err3)
+			}
+			if l1 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode userProjectionBundle#0xc3baeed8: field facts: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+			}
+			prealloc1 := int(l1)
+			if prealloc1 > bin.PreallocateLimit {
+				prealloc1 = bin.PreallocateLimit
+			}
+			v1 := make([]tg.ImmutableUserClazz, 0, prealloc1)
+			for i := int32(0); i < l1; i++ {
+				vv1, err3 := tg.DecodeImmutableUserClazz(d)
+				if err3 != nil {
+					return fmt.Errorf("unable to decode userProjectionBundle#0xc3baeed8: field facts: %w", err3)
+				}
+				v1 = append(v1, vv1)
+			}
+			m.Facts = v1
+		}
+		l2, err3 := d.VectorHeader()
+		if err3 != nil {
+			return fmt.Errorf("unable to decode userProjectionBundle#0xc3baeed8: field viewer_users: %w", err3)
+		}
+		if l2 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode userProjectionBundle#0xc3baeed8: field viewer_users: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l2)})
+		}
+		prealloc2 := int(l2)
+		if prealloc2 > bin.PreallocateLimit {
+			prealloc2 = bin.PreallocateLimit
+		}
+		v2 := make([]ViewerUsersClazz, 0, prealloc2)
+		for i := int32(0); i < l2; i++ {
+			vv2, err3 := DecodeViewerUsersClazz(d)
+			if err3 != nil {
+				return fmt.Errorf("unable to decode userProjectionBundle#0xc3baeed8: field viewer_users: %w", err3)
+			}
+			v2 = append(v2, vv2)
+		}
+		m.ViewerUsers = v2
+
+		m.MissingUserIds, err = iface.DecodeInt64List(d)
+		if err != nil {
+			return fmt.Errorf("unable to decode userProjectionBundle#0xc3baeed8: field missing_user_ids: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode userProjectionBundle: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// UserProjectionBundle <--
+type UserProjectionBundle = TLUserProjectionBundle
+
 // UsernameDataClazz <--
 //   - TL_UsernameData
 type UsernameDataClazz = *TLUsernameData
@@ -1839,3 +2052,157 @@ func (m *UsersFound) ToUsersIdFound() (*TLUsersIdFound, bool) {
 
 	return nil, false
 }
+
+// ViewerUsersClazz <--
+//   - TL_ViewerUsers
+type ViewerUsersClazz = *TLViewerUsers
+
+func DecodeViewerUsersClazz(d *bin.Decoder) (ViewerUsersClazz, error) {
+	// id, err := d.PeekClazzID()
+	id, err := d.ClazzID()
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode ViewerUsers: constructor: %w", err)
+	}
+
+	switch id {
+	case 0x9aac1d89:
+		x := &TLViewerUsers{ClazzID: id, ClazzName2: ClazzName_viewerUsers}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
+		return x, nil
+	default:
+		return nil, fmt.Errorf("unable to decode ViewerUsers: invalid constructor %x", id)
+	}
+
+}
+
+// TLViewerUsers <--
+type TLViewerUsers struct {
+	ClazzID      uint32         `json:"_id"`
+	ClazzName2   string         `json:"_name"`
+	ViewerUserId int64          `json:"viewer_user_id"`
+	Users        []tg.UserClazz `json:"users"`
+}
+
+func MakeTLViewerUsers(m *TLViewerUsers) *TLViewerUsers {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_viewerUsers
+
+	return m
+}
+
+func (m *TLViewerUsers) String() string {
+	return iface.DebugStringWithName("viewerUsers", m)
+}
+
+func (m *TLViewerUsers) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("viewerUsers", m)
+}
+
+// ViewerUsersClazzName <--
+func (m *TLViewerUsers) ViewerUsersClazzName() string {
+	return ClazzName_viewerUsers
+}
+
+// ClazzName <--
+func (m *TLViewerUsers) ClazzName() string {
+	return m.ClazzName2
+}
+
+// ToViewerUsers <--
+func (m *TLViewerUsers) ToViewerUsers() *ViewerUsers {
+	if m == nil {
+		return nil
+	}
+
+	return m
+
+}
+
+func (m *TLViewerUsers) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_viewerUsers, int(layer)); clazzId {
+	case 0x9aac1d89:
+		size := 4
+		size += 8
+		size += iface.CalcObjectListSize(m.Users, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLViewerUsers) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_viewerUsers, int(layer)); clazzId {
+	case 0x9aac1d89:
+		if err := iface.ValidateRequiredSlice("users", m.Users); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode viewerUsers: unsupported layer %d", layer)
+	}
+}
+
+// Encode <--
+func (m *TLViewerUsers) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_viewerUsers, int(layer)); clazzId {
+	case 0x9aac1d89:
+		x.PutClazzID(0x9aac1d89)
+
+		x.PutInt64(m.ViewerUserId)
+
+		if err := iface.EncodeObjectList(x, m.Users, layer); err != nil {
+			return fmt.Errorf("unable to encode viewerUsers#0x9aac1d89: field users: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode viewerUsers: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLViewerUsers) Decode(d *bin.Decoder) (err error) {
+	switch m.ClazzID {
+	case 0x9aac1d89:
+		m.ViewerUserId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode viewerUsers#0x9aac1d89: field viewer_user_id: %w", err)
+		}
+		l1, err3 := d.VectorHeader()
+		if err3 != nil {
+			return fmt.Errorf("unable to decode viewerUsers#0x9aac1d89: field users: %w", err3)
+		}
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode viewerUsers#0x9aac1d89: field users: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]tg.UserClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
+			vv1, err3 := tg.DecodeUserClazz(d)
+			if err3 != nil {
+				return fmt.Errorf("unable to decode viewerUsers#0x9aac1d89: field users: %w", err3)
+			}
+			v1 = append(v1, vv1)
+		}
+		m.Users = v1
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode viewerUsers: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// ViewerUsers <--
+type ViewerUsers = TLViewerUsers

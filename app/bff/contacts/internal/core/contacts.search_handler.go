@@ -17,6 +17,7 @@
 package core
 
 import (
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -113,20 +114,13 @@ func (c *ContactsCore) ContactsSearch(in *tg.TLContactsSearch) (*tg.ContactsFoun
 		c.Logger.Errorf("contacts.search - user.search error: q: %q, err: %v", in.Q, err)
 	}
 
-	users, err := c.svcCtx.Repo.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
-		Id: userIDs,
-		To: []int64{c.MD.UserId},
-	})
+	users, err := c.projectUsers(userIDs, userprojection.MissingStoredReference)
 	if err != nil {
-		c.Logger.Errorf("contacts.search - user.getMutableUsers error: ids: %v, err: %v", userIDs, err)
+		c.Logger.Errorf("contacts.search - user.getUserProjectionBundle error: ids: %v, err: %v", userIDs, err)
 		return found, nil
 	}
 
-	var immutableUsers []tg.ImmutableUserClazz
-	if users != nil {
-		immutableUsers = users.Datas
-	}
-	found.Users = projectUsersByIDs(immutableUsers, userIDs)
+	found.Users = users
 	contactSet := make(map[int64]struct{}, len(contactIDs))
 	for _, id := range contactIDs {
 		contactSet[id] = struct{}{}

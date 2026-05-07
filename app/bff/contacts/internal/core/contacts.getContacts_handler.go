@@ -17,6 +17,7 @@
 package core
 
 import (
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -45,22 +46,14 @@ func (c *ContactsCore) ContactsGetContacts(in *tg.TLContactsGetContacts) (*tg.Co
 		}
 	}
 
-	users, err := c.svcCtx.Repo.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{
-		Id: append([]int64{c.MD.UserId}, idList...),
-		To: []int64{c.MD.UserId},
-	})
+	users, err := c.projectUsers(idList, userprojection.MissingStoredReference)
 	if err != nil {
 		return nil, err
-	}
-
-	var immutableUsers []tg.ImmutableUserClazz
-	if users != nil {
-		immutableUsers = users.Datas
 	}
 
 	return tg.MakeTLContactsContacts(&tg.TLContactsContacts{
 		Contacts:   contactDatasToContacts(contactList.Datas),
 		SavedCount: 0,
-		Users:      projectUsersByIDs(immutableUsers, idList),
+		Users:      users,
 	}).ToContactsContacts(), nil
 }

@@ -26,20 +26,35 @@ import (
 // Repository is the dependency container for repository instances.
 type Repository struct {
 	sqlc.CachedConn
-	db          *sqlx.DB
-	model       *model.Models
-	mediaReader MediaReader
+	db              *sqlx.DB
+	model           *model.Models
+	mediaReader     MediaReader
+	projection      ProjectionConfig
+	projectionCache projectionCacheStore
 }
 
 // NewRepository creates a new Repository.
 func NewRepository(c config.Config, mediaReader MediaReader) *Repository {
 	db := sqlx.NewMySQL(&c.Mysql)
 	return &Repository{
-		CachedConn:  sqlc.NewConn(db, c.Cache),
-		db:          db,
-		model:       model.NewModels(db),
-		mediaReader: mediaReader,
+		CachedConn:      sqlc.NewConn(db, c.Cache),
+		db:              db,
+		model:           model.NewModels(db),
+		mediaReader:     mediaReader,
+		projection:      projectionConfigFromConfig(c.Projection),
+		projectionCache: newProjectionRedisCacheStore(c.Cache),
 	}
+}
+
+func projectionConfigFromConfig(c config.ProjectionConf) ProjectionConfig {
+	return normalizeProjectionConfig(ProjectionConfig{
+		SQLInChunkSize:         c.SQLInChunkSize,
+		MaxViewerUserIds:       c.MaxViewerUserIds,
+		MaxTargetUserIds:       c.MaxTargetUserIds,
+		MaxProjectionPairs:     c.MaxProjectionPairs,
+		ContactMapCacheEnabled: !c.ContactMapCacheDisabled,
+		ContactMapMaxEntries:   c.ContactMapMaxEntries,
+	})
 }
 
 func (r *Repository) Close() error {

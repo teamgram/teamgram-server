@@ -11,6 +11,8 @@
 package user
 
 const (
+	ClazzID_viewerUsers                        = 0x9aac1d89 // 9aac1d89
+	ClazzID_userProjectionBundle               = 0xc3baeed8 // c3baeed8
 	ClazzID_userImportedContacts               = 0x4adf7bc0 // 4adf7bc0
 	ClazzID_usersDataFound                     = 0x3fa3dbc7 // 3fa3dbc7
 	ClazzID_usersIdFound                       = 0x80c4adfa // 80c4adfa
@@ -87,6 +89,7 @@ const (
 	ClazzID_user_updateBotData                 = 0x60f35d28 // 60f35d28
 	ClazzID_user_getImmutableUserV2            = 0x300aba4c // 300aba4c
 	ClazzID_user_getMutableUsersV2             = 0x94f98b28 // 94f98b28
+	ClazzID_user_getUserProjectionBundle       = 0x3fc25f21 // 3fc25f21
 	ClazzID_user_createNewTestUser             = 0x4c6eccab // 4c6eccab
 	ClazzID_user_editCloseFriends              = 0x86247b05 // 86247b05
 	ClazzID_user_setStoriesMaxId               = 0x52f5b670 // 52f5b670

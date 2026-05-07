@@ -42,6 +42,14 @@ Gateway:
       - 127.0.0.1:2379
     Key: interface.gateway
 
+UserClient:
+  DestService: service.biz_service.user
+  ServiceName: RPCUser
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.biz_service.user
+
 ReceiverOperations:
   Brokers:
     - 127.0.0.1:9094

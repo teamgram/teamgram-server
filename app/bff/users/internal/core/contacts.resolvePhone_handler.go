@@ -20,6 +20,7 @@ import (
 	"errors"
 	"fmt"
 
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -51,33 +52,17 @@ func (c *UsersCore) ContactsResolvePhone(in *tg.TLContactsResolvePhone) (*tg.Con
 		return nil, tg.ErrPhoneNotOccupied
 	}
 
-	mutableUsers, err := c.svcCtx.Repo.UserClient.UserGetMutableUsersV2(c.ctx, &userpb.TLUserGetMutableUsersV2{
-		Id:      []int64{resolvedID.V, selfID},
-		Privacy: true,
-		HasTo:   true,
-		To:      []int64{selfID},
-	})
+	users, err := userprojection.ProjectUsers(c.ctx, c.svcCtx.Repo.UserClient, selfID, []int64{resolvedID.V}, userprojection.MissingExplicitInput)
 	if err != nil {
 		return nil, err
 	}
-
-	var resolvedUser tg.UserClazz
-	if mutableUsers != nil {
-		for _, immutableUser := range mutableUsers.Users {
-			user := projectImmutableUser(immutableUser)
-			if id, ok := userID(user); ok && id == resolvedID.V {
-				resolvedUser = user
-				break
-			}
-		}
-	}
-	if resolvedUser == nil {
+	if len(users) == 0 {
 		return nil, tg.ErrPhoneNotOccupied
 	}
 
 	return tg.MakeTLContactsResolvedPeer(&tg.TLContactsResolvedPeer{
 		Peer:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: resolvedID.V}),
 		Chats: []tg.ChatClazz{},
-		Users: []tg.UserClazz{resolvedUser},
+		Users: users,
 	}).ToContactsResolvedPeer(), nil
 }

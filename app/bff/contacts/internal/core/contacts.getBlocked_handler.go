@@ -17,6 +17,7 @@
 package core
 
 import (
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -56,18 +57,13 @@ func (c *ContactsCore) ContactsGetBlocked(in *tg.TLContactsGetBlocked) (*tg.Cont
 		}
 	}
 
-	users, err := c.svcCtx.Repo.UserClient.UserGetMutableUsers(c.ctx, &userpb.TLUserGetMutableUsers{Id: userIDs})
+	users, err := c.projectUsers(userIDs, userprojection.MissingStoredReference)
 	if err != nil {
 		return nil, err
-	}
-
-	var immutableUsers []tg.ImmutableUserClazz
-	if users != nil {
-		immutableUsers = users.Datas
 	}
 	return tg.MakeTLContactsBlocked(&tg.TLContactsBlocked{
 		Blocked: blockedList.Datas,
 		Chats:   []tg.ChatClazz{},
-		Users:   projectUsersByIDs(immutableUsers, userIDs),
+		Users:   users,
 	}).ToContactsBlocked(), nil
 }

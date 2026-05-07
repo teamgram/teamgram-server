@@ -27,4 +27,14 @@ type Config struct {
 	Mysql       sqlx.Config
 	Cache       cache.CacheConf
 	MediaClient kitex.RpcClientConf
+	Projection  ProjectionConf `json:",optional"`
+}
+
+type ProjectionConf struct {
+	SQLInChunkSize          int  `json:",default=500"`
+	MaxViewerUserIds        int  `json:",default=8"`
+	MaxTargetUserIds        int  `json:",default=1000"`
+	MaxProjectionPairs      int  `json:",default=5000"`
+	ContactMapCacheDisabled bool `json:",optional"`
+	ContactMapMaxEntries    int  `json:",default=1000"`
 }

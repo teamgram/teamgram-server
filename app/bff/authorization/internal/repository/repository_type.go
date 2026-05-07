@@ -43,5 +43,6 @@ type (
 	UserDirectory interface {
 		GetUserByPhone(ctx context.Context, phone string) (*tg.ImmutableUser, error)
 		CreateUser(ctx context.Context, secretKeyId int64, phone string, countryCode string, firstName string, lastName string) (*tg.ImmutableUser, error)
+		ProjectSelfUser(ctx context.Context, userId int64) (tg.UserClazz, error)
 	}
 )

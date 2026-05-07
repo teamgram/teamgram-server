@@ -21,6 +21,7 @@ import (
 	"math"
 	"strconv"
 
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
@@ -510,36 +511,12 @@ func (c *DialogsCore) fetchDialogUsersWithOperation(operation string, ids []int6
 		return []tg.UserClazz{}, nil
 	}
 
-	users, err := c.svcCtx.Repo.UserClient.UserGetMutableUsersV2(c.ctx, &userpb.TLUserGetMutableUsersV2{
-		Id:      ids,
-		Privacy: true,
-		HasTo:   true,
-		To:      []int64{c.MD.UserId},
-	})
+	users, err := userprojection.ProjectUsers(c.ctx, c.svcCtx.Repo.UserClient, c.MD.UserId, ids, userprojection.MissingStoredReference)
 	if err != nil {
-		c.Logger.Errorf("%s - user.getMutableUsersV2 failed: user_id: %d, id: %v, err: %v", operation, c.MD.UserId, ids, err)
+		c.Logger.Errorf("%s - user.getUserProjectionBundle failed: user_id: %d, id: %v, err: %v", operation, c.MD.UserId, ids, err)
 		return nil, tg.ErrInternalServerError
 	}
-
-	byID := make(map[int64]tg.UserClazz, len(ids))
-	if users != nil {
-		for _, immutableUser := range users.Users {
-			user := projectImmutableUser(immutableUser)
-			if id, ok := userID(user); ok {
-				byID[id] = user
-			}
-		}
-	}
-
-	out := make([]tg.UserClazz, 0, len(ids))
-	for _, id := range ids {
-		if user := byID[id]; user != nil {
-			out = append(out, user)
-			continue
-		}
-		out = append(out, tg.MakeTLUserEmpty(&tg.TLUserEmpty{Id: id}))
-	}
-	return out, nil
+	return users, nil
 }
 
 func chatID(chat tg.ChatClazz) (int64, bool) {

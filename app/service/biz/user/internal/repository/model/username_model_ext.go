@@ -17,6 +17,5 @@
 package model
 
 type (
-	extendUsernameModel interface {
-	}
+	extendUsernameModel interface{}
 )

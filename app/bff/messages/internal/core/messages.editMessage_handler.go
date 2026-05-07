@@ -19,6 +19,7 @@ package core
 import (
 	"time"
 
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -97,6 +98,9 @@ func (c *MessagesCore) MessagesEditMessage(in *tg.TLMessagesEditMessage) (*tg.Up
 	})
 	if err != nil {
 		return nil, mapMsgEditError(err)
+	}
+	if err := userprojection.FillUpdatesUsers(c.ctx, c.svcCtx.Repo.UserClient, md.UserId, updates, userprojection.MissingStoredReference); err != nil {
+		return nil, err
 	}
 
 	return updates, nil

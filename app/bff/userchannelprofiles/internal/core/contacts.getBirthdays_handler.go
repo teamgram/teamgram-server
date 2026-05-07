@@ -17,6 +17,7 @@
 package core
 
 import (
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -59,22 +60,11 @@ func (c *UserChannelProfilesCore) ContactsGetBirthdays(in *tg.TLContactsGetBirth
 		}).ToContactsContactBirthdays(), nil
 	}
 
-	mutableUsers, err := c.svcCtx.Repo.UserClient.UserGetMutableUsersV2(c.ctx, &userpb.TLUserGetMutableUsersV2{
-		Id:      ids,
-		Privacy: true,
-		HasTo:   true,
-		To:      []int64{selfID},
-	})
+	users, err := userprojection.ProjectUsers(c.ctx, c.svcCtx.Repo.UserClient, selfID, ids, userprojection.MissingStoredReference)
 	if err != nil {
 		return nil, err
 	}
 
-	users := []tg.UserClazz{}
-	if mutableUsers != nil {
-		for _, immutableUser := range mutableUsers.Users {
-			users = append(users, projectImmutableUser(immutableUser))
-		}
-	}
 	return tg.MakeTLContactsContactBirthdays(&tg.TLContactsContactBirthdays{
 		Contacts: contacts,
 		Users:    users,

@@ -43,20 +43,3 @@ func TestInputHelpers(t *testing.T) {
 		t.Fatalf("inputChannelEmpty error = %v, want INPUT_REQUEST_INVALID", err)
 	}
 }
-
-func TestProjectImmutableUser(t *testing.T) {
-	projected := projectImmutableUser(immutableUserFixture(2002, "Ada", "Lovelace", "ada"))
-	user, ok := projected.(*tg.TLUser)
-	if !ok {
-		t.Fatalf("projected user = %T, want *tg.TLUser", projected)
-	}
-	if user.Id != 2002 || user.FirstName == nil || *user.FirstName != "Ada" || user.Username == nil || *user.Username != "ada" {
-		t.Fatalf("projected user = %+v", user)
-	}
-
-	self := projectSelfImmutableUser(immutableUserFixture(1001, "Self", "", "self"))
-	selfUser, ok := self.(*tg.TLUser)
-	if !ok || !selfUser.Self {
-		t.Fatalf("self projection = %#v, want self user", self)
-	}
-}

@@ -15,6 +15,8 @@ import (
 )
 
 const (
+	ClazzName_viewerUsers                        = "viewerUsers"
+	ClazzName_userProjectionBundle               = "userProjectionBundle"
 	ClazzName_userImportedContacts               = "userImportedContacts"
 	ClazzName_usersDataFound                     = "usersDataFound"
 	ClazzName_usersIdFound                       = "usersIdFound"
@@ -91,6 +93,7 @@ const (
 	ClazzName_user_updateBotData                 = "user_updateBotData"
 	ClazzName_user_getImmutableUserV2            = "user_getImmutableUserV2"
 	ClazzName_user_getMutableUsersV2             = "user_getMutableUsersV2"
+	ClazzName_user_getUserProjectionBundle       = "user_getUserProjectionBundle"
 	ClazzName_user_createNewTestUser             = "user_createNewTestUser"
 	ClazzName_user_editCloseFriends              = "user_editCloseFriends"
 	ClazzName_user_setStoriesMaxId               = "user_setStoriesMaxId"
@@ -128,6 +131,8 @@ const (
 
 func init() {
 	// RegisterClazzNameList
+	iface.RegisterClazzName(ClazzName_viewerUsers, 0, 0x9aac1d89)                        // 9aac1d89
+	iface.RegisterClazzName(ClazzName_userProjectionBundle, 0, 0xc3baeed8)               // c3baeed8
 	iface.RegisterClazzName(ClazzName_userImportedContacts, 0, 0x4adf7bc0)               // 4adf7bc0
 	iface.RegisterClazzName(ClazzName_usersDataFound, 0, 0x3fa3dbc7)                     // 3fa3dbc7
 	iface.RegisterClazzName(ClazzName_usersIdFound, 0, 0x80c4adfa)                       // 80c4adfa
@@ -204,6 +209,7 @@ func init() {
 	iface.RegisterClazzName(ClazzName_user_updateBotData, 0, 0x60f35d28)                 // 60f35d28
 	iface.RegisterClazzName(ClazzName_user_getImmutableUserV2, 0, 0x300aba4c)            // 300aba4c
 	iface.RegisterClazzName(ClazzName_user_getMutableUsersV2, 0, 0x94f98b28)             // 94f98b28
+	iface.RegisterClazzName(ClazzName_user_getUserProjectionBundle, 0, 0x3fc25f21)       // 3fc25f21
 	iface.RegisterClazzName(ClazzName_user_createNewTestUser, 0, 0x4c6eccab)             // 4c6eccab
 	iface.RegisterClazzName(ClazzName_user_editCloseFriends, 0, 0x86247b05)              // 86247b05
 	iface.RegisterClazzName(ClazzName_user_setStoriesMaxId, 0, 0x52f5b670)               // 52f5b670
@@ -239,6 +245,8 @@ func init() {
 	iface.RegisterClazzName(ClazzName_user_deactivateAllChannelUsernames, 0, 0x9a5fe53c) // 9a5fe53c
 
 	//RegisterClazzIDNameList
+	iface.RegisterClazzIDName(ClazzName_viewerUsers, 0x9aac1d89)                        // 9aac1d89
+	iface.RegisterClazzIDName(ClazzName_userProjectionBundle, 0xc3baeed8)               // c3baeed8
 	iface.RegisterClazzIDName(ClazzName_userImportedContacts, 0x4adf7bc0)               // 4adf7bc0
 	iface.RegisterClazzIDName(ClazzName_usersDataFound, 0x3fa3dbc7)                     // 3fa3dbc7
 	iface.RegisterClazzIDName(ClazzName_usersIdFound, 0x80c4adfa)                       // 80c4adfa
@@ -315,6 +323,7 @@ func init() {
 	iface.RegisterClazzIDName(ClazzName_user_updateBotData, 0x60f35d28)                 // 60f35d28
 	iface.RegisterClazzIDName(ClazzName_user_getImmutableUserV2, 0x300aba4c)            // 300aba4c
 	iface.RegisterClazzIDName(ClazzName_user_getMutableUsersV2, 0x94f98b28)             // 94f98b28
+	iface.RegisterClazzIDName(ClazzName_user_getUserProjectionBundle, 0x3fc25f21)       // 3fc25f21
 	iface.RegisterClazzIDName(ClazzName_user_createNewTestUser, 0x4c6eccab)             // 4c6eccab
 	iface.RegisterClazzIDName(ClazzName_user_editCloseFriends, 0x86247b05)              // 86247b05
 	iface.RegisterClazzIDName(ClazzName_user_setStoriesMaxId, 0x52f5b670)               // 52f5b670

@@ -19,9 +19,11 @@ package repository
 import (
 	"context"
 	"fmt"
+
 	"github.com/teamgram/marmota/pkg/strings2"
 	"github.com/zeromicro/go-zero/core/logx"
 
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/app/bff/usernames/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/bff/usernames/plugin"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
@@ -104,7 +106,7 @@ func (r *Repository) UpdateAccountUsername(ctx context.Context, userId int64, ne
 
 	oldUsername := userDataUsername(me.User)
 	if newUsername == oldUsername {
-		return buildSelfUser(me), nil
+		return r.projectSelfUser(ctx, userId)
 	}
 
 	if newUsername != "" {
@@ -142,12 +144,11 @@ func (r *Repository) UpdateAccountUsername(ctx context.Context, userId int64, ne
 		return nil, fmt.Errorf("usernames repository: update username: %w", err)
 	}
 
-	// Update the in-memory copy for the sync push.
 	me.User.Username = newUsername
 
 	r.pushUpdateUserName(ctx, userId, me)
 
-	return buildSelfUser(me), nil
+	return r.projectSelfUser(ctx, userId)
 }
 
 func (r *Repository) pushUpdateUserName(ctx context.Context, userId int64, me *tg.ImmutableUser) {
@@ -170,14 +171,7 @@ func (r *Repository) pushUpdateUserName(ctx context.Context, userId int64, me *t
 
 	logx.WithContext(ctx).Errorf("pushUpdateUserName sync not impl for userId=%d: %s", userId, update)
 
-	//if _, err := r.SyncClient.SyncUpdatesNotMe(ctx, &syncpb.TLSyncUpdatesNotMe{
-	//	UserId: userId,
-	//	Updates: tg.MakeTLUpdates(&tg.TLUpdates{
-	//		Updates: []tg.UpdateClazz{update},
-	//		Users:   []tg.UserClazz{buildSelfUser(me).Clazz},
-	//		Date:    int32(time.Now().Unix()),
-	//	}),
-	//}); err != nil {
+	//if _, err := r.SyncClient.SyncUpdatesNotMe(ctx, ...); err != nil {
 	//	logx.Errorf("pushUpdateUserName sync failed for userId=%d: %v", userId, err)
 	//}
 }
@@ -199,22 +193,11 @@ func (r *Repository) ResolveUsername(ctx context.Context, selfId int64, username
 
 	switch p := rName.Clazz.(type) {
 	case *tg.TLPeerUser:
-		mUsers, err := r.UserClient.UserGetMutableUsersV2(ctx, &userpb.TLUserGetMutableUsersV2{
-			Id:      []int64{selfId, p.UserId},
-			Privacy: true,
-			HasTo:   true,
-			To:      []int64{selfId},
-		})
+		users, err := userprojection.ProjectUsers(ctx, r.UserClient, selfId, []int64{selfId, p.UserId}, userprojection.MissingExplicitInput)
 		if err != nil {
-			return nil, fmt.Errorf("usernames repository: resolve username: get mutable users: %w", err)
+			return nil, fmt.Errorf("usernames repository: resolve username: project users: %w", err)
 		}
-		if mUsers != nil {
-			for _, u := range mUsers.Users {
-				if u != nil {
-					resolvedPeer.Users = append(resolvedPeer.Users, buildSelfUser(u).Clazz)
-				}
-			}
-		}
+		resolvedPeer.Users = append(resolvedPeer.Users, users...)
 	case *tg.TLPeerChat:
 		chat, err := r.ChatClient.ChatGetChatBySelfId(ctx, &chatpb.TLChatGetChatBySelfId{
 			SelfId: selfId,
@@ -270,40 +253,15 @@ func userDataLastName(ud tg.UserDataClazz) string {
 	return ud.LastName
 }
 
-// buildSelfUser builds a *User (wrapper) from an ImmutableUser, setting Self=true.
-func buildSelfUser(me *tg.ImmutableUser) *tg.User {
-	if me == nil || me.User == nil {
-		return nil
+func (r *Repository) projectSelfUser(ctx context.Context, userId int64) (*tg.User, error) {
+	users, err := userprojection.ProjectUsers(ctx, r.UserClient, userId, []int64{userId}, userprojection.MissingStoredReference)
+	if err != nil {
+		return nil, fmt.Errorf("usernames repository: project self user: %w", err)
 	}
-	ud := me.User
-	return tg.MakeTLUser(&tg.TLUser{
-		Self:       true,
-		Id:         ud.Id,
-		AccessHash: optionalInt64Ptr(ud.AccessHash),
-		FirstName:  optionalStringPtr(ud.FirstName),
-		LastName:   optionalStringPtr(ud.LastName),
-		Username:   optionalStringPtr(ud.Username),
-		Phone:      optionalStringPtr(ud.Phone),
-		Verified:   ud.Verified,
-		Support:    ud.Support,
-		Fake:       ud.Fake,
-		Premium:    ud.Premium,
-		Status:     tg.UserStatusEmptyClazz,
-	}).ToUser()
-}
-
-func optionalStringPtr(v string) *string {
-	if v == "" {
-		return nil
+	if len(users) == 0 {
+		return nil, fmt.Errorf("usernames repository: project self user: returned empty users")
 	}
-	return &v
-}
-
-func optionalInt64Ptr(v int64) *int64 {
-	if v == 0 {
-		return nil
-	}
-	return &v
+	return &tg.User{Clazz: users[0]}, nil
 }
 
 // projectMutableChat converts a MutableChat to a ChatClazz suitable for

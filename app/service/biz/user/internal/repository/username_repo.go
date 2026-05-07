@@ -53,9 +53,19 @@ func (r *Repository) UpdateUsername(ctx context.Context, id int64, username stri
 }
 
 func (r *Repository) DeleteUsername(ctx context.Context, username string) (bool, error) {
+	usernameDO, err := r.model.UsernameModel.SelectByUsername(ctx, username)
+	if err != nil {
+		if !isNotFound(err) {
+			return false, fmt.Errorf("%w: delete username lookup %s: %w", userpb.ErrUserStorage, username, err)
+		}
+		usernameDO = nil
+	}
 	rows, err := r.model.UsernameModel.Delete(ctx, username)
 	if err != nil {
 		return false, fmt.Errorf("%w: delete username %s: %w", userpb.ErrUserStorage, username, err)
+	}
+	if rows > 0 && usernameDO != nil && usernameDO.PeerType == tg.PEER_USER {
+		r.invalidateProjectionFactCache(ctx, usernameDO.PeerId)
 	}
 	return rows > 0, nil
 }
@@ -67,6 +77,9 @@ func (r *Repository) DeleteUsernameByPeer(ctx context.Context, peerType int32, p
 	}
 	if rows == 0 {
 		return userpb.ErrUsernameNotFound
+	}
+	if peerType == tg.PEER_USER {
+		r.invalidateProjectionFactCache(ctx, peerID)
 	}
 	return nil
 }
@@ -141,6 +154,9 @@ func (r *Repository) UpdateUsernameByPeer(ctx context.Context, peerType int32, p
 		}
 		return false, fmt.Errorf("%w: update username by peer %d/%d: %w", userpb.ErrUserStorage, peerType, peerID, err)
 	}
+	if peerType == tg.PEER_USER {
+		r.invalidateProjectionFactCache(ctx, peerID)
+	}
 	return true, nil
 }
 
@@ -207,9 +223,11 @@ func (r *Repository) updateUsernameByPeer(ctx context.Context, peerType int32, p
 	}
 
 	if syncUserRow {
-		if err := r.DelCache(ctx, userDataCacheKey(peerID)); err != nil {
-			return fmt.Errorf("%w: invalidate user cache %d: %w", userpb.ErrUserStorage, peerID, err)
+		if err := r.invalidateUserDataCache(ctx, peerID, "invalidate username user cache"); err != nil {
+			return err
 		}
+	} else if peerType == tg.PEER_USER {
+		r.invalidateProjectionFactCache(ctx, peerID)
 	}
 	return nil
 }
@@ -224,6 +242,9 @@ func (r *Repository) ToggleUsername(ctx context.Context, peerType int32, peerID 
 	}
 	if rows == 0 {
 		return userpb.ErrUsernameNotFound
+	}
+	if peerType == tg.PEER_USER {
+		r.invalidateProjectionFactCache(ctx, peerID)
 	}
 	return nil
 }
@@ -241,6 +262,9 @@ func (r *Repository) ReorderUsernames(ctx context.Context, peerType int32, peerI
 		if rows == 0 {
 			return userpb.ErrUsernameNotFound
 		}
+	}
+	if peerType == tg.PEER_USER {
+		r.invalidateProjectionFactCache(ctx, peerID)
 	}
 	return nil
 }

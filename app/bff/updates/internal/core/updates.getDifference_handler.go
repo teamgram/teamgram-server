@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"math"
 
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -48,7 +49,14 @@ func (c *UpdatesCore) UpdatesGetDifference(in *tg.TLUpdatesGetDifference) (*tg.U
 	if err != nil {
 		return nil, err
 	}
-	return userDifferenceToUpdatesDifference(diff)
+	publicDiff, err := userDifferenceToUpdatesDifference(diff)
+	if err != nil {
+		return nil, err
+	}
+	if err := userprojection.FillDifferenceUsers(c.ctx, c.svcCtx.Repo.UserClient, userID, publicDiff, userprojection.MissingStoredReference); err != nil {
+		return nil, err
+	}
+	return publicDiff, nil
 }
 
 func (c *UpdatesCore) requireUserAndPermAuthKey() (int64, int64, error) {

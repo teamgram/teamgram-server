@@ -141,6 +141,7 @@ func buildMessagesConfig(c config.Config) messageshelper.Config {
 		ChatClient:        withServiceName(c.BizServiceClient, "RPCChat"),
 		MsgClient:         withServiceName(c.MsgClient, "RPCMsg"),
 		UserupdatesClient: withServiceName(c.UserupdatesClient, "RPCUserupdates"),
+		UserClient:        withServiceName(c.BizServiceClient, "RPCUser"),
 	}
 }
 
@@ -156,6 +157,7 @@ func buildUpdatesConfig(c config.Config) updateshelper.Config {
 	return updateshelper.Config{
 		RpcServerConf:     c.RpcServerConf,
 		UserupdatesClient: withServiceName(c.UserupdatesClient, "RPCUserupdates"),
+		UserClient:        withServiceName(c.BizServiceClient, "RPCUser"),
 	}
 }
 

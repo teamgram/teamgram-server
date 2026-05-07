@@ -33,8 +33,8 @@ type bizUserPrivaciesModel interface {
 	SelectPrivacy(ctx context.Context, userId int64, keyType int32) (*UserPrivacies, error)
 	SelectPrivacyList(ctx context.Context, userId int64, keyList []int32) ([]UserPrivacies, error)
 	SelectPrivacyListWithCB(ctx context.Context, userId int64, keyList []int32, cb func(sz, i int, v *UserPrivacies)) ([]UserPrivacies, error)
-	SelectUsersPrivacyList(ctx context.Context, idList []int32, keyList []int32) ([]UserPrivacies, error)
-	SelectUsersPrivacyListWithCB(ctx context.Context, idList []int32, keyList []int32, cb func(sz, i int, v *UserPrivacies)) ([]UserPrivacies, error)
+	SelectUsersPrivacyList(ctx context.Context, idList []int64, keyList []int32) ([]UserPrivacies, error)
+	SelectUsersPrivacyListWithCB(ctx context.Context, idList []int64, keyList []int32, cb func(sz, i int, v *UserPrivacies)) ([]UserPrivacies, error)
 	SelectPrivacyAll(ctx context.Context, userId int64) ([]UserPrivacies, error)
 	SelectPrivacyAllWithCB(ctx context.Context, userId int64, cb func(sz, i int, v *UserPrivacies)) ([]UserPrivacies, error)
 }
@@ -44,7 +44,7 @@ type UserPrivaciesTxModel interface {
 	InsertBulk(doList []*UserPrivacies) (lastInsertId, rowsAffected int64, err error)
 	SelectPrivacy(userId int64, keyType int32) (*UserPrivacies, error)
 	SelectPrivacyList(userId int64, keyList []int32) ([]UserPrivacies, error)
-	SelectUsersPrivacyList(idList []int32, keyList []int32) ([]UserPrivacies, error)
+	SelectUsersPrivacyList(idList []int64, keyList []int32) ([]UserPrivacies, error)
 	SelectPrivacyAll(userId int64) ([]UserPrivacies, error)
 }
 
@@ -321,9 +321,9 @@ func (m *defaultUserPrivaciesModel) SelectPrivacyListWithCB(ctx context.Context,
 
 // SelectUsersPrivacyList
 // select id, user_id, key_type, rules from user_privacies where user_id in (:idList) and key_type in (:keyList)
-func (m *defaultUserPrivaciesModel) SelectUsersPrivacyList(ctx context.Context, idList []int32, keyList []int32) (rList []UserPrivacies, err error) {
+func (m *defaultUserPrivaciesModel) SelectUsersPrivacyList(ctx context.Context, idList []int64, keyList []int32) (rList []UserPrivacies, err error) {
 	var (
-		query  = fmt.Sprintf("select id, user_id, key_type, rules from user_privacies where user_id in (%s) and key_type in (%s)", sqlx.InInt32List(idList), sqlx.InInt32List(keyList))
+		query  = fmt.Sprintf("select id, user_id, key_type, rules from user_privacies where user_id in (%s) and key_type in (%s)", sqlx.InInt64List(idList), sqlx.InInt32List(keyList))
 		values []UserPrivacies
 	)
 	if len(idList) == 0 {
@@ -354,9 +354,9 @@ func (m *defaultUserPrivaciesModel) SelectUsersPrivacyList(ctx context.Context, 
 
 // SelectUsersPrivacyList
 // select id, user_id, key_type, rules from user_privacies where user_id in (:idList) and key_type in (:keyList)
-func (m *defaultUserPrivaciesTxModel) SelectUsersPrivacyList(idList []int32, keyList []int32) (rList []UserPrivacies, err error) {
+func (m *defaultUserPrivaciesTxModel) SelectUsersPrivacyList(idList []int64, keyList []int32) (rList []UserPrivacies, err error) {
 	var (
-		query  = fmt.Sprintf("select id, user_id, key_type, rules from user_privacies where user_id in (%s) and key_type in (%s)", sqlx.InInt32List(idList), sqlx.InInt32List(keyList))
+		query  = fmt.Sprintf("select id, user_id, key_type, rules from user_privacies where user_id in (%s) and key_type in (%s)", sqlx.InInt64List(idList), sqlx.InInt32List(keyList))
 		values []UserPrivacies
 	)
 	if len(idList) == 0 {
@@ -387,9 +387,9 @@ func (m *defaultUserPrivaciesTxModel) SelectUsersPrivacyList(idList []int32, key
 
 // SelectUsersPrivacyListWithCB
 // select id, user_id, key_type, rules from user_privacies where user_id in (:idList) and key_type in (:keyList)
-func (m *defaultUserPrivaciesModel) SelectUsersPrivacyListWithCB(ctx context.Context, idList []int32, keyList []int32, cb func(sz, i int, v *UserPrivacies)) (rList []UserPrivacies, err error) {
+func (m *defaultUserPrivaciesModel) SelectUsersPrivacyListWithCB(ctx context.Context, idList []int64, keyList []int32, cb func(sz, i int, v *UserPrivacies)) (rList []UserPrivacies, err error) {
 	var (
-		query  = fmt.Sprintf("select id, user_id, key_type, rules from user_privacies where user_id in (%s) and key_type in (%s)", sqlx.InInt32List(idList), sqlx.InInt32List(keyList))
+		query  = fmt.Sprintf("select id, user_id, key_type, rules from user_privacies where user_id in (%s) and key_type in (%s)", sqlx.InInt64List(idList), sqlx.InInt32List(keyList))
 		values []UserPrivacies
 	)
 	if len(idList) == 0 {

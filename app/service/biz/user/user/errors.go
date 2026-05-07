@@ -5,6 +5,7 @@ import "errors"
 var (
 	ErrUserNotFound                 = errors.New("user: not found")
 	ErrUserStorage                  = errors.New("user: storage failure")
+	ErrUserInvalidArgument          = errors.New("user: invalid argument")
 	ErrUsernameNotFound             = errors.New("user: username not found")
 	ErrUsernameInvalid              = errors.New("user: username invalid")
 	ErrUsernameInUse                = errors.New("user: username in use")

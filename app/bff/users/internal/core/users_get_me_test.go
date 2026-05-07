@@ -10,10 +10,21 @@ import (
 
 func TestUsersGetMeReturnsSelfUserForMatchingToken(t *testing.T) {
 	var gotReq *userpb.TLUserGetImmutableUserByToken
+	var gotProjection *userpb.TLUserGetUserProjectionBundle
 	core := newUsersCoreForTest(&fakeUserClient{
 		getImmutableUserByToken: func(_ context.Context, in *userpb.TLUserGetImmutableUserByToken) (*tg.ImmutableUser, error) {
 			gotReq = in
 			return immutableUserFixture(1001, "Grace", "", "grace"), nil
+		},
+		getUserProjectionBundle: func(_ context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+			gotProjection = in
+			return userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+				ViewerUsers: []userpb.ViewerUsersClazz{
+					userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 1001, Users: []tg.UserClazz{
+						tg.MakeTLUser(&tg.TLUser{Id: 1001, Self: true, FirstName: strPtr("Grace")}),
+					}}),
+				},
+			}).ToUserProjectionBundle(), nil
 		},
 	}, 0)
 
@@ -23,6 +34,10 @@ func TestUsersGetMeReturnsSelfUserForMatchingToken(t *testing.T) {
 	}
 	if gotReq == nil || gotReq.Token != "bot-token" {
 		t.Fatalf("request = %+v, want token bot-token", gotReq)
+	}
+	if gotProjection == nil || len(gotProjection.ViewerUserIds) != 1 || gotProjection.ViewerUserIds[0] != 1001 ||
+		len(gotProjection.TargetUserIds) != 1 || gotProjection.TargetUserIds[0] != 1001 {
+		t.Fatalf("projection request = %+v, want viewer/target 1001", gotProjection)
 	}
 	user, ok := got.Clazz.(*tg.TLUser)
 	if !ok {
@@ -44,4 +59,8 @@ func TestUsersGetMeRejectsTokenUserMismatch(t *testing.T) {
 	if err != tg.ErrTokenInvalid {
 		t.Fatalf("error = %v, want TOKEN_INVALID", err)
 	}
+}
+
+func strPtr(v string) *string {
+	return &v
 }

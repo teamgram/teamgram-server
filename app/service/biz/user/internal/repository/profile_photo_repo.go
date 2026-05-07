@@ -58,8 +58,8 @@ func (r *Repository) UpdateProfilePhoto(ctx context.Context, userID, photoID int
 		return 0, fmt.Errorf("%w: update profile photo %d: %w", userpb.ErrUserStorage, userID, err)
 	}
 
-	if err := r.DelCache(ctx, userDataCacheKey(userID)); err != nil {
-		return 0, fmt.Errorf("%w: invalidate user cache %d: %w", userpb.ErrUserStorage, userID, err)
+	if err := r.invalidateUserDataCache(ctx, userID, "invalidate profile photo user cache"); err != nil {
+		return 0, err
 	}
 	return mainPhotoID, nil
 }
@@ -120,8 +120,8 @@ func (r *Repository) DeleteProfilePhotos(ctx context.Context, userID int64, phot
 		return 0, fmt.Errorf("%w: delete profile photos %d: %w", userpb.ErrUserStorage, userID, err)
 	}
 
-	if err := r.DelCache(ctx, userDataCacheKey(userID)); err != nil {
-		return 0, fmt.Errorf("%w: invalidate user cache %d: %w", userpb.ErrUserStorage, userID, err)
+	if err := r.invalidateUserDataCache(ctx, userID, "invalidate profile photo user cache"); err != nil {
+		return 0, err
 	}
 	return nextMainPhotoID, nil
 }
