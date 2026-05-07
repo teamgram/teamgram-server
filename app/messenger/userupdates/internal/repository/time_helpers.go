@@ -20,7 +20,7 @@ func mysqlZeroTime() time.Time {
 }
 
 func mysqlTimestamp(t time.Time) string {
-	return t.Local().Format(mysqlTimeLayout)
+	return t.UTC().Format(mysqlTimeLayout)
 }
 
 func mysqlNullInvalid() sql.NullTime {
