@@ -18,3 +18,10 @@ MediaClient:
     Hosts:
       - 127.0.0.1:2379
     Key: service.media
+Projection:
+  SQLInChunkSize: 500
+  MaxViewerUserIds: 8
+  MaxTargetUserIds: 1000
+  MaxProjectionPairs: 5000
+  ContactMapCacheEnabled: true
+  ContactMapMaxEntries: 1000

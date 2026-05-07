@@ -29,6 +29,7 @@ type Repository struct {
 	db          *sqlx.DB
 	model       *model.Models
 	mediaReader MediaReader
+	projection  ProjectionConfig
 }
 
 // NewRepository creates a new Repository.
@@ -39,6 +40,14 @@ func NewRepository(c config.Config, mediaReader MediaReader) *Repository {
 		db:          db,
 		model:       model.NewModels(db),
 		mediaReader: mediaReader,
+		projection: normalizeProjectionConfig(ProjectionConfig{
+			SQLInChunkSize:         c.Projection.SQLInChunkSize,
+			MaxViewerUserIds:       c.Projection.MaxViewerUserIds,
+			MaxTargetUserIds:       c.Projection.MaxTargetUserIds,
+			MaxProjectionPairs:     c.Projection.MaxProjectionPairs,
+			ContactMapCacheEnabled: c.Projection.ContactMapCacheEnabled,
+			ContactMapMaxEntries:   c.Projection.ContactMapMaxEntries,
+		}),
 	}
 }
 
