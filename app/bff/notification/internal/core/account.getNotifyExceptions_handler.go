@@ -19,8 +19,8 @@ package core
 import (
 	"time"
 
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/app/bff/notification/internal/repository"
-	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -62,15 +62,10 @@ func (c *NotificationCore) AccountGetNotifyExceptions(in *tg.TLAccountGetNotifyE
 	// Fetch users
 	var users []tg.UserClazz
 	if len(userIdList) > 0 {
-		mUsers, err := c.svcCtx.Repo.UserClient.UserGetMutableUsersV2(c.ctx, &userpb.TLUserGetMutableUsersV2{
-			Id: userIdList,
-		})
+		users, err = userprojection.ProjectUsers(c.ctx, c.svcCtx.Repo.UserClient, c.MD.UserId, userIdList, userprojection.MissingStoredReference)
 		if err != nil {
 			c.Logger.Errorf("account.getNotifyExceptions - error fetching users: %v", err)
 			return nil, err
-		}
-		for _, u := range mUsers.Users {
-			users = append(users, projectImmutableUser(u))
 		}
 	}
 

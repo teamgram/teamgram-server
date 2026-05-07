@@ -18,8 +18,8 @@ package repository
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/notification/internal/config"
-	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
 	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
+	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
