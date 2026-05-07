@@ -52,11 +52,16 @@ func (f *dialogsFakeDialogClient) DialogReorderPinnedDialogs(ctx context.Context
 type dialogsFakeUserClient struct {
 	userclient.UserClient
 	getMutableUsersV2     func(context.Context, *userpb.TLUserGetMutableUsersV2) (*tg.MutableUsers, error)
+	getUserProjection     func(context.Context, *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error)
 	getNotifySettingsList func(context.Context, *userpb.TLUserGetNotifySettingsList) (*userpb.VectorPeerPeerNotifySettings, error)
 }
 
 func (f *dialogsFakeUserClient) UserGetMutableUsersV2(ctx context.Context, in *userpb.TLUserGetMutableUsersV2) (*tg.MutableUsers, error) {
 	return f.getMutableUsersV2(ctx, in)
+}
+
+func (f *dialogsFakeUserClient) UserGetUserProjectionBundle(ctx context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+	return f.getUserProjection(ctx, in)
 }
 
 func (f *dialogsFakeUserClient) UserGetNotifySettingsList(ctx context.Context, in *userpb.TLUserGetNotifySettingsList) (*userpb.VectorPeerPeerNotifySettings, error) {
@@ -191,7 +196,7 @@ func TestMessagesGetPeerDialogsHydratesTopMessagesUsersChats(t *testing.T) {
 	const selfID int64 = 100
 	var gotPeerDialogs *dialogpb.TLDialogGetPeerDialogsV2
 	var gotMessageViews *userupdates.TLUserupdatesGetMessageViewsByPeerSeqs
-	var gotUsers *userpb.TLUserGetMutableUsersV2
+	var gotUsers *userpb.TLUserGetUserProjectionBundle
 	var gotChats *chatpb.TLChatGetChatListByIdList
 
 	c := newDialogsGetDialogsCore(&repository.Repository{
@@ -224,11 +229,15 @@ func TestMessagesGetPeerDialogsHydratesTopMessagesUsersChats(t *testing.T) {
 			},
 		},
 		UserClient: &dialogsFakeUserClient{
-			getMutableUsersV2: func(_ context.Context, in *userpb.TLUserGetMutableUsersV2) (*tg.MutableUsers, error) {
+			getUserProjection: func(_ context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
 				gotUsers = in
-				return tg.MakeTLMutableUsers(&tg.TLMutableUsers{Users: []tg.ImmutableUserClazz{
-					tg.MakeTLImmutableUser(&tg.TLImmutableUser{User: tg.MakeTLUserData(&tg.TLUserData{Id: 200, FirstName: "Alice"})}),
-				}}).ToMutableUsers(), nil
+				return userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+					ViewerUsers: []userpb.ViewerUsersClazz{
+						userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: selfID, Users: []tg.UserClazz{
+							tg.MakeTLUser(&tg.TLUser{Id: 200, FirstName: nonEmptyStringPtr("Alice")}),
+						}}),
+					},
+				}).ToUserProjectionBundle(), nil
 			},
 		},
 		ChatClient: &dialogsFakeChatClient{
@@ -256,8 +265,8 @@ func TestMessagesGetPeerDialogsHydratesTopMessagesUsersChats(t *testing.T) {
 		gotMessageViews.Peers[1].PeerType != dialogPeerTypeChat || gotMessageViews.Peers[1].PeerId != 300 || gotMessageViews.Peers[1].PeerSeq != 8 {
 		t.Fatalf("UserupdatesGetMessageViewsByPeerSeqs request = %+v", gotMessageViews)
 	}
-	if gotUsers == nil || len(gotUsers.Id) != 1 || gotUsers.Id[0] != 200 {
-		t.Fatalf("UserGetMutableUsersV2 request = %+v", gotUsers)
+	if gotUsers == nil || len(gotUsers.ViewerUserIds) != 1 || gotUsers.ViewerUserIds[0] != selfID || len(gotUsers.TargetUserIds) != 1 || gotUsers.TargetUserIds[0] != 200 {
+		t.Fatalf("UserGetUserProjectionBundle request = %+v", gotUsers)
 	}
 	if gotChats == nil || len(gotChats.IdList) != 1 || gotChats.IdList[0] != 300 {
 		t.Fatalf("ChatGetChatListByIdList request = %+v", gotChats)
@@ -344,12 +353,14 @@ func TestMessagesGetPinnedDialogsHydratesFacadeProjection(t *testing.T) {
 			},
 		},
 		UserClient: &dialogsFakeUserClient{
-			getMutableUsersV2: func(context.Context, *userpb.TLUserGetMutableUsersV2) (*tg.MutableUsers, error) {
-				return tg.MakeTLMutableUsers(&tg.TLMutableUsers{Users: []tg.ImmutableUserClazz{
-					tg.MakeTLImmutableUser(&tg.TLImmutableUser{
-						User: tg.MakeTLUserData(&tg.TLUserData{Id: 200, FirstName: "Peer"}),
-					}),
-				}}).ToMutableUsers(), nil
+			getUserProjection: func(context.Context, *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+				return userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+					ViewerUsers: []userpb.ViewerUsersClazz{
+						userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 100, Users: []tg.UserClazz{
+							tg.MakeTLUser(&tg.TLUser{Id: 200, FirstName: nonEmptyStringPtr("Peer")}),
+						}}),
+					},
+				}).ToUserProjectionBundle(), nil
 			},
 		},
 	}, 100)
@@ -497,7 +508,7 @@ func TestMessagesGetPeerSettingsReturnsDefaultSettings(t *testing.T) {
 func TestMessagesGetDialogsMapsUserDialogAndTopMessage(t *testing.T) {
 	const selfID int64 = 100
 	var gotMessageViews *userupdates.TLUserupdatesGetMessageViewsByPeerSeqs
-	var gotUsers *userpb.TLUserGetMutableUsersV2
+	var gotUsers *userpb.TLUserGetUserProjectionBundle
 
 	c := newDialogsGetDialogsCore(&repository.Repository{
 		DialogClient: &dialogsFakeDialogClient{
@@ -551,17 +562,15 @@ func TestMessagesGetDialogsMapsUserDialogAndTopMessage(t *testing.T) {
 					}),
 				}}, nil
 			},
-			getMutableUsersV2: func(_ context.Context, in *userpb.TLUserGetMutableUsersV2) (*tg.MutableUsers, error) {
+			getUserProjection: func(_ context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
 				gotUsers = in
-				return tg.MakeTLMutableUsers(&tg.TLMutableUsers{Users: []tg.ImmutableUserClazz{
-					tg.MakeTLImmutableUser(&tg.TLImmutableUser{
-						User: tg.MakeTLUserData(&tg.TLUserData{
-							Id:        200,
-							FirstName: "Alice",
-						}),
-						KeysPrivacyRules: []tg.PrivacyKeyRulesClazz{},
-					}),
-				}}).ToMutableUsers(), nil
+				return userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+					ViewerUsers: []userpb.ViewerUsersClazz{
+						userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: selfID, Users: []tg.UserClazz{
+							tg.MakeTLUser(&tg.TLUser{Id: 200, FirstName: nonEmptyStringPtr("Alice")}),
+						}}),
+					},
+				}).ToUserProjectionBundle(), nil
 			},
 		},
 	}, selfID)
@@ -577,8 +586,8 @@ func TestMessagesGetDialogsMapsUserDialogAndTopMessage(t *testing.T) {
 		gotMessageViews.Peers[0].PeerType != dialogPeerTypeUser || gotMessageViews.Peers[0].PeerId != 200 || gotMessageViews.Peers[0].PeerSeq != 7 {
 		t.Fatalf("UserupdatesGetMessageViewsByPeerSeqs request = %+v, want self/user/200 seq 7", gotMessageViews)
 	}
-	if gotUsers == nil || len(gotUsers.Id) != 1 || gotUsers.Id[0] != 200 || !gotUsers.Privacy || !gotUsers.HasTo || len(gotUsers.To) != 1 || gotUsers.To[0] != selfID {
-		t.Fatalf("UserGetMutableUsersV2 request = %+v, want peer user 200 with privacy to self", gotUsers)
+	if gotUsers == nil || len(gotUsers.ViewerUserIds) != 1 || gotUsers.ViewerUserIds[0] != selfID || len(gotUsers.TargetUserIds) != 1 || gotUsers.TargetUserIds[0] != 200 {
+		t.Fatalf("UserGetUserProjectionBundle request = %+v, want viewer self and peer user 200", gotUsers)
 	}
 
 	slice, ok := r.ToMessagesDialogsSlice()
