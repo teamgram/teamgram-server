@@ -54,5 +54,5 @@ func (c *MsgCore) MsgSearchHashtag(in *msg.TLMsgSearchHashtag) (*tg.MessagesMess
 	if err != nil {
 		return nil, err
 	}
-	return messagesFromHistory(history), nil
+	return messagesFromHistory(history)
 }

@@ -3,7 +3,6 @@ package repository
 import (
 	"bytes"
 	"context"
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"math"
@@ -73,10 +72,7 @@ func (r *Repository) CreateOrGetByClientRandom(ctx context.Context, in CreateCan
 		if err != nil {
 			return err
 		}
-		messageDate := in.MessageDate
-		if messageDate == 0 {
-			messageDate = int32(time.Now().Unix())
-		}
+		messageDate := unixOrNow(in.MessageDate)
 		if err := insertCanonicalMessageTx(txModels, canonicalID, sequencePeerID, peerSeq, messageDate, in); err != nil {
 			return err
 		}
@@ -188,7 +184,7 @@ func (r *Repository) GetCanonicalMessageByPeerSeq(ctx context.Context, userID in
 		PeerID:             row.PeerId,
 		MessageKind:        row.MessageKind,
 		MessageText:        row.MessageText,
-		MessageDate:        int32(row.Date.UTC().Unix()),
+		MessageDate:        row.Date,
 	}, nil
 }
 
@@ -226,19 +222,16 @@ func (r *Repository) EditCanonicalMessage(ctx context.Context, in EditCanonicalM
 				PeerID:             row.PeerID,
 				MessageKind:        row.MessageKind,
 				MessageText:        row.MessageText,
-				MessageDate:        mysqlTimeUnix(row.MessageDate),
-				EditDate:           mysqlTimeUnix(row.EditDate),
+				MessageDate:        row.MessageDate,
+				EditDate:           row.EditDate,
 				EditVersion:        row.EditVersion,
 			}
 			return nil
 		}
 
-		editDate := in.RequestEditDate
-		if editDate == 0 {
-			editDate = int32(time.Now().Unix())
-		}
+		editDate := unixOrNow(in.RequestEditDate)
 		editVersion := row.EditVersion + 1
-		affected, err := txModels.CanonicalMessagesModel.UpdateMessageEdit(in.NewMessageText, editVersion, nullableMysqlDate(editDate), row.CanonicalMessageID, row.EditVersion)
+		affected, err := txModels.CanonicalMessagesModel.UpdateMessageEdit(in.NewMessageText, editVersion, editDate, row.CanonicalMessageID, row.EditVersion)
 		if err != nil {
 			return storageError("update canonical message edit", err)
 		}
@@ -253,7 +246,7 @@ func (r *Repository) EditCanonicalMessage(ctx context.Context, in EditCanonicalM
 			PeerID:             row.PeerID,
 			MessageKind:        row.MessageKind,
 			MessageText:        in.NewMessageText,
-			MessageDate:        mysqlTimeUnix(row.MessageDate),
+			MessageDate:        row.MessageDate,
 			EditDate:           editDate,
 			EditVersion:        editVersion,
 		}
@@ -282,12 +275,19 @@ func historyRowToCanonicalMessage(row model.HistoryMessageRow) *CanonicalMessage
 		PeerID:             row.PeerID,
 		MessageKind:        row.MessageKind,
 		MessageText:        row.MessageText,
-		MessageDate:        mysqlTimeUnix(row.MessageDate),
+		MessageDate:        row.MessageDate,
 	}
 }
 
-func mysqlTimeUnix(t time.Time) int32 {
-	return int32(time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), t.Second(), t.Nanosecond(), time.UTC).Unix())
+func unixNow() int64 {
+	return time.Now().UTC().Unix()
+}
+
+func unixOrNow(seconds int64) int64 {
+	if seconds > 0 {
+		return seconds
+	}
+	return unixNow()
 }
 
 func (r *Repository) historySliceOffset(ctx context.Context, in ListHistoryMessagesInput) (int64, error) {
@@ -322,7 +322,6 @@ func historyMessageRowToMessage(r model.HistoryMessageRow) (HistoryMessage, erro
 		}
 		replyToPeerSeq = event.ReplyToPeerSeq
 	}
-	messageDate := time.Date(r.MessageDate.Year(), r.MessageDate.Month(), r.MessageDate.Day(), r.MessageDate.Hour(), r.MessageDate.Minute(), r.MessageDate.Second(), r.MessageDate.Nanosecond(), time.UTC)
 	return HistoryMessage{
 		CanonicalMessageID: r.CanonicalMessageID,
 		PeerSeq:            r.PeerSeq,
@@ -332,7 +331,7 @@ func historyMessageRowToMessage(r model.HistoryMessageRow) (HistoryMessage, erro
 		PeerID:             r.PeerID,
 		MessageKind:        r.MessageKind,
 		MessageText:        r.MessageText,
-		MessageDate:        int32(messageDate.Unix()),
+		MessageDate:        r.MessageDate,
 		ReplyToPeerSeq:     replyToPeerSeq,
 	}, nil
 }
@@ -383,7 +382,7 @@ func nextPeerSeqTx(txModels *model.TxModels, peerType int32, peerID int64, minNe
 	return peerSeq, nil
 }
 
-func insertCanonicalMessageTx(txModels *model.TxModels, canonicalID int64, canonicalPeerID int64, peerSeq int64, messageDate int32, in CreateCanonicalMessageInput) error {
+func insertCanonicalMessageTx(txModels *model.TxModels, canonicalID int64, canonicalPeerID int64, peerSeq int64, messageDate int64, in CreateCanonicalMessageInput) error {
 	_, _, err := txModels.CanonicalMessagesModel.Insert(&model.CanonicalMessages{
 		CanonicalMessageId:           canonicalID,
 		PeerType:                     in.PeerType,
@@ -400,9 +399,9 @@ func insertCanonicalMessageTx(txModels *model.TxModels, canonicalID int64, canon
 		ServiceActionPayload:         nil,
 		MessageStatus:                MessageStatusLive,
 		EditVersion:                  0,
-		Date:                         mysqlDate(messageDate),
-		EditDate:                     sql.NullTime{},
-		DeletedAt:                    sql.NullTime{},
+		Date:                         messageDate,
+		EditDate:                     0,
+		DeletedAt:                    0,
 		StorageSchemaVersion:         1,
 	})
 	if err != nil {
@@ -433,7 +432,7 @@ func messageSequencePeerID(peerType int32, userID int64, peerID int64) (int64, b
 	return int64((uint64(lo) << 32) | uint64(hi)), true
 }
 
-func insertClientRandomTx(txModels *model.TxModels, canonicalID int64, _ int64, _ int32, in CreateCanonicalMessageInput) error {
+func insertClientRandomTx(txModels *model.TxModels, canonicalID int64, _ int64, _ int64, in CreateCanonicalMessageInput) error {
 	_, _, err := txModels.MessageClientRandomsModel.Insert(&model.MessageClientRandoms{
 		SenderUserId:       in.SenderUserID,
 		PeerType:           in.PeerType,
@@ -453,31 +452,12 @@ func canonicalMessageRowToResult(r *model.CanonicalMessageRow, created bool) *Ca
 	if r == nil {
 		return nil
 	}
-	messageDate := time.Date(r.MessageDate.Year(), r.MessageDate.Month(), r.MessageDate.Day(), r.MessageDate.Hour(), r.MessageDate.Minute(), r.MessageDate.Second(), r.MessageDate.Nanosecond(), time.UTC)
 	return &CanonicalMessageResult{
 		SendStateID:        r.SendStateID,
 		CanonicalMessageID: r.CanonicalMessageID,
 		PeerSeq:            r.PeerSeq,
-		MessageDate:        int32(messageDate.Unix()),
+		MessageDate:        r.MessageDate,
 		RequestPayloadHash: r.RequestPayloadHash,
 		CreatedNew:         created,
-	}
-}
-
-func mysqlDate(unix int32) time.Time {
-	return time.Unix(int64(unix), 0).UTC()
-}
-
-func nullableMysqlDate(unix int32) sql.NullTime {
-	return sql.NullTime{
-		Time:  mysqlDate(unix),
-		Valid: true,
-	}
-}
-
-func mysqlNow() sql.NullTime {
-	return sql.NullTime{
-		Time:  time.Now().UTC(),
-		Valid: true,
 	}
 }

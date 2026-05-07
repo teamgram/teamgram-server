@@ -50,14 +50,18 @@ func (c *MsgCore) MsgGetHistory(in *msg.TLMsgGetHistory) (*tg.MessagesMessages, 
 		}).ToMessagesMessages(), nil
 	}
 
-	return messagesFromHistory(history), nil
+	return messagesFromHistory(history)
 }
 
-func messagesFromHistory(history []repository.HistoryMessage) *tg.MessagesMessages {
+func messagesFromHistory(history []repository.HistoryMessage) (*tg.MessagesMessages, error) {
 	messages := make([]tg.MessageClazz, 0, len(history))
 	for _, item := range history {
 		if item.MessageKind != repository.MessageKindText {
 			continue
+		}
+		date, err := tg.DateInt32FromUnixSeconds(item.MessageDate)
+		if err != nil {
+			return nil, err
 		}
 		messages = append(messages, tg.MakeTLMessage(&tg.TLMessage{
 			Out:     item.Outgoing,
@@ -65,7 +69,7 @@ func messagesFromHistory(history []repository.HistoryMessage) *tg.MessagesMessag
 			FromId:  tg.MakePeerUser(item.FromUserID),
 			PeerId:  tg.MakePeerUser(item.PeerID),
 			ReplyTo: historyReplyHeader(item.ReplyToPeerSeq),
-			Date:    item.MessageDate,
+			Date:    date,
 			Message: item.MessageText,
 		}))
 	}
@@ -73,7 +77,7 @@ func messagesFromHistory(history []repository.HistoryMessage) *tg.MessagesMessag
 		Messages: messages,
 		Chats:    []tg.ChatClazz{},
 		Users:    []tg.UserClazz{},
-	}).ToMessagesMessages()
+	}).ToMessagesMessages(), nil
 }
 
 func historyReplyHeader(peerSeq int64) tg.MessageReplyHeaderClazz {
@@ -85,7 +89,8 @@ func historyReplyHeader(peerSeq int64) tg.MessageReplyHeaderClazz {
 }
 
 func emptyMsgMessages() *tg.MessagesMessages {
-	return messagesFromHistory(nil)
+	messages, _ := messagesFromHistory(nil)
+	return messages
 }
 
 func historyMessageIDs(history []repository.HistoryMessage) []int64 {

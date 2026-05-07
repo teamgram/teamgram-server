@@ -63,7 +63,7 @@ func TestMessageRepositoryCreateAndCommitSendState(t *testing.T) {
 		ClientRandomID:     randomID,
 		RequestPayloadHash: requestHash,
 		MessageText:        "hello",
-		MessageDate:        int32(time.Now().Unix()),
+		MessageDate:        time.Now().Unix(),
 	})
 	if err != nil {
 		t.Fatalf("CreateOrGetByClientRandom() error = %v", err)
@@ -80,7 +80,7 @@ func TestMessageRepositoryCreateAndCommitSendState(t *testing.T) {
 		ClientRandomID:     randomID,
 		RequestPayloadHash: requestHash,
 		MessageText:        "hello retry",
-		MessageDate:        int32(time.Now().Unix()),
+		MessageDate:        time.Now().Unix(),
 	})
 	if err != nil {
 		t.Fatalf("CreateOrGetByClientRandom() retry error = %v", err)
@@ -132,6 +132,26 @@ func TestMessageRepositoryCreateAndCommitSendState(t *testing.T) {
 	}
 }
 
+func TestCanonicalMessageDatesUseUnixSeconds(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	repo := NewForTest(db, &testIDGenerator{next: base + 10_000})
+	date := int64(1_772_000_123)
+	canonical := createCanonicalMessageForTest(t, ctx, repo, base+101, base+102, base+103, "int64 date", date)
+	if canonical.MessageDate != date {
+		t.Fatalf("MessageDate = %d, want %d", canonical.MessageDate, date)
+	}
+
+	got, err := repo.GetCanonicalMessageByPeerSeq(ctx, base+101, payload.PeerTypeUser, base+102, canonical.PeerSeq)
+	if err != nil {
+		t.Fatalf("GetCanonicalMessageByPeerSeq: %v", err)
+	}
+	if got.MessageDate != date {
+		t.Fatalf("stored MessageDate = %d, want %d", got.MessageDate, date)
+	}
+}
+
 func TestMessageRepositoryRandomIdConflict(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)
@@ -164,7 +184,7 @@ func TestMessageRepositoryListHistoryMessages(t *testing.T) {
 
 	senderID := base + 401
 	receiverID := base + 402
-	firstDate := int32(time.Now().Unix())
+	firstDate := time.Now().Unix()
 	secondDate := firstDate + 1
 
 	first := createCanonicalMessageForTest(t, ctx, repo, senderID, receiverID, base+403, "first", firstDate)
@@ -220,7 +240,7 @@ func TestMessageRepositoryListHistoryMessagesUsesOffsetIDPositionBeforeFilters(t
 
 	senderID := base + 451
 	receiverID := base + 452
-	now := int32(time.Now().Unix())
+	now := time.Now().Unix()
 	one := createCanonicalMessageForTest(t, ctx, repo, senderID, receiverID, base+453, "one", now)
 	two := createCanonicalMessageForTest(t, ctx, repo, senderID, receiverID, base+454, "two", now+1)
 	three := createCanonicalMessageForTest(t, ctx, repo, senderID, receiverID, base+455, "three", now+2)
@@ -266,8 +286,8 @@ func TestMessageRepositoryListHistoryMessagesUsesViewerScopedViews(t *testing.T)
 
 	peerID := base + 501
 	viewerID := base + 502
-	peerSelf := createCanonicalMessageForTest(t, ctx, repo, peerID, peerID, base+503, "peer self", int32(time.Now().Unix()))
-	direct := createCanonicalMessageForTest(t, ctx, repo, peerID, viewerID, base+504, "direct to viewer", int32(time.Now().Unix())+1)
+	peerSelf := createCanonicalMessageForTest(t, ctx, repo, peerID, peerID, base+503, "peer self", time.Now().Unix())
+	direct := createCanonicalMessageForTest(t, ctx, repo, peerID, viewerID, base+504, "direct to viewer", time.Now().Unix()+1)
 	insertUserMessageViewForTest(t, ctx, db, viewerID, payload.PeerTypeUser, peerID, direct, peerID, false)
 
 	history, err := repo.ListHistoryMessages(ctx, ListHistoryMessagesInput{
@@ -304,7 +324,7 @@ func TestMessageRepositoryListHistoryMessagesCarriesReplyToPeerSeqFromViewPayloa
 
 	senderID := base + 551
 	receiverID := base + 552
-	now := int32(time.Now().Unix())
+	now := time.Now().Unix()
 	target := createCanonicalMessageForTest(t, ctx, repo, receiverID, senderID, base+553, "target", now)
 	reply := createCanonicalMessageForTest(t, ctx, repo, senderID, receiverID, base+554, "reply", now+1)
 	insertUserMessageViewWithPayloadForTest(t, ctx, db, receiverID, payload.PeerTypeUser, senderID, reply, 11, senderID, false, payload.MessageEventV1{
@@ -316,7 +336,7 @@ func TestMessageRepositoryListHistoryMessagesCarriesReplyToPeerSeqFromViewPayloa
 		PeerID:             senderID,
 		FromUserID:         senderID,
 		ToUserID:           receiverID,
-		Date:               now + 1,
+		Date:               int32(now + 1),
 		Out:                false,
 		MessageText:        "reply",
 		ReplyToPeerSeq:     target.PeerSeq,
@@ -347,7 +367,7 @@ func TestMessageRepositoryListHistoryMessagesUsesCanonicalSender(t *testing.T) {
 
 	senderID := base + 601
 	receiverID := base + 602
-	canonical := createCanonicalMessageForTest(t, ctx, repo, senderID, receiverID, base+603, "canonical sender", int32(time.Now().Unix()))
+	canonical := createCanonicalMessageForTest(t, ctx, repo, senderID, receiverID, base+603, "canonical sender", time.Now().Unix())
 	updateUserMessageViewFromForTest(t, ctx, db, senderID, payload.PeerTypeUser, receiverID, canonical.PeerSeq, receiverID)
 
 	history, err := repo.ListHistoryMessages(ctx, ListHistoryMessagesInput{
@@ -375,7 +395,7 @@ func TestMessageRepositoryCreateCanonicalUsesConversationScopedPeerSeq(t *testin
 
 	userA := base + 651
 	userB := base + 652
-	now := int32(time.Now().Unix())
+	now := time.Now().Unix()
 	first := createCanonicalMessageForTest(t, ctx, repo, userA, userB, base+653, "a to b", now)
 	second := createCanonicalMessageForTest(t, ctx, repo, userB, userA, base+654, "b to a", now+1)
 	insertUserMessageViewForTest(t, ctx, db, userA, payload.PeerTypeUser, userB, second, userB, false)
@@ -412,7 +432,7 @@ func TestMessageRepositoryListHistoryMessagesOffsetsByViewerTimeline(t *testing.
 
 	viewerID := base + 701
 	peerID := base + 702
-	now := int32(time.Now().Unix())
+	now := time.Now().Unix()
 	olderSent := createCanonicalMessageForTest(t, ctx, repo, viewerID, peerID, base+703, "older sent high id", now)
 	updateUserMessageViewSeqForTest(t, ctx, db, viewerID, payload.PeerTypeUser, peerID, olderSent.PeerSeq, 100)
 	newerIncoming := createCanonicalMessageForTest(t, ctx, repo, peerID, viewerID, base+704, "newer incoming low id", now+10)
@@ -533,7 +553,7 @@ VALUES
 		MessageKindText,
 		MessageStatusLive,
 		0,
-		mysqlDate(canonical.MessageDate),
+		canonical.MessageDate,
 		1,
 		nil,
 	)
@@ -575,7 +595,7 @@ VALUES
 		MessageKindText,
 		MessageStatusLive,
 		0,
-		mysqlDate(canonical.MessageDate),
+		canonical.MessageDate,
 		payload.MessageEventSchemaVersion,
 		viewPayload,
 	)
@@ -624,7 +644,7 @@ func createCanonicalMessageForTest(
 	receiverID int64,
 	randomID int64,
 	text string,
-	date int32,
+	date int64,
 ) *CanonicalMessageResult {
 	t.Helper()
 	requestHash := payload.HashBytes([]byte(text))
@@ -689,7 +709,7 @@ VALUES
 		MessageKindText,
 		MessageStatusLive,
 		0,
-		mysqlDate(canonical.MessageDate),
+		canonical.MessageDate,
 		1,
 		nil,
 	)

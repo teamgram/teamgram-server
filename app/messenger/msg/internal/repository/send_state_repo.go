@@ -3,7 +3,6 @@ package repository
 import (
 	"bytes"
 	"context"
-	"database/sql"
 	"errors"
 	"fmt"
 	"math"
@@ -53,7 +52,7 @@ func (r *Repository) CreateOrLoadSendState(ctx context.Context, in CreateSendSta
 		LastErrorCode:               "",
 		LastErrorMessage:            "",
 		RetryCount:                  0,
-		CompletedAt:                 sql.NullTime{},
+		CompletedAt:                 0,
 	})
 	if err != nil {
 		again, found, selectErr := r.selectSendStateByRandom(ctx, in.SenderUserID, in.PeerType, in.PeerID, in.ClientRandomID)
@@ -115,7 +114,7 @@ func (r *Repository) MarkCompleted(ctx context.Context, sendStateID int64) error
 	if _, err := r.requireDB(); err != nil {
 		return err
 	}
-	affected, err := r.models.MessageSendStatesModel.MarkCompleted(ctx, SendStateStatusCompleted, mysqlNow(), sendStateID)
+	affected, err := r.models.MessageSendStatesModel.MarkCompleted(ctx, SendStateStatusCompleted, unixNow(), sendStateID)
 	if err != nil {
 		return storageError("mark completed", err)
 	}

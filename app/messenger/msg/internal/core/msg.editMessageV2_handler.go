@@ -50,7 +50,7 @@ func (c *MsgCore) MsgEditMessageV2(in *msg.TLMsgEditMessageV2) (*tg.Updates, err
 		return nil, msg.ErrSendStateConflict
 	}
 
-	editDate := int32(time.Now().Unix())
+	editDate := time.Now().UTC().Unix()
 	edited, err := c.svcCtx.Repo.EditCanonicalMessage(c.ctx, repository.EditCanonicalMessageInput{
 		ActorUserID:     in.UserId,
 		PeerType:        in.PeerType,
@@ -111,7 +111,7 @@ func (c *MsgCore) processEditSenderOperation(in *msg.TLMsgEditMessageV2, edited 
 			PeerId:               in.PeerId,
 			CanonicalMessageId:   &edited.CanonicalMessageID,
 			CanonicalPeerSeq:     &edited.PeerSeq,
-			CanonicalDate:        int64Ptr(int64(edited.MessageDate)),
+			CanonicalDate:        int64Ptr(edited.MessageDate),
 			PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
 			PayloadCodec:         payload.PayloadCodecJSON,
 			PayloadHash:          hashBytes,
@@ -145,6 +145,14 @@ func buildEditReceiverOperation(in *msg.TLMsgEditMessageV2, edited *repository.E
 }
 
 func buildEditMessageOperationPayload(fromUserID int64, toUserID int64, peerID int64, out bool, edited *repository.EditMessageResult) ([]byte, []byte, error) {
+	date, err := tg.DateInt32FromUnixSeconds(edited.MessageDate)
+	if err != nil {
+		return nil, nil, err
+	}
+	editDate, err := tg.DateInt32FromUnixSeconds(edited.EditDate)
+	if err != nil {
+		return nil, nil, err
+	}
 	body, err := json.Marshal(payload.MessageOperationV1{
 		SchemaVersion:      payload.MessageOperationSchemaVersion,
 		OperationKind:      payload.OperationKindEditMessage,
@@ -154,8 +162,8 @@ func buildEditMessageOperationPayload(fromUserID int64, toUserID int64, peerID i
 		PeerSeq:            edited.PeerSeq,
 		FromUserID:         fromUserID,
 		ToUserID:           toUserID,
-		Date:               edited.MessageDate,
-		EditDate:           edited.EditDate,
+		Date:               date,
+		EditDate:           editDate,
 		EditVersion:        edited.EditVersion,
 		Out:                out,
 		MessageText:        edited.MessageText,
@@ -178,14 +186,26 @@ func shortEditMessage(edited *repository.EditMessageResult, result *userupdates.
 	if err != nil {
 		return nil, err
 	}
+	date, err := tg.DateInt32FromUnixSeconds(edited.MessageDate)
+	if err != nil {
+		return nil, err
+	}
+	editDate, err := tg.DateInt32FromUnixSeconds(edited.EditDate)
+	if err != nil {
+		return nil, err
+	}
+	updateDate, err := tg.DateInt32FromUnixSeconds(edited.EditDate - 1)
+	if err != nil {
+		return nil, err
+	}
 	message := tg.MakeTLMessage(&tg.TLMessage{
 		Out:      true,
 		Id:       peerSeq,
 		FromId:   tg.MakePeerUser(edited.FromUserID),
 		PeerId:   tg.MakePeerUser(peerID),
-		Date:     edited.MessageDate,
+		Date:     date,
 		Message:  edited.MessageText,
-		EditDate: &edited.EditDate,
+		EditDate: &editDate,
 	})
 	return tg.MakeTLUpdates(&tg.TLUpdates{
 		Updates: []tg.UpdateClazz{tg.MakeTLUpdateEditMessage(&tg.TLUpdateEditMessage{
@@ -195,7 +215,7 @@ func shortEditMessage(edited *repository.EditMessageResult, result *userupdates.
 		})},
 		Users: []tg.UserClazz{},
 		Chats: []tg.ChatClazz{},
-		Date:  edited.EditDate - 1,
+		Date:  updateDate,
 		Seq:   0,
 	}).ToUpdates(), nil
 }

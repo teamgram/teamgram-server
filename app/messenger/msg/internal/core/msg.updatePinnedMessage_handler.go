@@ -93,6 +93,10 @@ func (c *MsgCore) MsgUpdatePinnedMessage(in *msg.TLMsgUpdatePinnedMessage) (*tg.
 	if !in.Unpin {
 		messages = []int32{in.Id}
 	}
+	date, err := tg.DateInt32FromUnixSeconds(time.Now().UTC().Unix())
+	if err != nil {
+		return nil, err
+	}
 	return tg.MakeTLUpdateShort(&tg.TLUpdateShort{
 		Update: tg.MakeTLUpdatePinnedMessages(&tg.TLUpdatePinnedMessages{
 			Pinned:   !in.Unpin,
@@ -101,12 +105,15 @@ func (c *MsgCore) MsgUpdatePinnedMessage(in *msg.TLMsgUpdatePinnedMessage) (*tg.
 			Pts:      pts,
 			PtsCount: result.PtsCount,
 		}),
-		Date: int32(time.Now().Unix()),
+		Date: date,
 	}).ToUpdates(), nil
 }
 
 func buildPinnedMessageOperation(in *msg.TLMsgUpdatePinnedMessage, canonical *repository.CanonicalMessage) ([]byte, []byte, error) {
-	date := int32(time.Now().Unix())
+	date, err := tg.DateInt32FromUnixSeconds(time.Now().UTC().Unix())
+	if err != nil {
+		return nil, nil, err
+	}
 	var canonicalID int64
 	var peerSeq int64
 	var fromUserID int64
@@ -117,7 +124,10 @@ func buildPinnedMessageOperation(in *msg.TLMsgUpdatePinnedMessage, canonical *re
 		fromUserID = canonical.FromUserID
 		messageText = canonical.MessageText
 		if canonical.MessageDate != 0 {
-			date = canonical.MessageDate
+			date, err = tg.DateInt32FromUnixSeconds(canonical.MessageDate)
+			if err != nil {
+				return nil, nil, err
+			}
 		}
 	}
 	body, err := json.Marshal(payload.MessageOperationV1{

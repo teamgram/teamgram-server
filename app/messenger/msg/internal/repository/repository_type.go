@@ -75,14 +75,14 @@ type CreateCanonicalMessageInput struct {
 	ClientRandomID     int64
 	RequestPayloadHash []byte
 	MessageText        string
-	MessageDate        int32
+	MessageDate        int64
 }
 
 type CanonicalMessageResult struct {
 	SendStateID        int64
 	CanonicalMessageID int64
 	PeerSeq            int64
-	MessageDate        int32
+	MessageDate        int64
 	RequestPayloadHash []byte
 	CreatedNew         bool
 }
@@ -117,7 +117,7 @@ type HistoryMessage struct {
 	PeerID             int64
 	MessageKind        int32
 	MessageText        string
-	MessageDate        int32
+	MessageDate        int64
 }
 
 type CanonicalMessage struct {
@@ -128,7 +128,7 @@ type CanonicalMessage struct {
 	PeerID             int64
 	MessageKind        int32
 	MessageText        string
-	MessageDate        int32
+	MessageDate        int64
 }
 
 type EditCanonicalMessageInput struct {
@@ -137,7 +137,7 @@ type EditCanonicalMessageInput struct {
 	PeerID          int64
 	PeerSeq         int64
 	NewMessageText  string
-	RequestEditDate int32
+	RequestEditDate int64
 }
 
 type EditMessageResult struct {
@@ -148,8 +148,8 @@ type EditMessageResult struct {
 	PeerID             int64
 	MessageKind        int32
 	MessageText        string
-	MessageDate        int32
-	EditDate           int32
+	MessageDate        int64
+	EditDate           int64
 	EditVersion        int32
 }
 

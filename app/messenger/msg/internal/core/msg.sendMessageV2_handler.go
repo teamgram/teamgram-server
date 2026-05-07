@@ -75,7 +75,7 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 		return nil, err
 	}
 
-	messageDate := int32(time.Now().Unix())
+	messageDate := time.Now().UTC().Unix()
 	canonical, err := c.svcCtx.Repo.CreateOrGetByClientRandom(c.ctx, repository.CreateCanonicalMessageInput{
 		SendStateID:        sendState.SendStateID,
 		SenderUserID:       in.UserId,
@@ -268,7 +268,7 @@ func (c *MsgCore) processSenderOperation(in *msg.TLMsgSendMessageV2, canonical *
 			PeerId:               in.PeerId,
 			CanonicalMessageId:   &canonical.CanonicalMessageID,
 			CanonicalPeerSeq:     &canonical.PeerSeq,
-			CanonicalDate:        int64Ptr(int64(canonical.MessageDate)),
+			CanonicalDate:        int64Ptr(canonical.MessageDate),
 			PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
 			PayloadCodec:         payload.PayloadCodecJSON,
 			PayloadHash:          hashBytes,
@@ -329,6 +329,10 @@ func buildReceiverOperation(in *msg.TLMsgSendMessageV2, canonical *repository.Ca
 }
 
 func buildMessageOperationPayload(fromUserID int64, toUserID int64, peerID int64, out bool, canonical *repository.CanonicalMessageResult, text string, replyToCanonicalMessageID int64, clearDraft bool, sourcePermAuthKeyID int64, clearDraftBeforeDate int32) ([]byte, []byte, []byte, error) {
+	date, err := tg.DateInt32FromUnixSeconds(canonical.MessageDate)
+	if err != nil {
+		return nil, nil, nil, err
+	}
 	body, err := json.Marshal(payload.MessageOperationV1{
 		SchemaVersion:             payload.MessageOperationSchemaVersion,
 		OperationKind:             payload.OperationKindSendMessage,
@@ -338,7 +342,7 @@ func buildMessageOperationPayload(fromUserID int64, toUserID int64, peerID int64
 		PeerSeq:                   canonical.PeerSeq,
 		FromUserID:                fromUserID,
 		ToUserID:                  toUserID,
-		Date:                      canonical.MessageDate,
+		Date:                      date,
 		Out:                       out,
 		MessageText:               text,
 		ReplyToCanonicalMessageID: replyToCanonicalMessageID,
@@ -365,12 +369,16 @@ func shortSentMessage(canonical *repository.CanonicalMessageResult, result *user
 	if err != nil {
 		return nil, err
 	}
+	date, err := tg.DateInt32FromUnixSeconds(canonical.MessageDate)
+	if err != nil {
+		return nil, err
+	}
 	return tg.MakeTLUpdateShortSentMessage(&tg.TLUpdateShortSentMessage{
 		Out:      true,
 		Id:       peerSeq,
 		Pts:      pts,
 		PtsCount: result.PtsCount,
-		Date:     canonical.MessageDate,
+		Date:     date,
 	}).ToUpdates(), nil
 }
 
