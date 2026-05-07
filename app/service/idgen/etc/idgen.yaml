@@ -21,7 +21,7 @@ NodeId: 0
 # app/service/idgen/sql/seq_conversations.sql and must be applied to
 # every database referenced here before enabling the service.
 Mysql:
-  DSN: "root:@tcp(127.0.0.1:3306)/teamgooo?charset=utf8mb4&parseTime=true&loc=Local"
+  DSN: "root:@tcp(127.0.0.1:3306)/teamgooo?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai"
   Active: 64
   Idle: 64
   IdleTimeout: 4h

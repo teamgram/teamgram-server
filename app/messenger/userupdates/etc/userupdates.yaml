@@ -13,7 +13,7 @@ Log:
 OwnerInstance: local-userupdates
 
 Mysql:
-  DSN: "root:@tcp(127.0.0.1:3306)/teamgooo?charset=utf8mb4&parseTime=true&loc=UTC"
+  DSN: "root:@tcp(127.0.0.1:3306)/teamgooo?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai"
   Active: 64
   Idle: 64
   IdleTimeout: 4h

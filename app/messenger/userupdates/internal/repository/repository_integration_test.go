@@ -505,7 +505,7 @@ func openIntegrationDB(t *testing.T) *sqlx.DB {
 	dsn := os.Getenv("TEAMGRAM_TEST_MYSQL_DSN")
 	explicit := dsn != ""
 	if dsn == "" {
-		dsn = "root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai"
+		dsn = "root:@tcp(127.0.0.1:3306)/teamgooo?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai"
 	}
 	db, err := sqlx.Open(&sqlx.Config{DSN: dsn})
 	if err != nil {
