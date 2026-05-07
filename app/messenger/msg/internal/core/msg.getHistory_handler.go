@@ -59,7 +59,7 @@ func messagesFromHistory(history []repository.HistoryMessage) (*tg.MessagesMessa
 		if item.MessageKind != repository.MessageKindText {
 			continue
 		}
-		date, err := tg.DateInt32FromUnixSeconds(item.MessageDate)
+		date, err := msgDateInt32FromUnixSeconds(item.MessageDate, "history message date")
 		if err != nil {
 			return nil, err
 		}

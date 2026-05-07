@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"math"
 	"os"
 	"testing"
 	"time"
@@ -137,7 +138,7 @@ func TestCanonicalMessageDatesUseUnixSeconds(t *testing.T) {
 	db := openIntegrationDB(t)
 	base := time.Now().UnixNano() % 1_000_000_000
 	repo := NewForTest(db, &testIDGenerator{next: base + 10_000})
-	date := int64(1_772_000_123)
+	date := int64(math.MaxInt32) + 10_000
 	canonical := createCanonicalMessageForTest(t, ctx, repo, base+101, base+102, base+103, "int64 date", date)
 	if canonical.MessageDate != date {
 		t.Fatalf("MessageDate = %d, want %d", canonical.MessageDate, date)

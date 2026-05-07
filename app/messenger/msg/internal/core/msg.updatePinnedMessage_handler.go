@@ -93,7 +93,7 @@ func (c *MsgCore) MsgUpdatePinnedMessage(in *msg.TLMsgUpdatePinnedMessage) (*tg.
 	if !in.Unpin {
 		messages = []int32{in.Id}
 	}
-	date, err := tg.DateInt32FromUnixSeconds(time.Now().UTC().Unix())
+	date, err := msgDateInt32FromUnixSeconds(time.Now().UTC().Unix(), "update pinned date")
 	if err != nil {
 		return nil, err
 	}
@@ -110,7 +110,7 @@ func (c *MsgCore) MsgUpdatePinnedMessage(in *msg.TLMsgUpdatePinnedMessage) (*tg.
 }
 
 func buildPinnedMessageOperation(in *msg.TLMsgUpdatePinnedMessage, canonical *repository.CanonicalMessage) ([]byte, []byte, error) {
-	date, err := tg.DateInt32FromUnixSeconds(time.Now().UTC().Unix())
+	date, err := msgDateInt32FromUnixSeconds(time.Now().UTC().Unix(), "pinned operation date")
 	if err != nil {
 		return nil, nil, err
 	}
@@ -124,7 +124,7 @@ func buildPinnedMessageOperation(in *msg.TLMsgUpdatePinnedMessage, canonical *re
 		fromUserID = canonical.FromUserID
 		messageText = canonical.MessageText
 		if canonical.MessageDate != 0 {
-			date, err = tg.DateInt32FromUnixSeconds(canonical.MessageDate)
+			date, err = msgDateInt32FromUnixSeconds(canonical.MessageDate, "pinned canonical message date")
 			if err != nil {
 				return nil, nil, err
 			}

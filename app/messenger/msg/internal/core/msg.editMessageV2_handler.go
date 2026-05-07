@@ -145,11 +145,11 @@ func buildEditReceiverOperation(in *msg.TLMsgEditMessageV2, edited *repository.E
 }
 
 func buildEditMessageOperationPayload(fromUserID int64, toUserID int64, peerID int64, out bool, edited *repository.EditMessageResult) ([]byte, []byte, error) {
-	date, err := tg.DateInt32FromUnixSeconds(edited.MessageDate)
+	date, err := msgDateInt32FromUnixSeconds(edited.MessageDate, "edit message date")
 	if err != nil {
 		return nil, nil, err
 	}
-	editDate, err := tg.DateInt32FromUnixSeconds(edited.EditDate)
+	editDate, err := msgDateInt32FromUnixSeconds(edited.EditDate, "edit date")
 	if err != nil {
 		return nil, nil, err
 	}
@@ -186,15 +186,15 @@ func shortEditMessage(edited *repository.EditMessageResult, result *userupdates.
 	if err != nil {
 		return nil, err
 	}
-	date, err := tg.DateInt32FromUnixSeconds(edited.MessageDate)
+	date, err := msgDateInt32FromUnixSeconds(edited.MessageDate, "edit update message date")
 	if err != nil {
 		return nil, err
 	}
-	editDate, err := tg.DateInt32FromUnixSeconds(edited.EditDate)
+	editDate, err := msgDateInt32FromUnixSeconds(edited.EditDate, "edit update edit date")
 	if err != nil {
 		return nil, err
 	}
-	updateDate, err := tg.DateInt32FromUnixSeconds(edited.EditDate - 1)
+	updateDate, err := msgDateInt32FromUnixSeconds(edited.EditDate-1, "edit updates date")
 	if err != nil {
 		return nil, err
 	}

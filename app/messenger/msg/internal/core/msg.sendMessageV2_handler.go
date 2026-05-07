@@ -329,7 +329,7 @@ func buildReceiverOperation(in *msg.TLMsgSendMessageV2, canonical *repository.Ca
 }
 
 func buildMessageOperationPayload(fromUserID int64, toUserID int64, peerID int64, out bool, canonical *repository.CanonicalMessageResult, text string, replyToCanonicalMessageID int64, clearDraft bool, sourcePermAuthKeyID int64, clearDraftBeforeDate int32) ([]byte, []byte, []byte, error) {
-	date, err := tg.DateInt32FromUnixSeconds(canonical.MessageDate)
+	date, err := msgDateInt32FromUnixSeconds(canonical.MessageDate, "message date")
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -369,7 +369,7 @@ func shortSentMessage(canonical *repository.CanonicalMessageResult, result *user
 	if err != nil {
 		return nil, err
 	}
-	date, err := tg.DateInt32FromUnixSeconds(canonical.MessageDate)
+	date, err := msgDateInt32FromUnixSeconds(canonical.MessageDate, "short sent message date")
 	if err != nil {
 		return nil, err
 	}
@@ -387,6 +387,14 @@ func int64ToInt32(v int64, field string) (int32, error) {
 		return 0, fmt.Errorf("%w: %s out of int32 range", msg.ErrSenderSyncFailed, field)
 	}
 	return int32(v), nil
+}
+
+func msgDateInt32FromUnixSeconds(seconds int64, field string) (int32, error) {
+	date, err := tg.DateInt32FromUnixSeconds(seconds)
+	if err != nil {
+		return 0, fmt.Errorf("%w: convert %s: %v", msg.ErrMsgStorage, field, err)
+	}
+	return date, nil
 }
 
 func int64Ptr(v int64) *int64 {
