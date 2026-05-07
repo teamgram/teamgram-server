@@ -73,7 +73,7 @@
 
     <operation name="MarkBlockedIfOld">
         <params>
-            <param name="blocked_before" type="string" />
+            <param name="blocked_before" type="time.Time" />
         </params>
         <sql>
             UPDATE
@@ -85,7 +85,26 @@
                 last_error_code = :last_error_code
             WHERE
                 side_effect_id = :side_effect_id
-                AND created_at &lt;= :blocked_before
+                AND next_retry_at &lt;= :blocked_before
+        </sql>
+    </operation>
+
+    <operation name="ResetBlocked">
+        <params>
+            <param name="old_status" type="int32" />
+        </params>
+        <sql>
+            UPDATE
+                dialog_side_effect_outbox
+            SET
+                status = :status,
+                attempt_count = 0,
+                next_retry_at = :next_retry_at,
+                lease_owner = '',
+                lease_until = :lease_until,
+                last_error_code = ''
+            WHERE
+                status = :old_status AND side_effect_id = :side_effect_id
         </sql>
     </operation>
 

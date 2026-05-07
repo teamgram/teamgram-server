@@ -108,4 +108,52 @@
                 user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id
         </sql>
     </operation>
+
+    <operation name="UpdateAvailableMinPeerSeq">
+        <sql>
+            UPDATE
+                user_dialogs
+            SET
+                available_min_peer_seq = :available_min_peer_seq,
+                last_pts = :last_pts,
+                last_pts_at = :last_pts_at
+            WHERE
+                user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id
+        </sql>
+    </operation>
+
+    <operation name="ClearDialogTopAfterDelete">
+        <sql>
+            UPDATE
+                user_dialogs
+            SET
+                top_peer_seq = 0,
+                top_canonical_message_id = 0,
+                top_message_status = :top_message_status,
+                hidden = 1,
+                deleted_at = :deleted_at,
+                last_pts = :last_pts,
+                last_pts_at = :last_pts_at
+            WHERE
+                user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id
+        </sql>
+    </operation>
+
+    <operation name="UpdateDialogTopAfterDelete">
+        <sql>
+            UPDATE
+                user_dialogs
+            SET
+                top_peer_seq = :top_peer_seq,
+                top_canonical_message_id = :top_canonical_message_id,
+                top_message_date = :top_message_date,
+                top_message_status = :top_message_status,
+                hidden = 0,
+                deleted_at = :deleted_at,
+                last_pts = :last_pts,
+                last_pts_at = :last_pts_at
+            WHERE
+                user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id
+        </sql>
+    </operation>
 </table>

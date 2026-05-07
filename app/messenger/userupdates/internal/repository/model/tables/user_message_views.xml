@@ -52,4 +52,48 @@
                 peer_seq LIMIT :limit
         </sql>
     </operation>
+
+    <operation name="MarkHistoryDeleted">
+        <sql>
+            UPDATE
+                user_message_views
+            SET
+                message_status = :message_status,
+                view_payload = :view_payload
+            WHERE
+                user_id = :user_id
+                AND peer_type = :peer_type
+                AND peer_id = :peer_id
+                AND peer_seq &lt;= :peer_seq
+        </sql>
+    </operation>
+
+    <operation name="UpdateEditDateByUserCanonical">
+        <sql>
+            UPDATE
+                user_message_views
+            SET
+                edit_date = :edit_date
+            WHERE
+                user_id = :user_id
+                AND canonical_message_id = :canonical_message_id
+        </sql>
+    </operation>
+
+    <operation name="SelectTopLiveByUserPeer">
+        <sql>
+            SELECT
+                user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload
+            FROM
+                user_message_views
+            WHERE
+                user_id = :user_id
+                AND peer_type = :peer_type
+                AND peer_id = :peer_id
+                AND message_status = :message_status
+            ORDER BY
+                peer_seq DESC
+            LIMIT 1
+        </sql>
+    </operation>
 </table>

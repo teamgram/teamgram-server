@@ -101,15 +101,14 @@ func (r *Repository) GetDialogProjectionsByPeers(ctx context.Context, userID int
 }
 
 func (r *Repository) CountVisibleDialogs(ctx context.Context, userID int64) (int32, error) {
-	db, err := r.requireDB()
-	if err != nil {
+	if _, err := r.requireDB(); err != nil {
 		return 0, err
 	}
-	var count int32
-	if err := db.QueryRow(ctx, &count, "SELECT COUNT(*) FROM user_dialogs WHERE user_id = ? AND hidden = 0", userID); err != nil {
+	row, err := r.models.UserupdatesQueries.CountVisibleDialogs(ctx, userID)
+	if err != nil {
 		return 0, storageError("count visible dialogs", err)
 	}
-	return count, nil
+	return row.Count, nil
 }
 
 func mapDialogProjectionRows(rows []model.UserDialogs) []DialogProjection {

@@ -1,0 +1,16 @@
+<queries namespace="UserupdatesQueries">
+    <result name="VisibleDialogCountRow">
+        <field name="Count" type="int32" db="count"/>
+    </result>
+
+    <query name="CountVisibleDialogs" result="VisibleDialogCountRow">
+        <sql>
+            SELECT
+                COUNT(*) AS count
+            FROM
+                user_dialogs
+            WHERE
+                user_id = :user_id AND hidden = 0
+        </sql>
+    </query>
+</queries>

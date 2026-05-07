@@ -28,6 +28,7 @@ type Models struct {
 	UserPtsEventsModel              UserPtsEventsModel
 	UserPtsStateModel               UserPtsStateModel
 	UserupdatesPartitionFencesModel UserupdatesPartitionFencesModel
+	UserupdatesQueries              UserupdatesQueriesModel
 }
 
 type TxModels struct {
@@ -44,6 +45,7 @@ type TxModels struct {
 	UserPtsEventsModel              UserPtsEventsTxModel
 	UserPtsStateModel               UserPtsStateTxModel
 	UserupdatesPartitionFencesModel UserupdatesPartitionFencesTxModel
+	UserupdatesQueries              UserupdatesQueriesTxModel
 }
 
 func NewModels(db *sqlx.DB) *Models {
@@ -61,6 +63,7 @@ func NewModels(db *sqlx.DB) *Models {
 		UserPtsEventsModel:              NewUserPtsEventsModel(db),
 		UserPtsStateModel:               NewUserPtsStateModel(db),
 		UserupdatesPartitionFencesModel: NewUserupdatesPartitionFencesModel(db),
+		UserupdatesQueries:              NewUserupdatesQueriesModel(db),
 	}
 }
 
@@ -79,5 +82,6 @@ func (m *Models) WithTx(tx *sqlx.Tx) *TxModels {
 		UserPtsEventsModel:              NewUserPtsEventsTxModel(tx),
 		UserPtsStateModel:               NewUserPtsStateTxModel(tx),
 		UserupdatesPartitionFencesModel: NewUserupdatesPartitionFencesTxModel(tx),
+		UserupdatesQueries:              NewUserupdatesQueriesTxModel(tx),
 	}
 }

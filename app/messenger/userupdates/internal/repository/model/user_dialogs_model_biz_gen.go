@@ -36,6 +36,9 @@ type bizUserDialogsModel interface {
 	SelectByUserCursorWithCB(ctx context.Context, userId int64, topMessageDate string, topPeerSeq int64, peerType int32, peerId int64, limit int32, cb func(sz, i int, v *UserDialogs)) ([]UserDialogs, error)
 	UpdateReadState(ctx context.Context, unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, readInboxMaxPeerSeq int64, readOutboxMaxPeerSeq int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
 	UpdatePinnedMessage(ctx context.Context, pinnedPeerSeq int64, pinnedCanonicalMessageId int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	UpdateAvailableMinPeerSeq(ctx context.Context, availableMinPeerSeq int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	ClearDialogTopAfterDelete(ctx context.Context, topMessageStatus int32, deletedAt sql.NullTime, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	UpdateDialogTopAfterDelete(ctx context.Context, topPeerSeq int64, topCanonicalMessageId int64, topMessageDate sql.NullTime, topMessageStatus int32, deletedAt sql.NullTime, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
 }
 
 type UserDialogsTxModel interface {
@@ -45,6 +48,9 @@ type UserDialogsTxModel interface {
 	SelectByUserCursor(userId int64, topMessageDate string, topPeerSeq int64, peerType int32, peerId int64, limit int32) ([]UserDialogs, error)
 	UpdateReadState(unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, readInboxMaxPeerSeq int64, readOutboxMaxPeerSeq int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
 	UpdatePinnedMessage(pinnedPeerSeq int64, pinnedCanonicalMessageId int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	UpdateAvailableMinPeerSeq(availableMinPeerSeq int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	ClearDialogTopAfterDelete(topMessageStatus int32, deletedAt sql.NullTime, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	UpdateDialogTopAfterDelete(topPeerSeq int64, topCanonicalMessageId int64, topMessageDate sql.NullTime, topMessageStatus int32, deletedAt sql.NullTime, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
 }
 
 type defaultUserDialogsTxModel struct {
@@ -425,6 +431,150 @@ func (m *defaultUserDialogsTxModel) UpdatePinnedMessage(pinnedPeerSeq int64, pin
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_dialogs.UpdatePinnedMessage rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// UpdateAvailableMinPeerSeq
+// update user_dialogs set available_min_peer_seq = :available_min_peer_seq, last_pts = :last_pts, last_pts_at = :last_pts_at where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
+func (m *defaultUserDialogsModel) UpdateAvailableMinPeerSeq(ctx context.Context, availableMinPeerSeq int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+
+	var (
+		query   = "update user_dialogs set available_min_peer_seq = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
+		rResult sql.Result
+	)
+
+	rResult, err = m.db.Exec(ctx, query, availableMinPeerSeq, lastPts, lastPtsAt, userId, peerType, peerId)
+
+	if err != nil {
+		err = fmt.Errorf("user_dialogs.UpdateAvailableMinPeerSeq exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("user_dialogs.UpdateAvailableMinPeerSeq rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// UpdateAvailableMinPeerSeq
+// update user_dialogs set available_min_peer_seq = :available_min_peer_seq, last_pts = :last_pts, last_pts_at = :last_pts_at where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
+func (m *defaultUserDialogsTxModel) UpdateAvailableMinPeerSeq(availableMinPeerSeq int64, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update user_dialogs set available_min_peer_seq = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
+		rResult sql.Result
+	)
+	rResult, err = m.tx.Exec(query, availableMinPeerSeq, lastPts, lastPtsAt, userId, peerType, peerId)
+
+	if err != nil {
+		err = fmt.Errorf("user_dialogs.UpdateAvailableMinPeerSeq exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("user_dialogs.UpdateAvailableMinPeerSeq rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// ClearDialogTopAfterDelete
+// update user_dialogs set top_peer_seq = 0, top_canonical_message_id = 0, top_message_status = :top_message_status, hidden = 1, deleted_at = :deleted_at, last_pts = :last_pts, last_pts_at = :last_pts_at where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
+func (m *defaultUserDialogsModel) ClearDialogTopAfterDelete(ctx context.Context, topMessageStatus int32, deletedAt sql.NullTime, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+
+	var (
+		query   = "update user_dialogs set top_peer_seq = 0, top_canonical_message_id = 0, top_message_status = ?, hidden = 1, deleted_at = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
+		rResult sql.Result
+	)
+
+	rResult, err = m.db.Exec(ctx, query, topMessageStatus, deletedAt, lastPts, lastPtsAt, userId, peerType, peerId)
+
+	if err != nil {
+		err = fmt.Errorf("user_dialogs.ClearDialogTopAfterDelete exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("user_dialogs.ClearDialogTopAfterDelete rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// ClearDialogTopAfterDelete
+// update user_dialogs set top_peer_seq = 0, top_canonical_message_id = 0, top_message_status = :top_message_status, hidden = 1, deleted_at = :deleted_at, last_pts = :last_pts, last_pts_at = :last_pts_at where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
+func (m *defaultUserDialogsTxModel) ClearDialogTopAfterDelete(topMessageStatus int32, deletedAt sql.NullTime, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update user_dialogs set top_peer_seq = 0, top_canonical_message_id = 0, top_message_status = ?, hidden = 1, deleted_at = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
+		rResult sql.Result
+	)
+	rResult, err = m.tx.Exec(query, topMessageStatus, deletedAt, lastPts, lastPtsAt, userId, peerType, peerId)
+
+	if err != nil {
+		err = fmt.Errorf("user_dialogs.ClearDialogTopAfterDelete exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("user_dialogs.ClearDialogTopAfterDelete rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// UpdateDialogTopAfterDelete
+// update user_dialogs set top_peer_seq = :top_peer_seq, top_canonical_message_id = :top_canonical_message_id, top_message_date = :top_message_date, top_message_status = :top_message_status, hidden = 0, deleted_at = :deleted_at, last_pts = :last_pts, last_pts_at = :last_pts_at where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
+func (m *defaultUserDialogsModel) UpdateDialogTopAfterDelete(ctx context.Context, topPeerSeq int64, topCanonicalMessageId int64, topMessageDate sql.NullTime, topMessageStatus int32, deletedAt sql.NullTime, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+
+	var (
+		query   = "update user_dialogs set top_peer_seq = ?, top_canonical_message_id = ?, top_message_date = ?, top_message_status = ?, hidden = 0, deleted_at = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
+		rResult sql.Result
+	)
+
+	rResult, err = m.db.Exec(ctx, query, topPeerSeq, topCanonicalMessageId, topMessageDate, topMessageStatus, deletedAt, lastPts, lastPtsAt, userId, peerType, peerId)
+
+	if err != nil {
+		err = fmt.Errorf("user_dialogs.UpdateDialogTopAfterDelete exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("user_dialogs.UpdateDialogTopAfterDelete rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// UpdateDialogTopAfterDelete
+// update user_dialogs set top_peer_seq = :top_peer_seq, top_canonical_message_id = :top_canonical_message_id, top_message_date = :top_message_date, top_message_status = :top_message_status, hidden = 0, deleted_at = :deleted_at, last_pts = :last_pts, last_pts_at = :last_pts_at where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
+func (m *defaultUserDialogsTxModel) UpdateDialogTopAfterDelete(topPeerSeq int64, topCanonicalMessageId int64, topMessageDate sql.NullTime, topMessageStatus int32, deletedAt sql.NullTime, lastPts int64, lastPtsAt sql.NullTime, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update user_dialogs set top_peer_seq = ?, top_canonical_message_id = ?, top_message_date = ?, top_message_status = ?, hidden = 0, deleted_at = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
+		rResult sql.Result
+	)
+	rResult, err = m.tx.Exec(query, topPeerSeq, topCanonicalMessageId, topMessageDate, topMessageStatus, deletedAt, lastPts, lastPtsAt, userId, peerType, peerId)
+
+	if err != nil {
+		err = fmt.Errorf("user_dialogs.UpdateDialogTopAfterDelete exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("user_dialogs.UpdateDialogTopAfterDelete rows affected: %w", err)
 		return
 	}
 

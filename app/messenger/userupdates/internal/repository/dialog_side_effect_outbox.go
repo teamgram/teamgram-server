@@ -221,7 +221,7 @@ func (r *Repository) MarkDialogSideEffectRetryableFailure(ctx context.Context, s
 		mysqlZeroTime(),
 		errCode,
 		sideEffectID,
-		mysqlTimestamp(blockedBefore),
+		blockedBefore,
 	)
 	if err != nil {
 		return storageError("mark old dialog side effect blocked", err)
@@ -265,15 +265,19 @@ func (r *Repository) MarkDialogSideEffectBlocked(ctx context.Context, sideEffect
 }
 
 func (r *Repository) ResetDialogSideEffectOutboxBlocked(ctx context.Context, ids []int64) error {
-	db, err := r.requireDB()
-	if err != nil {
+	if _, err := r.requireDB(); err != nil {
 		return err
 	}
 	for _, id := range ids {
-		query := `UPDATE dialog_side_effect_outbox
-SET status = ?, attempt_count = 0, next_retry_at = ?, lease_owner = '', lease_until = ?, last_error_code = ''
-WHERE status = ? AND side_effect_id = ?`
-		if _, err := db.Exec(ctx, query, DialogSideEffectStatusPending, mysqlNow(), mysqlZeroTime(), DialogSideEffectStatusBlocked, id); err != nil {
+		_, err := r.models.DialogSideEffectOutboxModel.ResetBlocked(
+			ctx,
+			DialogSideEffectStatusPending,
+			mysqlNow(),
+			mysqlZeroTime(),
+			DialogSideEffectStatusBlocked,
+			id,
+		)
+		if err != nil {
 			return storageError("reset dialog side effect outbox blocked", err)
 		}
 	}
