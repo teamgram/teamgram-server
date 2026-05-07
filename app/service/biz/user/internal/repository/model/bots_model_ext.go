@@ -16,27 +16,6 @@
 
 package model
 
-import (
-	"context"
-	"fmt"
-
-	"github.com/teamgram/marmota/pkg/stores/sqlx"
-)
-
 type (
-	extendBotsModel interface {
-		SelectByBotIdList(ctx context.Context, idList []int64) ([]Bots, error)
-	}
+	extendBotsModel interface{}
 )
-
-func (m *customBotsModel) SelectByBotIdList(ctx context.Context, idList []int64) ([]Bots, error) {
-	if len(idList) == 0 {
-		return []Bots{}, nil
-	}
-	query := fmt.Sprintf("select id, bot_id, bot_type, creator_user_id, token, description, bot_chat_history, bot_nochats, bot_inline_geo, bot_info_version, bot_inline_placeholder, attach_menu_enabled, bot_attach_menu, bot_business, bot_has_main_app, bot_active_users, has_menu_button, menu_button_text, menu_button_url, bot_can_edit, has_preview_medias, description_photo_id, description_document_id, main_app_url, has_app_settings, placeholder_path, background_color, background_dark_color, header_color, header_dark_color, privacy_policy_url from bots where bot_id in (%s)", sqlx.InInt64List(idList))
-	var values []Bots
-	if err := m.db.QueryRowsPartial(ctx, &values, query); err != nil {
-		return nil, fmt.Errorf("bots.SelectByBotIdList: %w", err)
-	}
-	return values, nil
-}

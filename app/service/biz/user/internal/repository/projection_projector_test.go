@@ -64,6 +64,27 @@ func TestProjectUserNonContactDoesNotLeakPhoneByDefault(t *testing.T) {
 	}
 }
 
+func TestProjectUserMissingPrivacyUsesDefaultRules(t *testing.T) {
+	facts := projectionFacts{
+		Users: map[int64]*projectionUserFact{
+			1002: {User: tg.MakeTLUserData(&tg.TLUserData{Id: 1002, AccessHash: 22, FirstName: "Target", Phone: "200"}), PhotoId: 9002},
+		},
+		Presences: map[int64]*projectionPresenceFact{
+			1002: {LastSeenAt: 1710000000, Expires: 2147483647},
+		},
+	}
+	user := projectUserForViewer(1001, 1002, facts).(*tg.TLUser)
+	if user.Phone != nil {
+		t.Fatalf("missing phone privacy leaked phone: %+v", user)
+	}
+	if user.Photo == nil {
+		t.Fatalf("missing photo privacy hid default-visible photo: %+v", user)
+	}
+	if user.Status == nil {
+		t.Fatalf("missing status privacy hid default-visible status: %+v", user)
+	}
+}
+
 func TestProjectUserAppliesPhonePrivacyAllowAndDisallow(t *testing.T) {
 	facts := projectionFacts{
 		Users: map[int64]*projectionUserFact{

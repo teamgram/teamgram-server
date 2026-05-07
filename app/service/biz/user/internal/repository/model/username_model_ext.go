@@ -16,27 +16,6 @@
 
 package model
 
-import (
-	"context"
-	"fmt"
-
-	"github.com/teamgram/marmota/pkg/stores/sqlx"
-)
-
 type (
-	extendUsernameModel interface {
-		SelectListByUserIdList(ctx context.Context, idList []int64) ([]Username, error)
-	}
+	extendUsernameModel interface{}
 )
-
-func (m *customUsernameModel) SelectListByUserIdList(ctx context.Context, idList []int64) ([]Username, error) {
-	if len(idList) == 0 {
-		return []Username{}, nil
-	}
-	query := fmt.Sprintf("select peer_type, peer_id, username, editable, active, order2 from username where peer_type = 2 and peer_id in (%s)", sqlx.InInt64List(idList))
-	var values []Username
-	if err := m.db.QueryRowsPartial(ctx, &values, query); err != nil {
-		return nil, fmt.Errorf("username.SelectListByUserIdList: %w", err)
-	}
-	return values, nil
-}

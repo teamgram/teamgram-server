@@ -95,6 +95,20 @@
         </sql>
     </operation>
 
+    <operation name="SelectListByUserIdList" result_set="list">
+        <params>
+            <param name="id_list" type="[]int64" />
+        </params>
+        <sql>
+            SELECT
+                peer_type, peer_id, username, editable, active, order2
+            FROM
+                username
+            WHERE
+                peer_type = 2 AND peer_id IN (:id_list)
+        </sql>
+    </operation>
+
     <operation name="SelectByChannelId">
         <sql>
             SELECT

@@ -93,6 +93,21 @@ func TestProjectionComponentCacheBulkRead(t *testing.T) {
 	}
 }
 
+func TestProjectionCacheIdentityMismatchDeletesKey(t *testing.T) {
+	cache := newFakeProjectionBatchCache()
+	r := &Repository{CachedConn: sqlc.NewConnWithCache(nil, cache)}
+	ctx := context.Background()
+	key := projectionPresenceCacheKey(42)
+
+	r.setProjectionComponentCache(ctx, key, projectionPresenceCacheDTO{UserID: 43})
+	r.logProjectionCacheIdentityMismatch(ctx, key, "presence", 42, 43)
+
+	var got projectionPresenceCacheDTO
+	if err := cache.GetCtx(ctx, key, &got); err != sql.ErrNoRows {
+		t.Fatalf("cache key still present after mismatch delete: err=%v got=%+v", err, got)
+	}
+}
+
 type fakeProjectionBatchCache struct {
 	values map[string]interface{}
 	gets   int

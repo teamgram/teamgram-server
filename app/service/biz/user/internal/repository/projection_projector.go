@@ -78,13 +78,13 @@ func projectUserForViewer(viewerUserId, targetUserId int64, facts projectionFact
 		user.CloseFriend = contact.CloseFriend
 		user.StoriesHidden = contact.StoriesHidden
 		user.Phone = stringPtr(contact.Phone)
-	} else if projectionAllowsPrivacy(viewerUserId, targetUserId, tg.PHONE_NUMBER, facts, false) {
+	} else if projectionAllowsPrivacy(viewerUserId, targetUserId, tg.PHONE_NUMBER, facts) {
 		user.Phone = stringPtr(userData.Phone)
 	}
-	if projectionAllowsPrivacy(viewerUserId, targetUserId, tg.PROFILE_PHOTO, facts, false) {
+	if projectionAllowsPrivacy(viewerUserId, targetUserId, tg.PROFILE_PHOTO, facts) {
 		user.Photo = projectionUserProfilePhoto(fact)
 	}
-	if projectionAllowsPrivacy(viewerUserId, targetUserId, tg.STATUS_TIMESTAMP, facts, false) {
+	if projectionAllowsPrivacy(viewerUserId, targetUserId, tg.STATUS_TIMESTAMP, facts) {
 		user.Status = projectionUserStatus(facts.Presences[targetUserId])
 	}
 	return user
@@ -166,17 +166,13 @@ func projectionUsernames(userData *tg.UserData, fact *projectionUserFact) []tg.U
 	return tgUsernameList(userData.Username, true)
 }
 
-func projectionAllowsPrivacy(viewerUserId, targetUserId int64, keyType int32, facts projectionFacts, defaultAllow bool) bool {
+func projectionAllowsPrivacy(viewerUserId, targetUserId int64, keyType int32, facts projectionFacts) bool {
 	if viewerUserId == targetUserId {
 		return true
 	}
 	rules, ok := facts.Privacies[privacyKey{UserId: targetUserId, KeyType: keyType}]
 	if !ok {
-		if defaultAllow {
-			rules = defaultPrivacyRules(keyType)
-		} else {
-			return false
-		}
+		rules = defaultPrivacyRules(keyType)
 	}
 	return evaluatePrivacyRules(rules, privacyEvaluationContext{
 		PeerID:        viewerUserId,

@@ -259,6 +259,11 @@ func (r *Repository) logProjectionCacheDecodeMiss(ctx context.Context, key strin
 	}
 }
 
+func (r *Repository) logProjectionCacheIdentityMismatch(ctx context.Context, key, component string, expected, got int64) {
+	logx.WithContext(ctx).Errorf("user projection cache identity mismatch: component=%s key=%s expected=%d got=%d", component, key, expected, got)
+	r.deleteProjectionComponentCaches(ctx, key)
+}
+
 func projectionCacheNotFound(err error) bool {
 	return err == nil || errors.Is(err, sql.ErrNoRows) || errors.Is(err, sqlx.ErrNotFound)
 }

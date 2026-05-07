@@ -40,6 +40,8 @@ type bizUsernameModel interface {
 	SelectByUserId(ctx context.Context, peerId int64) (*Username, error)
 	SelectListByUserId(ctx context.Context, peerId int64) ([]Username, error)
 	SelectListByUserIdWithCB(ctx context.Context, peerId int64, cb func(sz, i int, v *Username)) ([]Username, error)
+	SelectListByUserIdList(ctx context.Context, idList []int64) ([]Username, error)
+	SelectListByUserIdListWithCB(ctx context.Context, idList []int64, cb func(sz, i int, v *Username)) ([]Username, error)
 	SelectByChannelId(ctx context.Context, peerId int64) (*Username, error)
 	SelectListByChannelId(ctx context.Context, peerId int64) ([]Username, error)
 	SelectListByChannelIdWithCB(ctx context.Context, peerId int64, cb func(sz, i int, v *Username)) ([]Username, error)
@@ -59,6 +61,7 @@ type UsernameTxModel interface {
 	SelectByPeer(peerType int32, peerId int64) (*Username, error)
 	SelectByUserId(peerId int64) (*Username, error)
 	SelectListByUserId(peerId int64) ([]Username, error)
+	SelectListByUserIdList(idList []int64) ([]Username, error)
 	SelectByChannelId(peerId int64) (*Username, error)
 	SelectListByChannelId(peerId int64) ([]Username, error)
 	UpdateUsername(username string, peerType int32, peerId int64) (rowsAffected int64, err error)
@@ -650,6 +653,100 @@ func (m *defaultUsernameModel) SelectListByUserIdWithCB(ctx context.Context, pee
 			return
 		}
 		err = fmt.Errorf("username.SelectListByUserIdWithCB: %w", err)
+		return
+	}
+
+	rList = values
+
+	if cb != nil {
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
+		}
+	}
+
+	return
+}
+
+// SelectListByUserIdList
+// select peer_type, peer_id, username, editable, active, order2 from username where peer_type = 2 and peer_id in (:id_list)
+func (m *defaultUsernameModel) SelectListByUserIdList(ctx context.Context, idList []int64) (rList []Username, err error) {
+	var (
+		query  = fmt.Sprintf("select peer_type, peer_id, username, editable, active, order2 from username where peer_type = 2 and peer_id in (%s)", sqlx.InInt64List(idList))
+		values []Username
+	)
+	if len(idList) == 0 {
+		rList = []Username{}
+		return
+	}
+
+	err = m.db.QueryRowsPartial(ctx, &values, query)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Username{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("username.SelectListByUserIdList: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectListByUserIdList
+// select peer_type, peer_id, username, editable, active, order2 from username where peer_type = 2 and peer_id in (:id_list)
+func (m *defaultUsernameTxModel) SelectListByUserIdList(idList []int64) (rList []Username, err error) {
+	var (
+		query  = fmt.Sprintf("select peer_type, peer_id, username, editable, active, order2 from username where peer_type = 2 and peer_id in (%s)", sqlx.InInt64List(idList))
+		values []Username
+	)
+	if len(idList) == 0 {
+		rList = []Username{}
+		return
+	}
+
+	err = m.tx.QueryRowsPartial(&values, query)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Username{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("username.SelectListByUserIdList: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectListByUserIdListWithCB
+// select peer_type, peer_id, username, editable, active, order2 from username where peer_type = 2 and peer_id in (:id_list)
+func (m *defaultUsernameModel) SelectListByUserIdListWithCB(ctx context.Context, idList []int64, cb func(sz, i int, v *Username)) (rList []Username, err error) {
+	var (
+		query  = fmt.Sprintf("select peer_type, peer_id, username, editable, active, order2 from username where peer_type = 2 and peer_id in (%s)", sqlx.InInt64List(idList))
+		values []Username
+	)
+	if len(idList) == 0 {
+		rList = []Username{}
+		return
+	}
+
+	err = m.db.QueryRowsPartial(ctx, &values, query)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []Username{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("username.SelectListByUserIdListWithCB: %w", err)
 		return
 	}
 

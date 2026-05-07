@@ -46,9 +46,12 @@ func (r *Repository) loadProjectionUserFacts(ctx context.Context, ids []int64, c
 	for _, id := range ids {
 		key := projectionFactsCacheKey(id)
 		dto, ok := cacheHits[key]
-		if ok && dto.UserID == id {
-			facts.Users[id] = projectionUserFactFromCacheDTO(dto)
-			continue
+		if ok {
+			if dto.UserID == id {
+				facts.Users[id] = projectionUserFactFromCacheDTO(dto)
+				continue
+			}
+			r.logProjectionCacheIdentityMismatch(ctx, key, "facts", id, dto.UserID)
 		}
 		missIDs = append(missIDs, id)
 	}
@@ -102,7 +105,17 @@ func (r *Repository) loadProjectionContactFacts(ctx context.Context, viewerIds [
 		for _, ownerID := range ownerIds {
 			key := projectionContactMapCacheKey(ownerID)
 			dto, ok := cacheHits[key]
-			if !ok || dto.OwnerUserID != ownerID || len(dto.Contacts) > cfg.ContactMapMaxEntries {
+			if !ok {
+				fallbackOwnerIds = append(fallbackOwnerIds, ownerID)
+				continue
+			}
+			if dto.OwnerUserID != ownerID {
+				r.logProjectionCacheIdentityMismatch(ctx, key, "contact-map", ownerID, dto.OwnerUserID)
+				fallbackOwnerIds = append(fallbackOwnerIds, ownerID)
+				continue
+			}
+			if len(dto.Contacts) > cfg.ContactMapMaxEntries {
+				r.deleteProjectionComponentCaches(ctx, key)
 				fallbackOwnerIds = append(fallbackOwnerIds, ownerID)
 				continue
 			}
@@ -115,45 +128,50 @@ func (r *Repository) loadProjectionContactFacts(ctx context.Context, viewerIds [
 			}
 		}
 	}
-	return r.loadProjectionContactOwnerMaps(ctx, fallbackOwnerIds, contactSet, cfg, facts)
+	return r.loadProjectionContactEdges(ctx, fallbackOwnerIds, viewerIds, targetIds, cfg, facts)
 }
 
-func (r *Repository) loadProjectionContactOwnerMaps(ctx context.Context, ownerIds []int64, contactSet map[int64]bool, cfg ProjectionConfig, facts projectionFacts) error {
+// Edge fallback is pair-bounded; it must not write owner-map cache because it does not load complete owner maps.
+func (r *Repository) loadProjectionContactEdges(ctx context.Context, ownerIds, viewerIds, targetIds []int64, cfg ProjectionConfig, facts projectionFacts) error {
 	if len(ownerIds) == 0 {
 		return nil
 	}
-	contactsByOwner := make(map[int64]map[int64]projectionContactFact, len(ownerIds))
-	for _, ownerID := range ownerIds {
-		contactsByOwner[ownerID] = make(map[int64]projectionContactFact)
+	ownerSet := int64Set(ownerIds)
+	viewerOwners := filterInt64s(viewerIds, ownerSet)
+	targetOwners := filterInt64s(targetIds, ownerSet)
+	if err := r.loadProjectionContactDirection(ctx, viewerOwners, targetIds, cfg, facts); err != nil {
+		return err
+	}
+	return r.loadProjectionContactDirection(ctx, targetOwners, viewerIds, cfg, facts)
+}
+
+func (r *Repository) loadProjectionContactDirection(ctx context.Context, ownerIds, contactIds []int64, cfg ProjectionConfig, facts projectionFacts) error {
+	if len(ownerIds) == 0 || len(contactIds) == 0 {
+		return nil
 	}
 	for _, ownerChunk := range chunkInt64s(ownerIds, cfg.SQLInChunkSize) {
-		contacts, err := r.model.UserContactsModel.SelectListByOwnerList(ctx, ownerChunk)
-		if err != nil {
-			return fmt.Errorf("%w: projection load contact maps: %w", userpb.ErrUserStorage, err)
-		}
-		for i := range contacts {
-			c := projectionContactFactFromModel(&contacts[i])
-			contactsByOwner[contacts[i].OwnerUserId][contacts[i].ContactUserId] = c
-			if _, ok := contactSet[contacts[i].ContactUserId]; ok {
-				c2 := c
-				facts.Contacts[contactKey{OwnerUserId: contacts[i].OwnerUserId, ContactUserId: contacts[i].ContactUserId}] = &c2
+		for _, contactChunk := range chunkInt64s(contactIds, cfg.SQLInChunkSize) {
+			contacts, err := r.model.UserContactsModel.SelectListByOwnerListAndContactList(ctx, ownerChunk, contactChunk)
+			if err != nil {
+				return fmt.Errorf("%w: projection load contact edges: %w", userpb.ErrUserStorage, err)
 			}
-		}
-	}
-	if cfg.ContactMapCacheEnabled {
-		for _, ownerID := range ownerIds {
-			ownerContacts := contactsByOwner[ownerID]
-			if len(ownerContacts) > cfg.ContactMapMaxEntries {
-				r.deleteProjectionComponentCaches(ctx, projectionContactMapCacheKey(ownerID))
-				continue
-			}
-			r.setProjectionComponentCache(ctx, projectionContactMapCacheKey(ownerID), projectionContactMapCacheDTO{
-				OwnerUserID: ownerID,
-				Contacts:    ownerContacts,
-			})
+			addProjectionContactFacts(contacts, facts)
 		}
 	}
 	return nil
+}
+
+func filterInt64s(values []int64, allowed map[int64]bool) []int64 {
+	if len(values) == 0 || len(allowed) == 0 {
+		return nil
+	}
+	out := make([]int64, 0, len(values))
+	for _, value := range values {
+		if allowed[value] {
+			out = append(out, value)
+		}
+	}
+	return out
 }
 
 func (r *Repository) loadProjectionPrivacyFacts(ctx context.Context, ids []int64, cfg ProjectionConfig, facts projectionFacts) error {
@@ -167,9 +185,12 @@ func (r *Repository) loadProjectionPrivacyFacts(ctx context.Context, ids []int64
 	for _, id := range ids {
 		key := projectionPrivacyCacheKey(id)
 		dto, ok := cacheHits[key]
-		if ok && dto.UserID == id {
-			addProjectionPrivacyCacheDTO(dto, facts)
-			continue
+		if ok {
+			if dto.UserID == id {
+				addProjectionPrivacyCacheDTO(dto, facts)
+				continue
+			}
+			r.logProjectionCacheIdentityMismatch(ctx, key, "privacy", id, dto.UserID)
 		}
 		missIDs = append(missIDs, id)
 	}
@@ -214,11 +235,14 @@ func (r *Repository) loadProjectionPresenceFacts(ctx context.Context, ids []int6
 	for _, id := range ids {
 		key := projectionPresenceCacheKey(id)
 		dto, ok := cacheHits[key]
-		if ok && dto.UserID == id {
-			if dto.HasPresence {
-				facts.Presences[id] = &projectionPresenceFact{LastSeenAt: dto.LastSeenAt, Expires: dto.Expires}
+		if ok {
+			if dto.UserID == id {
+				if dto.HasPresence {
+					facts.Presences[id] = &projectionPresenceFact{LastSeenAt: dto.LastSeenAt, Expires: dto.Expires}
+				}
+				continue
 			}
-			continue
+			r.logProjectionCacheIdentityMismatch(ctx, key, "presence", id, dto.UserID)
 		}
 		missIDs = append(missIDs, id)
 	}
@@ -252,7 +276,7 @@ func (r *Repository) loadProjectionBotFacts(ctx context.Context, ids []int64, cf
 		}
 	}
 	for _, chunk := range chunkInt64s(botIDs, cfg.SQLInChunkSize) {
-		rows, err := r.model.BotsModel.SelectByBotIdList(ctx, chunk)
+		rows, err := r.model.BotsModel.FindListByBotIdList(ctx, chunk...)
 		if err != nil {
 			return fmt.Errorf("%w: projection load bots: %w", userpb.ErrUserStorage, err)
 		}
