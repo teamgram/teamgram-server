@@ -19,7 +19,6 @@ package core
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
@@ -35,7 +34,7 @@ func (c *UserupdatesCore) UserupdatesListDialogs(in *userupdates.TLUserupdatesLi
 	}
 	limit := paging.NormalizeDialogLimit(in.Limit)
 	projections, err := c.svcCtx.Repo.ListDialogProjections(c.ctx, in.UserId, repository.DialogProjectionCursor{
-		TopMessageDate: dialogCursorDate(in.TopMessageDate),
+		TopMessageDate: in.TopMessageDate,
 		TopPeerSeq:     in.TopPeerSeq,
 		PeerType:       in.PeerType,
 		PeerID:         in.PeerId,
@@ -56,7 +55,7 @@ func (c *UserupdatesCore) UserupdatesListDialogs(in *userupdates.TLUserupdatesLi
 	}
 	if len(projections) != 0 {
 		last := projections[len(projections)-1]
-		out.NextTopMessageDate = mysqlTimeToUnix(last.TopMessageDate)
+		out.NextTopMessageDate = last.TopMessageDate
 		out.NextTopPeerSeq = last.TopPeerSeq
 		out.NextPeerType = last.PeerType
 		out.NextPeerId = last.PeerID
@@ -70,7 +69,7 @@ func dialogProjectionToTL(in repository.DialogProjection) userupdates.DialogProj
 		PeerId:                   in.PeerID,
 		TopPeerSeq:               in.TopPeerSeq,
 		TopCanonicalMessageId:    in.TopCanonicalMessageID,
-		TopMessageDate:           mysqlTimeToUnix(in.TopMessageDate),
+		TopMessageDate:           in.TopMessageDate,
 		TopMessageStatus:         in.TopMessageStatus,
 		ReadInboxMaxPeerSeq:      in.ReadInboxMaxPeerSeq,
 		ReadOutboxMaxPeerSeq:     in.ReadOutboxMaxPeerSeq,
@@ -83,31 +82,8 @@ func dialogProjectionToTL(in repository.DialogProjection) userupdates.DialogProj
 		HasScheduled:             in.HasScheduled,
 		AvailableMinPeerSeq:      in.AvailableMinPeerSeq,
 		LastPts:                  in.LastPTS,
-		LastPtsAt:                mysqlTimeToUnix(in.LastPTSAt),
+		LastPtsAt:                in.LastPTSAt,
 		DialogSchemaVersion:      in.DialogSchemaVersion,
 		DialogPayload:            in.DialogPayload,
 	})
-}
-
-func dialogCursorDate(unix int64) string {
-	if unix <= 0 {
-		return ""
-	}
-	return time.Unix(unix, 0).UTC().Format("2006-01-02 15:04:05.000000")
-}
-
-func mysqlTimeToUnix(value string) int64 {
-	if value == "" {
-		return 0
-	}
-	for _, layout := range []string{
-		"2006-01-02 15:04:05.000000",
-		"2006-01-02 15:04:05.999999",
-		time.RFC3339Nano,
-	} {
-		if parsed, err := time.Parse(layout, value); err == nil {
-			return parsed.UTC().Unix()
-		}
-	}
-	return 0
 }

@@ -69,7 +69,7 @@ func mapMessageViewRow(row *model.UserMessageViews) MessageView {
 		MessageKind:        row.MessageKind,
 		MessageStatus:      row.MessageStatus,
 		EditVersion:        row.EditVersion,
-		Date:               int32(row.Date.Unix()),
+		Date:               int32(row.Date),
 		ViewSchemaVersion:  row.ViewSchemaVersion,
 		ViewPayload:        row.ViewPayload,
 	}
@@ -98,5 +98,5 @@ func (r *Repository) GetOutboxReadDate(ctx context.Context, in OutboxReadDateInp
 	if len(rows) == 0 {
 		return 0, userupdates.ErrOutboxReadDateNotFound
 	}
-	return int32(rows[0].ReadOutboxMaxDate.Unix()), nil
+	return int32(rows[0].ReadOutboxMaxDate), nil
 }

@@ -35,8 +35,8 @@ func TestPushOutboxWorkerMarksRowPublished(t *testing.T) {
 		TaskPayload:       []byte(`{"schema_version":1}`),
 		Status:            PushTaskStatusPending,
 		AvailableAt:       mysqlTestTimeValue(time.Now().Add(-time.Minute)),
-		NextRetryAt:       mysqlTestNullTime(time.Now().Add(-time.Minute)),
-		PublishedAt:       mysqlTestNullTime(time.Unix(0, 0).UTC()),
+		NextRetryAt:       mysqlTestTimeValue(time.Now().Add(-time.Minute)),
+		PublishedAt:       int64(0),
 	})
 	worker := NewPushOutboxWorker(repo, &fakePushPublisher{}, PushOutboxWorkerOptions{
 		Interval:          time.Second,

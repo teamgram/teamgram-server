@@ -13,7 +13,7 @@ func (r *Repository) ListPendingPushTasks(ctx context.Context, now time.Time, li
 		ctx,
 		PushTaskStatusPending,
 		PushTaskStatusFailedRetryable,
-		mysqlTimestamp(now),
+		now.UTC().Unix(),
 		limit,
 	)
 	if err != nil {
@@ -43,11 +43,11 @@ func (r *Repository) TryMarkPushTaskPublishing(ctx context.Context, taskID int64
 	rows, err := r.models.PushTaskOutboxModel.TryMarkPublishingDue(
 		ctx,
 		PushTaskStatusPublishing,
-		mysqlTimestamp(leaseExpiresAt),
+		leaseExpiresAt.UTC().Unix(),
 		taskID,
 		PushTaskStatusPending,
 		PushTaskStatusFailedRetryable,
-		mysqlTimestamp(now),
+		now.UTC().Unix(),
 	)
 	if err != nil {
 		return false, storageError("mark push task publishing", err)
@@ -56,7 +56,7 @@ func (r *Repository) TryMarkPushTaskPublishing(ctx context.Context, taskID int64
 }
 
 func (r *Repository) MarkPushTaskPublished(ctx context.Context, taskID int64, ack KafkaAck) error {
-	rows, err := r.models.PushTaskOutboxModel.MarkPublished(ctx, PushTaskStatusPublished, ack.Topic, ack.Partition, ack.Offset, mysqlNullNow(), taskID)
+	rows, err := r.models.PushTaskOutboxModel.MarkPublished(ctx, PushTaskStatusPublished, ack.Topic, ack.Partition, ack.Offset, unixNow(), taskID)
 	if err != nil {
 		return storageError("mark push task published", err)
 	}
@@ -67,7 +67,8 @@ func (r *Repository) MarkPushTaskPublished(ctx context.Context, taskID int64, ac
 }
 
 func (r *Repository) MarkPushTaskPublishFailed(ctx context.Context, taskID int64, code string, nextRetryAt time.Time) error {
-	rows, err := r.models.PushTaskOutboxModel.MarkPublishFailed(ctx, PushTaskStatusFailedRetryable, mysqlNullTime(nextRetryAt), nextRetryAt.UTC(), code, taskID)
+	nextRetryUnix := nextRetryAt.UTC().Unix()
+	rows, err := r.models.PushTaskOutboxModel.MarkPublishFailed(ctx, PushTaskStatusFailedRetryable, nextRetryUnix, nextRetryUnix, code, taskID)
 	if err != nil {
 		return storageError("mark push task publish failed", err)
 	}
@@ -78,13 +79,13 @@ func (r *Repository) MarkPushTaskPublishFailed(ctx context.Context, taskID int64
 }
 
 func (r *Repository) ResetExpiredPublishingTasks(ctx context.Context, now time.Time, limit int32) (int64, error) {
-	nowString := mysqlTimestamp(now)
+	nowUnix := now.UTC().Unix()
 	rows, err := r.models.PushTaskOutboxModel.ResetExpiredPublishing(
 		ctx,
 		PushTaskStatusPending,
-		nowString,
+		nowUnix,
 		PushTaskStatusPublishing,
-		nowString,
+		nowUnix,
 		limit,
 	)
 	if err != nil {

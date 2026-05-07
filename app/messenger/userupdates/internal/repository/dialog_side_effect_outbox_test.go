@@ -122,16 +122,16 @@ func TestDialogSideEffectOutboxRetryMovesToBlocked(t *testing.T) {
 		PeerID:                   base + 30_002,
 		SourcePermAuthKeyID:      base + 30_003,
 		SourceOperationID:        "test-dialog-side-effect-blocked-" + time.Now().UTC().Format("150405.000000000"),
-		SourceMessageDate:        now,
+		SourceMessageDate:        now.Unix(),
 		SourcePeerSeq:            7,
 		SourceCanonicalMessageID: base + 30_004,
-		ClearBeforeDate:          now,
+		ClearBeforeDate:          now.Unix(),
 		PayloadSchemaVersion:     1,
 		Payload:                  []byte(`{"schema_version":1}`),
 		PayloadHash:              payload.HashBytes([]byte(`{"schema_version":1}`)),
 		Status:                   DialogSideEffectStatusPending,
 		AttemptCount:             BlockedAfterAttempts - 1,
-		NextRetryAt:              now.Add(-time.Minute),
+		NextRetryAt:              now.Add(-time.Minute).Unix(),
 	}
 	if err := db.Transact(ctx, func(tx *sqlx.Tx) error {
 		return repo.InsertDialogSideEffectTx(repo.models.WithTx(tx), row)

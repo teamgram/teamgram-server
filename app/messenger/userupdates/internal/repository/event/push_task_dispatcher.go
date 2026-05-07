@@ -8,6 +8,7 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/gateway"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -179,6 +180,10 @@ func pushTaskUpdates(msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, *int
 	if err != nil {
 		return nil, nil, err
 	}
+	date, err := userupdatesDateInt32FromUnixSeconds(int64(event.Date), "push message date")
+	if err != nil {
+		return nil, nil, err
+	}
 	replyTo, err := replyHeaderFromPeerSeq(event.ReplyToPeerSeq)
 	if err != nil {
 		return nil, nil, err
@@ -191,7 +196,7 @@ func pushTaskUpdates(msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, *int
 			Message:  event.MessageText,
 			Pts:      pts,
 			PtsCount: 1,
-			Date:     event.Date,
+			Date:     date,
 			ReplyTo:  replyTo,
 		}), event.AuthKeyIdExclude, nil
 	}
@@ -201,7 +206,7 @@ func pushTaskUpdates(msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, *int
 		FromId:  peerFromUser(event.FromUserID),
 		PeerId:  peerFromEvent(event.PeerType, event.PeerID),
 		ReplyTo: replyTo,
-		Date:    event.Date,
+		Date:    date,
 		Message: event.MessageText,
 	})
 	return tg.MakeTLUpdates(&tg.TLUpdates{
@@ -212,7 +217,7 @@ func pushTaskUpdates(msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, *int
 		})},
 		Users: []tg.UserClazz{},
 		Chats: []tg.ChatClazz{},
-		Date:  event.Date,
+		Date:  date,
 		Seq:   pts,
 	}), event.AuthKeyIdExclude, nil
 }
@@ -234,6 +239,10 @@ func readHistoryUpdates(msg *payload.PushTaskKafkaMessageV1, event payload.Messa
 		return nil, nil, err
 	}
 	pts, err := int64ToInt32(msg.Pts, "pts")
+	if err != nil {
+		return nil, nil, err
+	}
+	date, err := userupdatesDateInt32FromUnixSeconds(int64(event.Date), "read history updates date")
 	if err != nil {
 		return nil, nil, err
 	}
@@ -259,7 +268,7 @@ func readHistoryUpdates(msg *payload.PushTaskKafkaMessageV1, event payload.Messa
 		Updates: []tg.UpdateClazz{update},
 		Users:   []tg.UserClazz{},
 		Chats:   []tg.ChatClazz{},
-		Date:    event.Date,
+		Date:    date,
 		Seq:     pts,
 	}), event.AuthKeyIdExclude, nil
 }
@@ -277,14 +286,26 @@ func editMessageUpdates(msg *payload.PushTaskKafkaMessageV1, event payload.Messa
 	if editDate == 0 {
 		editDate = event.Date
 	}
+	date, err := userupdatesDateInt32FromUnixSeconds(int64(event.Date), "edit message date")
+	if err != nil {
+		return nil, nil, err
+	}
+	editDate32, err := userupdatesDateInt32FromUnixSeconds(int64(editDate), "edit date")
+	if err != nil {
+		return nil, nil, err
+	}
+	updateDate, err := userupdatesDateInt32FromUnixSeconds(int64(editDate)-1, "edit updates date")
+	if err != nil {
+		return nil, nil, err
+	}
 	message := tg.MakeTLMessage(&tg.TLMessage{
 		Out:      event.Out,
 		Id:       messageID,
 		FromId:   peerFromUser(event.FromUserID),
 		PeerId:   peerFromEvent(event.PeerType, event.PeerID),
-		Date:     event.Date,
+		Date:     date,
 		Message:  event.MessageText,
-		EditDate: &editDate,
+		EditDate: &editDate32,
 	})
 	return tg.MakeTLUpdates(&tg.TLUpdates{
 		Updates: []tg.UpdateClazz{tg.MakeTLUpdateEditMessage(&tg.TLUpdateEditMessage{
@@ -294,7 +315,7 @@ func editMessageUpdates(msg *payload.PushTaskKafkaMessageV1, event payload.Messa
 		})},
 		Users: []tg.UserClazz{},
 		Chats: []tg.ChatClazz{},
-		Date:  editDate - 1,
+		Date:  updateDate,
 		Seq:   0,
 	}), event.AuthKeyIdExclude, nil
 }
@@ -311,6 +332,14 @@ func int64ToInt32(v int64, field string) (int32, error) {
 		return 0, fmt.Errorf("%s out of int32 range", field)
 	}
 	return int32(v), nil
+}
+
+func userupdatesDateInt32FromUnixSeconds(seconds int64, field string) (int32, error) {
+	date, err := tg.DateInt32FromUnixSeconds(seconds)
+	if err != nil {
+		return 0, fmt.Errorf("%w: convert %s: %v", userupdates.ErrUserupdatesStorage, field, err)
+	}
+	return date, nil
 }
 
 func peerFromUser(userID int64) tg.PeerClazz {

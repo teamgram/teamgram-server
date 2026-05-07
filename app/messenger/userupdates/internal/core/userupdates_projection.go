@@ -223,13 +223,17 @@ func messageEventToTLMessage(messageEvent payload.MessageEventV1) (tg.MessageCla
 	if err != nil {
 		return nil, err
 	}
+	date, err := userupdatesDateInt32FromUnixSeconds(int64(messageEvent.Date), "message date")
+	if err != nil {
+		return nil, err
+	}
 	return tg.MakeTLMessage(&tg.TLMessage{
 		Out:     messageEvent.Out,
 		Id:      messageID,
 		FromId:  peerFromUser(messageEvent.FromUserID),
 		PeerId:  peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
 		ReplyTo: replyTo,
-		Date:    messageEvent.Date,
+		Date:    date,
 		Message: messageEvent.MessageText,
 	}), nil
 }
@@ -246,14 +250,22 @@ func editMessageEventToTLMessage(messageEvent payload.MessageEventV1) (tg.Messag
 	if editDate == 0 {
 		editDate = messageEvent.Date
 	}
+	date, err := userupdatesDateInt32FromUnixSeconds(int64(messageEvent.Date), "edit message date")
+	if err != nil {
+		return nil, err
+	}
+	editDate32, err := userupdatesDateInt32FromUnixSeconds(int64(editDate), "edit date")
+	if err != nil {
+		return nil, err
+	}
 	return tg.MakeTLMessage(&tg.TLMessage{
 		Out:      messageEvent.Out,
 		Id:       messageID,
 		FromId:   peerFromUser(messageEvent.FromUserID),
 		PeerId:   peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
-		Date:     messageEvent.Date,
+		Date:     date,
 		Message:  messageEvent.MessageText,
-		EditDate: &editDate,
+		EditDate: &editDate32,
 	}), nil
 }
 
@@ -365,6 +377,14 @@ func int64ToInt32(v int64, field string) (int32, error) {
 		return 0, fmt.Errorf("%w: %s out of int32 range", userupdates.ErrOperationTerminal, field)
 	}
 	return int32(v), nil
+}
+
+func userupdatesDateInt32FromUnixSeconds(seconds int64, field string) (int32, error) {
+	date, err := tg.DateInt32FromUnixSeconds(seconds)
+	if err != nil {
+		return 0, fmt.Errorf("%w: convert %s: %v", userupdates.ErrUserupdatesStorage, field, err)
+	}
+	return date, nil
 }
 
 func peerFromUser(userID int64) tg.PeerClazz {

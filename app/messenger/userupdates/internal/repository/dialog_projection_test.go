@@ -17,9 +17,9 @@ func TestListDialogsOrdersByTopDatePeerSeqAndSkipsHidden(t *testing.T) {
 	userID := base + 1001
 	repo := NewForTest(db, &testIDGenerator{next: base + 10_000}, "local-userupdates")
 
-	insertUserDialogProjection(t, repo, userID, payload.PeerTypeUser, 10, 1, "2026-05-05 10:00:00.000000", false)
-	insertUserDialogProjection(t, repo, userID, payload.PeerTypeUser, 11, 2, "2026-05-05 10:00:00.000000", false)
-	insertUserDialogProjection(t, repo, userID, payload.PeerTypeUser, 12, 1, "2026-05-05 10:00:01.000000", true)
+	insertUserDialogProjection(t, repo, userID, payload.PeerTypeUser, 10, 1, 1_778_201_600, false)
+	insertUserDialogProjection(t, repo, userID, payload.PeerTypeUser, 11, 2, 1_778_201_600, false)
+	insertUserDialogProjection(t, repo, userID, payload.PeerTypeUser, 12, 1, 1_778_201_601, true)
 
 	rows, err := repo.ListDialogProjections(ctx, userID, DialogProjectionCursor{}, 10)
 	if err != nil {
@@ -33,14 +33,14 @@ func TestListDialogsOrdersByTopDatePeerSeqAndSkipsHidden(t *testing.T) {
 	}
 }
 
-func TestListDialogsHandlesLegacyNullDeletedAt(t *testing.T) {
+func TestListDialogsHandlesZeroDeletedAt(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)
 	base := time.Now().UnixNano() % 1_000_000_000
 	userID := base + 1501
 	repo := NewForTest(db, &testIDGenerator{next: base + 15_000}, "local-userupdates")
 
-	insertUserDialogProjectionWithDeletedAt(t, repo, userID, payload.PeerTypeUser, 10, 1, "2026-05-05 10:00:00.000000", false, nil)
+	insertUserDialogProjectionWithDeletedAt(t, repo, userID, payload.PeerTypeUser, 10, 1, 1_778_201_600, false, int64(0))
 
 	rows, err := repo.ListDialogProjections(ctx, userID, DialogProjectionCursor{}, 10)
 	if err != nil {
@@ -58,7 +58,7 @@ func TestGetDialogsByPeersPreservesRequestedPeerCoverage(t *testing.T) {
 	userID := base + 2001
 	repo := NewForTest(db, &testIDGenerator{next: base + 20_000}, "local-userupdates")
 
-	insertUserDialogProjection(t, repo, userID, payload.PeerTypeUser, 10, 1, "2026-05-05 10:00:00.000000", false)
+	insertUserDialogProjection(t, repo, userID, payload.PeerTypeUser, 10, 1, 1_778_201_600, false)
 
 	rows, err := repo.GetDialogProjectionsByPeers(ctx, userID, []DialogProjectionPeer{
 		{PeerType: payload.PeerTypeUser, PeerID: 10},
@@ -82,8 +82,8 @@ func TestCountVisibleDialogsSkipsHidden(t *testing.T) {
 	userID := base + 3001
 	repo := NewForTest(db, &testIDGenerator{next: base + 30_000}, "local-userupdates")
 
-	insertUserDialogProjection(t, repo, userID, payload.PeerTypeUser, 10, 1, "2026-05-05 10:00:00.000000", false)
-	insertUserDialogProjection(t, repo, userID, payload.PeerTypeUser, 11, 2, "2026-05-05 10:00:00.000000", true)
+	insertUserDialogProjection(t, repo, userID, payload.PeerTypeUser, 10, 1, 1_778_201_600, false)
+	insertUserDialogProjection(t, repo, userID, payload.PeerTypeUser, 11, 2, 1_778_201_600, true)
 
 	count, err := repo.CountVisibleDialogs(ctx, userID)
 	if err != nil {
@@ -94,13 +94,13 @@ func TestCountVisibleDialogsSkipsHidden(t *testing.T) {
 	}
 }
 
-func insertUserDialogProjection(t *testing.T, repo *Repository, userID int64, peerType int32, peerID int64, topPeerSeq int64, topMessageDate string, hidden bool) {
+func insertUserDialogProjection(t *testing.T, repo *Repository, userID int64, peerType int32, peerID int64, topPeerSeq int64, topMessageDate int64, hidden bool) {
 	t.Helper()
-	deletedAt := any(mysqlZeroTime())
+	deletedAt := any(int64(0))
 	insertUserDialogProjectionWithDeletedAt(t, repo, userID, peerType, peerID, topPeerSeq, topMessageDate, hidden, deletedAt)
 }
 
-func insertUserDialogProjectionWithDeletedAt(t *testing.T, repo *Repository, userID int64, peerType int32, peerID int64, topPeerSeq int64, topMessageDate string, hidden bool, deletedAt any) {
+func insertUserDialogProjectionWithDeletedAt(t *testing.T, repo *Repository, userID int64, peerType int32, peerID int64, topPeerSeq int64, topMessageDate int64, hidden bool, deletedAt any) {
 	t.Helper()
 	_, err := repo.db.Exec(context.Background(), `
 INSERT INTO user_dialogs

@@ -44,8 +44,8 @@ func (r *Repository) InsertDialogSideEffectTx(txModels *model.TxModels, row Dial
 	if row.Status == 0 {
 		row.Status = DialogSideEffectStatusPending
 	}
-	if row.NextRetryAt.IsZero() {
-		row.NextRetryAt = time.Now().UTC()
+	if row.NextRetryAt <= 0 {
+		row.NextRetryAt = unixNow()
 	}
 	_, rowsAffected, err := txModels.DialogSideEffectOutboxModel.Insert(toDialogSideEffectModel(row))
 	if err != nil {
@@ -85,7 +85,7 @@ func (r *Repository) ClaimDialogSideEffects(ctx context.Context, now time.Time, 
 		rows, err := txModels.DialogSideEffectOutboxModel.SelectPendingForUpdate(
 			DialogSideEffectStatusPending,
 			DialogSideEffectStatusFailedRetryable,
-			mysqlTimestamp(now),
+			now.UTC().Unix(),
 			DialogSideEffectStatusPublishing,
 			limit,
 		)
@@ -96,7 +96,7 @@ func (r *Repository) ClaimDialogSideEffects(ctx context.Context, now time.Time, 
 			}
 			return storageError("claim dialog side effects", err)
 		}
-		leaseUntil := now.UTC().Add(5 * time.Minute)
+		leaseUntil := now.UTC().Add(5 * time.Minute).Unix()
 		out = make([]DialogSideEffect, 0, len(rows))
 		for i := range rows {
 			row := rows[i]
@@ -115,7 +115,7 @@ func (r *Repository) ClaimDialogSideEffects(ctx context.Context, now time.Time, 
 			row.Status = DialogSideEffectStatusPublishing
 			row.AttemptCount++
 			row.LeaseOwner = r.OwnerInstance()
-			row.LeaseUntil = leaseUntil.UTC()
+			row.LeaseUntil = leaseUntil
 			dto, err := fromDialogSideEffectModel(row)
 			if err != nil {
 				return err
@@ -145,7 +145,7 @@ func (r *Repository) ClaimDialogSideEffectsByKind(ctx context.Context, kind stri
 			kind,
 			DialogSideEffectStatusPending,
 			DialogSideEffectStatusFailedRetryable,
-			mysqlTimestamp(now),
+			now.UTC().Unix(),
 			DialogSideEffectStatusPublishing,
 			limit,
 		)
@@ -156,7 +156,7 @@ func (r *Repository) ClaimDialogSideEffectsByKind(ctx context.Context, kind stri
 			}
 			return storageError("claim dialog side effects by kind", err)
 		}
-		leaseUntil := now.UTC().Add(5 * time.Minute)
+		leaseUntil := now.UTC().Add(5 * time.Minute).Unix()
 		out = make([]DialogSideEffect, 0, len(rows))
 		for i := range rows {
 			row := rows[i]
@@ -175,7 +175,7 @@ func (r *Repository) ClaimDialogSideEffectsByKind(ctx context.Context, kind stri
 			row.Status = DialogSideEffectStatusPublishing
 			row.AttemptCount++
 			row.LeaseOwner = r.OwnerInstance()
-			row.LeaseUntil = leaseUntil.UTC()
+			row.LeaseUntil = leaseUntil
 			dto, err := fromDialogSideEffectModel(row)
 			if err != nil {
 				return err
@@ -194,7 +194,7 @@ func (r *Repository) MarkDialogSideEffectCompleted(ctx context.Context, sideEffe
 	rows, err := r.models.DialogSideEffectOutboxModel.MarkCompleted(
 		ctx,
 		DialogSideEffectStatusCompleted,
-		mysqlZeroTime(),
+		0,
 		sideEffectID,
 	)
 	if err != nil {
@@ -214,11 +214,11 @@ func (r *Repository) MarkDialogSideEffectRetryableFailure(ctx context.Context, s
 	if row.AttemptCount >= BlockedAfterAttempts-1 {
 		return r.MarkDialogSideEffectBlocked(ctx, sideEffectID, errCode)
 	}
-	blockedBefore := now.UTC().Add(-time.Duration(BlockedAfterAgeSeconds) * time.Second)
+	blockedBefore := now.UTC().Add(-time.Duration(BlockedAfterAgeSeconds) * time.Second).Unix()
 	rows, err := r.models.DialogSideEffectOutboxModel.MarkBlockedIfOld(
 		ctx,
 		DialogSideEffectStatusBlocked,
-		mysqlZeroTime(),
+		0,
 		errCode,
 		sideEffectID,
 		blockedBefore,
@@ -229,12 +229,12 @@ func (r *Repository) MarkDialogSideEffectRetryableFailure(ctx context.Context, s
 	if rows > 0 {
 		return nil
 	}
-	nextRetryAt := now.UTC().Add(dialogSideEffectRetryDelay(sideEffectID, row.AttemptCount))
+	nextRetryAt := now.UTC().Unix() + int64(dialogSideEffectRetryDelay(sideEffectID, row.AttemptCount).Seconds())
 	rows, err = r.models.DialogSideEffectOutboxModel.MarkRetryableFailure(
 		ctx,
 		DialogSideEffectStatusFailedRetryable,
 		nextRetryAt,
-		mysqlZeroTime(),
+		0,
 		errCode,
 		sideEffectID,
 	)
@@ -251,7 +251,7 @@ func (r *Repository) MarkDialogSideEffectBlocked(ctx context.Context, sideEffect
 	rows, err := r.models.DialogSideEffectOutboxModel.MarkBlocked(
 		ctx,
 		DialogSideEffectStatusBlocked,
-		mysqlZeroTime(),
+		0,
 		errCode,
 		sideEffectID,
 	)
@@ -272,8 +272,8 @@ func (r *Repository) ResetDialogSideEffectOutboxBlocked(ctx context.Context, ids
 		_, err := r.models.DialogSideEffectOutboxModel.ResetBlocked(
 			ctx,
 			DialogSideEffectStatusPending,
-			mysqlNow(),
-			mysqlZeroTime(),
+			unixNow(),
+			0,
 			DialogSideEffectStatusBlocked,
 			id,
 		)
@@ -316,18 +316,18 @@ func toDialogSideEffectModel(row DialogSideEffect) *model.DialogSideEffectOutbox
 		PeerId:                   row.PeerID,
 		SourcePermAuthKeyId:      row.SourcePermAuthKeyID,
 		SourceOperationId:        row.SourceOperationID,
-		SourceMessageDate:        row.SourceMessageDate.UTC(),
+		SourceMessageDate:        row.SourceMessageDate,
 		SourcePeerSeq:            row.SourcePeerSeq,
 		SourceCanonicalMessageId: row.SourceCanonicalMessageID,
-		ClearBeforeDate:          mysqlTimeOrZero(row.ClearBeforeDate),
+		ClearBeforeDate:          unixOrZero(row.ClearBeforeDate),
 		PayloadSchemaVersion:     row.PayloadSchemaVersion,
 		Payload:                  row.Payload,
 		PayloadHash:              row.PayloadHash,
 		Status:                   row.Status,
 		AttemptCount:             row.AttemptCount,
-		NextRetryAt:              row.NextRetryAt.UTC(),
+		NextRetryAt:              unixOrZero(row.NextRetryAt),
 		LeaseOwner:               row.LeaseOwner,
-		LeaseUntil:               mysqlTimeOrZero(row.LeaseUntil),
+		LeaseUntil:               unixOrZero(row.LeaseUntil),
 		LastErrorCode:            row.LastErrorCode,
 	}
 }
@@ -341,18 +341,18 @@ func fromDialogSideEffectModel(row model.DialogSideEffectOutbox) (DialogSideEffe
 		PeerID:                   row.PeerId,
 		SourcePermAuthKeyID:      row.SourcePermAuthKeyId,
 		SourceOperationID:        row.SourceOperationId,
-		SourceMessageDate:        row.SourceMessageDate.UTC(),
+		SourceMessageDate:        row.SourceMessageDate,
 		SourcePeerSeq:            row.SourcePeerSeq,
 		SourceCanonicalMessageID: row.SourceCanonicalMessageId,
-		ClearBeforeDate:          mysqlTimeFromSentinel(row.ClearBeforeDate),
+		ClearBeforeDate:          unixOrZero(row.ClearBeforeDate),
 		PayloadSchemaVersion:     row.PayloadSchemaVersion,
 		Payload:                  row.Payload,
 		PayloadHash:              row.PayloadHash,
 		Status:                   row.Status,
 		AttemptCount:             row.AttemptCount,
-		NextRetryAt:              row.NextRetryAt.UTC(),
+		NextRetryAt:              row.NextRetryAt,
 		LeaseOwner:               row.LeaseOwner,
-		LeaseUntil:               mysqlTimeFromSentinel(row.LeaseUntil),
+		LeaseUntil:               unixOrZero(row.LeaseUntil),
 		LastErrorCode:            row.LastErrorCode,
 	}, nil
 }

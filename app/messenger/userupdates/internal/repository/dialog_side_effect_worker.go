@@ -110,7 +110,7 @@ func (w *DialogSideEffectWorker) publishSavedDialog(ctx context.Context, row Dia
 		PeerId:                row.PeerID,
 		TopPeerSeq:            row.SourcePeerSeq,
 		TopCanonicalMessageId: row.SourceCanonicalMessageID,
-		TopMessageDate:        int32(row.SourceMessageDate.Unix()),
+		TopMessageDate:        int32(row.SourceMessageDate),
 		Payload:               row.Payload,
 	})
 	return err

@@ -1,66 +1,45 @@
 package repository
 
 import (
-	"database/sql"
+	"strconv"
 	"time"
 )
 
-const mysqlTimeLayout = "2006-01-02 15:04:05.000000"
-
-func mysqlDate(unix int32) time.Time {
-	return time.Unix(int64(unix), 0).UTC()
+func unixNow() int64 {
+	return time.Now().UTC().Unix()
 }
 
-func mysqlNow() time.Time {
-	return time.Now().UTC()
+func unixOrZero(seconds int64) int64 {
+	if seconds <= 0 {
+		return 0
+	}
+	return seconds
 }
 
-func mysqlZeroTime() time.Time {
-	return time.Unix(0, 0).UTC()
+func unixOrNow(seconds int64) int64 {
+	if seconds > 0 {
+		return seconds
+	}
+	return unixNow()
 }
 
-func mysqlTimestamp(t time.Time) string {
-	return t.UTC().Format(mysqlTimeLayout)
-}
-
-func mysqlNullInvalid() sql.NullTime {
-	return sql.NullTime{}
-}
-
-func mysqlNullTime(t time.Time) sql.NullTime {
-	return sql.NullTime{Time: t.UTC(), Valid: true}
-}
-
-func mysqlNullDate(unix int32) sql.NullTime {
-	return mysqlNullTime(mysqlDate(unix))
-}
-
-func mysqlNullNow() sql.NullTime {
-	return mysqlNullTime(mysqlNow())
-}
-
-func mysqlNullZeroTime() sql.NullTime {
-	return mysqlNullTime(mysqlZeroTime())
-}
-
-func mysqlNullTimeString(t sql.NullTime) string {
-	if !t.Valid {
+func unixOptionalString(seconds int64) string {
+	if seconds <= 0 {
 		return ""
 	}
-	return mysqlTimestamp(t.Time)
+	return strconv.FormatInt(seconds, 10)
 }
 
-func mysqlTimeOrZero(t time.Time) time.Time {
+func unixFromTimeOrZero(t time.Time) int64 {
 	if t.IsZero() {
-		return mysqlZeroTime()
+		return 0
 	}
-	return t.UTC()
+	return t.UTC().Unix()
 }
 
-func mysqlTimeFromSentinel(t time.Time) time.Time {
-	t = t.UTC()
-	if t.IsZero() || t.Equal(mysqlZeroTime()) {
+func unixTimeFromSentinel(seconds int64) time.Time {
+	if seconds <= 0 {
 		return time.Time{}
 	}
-	return t
+	return time.Unix(seconds, 0).UTC()
 }

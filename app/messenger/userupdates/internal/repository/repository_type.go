@@ -17,8 +17,6 @@
 
 package repository
 
-import "time"
-
 const (
 	PayloadCodecJSON int32 = 1
 
@@ -120,18 +118,18 @@ type DialogSideEffect struct {
 	PeerID                   int64
 	SourcePermAuthKeyID      int64
 	SourceOperationID        string
-	SourceMessageDate        time.Time
+	SourceMessageDate        int64
 	SourcePeerSeq            int64
 	SourceCanonicalMessageID int64
-	ClearBeforeDate          time.Time
+	ClearBeforeDate          int64
 	PayloadSchemaVersion     int32
 	Payload                  []byte
 	PayloadHash              []byte
 	Status                   int32
 	AttemptCount             int32
-	NextRetryAt              time.Time
+	NextRetryAt              int64
 	LeaseOwner               string
-	LeaseUntil               time.Time
+	LeaseUntil               int64
 	LastErrorCode            string
 }
 

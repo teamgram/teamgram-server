@@ -102,7 +102,7 @@ func (r *Repository) AppendDialogPtsSideEffect(ctx context.Context, in DialogSid
 		if !errors.Is(err, model.ErrNotFound) {
 			return storageError("select pts side effect event", err)
 		}
-		if _, _, err := txModels.UserPtsStateModel.InsertIgnore(&model.UserPtsState{UserId: in.UserID, Pts: 0, PtsUpdatedAt: mysqlNow(), PartitionId: 0, OwnerEpoch: 0, RowVersion: 0}); err != nil {
+		if _, _, err := txModels.UserPtsStateModel.InsertIgnore(&model.UserPtsState{UserId: in.UserID, Pts: 0, PtsUpdatedAt: unixNow(), PartitionId: 0, OwnerEpoch: 0, RowVersion: 0}); err != nil {
 			return storageError("init pts state", err)
 		}
 		state, err := txModels.UserPtsStateModel.SelectForUpdate(in.UserID)
@@ -127,7 +127,7 @@ func (r *Repository) AppendDialogPtsSideEffect(ctx context.Context, in DialogSid
 		}); err != nil {
 			return storageError("insert pts side effect event", err)
 		}
-		if affected, err := txModels.UserPtsStateModel.UpdatePts(nextPts, mysqlNow(), 0, 0, in.UserID); err != nil {
+		if affected, err := txModels.UserPtsStateModel.UpdatePts(nextPts, unixNow(), 0, 0, in.UserID); err != nil {
 			return storageError("update pts state", err)
 		} else if affected == 0 {
 			return userupdates.ErrPtsContinuityViolation

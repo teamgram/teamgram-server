@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"math"
 	"strings"
-	"time"
 	"unicode"
 	"unicode/utf8"
 
@@ -83,7 +82,7 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 	if _, _, err := txModels.UserPtsStateModel.InsertIgnore(&model.UserPtsState{
 		UserId:       in.UserID,
 		Pts:          0,
-		PtsUpdatedAt: mysqlNow(),
+		PtsUpdatedAt: unixNow(),
 		PartitionId:  in.PartitionID,
 		OwnerEpoch:   fence.OwnerEpoch,
 		RowVersion:   0,
@@ -199,7 +198,7 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 	if err := insertOperationResult(txModels, in, nextPTS, ptsCount, responsePayload, responsePayloadHash); err != nil {
 		return nil, err
 	}
-	affected, err := txModels.UserPtsStateModel.UpdatePts(nextPTS, mysqlNow(), in.PartitionID, fence.OwnerEpoch, in.UserID)
+	affected, err := txModels.UserPtsStateModel.UpdatePts(nextPTS, unixNow(), in.PartitionID, fence.OwnerEpoch, in.UserID)
 	if err != nil {
 		return nil, storageError("update user pts state", err)
 	}
@@ -288,9 +287,9 @@ func insertUserMessageView(txModels *model.TxModels, in ApplyUserOperationInput,
 		MessageKind:        MessageKindText,
 		MessageStatus:      MessageStatusLive,
 		EditVersion:        0,
-		Date:               mysqlDate(op.Date),
-		EditDate:           mysqlNullInvalid(),
-		DeletedAt:          mysqlNullInvalid(),
+		Date:               int64(op.Date),
+		EditDate:           0,
+		DeletedAt:          0,
 		ViewSchemaVersion:  1,
 		ViewPayload:        viewPayload,
 	})
@@ -308,14 +307,14 @@ func upsertUserDialog(txModels *model.TxModels, in ApplyUserOperationInput, op p
 	if !op.Out {
 		unread = 1
 	}
-	now := mysqlNow()
+	now := unixNow()
 	_, _, err := txModels.UserDialogsModel.InsertOrUpdateMessageEvent(&model.UserDialogs{
 		UserId:                   in.UserID,
 		PeerType:                 op.PeerType,
 		PeerId:                   op.PeerID,
 		TopPeerSeq:               op.PeerSeq,
 		TopCanonicalMessageId:    op.CanonicalMessageID,
-		TopMessageDate:           mysqlNullDate(op.Date),
+		TopMessageDate:           int64(op.Date),
 		TopMessageStatus:         MessageStatusLive,
 		ReadInboxMaxPeerSeq:      0,
 		ReadOutboxMaxPeerSeq:     0,
@@ -328,9 +327,9 @@ func upsertUserDialog(txModels *model.TxModels, in ApplyUserOperationInput, op p
 		HasScheduled:             false,
 		AvailableMinPeerSeq:      0,
 		Hidden:                   false,
-		DeletedAt:                mysqlNullInvalid(),
+		DeletedAt:                0,
 		LastPts:                  nextPTS,
-		LastPtsAt:                mysqlNullTime(now),
+		LastPtsAt:                now,
 		DialogSchemaVersion:      1,
 		DialogPayload:            dialogPayload,
 	})
@@ -362,7 +361,7 @@ func applyReadHistory(txModels *model.TxModels, in ApplyUserOperationInput, op p
 			readInbox = op.PeerSeq
 		}
 	}
-	_, err := txModels.UserDialogsModel.UpdateReadState(0, 0, 0, false, readInbox, readOutbox, nextPTS, mysqlNullNow(), in.UserID, op.PeerType, op.PeerID)
+	_, err := txModels.UserDialogsModel.UpdateReadState(0, 0, 0, false, readInbox, readOutbox, nextPTS, unixNow(), in.UserID, op.PeerType, op.PeerID)
 	if err != nil {
 		return storageError("apply read history", err)
 	}
@@ -400,16 +399,13 @@ func insertOutboxReadDateTx(txModels *model.TxModels, userID int64, peerType int
 	if maxPeerSeq > math.MaxInt32 {
 		return storageError("insert outbox read date", fmt.Errorf("peer seq out of int32 range: %d", maxPeerSeq))
 	}
-	if date <= 0 {
-		date = int32(time.Now().Unix())
-	}
 	if _, _, err := txModels.MessageReadOutboxModel.InsertOrUpdate(&model.MessageReadOutbox{
 		UserId:            userID,
 		PeerType:          peerType,
 		PeerId:            peerID,
 		ReadUserId:        readUserID,
 		ReadOutboxMaxId:   int32(maxPeerSeq),
-		ReadOutboxMaxDate: mysqlDate(date),
+		ReadOutboxMaxDate: unixOrNow(int64(date)),
 	}); err != nil {
 		return storageError("insert outbox read date", err)
 	}
@@ -451,7 +447,7 @@ func isHashTagRune(r rune) bool {
 }
 
 func applyDeleteMessages(txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, nextPTS int64) error {
-	deletedAt := mysqlNow()
+	deletedAt := unixNow()
 	for _, peerSeq := range op.DeletePeerSeqs {
 		row, err := txModels.UserMessageViewsModel.SelectByUserPeerSeq(in.UserID, op.PeerType, op.PeerID, peerSeq)
 		if err != nil {
@@ -461,7 +457,7 @@ func applyDeleteMessages(txModels *model.TxModels, in ApplyUserOperationInput, o
 			return storageError("select message before delete", err)
 		}
 		row.MessageStatus = MessageStatusDeleted
-		row.DeletedAt = mysqlNullTime(deletedAt)
+		row.DeletedAt = deletedAt
 		row.ViewPayload = []byte(`{"schema_version":1,"deleted":true}`)
 		if _, _, err := txModels.UserMessageViewsModel.InsertOrUpdate(row); err != nil {
 			return storageError("mark message deleted", err)
@@ -491,7 +487,7 @@ func applyDeleteHistory(txModels *model.TxModels, in ApplyUserOperationInput, op
 		return err
 	}
 	if op.JustClear || maxPeerSeq > 0 {
-		if _, err := txModels.UserDialogsModel.UpdateAvailableMinPeerSeq(maxPeerSeq, nextPTS, mysqlNullNow(), in.UserID, op.PeerType, op.PeerID); err != nil {
+		if _, err := txModels.UserDialogsModel.UpdateAvailableMinPeerSeq(maxPeerSeq, nextPTS, unixNow(), in.UserID, op.PeerType, op.PeerID); err != nil {
 			return storageError("update dialog available min peer seq", err)
 		}
 	}
@@ -519,7 +515,7 @@ func applyEditMessage(txModels *model.TxModels, in ApplyUserOperationInput, op p
 		return storageError("update message view after edit", err)
 	}
 	if op.EditDate > 0 {
-		if _, err := txModels.UserMessageViewsModel.UpdateEditDateByUserCanonical(mysqlNullDate(op.EditDate), in.UserID, op.CanonicalMessageID); err != nil {
+		if _, err := txModels.UserMessageViewsModel.UpdateEditDateByUserCanonical(int64(op.EditDate), in.UserID, op.CanonicalMessageID); err != nil {
 			return storageError("update message view edit date", err)
 		}
 	}
@@ -538,7 +534,7 @@ func applyEditMessage(txModels *model.TxModels, in ApplyUserOperationInput, op p
 	}
 	dialog.DialogPayload = viewPayload
 	dialog.LastPts = nextPTS
-	dialog.LastPtsAt = mysqlNullNow()
+	dialog.LastPtsAt = unixNow()
 	if _, _, err := txModels.UserDialogsModel.InsertOrUpdateMessageEvent(dialog); err != nil {
 		return storageError("update dialog payload after edit", err)
 	}
@@ -551,12 +547,12 @@ func recomputeDialogTop(txModels *model.TxModels, userID int64, peerType int32, 
 		if !errors.Is(err, sqlx.ErrNotFound) && !errors.Is(err, model.ErrNotFound) {
 			return storageError("select top message after delete", err)
 		}
-		if _, execErr := txModels.UserDialogsModel.ClearDialogTopAfterDelete(MessageStatusDeleted, mysqlNullNow(), nextPTS, mysqlNullNow(), userID, peerType, peerID); execErr != nil {
+		if _, execErr := txModels.UserDialogsModel.ClearDialogTopAfterDelete(MessageStatusDeleted, unixNow(), nextPTS, unixNow(), userID, peerType, peerID); execErr != nil {
 			return storageError("clear dialog top after delete", execErr)
 		}
 		return nil
 	}
-	if _, err := txModels.UserDialogsModel.UpdateDialogTopAfterDelete(top.PeerSeq, top.CanonicalMessageId, mysqlNullTime(top.Date), top.MessageStatus, mysqlNullInvalid(), nextPTS, mysqlNullNow(), userID, peerType, peerID); err != nil {
+	if _, err := txModels.UserDialogsModel.UpdateDialogTopAfterDelete(top.PeerSeq, top.CanonicalMessageId, top.Date, top.MessageStatus, 0, nextPTS, unixNow(), userID, peerType, peerID); err != nil {
 		return storageError("update dialog top after delete", err)
 	}
 	return nil
@@ -571,7 +567,7 @@ func applyUpdatePinnedMessage(txModels *model.TxModels, in ApplyUserOperationInp
 	if pinnedCanonicalID == 0 {
 		pinnedCanonicalID = op.CanonicalMessageID
 	}
-	_, err := txModels.UserDialogsModel.UpdatePinnedMessage(pinnedPeerSeq, pinnedCanonicalID, nextPTS, mysqlNullNow(), in.UserID, op.PeerType, op.PeerID)
+	_, err := txModels.UserDialogsModel.UpdatePinnedMessage(pinnedPeerSeq, pinnedCanonicalID, nextPTS, unixNow(), in.UserID, op.PeerType, op.PeerID)
 	if err != nil {
 		return storageError("apply update pinned message", err)
 	}
@@ -598,7 +594,7 @@ func applyMarkDialogUnread(txModels *model.TxModels, in ApplyUserOperationInput,
 		row.ReadInboxMaxPeerSeq,
 		row.ReadOutboxMaxPeerSeq,
 		nextPTS,
-		mysqlNullNow(),
+		unixNow(),
 		in.UserID,
 		op.PeerType,
 		op.PeerID,
@@ -620,7 +616,7 @@ func applyScheduledMarker(txModels *model.TxModels, in ApplyUserOperationInput, 
 		PeerId:                   op.PeerID,
 		TopPeerSeq:               op.PeerSeq,
 		TopCanonicalMessageId:    op.CanonicalMessageID,
-		TopMessageDate:           mysqlNullDate(op.Date),
+		TopMessageDate:           int64(op.Date),
 		TopMessageStatus:         MessageStatusLive,
 		ReadInboxMaxPeerSeq:      0,
 		ReadOutboxMaxPeerSeq:     0,
@@ -633,9 +629,9 @@ func applyScheduledMarker(txModels *model.TxModels, in ApplyUserOperationInput, 
 		HasScheduled:             hasScheduled,
 		AvailableMinPeerSeq:      0,
 		Hidden:                   false,
-		DeletedAt:                mysqlNullInvalid(),
+		DeletedAt:                0,
 		LastPts:                  nextPTS,
-		LastPtsAt:                mysqlNullNow(),
+		LastPtsAt:                unixNow(),
 		DialogSchemaVersion:      1,
 		DialogPayload:            []byte(`{"schema_version":1}`),
 	})
@@ -706,7 +702,7 @@ func insertPushTask(ctx context.Context, txModels *model.TxModels, r *Repository
 		TaskPayload:        taskPayload,
 		Status:             PushTaskStatusPending,
 		PublishAttempts:    0,
-		AvailableAt:        mysqlNow(),
+		AvailableAt:        unixNow(),
 		PublishedTopic:     "",
 		PublishedPartition: 0,
 		PublishedOffset:    0,
@@ -746,16 +742,16 @@ func insertDialogSideEffects(ctx context.Context, txModels *model.TxModels, r *R
 			PeerID:                   op.PeerID,
 			SourcePermAuthKeyID:      op.SourcePermAuthKeyID,
 			SourceOperationID:        in.OperationID,
-			SourceMessageDate:        time.Unix(int64(op.Date), 0).UTC(),
+			SourceMessageDate:        int64(op.Date),
 			SourcePeerSeq:            op.PeerSeq,
 			SourceCanonicalMessageID: op.CanonicalMessageID,
-			ClearBeforeDate:          time.Unix(int64(clearBeforeDate), 0).UTC(),
+			ClearBeforeDate:          int64(clearBeforeDate),
 			PayloadSchemaVersion:     1,
 			Payload:                  body,
 			PayloadHash:              payload.HashBytes(body),
 			Status:                   DialogSideEffectStatusPending,
 			AttemptCount:             0,
-			NextRetryAt:              time.Now().UTC(),
+			NextRetryAt:              unixNow(),
 		}); err != nil {
 			return err
 		}
@@ -785,7 +781,7 @@ func insertDialogSideEffects(ctx context.Context, txModels *model.TxModels, r *R
 			PeerType:                 op.PeerType,
 			PeerID:                   op.PeerID,
 			SourceOperationID:        in.OperationID,
-			SourceMessageDate:        time.Unix(int64(op.Date), 0).UTC(),
+			SourceMessageDate:        int64(op.Date),
 			SourcePeerSeq:            op.PeerSeq,
 			SourceCanonicalMessageID: op.CanonicalMessageID,
 			PayloadSchemaVersion:     1,
@@ -793,7 +789,7 @@ func insertDialogSideEffects(ctx context.Context, txModels *model.TxModels, r *R
 			PayloadHash:              payload.HashBytes(body),
 			Status:                   DialogSideEffectStatusPending,
 			AttemptCount:             0,
-			NextRetryAt:              time.Now().UTC(),
+			NextRetryAt:              unixNow(),
 		}); err != nil {
 			return err
 		}
@@ -822,7 +818,7 @@ func insertOperationResult(txModels *model.TxModels, in ApplyUserOperationInput,
 		ResponsePayload:       responsePayload,
 		ResponsePayloadHash:   responseHash,
 		TerminalErrorCode:     "",
-		CompletedAt:           mysqlNow(),
+		CompletedAt:           unixNow(),
 	})
 	if err != nil {
 		return storageError("insert operation result", err)

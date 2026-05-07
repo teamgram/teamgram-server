@@ -34,7 +34,7 @@ func (r *Repository) RecordDeliveryFailure(ctx context.Context, in RecordDeliver
 		FailureMessage:       safeFailureMessage(in.FailureMessage),
 		RetryCount:           0,
 		Status:               DeliveryFailedOperationStatusOpen,
-		FailedAt:             mysqlNow(),
+		FailedAt:             unixNow(),
 	})
 	if isDuplicateKey(err) {
 		return nil

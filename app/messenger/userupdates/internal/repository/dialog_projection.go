@@ -14,7 +14,7 @@ type DialogProjectionPeer struct {
 }
 
 type DialogProjectionCursor struct {
-	TopMessageDate string
+	TopMessageDate int64
 	TopPeerSeq     int64
 	PeerType       int32
 	PeerID         int64
@@ -26,7 +26,7 @@ type DialogProjection struct {
 	PeerID                   int64
 	TopPeerSeq               int64
 	TopCanonicalMessageID    int64
-	TopMessageDate           string
+	TopMessageDate           int64
 	TopMessageStatus         int32
 	ReadInboxMaxPeerSeq      int64
 	ReadOutboxMaxPeerSeq     int64
@@ -39,7 +39,7 @@ type DialogProjection struct {
 	HasScheduled             bool
 	AvailableMinPeerSeq      int64
 	LastPTS                  int64
-	LastPTSAt                string
+	LastPTSAt                int64
 	DialogSchemaVersion      int32
 	DialogPayload            []byte
 }
@@ -126,7 +126,7 @@ func mapDialogProjectionRow(row model.UserDialogs) DialogProjection {
 		PeerID:                   row.PeerId,
 		TopPeerSeq:               row.TopPeerSeq,
 		TopCanonicalMessageID:    row.TopCanonicalMessageId,
-		TopMessageDate:           mysqlNullTimeString(row.TopMessageDate),
+		TopMessageDate:           row.TopMessageDate,
 		TopMessageStatus:         row.TopMessageStatus,
 		ReadInboxMaxPeerSeq:      row.ReadInboxMaxPeerSeq,
 		ReadOutboxMaxPeerSeq:     row.ReadOutboxMaxPeerSeq,
@@ -139,7 +139,7 @@ func mapDialogProjectionRow(row model.UserDialogs) DialogProjection {
 		HasScheduled:             row.HasScheduled,
 		AvailableMinPeerSeq:      row.AvailableMinPeerSeq,
 		LastPTS:                  row.LastPts,
-		LastPTSAt:                mysqlNullTimeString(row.LastPtsAt),
+		LastPTSAt:                row.LastPtsAt,
 		DialogSchemaVersion:      row.DialogSchemaVersion,
 		DialogPayload:            row.DialogPayload,
 	}

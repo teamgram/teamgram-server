@@ -41,7 +41,7 @@ func (c *fakeDialogSideEffectClient) DialogUpsertSavedDialogFromMessage(ctx cont
 }
 
 func TestDialogSideEffectWorkerPublishesSavedDialogTop(t *testing.T) {
-	sourceDate := time.Unix(1710000000, 0).UTC()
+	sourceDate := int64(1710000000)
 	store := &fakeDialogSideEffectStore{rows: []DialogSideEffect{{
 		SideEffectID:             1001,
 		Kind:                     DialogSideEffectKindUpsertSavedDialogFromMessage,
@@ -64,7 +64,7 @@ func TestDialogSideEffectWorkerPublishesSavedDialogTop(t *testing.T) {
 	if client.got.UserId != 2001 || client.got.PeerType != 1 || client.got.PeerId != 3001 {
 		t.Fatalf("dialog upsert peer = user:%d type:%d id:%d", client.got.UserId, client.got.PeerType, client.got.PeerId)
 	}
-	if client.got.TopPeerSeq != 41 || client.got.TopCanonicalMessageId != 9001 || client.got.TopMessageDate != int32(sourceDate.Unix()) {
+	if client.got.TopPeerSeq != 41 || client.got.TopCanonicalMessageId != 9001 || client.got.TopMessageDate != int32(sourceDate) {
 		t.Fatalf("dialog upsert top = seq:%d canonical:%d date:%d", client.got.TopPeerSeq, client.got.TopCanonicalMessageId, client.got.TopMessageDate)
 	}
 	if len(store.completed) != 1 || store.completed[0] != 1001 {

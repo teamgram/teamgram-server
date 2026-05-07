@@ -5,7 +5,6 @@ package repository
 import (
 	"bytes"
 	"context"
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -524,40 +523,29 @@ func openIntegrationDB(t *testing.T) *sqlx.DB {
 	return db
 }
 
-func mysqlTestTime(t time.Time) string {
-	return mysqlTimestamp(t)
+func mysqlTestTime(t time.Time) int64 {
+	return t.UTC().Unix()
 }
 
-func mysqlTestTimeValue(t time.Time) time.Time {
-	return t.UTC()
+func mysqlTestTimeValue(t time.Time) int64 {
+	return t.UTC().Unix()
 }
 
-func mysqlTestNullTime(t time.Time) sql.NullTime {
-	return sql.NullTime{Time: t.UTC(), Valid: true}
-}
-
-func normalizeDBTestTime(t *testing.T, value any) string {
+func normalizeDBTestTime(t *testing.T, value any) int64 {
 	t.Helper()
 	switch v := value.(type) {
 	case time.Time:
 		return mysqlTestTime(v)
-	case sql.NullTime:
-		if !v.Valid {
-			return ""
-		}
-		return mysqlTestTime(v.Time)
-	case string:
-		if parsed, err := time.Parse(time.RFC3339Nano, v); err == nil {
-			return parsed.Format("2006-01-02 15:04:05.000000")
-		}
-		if parsed, err := time.Parse("2006-01-02 15:04:05.999999", v); err == nil {
-			return parsed.Format("2006-01-02 15:04:05.000000")
-		}
-		t.Fatalf("unsupported DB time format %q", v)
+	case int64:
+		return v
+	case int32:
+		return int64(v)
+	case int:
+		return int64(v)
 	default:
 		t.Fatalf("unsupported DB time value %T", value)
 	}
-	return ""
+	return 0
 }
 
 func insertTestPushTask(t *testing.T, ctx context.Context, db *sqlx.DB, taskID int64, status int32, availableAt time.Time) {

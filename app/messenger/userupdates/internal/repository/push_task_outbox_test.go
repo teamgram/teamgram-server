@@ -34,8 +34,8 @@ func TestListPendingPushTasksReturnsDueRows(t *testing.T) {
 		TaskPayload:       []byte(`{"schema_version":1}`),
 		Status:            PushTaskStatusPending,
 		AvailableAt:       mysqlTestTimeValue(now.Add(-time.Minute)),
-		NextRetryAt:       mysqlTestNullTime(now.Add(-time.Minute)),
-		PublishedAt:       mysqlTestNullTime(time.Unix(0, 0).UTC()),
+		NextRetryAt:       mysqlTestTimeValue(now.Add(-time.Minute)),
+		PublishedAt:       int64(0),
 	})
 	insertPushTaskOutboxRow(t, repo, model.PushTaskOutbox{
 		TaskId:            futureID,
@@ -51,8 +51,8 @@ func TestListPendingPushTasksReturnsDueRows(t *testing.T) {
 		TaskPayload:       []byte(`{"schema_version":1}`),
 		Status:            PushTaskStatusPending,
 		AvailableAt:       mysqlTestTimeValue(now.Add(time.Hour)),
-		NextRetryAt:       mysqlTestNullTime(now.Add(time.Hour)),
-		PublishedAt:       mysqlTestNullTime(time.Unix(0, 0).UTC()),
+		NextRetryAt:       mysqlTestTimeValue(now.Add(time.Hour)),
+		PublishedAt:       int64(0),
 	})
 
 	tasks, err := repo.ListPendingPushTasks(ctx, now, 10_000)
@@ -87,8 +87,8 @@ func TestTryMarkPushTaskPublishingClaimsOnce(t *testing.T) {
 		TaskPayload:       []byte(`{"schema_version":1}`),
 		Status:            PushTaskStatusPending,
 		AvailableAt:       mysqlTestTimeValue(time.Now().Add(-time.Minute)),
-		NextRetryAt:       mysqlTestNullTime(time.Now().Add(-time.Minute)),
-		PublishedAt:       mysqlTestNullTime(time.Unix(0, 0).UTC()),
+		NextRetryAt:       mysqlTestTimeValue(time.Now().Add(-time.Minute)),
+		PublishedAt:       int64(0),
 	})
 
 	now := time.Now().UTC()
@@ -139,8 +139,8 @@ func TestResetExpiredPublishingTasksMovesRowsBackToPending(t *testing.T) {
 		TaskPayload:       []byte(`{"schema_version":1}`),
 		Status:            PushTaskStatusPublishing,
 		AvailableAt:       mysqlTestTimeValue(time.Now().Add(-2 * time.Hour)),
-		NextRetryAt:       mysqlTestNullTime(time.Now().Add(time.Hour)),
-		PublishedAt:       mysqlTestNullTime(time.Unix(0, 0).UTC()),
+		NextRetryAt:       mysqlTestTimeValue(time.Now().Add(time.Hour)),
+		PublishedAt:       int64(0),
 	})
 
 	now := time.Now().UTC()
