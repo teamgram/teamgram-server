@@ -165,8 +165,8 @@ func (r *Repository) UpdateFirstAndLastName(ctx context.Context, id int64, first
 		return userpb.ErrUserNotFound
 	}
 
-	if err := r.DelCache(ctx, userDataCacheKey(id)); err != nil {
-		return fmt.Errorf("%w: invalidate user cache %d: %w", userpb.ErrUserStorage, id, err)
+	if err := r.invalidateUserDataCache(ctx, id, "invalidate user name cache"); err != nil {
+		return err
 	}
 
 	return nil
@@ -604,8 +604,8 @@ func (r *Repository) execUserUpdate(ctx context.Context, id int64, op string, fn
 	if rowsAffected == 0 {
 		return userpb.ErrUserNotFound
 	}
-	if err := r.DelCache(ctx, userDataCacheKey(id)); err != nil {
-		return fmt.Errorf("%w: invalidate user cache %d: %w", userpb.ErrUserStorage, id, err)
+	if err := r.invalidateUserDataCache(ctx, id, "invalidate user cache"); err != nil {
+		return err
 	}
 	return nil
 }
