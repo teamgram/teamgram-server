@@ -88,10 +88,11 @@ func userDifferenceToUpdatesDifference(diff *userupdates.UserDifference) (*tg.Up
 		if err != nil {
 			return nil, err
 		}
+		newMessages, otherUpdates := mergeUpdateNewMessages(full.NewMessages, full.OtherUpdates)
 		return tg.MakeTLUpdatesDifference(&tg.TLUpdatesDifference{
-			NewMessages:          full.NewMessages,
+			NewMessages:          newMessages,
 			NewEncryptedMessages: []tg.EncryptedMessageClazz{},
-			OtherUpdates:         full.OtherUpdates,
+			OtherUpdates:         otherUpdates,
 			Chats:                []tg.ChatClazz{},
 			Users:                []tg.UserClazz{},
 			State:                state,
@@ -102,10 +103,11 @@ func userDifferenceToUpdatesDifference(diff *userupdates.UserDifference) (*tg.Up
 		if err != nil {
 			return nil, err
 		}
+		newMessages, otherUpdates := mergeUpdateNewMessages(slice.NewMessages, slice.OtherUpdates)
 		return tg.MakeTLUpdatesDifferenceSlice(&tg.TLUpdatesDifferenceSlice{
-			NewMessages:          slice.NewMessages,
+			NewMessages:          newMessages,
 			NewEncryptedMessages: []tg.EncryptedMessageClazz{},
-			OtherUpdates:         slice.OtherUpdates,
+			OtherUpdates:         otherUpdates,
 			Chats:                []tg.ChatClazz{},
 			Users:                []tg.UserClazz{},
 			IntermediateState:    intermediateState,
@@ -121,6 +123,24 @@ func userDifferenceToUpdatesDifference(diff *userupdates.UserDifference) (*tg.Up
 		}).ToUpdatesDifference(), nil
 	}
 	return nil, fmt.Errorf("updates.getDifference: unsupported user difference %s", diff.ClazzName())
+}
+
+func mergeUpdateNewMessages(messages []tg.MessageClazz, updates []tg.UpdateClazz) ([]tg.MessageClazz, []tg.UpdateClazz) {
+	if len(updates) == 0 {
+		return messages, updates
+	}
+	mergedMessages := append([]tg.MessageClazz{}, messages...)
+	otherUpdates := make([]tg.UpdateClazz, 0, len(updates))
+	for _, update := range updates {
+		if updateNewMessage, ok := update.(*tg.TLUpdateNewMessage); ok {
+			if updateNewMessage.Message != nil {
+				mergedMessages = append(mergedMessages, updateNewMessage.Message)
+			}
+			continue
+		}
+		otherUpdates = append(otherUpdates, update)
+	}
+	return mergedMessages, otherUpdates
 }
 
 func userStateToUpdatesState(state userupdates.UserStateClazz) (*tg.UpdatesState, error) {

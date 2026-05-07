@@ -105,7 +105,18 @@ func TestUpdatesGetDifferenceReturnsNonEmptyDifference(t *testing.T) {
 			tg.MakeTLMessage(&tg.TLMessage{Id: 9, Message: "hello"}),
 		},
 		OtherUpdates: []tg.UpdateClazz{
-			tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{Pts: 18, PtsCount: 1}),
+			tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
+				Message:  tg.MakeTLMessage(&tg.TLMessage{Id: 10, Message: "from update"}),
+				Pts:      18,
+				PtsCount: 1,
+			}),
+			tg.MakeTLUpdateReadHistoryInbox(&tg.TLUpdateReadHistoryInbox{
+				Peer:             tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 1002}),
+				MaxId:            10,
+				StillUnreadCount: 0,
+				Pts:              18,
+				PtsCount:         1,
+			}),
 		},
 		State: userupdates.MakeTLUserState(&userupdates.TLUserState{Pts: 18, Qts: -1, Date: 123, Seq: 0, UnreadCount: 0}),
 	}).ToUserDifference()}
@@ -122,8 +133,14 @@ func TestUpdatesGetDifferenceReturnsNonEmptyDifference(t *testing.T) {
 	if !ok {
 		t.Fatalf("got %s, want updates.difference", got.ClazzName())
 	}
-	if len(diff.NewMessages) != 1 || len(diff.OtherUpdates) != 1 || diff.State == nil || diff.State.Pts != 18 || diff.State.Qts != -1 {
+	if len(diff.NewMessages) != 2 || len(diff.OtherUpdates) != 1 || diff.State == nil || diff.State.Pts != 18 || diff.State.Qts != -1 {
 		t.Fatalf("difference = %#v", diff)
+	}
+	if diff.NewMessages[1].(*tg.TLMessage).Id != 10 {
+		t.Fatalf("merged updateNewMessage message = %#v", diff.NewMessages[1])
+	}
+	if _, ok := diff.OtherUpdates[0].(*tg.TLUpdateReadHistoryInbox); !ok {
+		t.Fatalf("other update = %T, want TLUpdateReadHistoryInbox", diff.OtherUpdates[0])
 	}
 }
 
@@ -220,7 +237,11 @@ func TestUpdatesGetDifferenceReturnsSlice(t *testing.T) {
 			tg.MakeTLMessage(&tg.TLMessage{Id: 9, Message: "hello"}),
 		},
 		OtherUpdates: []tg.UpdateClazz{
-			tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{Pts: 18, PtsCount: 1}),
+			tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
+				Message:  tg.MakeTLMessage(&tg.TLMessage{Id: 10, Message: "from slice update"}),
+				Pts:      18,
+				PtsCount: 1,
+			}),
 		},
 		IntermediateState: userupdates.MakeTLUserState(&userupdates.TLUserState{
 			Pts:         18,
@@ -243,8 +264,11 @@ func TestUpdatesGetDifferenceReturnsSlice(t *testing.T) {
 	if !ok {
 		t.Fatalf("got %s, want updates.differenceSlice", got.ClazzName())
 	}
-	if len(slice.NewMessages) != 1 || len(slice.OtherUpdates) != 1 {
+	if len(slice.NewMessages) != 2 || len(slice.OtherUpdates) != 0 {
 		t.Fatalf("slice payload = %#v", slice)
+	}
+	if slice.NewMessages[1].(*tg.TLMessage).Id != 10 {
+		t.Fatalf("merged slice updateNewMessage message = %#v", slice.NewMessages[1])
 	}
 	if slice.IntermediateState == nil || slice.IntermediateState.Pts != 18 || slice.IntermediateState.Date != 123 || slice.IntermediateState.Seq != 2 {
 		t.Fatalf("intermediate state = %#v", slice.IntermediateState)
