@@ -1315,6 +1315,39 @@ CREATE TABLE IF NOT EXISTS `userupdates_partition_fences` (
   PRIMARY KEY (`partition_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+DROP PROCEDURE IF EXISTS init_userupdates_partition_fences;
+
+DELIMITER //
+
+CREATE PROCEDURE init_userupdates_partition_fences()
+BEGIN
+  DECLARE i INT DEFAULT 0;
+
+  WHILE i < 256 DO
+    INSERT IGNORE INTO userupdates_partition_fences (
+      partition_id,
+      owner_epoch,
+      owner_instance_id,
+      lease_id,
+      lease_expires_at
+    ) VALUES (
+      i,
+      0,
+      'unassigned',
+      NULL,
+      NULL
+    );
+
+    SET i = i + 1;
+  END WHILE;
+END//
+
+DELIMITER ;
+
+CALL init_userupdates_partition_fences();
+DROP PROCEDURE init_userupdates_partition_fences;
+
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE IF NOT EXISTS `video_sizes` (
