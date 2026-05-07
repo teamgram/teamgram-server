@@ -18,8 +18,8 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/drafts/internal/repository"
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
-	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -66,21 +66,11 @@ func (c *DraftsCore) MessagesGetAllDrafts(in *tg.TLMessagesGetAllDrafts) (*tg.Up
 	}
 
 	if len(userIdList) > 0 {
-		mutableUsers, err := c.svcCtx.Repo.UserClient.UserGetMutableUsersV2(c.ctx,
-			&userpb.TLUserGetMutableUsersV2{
-				Id: userIdList,
-			})
+		users, err := userprojection.ProjectUsers(c.ctx, c.svcCtx.Repo.UserClient, c.MD.UserId, userIdList, userprojection.MissingStoredReference)
 		if err != nil {
-			c.Logger.Errorf("messages.getAllDrafts - user.getMutableUsersV2 error: %v", err)
+			c.Logger.Errorf("messages.getAllDrafts - user.getUserProjectionBundle error: %v", err)
 		}
-		if mutableUsers != nil {
-			for _, u := range mutableUsers.Users {
-				user := projectImmutableUser(u)
-				if user != nil {
-					rUpdates.Users = append(rUpdates.Users, user)
-				}
-			}
-		}
+		rUpdates.Users = append(rUpdates.Users, users...)
 	}
 
 	if len(chatIdList) > 0 {

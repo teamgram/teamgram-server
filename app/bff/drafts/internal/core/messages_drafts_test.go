@@ -8,6 +8,8 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/drafts/internal/svc"
 	dialogclient "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/client"
 	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
+	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -29,6 +31,15 @@ func (f fakeDraftDialogClient) DialogGetAllDrafts(ctx context.Context, in *dialo
 
 func (f fakeDraftDialogClient) DialogClearAllDrafts(ctx context.Context, in *dialogpb.TLDialogClearAllDrafts) (*dialogpb.VectorPeerWithDraftMessage, error) {
 	return f.clearAll(ctx, in)
+}
+
+type fakeDraftUserClient struct {
+	userclient.UserClient
+	getUserProjection func(context.Context, *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error)
+}
+
+func (f fakeDraftUserClient) UserGetUserProjectionBundle(ctx context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+	return f.getUserProjection(ctx, in)
 }
 
 func newDraftsCoreForTest(repo *repository.Repository, selfID int64) *DraftsCore {
@@ -110,6 +121,53 @@ func TestMessagesGetAllDraftsFailsWhenDialogClientIsNotConfigured(t *testing.T) 
 	_, err := c.MessagesGetAllDrafts(&tg.TLMessagesGetAllDrafts{})
 	if err != tg.ErrInternalServerError {
 		t.Fatalf("MessagesGetAllDrafts error = %v, want %v", err, tg.ErrInternalServerError)
+	}
+}
+
+func TestMessagesGetAllDraftsProjectsUsers(t *testing.T) {
+	var gotUsers *userpb.TLUserGetUserProjectionBundle
+	c := newDraftsCoreForTest(&repository.Repository{
+		DialogClient: fakeDraftDialogClient{
+			getAll: func(context.Context, *dialogpb.TLDialogGetAllDrafts) (*dialogpb.VectorPeerWithDraftMessage, error) {
+				return &dialogpb.VectorPeerWithDraftMessage{Datas: []dialogpb.PeerWithDraftMessageClazz{
+					dialogpb.MakeTLUpdateDraftMessage(&dialogpb.TLUpdateDraftMessage{
+						Peer:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 200}),
+						Draft: tg.MakeTLDraftMessage(&tg.TLDraftMessage{Message: "draft"}),
+					}),
+				}}, nil
+			},
+		},
+		UserClient: fakeDraftUserClient{
+			getUserProjection: func(_ context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+				gotUsers = in
+				return userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+					ViewerUsers: []userpb.ViewerUsersClazz{
+						userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 100, Users: []tg.UserClazz{
+							tg.MakeTLUser(&tg.TLUser{Id: 200, Contact: true}),
+						}}),
+					},
+				}).ToUserProjectionBundle(), nil
+			},
+		},
+	}, 100)
+
+	got, err := c.MessagesGetAllDrafts(&tg.TLMessagesGetAllDrafts{})
+	if err != nil {
+		t.Fatalf("MessagesGetAllDrafts error = %v", err)
+	}
+	updates, ok := got.ToUpdates()
+	if !ok {
+		t.Fatalf("got %s, want updates", got.ClazzName())
+	}
+	if gotUsers == nil || len(gotUsers.ViewerUserIds) != 1 || gotUsers.ViewerUserIds[0] != 100 || len(gotUsers.TargetUserIds) != 1 || gotUsers.TargetUserIds[0] != 200 {
+		t.Fatalf("projection request = %+v, want viewer [100] target [200]", gotUsers)
+	}
+	if len(updates.Users) != 1 {
+		t.Fatalf("users = %#v", updates.Users)
+	}
+	user, ok := updates.Users[0].(*tg.TLUser)
+	if !ok || user.Id != 200 || !user.Contact {
+		t.Fatalf("projected user = %#v", updates.Users[0])
 	}
 }
 
