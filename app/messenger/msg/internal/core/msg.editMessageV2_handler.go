@@ -193,7 +193,7 @@ func shortEditMessage(edited *repository.EditMessageResult, result *userupdates.
 			Pts:      pts,
 			PtsCount: result.PtsCount,
 		})},
-		Users: editMessageUsers(edited.FromUserID, edited.PeerID),
+		Users: []tg.UserClazz{},
 		Chats: []tg.ChatClazz{},
 		Date:  edited.EditDate - 1,
 		Seq:   0,
@@ -202,14 +202,4 @@ func shortEditMessage(edited *repository.EditMessageResult, result *userupdates.
 
 func editMessageOperationID(canonicalMessageID int64, editVersion int32, userID int64) string {
 	return fmt.Sprintf("v1:msg:%d:edit:%d:%d", canonicalMessageID, editVersion, userID)
-}
-
-func editMessageUsers(fromUserID, peerID int64) []tg.UserClazz {
-	if fromUserID == peerID {
-		return []tg.UserClazz{tg.MakeTLUser(&tg.TLUser{Id: fromUserID})}
-	}
-	return []tg.UserClazz{
-		tg.MakeTLUser(&tg.TLUser{Id: fromUserID}),
-		tg.MakeTLUser(&tg.TLUser{Id: peerID}),
-	}
 }
