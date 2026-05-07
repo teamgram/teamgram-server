@@ -17,6 +17,7 @@
 package core
 
 import (
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -102,16 +103,11 @@ func (c *PrivacySettingsCore) AccountGetPrivacy(in *tg.TLAccountGetPrivacy) (*tg
 		}
 
 		if len(userIds) > 0 {
-			users, err := c.svcCtx.Repo.UserClient.UserGetMutableUsers(c.ctx,
-				&user.TLUserGetMutableUsers{
-					Id: userIds,
-				})
+			users, err := userprojection.ProjectUsers(c.ctx, c.svcCtx.Repo.UserClient, c.MD.UserId, userIds, userprojection.MissingStoredReference)
 			if err != nil {
 				c.Logger.Errorf("account.getPrivacy - get users error: %v", err)
 			} else {
-				for _, u := range users.Datas {
-					rVal.Users = append(rVal.Users, projectImmutableUser(u))
-				}
+				rVal.Users = append(rVal.Users, users...)
 			}
 		}
 
