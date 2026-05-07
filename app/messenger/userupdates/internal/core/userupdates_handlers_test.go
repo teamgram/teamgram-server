@@ -76,6 +76,46 @@ func TestProcessUserOperationMapsTLToRepository(t *testing.T) {
 	}
 }
 
+func TestProcessUserOperationWakesPushOutboxNotifier(t *testing.T) {
+	operationPayload := []byte(`{"schema_version":1,"operation_kind":"read_history"}`)
+	operationHash := payload.HashBytes(operationPayload)
+	responsePayload := []byte(`{"schema_version":1,"pts":13,"pts_count":1}`)
+	responseHash := payload.HashBytes(responsePayload)
+	notifier := &fakePushOutboxNotifier{}
+	repo := &fakeUserUpdatesRepository{
+		applyResult: &repository.ApplyUserOperationResult{
+			UserID:          1002,
+			OperationID:     "v1:dialog:read_history:user:1002:peer:1001:max:9:auth:0",
+			Pts:             13,
+			PtsCount:        1,
+			ResponsePayload: responsePayload,
+			ResponseHash:    responseHash,
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo, PushOutboxNotifier: notifier})
+
+	if _, err := core.UserupdatesProcessUserOperation(&userupdates.TLUserupdatesProcessUserOperation{
+		Operation: userupdates.MakeTLUserOperation(&userupdates.TLUserOperation{
+			UserId:               1002,
+			BucketId:             77,
+			PartitionId:          13,
+			OperationId:          "v1:dialog:read_history:user:1002:peer:1001:max:9:auth:0",
+			OpType:               repository.OpTypeSendMessage,
+			PeerType:             payload.PeerTypeUser,
+			PeerId:               1001,
+			PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+			PayloadCodec:         repository.PayloadCodecJSON,
+			PayloadHash:          operationHash,
+			Payload:              operationPayload,
+		}),
+	}); err != nil {
+		t.Fatalf("ProcessUserOperation returned error: %v", err)
+	}
+	if notifier.wakes != 1 {
+		t.Fatalf("notifier wakes = %d, want 1", notifier.wakes)
+	}
+}
+
 func TestGetOperationResultRejectsMismatchedPayloadHash(t *testing.T) {
 	goodPayload := []byte(`{"good":true}`)
 	badPayload := []byte(`{"good":false}`)
@@ -744,6 +784,14 @@ func TestGetOutboxReadDateRejectsDateOverflow(t *testing.T) {
 	if !errors.Is(err, userupdates.ErrUserupdatesStorage) {
 		t.Fatalf("expected ErrUserupdatesStorage, got %v", err)
 	}
+}
+
+type fakePushOutboxNotifier struct {
+	wakes int
+}
+
+func (f *fakePushOutboxNotifier) Wake() {
+	f.wakes++
 }
 
 type fakeUserUpdatesRepository struct {

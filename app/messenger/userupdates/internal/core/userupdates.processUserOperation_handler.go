@@ -53,5 +53,8 @@ func (c *UserupdatesCore) UserupdatesProcessUserOperation(in *userupdates.TLUser
 	if err != nil {
 		return nil, err
 	}
+	if c.svcCtx.PushOutboxNotifier != nil {
+		c.svcCtx.PushOutboxNotifier.Wake()
+	}
 	return applyResultToTL(result)
 }

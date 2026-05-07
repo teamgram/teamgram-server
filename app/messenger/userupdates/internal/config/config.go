@@ -40,7 +40,7 @@ type Config struct {
 
 type PushOutboxWorkerConf struct {
 	Enabled             bool  `json:",default=false"`
-	PollInterval        int64 `json:",default=1000"`
+	PollInterval        int64 `json:",default=200"`
 	BatchSize           int32 `json:",default=100"`
 	PublishingTimeoutMs int64 `json:",default=60000"`
 }

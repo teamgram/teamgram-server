@@ -53,12 +53,17 @@ type waitableBackgroundWorker interface {
 	Wait()
 }
 
+type PushOutboxNotifier interface {
+	Wake()
+}
+
 type ServiceContext struct {
-	Config  config.Config
-	Repo    UserUpdatesRepository
-	workers []backgroundWorker
-	closers []interface{ Close() error }
-	cancel  context.CancelFunc
+	Config             config.Config
+	Repo               UserUpdatesRepository
+	PushOutboxNotifier PushOutboxNotifier
+	workers            []backgroundWorker
+	closers            []interface{ Close() error }
+	cancel             context.CancelFunc
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -90,6 +95,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 			BatchSize:         c.PushOutboxWorker.BatchSize,
 			PublishingTimeout: time.Duration(c.PushOutboxWorker.PublishingTimeoutMs) * time.Millisecond,
 		})
+		sc.PushOutboxNotifier = worker
 		sc.workers = append(sc.workers, worker)
 		sc.closers = append(sc.closers, publisher)
 	}

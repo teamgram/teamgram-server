@@ -15,6 +15,7 @@ type PushOutboxWorker struct {
 	batchSize         int32
 	publishingTimeout time.Duration
 	stop              chan struct{}
+	wake              chan struct{}
 	drainMu           sync.Mutex
 	stopping          bool
 	stopClosed        bool
@@ -71,6 +72,7 @@ func NewPushOutboxWorker(repo pushTaskOutboxStore, publisher pushTaskPublisher, 
 		batchSize:         options.BatchSize,
 		publishingTimeout: options.PublishingTimeout,
 		stop:              make(chan struct{}),
+		wake:              make(chan struct{}, 1),
 		counters:          noopPushOutboxWorkerCounters{},
 	}
 }
@@ -123,9 +125,21 @@ func (w *PushOutboxWorker) Run(ctx context.Context) {
 			return
 		case <-w.stop:
 			return
+		case <-w.wake:
+			w.runDrain(ctx)
 		case <-ticker.C:
 			w.runDrain(ctx)
 		}
+	}
+}
+
+func (w *PushOutboxWorker) Wake() {
+	if w == nil {
+		return
+	}
+	select {
+	case w.wake <- struct{}{}:
+	default:
 	}
 }
 

@@ -73,6 +73,6 @@ PushTaskConsumer:
 
 PushOutboxWorker:
   Enabled: true
-  PollInterval: 1000
+  PollInterval: 200
   BatchSize: 100
   PublishingTimeoutMs: 60000

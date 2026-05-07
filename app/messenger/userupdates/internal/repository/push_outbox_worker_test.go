@@ -53,11 +53,11 @@ func (s *fakePushTaskStore) ResetExpiredPublishingTasks(ctx context.Context, now
 
 type fakePushPublisher struct {
 	err   error
-	calls int
+	calls atomic.Int32
 }
 
 func (p *fakePushPublisher) Publish(ctx context.Context, task PushTask) (KafkaAck, error) {
-	p.calls++
+	p.calls.Add(1)
 	if p.err != nil {
 		return KafkaAck{}, p.err
 	}
@@ -111,14 +111,37 @@ func TestPushOutboxWorkerPublishesPendingTask(t *testing.T) {
 
 	worker.drain(context.Background())
 
-	if publisher.calls != 1 {
-		t.Fatalf("publisher calls = %d, want 1", publisher.calls)
+	if calls := publisher.calls.Load(); calls != 1 {
+		t.Fatalf("publisher calls = %d, want 1", calls)
 	}
 	if len(store.published) != 1 || store.published[0] != 1 {
 		t.Fatalf("published = %+v", store.published)
 	}
 	if len(store.failed) != 0 {
 		t.Fatalf("failed = %+v", store.failed)
+	}
+}
+
+func TestPushOutboxWorkerWakeDrainsBeforeInterval(t *testing.T) {
+	store := &fakePushTaskStore{tasks: []PushTask{{TaskID: 1, UserID: 10, Pts: 1, OperationID: "op", PushPartitionID: 3}}}
+	publisher := &fakePushPublisher{}
+	worker := NewPushOutboxWorker(store, publisher, PushOutboxWorkerOptions{Interval: time.Hour, BatchSize: 10, PublishingTimeout: time.Minute})
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go worker.Run(ctx)
+
+	worker.Wake()
+
+	deadline := time.After(time.Second)
+	for {
+		if publisher.calls.Load() > 0 {
+			return
+		}
+		select {
+		case <-deadline:
+			t.Fatal("worker did not publish after wake")
+		case <-time.After(10 * time.Millisecond):
+		}
 	}
 }
 
@@ -257,7 +280,7 @@ func TestPushOutboxWorkerStopPreventsNewDrain(t *testing.T) {
 	worker.Stop()
 	worker.runDrain(context.Background())
 
-	if publisher.calls != 0 {
-		t.Fatalf("publisher calls = %d, want 0 after Stop", publisher.calls)
+	if calls := publisher.calls.Load(); calls != 0 {
+		t.Fatalf("publisher calls = %d, want 0 after Stop", calls)
 	}
 }
