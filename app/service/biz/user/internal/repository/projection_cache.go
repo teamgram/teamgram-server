@@ -5,13 +5,20 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"time"
 
+	red "github.com/redis/go-redis/v9"
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	"github.com/zeromicro/go-zero/core/hash"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	gocache "github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 )
 
 const projectionCacheSchemaVersion = 1
+
+const projectionCacheExpiry = 7 * 24 * time.Hour
 
 type projectionCacheDecodeStatus int
 
@@ -25,6 +32,157 @@ const (
 type projectionCacheEnvelope[T any] struct {
 	SchemaVersion int `json:"schema_version"`
 	Data          T   `json:"data"`
+}
+
+type projectionCacheStore interface {
+	getMany(ctx context.Context, keys []string) (map[string]string, error)
+	setMany(ctx context.Context, values map[string]string) error
+	delete(ctx context.Context, keys ...string) error
+}
+
+type projectionRedisCacheStore struct {
+	dispatcher *hash.ConsistentHash
+	nodes      []*projectionRedisCacheNode
+	expiry     time.Duration
+}
+
+type projectionRedisCacheNode struct {
+	rds  *redis.Redis
+	addr string
+}
+
+func newProjectionRedisCacheStore(conf gocache.CacheConf) projectionCacheStore {
+	if len(conf) == 0 || gocache.TotalWeights(conf) <= 0 {
+		return nil
+	}
+	store := &projectionRedisCacheStore{
+		dispatcher: hash.NewConsistentHash(),
+		expiry:     projectionCacheExpiry,
+	}
+	for _, nodeConf := range conf {
+		if nodeConf.Weight <= 0 {
+			continue
+		}
+		node := &projectionRedisCacheNode{
+			rds:  redis.MustNewRedis(nodeConf.RedisConf),
+			addr: nodeConf.Host,
+		}
+		store.nodes = append(store.nodes, node)
+		store.dispatcher.AddWithWeight(node, nodeConf.Weight)
+	}
+	if len(store.nodes) == 0 {
+		return nil
+	}
+	return store
+}
+
+func (n *projectionRedisCacheNode) String() string {
+	return n.addr
+}
+
+func (s *projectionRedisCacheStore) getMany(ctx context.Context, keys []string) (map[string]string, error) {
+	out := make(map[string]string, len(keys))
+	if len(keys) == 0 {
+		return out, nil
+	}
+	var batchErr error
+	for node, nodeKeys := range s.groupKeys(keys) {
+		cmds := make(map[string]*red.StringCmd, len(nodeKeys))
+		if err := node.rds.PipelinedCtx(ctx, func(pipe redis.Pipeliner) error {
+			for _, key := range nodeKeys {
+				cmds[key] = pipe.Get(ctx, key)
+			}
+			return nil
+		}); err != nil && !errors.Is(err, redis.Nil) {
+			batchErr = errors.Join(batchErr, err)
+		}
+		for key, cmd := range cmds {
+			value, err := cmd.Result()
+			if errors.Is(err, redis.Nil) {
+				continue
+			}
+			if err != nil {
+				batchErr = errors.Join(batchErr, err)
+				continue
+			}
+			out[key] = value
+		}
+	}
+	return out, batchErr
+}
+
+func (s *projectionRedisCacheStore) setMany(ctx context.Context, values map[string]string) error {
+	if len(values) == 0 {
+		return nil
+	}
+	var batchErr error
+	for node, nodeValues := range s.groupValues(values) {
+		if err := node.rds.PipelinedCtx(ctx, func(pipe redis.Pipeliner) error {
+			for key, value := range nodeValues {
+				pipe.SetEx(ctx, key, value, s.expiry)
+			}
+			return nil
+		}); err != nil {
+			batchErr = errors.Join(batchErr, err)
+		}
+	}
+	return batchErr
+}
+
+func (s *projectionRedisCacheStore) delete(ctx context.Context, keys ...string) error {
+	if len(keys) == 0 {
+		return nil
+	}
+	var batchErr error
+	for node, nodeKeys := range s.groupKeys(keys) {
+		if err := node.rds.PipelinedCtx(ctx, func(pipe redis.Pipeliner) error {
+			for _, key := range nodeKeys {
+				pipe.Del(ctx, key)
+			}
+			return nil
+		}); err != nil {
+			batchErr = errors.Join(batchErr, err)
+		}
+	}
+	return batchErr
+}
+
+func (s *projectionRedisCacheStore) groupKeys(keys []string) map[*projectionRedisCacheNode][]string {
+	out := make(map[*projectionRedisCacheNode][]string)
+	for _, key := range keys {
+		node, ok := s.nodeForKey(key)
+		if !ok {
+			continue
+		}
+		out[node] = append(out[node], key)
+	}
+	return out
+}
+
+func (s *projectionRedisCacheStore) groupValues(values map[string]string) map[*projectionRedisCacheNode]map[string]string {
+	out := make(map[*projectionRedisCacheNode]map[string]string)
+	for key, value := range values {
+		node, ok := s.nodeForKey(key)
+		if !ok {
+			continue
+		}
+		if out[node] == nil {
+			out[node] = make(map[string]string)
+		}
+		out[node][key] = value
+	}
+	return out
+}
+
+func (s *projectionRedisCacheStore) nodeForKey(key string) (*projectionRedisCacheNode, bool) {
+	if len(s.nodes) == 1 {
+		return s.nodes[0], true
+	}
+	node, ok := s.dispatcher.Get(key)
+	if !ok {
+		return nil, false
+	}
+	return node.(*projectionRedisCacheNode), true
 }
 
 type projectionUserCacheDTO struct {
@@ -142,71 +300,98 @@ func decodeProjectionCacheStatus[T any](raw string) (T, projectionCacheDecodeSta
 	return env.Data, projectionCacheDecodeHit
 }
 
-func (r *Repository) getProjectionComponentCache(ctx context.Context, key string, out interface{}) bool {
-	var env projectionCacheEnvelope[json.RawMessage]
-	if err := r.GetCache(ctx, key, &env); err != nil {
-		if !projectionCacheNotFound(err) {
-			logx.WithContext(ctx).Errorf("user projection cache get failed: key=%s err=%v", key, err)
-		}
-		return false
-	}
-	raw, status := decodeProjectionCacheStatus[json.RawMessage](mustMarshalProjectionCacheEnvelope(env))
-	if status != projectionCacheDecodeHit {
-		r.logProjectionCacheDecodeMiss(ctx, key, status)
-		return false
-	}
-	if err := json.Unmarshal(raw, out); err != nil {
-		logx.WithContext(ctx).Errorf("user projection cache dto decode failed: key=%s err=%v", key, err)
-		return false
-	}
-	return true
-}
-
 func getProjectionComponentCaches[T any](r *Repository, ctx context.Context, keys []string) map[string]T {
 	out := make(map[string]T, len(keys))
 	if len(keys) == 0 {
 		return out
 	}
-	if err := r.QueryRows(ctx, func(ctx context.Context, _ *sqlx.DB, _ ...string) (map[string]interface{}, error) {
-		return map[string]interface{}{}, nil
-	}, func(key, raw string) (interface{}, error) {
+	rawValues, err := r.getProjectionRawCaches(ctx, keys)
+	if err != nil {
+		logx.WithContext(ctx).Errorf("user projection cache bulk get failed: keys=%d err=%v", len(keys), err)
+		return out
+	}
+	deleteKeys := make([]string, 0)
+	for key, raw := range rawValues {
 		dto, status := decodeProjectionCacheStatus[T](raw)
 		switch status {
 		case projectionCacheDecodeHit:
 			out[key] = dto
-			return nil, nil
 		case projectionCacheDecodeMiss:
-			return nil, sql.ErrNoRows
 		case projectionCacheDecodeStale:
 			r.logProjectionCacheDecodeMiss(ctx, key, status)
-			r.deleteProjectionComponentCaches(ctx, key)
-			return nil, nil
+			deleteKeys = append(deleteKeys, key)
 		case projectionCacheDecodeCorrupt:
 			r.logProjectionCacheDecodeMiss(ctx, key, status)
-			r.deleteProjectionComponentCaches(ctx, key)
-			return nil, nil
+			deleteKeys = append(deleteKeys, key)
 		default:
 			r.logProjectionCacheDecodeMiss(ctx, key, status)
-			r.deleteProjectionComponentCaches(ctx, key)
-			return nil, nil
+			deleteKeys = append(deleteKeys, key)
 		}
-	}, keys...); err != nil {
-		logx.WithContext(ctx).Errorf("user projection cache bulk get failed: keys=%d err=%v", len(keys), err)
 	}
+	r.deleteProjectionComponentCaches(ctx, deleteKeys...)
 	return out
 }
 
-func (r *Repository) setProjectionComponentCache(ctx context.Context, key string, data interface{}) {
-	if err := r.SetCache(ctx, key, projectionCacheEnvelope[interface{}]{
-		SchemaVersion: projectionCacheSchemaVersion,
-		Data:          data,
-	}); err != nil {
-		logx.WithContext(ctx).Errorf("user projection cache set failed: key=%s err=%v", key, err)
+func (r *Repository) getProjectionRawCaches(ctx context.Context, keys []string) (map[string]string, error) {
+	if r.projectionCache != nil {
+		return r.projectionCache.getMany(ctx, keys)
+	}
+	out := make(map[string]string, len(keys))
+	for _, key := range keys {
+		var env projectionCacheEnvelope[json.RawMessage]
+		if err := r.GetCache(ctx, key, &env); err != nil {
+			if !projectionCacheNotFound(err) {
+				return out, err
+			}
+			continue
+		}
+		out[key] = mustMarshalProjectionCacheEnvelope(env)
+	}
+	return out, nil
+}
+
+func (r *Repository) setProjectionComponentCaches(ctx context.Context, values map[string]interface{}) {
+	if len(values) == 0 {
+		return
+	}
+	rawValues := make(map[string]string, len(values))
+	for key, value := range values {
+		raw, err := encodeProjectionCache(value)
+		if err != nil {
+			logx.WithContext(ctx).Errorf("user projection cache encode failed: key=%s err=%v", key, err)
+			continue
+		}
+		rawValues[key] = raw
+	}
+	if len(rawValues) == 0 {
+		return
+	}
+	if r.projectionCache != nil {
+		if err := r.projectionCache.setMany(ctx, rawValues); err != nil {
+			logx.WithContext(ctx).Errorf("user projection cache batch set failed: keys=%d err=%v", len(rawValues), err)
+		}
+		return
+	}
+	for key, raw := range rawValues {
+		var env projectionCacheEnvelope[json.RawMessage]
+		if err := json.Unmarshal([]byte(raw), &env); err != nil {
+			logx.WithContext(ctx).Errorf("user projection cache dto decode failed: key=%s err=%v", key, err)
+			continue
+		}
+		if err := r.SetCache(ctx, key, env); err != nil {
+			logx.WithContext(ctx).Errorf("user projection cache set failed: key=%s err=%v", key, err)
+		}
 	}
 }
 
 func (r *Repository) deleteProjectionComponentCaches(ctx context.Context, keys ...string) {
 	if len(keys) == 0 {
+		return
+	}
+	if r.projectionCache != nil {
+		if err := r.projectionCache.delete(ctx, keys...); err != nil {
+			logx.WithContext(ctx).Errorf("user projection cache delete failed: keys=%d err=%v", len(keys), err)
+		}
 		return
 	}
 	if err := r.DelCache(ctx, keys...); err != nil {

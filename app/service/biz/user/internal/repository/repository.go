@@ -26,21 +26,23 @@ import (
 // Repository is the dependency container for repository instances.
 type Repository struct {
 	sqlc.CachedConn
-	db          *sqlx.DB
-	model       *model.Models
-	mediaReader MediaReader
-	projection  ProjectionConfig
+	db              *sqlx.DB
+	model           *model.Models
+	mediaReader     MediaReader
+	projection      ProjectionConfig
+	projectionCache projectionCacheStore
 }
 
 // NewRepository creates a new Repository.
 func NewRepository(c config.Config, mediaReader MediaReader) *Repository {
 	db := sqlx.NewMySQL(&c.Mysql)
 	return &Repository{
-		CachedConn:  sqlc.NewConn(db, c.Cache),
-		db:          db,
-		model:       model.NewModels(db),
-		mediaReader: mediaReader,
-		projection:  projectionConfigFromConfig(c.Projection),
+		CachedConn:      sqlc.NewConn(db, c.Cache),
+		db:              db,
+		model:           model.NewModels(db),
+		mediaReader:     mediaReader,
+		projection:      projectionConfigFromConfig(c.Projection),
+		projectionCache: newProjectionRedisCacheStore(c.Cache),
 	}
 }
 

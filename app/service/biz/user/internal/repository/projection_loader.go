@@ -76,13 +76,15 @@ func (r *Repository) loadProjectionUserFacts(ctx context.Context, ids []int64, c
 	if err := r.loadProjectionUsernameFacts(ctx, dbLoadedIDs, cfg, facts); err != nil {
 		return err
 	}
+	cacheWrites := make(map[string]interface{}, len(dbLoadedIDs))
 	for _, id := range dbLoadedIDs {
 		fact := facts.Users[id]
 		if fact == nil {
 			continue
 		}
-		r.setProjectionComponentCache(ctx, projectionFactsCacheKey(id), projectionUserCacheDTOFromFact(id, fact))
+		cacheWrites[projectionFactsCacheKey(id)] = projectionUserCacheDTOFromFact(id, fact)
 	}
+	r.setProjectionComponentCaches(ctx, cacheWrites)
 	return nil
 }
 
@@ -149,23 +151,27 @@ func (r *Repository) loadProjectionContactEdges(ctx context.Context, ownerIds, v
 		return err
 	}
 	if cfg.ContactMapCacheEnabled {
+		cacheWrites := make(map[string]interface{}, len(ownerIds))
+		deleteKeys := make([]string, 0)
 		for _, ownerID := range ownerIds {
 			requiredContactIDs := projectionRequiredContactIDs(ownerID, viewerSet, targetSet, viewerIds, targetIds)
 			if len(requiredContactIDs) > cfg.ContactMapMaxEntries {
-				r.deleteProjectionComponentCaches(ctx, projectionContactMapCacheKey(ownerID))
+				deleteKeys = append(deleteKeys, projectionContactMapCacheKey(ownerID))
 				continue
 			}
 			contacts := loadedByOwner[ownerID]
 			if len(contacts) > cfg.ContactMapMaxEntries {
-				r.deleteProjectionComponentCaches(ctx, projectionContactMapCacheKey(ownerID))
+				deleteKeys = append(deleteKeys, projectionContactMapCacheKey(ownerID))
 				continue
 			}
-			r.setProjectionComponentCache(ctx, projectionContactMapCacheKey(ownerID), projectionContactMapCacheDTO{
+			cacheWrites[projectionContactMapCacheKey(ownerID)] = projectionContactMapCacheDTO{
 				OwnerUserID:       ownerID,
 				Contacts:          contacts,
 				CoveredContactIDs: requiredContactIDs,
-			})
+			}
 		}
+		r.deleteProjectionComponentCaches(ctx, deleteKeys...)
+		r.setProjectionComponentCaches(ctx, cacheWrites)
 	}
 	return nil
 }
@@ -297,9 +303,11 @@ func (r *Repository) loadProjectionPrivacyFacts(ctx context.Context, ids []int64
 			facts.Privacies[privacyKey{UserId: rows[i].UserId, KeyType: rows[i].KeyType}] = rules
 		}
 	}
+	cacheWrites := make(map[string]interface{}, len(missIDs))
 	for _, id := range missIDs {
-		r.setProjectionComponentCache(ctx, projectionPrivacyCacheKey(id), projectionPrivacyCacheDTOFromRules(id, loaded[id]))
+		cacheWrites[projectionPrivacyCacheKey(id)] = projectionPrivacyCacheDTOFromRules(id, loaded[id])
 	}
+	r.setProjectionComponentCaches(ctx, cacheWrites)
 	return nil
 }
 
@@ -340,9 +348,11 @@ func (r *Repository) loadProjectionPresenceFacts(ctx context.Context, ids []int6
 			facts.Presences[rows[i].UserId] = presence
 		}
 	}
+	cacheWrites := make(map[string]interface{}, len(missIDs))
 	for _, id := range missIDs {
-		r.setProjectionComponentCache(ctx, projectionPresenceCacheKey(id), projectionPresenceCacheDTOFromFact(id, loaded[id]))
+		cacheWrites[projectionPresenceCacheKey(id)] = projectionPresenceCacheDTOFromFact(id, loaded[id])
 	}
+	r.setProjectionComponentCaches(ctx, cacheWrites)
 	return nil
 }
 
