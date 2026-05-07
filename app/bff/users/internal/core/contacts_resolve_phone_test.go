@@ -10,17 +10,21 @@ import (
 
 func TestContactsResolvePhoneReturnsResolvedPeer(t *testing.T) {
 	var gotPhone *userpb.TLUserGetUserIdByPhone
-	var gotUsers *userpb.TLUserGetMutableUsersV2
+	var gotUsers *userpb.TLUserGetUserProjectionBundle
 	core := newUsersCoreForTest(&fakeUserClient{
 		getUserIDByPhone: func(_ context.Context, in *userpb.TLUserGetUserIdByPhone) (*tg.Int64, error) {
 			gotPhone = in
 			return &tg.Int64{V: 2002}, nil
 		},
-		getMutableUsersV2: func(_ context.Context, in *userpb.TLUserGetMutableUsersV2) (*tg.MutableUsers, error) {
+		getUserProjectionBundle: func(_ context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
 			gotUsers = in
-			return tg.MakeTLMutableUsers(&tg.TLMutableUsers{
-				Users: []tg.ImmutableUserClazz{immutableUserFixture(2002, "Ada", "", "ada")},
-			}).ToMutableUsers(), nil
+			return userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+				ViewerUsers: []userpb.ViewerUsersClazz{
+					userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 1001, Users: []tg.UserClazz{
+						tg.MakeTLUser(&tg.TLUser{Id: 2002, Contact: true}),
+					}}),
+				},
+			}).ToUserProjectionBundle(), nil
 		},
 	}, 1001)
 
@@ -31,8 +35,8 @@ func TestContactsResolvePhoneReturnsResolvedPeer(t *testing.T) {
 	if gotPhone == nil || gotPhone.Phone != "15551230000" {
 		t.Fatalf("phone request = %+v, want phone 15551230000", gotPhone)
 	}
-	if gotUsers == nil || len(gotUsers.Id) != 2 || gotUsers.Id[0] != 2002 || gotUsers.Id[1] != 1001 {
-		t.Fatalf("mutable users request = %+v, want ids [2002 1001]", gotUsers)
+	if gotUsers == nil || len(gotUsers.ViewerUserIds) != 1 || gotUsers.ViewerUserIds[0] != 1001 || len(gotUsers.TargetUserIds) != 1 || gotUsers.TargetUserIds[0] != 2002 {
+		t.Fatalf("projection request = %+v, want viewer [1001] target [2002]", gotUsers)
 	}
 	if _, ok := got.Peer.(*tg.TLPeerUser); !ok {
 		t.Fatalf("peer = %T, want *tg.TLPeerUser", got.Peer)
@@ -43,8 +47,8 @@ func TestContactsResolvePhoneReturnsResolvedPeer(t *testing.T) {
 	if len(got.Users) != 1 {
 		t.Fatalf("users len = %d, want 1", len(got.Users))
 	}
-	if id, _ := userID(got.Users[0]); id != 2002 {
-		t.Fatalf("resolved user id = %d, want 2002", id)
+	if user, ok := got.Users[0].(*tg.TLUser); !ok || user.Id != 2002 || !user.Contact {
+		t.Fatalf("resolved user = %#v, want contact user 2002", got.Users[0])
 	}
 }
 

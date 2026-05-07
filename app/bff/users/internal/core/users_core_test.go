@@ -14,6 +14,7 @@ import (
 type fakeUserClient struct {
 	userclient.UserClient
 	getMutableUsersV2       func(context.Context, *userpb.TLUserGetMutableUsersV2) (*tg.MutableUsers, error)
+	getUserProjectionBundle func(context.Context, *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error)
 	getFullUser             func(context.Context, *userpb.TLUserGetFullUser) (*tg.UsersUserFull, error)
 	getImmutableUserByToken func(context.Context, *userpb.TLUserGetImmutableUserByToken) (*tg.ImmutableUser, error)
 	getUserIDByPhone        func(context.Context, *userpb.TLUserGetUserIdByPhone) (*tg.Int64, error)
@@ -21,6 +22,10 @@ type fakeUserClient struct {
 
 func (f *fakeUserClient) UserGetMutableUsersV2(ctx context.Context, in *userpb.TLUserGetMutableUsersV2) (*tg.MutableUsers, error) {
 	return f.getMutableUsersV2(ctx, in)
+}
+
+func (f *fakeUserClient) UserGetUserProjectionBundle(ctx context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+	return f.getUserProjectionBundle(ctx, in)
 }
 
 func (f *fakeUserClient) UserGetFullUser(ctx context.Context, in *userpb.TLUserGetFullUser) (*tg.UsersUserFull, error) {

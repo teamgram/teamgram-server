@@ -19,7 +19,7 @@ package core
 import (
 	"fmt"
 
-	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -46,34 +46,10 @@ func (c *UsersCore) UsersGetUsers(in *tg.TLUsersGetUsers) (*tg.VectorUser, error
 		requestedIDs = append(requestedIDs, id)
 	}
 
-	mutableUsers, err := c.svcCtx.Repo.UserClient.UserGetMutableUsersV2(c.ctx, &userpb.TLUserGetMutableUsersV2{
-		Id:      requestedIDs,
-		Privacy: true,
-		HasTo:   true,
-		To:      []int64{selfID},
-	})
+	users, err := userprojection.ProjectUsers(c.ctx, c.svcCtx.Repo.UserClient, selfID, requestedIDs, userprojection.MissingExplicitInput)
 	if err != nil {
 		return nil, err
 	}
 
-	byID := make(map[int64]tg.UserClazz, len(requestedIDs))
-	if mutableUsers != nil {
-		for _, immutableUser := range mutableUsers.Users {
-			user := projectImmutableUser(immutableUser)
-			if id, ok := userID(user); ok {
-				byID[id] = user
-			}
-		}
-	}
-
-	result := make([]tg.UserClazz, 0, len(requestedIDs))
-	for _, id := range requestedIDs {
-		if user := byID[id]; user != nil {
-			result = append(result, user)
-			continue
-		}
-		result = append(result, tg.MakeTLUserEmpty(&tg.TLUserEmpty{Id: id}))
-	}
-
-	return &tg.VectorUser{Datas: result}, nil
+	return &tg.VectorUser{Datas: users}, nil
 }
