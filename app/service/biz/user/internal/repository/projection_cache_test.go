@@ -172,6 +172,21 @@ func TestProjectionContactMapCoverageIsExplicitForPartialMaps(t *testing.T) {
 	}
 }
 
+func TestProjectionContactCacheFactsOnlyUseRequiredIds(t *testing.T) {
+	facts := projectionFacts{Contacts: make(map[contactKey]*projectionContactFact)}
+	addProjectionContactCacheFacts(1, []int64{2}, map[int64]projectionContactFact{
+		2: {FirstName: "Covered"},
+		3: {FirstName: "Stale"},
+	}, facts)
+
+	if facts.Contacts[contactKey{OwnerUserId: 1, ContactUserId: 2}] == nil {
+		t.Fatalf("covered contact was not added")
+	}
+	if facts.Contacts[contactKey{OwnerUserId: 1, ContactUserId: 3}] != nil {
+		t.Fatalf("non-required stale contact was added")
+	}
+}
+
 type fakeProjectionBatchCache struct {
 	values map[string]interface{}
 	gets   int

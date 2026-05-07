@@ -120,10 +120,11 @@ func (r *Repository) loadProjectionContactFacts(ctx context.Context, viewerIds [
 				continue
 			}
 			requiredContactIDs := projectionRequiredContactIDs(ownerID, viewerSet, targetSet, viewerIds, targetIds)
-			addProjectionContactCacheFacts(ownerID, requiredContactIDs, dto.Contacts, facts)
 			if projectionContactMapCovers(dto, requiredContactIDs) {
+				addProjectionContactCacheFacts(ownerID, requiredContactIDs, dto.Contacts, facts)
 				continue
 			}
+			r.deleteProjectionComponentCaches(ctx, key)
 			fallbackOwnerIds = append(fallbackOwnerIds, ownerID)
 		}
 	}
