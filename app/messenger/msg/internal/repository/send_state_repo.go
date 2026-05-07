@@ -3,6 +3,7 @@ package repository
 import (
 	"bytes"
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"math"
@@ -52,7 +53,7 @@ func (r *Repository) CreateOrLoadSendState(ctx context.Context, in CreateSendSta
 		LastErrorCode:               "",
 		LastErrorMessage:            "",
 		RetryCount:                  0,
-		CompletedAt:                 "",
+		CompletedAt:                 sql.NullTime{},
 	})
 	if err != nil {
 		again, found, selectErr := r.selectSendStateByRandom(ctx, in.SenderUserID, in.PeerType, in.PeerID, in.ClientRandomID)

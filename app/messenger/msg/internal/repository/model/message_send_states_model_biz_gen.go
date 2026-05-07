@@ -34,7 +34,7 @@ type bizMessageSendStatesModel interface {
 	MarkCanonicalCreated(ctx context.Context, canonicalMessageId int64, peerSeq int64, status int32, sendStateId int64) (rowsAffected int64, err error)
 	MarkSenderCommitted(ctx context.Context, senderOperationId string, senderPts int64, senderPtsCount int32, senderUpdateSchemaVersion int32, senderUpdatePayload []byte, senderUpdatePayloadHash []byte, status int32, sendStateId int64) (rowsAffected int64, err error)
 	MarkReceiverOpsAcked(ctx context.Context, receiverManifestId int64, status int32, sendStateId int64) (rowsAffected int64, err error)
-	MarkCompleted(ctx context.Context, status int32, completedAt string, sendStateId int64) (rowsAffected int64, err error)
+	MarkCompleted(ctx context.Context, status int32, completedAt sql.NullTime, sendStateId int64) (rowsAffected int64, err error)
 	MarkRetryableFailure(ctx context.Context, status int32, lastErrorCategory int32, lastErrorCode string, lastErrorMessage string, sendStateId int64) (rowsAffected int64, err error)
 }
 
@@ -45,7 +45,7 @@ type MessageSendStatesTxModel interface {
 	MarkCanonicalCreated(canonicalMessageId int64, peerSeq int64, status int32, sendStateId int64) (rowsAffected int64, err error)
 	MarkSenderCommitted(senderOperationId string, senderPts int64, senderPtsCount int32, senderUpdateSchemaVersion int32, senderUpdatePayload []byte, senderUpdatePayloadHash []byte, status int32, sendStateId int64) (rowsAffected int64, err error)
 	MarkReceiverOpsAcked(receiverManifestId int64, status int32, sendStateId int64) (rowsAffected int64, err error)
-	MarkCompleted(status int32, completedAt string, sendStateId int64) (rowsAffected int64, err error)
+	MarkCompleted(status int32, completedAt sql.NullTime, sendStateId int64) (rowsAffected int64, err error)
 	MarkRetryableFailure(status int32, lastErrorCategory int32, lastErrorCode string, lastErrorMessage string, sendStateId int64) (rowsAffected int64, err error)
 }
 
@@ -362,7 +362,7 @@ func (m *defaultMessageSendStatesTxModel) MarkReceiverOpsAcked(receiverManifestI
 
 // MarkCompleted
 // update message_send_states set `status` = :status, completed_at = :completed_at where send_state_id = :send_state_id
-func (m *defaultMessageSendStatesModel) MarkCompleted(ctx context.Context, status int32, completedAt string, sendStateId int64) (rowsAffected int64, err error) {
+func (m *defaultMessageSendStatesModel) MarkCompleted(ctx context.Context, status int32, completedAt sql.NullTime, sendStateId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update message_send_states set `status` = ?, completed_at = ? where send_state_id = ?"
@@ -387,7 +387,7 @@ func (m *defaultMessageSendStatesModel) MarkCompleted(ctx context.Context, statu
 
 // MarkCompleted
 // update message_send_states set `status` = :status, completed_at = :completed_at where send_state_id = :send_state_id
-func (m *defaultMessageSendStatesTxModel) MarkCompleted(status int32, completedAt string, sendStateId int64) (rowsAffected int64, err error) {
+func (m *defaultMessageSendStatesTxModel) MarkCompleted(status int32, completedAt sql.NullTime, sendStateId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update message_send_states set `status` = ?, completed_at = ? where send_state_id = ?"
 		rResult sql.Result

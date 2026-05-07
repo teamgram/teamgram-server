@@ -30,4 +30,20 @@
                 peer_type = :peer_type AND peer_id = :peer_id AND peer_seq = :peer_seq LIMIT 1
         </sql>
     </operation>
+
+    <operation name="UpdateMessageEdit">
+        <params>
+            <param name="old_edit_version" type="int32"/>
+        </params>
+        <sql>
+            UPDATE
+                canonical_messages
+            SET
+                message_text = :message_text,
+                edit_version = :edit_version,
+                edit_date = :edit_date
+            WHERE
+                canonical_message_id = :canonical_message_id AND edit_version = :old_edit_version
+        </sql>
+    </operation>
 </table>

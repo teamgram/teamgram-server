@@ -31,14 +31,14 @@ type bizMessageFanoutManifestsModel interface {
 	Insert(ctx context.Context, data *MessageFanoutManifests) (lastInsertId, rowsAffected int64, err error)
 	SelectByManifestId(ctx context.Context, manifestId int64) (*MessageFanoutManifests, error)
 	SelectByCanonicalMessageId(ctx context.Context, canonicalMessageId int64) (*MessageFanoutManifests, error)
-	MarkCompleted(ctx context.Context, status int32, completedAt string, manifestId int64) (rowsAffected int64, err error)
+	MarkCompleted(ctx context.Context, status int32, completedAt sql.NullTime, manifestId int64) (rowsAffected int64, err error)
 }
 
 type MessageFanoutManifestsTxModel interface {
 	Insert(data *MessageFanoutManifests) (lastInsertId, rowsAffected int64, err error)
 	SelectByManifestId(manifestId int64) (*MessageFanoutManifests, error)
 	SelectByCanonicalMessageId(canonicalMessageId int64) (*MessageFanoutManifests, error)
-	MarkCompleted(status int32, completedAt string, manifestId int64) (rowsAffected int64, err error)
+	MarkCompleted(status int32, completedAt sql.NullTime, manifestId int64) (rowsAffected int64, err error)
 }
 
 type defaultMessageFanoutManifestsTxModel struct {
@@ -210,7 +210,7 @@ func (m *defaultMessageFanoutManifestsTxModel) SelectByCanonicalMessageId(canoni
 
 // MarkCompleted
 // update message_fanout_manifests set `status` = :status, completed_at = :completed_at where manifest_id = :manifest_id
-func (m *defaultMessageFanoutManifestsModel) MarkCompleted(ctx context.Context, status int32, completedAt string, manifestId int64) (rowsAffected int64, err error) {
+func (m *defaultMessageFanoutManifestsModel) MarkCompleted(ctx context.Context, status int32, completedAt sql.NullTime, manifestId int64) (rowsAffected int64, err error) {
 
 	var (
 		query   = "update message_fanout_manifests set `status` = ?, completed_at = ? where manifest_id = ?"
@@ -235,7 +235,7 @@ func (m *defaultMessageFanoutManifestsModel) MarkCompleted(ctx context.Context, 
 
 // MarkCompleted
 // update message_fanout_manifests set `status` = :status, completed_at = :completed_at where manifest_id = :manifest_id
-func (m *defaultMessageFanoutManifestsTxModel) MarkCompleted(status int32, completedAt string, manifestId int64) (rowsAffected int64, err error) {
+func (m *defaultMessageFanoutManifestsTxModel) MarkCompleted(status int32, completedAt sql.NullTime, manifestId int64) (rowsAffected int64, err error) {
 	var (
 		query   = "update message_fanout_manifests set `status` = ?, completed_at = ? where manifest_id = ?"
 		rResult sql.Result

@@ -20,6 +20,26 @@
         <field name="ViewPayload" type="[]byte" db="view_payload"/>
     </result>
 
+    <result name="EditableMessageRow">
+        <field name="CanonicalMessageID" type="int64" db="canonical_message_id"/>
+        <field name="PeerSeq" type="int64" db="peer_seq"/>
+        <field name="FromUserID" type="int64" db="from_user_id"/>
+        <field name="PeerType" type="int32" db="peer_type"/>
+        <field name="PeerID" type="int64" db="peer_id"/>
+        <field name="MessageKind" type="int32" db="message_kind"/>
+        <field name="MessageText" type="string" db="message_text"/>
+        <field name="MessageDate" type="time.Time" db="message_date"/>
+        <field name="EditVersion" type="int32" db="edit_version"/>
+    </result>
+
+    <result name="HistoryOffsetRow">
+        <field name="OffsetFromID" type="int64" db="offset_from_id"/>
+    </result>
+
+    <result name="PeerSeqFloorRow">
+        <field name="PeerSeqFloor" type="int64" db="peer_seq_floor"/>
+    </result>
+
     <query name="SelectCanonicalByRandom" result="CanonicalMessageRow">
         <params>
             <param name="peer_type" type="int32"/>
@@ -102,6 +122,215 @@
                 v.date DESC,
                 v.peer_seq DESC
             LIMIT :limit
+        </sql>
+    </query>
+
+    <query name="SearchHashTagMessages" result="HistoryMessageRow" result_set="list">
+        <params>
+            <param name="hash_tag" type="string"/>
+            <param name="peer_type" type="int32"/>
+            <param name="message_status" type="int32"/>
+            <param name="offset_id" type="int64"/>
+            <param name="offset_id_limit" type="int64"/>
+            <param name="like_tag" type="string"/>
+            <param name="limit" type="int32"/>
+        </params>
+        <sql>
+            SELECT DISTINCT
+                v.canonical_message_id,
+                v.peer_seq,
+                c.from_user_id,
+                v.outgoing,
+                v.peer_type,
+                v.peer_id,
+                v.message_kind,
+                c.message_text,
+                v.date AS message_date,
+                v.view_payload
+            FROM
+                user_message_views v
+            JOIN
+                canonical_messages c
+            ON
+                c.canonical_message_id = v.canonical_message_id
+            LEFT JOIN
+                hash_tags h
+            ON
+                h.user_id = v.user_id
+                AND h.peer_type = v.peer_type
+                AND h.peer_id = v.peer_id
+                AND h.hash_tag_message_id = v.peer_seq
+                AND h.hash_tag = :hash_tag
+                AND h.deleted = 0
+            WHERE
+                v.user_id = :user_id
+                AND v.peer_type = :peer_type
+                AND v.peer_id = :peer_id
+                AND v.message_status = :message_status
+                AND (:offset_id &lt;= 0 OR v.peer_seq &lt; :offset_id_limit)
+                AND (
+                    h.hash_tag_message_id IS NOT NULL
+                    OR c.message_text LIKE :like_tag
+                )
+            ORDER BY
+                v.peer_seq DESC
+            LIMIT :limit
+        </sql>
+    </query>
+
+    <query name="SelectCanonicalByUserView" result="HistoryMessageRow">
+        <params>
+            <param name="peer_type" type="int32"/>
+            <param name="message_status" type="int32"/>
+            <param name="cur_user_id" type="int64"/>
+            <param name="cur_peer_type" type="int32"/>
+            <param name="cur_peer_id" type="int64"/>
+            <param name="cur_peer_seq" type="int64"/>
+        </params>
+        <sql>
+            SELECT
+                v.canonical_message_id,
+                v.peer_seq,
+                c.from_user_id,
+                v.outgoing,
+                v.peer_type,
+                v.peer_id,
+                v.message_kind,
+                c.message_text,
+                v.date AS message_date,
+                v.view_payload
+            FROM
+                user_message_views v
+            JOIN
+                canonical_messages c
+            ON
+                c.canonical_message_id = v.canonical_message_id
+            WHERE
+                v.user_id = :user_id
+                AND v.peer_type = :peer_type
+                AND v.peer_id = :peer_id
+                AND v.peer_seq = :peer_seq
+                AND v.message_status = :message_status
+            LIMIT 1
+        </sql>
+    </query>
+
+    <query name="SelectEditableMessageForUpdate" result="EditableMessageRow">
+        <params>
+            <param name="peer_type" type="int32"/>
+            <param name="message_status" type="int32"/>
+        </params>
+        <sql>
+            SELECT
+                c.canonical_message_id,
+                c.peer_seq,
+                c.from_user_id,
+                c.peer_type,
+                c.peer_id,
+                c.message_kind,
+                c.message_text,
+                c.date AS message_date,
+                c.edit_version
+            FROM
+                user_message_views v
+            JOIN
+                canonical_messages c
+            ON
+                c.canonical_message_id = v.canonical_message_id
+            WHERE
+                v.user_id = :actor_user_id
+                AND v.peer_type = :peer_type
+                AND v.peer_id = :peer_id
+                AND v.peer_seq = :peer_seq
+                AND v.message_status = :message_status
+            LIMIT 1
+            FOR UPDATE
+        </sql>
+    </query>
+
+    <query name="CountHistoryOffset" result="HistoryOffsetRow">
+        <params>
+            <param name="peer_type" type="int32"/>
+            <param name="message_status" type="int32"/>
+        </params>
+        <sql>
+            SELECT
+                COUNT(*) AS offset_from_id
+            FROM
+                user_message_views v
+            JOIN
+                user_message_views cur
+            ON
+                cur.user_id = :cur_user_id
+                AND cur.peer_type = :cur_peer_type
+                AND cur.peer_id = :cur_peer_id
+                AND cur.peer_seq = :cur_peer_seq
+            WHERE
+                v.user_id = :user_id
+                AND v.peer_type = :peer_type
+                AND v.peer_id = :peer_id
+                AND v.message_status = :message_status
+                AND (
+                    v.date &gt; cur.date
+                    OR (v.date = cur.date AND v.peer_seq &gt;= cur.peer_seq)
+                )
+        </sql>
+    </query>
+
+    <query name="SelectHistoryMessagesPage" result="HistoryMessageRow" result_set="list">
+        <params>
+            <param name="peer_type" type="int32"/>
+            <param name="message_status" type="int32"/>
+            <param name="offset" type="int64"/>
+            <param name="limit" type="int32"/>
+        </params>
+        <sql>
+            SELECT
+                v.canonical_message_id,
+                v.peer_seq,
+                c.from_user_id,
+                v.outgoing,
+                v.peer_type,
+                v.peer_id,
+                v.message_kind,
+                c.message_text,
+                v.date AS message_date,
+                v.view_payload
+            FROM
+                user_message_views v
+            JOIN
+                canonical_messages c
+            ON
+                c.canonical_message_id = v.canonical_message_id
+            WHERE
+                v.user_id = :user_id
+                AND v.peer_type = :peer_type
+                AND v.peer_id = :peer_id
+                AND v.message_status = :message_status
+            ORDER BY
+                v.date DESC,
+                v.peer_seq DESC
+            LIMIT :offset, :limit
+        </sql>
+    </query>
+
+    <query name="SelectConversationViewPeerSeqFloor" result="PeerSeqFloorRow">
+        <params>
+            <param name="peer_type" type="int32"/>
+            <param name="other_user_id" type="int64"/>
+            <param name="other_peer_id" type="int64"/>
+        </params>
+        <sql>
+            SELECT
+                COALESCE(MAX(peer_seq), 0) + 1 AS peer_seq_floor
+            FROM
+                user_message_views
+            WHERE
+                peer_type = :peer_type
+                AND (
+                    (user_id = :user_id AND peer_id = :peer_id)
+                    OR (user_id = :other_user_id AND peer_id = :other_peer_id)
+                )
         </sql>
     </query>
 </queries>

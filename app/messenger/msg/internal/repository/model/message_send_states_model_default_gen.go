@@ -49,28 +49,28 @@ type (
 	}
 
 	MessageSendStates struct {
-		SendStateId                 int64  `db:"send_state_id" json:"send_state_id"`
-		SenderUserId                int64  `db:"sender_user_id" json:"sender_user_id"`
-		PeerType                    int32  `db:"peer_type" json:"peer_type"`
-		PeerId                      int64  `db:"peer_id" json:"peer_id"`
-		ClientRandomId              int64  `db:"client_random_id" json:"client_random_id"`
-		CanonicalMessageId          int64  `db:"canonical_message_id" json:"canonical_message_id"`
-		PeerSeq                     int64  `db:"peer_seq" json:"peer_seq"`
-		Status                      int32  `db:"status" json:"status"`
-		RequestPayloadSchemaVersion int32  `db:"request_payload_schema_version" json:"request_payload_schema_version"`
-		RequestPayloadHash          []byte `db:"request_payload_hash" json:"request_payload_hash"`
-		SenderOperationId           string `db:"sender_operation_id" json:"sender_operation_id"`
-		SenderPts                   int64  `db:"sender_pts" json:"sender_pts"`
-		SenderPtsCount              int32  `db:"sender_pts_count" json:"sender_pts_count"`
-		SenderUpdateSchemaVersion   int32  `db:"sender_update_schema_version" json:"sender_update_schema_version"`
-		SenderUpdatePayload         []byte `db:"sender_update_payload" json:"sender_update_payload"`
-		SenderUpdatePayloadHash     []byte `db:"sender_update_payload_hash" json:"sender_update_payload_hash"`
-		ReceiverManifestId          int64  `db:"receiver_manifest_id" json:"receiver_manifest_id"`
-		LastErrorCategory           int32  `db:"last_error_category" json:"last_error_category"`
-		LastErrorCode               string `db:"last_error_code" json:"last_error_code"`
-		LastErrorMessage            string `db:"last_error_message" json:"last_error_message"`
-		RetryCount                  int32  `db:"retry_count" json:"retry_count"`
-		CompletedAt                 string `db:"completed_at" json:"completed_at"`
+		SendStateId                 int64        `db:"send_state_id" json:"send_state_id"`
+		SenderUserId                int64        `db:"sender_user_id" json:"sender_user_id"`
+		PeerType                    int32        `db:"peer_type" json:"peer_type"`
+		PeerId                      int64        `db:"peer_id" json:"peer_id"`
+		ClientRandomId              int64        `db:"client_random_id" json:"client_random_id"`
+		CanonicalMessageId          int64        `db:"canonical_message_id" json:"canonical_message_id"`
+		PeerSeq                     int64        `db:"peer_seq" json:"peer_seq"`
+		Status                      int32        `db:"status" json:"status"`
+		RequestPayloadSchemaVersion int32        `db:"request_payload_schema_version" json:"request_payload_schema_version"`
+		RequestPayloadHash          []byte       `db:"request_payload_hash" json:"request_payload_hash"`
+		SenderOperationId           string       `db:"sender_operation_id" json:"sender_operation_id"`
+		SenderPts                   int64        `db:"sender_pts" json:"sender_pts"`
+		SenderPtsCount              int32        `db:"sender_pts_count" json:"sender_pts_count"`
+		SenderUpdateSchemaVersion   int32        `db:"sender_update_schema_version" json:"sender_update_schema_version"`
+		SenderUpdatePayload         []byte       `db:"sender_update_payload" json:"sender_update_payload"`
+		SenderUpdatePayloadHash     []byte       `db:"sender_update_payload_hash" json:"sender_update_payload_hash"`
+		ReceiverManifestId          int64        `db:"receiver_manifest_id" json:"receiver_manifest_id"`
+		LastErrorCategory           int32        `db:"last_error_category" json:"last_error_category"`
+		LastErrorCode               string       `db:"last_error_code" json:"last_error_code"`
+		LastErrorMessage            string       `db:"last_error_message" json:"last_error_message"`
+		RetryCount                  int32        `db:"retry_count" json:"retry_count"`
+		CompletedAt                 sql.NullTime `db:"completed_at" json:"completed_at"`
 	}
 )
 

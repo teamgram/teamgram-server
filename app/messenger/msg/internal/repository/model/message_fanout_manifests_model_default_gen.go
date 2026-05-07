@@ -47,15 +47,15 @@ type (
 	}
 
 	MessageFanoutManifests struct {
-		ManifestId         int64  `db:"manifest_id" json:"manifest_id"`
-		CanonicalMessageId int64  `db:"canonical_message_id" json:"canonical_message_id"`
-		PeerType           int32  `db:"peer_type" json:"peer_type"`
-		PeerId             int64  `db:"peer_id" json:"peer_id"`
-		PeerSeq            int64  `db:"peer_seq" json:"peer_seq"`
-		ActorUserId        int64  `db:"actor_user_id" json:"actor_user_id"`
-		AffectedUserCount  int32  `db:"affected_user_count" json:"affected_user_count"`
-		Status             int32  `db:"status" json:"status"`
-		CompletedAt        string `db:"completed_at" json:"completed_at"`
+		ManifestId         int64        `db:"manifest_id" json:"manifest_id"`
+		CanonicalMessageId int64        `db:"canonical_message_id" json:"canonical_message_id"`
+		PeerType           int32        `db:"peer_type" json:"peer_type"`
+		PeerId             int64        `db:"peer_id" json:"peer_id"`
+		PeerSeq            int64        `db:"peer_seq" json:"peer_seq"`
+		ActorUserId        int64        `db:"actor_user_id" json:"actor_user_id"`
+		AffectedUserCount  int32        `db:"affected_user_count" json:"affected_user_count"`
+		Status             int32        `db:"status" json:"status"`
+		CompletedAt        sql.NullTime `db:"completed_at" json:"completed_at"`
 	}
 )
 
