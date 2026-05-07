@@ -23,6 +23,7 @@ import (
 	"strings"
 
 	"github.com/teamgram/teamgram-server/v2/app/bff/authorization/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 	authsessionclient "github.com/teamgram/teamgram-server/v2/app/service/authsession/client"
 	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
@@ -104,7 +105,7 @@ func (r *Repository) GetUserByPhone(ctx context.Context, phone string) (*tg.Immu
 		}
 		return nil, fmt.Errorf("authorization repository: get user by phone %s: %w", phone, err)
 	}
-	if user == nil {
+	if user == nil || user.User == nil {
 		return nil, ErrUserNotFound
 	}
 	return user, nil
@@ -124,10 +125,27 @@ func (r *Repository) CreateUser(ctx context.Context, secretKeyId int64, phone st
 	if err != nil {
 		return nil, fmt.Errorf("authorization repository: create user %s: %w", phone, err)
 	}
-	if user == nil {
-		return nil, fmt.Errorf("authorization repository: create user %s returned nil", phone)
+	if user == nil || user.User == nil {
+		return nil, fmt.Errorf("authorization repository: create user %s returned nil user data", phone)
 	}
 	return user, nil
+}
+
+func (r *Repository) ProjectSelfUser(ctx context.Context, userId int64) (tg.UserClazz, error) {
+	if r.UserClient == nil {
+		return nil, fmt.Errorf("authorization repository: user client is not configured")
+	}
+	if userId <= 0 {
+		return nil, fmt.Errorf("authorization repository: project self user: invalid user id %d", userId)
+	}
+	users, err := userprojection.ProjectUsers(ctx, r.UserClient, userId, []int64{userId}, userprojection.MissingStoredReference)
+	if err != nil {
+		return nil, fmt.Errorf("authorization repository: project self user %d: %w", userId, err)
+	}
+	if len(users) == 0 {
+		return nil, fmt.Errorf("authorization repository: project self user %d returned empty users", userId)
+	}
+	return users[0], nil
 }
 
 func isUserNotFound(err error) bool {

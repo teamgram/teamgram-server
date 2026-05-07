@@ -19,6 +19,7 @@ package core
 import (
 	"strings"
 
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -56,6 +57,9 @@ func (c *MessagesCore) MessagesSearch(in *tg.TLMessagesSearch) (*tg.MessagesMess
 				c.Logger.Errorf("messages.search hashtag - msg error: self_user_id: %d, peer_id: %d, tag: %s, err: %v",
 					c.MD.UserId, peerUserID, tag, err)
 				return nil, mapMsgSendError(err)
+			}
+			if err = userprojection.FillMessagesMessagesUsers(c.ctx, c.svcCtx.Repo.UserClient, c.MD.UserId, r, userprojection.MissingStoredReference); err != nil {
+				return nil, err
 			}
 			return r, nil
 		}

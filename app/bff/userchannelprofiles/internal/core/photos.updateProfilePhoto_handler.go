@@ -17,6 +17,7 @@
 package core
 
 import (
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	mediapb "github.com/teamgram/teamgram-server/v2/app/service/media/media"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -67,9 +68,13 @@ func (c *UserChannelProfilesCore) PhotosUpdateProfilePhoto(in *tg.TLPhotosUpdate
 		photo = tg.MakeTLPhotoEmpty(&tg.TLPhotoEmpty{Id: photoID})
 	}
 	// TODO(v2 userchannelprofiles): sync delivery is intentionally not migrated here; route profile photo updates through userupdates/gateway when the V2 delivery contract is defined.
+	users, err := userprojection.ProjectUsers(c.ctx, c.svcCtx.Repo.UserClient, selfID, []int64{selfID}, userprojection.MissingExplicitInput)
+	if err != nil {
+		return nil, err
+	}
 
 	return tg.MakeTLPhotosPhoto(&tg.TLPhotosPhoto{
 		Photo: photo,
-		Users: []tg.UserClazz{},
+		Users: users,
 	}).ToPhotosPhoto(), nil
 }

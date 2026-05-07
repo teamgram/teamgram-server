@@ -140,6 +140,7 @@ func TestAccountChangePhoneRejectsWrongCode(t *testing.T) {
 func TestAccountChangePhoneUpdatesUserAndDeletesCode(t *testing.T) {
 	var gotChange *userpb.TLUserChangePhone
 	var gotDelete *codepb.TLCodeDeletePhoneCode
+	var gotProjection *userpb.TLUserGetUserProjectionBundle
 	c := newAccountCoreForTest(&fakeAccountUserClient{
 		getImmutableUserByPhone: func(context.Context, *userpb.TLUserGetImmutableUserByPhone) (*tg.ImmutableUser, error) {
 			return nil, userpb.ErrUserNotFound
@@ -150,6 +151,16 @@ func TestAccountChangePhoneUpdatesUserAndDeletesCode(t *testing.T) {
 		changePhone: func(_ context.Context, in *userpb.TLUserChangePhone) (*tg.Bool, error) {
 			gotChange = in
 			return tg.BoolTrue, nil
+		},
+		getUserProjection: func(_ context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+			gotProjection = in
+			return userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+				ViewerUsers: []userpb.ViewerUsersClazz{
+					userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 1001, Users: []tg.UserClazz{
+						tg.MakeTLUser(&tg.TLUser{Id: 1001, Self: true, Phone: strPtr("8613711112222")}),
+					}}),
+				},
+			}).ToUserProjectionBundle(), nil
 		},
 	}, nil, &fakeAccountCodeClient{
 		getPhoneCode: func(_ context.Context, in *codepb.TLCodeGetPhoneCode) (*codepb.PhoneCodeTransaction, error) {
@@ -183,6 +194,10 @@ func TestAccountChangePhoneUpdatesUserAndDeletesCode(t *testing.T) {
 	if gotDelete == nil || gotDelete.AuthKeyId != 9001 || gotDelete.Phone != "8613711112222" || gotDelete.PhoneCodeHash != "hash-1" {
 		t.Fatalf("delete request = %+v, want auth_key_id 9001 phone 8613711112222 hash-1", gotDelete)
 	}
+	if gotProjection == nil || len(gotProjection.ViewerUserIds) != 1 || gotProjection.ViewerUserIds[0] != 1001 ||
+		len(gotProjection.TargetUserIds) != 1 || gotProjection.TargetUserIds[0] != 1001 {
+		t.Fatalf("projection request = %+v, want viewer/target 1001", gotProjection)
+	}
 	user, ok := got.ToUser()
 	if !ok {
 		t.Fatalf("result = %s, want user", got.ClazzName())
@@ -193,4 +208,8 @@ func TestAccountChangePhoneUpdatesUserAndDeletesCode(t *testing.T) {
 	if !user.Self {
 		t.Fatal("returned user Self = false, want true")
 	}
+}
+
+func strPtr(v string) *string {
+	return &v
 }

@@ -17,6 +17,7 @@
 package core
 
 import (
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -56,6 +57,9 @@ func (c *MessagesCore) MessagesGetHistory(in *tg.TLMessagesGetHistory) (*tg.Mess
 		c.Logger.Errorf("messages.getHistory - msg error: self_user_id: %d, peer_id: %d, offset_id: %d, limit: %d, err: %v",
 			md.UserId, peerUserID, in.OffsetId, in.Limit, err)
 		return nil, mapMsgSendError(err)
+	}
+	if err = userprojection.FillMessagesMessagesUsers(c.ctx, c.svcCtx.Repo.UserClient, md.UserId, r, userprojection.MissingStoredReference); err != nil {
+		return nil, err
 	}
 	return r, nil
 }

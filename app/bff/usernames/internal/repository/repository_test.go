@@ -190,6 +190,7 @@ func TestResolveUsernameProjectsUser(t *testing.T) {
 }
 
 func TestUpdateAccountUsername_NoChange(t *testing.T) {
+	var gotProjection *userpb.TLUserGetUserProjectionBundle
 	repo := &Repository{
 		UserClient: &stubUserClient{
 			getImmutableUserFn: func(ctx context.Context, in *userpb.TLUserGetImmutableUser) (*tg.ImmutableUser, error) {
@@ -201,12 +202,26 @@ func TestUpdateAccountUsername_NoChange(t *testing.T) {
 					},
 				}, nil
 			},
+			projectionFn: func(ctx context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+				gotProjection = in
+				return userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+					ViewerUsers: []userpb.ViewerUsersClazz{
+						userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 1, Users: []tg.UserClazz{
+							tg.MakeTLUser(&tg.TLUser{Id: 1, Self: true}),
+						}}),
+					},
+				}).ToUserProjectionBundle(), nil
+			},
 		},
 	}
 	// newUsername equals oldUsername; no RPC should be called.
 	user, err := repo.UpdateAccountUsername(context.Background(), 1, "already_set")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
+	}
+	if gotProjection == nil || len(gotProjection.ViewerUserIds) != 1 || gotProjection.ViewerUserIds[0] != 1 ||
+		len(gotProjection.TargetUserIds) != 1 || gotProjection.TargetUserIds[0] != 1 {
+		t.Fatalf("projection request = %+v, want viewer/target 1", gotProjection)
 	}
 	if user == nil {
 		t.Fatal("expected non-nil user for no-change update")

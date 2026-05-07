@@ -62,6 +62,23 @@ func TestCollectUserIDsFromDifferenceCollectsMessagesAndOtherUpdates(t *testing.
 	}
 }
 
+func TestCollectUserIDsFromMessagesMessagesCollectsMessages(t *testing.T) {
+	messages := MakeTLMessagesMessages(&TLMessagesMessages{
+		Messages: []MessageClazz{MakeTLMessage(&TLMessage{
+			FromId: MakeTLPeerUser(&TLPeerUser{UserId: 1001}),
+			PeerId: MakeTLPeerUser(&TLPeerUser{UserId: 1002}),
+		})},
+		Chats: []ChatClazz{},
+		Users: []UserClazz{},
+	}).ToMessagesMessages()
+
+	got := CollectUserIDsFromMessagesMessages(messages)
+	want := []int64{1001, 1002}
+	if !sameInt64s(got, want) {
+		t.Fatalf("ids = %v, want %v", got, want)
+	}
+}
+
 func TestCollectUserIDsFromShortUpdatesIsEmpty(t *testing.T) {
 	got := CollectUserIDsFromUpdates(MakeTLUpdateShortMessage(&TLUpdateShortMessage{UserId: 1001}).ToUpdates())
 	if len(got) != 0 {

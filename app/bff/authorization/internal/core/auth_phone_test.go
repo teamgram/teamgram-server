@@ -92,6 +92,9 @@ func TestAuthPhoneRegistrationFlow(t *testing.T) {
 	if repo.bindCalls != 1 {
 		t.Fatalf("bind calls = %d, want 1", repo.bindCalls)
 	}
+	if repo.projectCalls != 1 {
+		t.Fatalf("project calls = %d, want 1", repo.projectCalls)
+	}
 	if repo.boundAuthKeyID != 1001001 || repo.boundUserID != fakeAuthUserID {
 		t.Fatalf("bound auth/user = %d/%d, want %d/%d", repo.boundAuthKeyID, repo.boundUserID, int64(1001001), int64(fakeAuthUserID))
 	}
@@ -150,6 +153,9 @@ func TestAuthSignInExistingUserBindsAuthKey(t *testing.T) {
 	if repo.bindCalls != 1 {
 		t.Fatalf("bind calls = %d, want 1", repo.bindCalls)
 	}
+	if repo.projectCalls != 1 {
+		t.Fatalf("project calls = %d, want 1", repo.projectCalls)
+	}
 	if repo.boundAuthKeyID != 3003003 || repo.boundUserID != fakeAuthUserID {
 		t.Fatalf("bound auth/user = %d/%d, want %d/%d", repo.boundAuthKeyID, repo.boundUserID, int64(3003003), int64(fakeAuthUserID))
 	}
@@ -183,6 +189,7 @@ type fakeAuthRepository struct {
 	createUserCalls int
 	bindCalls       int
 	unbindCalls     int
+	projectCalls    int
 
 	boundAuthKeyID int64
 	boundUserID    int64
@@ -218,6 +225,28 @@ func (r *fakeAuthRepository) CreateUser(ctx context.Context, secretKeyId int64, 
 	return user, nil
 }
 
+func (r *fakeAuthRepository) ProjectSelfUser(ctx context.Context, userId int64) (tg.UserClazz, error) {
+	_ = ctx
+	r.projectCalls++
+	for _, user := range r.usersByPhone {
+		if user == nil || user.User == nil || user.User.Id != userId {
+			continue
+		}
+		data := user.User
+		return tg.MakeTLUser(&tg.TLUser{
+			Self:       true,
+			Id:         data.Id,
+			AccessHash: &data.AccessHash,
+			FirstName:  stringPtr(data.FirstName),
+			LastName:   stringPtr(data.LastName),
+			Username:   optionalStringPtr(data.Username),
+			Phone:      optionalStringPtr(data.Phone),
+			Status:     tg.UserStatusEmptyClazz,
+		}), nil
+	}
+	return nil, repository.ErrUserNotFound
+}
+
 func (r *fakeAuthRepository) BindAuthKeyUser(ctx context.Context, authKeyId int64, userId int64) error {
 	_ = ctx
 	r.bindCalls++
@@ -248,4 +277,15 @@ func makeFakeImmutableUser(id int64, phone string, countryCode string, firstName
 		}).ToUserData(),
 		KeysPrivacyRules: []tg.PrivacyKeyRulesClazz{},
 	}).ToImmutableUser()
+}
+
+func stringPtr(v string) *string {
+	return &v
+}
+
+func optionalStringPtr(v string) *string {
+	if v == "" {
+		return nil
+	}
+	return &v
 }

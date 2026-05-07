@@ -86,3 +86,24 @@ func FillDifferenceUsers(ctx context.Context, client UserClient, viewerUserId in
 	}
 	return nil
 }
+
+func FillMessagesMessagesUsers(ctx context.Context, client UserClient, viewerUserId int64, messages *tg.MessagesMessages, missing MissingPolicy) error {
+	if messages == nil {
+		return nil
+	}
+	ids := tg.CollectUserIDsFromMessagesMessages(messages)
+	users, err := ProjectUsers(ctx, client, viewerUserId, ids, missing)
+	if err != nil {
+		return err
+	}
+	if full, ok := messages.ToMessagesMessages(); ok {
+		full.Users = users
+	}
+	if slice, ok := messages.ToMessagesMessagesSlice(); ok {
+		slice.Users = users
+	}
+	if channel, ok := messages.ToMessagesChannelMessages(); ok {
+		channel.Users = users
+	}
+	return nil
+}

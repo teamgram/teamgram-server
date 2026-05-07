@@ -489,7 +489,21 @@ func TestMessagesMarkDialogUnreadWritesUserupdatesOperation(t *testing.T) {
 }
 
 func TestMessagesGetPeerSettingsReturnsDefaultSettings(t *testing.T) {
-	c := newDialogsGetDialogsCore(&repository.Repository{}, 100)
+	var gotProjection *userpb.TLUserGetUserProjectionBundle
+	c := newDialogsGetDialogsCore(&repository.Repository{
+		UserClient: &dialogsFakeUserClient{
+			getUserProjection: func(_ context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+				gotProjection = in
+				return userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+					ViewerUsers: []userpb.ViewerUsersClazz{
+						userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 100, Users: []tg.UserClazz{
+							tg.MakeTLUser(&tg.TLUser{Id: 100, Self: true}),
+						}}),
+					},
+				}).ToUserProjectionBundle(), nil
+			},
+		},
+	}, 100)
 
 	r, err := c.MessagesGetPeerSettings(&tg.TLMessagesGetPeerSettings{
 		Peer: tg.MakeTLInputPeerSelf(&tg.TLInputPeerSelf{}),
@@ -500,8 +514,12 @@ func TestMessagesGetPeerSettingsReturnsDefaultSettings(t *testing.T) {
 	if r == nil || r.Settings == nil {
 		t.Fatalf("MessagesGetPeerSettings reply = %+v, want default settings", r)
 	}
-	if len(r.Chats) != 0 || len(r.Users) != 0 {
-		t.Fatalf("MessagesGetPeerSettings reply = %+v, want empty peers", r)
+	if gotProjection == nil || len(gotProjection.ViewerUserIds) != 1 || gotProjection.ViewerUserIds[0] != 100 ||
+		len(gotProjection.TargetUserIds) != 1 || gotProjection.TargetUserIds[0] != 100 {
+		t.Fatalf("projection request = %+v, want viewer/target 100", gotProjection)
+	}
+	if len(r.Chats) != 0 || len(r.Users) != 1 {
+		t.Fatalf("MessagesGetPeerSettings reply = %+v, want projected self user", r)
 	}
 }
 
@@ -628,5 +646,12 @@ func TestMessagesGetDialogsMapsBizDialogErrorToInternal(t *testing.T) {
 }
 
 func int32Ptr(v int32) *int32 {
+	return &v
+}
+
+func nonEmptyStringPtr(v string) *string {
+	if v == "" {
+		return nil
+	}
 	return &v
 }

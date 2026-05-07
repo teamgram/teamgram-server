@@ -50,6 +50,10 @@ func (c *AuthorizationCore) AuthSignUp(in *tg.TLAuthSignUp) (*tg.AuthAuthorizati
 		}
 	}
 
+	selfUser, err := c.svcCtx.Repo.ProjectSelfUser(c.ctx, userID)
+	if err != nil {
+		return nil, err
+	}
 	deleteStartupPhoneCode(in.PhoneCodeHash)
-	return makeAuthAuthorization(user), nil
+	return makeAuthAuthorization(selfUser), nil
 }

@@ -12,6 +12,8 @@ import (
 	userupdatesclient "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/client"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -67,6 +69,15 @@ type messagesFakeUserupdatesClient struct {
 
 func (f *messagesFakeUserupdatesClient) UserupdatesGetOutboxReadDate(ctx context.Context, in *userupdates.TLUserupdatesGetOutboxReadDate) (*tg.OutboxReadDate, error) {
 	return f.getOutboxReadDate(ctx, in)
+}
+
+type messagesFakeUserClient struct {
+	userclient.UserClient
+	projectUsers func(ctx context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error)
+}
+
+func (f *messagesFakeUserClient) UserGetUserProjectionBundle(ctx context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+	return f.projectUsers(ctx, in)
 }
 
 func newSendMsgCore(client msgclient.MsgClient, selfID, authKeyID int64) *MessagesCore {
@@ -225,17 +236,38 @@ func TestMessagesSendMessage_InputReplyToMessageSetsReplyHeader(t *testing.T) {
 
 func TestMessagesGetHistory_UserPeerSuccess(t *testing.T) {
 	var got *msg.TLMsgGetHistory
+	var gotProjection *userpb.TLUserGetUserProjectionBundle
 	reply := tg.MakeTLMessagesMessages(&tg.TLMessagesMessages{
 		Messages: []tg.MessageClazz{
-			tg.MakeTLMessage(&tg.TLMessage{Id: 5, Message: "hello"}),
+			tg.MakeTLMessage(&tg.TLMessage{
+				Id:      5,
+				FromId:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 100}),
+				PeerId:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 300}),
+				Message: "hello",
+			}),
 		},
 		Chats: []tg.ChatClazz{},
 		Users: []tg.UserClazz{},
 	}).ToMessagesMessages()
-	c := newSendMsgCore(&messagesFakeMsgClient{
-		getHistory: func(_ context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error) {
-			got = in
-			return reply, nil
+	c := newMessagesCoreWithRepo(&repository.Repository{
+		MsgClient: &messagesFakeMsgClient{
+			getHistory: func(_ context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error) {
+				got = in
+				return reply, nil
+			},
+		},
+		UserClient: &messagesFakeUserClient{
+			projectUsers: func(_ context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+				gotProjection = in
+				return userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+					ViewerUsers: []userpb.ViewerUsersClazz{
+						userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 100, Users: []tg.UserClazz{
+							tg.MakeTLUser(&tg.TLUser{Id: 100, Self: true}),
+							tg.MakeTLUser(&tg.TLUser{Id: 300, Contact: true}),
+						}}),
+					},
+				}).ToUserProjectionBundle(), nil
+			},
 		},
 	}, 100, 200)
 
@@ -258,11 +290,19 @@ func TestMessagesGetHistory_UserPeerSuccess(t *testing.T) {
 	if got == nil {
 		t.Fatal("msg service was not called")
 	}
+	if gotProjection == nil || len(gotProjection.ViewerUserIds) != 1 || gotProjection.ViewerUserIds[0] != 100 ||
+		len(gotProjection.TargetUserIds) != 2 || gotProjection.TargetUserIds[0] != 100 || gotProjection.TargetUserIds[1] != 300 {
+		t.Fatalf("projection request = %+v, want viewer [100] target [100 300]", gotProjection)
+	}
 	if got.UserId != 100 || got.AuthKeyId != 200 || got.PeerType != payload.PeerTypeUser || got.PeerId != 300 {
 		t.Fatalf("unexpected service identity/peer: %+v", got)
 	}
 	if got.OffsetId != 7 || got.OffsetDate != 8 || got.AddOffset != 9 || got.Limit != 10 || got.MaxId != 11 || got.MinId != 12 || got.Hash != 13 {
 		t.Fatalf("unexpected paging input: %+v", got)
+	}
+	messages, ok := r.ToMessagesMessages()
+	if !ok || len(messages.Users) != 2 {
+		t.Fatalf("history users = %#v, ok=%v, want projected users", r, ok)
 	}
 }
 
@@ -314,17 +354,38 @@ func TestMessagesSearchPinnedReturnsEmptyMessages(t *testing.T) {
 
 func TestMessagesSearchHashtagRoutesToMsg(t *testing.T) {
 	var got *msg.TLMsgSearchHashtag
+	var gotProjection *userpb.TLUserGetUserProjectionBundle
 	reply := tg.MakeTLMessagesMessages(&tg.TLMessagesMessages{
 		Messages: []tg.MessageClazz{
-			tg.MakeTLMessage(&tg.TLMessage{Id: 7, Message: "#tag hello"}),
+			tg.MakeTLMessage(&tg.TLMessage{
+				Id:      7,
+				FromId:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 100}),
+				PeerId:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 300}),
+				Message: "#tag hello",
+			}),
 		},
 		Chats: []tg.ChatClazz{},
 		Users: []tg.UserClazz{},
 	}).ToMessagesMessages()
-	c := newSendMsgCore(&messagesFakeMsgClient{
-		searchHashtag: func(_ context.Context, in *msg.TLMsgSearchHashtag) (*tg.MessagesMessages, error) {
-			got = in
-			return reply, nil
+	c := newMessagesCoreWithRepo(&repository.Repository{
+		MsgClient: &messagesFakeMsgClient{
+			searchHashtag: func(_ context.Context, in *msg.TLMsgSearchHashtag) (*tg.MessagesMessages, error) {
+				got = in
+				return reply, nil
+			},
+		},
+		UserClient: &messagesFakeUserClient{
+			projectUsers: func(_ context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+				gotProjection = in
+				return userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+					ViewerUsers: []userpb.ViewerUsersClazz{
+						userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 100, Users: []tg.UserClazz{
+							tg.MakeTLUser(&tg.TLUser{Id: 100, Self: true}),
+							tg.MakeTLUser(&tg.TLUser{Id: 300, Contact: true}),
+						}}),
+					},
+				}).ToUserProjectionBundle(), nil
+			},
 		},
 	}, 100, 200)
 
@@ -342,6 +403,10 @@ func TestMessagesSearchHashtagRoutesToMsg(t *testing.T) {
 	}
 	if got == nil || got.UserId != 100 || got.AuthKeyId != 200 || got.PeerType != payload.PeerTypeUser || got.PeerId != 300 || got.HashTag != "tag" || got.Limit != 20 {
 		t.Fatalf("MsgSearchHashtag request = %+v", got)
+	}
+	if gotProjection == nil || len(gotProjection.ViewerUserIds) != 1 || gotProjection.ViewerUserIds[0] != 100 ||
+		len(gotProjection.TargetUserIds) != 2 || gotProjection.TargetUserIds[0] != 100 || gotProjection.TargetUserIds[1] != 300 {
+		t.Fatalf("projection request = %+v, want viewer [100] target [100 300]", gotProjection)
 	}
 }
 

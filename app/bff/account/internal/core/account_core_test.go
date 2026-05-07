@@ -21,6 +21,7 @@ type fakeAccountUserClient struct {
 	setAccountDaysTTL       func(context.Context, *userpb.TLUserSetAccountDaysTTL) (*tg.Bool, error)
 	getImmutableUserByPhone func(context.Context, *userpb.TLUserGetImmutableUserByPhone) (*tg.ImmutableUser, error)
 	getImmutableUser        func(context.Context, *userpb.TLUserGetImmutableUser) (*tg.ImmutableUser, error)
+	getUserProjection       func(context.Context, *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error)
 	changePhone             func(context.Context, *userpb.TLUserChangePhone) (*tg.Bool, error)
 	getUserDataByID         func(context.Context, *userpb.TLUserGetUserDataById) (*tg.UserData, error)
 	deleteUsername          func(context.Context, *userpb.TLUserDeleteUsername) (*tg.Bool, error)
@@ -54,6 +55,10 @@ func (f *fakeAccountUserClient) UserGetImmutableUserByPhone(ctx context.Context,
 
 func (f *fakeAccountUserClient) UserGetImmutableUser(ctx context.Context, in *userpb.TLUserGetImmutableUser) (*tg.ImmutableUser, error) {
 	return f.getImmutableUser(ctx, in)
+}
+
+func (f *fakeAccountUserClient) UserGetUserProjectionBundle(ctx context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+	return f.getUserProjection(ctx, in)
 }
 
 func (f *fakeAccountUserClient) UserChangePhone(ctx context.Context, in *userpb.TLUserChangePhone) (*tg.Bool, error) {

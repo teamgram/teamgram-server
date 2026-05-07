@@ -17,6 +17,7 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -85,5 +86,13 @@ func (c *UserChannelProfilesCore) AccountUpdateProfile(in *tg.TLAccountUpdatePro
 		// TODO(v2 userchannelprofiles): sync delivery is intentionally not migrated here; route profile updates through userupdates/gateway when the V2 delivery contract is defined.
 	}
 
-	return &tg.User{Clazz: projectSelfImmutableUser(me)}, nil
+	users, err := userprojection.ProjectUsers(c.ctx, c.svcCtx.Repo.UserClient, selfID, []int64{selfID}, userprojection.MissingExplicitInput)
+	if err != nil {
+		return nil, err
+	}
+	if len(users) == 0 {
+		return nil, tg.ErrUserIdInvalid
+	}
+
+	return &tg.User{Clazz: users[0]}, nil
 }

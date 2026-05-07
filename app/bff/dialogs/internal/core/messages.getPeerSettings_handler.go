@@ -17,6 +17,7 @@
 package core
 
 import (
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -29,13 +30,18 @@ func (c *DialogsCore) MessagesGetPeerSettings(in *tg.TLMessagesGetPeerSettings) 
 	if in == nil {
 		return nil, tg.ErrInputRequestInvalid
 	}
-	if _, ok := resolveDialogUserPeerID(in.Peer, c.MD.UserId); !ok {
+	peerUserID, ok := resolveDialogUserPeerID(in.Peer, c.MD.UserId)
+	if !ok {
 		return nil, tg.Err400PeerIdInvalid
+	}
+	users, err := userprojection.ProjectUsers(c.ctx, c.svcCtx.Repo.UserClient, c.MD.UserId, []int64{peerUserID}, userprojection.MissingExplicitInput)
+	if err != nil {
+		return nil, err
 	}
 
 	return tg.MakeTLMessagesPeerSettings(&tg.TLMessagesPeerSettings{
 		Settings: tg.MakeTLPeerSettings(&tg.TLPeerSettings{}).ToPeerSettings(),
 		Chats:    []tg.ChatClazz{},
-		Users:    []tg.UserClazz{},
+		Users:    users,
 	}).ToMessagesPeerSettings(), nil
 }

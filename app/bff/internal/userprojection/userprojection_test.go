@@ -80,4 +80,31 @@ func TestFillUpdatesUsersReplacesLegacyUsers(t *testing.T) {
 	}
 }
 
+func TestFillMessagesMessagesUsersReplacesLegacyUsers(t *testing.T) {
+	client := &fakeUserClient{out: userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+		ViewerUsers: []userpb.ViewerUsersClazz{
+			userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 1001, Users: []tg.UserClazz{
+				tg.MakeTLUser(&tg.TLUser{Id: 1001}),
+				tg.MakeTLUser(&tg.TLUser{Id: 1002}),
+			}}),
+		},
+	}).ToUserProjectionBundle()}
+	messages := tg.MakeTLMessagesMessages(&tg.TLMessagesMessages{
+		Messages: []tg.MessageClazz{tg.MakeTLMessage(&tg.TLMessage{
+			FromId: tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 1001}),
+			PeerId: tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 1002}),
+		})},
+		Chats: []tg.ChatClazz{},
+		Users: []tg.UserClazz{tg.MakeTLUser(&tg.TLUser{Id: 9999})},
+	})
+
+	err := FillMessagesMessagesUsers(context.Background(), client, 1001, messages.ToMessagesMessages(), MissingStoredReference)
+	if err != nil {
+		t.Fatalf("FillMessagesMessagesUsers() error = %v", err)
+	}
+	if len(messages.Users) != 2 || messages.Users[0].(*tg.TLUser).Id != 1001 || messages.Users[1].(*tg.TLUser).Id != 1002 {
+		t.Fatalf("users = %#v", messages.Users)
+	}
+}
+
 func strPtr(v string) *string { return &v }

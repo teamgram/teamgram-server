@@ -35,6 +35,23 @@ func CollectUserIDsFromDifference(diff *UpdatesDifference) []int64 {
 	return c.ids
 }
 
+func CollectUserIDsFromMessagesMessages(messages *MessagesMessages) []int64 {
+	c := newUserIDCollector()
+	if messages == nil {
+		return c.ids
+	}
+	if full, ok := messages.ToMessagesMessages(); ok {
+		c.collectMessages(full.Messages)
+	}
+	if slice, ok := messages.ToMessagesMessagesSlice(); ok {
+		c.collectMessages(slice.Messages)
+	}
+	if channel, ok := messages.ToMessagesChannelMessages(); ok {
+		c.collectMessages(channel.Messages)
+	}
+	return c.ids
+}
+
 func CollectUserIDsFromMessage(message MessageClazz) []int64 {
 	c := newUserIDCollector()
 	c.collectMessage(message)
