@@ -51,6 +51,10 @@ type deleteHistoryClient interface {
 	MsgDeleteHistory(ctx context.Context, in *msg.TLMsgDeleteHistory) (*tg.MessagesAffectedHistory, error)
 }
 
+type editMessageClient interface {
+	MsgEditMessageV2(ctx context.Context, in *msg.TLMsgEditMessageV2) (*tg.Updates, error)
+}
+
 type MessagesCore struct {
 	ctx    context.Context
 	svcCtx *svc.ServiceContext

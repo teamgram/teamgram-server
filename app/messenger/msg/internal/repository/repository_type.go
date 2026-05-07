@@ -131,6 +131,28 @@ type CanonicalMessage struct {
 	MessageDate        int32
 }
 
+type EditCanonicalMessageInput struct {
+	ActorUserID     int64
+	PeerType        int32
+	PeerID          int64
+	PeerSeq         int64
+	NewMessageText  string
+	RequestEditDate int32
+}
+
+type EditMessageResult struct {
+	CanonicalMessageID int64
+	PeerSeq            int64
+	FromUserID         int64
+	PeerType           int32
+	PeerID             int64
+	MessageKind        int32
+	MessageText        string
+	MessageDate        int32
+	EditDate           int32
+	EditVersion        int32
+}
+
 type MarkSenderCommittedInput struct {
 	SendStateID               int64
 	SenderOperationID         string
@@ -151,6 +173,7 @@ type MarkRetryableFailureInput struct {
 type MessageRepository interface {
 	CreateOrGetByClientRandom(ctx context.Context, in CreateCanonicalMessageInput) (*CanonicalMessageResult, error)
 	GetCanonicalMessageByPeerSeq(ctx context.Context, userID int64, peerType int32, peerID int64, peerSeq int64) (*CanonicalMessage, error)
+	EditCanonicalMessage(ctx context.Context, in EditCanonicalMessageInput) (*EditMessageResult, error)
 	ListHistoryMessages(ctx context.Context, in ListHistoryMessagesInput) ([]HistoryMessage, error)
 }
 

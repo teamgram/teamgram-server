@@ -16,6 +16,8 @@ type MessageOperationV1 struct {
 	FromUserID                int64             `json:"from_user_id"`
 	ToUserID                  int64             `json:"to_user_id"`
 	Date                      int32             `json:"date"`
+	EditDate                  int32             `json:"edit_date,omitempty"`
+	EditVersion               int32             `json:"edit_version,omitempty"`
 	Out                       bool              `json:"out"`
 	MessageText               string            `json:"message_text"`
 	Entities                  []MessageEntityV1 `json:"entities,omitempty"`
@@ -63,6 +65,8 @@ type MessageEventV1 struct {
 	FromUserID         int64             `json:"from_user_id"`
 	ToUserID           int64             `json:"to_user_id"`
 	Date               int32             `json:"date"`
+	EditDate           int32             `json:"edit_date,omitempty"`
+	EditVersion        int32             `json:"edit_version,omitempty"`
 	Out                bool              `json:"out"`
 	MessageText        string            `json:"message_text"`
 	Entities           []MessageEntityV1 `json:"entities,omitempty"`

@@ -310,6 +310,93 @@ func TestGetMessageViewsByPeerSeqsBuildsMessagesFromViews(t *testing.T) {
 	}
 }
 
+func TestEventToTLUpdateBuildsEditMessage(t *testing.T) {
+	eventPayload := mustMarshalMessageEvent(t, payload.MessageEventV1{
+		SchemaVersion:      payload.MessageEventSchemaVersion,
+		EventKind:          payload.OperationKindEditMessage,
+		CanonicalMessageID: 2001,
+		MessageID:          7,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             1002,
+		FromUserID:         1001,
+		ToUserID:           1002,
+		Date:               1_772_000_000,
+		EditDate:           1_772_000_100,
+		EditVersion:        1,
+		Out:                true,
+		MessageText:        "edited",
+	})
+	event := repository.UserEvent{
+		UserID:             1001,
+		Pts:                50,
+		PtsCount:           1,
+		EventType:          repository.EventTypeEditMessage,
+		EventSchemaVersion: payload.MessageEventSchemaVersion,
+		EventCodec:         repository.PayloadCodecJSON,
+		EventPayload:       eventPayload,
+		EventPayloadHash:   payload.HashBytes(eventPayload),
+	}
+
+	message, update, err := eventToTLUpdate(event)
+	if err != nil {
+		t.Fatalf("eventToTLUpdate error = %v", err)
+	}
+	if message != nil {
+		t.Fatalf("message = %T, want nil for edit update", message)
+	}
+	edit, ok := update.(*tg.TLUpdateEditMessage)
+	if !ok {
+		t.Fatalf("update = %T, want *tg.TLUpdateEditMessage", update)
+	}
+	if edit.Pts != 50 || edit.PtsCount != 1 {
+		t.Fatalf("unexpected edit update pts: %+v", edit)
+	}
+	tlMessage, ok := edit.Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("edit message = %T, want *tg.TLMessage", edit.Message)
+	}
+	if tlMessage.Id != 7 || tlMessage.Message != "edited" || tlMessage.EditDate == nil || *tlMessage.EditDate != 1_772_000_100 {
+		t.Fatalf("unexpected edit message: %+v", tlMessage)
+	}
+}
+
+func TestMessageViewToTLMessageAcceptsEditPayload(t *testing.T) {
+	eventPayload := mustMarshalMessageEvent(t, payload.MessageEventV1{
+		SchemaVersion:      payload.MessageEventSchemaVersion,
+		EventKind:          payload.OperationKindEditMessage,
+		CanonicalMessageID: 2001,
+		MessageID:          7,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             1002,
+		FromUserID:         1001,
+		ToUserID:           1002,
+		Date:               1_772_000_000,
+		EditDate:           1_772_000_100,
+		Out:                true,
+		MessageText:        "edited",
+	})
+	message, err := messageViewToTLMessage(repository.MessageView{
+		UserID:             1001,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             1002,
+		PeerSeq:            7,
+		CanonicalMessageID: 2001,
+		MessageStatus:      repository.MessageStatusLive,
+		ViewSchemaVersion:  payload.MessageEventSchemaVersion,
+		ViewPayload:        eventPayload,
+	})
+	if err != nil {
+		t.Fatalf("messageViewToTLMessage error = %v", err)
+	}
+	tlMessage, ok := message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessage", message)
+	}
+	if tlMessage.Message != "edited" || tlMessage.EditDate == nil || *tlMessage.EditDate != 1_772_000_100 {
+		t.Fatalf("unexpected message: %+v", tlMessage)
+	}
+}
+
 func TestGetStateReturnsRepositoryState(t *testing.T) {
 	repo := &fakeUserUpdatesRepository{
 		state: &repository.UserState{UserID: 1001, Pts: 55},

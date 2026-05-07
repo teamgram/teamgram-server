@@ -201,3 +201,79 @@ func TestPushTaskDispatcherRoutesReadHistoryOutboxUpdate(t *testing.T) {
 		t.Fatalf("read outbox update = %+v", update)
 	}
 }
+
+func TestPushTaskDispatcherRoutesEditMessageUpdate(t *testing.T) {
+	eventPayload, err := json.Marshal(payload.MessageEventV1{
+		SchemaVersion:      payload.MessageEventSchemaVersion,
+		EventKind:          payload.OperationKindEditMessage,
+		CanonicalMessageID: 7001,
+		MessageID:          9,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             1001,
+		FromUserID:         1001,
+		ToUserID:           2002,
+		Date:               1777781234,
+		EditDate:           1777781334,
+		Out:                false,
+		MessageText:        "edited",
+	})
+	if err != nil {
+		t.Fatalf("marshal event payload: %v", err)
+	}
+	body, err := payload.MarshalPushTaskKafkaMessage(payload.PushTaskKafkaMessageV1{
+		SchemaVersion: payload.PushTaskKafkaMessageSchemaVersion,
+		TaskID:        3,
+		UserID:        2002,
+		Pts:           40,
+		PushType:      1,
+		PeerType:      payload.PeerTypeUser,
+		PeerID:        1001,
+		OperationID:   "edit",
+		Payload:       eventPayload,
+	})
+	if err != nil {
+		t.Fatalf("marshal push task: %v", err)
+	}
+	auth := &fakePushAuthsession{keys: []int64{444}}
+	gatewayClient := &fakePushGateway{}
+	dispatcher := NewPushTaskDispatcher(auth, gatewayClient)
+
+	if err := dispatcher.HandlePushTaskKafkaRecord(context.Background(), PushTaskKafkaRecord{Value: body}); err != nil {
+		t.Fatalf("HandlePushTaskKafkaRecord() error = %v", err)
+	}
+	if len(gatewayClient.requests) != 1 {
+		t.Fatalf("gateway push count = %d, want 1", len(gatewayClient.requests))
+	}
+	updates, ok := gatewayClient.requests[0].Updates.(*tg.TLUpdates)
+	if !ok {
+		t.Fatalf("updates = %T, want *tg.TLUpdates", gatewayClient.requests[0].Updates)
+	}
+	if len(updates.Updates) != 1 {
+		t.Fatalf("updates payload = %+v", updates)
+	}
+	if updates.Date != 1777781333 || updates.Seq != 0 || len(updates.Users) != 2 {
+		t.Fatalf("updates envelope = %+v", updates)
+	}
+	fromUser, ok := updates.Users[0].(*tg.TLUser)
+	if !ok || fromUser.Id != 1001 {
+		t.Fatalf("sender user = %+v", updates.Users[0])
+	}
+	toUser, ok := updates.Users[1].(*tg.TLUser)
+	if !ok || toUser.Id != 2002 {
+		t.Fatalf("receiver user = %+v", updates.Users[1])
+	}
+	update, ok := updates.Updates[0].(*tg.TLUpdateEditMessage)
+	if !ok {
+		t.Fatalf("update = %T, want *tg.TLUpdateEditMessage", updates.Updates[0])
+	}
+	if update.Pts != 40 || update.PtsCount != 1 {
+		t.Fatalf("edit update = %+v", update)
+	}
+	message, ok := update.Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessage", update.Message)
+	}
+	if message.Id != 9 || message.Message != "edited" || message.EditDate == nil || *message.EditDate != 1777781334 {
+		t.Fatalf("edit message = %+v", message)
+	}
+}

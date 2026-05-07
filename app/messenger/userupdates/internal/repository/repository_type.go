@@ -31,6 +31,7 @@ const (
 	EventTypeScheduledMarker     int32 = 5
 	EventTypeDeleteMessages      int32 = 6
 	EventTypeDeleteHistory       int32 = 7
+	EventTypeEditMessage         int32 = 8
 	EventTypeDialogPublicUpdate  int32 = 100
 
 	OperationResultStatusCompleted int32 = 1

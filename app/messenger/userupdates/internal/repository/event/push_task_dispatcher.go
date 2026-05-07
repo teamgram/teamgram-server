@@ -88,6 +88,9 @@ func pushTaskUpdates(msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, *int
 	if event.EventKind == payload.OperationKindReadHistory {
 		return readHistoryUpdates(msg, event)
 	}
+	if event.EventKind == payload.OperationKindEditMessage {
+		return editMessageUpdates(msg, event)
+	}
 	if event.EventKind != payload.EventKindNewMessage {
 		return nil, nil, fmt.Errorf("unsupported message event schema=%d kind=%s", event.SchemaVersion, event.EventKind)
 	}
@@ -182,6 +185,51 @@ func readHistoryUpdates(msg *payload.PushTaskKafkaMessageV1, event payload.Messa
 		Date:    event.Date,
 		Seq:     pts,
 	}), event.AuthKeyIdExclude, nil
+}
+
+func editMessageUpdates(msg *payload.PushTaskKafkaMessageV1, event payload.MessageEventV1) (tg.UpdatesClazz, *int64, error) {
+	messageID, err := int64ToInt32(event.MessageID, "message id")
+	if err != nil {
+		return nil, nil, err
+	}
+	pts, err := int64ToInt32(msg.Pts, "pts")
+	if err != nil {
+		return nil, nil, err
+	}
+	editDate := event.EditDate
+	if editDate == 0 {
+		editDate = event.Date
+	}
+	message := tg.MakeTLMessage(&tg.TLMessage{
+		Out:      event.Out,
+		Id:       messageID,
+		FromId:   peerFromUser(event.FromUserID),
+		PeerId:   peerFromEvent(event.PeerType, event.PeerID),
+		Date:     event.Date,
+		Message:  event.MessageText,
+		EditDate: &editDate,
+	})
+	return tg.MakeTLUpdates(&tg.TLUpdates{
+		Updates: []tg.UpdateClazz{tg.MakeTLUpdateEditMessage(&tg.TLUpdateEditMessage{
+			Message:  message,
+			Pts:      pts,
+			PtsCount: 1,
+		})},
+		Users: editMessageUsers(event.FromUserID, event.ToUserID),
+		Chats: []tg.ChatClazz{},
+		Date:  editDate - 1,
+		Seq:   0,
+	}), event.AuthKeyIdExclude, nil
+}
+
+func editMessageUsers(fromUserID, toUserID int64) []tg.UserClazz {
+	if fromUserID == toUserID {
+		return []tg.UserClazz{tg.MakeTLUser(&tg.TLUser{Id: fromUserID})}
+	}
+	return []tg.UserClazz{
+		tg.MakeTLUser(&tg.TLUser{Id: fromUserID}),
+		tg.MakeTLUser(&tg.TLUser{Id: toUserID}),
+	}
 }
 
 func shortMessageUserID(event payload.MessageEventV1) int64 {

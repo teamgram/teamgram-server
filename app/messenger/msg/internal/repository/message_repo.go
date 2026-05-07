@@ -235,6 +235,111 @@ func (r *Repository) GetCanonicalMessageByPeerSeq(ctx context.Context, userID in
 	}, nil
 }
 
+func (r *Repository) EditCanonicalMessage(ctx context.Context, in EditCanonicalMessageInput) (*EditMessageResult, error) {
+	db, err := r.requireDB()
+	if err != nil {
+		return nil, err
+	}
+	if in.ActorUserID <= 0 || in.PeerSeq <= 0 || in.NewMessageText == "" {
+		return nil, msg.ErrSendStateConflict
+	}
+
+	var out *EditMessageResult
+	err = db.Transact(ctx, func(tx *sqlx.Tx) error {
+		query := `
+SELECT
+	c.canonical_message_id,
+	c.peer_seq,
+	c.from_user_id,
+	c.peer_type,
+	c.peer_id,
+	c.message_kind,
+	c.message_text,
+	c.date AS message_date,
+	c.edit_version
+FROM
+	user_message_views v
+JOIN
+	canonical_messages c
+ON
+	c.canonical_message_id = v.canonical_message_id
+WHERE
+	v.user_id = ?
+	AND v.peer_type = ?
+	AND v.peer_id = ?
+	AND v.peer_seq = ?
+	AND v.message_status = ?
+LIMIT 1
+FOR UPDATE`
+		var row struct {
+			CanonicalMessageID int64     `db:"canonical_message_id"`
+			PeerSeq            int64     `db:"peer_seq"`
+			FromUserID         int64     `db:"from_user_id"`
+			PeerType           int32     `db:"peer_type"`
+			PeerID             int64     `db:"peer_id"`
+			MessageKind        int32     `db:"message_kind"`
+			MessageText        string    `db:"message_text"`
+			MessageDate        time.Time `db:"message_date"`
+			EditVersion        int32     `db:"edit_version"`
+		}
+		if err := tx.QueryRowPartial(&row, query, in.ActorUserID, in.PeerType, in.PeerID, in.PeerSeq, MessageStatusLive); err != nil {
+			if errors.Is(err, sqlx.ErrNotFound) {
+				return msg.ErrSendStateConflict
+			}
+			return storageError("select editable message", err)
+		}
+		if row.FromUserID != in.ActorUserID {
+			return msg.ErrMessageAuthorRequired
+		}
+		if row.MessageText == in.NewMessageText {
+			return msg.ErrMessageNotModified
+		}
+
+		editDate := in.RequestEditDate
+		if editDate == 0 {
+			editDate = int32(time.Now().Unix())
+		}
+		editVersion := row.EditVersion + 1
+		updateQuery := `
+UPDATE canonical_messages
+SET
+	message_text = ?,
+	edit_version = ?,
+	edit_date = ?
+WHERE
+	canonical_message_id = ?
+	AND edit_version = ?`
+		result, err := tx.Exec(updateQuery, in.NewMessageText, editVersion, mysqlDate(editDate), row.CanonicalMessageID, row.EditVersion)
+		if err != nil {
+			return storageError("update canonical message edit", err)
+		}
+		affected, err := result.RowsAffected()
+		if err != nil {
+			return storageError("update canonical message edit rows", err)
+		}
+		if affected == 0 {
+			return msg.ErrSendStateConflict
+		}
+		out = &EditMessageResult{
+			CanonicalMessageID: row.CanonicalMessageID,
+			PeerSeq:            row.PeerSeq,
+			FromUserID:         row.FromUserID,
+			PeerType:           row.PeerType,
+			PeerID:             row.PeerID,
+			MessageKind:        row.MessageKind,
+			MessageText:        in.NewMessageText,
+			MessageDate:        int32(time.Date(row.MessageDate.Year(), row.MessageDate.Month(), row.MessageDate.Day(), row.MessageDate.Hour(), row.MessageDate.Minute(), row.MessageDate.Second(), row.MessageDate.Nanosecond(), time.UTC).Unix()),
+			EditDate:           editDate,
+			EditVersion:        editVersion,
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (r *Repository) selectCanonicalMessageByUserView(ctx context.Context, userID int64, peerType int32, peerID int64, peerSeq int64) (*CanonicalMessage, error) {
 	query := `
 SELECT

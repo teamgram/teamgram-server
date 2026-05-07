@@ -24,6 +24,7 @@ type messagesFakeMsgClient struct {
 	updatePinnedMessage func(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error)
 	deleteMessages      func(ctx context.Context, in *msg.TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error)
 	deleteHistory       func(ctx context.Context, in *msg.TLMsgDeleteHistory) (*tg.MessagesAffectedHistory, error)
+	editMessageV2       func(ctx context.Context, in *msg.TLMsgEditMessageV2) (*tg.Updates, error)
 	searchHashtag       func(ctx context.Context, in *msg.TLMsgSearchHashtag) (*tg.MessagesMessages, error)
 }
 
@@ -49,6 +50,10 @@ func (f *messagesFakeMsgClient) MsgDeleteMessages(ctx context.Context, in *msg.T
 
 func (f *messagesFakeMsgClient) MsgDeleteHistory(ctx context.Context, in *msg.TLMsgDeleteHistory) (*tg.MessagesAffectedHistory, error) {
 	return f.deleteHistory(ctx, in)
+}
+
+func (f *messagesFakeMsgClient) MsgEditMessageV2(ctx context.Context, in *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
+	return f.editMessageV2(ctx, in)
 }
 
 func (f *messagesFakeMsgClient) MsgSearchHashtag(ctx context.Context, in *msg.TLMsgSearchHashtag) (*tg.MessagesMessages, error) {
@@ -496,6 +501,185 @@ func TestMessagesDeleteMessagesRoutesSelfPeerSlice(t *testing.T) {
 	}
 	if got == nil || got.UserId != 100 || got.AuthKeyId != 200 || got.PeerType != payload.PeerTypeUser || got.PeerId != 100 || len(got.Id) != 2 {
 		t.Fatalf("MsgDeleteMessages request = %+v", got)
+	}
+}
+
+func TestMessagesEditMessage_TextUserPeerRoutesToMsg(t *testing.T) {
+	var got *msg.TLMsgEditMessageV2
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		editMessageV2: func(_ context.Context, in *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
+			got = in
+			return testUpdates(), nil
+		},
+	}, 100, 200)
+	text := "edited"
+
+	r, err := c.MessagesEditMessage(&tg.TLMessagesEditMessage{
+		Peer:      inputPeerUser(300),
+		Id:        7,
+		Message:   &text,
+		NoWebpage: true,
+		Entities:  []tg.MessageEntityClazz{tg.MakeTLMessageEntityBold(&tg.TLMessageEntityBold{})},
+	})
+	if err != nil {
+		t.Fatalf("MessagesEditMessage error = %v", err)
+	}
+	if r == nil {
+		t.Fatal("result is nil")
+	}
+	if got == nil {
+		t.Fatal("msg service was not called")
+	}
+	if got.UserId != 100 || got.AuthKeyId != 200 || got.PeerType != payload.PeerTypeUser || got.PeerId != 300 {
+		t.Fatalf("unexpected edit request identity/peer: %+v", got)
+	}
+	if got.DstMessage == nil || got.DstMessage.MessageId != 7 || got.DstMessage.SenderUserId != 100 {
+		t.Fatalf("unexpected dst message: %+v", got.DstMessage)
+	}
+	if got.NewMessage == nil {
+		t.Fatal("new outbox message is nil")
+	}
+	newMessage, ok := got.NewMessage.Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("new message type = %T, want *tg.TLMessage", got.NewMessage.Message)
+	}
+	if newMessage.Message != text || newMessage.EditDate == nil || newMessage.EditHide {
+		t.Fatalf("unexpected new message edit fields: %+v", newMessage)
+	}
+	if len(newMessage.Entities) != 1 {
+		t.Fatalf("entities len = %d, want 1", len(newMessage.Entities))
+	}
+	if !got.NewMessage.NoWebpage {
+		t.Fatal("NoWebpage = false, want true")
+	}
+}
+
+func TestMessagesEditMessage_InputPeerSelfTargetsCurrentUser(t *testing.T) {
+	var got *msg.TLMsgEditMessageV2
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		editMessageV2: func(_ context.Context, in *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
+			got = in
+			return testUpdates(), nil
+		},
+	}, 100, 200)
+	text := "edited"
+
+	_, err := c.MessagesEditMessage(&tg.TLMessagesEditMessage{
+		Peer:    inputPeerSelf(),
+		Id:      7,
+		Message: &text,
+	})
+	if err != nil {
+		t.Fatalf("MessagesEditMessage error = %v", err)
+	}
+	if got == nil || got.PeerId != 100 {
+		t.Fatalf("unexpected edit request: %+v", got)
+	}
+}
+
+func TestMessagesEditMessage_EmptyTextRejected(t *testing.T) {
+	called := false
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		editMessageV2: func(_ context.Context, _ *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
+			called = true
+			return nil, nil
+		},
+	}, 100, 200)
+	text := ""
+
+	_, err := c.MessagesEditMessage(&tg.TLMessagesEditMessage{
+		Peer:    inputPeerUser(300),
+		Id:      7,
+		Message: &text,
+	})
+	if err != tg.ErrMessageEmpty {
+		t.Fatalf("error = %v, want %v", err, tg.ErrMessageEmpty)
+	}
+	if called {
+		t.Fatal("msg service was called but should not have been")
+	}
+}
+
+func TestMessagesEditMessage_NonUserPeerRejected(t *testing.T) {
+	called := false
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		editMessageV2: func(_ context.Context, _ *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
+			called = true
+			return nil, nil
+		},
+	}, 100, 200)
+	text := "edited"
+
+	_, err := c.MessagesEditMessage(&tg.TLMessagesEditMessage{
+		Peer:    inputPeerChat(300),
+		Id:      7,
+		Message: &text,
+	})
+	if err != tg.Err400PeerIdInvalid {
+		t.Fatalf("error = %v, want %v", err, tg.Err400PeerIdInvalid)
+	}
+	if called {
+		t.Fatal("msg service was called but should not have been")
+	}
+}
+
+func TestMessagesEditMessage_MediaRejectedUntilSupported(t *testing.T) {
+	called := false
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		editMessageV2: func(_ context.Context, _ *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
+			called = true
+			return nil, nil
+		},
+	}, 100, 200)
+	text := "edited"
+
+	_, err := c.MessagesEditMessage(&tg.TLMessagesEditMessage{
+		Peer:    inputPeerUser(300),
+		Id:      7,
+		Message: &text,
+		Media:   tg.MakeTLInputMediaEmpty(&tg.TLInputMediaEmpty{}),
+	})
+	if err != tg.ErrMediaInvalid {
+		t.Fatalf("error = %v, want %v", err, tg.ErrMediaInvalid)
+	}
+	if called {
+		t.Fatal("msg service was called but should not have been")
+	}
+}
+
+func TestMessagesEditMessage_MsgStateConflictMappedToMsgIdInvalid(t *testing.T) {
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		editMessageV2: func(_ context.Context, _ *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
+			return nil, msg.ErrSendStateConflict
+		},
+	}, 100, 200)
+	text := "edited"
+
+	_, err := c.MessagesEditMessage(&tg.TLMessagesEditMessage{
+		Peer:    inputPeerUser(300),
+		Id:      7,
+		Message: &text,
+	})
+	if err != tg.ErrMsgIdInvalid {
+		t.Fatalf("error = %v, want %v", err, tg.ErrMsgIdInvalid)
+	}
+}
+
+func TestMessagesEditMessage_RemoteMsgNotModifiedMapped(t *testing.T) {
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		editMessageV2: func(_ context.Context, _ *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
+			return nil, errors.New("remote or network error: biz error: msg: message not modified")
+		},
+	}, 100, 200)
+	text := "edited"
+
+	_, err := c.MessagesEditMessage(&tg.TLMessagesEditMessage{
+		Peer:    inputPeerUser(300),
+		Id:      7,
+		Message: &text,
+	})
+	if err != tg.ErrMessageNotModified {
+		t.Fatalf("error = %v, want %v", err, tg.ErrMessageNotModified)
 	}
 }
 

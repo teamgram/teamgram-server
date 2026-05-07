@@ -122,6 +122,10 @@ func eventToTLUpdate(event repository.UserEvent) (tg.MessageClazz, tg.UpdateClaz
 		update, err := readHistoryEventToTLUpdate(event, messageEvent)
 		return nil, update, err
 	}
+	if messageEvent.EventKind == payload.OperationKindEditMessage {
+		update, err := editMessageEventToTLUpdate(event, messageEvent)
+		return nil, update, err
+	}
 	if messageEvent.EventKind != payload.EventKindNewMessage {
 		return nil, nil, fmt.Errorf("%w: unsupported event kind=%s schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.EventKind, messageEvent.SchemaVersion)
 	}
@@ -168,6 +172,22 @@ func readHistoryEventToTLUpdate(event repository.UserEvent, messageEvent payload
 	}), nil
 }
 
+func editMessageEventToTLUpdate(event repository.UserEvent, messageEvent payload.MessageEventV1) (tg.UpdateClazz, error) {
+	message, err := editMessageEventToTLMessage(messageEvent)
+	if err != nil {
+		return nil, err
+	}
+	pts, err := int64ToInt32(event.Pts, "pts")
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLUpdateEditMessage(&tg.TLUpdateEditMessage{
+		Message:  message,
+		Pts:      pts,
+		PtsCount: event.PtsCount,
+	}), nil
+}
+
 func messageViewToTLMessage(view repository.MessageView) (tg.MessageClazz, error) {
 	if view.MessageStatus != repository.MessageStatusLive {
 		return nil, nil
@@ -184,6 +204,9 @@ func messageViewToTLMessage(view repository.MessageView) (tg.MessageClazz, error
 	}
 	if messageEvent.PeerType != view.PeerType || messageEvent.PeerID != view.PeerID || messageEvent.MessageID != view.PeerSeq {
 		return nil, fmt.Errorf("%w: message view payload mismatch", userupdates.ErrUserupdatesStorage)
+	}
+	if messageEvent.EventKind == payload.OperationKindEditMessage {
+		return editMessageEventToTLMessage(messageEvent)
 	}
 	return messageEventToTLMessage(messageEvent)
 }
@@ -208,6 +231,29 @@ func messageEventToTLMessage(messageEvent payload.MessageEventV1) (tg.MessageCla
 		ReplyTo: replyTo,
 		Date:    messageEvent.Date,
 		Message: messageEvent.MessageText,
+	}), nil
+}
+
+func editMessageEventToTLMessage(messageEvent payload.MessageEventV1) (tg.MessageClazz, error) {
+	if messageEvent.EventKind != payload.OperationKindEditMessage {
+		return nil, fmt.Errorf("%w: unsupported edit event kind=%s schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.EventKind, messageEvent.SchemaVersion)
+	}
+	messageID, err := int64ToInt32(messageEvent.MessageID, "message id")
+	if err != nil {
+		return nil, err
+	}
+	editDate := messageEvent.EditDate
+	if editDate == 0 {
+		editDate = messageEvent.Date
+	}
+	return tg.MakeTLMessage(&tg.TLMessage{
+		Out:      messageEvent.Out,
+		Id:       messageID,
+		FromId:   peerFromUser(messageEvent.FromUserID),
+		PeerId:   peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
+		Date:     messageEvent.Date,
+		Message:  messageEvent.MessageText,
+		EditDate: &editDate,
 	}), nil
 }
 

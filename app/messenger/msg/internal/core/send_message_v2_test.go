@@ -739,10 +739,127 @@ func TestMsgDeleteHistoryRoutesProjectionOperation(t *testing.T) {
 	}
 }
 
+func TestMsgEditMessageV2UpdatesCanonicalAndRoutesOperations(t *testing.T) {
+	responsePayload := []byte(`{"schema_version":1,"pts":41,"pts_count":1}`)
+	responseHash := mustHashBytes(t, responsePayload)
+	repo := &fakeMsgRepository{
+		canonicalByPeerSeq: &repository.CanonicalMessage{
+			CanonicalMessageID: 7001,
+			PeerSeq:            7,
+			FromUserID:         1001,
+			PeerType:           payload.PeerTypeUser,
+			PeerID:             1002,
+			MessageText:        "old",
+			MessageDate:        1_772_000_010,
+		},
+		editResult: &repository.EditMessageResult{
+			CanonicalMessageID: 7001,
+			PeerSeq:            7,
+			FromUserID:         1001,
+			PeerType:           payload.PeerTypeUser,
+			PeerID:             1002,
+			MessageText:        "edited",
+			MessageDate:        1_772_000_010,
+			EditDate:           1_772_000_100,
+			EditVersion:        1,
+		},
+	}
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:              1001,
+			OperationId:         editMessageOperationID(7001, 1, 1001),
+			Status:              1,
+			Pts:                 41,
+			PtsCount:            1,
+			CurrentPts:          41,
+			ResponsePayload:     responsePayload,
+			ResponsePayloadHash: responseHash,
+		}),
+	}
+	publisher := &fakeReceiverPublisher{}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:              repo,
+		UserUpdates:       updatesClient,
+		ReceiverPublisher: publisher,
+	})
+
+	got, err := core.MsgEditMessageV2(editMessageRequest(1001, 1002, 9001, 7, "edited"))
+	if err != nil {
+		t.Fatalf("MsgEditMessageV2() error = %v", err)
+	}
+	updates, ok := got.ToUpdates()
+	if !ok {
+		t.Fatalf("expected updates, got %s", got.ClazzName())
+	}
+	if updates.Date != 1_772_000_099 || updates.Seq != 0 || len(updates.Updates) != 1 || len(updates.Users) != 2 {
+		t.Fatalf("unexpected edit updates envelope: %+v", updates)
+	}
+	fromUser, ok := updates.Users[0].(*tg.TLUser)
+	if !ok || fromUser.Id != 1001 {
+		t.Fatalf("sender user = %+v", updates.Users[0])
+	}
+	toUser, ok := updates.Users[1].(*tg.TLUser)
+	if !ok || toUser.Id != 1002 {
+		t.Fatalf("receiver user = %+v", updates.Users[1])
+	}
+	edit, ok := updates.Updates[0].(*tg.TLUpdateEditMessage)
+	if !ok {
+		t.Fatalf("expected updateEditMessage, got %T", updates.Updates[0])
+	}
+	if edit.Pts != 41 || edit.PtsCount != 1 {
+		t.Fatalf("unexpected edit update pts: %+v", edit)
+	}
+	if repo.editInput.NewMessageText != "edited" || repo.editInput.ActorUserID != 1001 || repo.editInput.PeerSeq != 7 {
+		t.Fatalf("unexpected edit input: %+v", repo.editInput)
+	}
+	if updatesClient.processed == nil || updatesClient.processed.OperationId != editMessageOperationID(7001, 1, 1001) {
+		t.Fatalf("sender edit operation was not sent to userupdates: %+v", updatesClient.processed)
+	}
+	var senderOp payload.MessageOperationV1
+	if err := json.Unmarshal(updatesClient.processed.Payload, &senderOp); err != nil {
+		t.Fatalf("decode sender edit payload: %v", err)
+	}
+	if senderOp.OperationKind != payload.OperationKindEditMessage || senderOp.MessageText != "edited" || senderOp.PeerSeq != 7 || senderOp.Date != 1_772_000_010 || senderOp.EditDate != 1_772_000_100 || senderOp.EditVersion != 1 {
+		t.Fatalf("unexpected sender edit payload: %+v", senderOp)
+	}
+	if publisher.published.UserID != 1002 || publisher.published.OperationID != editMessageOperationID(7001, 1, 1002) {
+		t.Fatalf("unexpected receiver edit operation: %+v", publisher.published)
+	}
+}
+
+func TestMsgEditMessageV2OperationIDIncludesEditVersion(t *testing.T) {
+	first := editMessageOperationID(7001, 1, 1001)
+	second := editMessageOperationID(7001, 2, 1001)
+	if first == second {
+		t.Fatalf("edit operation ids must differ across edit versions: %q", first)
+	}
+}
+
+func TestMsgEditMessageV2RejectsNonAuthor(t *testing.T) {
+	repo := &fakeMsgRepository{
+		canonicalByPeerSeq: &repository.CanonicalMessage{
+			CanonicalMessageID: 7001,
+			PeerSeq:            7,
+			FromUserID:         1002,
+			PeerType:           payload.PeerTypeUser,
+			PeerID:             1002,
+			MessageText:        "old",
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo, UserUpdates: &fakeUserUpdatesClient{}, ReceiverPublisher: &fakeReceiverPublisher{}})
+
+	_, err := core.MsgEditMessageV2(editMessageRequest(1001, 1002, 9001, 7, "edited"))
+	if !errors.Is(err, msgpb.ErrMessageAuthorRequired) {
+		t.Fatalf("MsgEditMessageV2 error = %v, want %v", err, msgpb.ErrMessageAuthorRequired)
+	}
+}
+
 type fakeMsgRepository struct {
 	sendState              *repository.SendState
 	canonical              *repository.CanonicalMessageResult
 	canonicalByPeerSeq     *repository.CanonicalMessage
+	editResult             *repository.EditMessageResult
+	editInput              repository.EditCanonicalMessageInput
 	history                []repository.HistoryMessage
 	historyInput           repository.ListHistoryMessagesInput
 	markCanonicalErr       error
@@ -772,6 +889,14 @@ func (f *fakeMsgRepository) GetCanonicalMessageByPeerSeq(context.Context, int64,
 func (f *fakeMsgRepository) ListHistoryMessages(_ context.Context, in repository.ListHistoryMessagesInput) ([]repository.HistoryMessage, error) {
 	f.historyInput = in
 	return f.history, nil
+}
+
+func (f *fakeMsgRepository) EditCanonicalMessage(_ context.Context, in repository.EditCanonicalMessageInput) (*repository.EditMessageResult, error) {
+	f.editInput = in
+	if f.canonicalByPeerSeq != nil && f.canonicalByPeerSeq.FromUserID != in.ActorUserID {
+		return nil, msgpb.ErrMessageAuthorRequired
+	}
+	return f.editResult, nil
 }
 
 func (f *fakeMsgRepository) MarkCanonicalCreated(context.Context, int64, int64, int64) error {
@@ -850,6 +975,21 @@ func sendMessageRequest(senderID, peerID, authKeyID int64, text string) *msgpb.T
 				Message:  tg.MakeTLMessage(&tg.TLMessage{Message: text}),
 			}),
 		},
+	}
+}
+
+func editMessageRequest(userID, peerID, authKeyID int64, peerSeq int32, text string) *msgpb.TLMsgEditMessageV2 {
+	return &msgpb.TLMsgEditMessageV2{
+		UserId:    userID,
+		AuthKeyId: authKeyID,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    peerID,
+		NewMessage: msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
+			Message: tg.MakeTLMessage(&tg.TLMessage{Message: text}),
+		}),
+		DstMessage: tg.MakeTLMessageBox(&tg.TLMessageBox{
+			MessageId: peerSeq,
+		}),
 	}
 }
 

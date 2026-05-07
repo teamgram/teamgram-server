@@ -116,6 +116,10 @@ func mapMsgSendError(err error) error {
 		return tg.ErrRandomIdDuplicate
 	case errors.Is(err, msg.ErrReplyToInvalid):
 		return tg.ErrReplyToInvalid
+	case isMsgServiceError(err, msg.ErrMessageAuthorRequired):
+		return tg.ErrMessageAuthorRequired
+	case isMsgServiceError(err, msg.ErrMessageNotModified):
+		return tg.ErrMessageNotModified
 	case errors.Is(err, msg.ErrReceiverBackpressure),
 		errors.Is(err, msg.ErrSenderSyncFailed),
 		errors.Is(err, msg.ErrMsgStorage),
@@ -128,4 +132,24 @@ func mapMsgSendError(err error) error {
 		}
 		return tg.ErrInternalServerError
 	}
+}
+
+func mapMsgEditError(err error) error {
+	if err == nil {
+		return nil
+	}
+	if isMsgServiceError(err, msg.ErrSendStateConflict) {
+		return tg.ErrMsgIdInvalid
+	}
+	return mapMsgSendError(err)
+}
+
+func isMsgServiceError(err error, target error) bool {
+	if err == nil || target == nil {
+		return false
+	}
+	if errors.Is(err, target) {
+		return true
+	}
+	return strings.Contains(err.Error(), target.Error())
 }

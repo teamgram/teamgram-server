@@ -171,6 +171,10 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 		if err := applyDeleteHistory(tx, txModels, in, op, nextPTS); err != nil {
 			return nil, err
 		}
+	case payload.OperationKindEditMessage:
+		if err := applyEditMessage(tx, txModels, in, op, eventPayload, nextPTS); err != nil {
+			return nil, err
+		}
 	case payload.OperationKindUpdatePinnedMessage:
 		if err := applyUpdatePinnedMessage(txModels, in, op, nextPTS); err != nil {
 			return nil, err
@@ -246,6 +250,8 @@ func buildEventAndResponse(in ApplyUserOperationInput, op payload.MessageOperati
 		FromUserID:         op.FromUserID,
 		ToUserID:           op.ToUserID,
 		Date:               op.Date,
+		EditDate:           op.EditDate,
+		EditVersion:        op.EditVersion,
 		Out:                op.Out,
 		MessageText:        op.MessageText,
 		Entities:           op.Entities,
@@ -494,6 +500,54 @@ func applyDeleteHistory(tx *sqlx.Tx, txModels *model.TxModels, in ApplyUserOpera
 	return nil
 }
 
+func applyEditMessage(tx *sqlx.Tx, txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, viewPayload []byte, nextPTS int64) error {
+	row, err := txModels.UserMessageViewsModel.SelectByUserCanonical(in.UserID, op.CanonicalMessageID)
+	if err != nil {
+		if errors.Is(err, model.ErrNotFound) {
+			return userupdates.ErrOperationTerminal
+		}
+		return storageError("select message before edit", err)
+	}
+	if row.MessageStatus != MessageStatusLive {
+		return userupdates.ErrOperationTerminal
+	}
+	editVersion := op.EditVersion
+	if editVersion == 0 {
+		editVersion = row.EditVersion + 1
+	}
+	row.EditVersion = editVersion
+	row.ViewPayload = viewPayload
+	if _, _, err := txModels.UserMessageViewsModel.InsertOrUpdate(row); err != nil {
+		return storageError("update message view after edit", err)
+	}
+	if op.EditDate > 0 {
+		query := "update user_message_views set edit_date = ? where user_id = ? and canonical_message_id = ?"
+		if _, err := tx.Exec(query, mysqlDate(op.EditDate), in.UserID, op.CanonicalMessageID); err != nil {
+			return storageError("update message view edit date", err)
+		}
+	}
+	if err := insertHashTagsTx(txModels, in.UserID, op); err != nil {
+		return err
+	}
+	dialog, err := txModels.UserDialogsModel.SelectByUserPeer(in.UserID, op.PeerType, op.PeerID)
+	if err != nil {
+		if errors.Is(err, model.ErrNotFound) {
+			return nil
+		}
+		return storageError("select dialog before edit", err)
+	}
+	if dialog.TopCanonicalMessageId != op.CanonicalMessageID {
+		return nil
+	}
+	dialog.DialogPayload = viewPayload
+	dialog.LastPts = nextPTS
+	dialog.LastPtsAt = mysqlNullNow()
+	if _, _, err := txModels.UserDialogsModel.InsertOrUpdateMessageEvent(dialog); err != nil {
+		return storageError("update dialog payload after edit", err)
+	}
+	return nil
+}
+
 func recomputeDialogTop(tx *sqlx.Tx, userID int64, peerType int32, peerID int64, nextPTS int64) error {
 	var top model.UserMessageViews
 	query := "select user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, `date`, view_schema_version, view_payload from user_message_views where user_id = ? and peer_type = ? and peer_id = ? and message_status = ? order by peer_seq desc limit 1"
@@ -606,6 +660,8 @@ func insertPTSEvent(txModels *model.TxModels, in ApplyUserOperationInput, op pay
 		eventType = EventTypeDeleteMessages
 	case payload.OperationKindDeleteHistory:
 		eventType = EventTypeDeleteHistory
+	case payload.OperationKindEditMessage:
+		eventType = EventTypeEditMessage
 	case payload.OperationKindUpdatePinnedMessage:
 		eventType = EventTypeUpdatePinnedMessage
 	case payload.OperationKindMarkDialogUnread:
