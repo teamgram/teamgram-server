@@ -51,6 +51,7 @@ func (r *Repository) SetPrivacy(ctx context.Context, userID int64, keyType int32
 		return fmt.Errorf("%w: set privacy %d/%d: %w", userpb.ErrUserStorage, userID, keyType, err)
 	}
 	if privacyAffectsUserData(keyType) {
+		r.invalidateProjectionPrivacyCache(ctx, userID)
 		return r.invalidateUserDataCache(ctx, userID, "invalidate privacy user cache")
 	}
 	return nil

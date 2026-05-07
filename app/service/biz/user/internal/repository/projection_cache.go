@@ -2,7 +2,14 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
+	"errors"
+	"fmt"
+
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 const projectionCacheSchemaVersion = 1
@@ -139,23 +146,121 @@ func decodeProjectionCacheStatus[T any](raw string) (T, projectionCacheDecodeSta
 func (r *Repository) getProjectionComponentCache(ctx context.Context, key string, out interface{}) bool {
 	var env projectionCacheEnvelope[json.RawMessage]
 	if err := r.GetCache(ctx, key, &env); err != nil {
+		if !projectionCacheNotFound(err) {
+			logx.WithContext(ctx).Errorf("user projection cache get failed: key=%s err=%v", key, err)
+		}
 		return false
 	}
 	raw, status := decodeProjectionCacheStatus[json.RawMessage](mustMarshalProjectionCacheEnvelope(env))
 	if status != projectionCacheDecodeHit {
+		r.logProjectionCacheDecodeMiss(ctx, key, status)
 		return false
 	}
 	if err := json.Unmarshal(raw, out); err != nil {
+		logx.WithContext(ctx).Errorf("user projection cache dto decode failed: key=%s err=%v", key, err)
 		return false
 	}
 	return true
 }
 
+func getProjectionComponentCaches[T any](r *Repository, ctx context.Context, keys []string) map[string]T {
+	out := make(map[string]T, len(keys))
+	if len(keys) == 0 {
+		return out
+	}
+	if err := r.QueryRows(ctx, func(ctx context.Context, _ *sqlx.DB, _ ...string) (map[string]interface{}, error) {
+		return map[string]interface{}{}, nil
+	}, func(key, raw string) (interface{}, error) {
+		dto, status := decodeProjectionCacheStatus[T](raw)
+		switch status {
+		case projectionCacheDecodeHit:
+			out[key] = dto
+			return nil, nil
+		case projectionCacheDecodeMiss:
+			return nil, sql.ErrNoRows
+		case projectionCacheDecodeStale:
+			r.logProjectionCacheDecodeMiss(ctx, key, status)
+			return nil, fmt.Errorf("projection cache stale schema")
+		case projectionCacheDecodeCorrupt:
+			r.logProjectionCacheDecodeMiss(ctx, key, status)
+			return nil, fmt.Errorf("projection cache corrupt payload")
+		default:
+			r.logProjectionCacheDecodeMiss(ctx, key, status)
+			return nil, fmt.Errorf("projection cache unknown decode status %d", status)
+		}
+	}, keys...); err != nil {
+		logx.WithContext(ctx).Errorf("user projection cache bulk get failed: keys=%d err=%v", len(keys), err)
+	}
+	return out
+}
+
 func (r *Repository) setProjectionComponentCache(ctx context.Context, key string, data interface{}) {
-	_ = r.SetCache(ctx, key, projectionCacheEnvelope[interface{}]{
+	if err := r.SetCache(ctx, key, projectionCacheEnvelope[interface{}]{
 		SchemaVersion: projectionCacheSchemaVersion,
 		Data:          data,
-	})
+	}); err != nil {
+		logx.WithContext(ctx).Errorf("user projection cache set failed: key=%s err=%v", key, err)
+	}
+}
+
+func (r *Repository) deleteProjectionComponentCaches(ctx context.Context, keys ...string) {
+	if len(keys) == 0 {
+		return
+	}
+	if err := r.DelCache(ctx, keys...); err != nil {
+		logx.WithContext(ctx).Errorf("user projection cache delete failed: keys=%d err=%v", len(keys), err)
+	}
+}
+
+func (r *Repository) invalidateProjectionFactCache(ctx context.Context, userID int64) {
+	if userID > 0 {
+		r.deleteProjectionComponentCaches(ctx, projectionFactsCacheKey(userID))
+	}
+}
+
+func (r *Repository) invalidateProjectionPrivacyCache(ctx context.Context, userID int64) {
+	if userID > 0 {
+		r.deleteProjectionComponentCaches(ctx, projectionPrivacyCacheKey(userID))
+	}
+}
+
+func (r *Repository) invalidateProjectionPresenceCache(ctx context.Context, userID int64) {
+	if userID > 0 {
+		r.deleteProjectionComponentCaches(ctx, projectionPresenceCacheKey(userID))
+	}
+}
+
+func (r *Repository) invalidateProjectionContactMapCaches(ctx context.Context, ownerIDs ...int64) {
+	keys := make([]string, 0, len(ownerIDs))
+	seen := make(map[int64]struct{}, len(ownerIDs))
+	for _, id := range ownerIDs {
+		if id <= 0 {
+			continue
+		}
+		if _, ok := seen[id]; ok {
+			continue
+		}
+		seen[id] = struct{}{}
+		keys = append(keys, projectionContactMapCacheKey(id))
+	}
+	r.deleteProjectionComponentCaches(ctx, keys...)
+}
+
+func (r *Repository) logProjectionCacheDecodeMiss(ctx context.Context, key string, status projectionCacheDecodeStatus) {
+	switch status {
+	case projectionCacheDecodeMiss:
+		return
+	case projectionCacheDecodeStale:
+		logx.WithContext(ctx).Errorf("user projection cache stale schema: key=%s", key)
+	case projectionCacheDecodeCorrupt:
+		logx.WithContext(ctx).Errorf("user projection cache corrupt payload: key=%s", key)
+	default:
+		logx.WithContext(ctx).Errorf("user projection cache decode failed: key=%s status=%d", key, status)
+	}
+}
+
+func projectionCacheNotFound(err error) bool {
+	return err == nil || errors.Is(err, sql.ErrNoRows) || errors.Is(err, sqlx.ErrNotFound)
 }
 
 func mustMarshalProjectionCacheEnvelope(env projectionCacheEnvelope[json.RawMessage]) string {

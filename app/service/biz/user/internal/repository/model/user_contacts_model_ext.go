@@ -17,6 +17,7 @@
 package model
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
@@ -26,6 +27,7 @@ import (
 type (
 	extendUserContactsModel interface {
 		SelectContactTx(tx *sqlx.Tx, ownerUserID, contactUserID int64) (*UserContacts, error)
+		SelectListByOwnerList(ctx context.Context, ownerIDs []int64) ([]UserContacts, error)
 	}
 )
 
@@ -41,4 +43,19 @@ func (m *defaultUserContactsModel) SelectContactTx(tx *sqlx.Tx, ownerUserID, con
 		return nil, fmt.Errorf("user_contacts.SelectContactTx: %w", err)
 	}
 	return do, nil
+}
+
+func (m *defaultUserContactsModel) SelectListByOwnerList(ctx context.Context, ownerIDs []int64) ([]UserContacts, error) {
+	if len(ownerIDs) == 0 {
+		return []UserContacts{}, nil
+	}
+	query := fmt.Sprintf("select id, owner_user_id, contact_user_id, contact_phone, contact_first_name, contact_last_name, mutual, close_friend, stories_hidden, is_deleted, date2 from user_contacts where owner_user_id in (%s) and is_deleted = 0 order by owner_user_id asc, contact_user_id asc", sqlx.InInt64List(ownerIDs))
+	var values []UserContacts
+	if err := m.db.QueryRowsPartial(ctx, &values, query); err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []UserContacts{}, nil
+		}
+		return nil, fmt.Errorf("user_contacts.SelectListByOwnerList: %w", err)
+	}
+	return values, nil
 }

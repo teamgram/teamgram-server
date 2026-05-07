@@ -37,9 +37,16 @@ func (r *Repository) loadProjectionFacts(ctx context.Context, req normalizedProj
 
 func (r *Repository) loadProjectionUserFacts(ctx context.Context, ids []int64, cfg ProjectionConfig, facts projectionFacts) error {
 	missIDs := make([]int64, 0, len(ids))
+	cacheKeys := make([]string, 0, len(ids))
 	for _, id := range ids {
-		var dto projectionUserCacheDTO
-		if r.getProjectionComponentCache(ctx, projectionFactsCacheKey(id), &dto) && dto.UserID == id {
+		key := projectionFactsCacheKey(id)
+		cacheKeys = append(cacheKeys, key)
+	}
+	cacheHits := getProjectionComponentCaches[projectionUserCacheDTO](r, ctx, cacheKeys)
+	for _, id := range ids {
+		key := projectionFactsCacheKey(id)
+		dto, ok := cacheHits[key]
+		if ok && dto.UserID == id {
 			facts.Users[id] = projectionUserFactFromCacheDTO(dto)
 			continue
 		}
@@ -82,13 +89,20 @@ func (r *Repository) loadProjectionContactFacts(ctx context.Context, viewerIds [
 	}
 	ownerIds := unionInt64s(viewerIds, targetIds)
 	contactIds := unionInt64s(targetIds, viewerIds)
+	contactSet := int64Set(contactIds)
 	fallbackOwnerIds := ownerIds
 	if cfg.ContactMapCacheEnabled {
 		fallbackOwnerIds = make([]int64, 0, len(ownerIds))
-		contactSet := int64Set(contactIds)
+		cacheKeys := make([]string, 0, len(ownerIds))
 		for _, ownerID := range ownerIds {
-			var dto projectionContactMapCacheDTO
-			if !r.getProjectionComponentCache(ctx, projectionContactMapCacheKey(ownerID), &dto) || dto.OwnerUserID != ownerID || len(dto.Contacts) > cfg.ContactMapMaxEntries {
+			key := projectionContactMapCacheKey(ownerID)
+			cacheKeys = append(cacheKeys, key)
+		}
+		cacheHits := getProjectionComponentCaches[projectionContactMapCacheDTO](r, ctx, cacheKeys)
+		for _, ownerID := range ownerIds {
+			key := projectionContactMapCacheKey(ownerID)
+			dto, ok := cacheHits[key]
+			if !ok || dto.OwnerUserID != ownerID || len(dto.Contacts) > cfg.ContactMapMaxEntries {
 				fallbackOwnerIds = append(fallbackOwnerIds, ownerID)
 				continue
 			}
@@ -101,20 +115,42 @@ func (r *Repository) loadProjectionContactFacts(ctx context.Context, viewerIds [
 			}
 		}
 	}
-	return r.loadProjectionContactRows(ctx, fallbackOwnerIds, contactIds, cfg, facts)
+	return r.loadProjectionContactOwnerMaps(ctx, fallbackOwnerIds, contactSet, cfg, facts)
 }
 
-func (r *Repository) loadProjectionContactRows(ctx context.Context, ownerIds []int64, contactIds []int64, cfg ProjectionConfig, facts projectionFacts) error {
-	if len(ownerIds) == 0 || len(contactIds) == 0 {
+func (r *Repository) loadProjectionContactOwnerMaps(ctx context.Context, ownerIds []int64, contactSet map[int64]bool, cfg ProjectionConfig, facts projectionFacts) error {
+	if len(ownerIds) == 0 {
 		return nil
 	}
+	contactsByOwner := make(map[int64]map[int64]projectionContactFact, len(ownerIds))
+	for _, ownerID := range ownerIds {
+		contactsByOwner[ownerID] = make(map[int64]projectionContactFact)
+	}
 	for _, ownerChunk := range chunkInt64s(ownerIds, cfg.SQLInChunkSize) {
-		for _, contactChunk := range chunkInt64s(contactIds, cfg.SQLInChunkSize) {
-			contacts, err := r.model.UserContactsModel.SelectListByOwnerListAndContactList(ctx, ownerChunk, contactChunk)
-			if err != nil {
-				return fmt.Errorf("%w: projection load contacts: %w", userpb.ErrUserStorage, err)
+		contacts, err := r.model.UserContactsModel.SelectListByOwnerList(ctx, ownerChunk)
+		if err != nil {
+			return fmt.Errorf("%w: projection load contact maps: %w", userpb.ErrUserStorage, err)
+		}
+		for i := range contacts {
+			c := projectionContactFactFromModel(&contacts[i])
+			contactsByOwner[contacts[i].OwnerUserId][contacts[i].ContactUserId] = c
+			if _, ok := contactSet[contacts[i].ContactUserId]; ok {
+				c2 := c
+				facts.Contacts[contactKey{OwnerUserId: contacts[i].OwnerUserId, ContactUserId: contacts[i].ContactUserId}] = &c2
 			}
-			addProjectionContactFacts(contacts, facts)
+		}
+	}
+	if cfg.ContactMapCacheEnabled {
+		for _, ownerID := range ownerIds {
+			ownerContacts := contactsByOwner[ownerID]
+			if len(ownerContacts) > cfg.ContactMapMaxEntries {
+				r.deleteProjectionComponentCaches(ctx, projectionContactMapCacheKey(ownerID))
+				continue
+			}
+			r.setProjectionComponentCache(ctx, projectionContactMapCacheKey(ownerID), projectionContactMapCacheDTO{
+				OwnerUserID: ownerID,
+				Contacts:    ownerContacts,
+			})
 		}
 	}
 	return nil
@@ -123,9 +159,15 @@ func (r *Repository) loadProjectionContactRows(ctx context.Context, ownerIds []i
 func (r *Repository) loadProjectionPrivacyFacts(ctx context.Context, ids []int64, cfg ProjectionConfig, facts projectionFacts) error {
 	keyTypes := []int32{tg.STATUS_TIMESTAMP, tg.PROFILE_PHOTO, tg.PHONE_NUMBER}
 	missIDs := make([]int64, 0, len(ids))
+	cacheKeys := make([]string, 0, len(ids))
 	for _, id := range ids {
-		var dto projectionPrivacyCacheDTO
-		if r.getProjectionComponentCache(ctx, projectionPrivacyCacheKey(id), &dto) && dto.UserID == id {
+		cacheKeys = append(cacheKeys, projectionPrivacyCacheKey(id))
+	}
+	cacheHits := getProjectionComponentCaches[projectionPrivacyCacheDTO](r, ctx, cacheKeys)
+	for _, id := range ids {
+		key := projectionPrivacyCacheKey(id)
+		dto, ok := cacheHits[key]
+		if ok && dto.UserID == id {
 			addProjectionPrivacyCacheDTO(dto, facts)
 			continue
 		}
@@ -164,9 +206,15 @@ func (r *Repository) loadProjectionPrivacyFacts(ctx context.Context, ids []int64
 
 func (r *Repository) loadProjectionPresenceFacts(ctx context.Context, ids []int64, cfg ProjectionConfig, facts projectionFacts) error {
 	missIDs := make([]int64, 0, len(ids))
+	cacheKeys := make([]string, 0, len(ids))
 	for _, id := range ids {
-		var dto projectionPresenceCacheDTO
-		if r.getProjectionComponentCache(ctx, projectionPresenceCacheKey(id), &dto) && dto.UserID == id {
+		cacheKeys = append(cacheKeys, projectionPresenceCacheKey(id))
+	}
+	cacheHits := getProjectionComponentCaches[projectionPresenceCacheDTO](r, ctx, cacheKeys)
+	for _, id := range ids {
+		key := projectionPresenceCacheKey(id)
+		dto, ok := cacheHits[key]
+		if ok && dto.UserID == id {
 			if dto.HasPresence {
 				facts.Presences[id] = &projectionPresenceFact{LastSeenAt: dto.LastSeenAt, Expires: dto.Expires}
 			}
@@ -240,14 +288,19 @@ func (r *Repository) loadProjectionUsernameFacts(ctx context.Context, ids []int6
 func addProjectionContactFacts(contacts []model.UserContacts, facts projectionFacts) {
 	for i := range contacts {
 		c := contacts[i]
-		facts.Contacts[contactKey{OwnerUserId: c.OwnerUserId, ContactUserId: c.ContactUserId}] = &projectionContactFact{
-			FirstName:     c.ContactFirstName,
-			LastName:      c.ContactLastName,
-			Phone:         c.ContactPhone,
-			Mutual:        c.Mutual,
-			CloseFriend:   c.CloseFriend,
-			StoriesHidden: c.StoriesHidden,
-		}
+		fact := projectionContactFactFromModel(&c)
+		facts.Contacts[contactKey{OwnerUserId: c.OwnerUserId, ContactUserId: c.ContactUserId}] = &fact
+	}
+}
+
+func projectionContactFactFromModel(c *model.UserContacts) projectionContactFact {
+	return projectionContactFact{
+		FirstName:     c.ContactFirstName,
+		LastName:      c.ContactLastName,
+		Phone:         c.ContactPhone,
+		Mutual:        c.Mutual,
+		CloseFriend:   c.CloseFriend,
+		StoriesHidden: c.StoriesHidden,
 	}
 }
 

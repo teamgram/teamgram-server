@@ -265,8 +265,8 @@ func (r *Repository) ChangePhone(ctx context.Context, id int64, phone string) er
 	if rowsAffected == 0 {
 		return userpb.ErrUserNotFound
 	}
-	if err := r.DelCache(ctx, userDataCacheKey(id)); err != nil {
-		return fmt.Errorf("%w: invalidate user cache %d: %w", userpb.ErrUserStorage, id, err)
+	if err := r.invalidateUserDataCache(ctx, id, "invalidate phone user cache"); err != nil {
+		return err
 	}
 	return nil
 }
@@ -392,6 +392,7 @@ func (r *Repository) UpdateLastSeen(ctx context.Context, id, lastSeenAt int64, e
 	if err != nil {
 		return fmt.Errorf("%w: update last seen %d: %w", userpb.ErrUserStorage, id, err)
 	}
+	r.invalidateProjectionPresenceCache(ctx, id)
 	return nil
 }
 

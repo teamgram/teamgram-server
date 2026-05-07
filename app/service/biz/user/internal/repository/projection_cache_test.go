@@ -71,10 +71,33 @@ func TestProjectionComponentCacheRoundTrip(t *testing.T) {
 	}
 }
 
+func TestProjectionComponentCacheBulkRead(t *testing.T) {
+	cache := newFakeProjectionBatchCache()
+	r := &Repository{CachedConn: sqlc.NewConnWithCache(nil, cache)}
+	ctx := context.Background()
+	key1 := projectionPresenceCacheKey(42)
+	key2 := projectionPresenceCacheKey(43)
+
+	r.setProjectionComponentCache(ctx, key1, projectionPresenceCacheDTO{UserID: 42, HasPresence: true, LastSeenAt: 100, Expires: 200})
+	r.setProjectionComponentCache(ctx, key2, projectionPresenceCacheDTO{UserID: 43})
+
+	got := getProjectionComponentCaches[projectionPresenceCacheDTO](r, ctx, []string{key1, key2})
+	if len(got) != 2 {
+		t.Fatalf("bulk hits = %#v", got)
+	}
+	if got[key1].UserID != 42 || !got[key1].HasPresence || got[key2].UserID != 43 {
+		t.Fatalf("bulk values = %#v", got)
+	}
+	if cache.takes != 1 {
+		t.Fatalf("bulk cache calls = %d, want 1", cache.takes)
+	}
+}
+
 type fakeProjectionBatchCache struct {
 	values map[string]interface{}
 	gets   int
 	sets   int
+	takes  int
 }
 
 func newFakeProjectionBatchCache() *fakeProjectionBatchCache {
@@ -164,7 +187,24 @@ func (c *fakeProjectionBatchCache) Takes(query func(keys ...string) (map[string]
 }
 
 func (c *fakeProjectionBatchCache) TakesCtx(ctx context.Context, query func(keys ...string) (map[string]any, error), cacheF func(k, v string) (any, error), keys ...string) error {
-	values, err := query(keys...)
+	c.takes++
+	missKeys := make([]string, 0, len(keys))
+	for _, key := range keys {
+		raw, ok := c.values[key]
+		if !ok {
+			missKeys = append(missKeys, key)
+			continue
+		}
+		b, err := json.Marshal(raw)
+		if err != nil {
+			missKeys = append(missKeys, key)
+			continue
+		}
+		if _, err := cacheF(key, string(b)); err != nil {
+			missKeys = append(missKeys, key)
+		}
+	}
+	values, err := query(missKeys...)
 	if err != nil {
 		return err
 	}
