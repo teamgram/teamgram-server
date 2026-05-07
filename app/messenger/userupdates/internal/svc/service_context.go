@@ -97,7 +97,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	if c.PushTaskConsumer != nil {
 		authsessionClient := authsessionclient.NewAuthsessionClient(authsessionclient.MustNewKitexClient(c.Authsession))
 		gatewayClient := gatewayclient.NewGatewayClient(gatewayclient.MustNewKitexClient(c.Gateway))
-		userClient := userclient.NewUserClient(userclient.MustNewKitexClient(c.UserClient))
+		userClient := userclient.NewUserClient(userclient.MustNewKitexClient(c.BizServiceClient))
 		consumer, err := receiverevent.NewPushTaskConsumer(c.PushTaskConsumer, receiverevent.NewPushTaskDispatcher(authsessionClient, gatewayClient, userClient))
 		if err != nil {
 			panic(err)
@@ -106,8 +106,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		sc.closers = append(sc.closers, consumer)
 	}
 
-	if c.DialogSideEffects.Enabled && hasRPCClientConfig(c.DialogClient) {
-		dialogClient := dialogclient.NewDialogClient(dialogclient.MustNewKitexClient(c.DialogClient))
+	if c.DialogSideEffects.Enabled && hasRPCClientConfig(c.BizServiceClient) {
+		dialogClient := dialogclient.NewDialogClient(dialogclient.MustNewKitexClient(c.BizServiceClient))
 		sc.workers = append(sc.workers, repository.NewDialogSideEffectWorker(repo, dialogClient, repository.DialogSideEffectWorkerOptions{
 			Interval:  time.Duration(c.DialogSideEffects.PollIntervalMs) * time.Millisecond,
 			BatchSize: c.DialogSideEffects.BatchSize,

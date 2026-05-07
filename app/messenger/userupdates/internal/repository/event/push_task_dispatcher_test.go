@@ -3,7 +3,6 @@ package event
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"testing"
 
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/gateway"
@@ -311,7 +310,7 @@ func TestPushTaskDispatcherProjectsEditMessageUsers(t *testing.T) {
 	}
 }
 
-func TestPushTaskDispatcherProjectionFailureIsRetryable(t *testing.T) {
+func TestPushTaskDispatcherProjectionFailureIsDegraded(t *testing.T) {
 	body := mustPushTaskBody(t, payload.MessageEventV1{
 		SchemaVersion: payload.MessageEventSchemaVersion,
 		EventKind:     payload.OperationKindEditMessage,
@@ -333,15 +332,25 @@ func TestPushTaskDispatcherProjectionFailureIsRetryable(t *testing.T) {
 		PeerID:        1001,
 		OperationID:   "edit-failure",
 	})
+	gatewayClient := &fakePushGateway{}
 	dispatcher := NewPushTaskDispatcher(
 		&fakePushAuthsession{keys: []int64{555}},
-		&fakePushGateway{},
+		gatewayClient,
 		&fakePushUserProjector{err: userpb.ErrUserStorage},
 	)
 
-	err := dispatcher.HandlePushTaskKafkaRecord(context.Background(), PushTaskKafkaRecord{Value: body})
-	if !errors.Is(err, userpb.ErrUserStorage) {
-		t.Fatalf("HandlePushTaskKafkaRecord() error = %v, want %v", err, userpb.ErrUserStorage)
+	if err := dispatcher.HandlePushTaskKafkaRecord(context.Background(), PushTaskKafkaRecord{Value: body}); err != nil {
+		t.Fatalf("HandlePushTaskKafkaRecord() error = %v", err)
+	}
+	if len(gatewayClient.requests) != 1 {
+		t.Fatalf("gateway push count = %d, want 1", len(gatewayClient.requests))
+	}
+	updates, ok := gatewayClient.requests[0].Updates.(*tg.TLUpdates)
+	if !ok {
+		t.Fatalf("updates = %T, want *tg.TLUpdates", gatewayClient.requests[0].Updates)
+	}
+	if len(updates.Users) != 0 {
+		t.Fatalf("users = %#v, want degraded empty users", updates.Users)
 	}
 }
 

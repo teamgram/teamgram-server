@@ -97,17 +97,20 @@ func (d *PushTaskDispatcher) projectPushUsers(ctx context.Context, msg *payload.
 		return nil
 	}
 	if d.user == nil {
-		return fmt.Errorf("push task user projection dependency is nil")
+		logx.WithContext(ctx).Errorf("push task degraded: task_id=%d user_id=%d code=user_projection_dependency_nil", msg.TaskID, msg.UserID)
+		return nil
 	}
 	bundle, err := d.user.UserGetUserProjectionBundle(ctx, &userpb.TLUserGetUserProjectionBundle{
 		ViewerUserIds: []int64{msg.UserID},
 		TargetUserIds: ids,
 	})
 	if err != nil {
-		return fmt.Errorf("push task project users: task_id=%d user_id=%d: %w", msg.TaskID, msg.UserID, err)
+		logx.WithContext(ctx).Errorf("push task degraded: task_id=%d user_id=%d code=user_projection_failed err=%v", msg.TaskID, msg.UserID, err)
+		return nil
 	}
 	if bundle == nil {
-		return fmt.Errorf("push task project users: task_id=%d user_id=%d: nil bundle", msg.TaskID, msg.UserID)
+		logx.WithContext(ctx).Errorf("push task degraded: task_id=%d user_id=%d code=user_projection_nil_bundle", msg.TaskID, msg.UserID)
+		return nil
 	}
 	if len(bundle.MissingUserIds) > 0 {
 		logx.WithContext(ctx).Errorf("push task degraded: task_id=%d user_id=%d code=missing_user_refs count=%d", msg.TaskID, msg.UserID, len(bundle.MissingUserIds))
