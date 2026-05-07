@@ -510,6 +510,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"/user.RPCUser/user.getUserProjectionBundle": kitex.NewMethodInfo(
+		getUserProjectionBundleHandler,
+		newGetUserProjectionBundleArgs,
+		newGetUserProjectionBundleResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 	"/user.RPCUser/user.createNewTestUser": kitex.NewMethodInfo(
 		createNewTestUserHandler,
 		newCreateNewTestUserArgs,
@@ -9524,6 +9531,140 @@ func (p *GetMutableUsersV2Result) GetResult() interface{} {
 	return p.Success
 }
 
+func getUserProjectionBundleHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*GetUserProjectionBundleArgs)
+	realResult := result.(*GetUserProjectionBundleResult)
+	success, err := handler.(user.RPCUser).UserGetUserProjectionBundle(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newGetUserProjectionBundleArgs() interface{} {
+	return &GetUserProjectionBundleArgs{}
+}
+
+func newGetUserProjectionBundleResult() interface{} {
+	return &GetUserProjectionBundleResult{}
+}
+
+type GetUserProjectionBundleArgs struct {
+	Req *user.TLUserGetUserProjectionBundle
+}
+
+func (p *GetUserProjectionBundleArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in GetUserProjectionBundleArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *GetUserProjectionBundleArgs) Unmarshal(in []byte) error {
+	msg := new(user.TLUserGetUserProjectionBundle)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *GetUserProjectionBundleArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in GetUserProjectionBundleArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *GetUserProjectionBundleArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.TLUserGetUserProjectionBundle)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetUserProjectionBundleArgs_Req_DEFAULT *user.TLUserGetUserProjectionBundle
+
+func (p *GetUserProjectionBundleArgs) GetReq() *user.TLUserGetUserProjectionBundle {
+	if !p.IsSetReq() {
+		return GetUserProjectionBundleArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetUserProjectionBundleArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type GetUserProjectionBundleResult struct {
+	Success *user.UserProjectionBundle
+}
+
+var GetUserProjectionBundleResult_Success_DEFAULT *user.UserProjectionBundle
+
+func (p *GetUserProjectionBundleResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in GetUserProjectionBundleResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *GetUserProjectionBundleResult) Unmarshal(in []byte) error {
+	msg := new(user.UserProjectionBundle)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetUserProjectionBundleResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in GetUserProjectionBundleResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *GetUserProjectionBundleResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(user.UserProjectionBundle)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetUserProjectionBundleResult) GetSuccess() *user.UserProjectionBundle {
+	if !p.IsSetSuccess() {
+		return GetUserProjectionBundleResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetUserProjectionBundleResult) SetSuccess(x interface{}) {
+	p.Success = x.(*user.UserProjectionBundle)
+}
+
+func (p *GetUserProjectionBundleResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetUserProjectionBundleResult) GetResult() interface{} {
+	return p.Success
+}
+
 func createNewTestUserHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*CreateNewTestUserArgs)
 	realResult := result.(*CreateNewTestUserResult)
@@ -14730,6 +14871,18 @@ func (p *kClient) UserGetMutableUsersV2(ctx context.Context, req *user.TLUserGet
 	var _result GetMutableUsersV2Result
 
 	if err = p.c.Call(ctx, "/user.RPCUser/user.getMutableUsersV2", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) UserGetUserProjectionBundle(ctx context.Context, req *user.TLUserGetUserProjectionBundle) (r *user.UserProjectionBundle, err error) {
+	// var _args GetUserProjectionBundleArgs
+	// _args.Req = req
+	var _result GetUserProjectionBundleResult
+
+	if err = p.c.Call(ctx, "/user.RPCUser/user.getUserProjectionBundle", req, &_result); err != nil {
 		return
 	}
 

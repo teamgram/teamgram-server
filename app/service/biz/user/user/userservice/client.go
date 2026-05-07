@@ -90,6 +90,7 @@ type Client interface {
 	UserUpdateBotData(ctx context.Context, req *user.TLUserUpdateBotData, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	UserGetImmutableUserV2(ctx context.Context, req *user.TLUserGetImmutableUserV2, callOptions ...callopt.Option) (r *tg.ImmutableUser, err error)
 	UserGetMutableUsersV2(ctx context.Context, req *user.TLUserGetMutableUsersV2, callOptions ...callopt.Option) (r *tg.MutableUsers, err error)
+	UserGetUserProjectionBundle(ctx context.Context, req *user.TLUserGetUserProjectionBundle, callOptions ...callopt.Option) (r *user.UserProjectionBundle, err error)
 	UserCreateNewTestUser(ctx context.Context, req *user.TLUserCreateNewTestUser, callOptions ...callopt.Option) (r *tg.ImmutableUser, err error)
 	UserEditCloseFriends(ctx context.Context, req *user.TLUserEditCloseFriends, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	UserSetStoriesMaxId(ctx context.Context, req *user.TLUserSetStoriesMaxId, callOptions ...callopt.Option) (r *tg.Bool, err error)
@@ -485,6 +486,11 @@ func (p *kUserClient) UserGetImmutableUserV2(ctx context.Context, req *user.TLUs
 func (p *kUserClient) UserGetMutableUsersV2(ctx context.Context, req *user.TLUserGetMutableUsersV2, callOptions ...callopt.Option) (r *tg.MutableUsers, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.UserGetMutableUsersV2(ctx, req)
+}
+
+func (p *kUserClient) UserGetUserProjectionBundle(ctx context.Context, req *user.TLUserGetUserProjectionBundle, callOptions ...callopt.Option) (r *user.UserProjectionBundle, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserGetUserProjectionBundle(ctx, req)
 }
 
 func (p *kUserClient) UserCreateNewTestUser(ctx context.Context, req *user.TLUserCreateNewTestUser, callOptions ...callopt.Option) (r *tg.ImmutableUser, err error) {

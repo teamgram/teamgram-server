@@ -3734,6 +3734,84 @@ func (m *TLUserGetMutableUsersV2) Decode(d *bin.Decoder) (err error) {
 	}
 }
 
+// TLUserGetUserProjectionBundle <--
+type TLUserGetUserProjectionBundle struct {
+	ClazzID       uint32  `json:"_id"`
+	WithFacts     bool    `json:"with_facts"`
+	ViewerUserIds []int64 `json:"viewer_user_ids"`
+	TargetUserIds []int64 `json:"target_user_ids"`
+}
+
+func (m *TLUserGetUserProjectionBundle) String() string {
+	return iface.DebugStringWithName(ClazzName_user_getUserProjectionBundle, m)
+}
+
+// Encode <--
+func (m *TLUserGetUserProjectionBundle) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_user_getUserProjectionBundle, int(layer)); clazzId {
+	case 0x3fc25f21:
+		x.PutClazzID(0x3fc25f21)
+
+		// set flags
+		var getFlags = func() uint32 {
+			var flags uint32 = 0
+
+			if m.WithFacts == true {
+				flags |= 1 << 0
+			}
+
+			return flags
+		}
+
+		// set flags
+		var flags = getFlags()
+		x.PutUint32(flags)
+
+		iface.EncodeInt64List(x, m.ViewerUserIds)
+
+		iface.EncodeInt64List(x, m.TargetUserIds)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode user_getUserProjectionBundle: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLUserGetUserProjectionBundle) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return fmt.Errorf("unable to decode user_getUserProjectionBundle: constructor: %w", err)
+		}
+	}
+	switch m.ClazzID {
+	case 0x3fc25f21:
+		flags, err := d.Uint32()
+		if err != nil {
+			return fmt.Errorf("unable to decode user_getUserProjectionBundle: field flags: %w", err)
+		}
+		_ = flags
+		if (flags & (1 << 0)) != 0 {
+			m.WithFacts = true
+		}
+
+		m.ViewerUserIds, err = iface.DecodeInt64List(d)
+		if err != nil {
+			return fmt.Errorf("unable to decode user_getUserProjectionBundle#0x3fc25f21: field viewer_user_ids: %w", err)
+		}
+
+		m.TargetUserIds, err = iface.DecodeInt64List(d)
+		if err != nil {
+			return fmt.Errorf("unable to decode user_getUserProjectionBundle#0x3fc25f21: field target_user_ids: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode user_getUserProjectionBundle: invalid constructor %x", m.ClazzID)
+	}
+}
+
 // TLUserCreateNewTestUser <--
 type TLUserCreateNewTestUser struct {
 	ClazzID     uint32 `json:"_id"`
@@ -5880,6 +5958,7 @@ type RPCUser interface {
 	UserUpdateBotData(ctx context.Context, in *TLUserUpdateBotData) (*tg.Bool, error)
 	UserGetImmutableUserV2(ctx context.Context, in *TLUserGetImmutableUserV2) (*tg.ImmutableUser, error)
 	UserGetMutableUsersV2(ctx context.Context, in *TLUserGetMutableUsersV2) (*tg.MutableUsers, error)
+	UserGetUserProjectionBundle(ctx context.Context, in *TLUserGetUserProjectionBundle) (*UserProjectionBundle, error)
 	UserCreateNewTestUser(ctx context.Context, in *TLUserCreateNewTestUser) (*tg.ImmutableUser, error)
 	UserEditCloseFriends(ctx context.Context, in *TLUserEditCloseFriends) (*tg.Bool, error)
 	UserSetStoriesMaxId(ctx context.Context, in *TLUserSetStoriesMaxId) (*tg.Bool, error)

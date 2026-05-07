@@ -88,6 +88,7 @@ type UserClient interface {
 	UserUpdateBotData(ctx context.Context, in *user.TLUserUpdateBotData) (*tg.Bool, error)
 	UserGetImmutableUserV2(ctx context.Context, in *user.TLUserGetImmutableUserV2) (*tg.ImmutableUser, error)
 	UserGetMutableUsersV2(ctx context.Context, in *user.TLUserGetMutableUsersV2) (*tg.MutableUsers, error)
+	UserGetUserProjectionBundle(ctx context.Context, in *user.TLUserGetUserProjectionBundle) (*user.UserProjectionBundle, error)
 	UserCreateNewTestUser(ctx context.Context, in *user.TLUserCreateNewTestUser) (*tg.ImmutableUser, error)
 	UserEditCloseFriends(ctx context.Context, in *user.TLUserEditCloseFriends) (*tg.Bool, error)
 	UserSetStoriesMaxId(ctx context.Context, in *user.TLUserSetStoriesMaxId) (*tg.Bool, error)
@@ -523,6 +524,12 @@ func (m *defaultUserClient) UserGetImmutableUserV2(ctx context.Context, in *user
 // user.getMutableUsersV2 flags:# id:Vector<long> privacy:flags.0?true has_to:flags.2?true to:flags.2?Vector<long> = MutableUsers;
 func (m *defaultUserClient) UserGetMutableUsersV2(ctx context.Context, in *user.TLUserGetMutableUsersV2) (*tg.MutableUsers, error) {
 	return m.rpc.UserGetMutableUsersV2(ctx, in)
+}
+
+// UserGetUserProjectionBundle
+// user.getUserProjectionBundle flags:# with_facts:flags.0?true viewer_user_ids:Vector<long> target_user_ids:Vector<long> = UserProjectionBundle;
+func (m *defaultUserClient) UserGetUserProjectionBundle(ctx context.Context, in *user.TLUserGetUserProjectionBundle) (*user.UserProjectionBundle, error) {
+	return m.rpc.UserGetUserProjectionBundle(ctx, in)
 }
 
 // UserCreateNewTestUser

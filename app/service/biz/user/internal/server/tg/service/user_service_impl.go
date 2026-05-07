@@ -1060,6 +1060,22 @@ func (s *Service) UserGetMutableUsersV2(ctx context.Context, request *user.TLUse
 	return r, err
 }
 
+// UserGetUserProjectionBundle
+// user.getUserProjectionBundle flags:# with_facts:flags.0?true viewer_user_ids:Vector<long> target_user_ids:Vector<long> = UserProjectionBundle;
+func (s *Service) UserGetUserProjectionBundle(ctx context.Context, request *user.TLUserGetUserProjectionBundle) (*user.UserProjectionBundle, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("user.getUserProjectionBundle - request: %s", request)
+
+	r, err := c.UserGetUserProjectionBundle(request)
+	if err != nil {
+		c.Logger.Errorf("user.getUserProjectionBundle - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("user.getUserProjectionBundle - reply: %s", r)
+	return r, err
+}
+
 // UserCreateNewTestUser
 // user.createNewTestUser secret_key_id:long min_id:long max_id:long = ImmutableUser;
 func (s *Service) UserCreateNewTestUser(ctx context.Context, request *user.TLUserCreateNewTestUser) (*tg.ImmutableUser, error) {
