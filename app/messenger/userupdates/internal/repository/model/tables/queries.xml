@@ -3,10 +3,25 @@
         <field name="Count" type="int32" db="count"/>
     </result>
 
+    <result name="UnreadDialogCountRow">
+        <field name="Count" type="int32" db="count"/>
+    </result>
+
     <query name="CountVisibleDialogs" result="VisibleDialogCountRow">
         <sql>
             SELECT
                 COUNT(*) AS count
+            FROM
+                user_dialogs
+            WHERE
+                user_id = :user_id AND hidden = 0
+        </sql>
+    </query>
+
+    <query name="SumUnreadDialogs" result="UnreadDialogCountRow">
+        <sql>
+            SELECT
+                COALESCE(SUM(unread_count), 0) AS count
             FROM
                 user_dialogs
             WHERE

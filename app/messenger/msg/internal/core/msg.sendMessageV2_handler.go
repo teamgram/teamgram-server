@@ -70,6 +70,8 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 		ClientRandomID:              outbox.RandomId,
 		RequestPayloadSchemaVersion: payload.MessageOperationSchemaVersion,
 		RequestPayloadHash:          requestHash,
+		MessageText:                 messageText,
+		ReplyToCanonicalMessageID:   replyToCanonicalMessageID,
 	})
 	if err != nil {
 		return nil, err
@@ -181,7 +183,6 @@ type sendRequestPayloadV1 struct {
 	ReplyToCanonicalMessageID int64  `json:"reply_to_canonical_message_id,omitempty"`
 	ClearDraft                bool   `json:"clear_draft,omitempty"`
 	SourcePermAuthKeyID       int64  `json:"source_perm_auth_key_id,omitempty"`
-	ClearDraftBeforeDate      int32  `json:"clear_draft_before_date,omitempty"`
 }
 
 func marshalSendRequest(senderUserID int64, peerType int32, peerID int64, randomID int64, text string, replyToCanonicalMessageID int64, clearDraft bool, sourcePermAuthKeyID int64, clearDraftBeforeDate int32) ([]byte, []byte, error) {
@@ -195,7 +196,6 @@ func marshalSendRequest(senderUserID int64, peerType int32, peerID int64, random
 		ReplyToCanonicalMessageID: replyToCanonicalMessageID,
 		ClearDraft:                clearDraft,
 		SourcePermAuthKeyID:       sourcePermAuthKeyID,
-		ClearDraftBeforeDate:      clearDraftBeforeDate,
 	})
 	if err != nil {
 		return nil, nil, fmt.Errorf("%w: marshal send request: %v", msg.ErrMsgStorage, err)

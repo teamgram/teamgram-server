@@ -30,7 +30,13 @@ func (r *Repository) CreateOrGetByClientRandom(ctx context.Context, in CreateCan
 		}
 		if found {
 			if !bytes.Equal(existing.RequestPayloadHash, in.RequestPayloadHash) {
-				return msg.ErrRandomIdConflict
+				retry, err := existingCanonicalMatchesRetryTx(txModels, existing.CanonicalMessageID, in)
+				if err != nil {
+					return err
+				}
+				if !retry {
+					return msg.ErrRandomIdConflict
+				}
 			}
 			out = existing
 			return nil
@@ -45,10 +51,25 @@ func (r *Repository) CreateOrGetByClientRandom(ctx context.Context, in CreateCan
 			state.PeerType != in.PeerType ||
 			state.PeerID != in.PeerID ||
 			state.ClientRandomID != in.ClientRandomID {
-			return msg.ErrRandomIdConflict
+			retry := false
+			if state.SenderUserID == in.SenderUserID &&
+				state.PeerType == in.PeerType &&
+				state.PeerID == in.PeerID &&
+				state.ClientRandomID == in.ClientRandomID {
+				retry, err = existingCanonicalMatchesRetryTx(txModels, state.CanonicalMessageID, in)
+				if err != nil {
+					return err
+				}
+			}
+			if !retry {
+				return msg.ErrRandomIdConflict
+			}
 		}
 		if state.CanonicalMessageID != 0 {
 			existing, err := selectCanonicalByIDTx(txModels, state.CanonicalMessageID, state.RequestPayloadHash, state.SendStateID)
+			if err != nil && !bytes.Equal(state.RequestPayloadHash, in.RequestPayloadHash) {
+				existing, err = selectCanonicalByIDOnlyTx(txModels, state.CanonicalMessageID, state.SendStateID)
+			}
 			if err != nil {
 				return err
 			}
@@ -353,6 +374,36 @@ func selectCanonicalByIDTx(txModels *model.TxModels, canonicalMessageID int64, r
 		return nil, storageError("select canonical by id", err)
 	}
 	return canonicalMessageRowToResult(row, false), nil
+}
+
+func selectCanonicalByIDOnlyTx(txModels *model.TxModels, canonicalMessageID int64, sendStateID int64) (*CanonicalMessageResult, error) {
+	row, err := txModels.CanonicalMessagesModel.SelectByCanonicalMessageId(canonicalMessageID)
+	if err != nil {
+		return nil, storageError("select canonical by id", err)
+	}
+	return &CanonicalMessageResult{
+		SendStateID:        sendStateID,
+		CanonicalMessageID: row.CanonicalMessageId,
+		PeerSeq:            row.PeerSeq,
+		MessageDate:        row.Date,
+		CreatedNew:         false,
+	}, nil
+}
+
+func existingCanonicalMatchesRetryTx(txModels *model.TxModels, canonicalMessageID int64, in CreateCanonicalMessageInput) (bool, error) {
+	if canonicalMessageID == 0 {
+		return false, nil
+	}
+	row, err := txModels.CanonicalMessagesModel.SelectByCanonicalMessageId(canonicalMessageID)
+	if err != nil {
+		if errors.Is(err, model.ErrNotFound) {
+			return false, nil
+		}
+		return false, storageError("select canonical for random retry", err)
+	}
+	return row.MessageText == in.MessageText &&
+		row.FromUserId == in.SenderUserID &&
+		row.MessageKind == MessageKindText, nil
 }
 
 func nextPeerSeqTx(txModels *model.TxModels, peerType int32, peerID int64, minNextPeerSeq int64) (int64, error) {

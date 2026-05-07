@@ -400,7 +400,7 @@ func TestMessageViewToTLMessageAcceptsEditPayload(t *testing.T) {
 
 func TestGetStateReturnsRepositoryState(t *testing.T) {
 	repo := &fakeUserUpdatesRepository{
-		state: &repository.UserState{UserID: 1001, Pts: 55},
+		state: &repository.UserState{UserID: 1001, Pts: 55, UnreadCount: 3},
 	}
 	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
 
@@ -408,8 +408,8 @@ func TestGetStateReturnsRepositoryState(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetState returned error: %v", err)
 	}
-	if got.Pts != 55 {
-		t.Fatalf("unexpected pts: %d", got.Pts)
+	if got.Pts != 55 || got.UnreadCount != 3 {
+		t.Fatalf("unexpected state: %+v", got)
 	}
 }
 

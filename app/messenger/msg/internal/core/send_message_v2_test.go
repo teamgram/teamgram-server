@@ -138,6 +138,28 @@ func TestMsgSendMessageV2ClearDraftWritesSenderOperationPayload(t *testing.T) {
 	}
 }
 
+func TestMarshalSendRequestHashIgnoresClearDraftBeforeDate(t *testing.T) {
+	_, firstHash, err := marshalSendRequest(1001, payload.PeerTypeUser, 1001, 77, "hello", 0, true, 9001, 1_778_160_035)
+	if err != nil {
+		t.Fatalf("marshalSendRequest(first) error = %v", err)
+	}
+	_, retryHash, err := marshalSendRequest(1001, payload.PeerTypeUser, 1001, 77, "hello", 0, true, 9001, 1_778_160_066)
+	if err != nil {
+		t.Fatalf("marshalSendRequest(retry) error = %v", err)
+	}
+	if string(firstHash) != string(retryHash) {
+		t.Fatalf("request hash changed when only clear_draft_before_date changed: first=%x retry=%x", firstHash, retryHash)
+	}
+
+	_, changedTextHash, err := marshalSendRequest(1001, payload.PeerTypeUser, 1001, 77, "changed", 0, true, 9001, 1_778_160_066)
+	if err != nil {
+		t.Fatalf("marshalSendRequest(changed text) error = %v", err)
+	}
+	if string(firstHash) == string(changedTextHash) {
+		t.Fatalf("request hash did not change when message text changed: hash=%x", firstHash)
+	}
+}
+
 func TestMsgSendMessageV2ReplyToPayloadUsesCanonicalMessageID(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":1,"pts":16,"pts_count":1}`)
 	responseHash := mustHashBytes(t, responsePayload)

@@ -23,12 +23,18 @@ type VisibleDialogCountRow struct {
 	Count int32 `db:"count"`
 }
 
+type UnreadDialogCountRow struct {
+	Count int32 `db:"count"`
+}
+
 type UserupdatesQueriesModel interface {
 	CountVisibleDialogs(ctx context.Context, userId int64) (*VisibleDialogCountRow, error)
+	SumUnreadDialogs(ctx context.Context, userId int64) (*UnreadDialogCountRow, error)
 }
 
 type UserupdatesQueriesTxModel interface {
 	CountVisibleDialogs(userId int64) (*VisibleDialogCountRow, error)
+	SumUnreadDialogs(userId int64) (*UnreadDialogCountRow, error)
 }
 
 type defaultUserupdatesQueriesModel struct {
@@ -61,6 +67,28 @@ func (m *defaultUserupdatesQueriesModel) CountVisibleDialogs(ctx context.Context
 func (m *defaultUserupdatesQueriesTxModel) CountVisibleDialogs(userId int64) (*VisibleDialogCountRow, error) {
 	var rValue VisibleDialogCountRow
 	query := "select COUNT(*) as count from user_dialogs where user_id = ? and hidden = 0"
+
+	err := m.tx.QueryRowPartial(&rValue, query, userId)
+	if err != nil {
+		return nil, err
+	}
+	return &rValue, nil
+}
+
+func (m *defaultUserupdatesQueriesModel) SumUnreadDialogs(ctx context.Context, userId int64) (*UnreadDialogCountRow, error) {
+	var rValue UnreadDialogCountRow
+	query := "select COALESCE(SUM(unread_count), 0) as count from user_dialogs where user_id = ? and hidden = 0"
+
+	err := m.db.QueryRowPartial(ctx, &rValue, query, userId)
+	if err != nil {
+		return nil, err
+	}
+	return &rValue, nil
+}
+
+func (m *defaultUserupdatesQueriesTxModel) SumUnreadDialogs(userId int64) (*UnreadDialogCountRow, error) {
+	var rValue UnreadDialogCountRow
+	query := "select COALESCE(SUM(unread_count), 0) as count from user_dialogs where user_id = ? and hidden = 0"
 
 	err := m.tx.QueryRowPartial(&rValue, query, userId)
 	if err != nil {

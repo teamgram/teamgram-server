@@ -176,6 +176,7 @@ type UserState struct {
 	Pts         int64
 	Seq         int64
 	Date        int32
+	UnreadCount int32
 	PartitionID int32
 	OwnerEpoch  int64
 	RowVersion  int64

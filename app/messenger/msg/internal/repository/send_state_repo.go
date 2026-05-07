@@ -21,7 +21,13 @@ func (r *Repository) CreateOrLoadSendState(ctx context.Context, in CreateSendSta
 	}
 	if found {
 		if !bytes.Equal(existing.RequestPayloadHash, in.RequestPayloadHash) {
-			return nil, msg.ErrRandomIdConflict
+			retry, err := r.isExistingCanonicalRetry(ctx, existing, in)
+			if err != nil {
+				return nil, err
+			}
+			if !retry {
+				return nil, msg.ErrRandomIdConflict
+			}
 		}
 		return existing, nil
 	}
@@ -58,13 +64,33 @@ func (r *Repository) CreateOrLoadSendState(ctx context.Context, in CreateSendSta
 		again, found, selectErr := r.selectSendStateByRandom(ctx, in.SenderUserID, in.PeerType, in.PeerID, in.ClientRandomID)
 		if selectErr == nil && found {
 			if !bytes.Equal(again.RequestPayloadHash, in.RequestPayloadHash) {
-				return nil, msg.ErrRandomIdConflict
+				retry, retryErr := r.isExistingCanonicalRetry(ctx, again, in)
+				if retryErr != nil {
+					return nil, retryErr
+				}
+				if !retry {
+					return nil, msg.ErrRandomIdConflict
+				}
 			}
 			return again, nil
 		}
 		return nil, storageError("insert send state", err)
 	}
 	return r.selectSendStateByID(ctx, sendStateID)
+}
+
+func (r *Repository) isExistingCanonicalRetry(ctx context.Context, state *SendState, in CreateSendStateInput) (bool, error) {
+	if state == nil || state.CanonicalMessageID == 0 || in.ReplyToCanonicalMessageID != 0 {
+		return false, nil
+	}
+	row, err := r.models.CanonicalMessagesModel.SelectByCanonicalMessageId(ctx, state.CanonicalMessageID)
+	if err != nil {
+		if errors.Is(err, model.ErrNotFound) {
+			return false, nil
+		}
+		return false, storageError("select canonical for send retry", err)
+	}
+	return row.MessageText == in.MessageText, nil
 }
 
 func (r *Repository) MarkCanonicalCreated(ctx context.Context, sendStateID int64, canonicalMessageID int64, peerSeq int64) error {

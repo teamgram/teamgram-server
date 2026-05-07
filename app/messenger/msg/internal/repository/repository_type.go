@@ -44,6 +44,8 @@ type CreateSendStateInput struct {
 	ClientRandomID              int64
 	RequestPayloadSchemaVersion int32
 	RequestPayloadHash          []byte
+	MessageText                 string
+	ReplyToCanonicalMessageID   int64
 }
 
 type SendState struct {

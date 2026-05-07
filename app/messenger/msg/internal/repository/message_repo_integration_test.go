@@ -177,6 +177,92 @@ func TestMessageRepositoryRandomIdConflict(t *testing.T) {
 	}
 }
 
+func TestMessageRepositoryRetryRecoversLegacyRequestHashAfterCanonicalCreated(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	repo := NewForTest(db, &testIDGenerator{next: base + 30_000})
+
+	senderID := base + 301
+	peerID := base + 302
+	randomID := base + 303
+	legacyHash := payload.HashBytes([]byte("legacy request hash with clear_draft_before_date"))
+	currentHash := payload.HashBytes([]byte("current request hash without clear_draft_before_date"))
+	state, err := repo.CreateOrLoadSendState(ctx, CreateSendStateInput{
+		SenderUserID:                senderID,
+		PeerType:                    payload.PeerTypeUser,
+		PeerID:                      peerID,
+		ClientRandomID:              randomID,
+		RequestPayloadSchemaVersion: 1,
+		RequestPayloadHash:          legacyHash,
+		MessageText:                 "hello",
+	})
+	if err != nil {
+		t.Fatalf("CreateOrLoadSendState(legacy) error = %v", err)
+	}
+	canonical, err := repo.CreateOrGetByClientRandom(ctx, CreateCanonicalMessageInput{
+		SendStateID:        state.SendStateID,
+		SenderUserID:       senderID,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             peerID,
+		ClientRandomID:     randomID,
+		RequestPayloadHash: legacyHash,
+		MessageText:        "hello",
+		MessageDate:        time.Now().Unix(),
+	})
+	if err != nil {
+		t.Fatalf("CreateOrGetByClientRandom(legacy) error = %v", err)
+	}
+	if err := repo.MarkCanonicalCreated(ctx, state.SendStateID, canonical.CanonicalMessageID, canonical.PeerSeq); err != nil {
+		t.Fatalf("MarkCanonicalCreated() error = %v", err)
+	}
+
+	retryState, err := repo.CreateOrLoadSendState(ctx, CreateSendStateInput{
+		SenderUserID:                senderID,
+		PeerType:                    payload.PeerTypeUser,
+		PeerID:                      peerID,
+		ClientRandomID:              randomID,
+		RequestPayloadSchemaVersion: 1,
+		RequestPayloadHash:          currentHash,
+		MessageText:                 "hello",
+	})
+	if err != nil {
+		t.Fatalf("CreateOrLoadSendState(retry) error = %v", err)
+	}
+	if retryState.SendStateID != state.SendStateID {
+		t.Fatalf("retry send_state_id = %d, want %d", retryState.SendStateID, state.SendStateID)
+	}
+	retryCanonical, err := repo.CreateOrGetByClientRandom(ctx, CreateCanonicalMessageInput{
+		SendStateID:        state.SendStateID,
+		SenderUserID:       senderID,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             peerID,
+		ClientRandomID:     randomID,
+		RequestPayloadHash: currentHash,
+		MessageText:        "hello",
+		MessageDate:        time.Now().Unix(),
+	})
+	if err != nil {
+		t.Fatalf("CreateOrGetByClientRandom(retry) error = %v", err)
+	}
+	if retryCanonical.CanonicalMessageID != canonical.CanonicalMessageID || retryCanonical.CreatedNew {
+		t.Fatalf("retry canonical = %+v, want existing %+v", retryCanonical, canonical)
+	}
+
+	_, err = repo.CreateOrLoadSendState(ctx, CreateSendStateInput{
+		SenderUserID:                senderID,
+		PeerType:                    payload.PeerTypeUser,
+		PeerID:                      peerID,
+		ClientRandomID:              randomID,
+		RequestPayloadSchemaVersion: 1,
+		RequestPayloadHash:          payload.HashBytes([]byte("changed")),
+		MessageText:                 "changed",
+	})
+	if !errors.Is(err, msg.ErrRandomIdConflict) {
+		t.Fatalf("CreateOrLoadSendState(changed) error = %v, want ErrRandomIdConflict", err)
+	}
+}
+
 func TestMessageRepositoryListHistoryMessages(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)

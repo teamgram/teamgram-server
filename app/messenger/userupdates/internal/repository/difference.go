@@ -33,6 +33,9 @@ func (r *Repository) GetState(ctx context.Context, userID int64, permAuthKeyID i
 			if err := r.fillAuthSeqState(ctx, state); err != nil {
 				return nil, err
 			}
+			if err := r.fillUnreadCount(ctx, state); err != nil {
+				return nil, err
+			}
 			return state, nil
 		}
 		return nil, storageError("get state", err)
@@ -45,6 +48,9 @@ func (r *Repository) GetState(ctx context.Context, userID int64, permAuthKeyID i
 		RowVersion:  row.RowVersion,
 	}
 	if err := r.fillAuthSeqState(ctx, state); err != nil {
+		return nil, err
+	}
+	if err := r.fillUnreadCount(ctx, state); err != nil {
 		return nil, err
 	}
 	return state, nil
@@ -60,6 +66,15 @@ func (r *Repository) fillAuthSeqState(ctx context.Context, state *UserState) err
 	}
 	state.Seq = authState.Seq
 	state.Date = authState.Date
+	return nil
+}
+
+func (r *Repository) fillUnreadCount(ctx context.Context, state *UserState) error {
+	row, err := r.models.UserupdatesQueries.SumUnreadDialogs(ctx, state.UserID)
+	if err != nil {
+		return storageError("sum unread dialogs", err)
+	}
+	state.UnreadCount = row.Count
 	return nil
 }
 

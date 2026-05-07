@@ -71,12 +71,9 @@ func (r *Repository) ApplyUserOperation(ctx context.Context, in ApplyUserOperati
 
 func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in ApplyUserOperationInput) (*ApplyUserOperationResult, error) {
 	txModels := r.models.WithTx(tx)
-	fence, err := r.lockPartitionFence(txModels, in.PartitionID)
+	fence, err := r.ensurePartitionOwnedTx(txModels, in.PartitionID)
 	if err != nil {
 		return nil, err
-	}
-	if fence.OwnerInstanceId != r.OwnerInstance() {
-		return nil, userupdates.ErrNotOwner
 	}
 
 	if _, _, err := txModels.UserPtsStateModel.InsertIgnore(&model.UserPtsState{
@@ -223,6 +220,44 @@ func (r *Repository) lockPartitionFence(txModels *model.TxModels, partitionID in
 		}
 		return nil, storageError("lock partition fence", err)
 	}
+	return fence, nil
+}
+
+func (r *Repository) ensurePartitionOwnedTx(txModels *model.TxModels, partitionID int32) (*model.UserupdatesPartitionFences, error) {
+	fence, err := txModels.UserupdatesPartitionFencesModel.SelectByPartitionId(partitionID)
+	if err != nil {
+		if !errors.Is(err, model.ErrNotFound) {
+			return nil, storageError("lock partition fence", err)
+		}
+		if _, _, err := txModels.UserupdatesPartitionFencesModel.InsertIgnore(&model.UserupdatesPartitionFences{
+			PartitionId:     partitionID,
+			OwnerEpoch:      0,
+			OwnerInstanceId: "unassigned",
+			LeaseId:         "",
+		}); err != nil {
+			return nil, storageError("insert partition fence", err)
+		}
+		fence, err = txModels.UserupdatesPartitionFencesModel.SelectByPartitionId(partitionID)
+		if err != nil {
+			return nil, storageError("lock partition fence", err)
+		}
+	}
+	if fence.OwnerInstanceId == r.OwnerInstance() {
+		return fence, nil
+	}
+	if fence.OwnerInstanceId != "" && fence.OwnerInstanceId != "unassigned" {
+		return nil, userupdates.ErrNotOwner
+	}
+	affected, err := txModels.UserupdatesPartitionFencesModel.CasAcquireOwner(r.OwnerInstance(), "", partitionID, fence.OwnerEpoch)
+	if err != nil {
+		return nil, storageError("claim partition owner", err)
+	}
+	if affected == 0 {
+		return nil, userupdates.ErrOwnerFenceFailed
+	}
+	fence.OwnerEpoch++
+	fence.OwnerInstanceId = r.OwnerInstance()
+	fence.LeaseId = ""
 	return fence, nil
 }
 

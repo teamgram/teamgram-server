@@ -69,6 +69,9 @@ func TestApplyUserOperationFinalTransaction(t *testing.T) {
 		if state.Pts != 1 {
 			t.Fatalf("state pts = %d, want 1", state.Pts)
 		}
+		if state.UnreadCount != 0 {
+			t.Fatalf("state unread_count = %d, want 0", state.UnreadCount)
+		}
 
 		diff, err := repo.GetDifference(ctx, GetDifferenceInput{UserID: userID, Pts: 0, Limit: 10})
 		if err != nil {
@@ -87,6 +90,40 @@ func TestApplyUserOperationFinalTransaction(t *testing.T) {
 		}
 		if opResult.Pts != 1 || !bytes.Equal(opResult.PayloadHash, in.PayloadHash) {
 			t.Fatalf("operation result mismatch: %+v", opResult)
+		}
+	})
+
+	t.Run("state unread count includes first incoming message", func(t *testing.T) {
+		receiverID := base + 2101
+		senderID := base + 2102
+		repo := NewForTest(db, &testIDGenerator{next: base + 70_000}, "local-userupdates")
+		op := payload.MessageOperationV1{
+			SchemaVersion:      payload.MessageOperationSchemaVersion,
+			OperationKind:      payload.OperationKindSendMessage,
+			CanonicalMessageID: receiverID*10 + 1,
+			PeerType:           payload.PeerTypeUser,
+			PeerID:             senderID,
+			PeerSeq:            1,
+			FromUserID:         senderID,
+			ToUserID:           receiverID,
+			Date:               int32(time.Now().Unix()),
+			Out:                false,
+			MessageText:        "incoming hello",
+		}
+		in := buildOperationApplyInput(t, receiverID, op, "incoming")
+		if _, err := repo.ClaimPartitionOwner(ctx, in.PartitionID); err != nil {
+			t.Fatalf("ClaimPartitionOwner() error = %v", err)
+		}
+		if _, err := repo.ApplyUserOperation(ctx, in); err != nil {
+			t.Fatalf("ApplyUserOperation() error = %v", err)
+		}
+
+		state, err := repo.GetState(ctx, receiverID, 0)
+		if err != nil {
+			t.Fatalf("GetState() error = %v", err)
+		}
+		if state.Pts != 1 || state.UnreadCount != 1 {
+			t.Fatalf("state = %+v, want pts=1 unread_count=1", state)
 		}
 	})
 
@@ -274,6 +311,28 @@ func TestApplyUserOperationFinalTransaction(t *testing.T) {
 		}
 		if len(diff.Events) != 0 {
 			t.Fatalf("events length = %d, want 0", len(diff.Events))
+		}
+	})
+
+	t.Run("sync operation claims missing or unassigned fence", func(t *testing.T) {
+		userID := base + 601
+		repo := NewForTest(db, &testIDGenerator{next: base + 35_000}, "local-userupdates")
+		in := buildApplyInput(t, userID, userID, base+701, true, "hello")
+		_ = repo.models.UserupdatesPartitionFencesModel.Delete2(ctx, in.PartitionID)
+
+		result, err := repo.ApplyUserOperation(ctx, in)
+		if err != nil {
+			t.Fatalf("ApplyUserOperation() error = %v", err)
+		}
+		if result.Pts != 1 {
+			t.Fatalf("result pts = %d, want 1", result.Pts)
+		}
+		fence, err := repo.models.UserupdatesPartitionFencesModel.SelectByPartitionId(ctx, in.PartitionID)
+		if err != nil {
+			t.Fatalf("SelectByPartitionId() error = %v", err)
+		}
+		if fence.OwnerInstanceId != "local-userupdates" || fence.OwnerEpoch != 1 {
+			t.Fatalf("fence = %+v, want local owner epoch 1", fence)
 		}
 	})
 

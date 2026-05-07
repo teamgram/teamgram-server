@@ -54,9 +54,10 @@ func operationResultToTL(in *repository.OperationResult) (*userupdates.UserOpera
 
 func stateToTL(in repository.UserState) *userupdates.UserState {
 	return userupdates.MakeTLUserState(&userupdates.TLUserState{
-		Pts:  in.Pts,
-		Seq:  int32(in.Seq),
-		Date: in.Date,
+		Pts:         in.Pts,
+		Seq:         int32(in.Seq),
+		Date:        in.Date,
+		UnreadCount: in.UnreadCount,
 	}).ToUserState()
 }
 
