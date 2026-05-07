@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"math"
 	"testing"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
@@ -730,6 +731,21 @@ func TestGetOutboxReadDateRoutesToRepository(t *testing.T) {
 	}
 }
 
+func TestGetOutboxReadDateRejectsDateOverflow(t *testing.T) {
+	repo := &fakeUserUpdatesRepository{outboxReadDate: int64(math.MaxInt32) + 1}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	_, err := core.UserupdatesGetOutboxReadDate(&userupdates.TLUserupdatesGetOutboxReadDate{
+		UserId:   1001,
+		PeerType: payload.PeerTypeUser,
+		PeerId:   1002,
+		MsgId:    9,
+	})
+	if !errors.Is(err, userupdates.ErrUserupdatesStorage) {
+		t.Fatalf("expected ErrUserupdatesStorage, got %v", err)
+	}
+}
+
 type fakeUserUpdatesRepository struct {
 	applyInput          repository.ApplyUserOperationInput
 	applyResult         *repository.ApplyUserOperationResult
@@ -751,7 +767,7 @@ type fakeUserUpdatesRepository struct {
 	messageViews        map[repository.MessageViewPeerSeq]repository.MessageView
 	dialogCountUserID   int64
 	dialogCount         int32
-	outboxReadDate      int32
+	outboxReadDate      int64
 	outboxReadDateInput repository.OutboxReadDateInput
 }
 
@@ -807,7 +823,7 @@ func (f *fakeUserUpdatesRepository) CountVisibleDialogs(_ context.Context, userI
 	return f.dialogCount, nil
 }
 
-func (f *fakeUserUpdatesRepository) GetOutboxReadDate(_ context.Context, in repository.OutboxReadDateInput) (int32, error) {
+func (f *fakeUserUpdatesRepository) GetOutboxReadDate(_ context.Context, in repository.OutboxReadDateInput) (int64, error) {
 	f.outboxReadDateInput = in
 	return f.outboxReadDate, nil
 }

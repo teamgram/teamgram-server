@@ -75,7 +75,7 @@ func mapMessageViewRow(row *model.UserMessageViews) MessageView {
 	}
 }
 
-func (r *Repository) GetOutboxReadDate(ctx context.Context, in OutboxReadDateInput) (int32, error) {
+func (r *Repository) GetOutboxReadDate(ctx context.Context, in OutboxReadDateInput) (int64, error) {
 	if _, err := r.requireDB(); err != nil {
 		return 0, err
 	}
@@ -98,5 +98,5 @@ func (r *Repository) GetOutboxReadDate(ctx context.Context, in OutboxReadDateInp
 	if len(rows) == 0 {
 		return 0, userupdates.ErrOutboxReadDateNotFound
 	}
-	return int32(rows[0].ReadOutboxMaxDate), nil
+	return rows[0].ReadOutboxMaxDate, nil
 }

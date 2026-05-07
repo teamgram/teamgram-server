@@ -36,12 +36,12 @@ func (c *UserupdatesCore) UserupdatesGetOutboxReadDate(in *userupdates.TLUserupd
 		return nil, tg.ErrMessageIdInvalid
 	}
 	readRepo, ok := c.svcCtx.Repo.(interface {
-		GetOutboxReadDate(context.Context, repository.OutboxReadDateInput) (int32, error)
+		GetOutboxReadDate(context.Context, repository.OutboxReadDateInput) (int64, error)
 	})
 	if !ok {
 		return nil, tg.ErrMessageNotReadYet
 	}
-	date, err := readRepo.GetOutboxReadDate(c.ctx, repository.OutboxReadDateInput{
+	dateSeconds, err := readRepo.GetOutboxReadDate(c.ctx, repository.OutboxReadDateInput{
 		UserID:   in.UserId,
 		PeerType: in.PeerType,
 		PeerID:   in.PeerId,
@@ -54,6 +54,10 @@ func (c *UserupdatesCore) UserupdatesGetOutboxReadDate(in *userupdates.TLUserupd
 		if errors.Is(err, userupdates.ErrOutboxReadDateNotFound) {
 			return nil, tg.ErrMessageNotReadYet
 		}
+		return nil, err
+	}
+	date, err := userupdatesDateInt32FromUnixSeconds(dateSeconds, "outbox read date")
+	if err != nil {
 		return nil, err
 	}
 	return tg.MakeTLOutboxReadDate(&tg.TLOutboxReadDate{
