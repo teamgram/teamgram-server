@@ -1,4 +1,7 @@
 #!/bin/bash
+set -euo pipefail
 
-tgctl model dalgen datasource -url "root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai" -out ./ -xml ./tables/
+DALGEN_DSN="${DALGEN_DSN:-root:@tcp(127.0.0.1:3306)/teamgram?charset=utf8mb4&parseTime=true&loc=UTC}"
+
+tgctl model dalgen datasource -url "${DALGEN_DSN}" -out ./ -xml ./tables/
 goimports -w *.go
