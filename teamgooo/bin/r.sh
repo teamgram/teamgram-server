@@ -42,7 +42,7 @@ sleep 1
 
 echo "run bff ..."
 nohup ./bff -f=../../app/bff/bff/etc/bff.yaml >> ../logs/bff.log  2>&1 &
-sleep 5
+sleep 1
 
 echo "run gateway ..."
 nohup ./gateway -f=../../app/interface/gateway/etc/gateway.yaml >> ../logs/gateway.log  2>&1 &
