@@ -90,14 +90,16 @@ type CanonicalMessageResult struct {
 }
 
 type ListHistoryMessagesInput struct {
-	UserID    int64
-	PeerType  int32
-	PeerID    int64
-	OffsetID  int32
-	AddOffset int32
-	MaxID     int32
-	MinID     int32
-	Limit     int32
+	UserID               int64
+	PeerType             int32
+	PeerID               int64
+	OffsetID             int32
+	AddOffset            int32
+	MaxID                int32
+	MinID                int32
+	Limit                int32
+	CursorsResolved      bool
+	ResolvedCursorBounds HistoryCursorBounds
 }
 
 type SearchHashTagMessagesInput struct {

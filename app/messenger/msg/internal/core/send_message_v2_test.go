@@ -507,6 +507,11 @@ func TestMsgSendMessageV2SelfRetryUsesCommittedSenderState(t *testing.T) {
 
 func TestMsgGetHistoryReturnsCanonicalTextMessages(t *testing.T) {
 	repo := &fakeMsgRepository{
+		historyCursorBounds: repository.HistoryCursorBounds{
+			OffsetPeerSeq: 13,
+			MaxPeerSeq:    12,
+			MinPeerSeq:    11,
+		},
 		history: []repository.HistoryMessage{
 			{
 				CanonicalMessageID:   9001,
@@ -542,8 +547,10 @@ func TestMsgGetHistoryReturnsCanonicalTextMessages(t *testing.T) {
 		AuthKeyId: 9001,
 		PeerType:  payload.PeerTypeUser,
 		PeerId:    1002,
-		OffsetId:  3,
+		OffsetId:  103,
 		AddOffset: -2,
+		MaxId:     102,
+		MinId:     101,
 		Limit:     20,
 	})
 	if err != nil {
@@ -573,10 +580,16 @@ func TestMsgGetHistoryReturnsCanonicalTextMessages(t *testing.T) {
 	if repo.historyInput.PeerType != payload.PeerTypeUser ||
 		repo.historyInput.UserID != 1001 ||
 		repo.historyInput.PeerID != 1002 ||
-		repo.historyInput.OffsetID != 3 ||
 		repo.historyInput.AddOffset != -2 ||
-		repo.historyInput.Limit != 20 {
+		repo.historyInput.Limit != 20 ||
+		!repo.historyInput.CursorsResolved ||
+		repo.historyInput.ResolvedCursorBounds.OffsetPeerSeq != 13 ||
+		repo.historyInput.ResolvedCursorBounds.MaxPeerSeq != 12 ||
+		repo.historyInput.ResolvedCursorBounds.MinPeerSeq != 11 {
 		t.Fatalf("unexpected history input: %+v", repo.historyInput)
+	}
+	if repo.resolveHistoryInput.offsetID != 103 || repo.resolveHistoryInput.maxID != 102 || repo.resolveHistoryInput.minID != 101 {
+		t.Fatalf("history cursors were not resolved from public ids: %+v", repo.resolveHistoryInput)
 	}
 }
 
@@ -691,15 +704,27 @@ func TestMsgReadHistoryV2ReturnsAffectedMessagesAck(t *testing.T) {
 	updatesClient := &fakeUserUpdatesClient{
 		processWithEffectsResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
 			UserId:      1001,
-			OperationId: readHistoryOperationID(1001, 1002, 2, 9001),
+			OperationId: readHistoryOperationID(1001, 1002, 102, 9001),
 			Status:      1,
 			Pts:         15,
 			PtsCount:    1,
 			CurrentPts:  15,
 		}),
 	}
+	repo := &fakeMsgRepository{
+		resolveByUserMessageID: map[int64]*repository.ResolvedMessageID{
+			102: {
+				UserID:             1001,
+				PeerType:           payload.PeerTypeUser,
+				PeerID:             1002,
+				UserMessageID:      102,
+				PeerSeq:            2,
+				CanonicalMessageID: 7002,
+			},
+		},
+	}
 	core := New(context.Background(), &svc.ServiceContext{
-		Repo:        &fakeMsgRepository{},
+		Repo:        repo,
 		UserUpdates: updatesClient,
 	})
 
@@ -708,7 +733,7 @@ func TestMsgReadHistoryV2ReturnsAffectedMessagesAck(t *testing.T) {
 		AuthKeyId: 9001,
 		PeerType:  payload.PeerTypeUser,
 		PeerId:    1002,
-		MaxId:     2,
+		MaxId:     102,
 	})
 	if err != nil {
 		t.Fatalf("MsgReadHistoryV2() error = %v", err)
@@ -729,7 +754,7 @@ func TestMsgReadHistoryV2ReturnsAffectedMessagesAck(t *testing.T) {
 	if readerOperation == nil {
 		t.Fatal("with-effects requester operation is nil")
 	}
-	if readerOperation.OperationId != readHistoryOperationID(1001, 1002, 2, 9001) {
+	if readerOperation.OperationId != readHistoryOperationID(1001, 1002, 102, 9001) {
 		t.Fatalf("reader operation_id = %q", readerOperation.OperationId)
 	}
 	if readerOperation.AuthKeyIdExclude == nil || *readerOperation.AuthKeyIdExclude != 9001 {
@@ -739,7 +764,7 @@ func TestMsgReadHistoryV2ReturnsAffectedMessagesAck(t *testing.T) {
 	if err := json.Unmarshal(readerOperation.Payload, &readerOp); err != nil {
 		t.Fatalf("decode read history payload: %v", err)
 	}
-	if readerOp.OperationKind != payload.OperationKindReadHistory || readerOp.PeerID != 1002 || readerOp.ReadInboxMaxPeerSeq != 2 || readerOp.ReadOutboxMaxPeerSeq != 0 || readerOp.Out {
+	if readerOp.OperationKind != payload.OperationKindReadHistory || readerOp.PeerID != 1002 || readerOp.ReadInboxMaxPeerSeq != 2 || readerOp.ReadMaxUserMessageID != 102 || readerOp.ReadOutboxMaxPeerSeq != 0 || readerOp.Out {
 		t.Fatalf("unexpected reader read history payload: %+v", readerOp)
 	}
 	if len(updatesClient.processWithEffects.AffectedEffects) != 1 {
@@ -763,7 +788,7 @@ func TestMsgReadHistoryV2ReturnsAffectedMessagesAck(t *testing.T) {
 	if err := json.Unmarshal(peerOperation.Payload, &peerOp); err != nil {
 		t.Fatalf("decode peer read outbox payload: %v", err)
 	}
-	if peerOp.OperationKind != payload.OperationKindReadHistory || peerOp.PeerID != 1001 || peerOp.ReadInboxMaxPeerSeq != 0 || peerOp.ReadOutboxMaxPeerSeq != 2 || !peerOp.Out {
+	if peerOp.OperationKind != payload.OperationKindReadHistory || peerOp.PeerID != 1001 || peerOp.ReadInboxMaxPeerSeq != 0 || peerOp.ReadOutboxMaxPeerSeq != 2 || peerOp.ReadMaxUserMessageID != 0 || !peerOp.Out {
 		t.Fatalf("unexpected peer read outbox payload: %+v", peerOp)
 	}
 }
@@ -1220,14 +1245,24 @@ func TestMsgEditMessageV2RejectsNonAuthor(t *testing.T) {
 }
 
 type fakeMsgRepository struct {
-	sendState              *repository.SendState
-	canonical              *repository.CanonicalMessageResult
-	canonicalByPeerSeq     *repository.CanonicalMessage
-	editResult             *repository.EditMessageResult
-	editInput              repository.EditCanonicalMessageInput
-	history                []repository.HistoryMessage
-	historyInput           repository.ListHistoryMessagesInput
+	sendState           *repository.SendState
+	canonical           *repository.CanonicalMessageResult
+	canonicalByPeerSeq  *repository.CanonicalMessage
+	editResult          *repository.EditMessageResult
+	editInput           repository.EditCanonicalMessageInput
+	history             []repository.HistoryMessage
+	historyInput        repository.ListHistoryMessagesInput
+	historyCursorBounds repository.HistoryCursorBounds
+	resolveHistoryInput struct {
+		userID   int64
+		peerType int32
+		peerID   int64
+		offsetID int32
+		maxID    int32
+		minID    int32
+	}
 	resolvedMessageID      *repository.ResolvedMessageID
+	resolveByUserMessageID map[int64]*repository.ResolvedMessageID
 	resolveInput           repository.ResolvedMessageID
 	markCanonicalErr       error
 	markSenderErrs         []error
@@ -1265,11 +1300,20 @@ func (f *fakeMsgRepository) ResolveMessageID(_ context.Context, userID int64, pe
 		PeerID:        peerID,
 		UserMessageID: userMessageID,
 	}
+	if f.resolveByUserMessageID != nil {
+		return f.resolveByUserMessageID[userMessageID], nil
+	}
 	return f.resolvedMessageID, nil
 }
 
-func (f *fakeMsgRepository) ResolveHistoryCursorIDs(context.Context, int64, int32, int64, int32, int32, int32) (repository.HistoryCursorBounds, error) {
-	return repository.HistoryCursorBounds{}, nil
+func (f *fakeMsgRepository) ResolveHistoryCursorIDs(_ context.Context, userID int64, peerType int32, peerID int64, offsetID int32, maxID int32, minID int32) (repository.HistoryCursorBounds, error) {
+	f.resolveHistoryInput.userID = userID
+	f.resolveHistoryInput.peerType = peerType
+	f.resolveHistoryInput.peerID = peerID
+	f.resolveHistoryInput.offsetID = offsetID
+	f.resolveHistoryInput.maxID = maxID
+	f.resolveHistoryInput.minID = minID
+	return f.historyCursorBounds, nil
 }
 
 func (f *fakeMsgRepository) ResolvePeerSeqToUserMessageID(context.Context, int64, int32, int64, int64) (int64, error) {

@@ -39,21 +39,35 @@ func (c *MsgCore) MsgReadHistoryV2(in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffe
 	if in.PeerType != payload.PeerTypeUser {
 		return nil, fmt.Errorf("%w: read history first slice only supports user peer", msg.ErrSendStateConflict)
 	}
-	if c == nil || c.svcCtx == nil || c.svcCtx.UserUpdates == nil {
+	if c == nil || c.svcCtx == nil || c.svcCtx.Repo == nil || c.svcCtx.UserUpdates == nil {
 		return nil, msg.ErrSenderSyncFailed
+	}
+
+	maxPeerSeq := int64(0)
+	maxUserMessageID := int64(0)
+	if in.MaxId > 0 {
+		resolved, err := c.svcCtx.Repo.ResolveMessageID(c.ctx, in.UserId, in.PeerType, in.PeerId, int64(in.MaxId))
+		if err != nil {
+			return nil, err
+		}
+		if resolved != nil {
+			maxPeerSeq = resolved.PeerSeq
+			maxUserMessageID = resolved.UserMessageID
+		}
 	}
 
 	date := int32(time.Now().Unix())
 	body, err := json.Marshal(payload.MessageOperationV1{
-		SchemaVersion:       payload.MessageOperationSchemaVersion,
-		OperationKind:       payload.OperationKindReadHistory,
-		PeerType:            in.PeerType,
-		PeerID:              in.PeerId,
-		PeerSeq:             int64(in.MaxId),
-		FromUserID:          in.UserId,
-		ToUserID:            in.UserId,
-		Date:                date,
-		ReadInboxMaxPeerSeq: int64(in.MaxId),
+		SchemaVersion:        payload.MessageOperationSchemaVersion,
+		OperationKind:        payload.OperationKindReadHistory,
+		PeerType:             in.PeerType,
+		PeerID:               in.PeerId,
+		PeerSeq:              maxPeerSeq,
+		FromUserID:           in.UserId,
+		ToUserID:             in.UserId,
+		Date:                 date,
+		ReadMaxUserMessageID: maxUserMessageID,
+		ReadInboxMaxPeerSeq:  maxPeerSeq,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("%w: marshal read history operation user_id=%d peer_id=%d", msg.ErrMsgStorage, in.UserId, in.PeerId)
@@ -72,7 +86,7 @@ func (c *MsgCore) MsgReadHistoryV2(in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffe
 		AuthKeyIDExclude:     &authKeyID,
 		PeerType:             in.PeerType,
 		PeerID:               in.PeerId,
-		CanonicalPeerSeq:     int64Ptr(int64(in.MaxId)),
+		CanonicalPeerSeq:     int64Ptr(maxPeerSeq),
 		CanonicalDate:        int64Ptr(int64(date)),
 		PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
 		PayloadCodec:         payload.PayloadCodecJSON,
@@ -88,12 +102,12 @@ func (c *MsgCore) MsgReadHistoryV2(in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffe
 			OperationKind:        payload.OperationKindReadHistory,
 			PeerType:             in.PeerType,
 			PeerID:               in.UserId,
-			PeerSeq:              int64(in.MaxId),
+			PeerSeq:              maxPeerSeq,
 			FromUserID:           in.UserId,
 			ToUserID:             in.PeerId,
 			Date:                 date,
 			Out:                  true,
-			ReadOutboxMaxPeerSeq: int64(in.MaxId),
+			ReadOutboxMaxPeerSeq: maxPeerSeq,
 		})
 		if err != nil {
 			return nil, fmt.Errorf("%w: marshal peer read outbox operation user_id=%d peer_id=%d", msg.ErrMsgStorage, in.UserId, in.PeerId)
@@ -106,7 +120,7 @@ func (c *MsgCore) MsgReadHistoryV2(in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffe
 			ActorUserID:          in.UserId,
 			PeerType:             in.PeerType,
 			PeerID:               in.UserId,
-			CanonicalPeerSeq:     int64Ptr(int64(in.MaxId)),
+			CanonicalPeerSeq:     int64Ptr(maxPeerSeq),
 			CanonicalDate:        int64Ptr(int64(date)),
 			PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
 			PayloadCodec:         payload.PayloadCodecJSON,

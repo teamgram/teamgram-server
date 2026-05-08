@@ -120,9 +120,13 @@ func (r *Repository) ListHistoryMessages(ctx context.Context, in ListHistoryMess
 	if _, err := r.requireDB(); err != nil {
 		return nil, err
 	}
-	bounds, err := r.ResolveHistoryCursorIDs(ctx, in.UserID, in.PeerType, in.PeerID, in.OffsetID, in.MaxID, in.MinID)
-	if err != nil {
-		return nil, err
+	bounds := in.ResolvedCursorBounds
+	if !in.CursorsResolved {
+		var err error
+		bounds, err = r.ResolveHistoryCursorIDs(ctx, in.UserID, in.PeerType, in.PeerID, in.OffsetID, in.MaxID, in.MinID)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	limit := pagination.NormalizeLimit(in.Limit)
