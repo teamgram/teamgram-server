@@ -56,6 +56,47 @@ func TestBuildEventAndResponseCarriesAuthKeyExclude(t *testing.T) {
 	}
 }
 
+func TestBuildEditEventAndResponseCarriesPublicMessageID(t *testing.T) {
+	eventPayload, _, responsePayload, _, err := buildEventAndResponse(
+		ApplyUserOperationInput{OperationID: "edit-op"},
+		payload.MessageOperationV1{
+			SchemaVersion:      payload.MessageOperationSchemaVersion,
+			OperationKind:      payload.OperationKindEditMessage,
+			CanonicalMessageID: 7001,
+			PeerType:           payload.PeerTypeUser,
+			PeerID:             2002,
+			PeerSeq:            9,
+			UserMessageID:      101,
+			FromUserID:         1001,
+			ToUserID:           2002,
+			Date:               1777781234,
+			EditDate:           1777782234,
+			EditVersion:        2,
+			Out:                true,
+			MessageText:        "edited",
+		},
+		39,
+		1,
+	)
+	if err != nil {
+		t.Fatalf("buildEventAndResponse() error = %v", err)
+	}
+	var event payload.MessageEventV2
+	if err := json.Unmarshal(eventPayload, &event); err != nil {
+		t.Fatalf("unmarshal event payload: %v", err)
+	}
+	if event.EventKind != payload.OperationKindEditMessage || event.MessageID != 101 || event.PeerSeq != 9 {
+		t.Fatalf("edit event ids = %+v, want public message_id=101 and peer_seq=9", event)
+	}
+	var response payload.OperationResponseV2
+	if err := json.Unmarshal(responsePayload, &response); err != nil {
+		t.Fatalf("unmarshal response payload: %v", err)
+	}
+	if response.UserMessageID != 101 {
+		t.Fatalf("edit response user_message_id = %d, want 101", response.UserMessageID)
+	}
+}
+
 func TestExtractHashTagsNormalizesAndDeduplicates(t *testing.T) {
 	got := extractHashTags("hello #Go #go #team_gram #中文 ok #")
 	want := []string{"go", "team_gram", "中文"}

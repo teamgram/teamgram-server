@@ -154,7 +154,9 @@ func (r *Repository) userEventFromModel(ctx context.Context, row model.UserPtsEv
 		EventPayload:       row.EventPayload,
 		EventPayloadHash:   row.EventPayloadHash,
 	}
-	if row.EventSchemaVersion != payload.MessageEventSchemaVersionV1 || row.EventCodec != PayloadCodecJSON {
+	if row.EventSchemaVersion != payload.MessageEventSchemaVersionV1 ||
+		row.EventCodec != PayloadCodecJSON ||
+		!needsLegacyMessageHydration(row.EventType) {
 		return event, nil
 	}
 	hydrated, err := r.hydrateLegacyMessageEvent(ctx, event)
@@ -172,7 +174,7 @@ func (r *Repository) hydrateLegacyMessageEvent(ctx context.Context, event UserEv
 	if old.SchemaVersion != payload.MessageEventSchemaVersionV1 {
 		return UserEvent{}, storageError("decode legacy message event", userupdates.ErrOperationTerminal)
 	}
-	userMessageID, err := r.resolveUserMessageIDByPeerSeq(ctx, event.UserID, event.PeerType, event.PeerID, event.PeerSeq)
+	userMessageID, err := r.resolveExactUserMessageIDByPeerSeq(ctx, event.UserID, event.PeerType, event.PeerID, event.PeerSeq)
 	if err != nil {
 		return UserEvent{}, err
 	}
@@ -181,7 +183,9 @@ func (r *Repository) hydrateLegacyMessageEvent(ctx context.Context, event UserEv
 	}
 	replyToUserMessageID := int64(0)
 	if old.ReplyToPeerSeq > 0 {
-		replyToUserMessageID, err = r.resolveUserMessageIDByPeerSeq(ctx, event.UserID, event.PeerType, event.PeerID, old.ReplyToPeerSeq)
+		// Replies may point at deleted or otherwise hidden rows. Keep the legacy
+		// fallback best-effort while requiring exact resolution for the event id.
+		replyToUserMessageID, err = r.resolveNearestLiveUserMessageIDByPeerSeq(ctx, event.UserID, event.PeerType, event.PeerID, old.ReplyToPeerSeq)
 		if err != nil {
 			return UserEvent{}, err
 		}
@@ -216,13 +220,33 @@ func (r *Repository) hydrateLegacyMessageEvent(ctx context.Context, event UserEv
 	return event, nil
 }
 
-func (r *Repository) resolveUserMessageIDByPeerSeq(ctx context.Context, userID int64, peerType int32, peerID, peerSeq int64) (int64, error) {
+func needsLegacyMessageHydration(eventType int32) bool {
+	switch eventType {
+	case EventTypeNewMessage, EventTypeReadHistory, EventTypeEditMessage:
+		return true
+	default:
+		return false
+	}
+}
+
+func (r *Repository) resolveExactUserMessageIDByPeerSeq(ctx context.Context, userID int64, peerType int32, peerID, peerSeq int64) (int64, error) {
+	row, err := r.models.UserMessageViewsModel.SelectByUserPeerSeq(ctx, userID, peerType, peerID, peerSeq)
+	if err != nil {
+		if errors.Is(err, model.ErrNotFound) {
+			return 0, nil
+		}
+		return 0, storageError("resolve exact user message id by peer seq", err)
+	}
+	return row.UserMessageId, nil
+}
+
+func (r *Repository) resolveNearestLiveUserMessageIDByPeerSeq(ctx context.Context, userID int64, peerType int32, peerID, peerSeq int64) (int64, error) {
 	row, err := r.models.UserMessageViewsModel.SelectNearestLiveByUserPeerSeq(ctx, userID, peerType, peerID, peerSeq, MessageStatusLive)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
 			return 0, nil
 		}
-		return 0, storageError("resolve user message id by peer seq", err)
+		return 0, storageError("resolve nearest live user message id by peer seq", err)
 	}
 	return row.UserMessageId, nil
 }

@@ -239,6 +239,16 @@ func resolvePublicIDsForOperation(txModels *model.TxModels, userID int64, op *pa
 			op.UserMessageID = userMessageID
 		}
 	}
+	if op.OperationKind == payload.OperationKindEditMessage && op.UserMessageID == 0 {
+		existingID, found, err := existingUserMessageID(txModels, userID, op.CanonicalMessageID)
+		if err != nil {
+			return err
+		}
+		if !found || existingID <= 0 {
+			return fmt.Errorf("%w: edit target canonical_message_id=%d not visible to user_id=%d", userupdates.ErrOperationTerminal, op.CanonicalMessageID, userID)
+		}
+		op.UserMessageID = existingID
+	}
 	if op.ReplyToUserMessageID == 0 && op.ReplyToPeerSeq > 0 {
 		id, err := resolveUserMessageIDByPeerSeq(txModels, userID, op.PeerType, op.PeerID, op.ReplyToPeerSeq)
 		if err != nil {
