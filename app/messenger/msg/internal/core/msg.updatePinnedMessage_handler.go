@@ -33,7 +33,7 @@ func (c *MsgCore) MsgUpdatePinnedMessage(in *msg.TLMsgUpdatePinnedMessage) (*tg.
 	if in == nil {
 		return nil, fmt.Errorf("%w: missing update pinned request", msg.ErrSendStateConflict)
 	}
-	if in.UserId <= 0 || in.PeerId <= 0 || in.Id < 0 {
+	if in.UserId <= 0 || in.PeerId <= 0 || in.Id < 0 || (!in.Unpin && in.Id == 0) {
 		return nil, fmt.Errorf("%w: invalid update pinned request", msg.ErrSendStateConflict)
 	}
 	if in.PeerType != payload.PeerTypeUser {

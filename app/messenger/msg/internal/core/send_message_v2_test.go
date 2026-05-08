@@ -1039,6 +1039,74 @@ func TestMsgUpdatePinnedMessageRoutesProjectionOperation(t *testing.T) {
 	}
 }
 
+func TestMsgUpdatePinnedMessageRejectsZeroIDForPin(t *testing.T) {
+	updatesClient := &fakeUserUpdatesClient{}
+	repo := &fakeMsgRepository{}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:        repo,
+		UserUpdates: updatesClient,
+	})
+
+	got, err := core.MsgUpdatePinnedMessage(&msgpb.TLMsgUpdatePinnedMessage{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    1002,
+		Id:        0,
+		Unpin:     false,
+	})
+	if !errors.Is(err, msgpb.ErrSendStateConflict) {
+		t.Fatalf("MsgUpdatePinnedMessage() error = %v, want ErrSendStateConflict, got=%+v", err, got)
+	}
+	if updatesClient.processed != nil || len(updatesClient.processedList) != 0 || updatesClient.processWithEffects != nil {
+		t.Fatalf("zero pin id dispatched operation: processed=%+v list=%d with_effects=%+v", updatesClient.processed, len(updatesClient.processedList), updatesClient.processWithEffects)
+	}
+	if repo.resolveInput.UserMessageID != 0 {
+		t.Fatalf("zero pin id resolved message unexpectedly: %+v", repo.resolveInput)
+	}
+}
+
+func TestMsgUpdatePinnedMessageAllowsZeroIDForUnpin(t *testing.T) {
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:      1001,
+			OperationId: updatePinnedOperationID(1001, 1002, 0, true, 9001),
+			Status:      1,
+			Pts:         22,
+			PtsCount:    1,
+			CurrentPts:  22,
+		}),
+	}
+	repo := &fakeMsgRepository{}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:        repo,
+		UserUpdates: updatesClient,
+	})
+
+	got, err := core.MsgUpdatePinnedMessage(&msgpb.TLMsgUpdatePinnedMessage{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		Unpin:     true,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    1002,
+		Id:        0,
+	})
+	if err != nil {
+		t.Fatalf("MsgUpdatePinnedMessage() error = %v", err)
+	}
+	short, ok := got.ToUpdateShort()
+	if !ok {
+		t.Fatalf("MsgUpdatePinnedMessage() = %s, want updateShort", got.ClazzName())
+	}
+	pinned, ok := (&tg.Update{Clazz: short.Update}).ToUpdatePinnedMessages()
+	if !ok || pinned.Pinned || len(pinned.Messages) != 0 || pinned.Pts != 22 {
+		t.Fatalf("unpin update = %+v ok=%v", pinned, ok)
+	}
+	if repo.resolveInput.UserMessageID != 0 {
+		t.Fatalf("zero unpin id resolved message unexpectedly: %+v", repo.resolveInput)
+	}
+}
+
 func TestMsgDeleteMessagesRoutesProjectionOperation(t *testing.T) {
 	updatesClient := &fakeUserUpdatesClient{
 		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
