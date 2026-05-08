@@ -1280,6 +1280,78 @@ func TestMsgDeleteMessagesRevokeEnqueuesPeerEffect(t *testing.T) {
 	}
 }
 
+func TestMsgDeleteMessagesRejectsPeerEmptyWithNonZeroPeerID(t *testing.T) {
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:      1001,
+			OperationId: deleteMessagesOperationID(1001, 1002, []int32{107}, false, 9001),
+			Status:      1,
+			Pts:         31,
+			PtsCount:    1,
+			CurrentPts:  31,
+		}),
+	}
+	repo := &fakeMsgRepository{
+		resolveManyByUserMessageID: map[int64]*repository.ResolvedMessageID{
+			107: {UserID: 1001, PeerType: payload.PeerTypeUser, PeerID: 1002, UserMessageID: 107, PeerSeq: 7, CanonicalMessageID: 7007},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo, UserUpdates: updatesClient})
+
+	got, err := core.MsgDeleteMessages(&msgpb.TLMsgDeleteMessages{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		PeerType:  0,
+		PeerId:    1002,
+		Id:        []int32{107},
+	})
+	if err == nil {
+		t.Fatalf("MsgDeleteMessages() error = nil, got = %+v", got)
+	}
+	if !errors.Is(err, msgpb.ErrSendStateConflict) {
+		t.Fatalf("MsgDeleteMessages() error = %v, want ErrSendStateConflict", err)
+	}
+}
+
+func TestMsgDeleteMessagesRevokeGroupsGlobalIDsByPeerUsesSequentialResults(t *testing.T) {
+	updatesClient := &fakeUserUpdatesClient{
+		processResults: []*userupdates.UserOperationResult{
+			userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+				UserId: 1001, OperationId: deleteMessagesOperationID(1001, 1002, []int32{107}, true, 9001), Status: 1, Pts: 41, PtsCount: 1, CurrentPts: 41,
+			}),
+			userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+				UserId: 1001, OperationId: deleteMessagesOperationID(1001, 1003, []int32{208}, true, 9001), Status: 1, Pts: 42, PtsCount: 1, CurrentPts: 42,
+			}),
+		},
+	}
+	repo := &fakeMsgRepository{
+		resolveManyByUserMessageID: map[int64]*repository.ResolvedMessageID{
+			107: {UserID: 1001, PeerType: payload.PeerTypeUser, PeerID: 1002, UserMessageID: 107, PeerSeq: 7, CanonicalMessageID: 7007},
+			208: {UserID: 1001, PeerType: payload.PeerTypeUser, PeerID: 1003, UserMessageID: 208, PeerSeq: 2, CanonicalMessageID: 8002},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo, UserUpdates: updatesClient})
+
+	got, err := core.MsgDeleteMessages(&msgpb.TLMsgDeleteMessages{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		Revoke:    true,
+		Id:        []int32{107, 208},
+	})
+	if err != nil {
+		t.Fatalf("MsgDeleteMessages() error = %v", err)
+	}
+	if got.Pts != 42 || got.PtsCount != 2 {
+		t.Fatalf("affected = %+v, want final pts 42 and two requester operations", got)
+	}
+	if len(updatesClient.processedOperations) != 2 {
+		t.Fatalf("processed operations = %d, want 2", len(updatesClient.processedOperations))
+	}
+	if updatesClient.processedOperations[0].PeerId != 1002 || updatesClient.processedOperations[1].PeerId != 1003 {
+		t.Fatalf("processed operation peers = %d,%d; want 1002,1003", updatesClient.processedOperations[0].PeerId, updatesClient.processedOperations[1].PeerId)
+	}
+}
+
 func TestMsgDeleteMessagesIgnoresMissingPublicIDs(t *testing.T) {
 	updatesClient := &fakeUserUpdatesClient{}
 	repo := &fakeMsgRepository{resolveManyByUserMessageID: map[int64]*repository.ResolvedMessageID{}}

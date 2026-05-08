@@ -37,6 +37,9 @@ func (c *MsgCore) MsgDeleteMessages(in *msg.TLMsgDeleteMessages) (*tg.MessagesAf
 	if in.PeerType != 0 && in.PeerType != payload.PeerTypeUser {
 		return nil, fmt.Errorf("%w: delete messages first slice only supports user peer", msg.ErrSendStateConflict)
 	}
+	if in.PeerType == 0 && in.PeerId != 0 {
+		return nil, fmt.Errorf("%w: invalid delete messages peer", msg.ErrSendStateConflict)
+	}
 	if in.PeerType != 0 && in.PeerId <= 0 {
 		return nil, fmt.Errorf("%w: invalid delete messages peer", msg.ErrSendStateConflict)
 	}
