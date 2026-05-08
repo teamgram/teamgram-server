@@ -635,6 +635,15 @@ func applyDeleteHistory(txModels *model.TxModels, in ApplyUserOperationInput, op
 			return storageError("select dialog before delete history", err)
 		}
 	}
+	updateAvailableMin := op.JustClear || maxPeerSeq > 0
+	availableMinUserMessageID := int64(0)
+	if updateAvailableMin {
+		var err error
+		availableMinUserMessageID, err = resolveUserMessageIDByPeerSeq(txModels, in.UserID, op.PeerType, op.PeerID, maxPeerSeq)
+		if err != nil {
+			return err
+		}
+	}
 	if maxPeerSeq > 0 {
 		if _, err := txModels.UserMessageViewsModel.MarkHistoryDeleted(MessageStatusDeleted, []byte(`{"schema_version":1,"deleted":true}`), in.UserID, op.PeerType, op.PeerID, maxPeerSeq); err != nil {
 			return storageError("mark history deleted", err)
@@ -643,11 +652,7 @@ func applyDeleteHistory(txModels *model.TxModels, in ApplyUserOperationInput, op
 	if err := recomputeDialogTop(txModels, in.UserID, op.PeerType, op.PeerID, nextPTS); err != nil {
 		return err
 	}
-	if op.JustClear || maxPeerSeq > 0 {
-		availableMinUserMessageID, err := resolveUserMessageIDByPeerSeq(txModels, in.UserID, op.PeerType, op.PeerID, maxPeerSeq)
-		if err != nil {
-			return err
-		}
+	if updateAvailableMin {
 		if _, err := txModels.UserDialogsModel.UpdateAvailableMinPeerSeq(maxPeerSeq, availableMinUserMessageID, nextPTS, unixNow(), in.UserID, op.PeerType, op.PeerID); err != nil {
 			return storageError("update dialog available min peer seq", err)
 		}

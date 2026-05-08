@@ -614,6 +614,82 @@ func TestApplyReadOutboxPreservesIncomingUnreadCount(t *testing.T) {
 	}
 }
 
+func TestApplyDeleteHistoryPersistsAvailableMinPublicUserMessageID(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	userID := base + 2161
+	peerID := base + 2162
+	repo := NewForTest(db, &testIDGenerator{next: base + 21600}, "local-userupdates")
+	first := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion:      payload.MessageOperationSchemaVersion,
+		OperationKind:      payload.OperationKindSendMessage,
+		CanonicalMessageID: userID*10 + 1,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             peerID,
+		PeerSeq:            1,
+		FromUserID:         userID,
+		ToUserID:           peerID,
+		Date:               int32(time.Now().Unix()),
+		Out:                true,
+		MessageText:        "first",
+	}, "delete-history-first")
+	if _, err := repo.ClaimPartitionOwner(ctx, first.PartitionID); err != nil {
+		t.Fatalf("ClaimPartitionOwner() error = %v", err)
+	}
+	if _, err := repo.ApplyUserOperation(ctx, first); err != nil {
+		t.Fatalf("ApplyUserOperation(first) error = %v", err)
+	}
+	second := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion:      payload.MessageOperationSchemaVersion,
+		OperationKind:      payload.OperationKindSendMessage,
+		CanonicalMessageID: userID*10 + 2,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             peerID,
+		PeerSeq:            7,
+		FromUserID:         userID,
+		ToUserID:           peerID,
+		Date:               int32(time.Now().Unix()),
+		Out:                true,
+		MessageText:        "second",
+	}, "delete-history-second")
+	if _, err := repo.ApplyUserOperation(ctx, second); err != nil {
+		t.Fatalf("ApplyUserOperation(second) error = %v", err)
+	}
+	secondView, err := repo.models.UserMessageViewsModel.SelectByUserPeerSeq(ctx, userID, payload.PeerTypeUser, peerID, 7)
+	if err != nil {
+		t.Fatalf("SelectByUserPeerSeq(second) error = %v", err)
+	}
+	if secondView.UserMessageId == 0 || secondView.UserMessageId == secondView.PeerSeq {
+		t.Fatalf("test setup requires public id distinct from peer seq, view=%+v", secondView)
+	}
+
+	deleteHistory := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion:    payload.MessageOperationSchemaVersion,
+		OperationKind:    payload.OperationKindDeleteHistory,
+		PeerType:         payload.PeerTypeUser,
+		PeerID:           peerID,
+		PeerSeq:          7,
+		DeleteMaxPeerSeq: 7,
+		FromUserID:       userID,
+		ToUserID:         peerID,
+		Date:             int32(time.Now().Unix()),
+		JustClear:        true,
+	}, "delete-history")
+	if _, err := repo.ApplyUserOperation(ctx, deleteHistory); err != nil {
+		t.Fatalf("ApplyUserOperation(delete history) error = %v", err)
+	}
+
+	dialog, err := repo.models.UserDialogsModel.SelectByUserPeer(ctx, userID, payload.PeerTypeUser, peerID)
+	if err != nil {
+		t.Fatalf("SelectByUserPeer() error = %v", err)
+	}
+	if dialog.AvailableMinPeerSeq != 7 || dialog.AvailableMinUserMessageId != secondView.UserMessageId {
+		t.Fatalf("available min mirrors = peer_seq:%d user_message_id:%d, want peer_seq=7 user_message_id=%d",
+			dialog.AvailableMinPeerSeq, dialog.AvailableMinUserMessageId, secondView.UserMessageId)
+	}
+}
+
 func TestGetOutboxReadDateResolvesPublicUserMessageID(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)
