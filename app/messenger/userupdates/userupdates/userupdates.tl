@@ -10,6 +10,8 @@
 
 userOperation flags:# user_id:long bucket_id:int partition_id:int operation_id:string op_type:int op_source:int actor_user_id:long auth_key_id:flags.0?long auth_key_id_exclude:flags.1?long peer_type:int peer_id:long canonical_message_id:flags.2?long canonical_peer_seq:flags.3?long canonical_date:flags.4?long dependency_pts:flags.5?long request_id:flags.6?string payload_schema_version:int payload_codec:int payload_hash:bytes payload:bytes = UserOperation;
 
+affectedUserOperation flags:# requester_user_id:long delivery_policy:int operation_kind:string operation:UserOperation = AffectedUserOperation;
+
 userOperationResult flags:# user_id:long operation_id:string status:int pts:long pts_count:int current_pts:long response_schema_version:flags.0?int response_payload:flags.1?bytes response_payload_hash:flags.2?bytes = UserOperationResult;
 
 userState pts:long qts:int date:int seq:int unread_count:int = UserState;
@@ -30,6 +32,8 @@ userPtsAppendResult user_id:long operation_id:string pts:long pts_count:int alre
 
 ---functions---
 userupdates.processUserOperation operation:UserOperation = UserOperationResult;
+
+userupdates.processUserOperationWithEffects operation:UserOperation affected_effects:Vector<AffectedUserOperation> = UserOperationResult;
 
 userupdates.getOperationResult user_id:long operation_id:string payload_hash:bytes = UserOperationResult;
 

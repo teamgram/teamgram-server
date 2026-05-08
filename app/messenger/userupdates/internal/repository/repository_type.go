@@ -22,6 +22,12 @@ const (
 
 	OpTypeSendMessage int32 = 1
 
+	DeliveryPolicyRequesterSync      int32 = 1
+	DeliveryPolicyBrokerDurableAck   int32 = 2
+	DeliveryPolicyDurableAsync       int32 = 3
+	DeliveryPolicyApplyAck           int32 = 4
+	DeliveryPolicyBestEffortPushOnly int32 = 5
+
 	EventTypeNewMessage          int32 = 1
 	EventTypeReadHistory         int32 = 2
 	EventTypeUpdatePinnedMessage int32 = 3
@@ -133,6 +139,22 @@ type DialogSideEffect struct {
 	LastErrorCode            string
 }
 
+type AffectedOutbox struct {
+	RequesterUserID   int64
+	TargetUserID      int64
+	TargetBucketID    int32
+	TargetPartitionID int32
+	OperationID       string
+	OpType            int32
+	OperationKind     string
+	PeerType          int32
+	PeerID            int64
+	PayloadCodec      int32
+	Payload           []byte
+	PayloadHash       []byte
+	DeliveryPolicy    int32
+}
+
 type ApplyUserOperationInput struct {
 	UserID           int64
 	OperationID      string
@@ -146,6 +168,7 @@ type ApplyUserOperationInput struct {
 	PartitionID      int32
 	DependencyPts    []int64
 	AuthKeyIDExclude *int64
+	AffectedOutboxes []AffectedOutbox
 }
 
 type ApplyUserOperationResult struct {

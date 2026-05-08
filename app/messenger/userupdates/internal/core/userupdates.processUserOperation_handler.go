@@ -30,13 +30,32 @@ func (c *UserupdatesCore) UserupdatesProcessUserOperation(in *userupdates.TLUser
 	if in == nil || in.Operation == nil {
 		return nil, fmt.Errorf("%w: missing operation", userupdates.ErrOperationTerminal)
 	}
-	op := in.Operation
+	applyIn, err := userOperationToRepositoryInput(in.Operation)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := c.svcCtx.Repo.ApplyUserOperation(c.ctx, applyIn)
+	if err != nil {
+		return nil, err
+	}
+	if c.svcCtx.PushOutboxNotifier != nil {
+		c.svcCtx.PushOutboxNotifier.Wake()
+	}
+	return applyResultToTL(result)
+}
+
+func userOperationToRepositoryInput(op *userupdates.TLUserOperation) (repository.ApplyUserOperationInput, error) {
+	if op == nil {
+		return repository.ApplyUserOperationInput{}, fmt.Errorf("%w: missing operation", userupdates.ErrOperationTerminal)
+	}
+
 	var dependencyPts []int64
 	if op.DependencyPts != nil {
 		dependencyPts = []int64{*op.DependencyPts}
 	}
 
-	result, err := c.svcCtx.Repo.ApplyUserOperation(c.ctx, repository.ApplyUserOperationInput{
+	return repository.ApplyUserOperationInput{
 		UserID:           op.UserId,
 		OperationID:      op.OperationId,
 		OpType:           op.OpType,
@@ -49,12 +68,5 @@ func (c *UserupdatesCore) UserupdatesProcessUserOperation(in *userupdates.TLUser
 		PartitionID:      op.PartitionId,
 		DependencyPts:    dependencyPts,
 		AuthKeyIDExclude: op.AuthKeyIdExclude,
-	})
-	if err != nil {
-		return nil, err
-	}
-	if c.svcCtx.PushOutboxNotifier != nil {
-		c.svcCtx.PushOutboxNotifier.Wake()
-	}
-	return applyResultToTL(result)
+	}, nil
 }

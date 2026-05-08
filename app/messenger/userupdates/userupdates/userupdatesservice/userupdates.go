@@ -62,6 +62,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"/userupdates.RPCUserupdates/userupdates.processUserOperationWithEffects": kitex.NewMethodInfo(
+		processUserOperationWithEffectsHandler,
+		newProcessUserOperationWithEffectsArgs,
+		newProcessUserOperationWithEffectsResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 	"/userupdates.RPCUserupdates/userupdates.getOperationResult": kitex.NewMethodInfo(
 		getOperationResultHandler,
 		newGetOperationResultArgs,
@@ -336,6 +343,140 @@ func (p *ProcessUserOperationResult) IsSetSuccess() bool {
 }
 
 func (p *ProcessUserOperationResult) GetResult() interface{} {
+	return p.Success
+}
+
+func processUserOperationWithEffectsHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*ProcessUserOperationWithEffectsArgs)
+	realResult := result.(*ProcessUserOperationWithEffectsResult)
+	success, err := handler.(userupdates.RPCUserupdates).UserupdatesProcessUserOperationWithEffects(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newProcessUserOperationWithEffectsArgs() interface{} {
+	return &ProcessUserOperationWithEffectsArgs{}
+}
+
+func newProcessUserOperationWithEffectsResult() interface{} {
+	return &ProcessUserOperationWithEffectsResult{}
+}
+
+type ProcessUserOperationWithEffectsArgs struct {
+	Req *userupdates.TLUserupdatesProcessUserOperationWithEffects
+}
+
+func (p *ProcessUserOperationWithEffectsArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in ProcessUserOperationWithEffectsArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *ProcessUserOperationWithEffectsArgs) Unmarshal(in []byte) error {
+	msg := new(userupdates.TLUserupdatesProcessUserOperationWithEffects)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *ProcessUserOperationWithEffectsArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in ProcessUserOperationWithEffectsArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *ProcessUserOperationWithEffectsArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(userupdates.TLUserupdatesProcessUserOperationWithEffects)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var ProcessUserOperationWithEffectsArgs_Req_DEFAULT *userupdates.TLUserupdatesProcessUserOperationWithEffects
+
+func (p *ProcessUserOperationWithEffectsArgs) GetReq() *userupdates.TLUserupdatesProcessUserOperationWithEffects {
+	if !p.IsSetReq() {
+		return ProcessUserOperationWithEffectsArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *ProcessUserOperationWithEffectsArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type ProcessUserOperationWithEffectsResult struct {
+	Success *userupdates.UserOperationResult
+}
+
+var ProcessUserOperationWithEffectsResult_Success_DEFAULT *userupdates.UserOperationResult
+
+func (p *ProcessUserOperationWithEffectsResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in ProcessUserOperationWithEffectsResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *ProcessUserOperationWithEffectsResult) Unmarshal(in []byte) error {
+	msg := new(userupdates.UserOperationResult)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ProcessUserOperationWithEffectsResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in ProcessUserOperationWithEffectsResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *ProcessUserOperationWithEffectsResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(userupdates.UserOperationResult)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ProcessUserOperationWithEffectsResult) GetSuccess() *userupdates.UserOperationResult {
+	if !p.IsSetSuccess() {
+		return ProcessUserOperationWithEffectsResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ProcessUserOperationWithEffectsResult) SetSuccess(x interface{}) {
+	p.Success = x.(*userupdates.UserOperationResult)
+}
+
+func (p *ProcessUserOperationWithEffectsResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ProcessUserOperationWithEffectsResult) GetResult() interface{} {
 	return p.Success
 }
 
@@ -1695,6 +1836,18 @@ func (p *kClient) UserupdatesProcessUserOperation(ctx context.Context, req *user
 	var _result ProcessUserOperationResult
 
 	if err = p.c.Call(ctx, "/userupdates.RPCUserupdates/userupdates.processUserOperation", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) UserupdatesProcessUserOperationWithEffects(ctx context.Context, req *userupdates.TLUserupdatesProcessUserOperationWithEffects) (r *userupdates.UserOperationResult, err error) {
+	// var _args ProcessUserOperationWithEffectsArgs
+	// _args.Req = req
+	var _result ProcessUserOperationWithEffectsResult
+
+	if err = p.c.Call(ctx, "/userupdates.RPCUserupdates/userupdates.processUserOperationWithEffects", req, &_result); err != nil {
 		return
 	}
 

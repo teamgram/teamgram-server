@@ -26,6 +26,7 @@ var _ *tg.Bool
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
 	UserupdatesProcessUserOperation(ctx context.Context, req *userupdates.TLUserupdatesProcessUserOperation, callOptions ...callopt.Option) (r *userupdates.UserOperationResult, err error)
+	UserupdatesProcessUserOperationWithEffects(ctx context.Context, req *userupdates.TLUserupdatesProcessUserOperationWithEffects, callOptions ...callopt.Option) (r *userupdates.UserOperationResult, err error)
 	UserupdatesGetOperationResult(ctx context.Context, req *userupdates.TLUserupdatesGetOperationResult, callOptions ...callopt.Option) (r *userupdates.UserOperationResult, err error)
 	UserupdatesGetState(ctx context.Context, req *userupdates.TLUserupdatesGetState, callOptions ...callopt.Option) (r *userupdates.UserState, err error)
 	UserupdatesGetDifference(ctx context.Context, req *userupdates.TLUserupdatesGetDifference, callOptions ...callopt.Option) (r *userupdates.UserDifference, err error)
@@ -78,6 +79,11 @@ func NewRPCUserupdatesClient(cli client.Client) Client {
 func (p *kUserupdatesClient) UserupdatesProcessUserOperation(ctx context.Context, req *userupdates.TLUserupdatesProcessUserOperation, callOptions ...callopt.Option) (r *userupdates.UserOperationResult, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.UserupdatesProcessUserOperation(ctx, req)
+}
+
+func (p *kUserupdatesClient) UserupdatesProcessUserOperationWithEffects(ctx context.Context, req *userupdates.TLUserupdatesProcessUserOperationWithEffects, callOptions ...callopt.Option) (r *userupdates.UserOperationResult, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.UserupdatesProcessUserOperationWithEffects(ctx, req)
 }
 
 func (p *kUserupdatesClient) UserupdatesGetOperationResult(ctx context.Context, req *userupdates.TLUserupdatesGetOperationResult, callOptions ...callopt.Option) (r *userupdates.UserOperationResult, err error) {

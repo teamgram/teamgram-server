@@ -117,6 +117,144 @@ func TestProcessUserOperationWakesPushOutboxNotifier(t *testing.T) {
 	}
 }
 
+func TestProcessUserOperationWithEffectsMapsAffectedOutboxes(t *testing.T) {
+	requestPayload := []byte(`{"schema_version":1,"operation_kind":"read_history","out":false}`)
+	requestHash := payload.HashBytes(requestPayload)
+	effectPayload := []byte(`{"schema_version":1,"operation_kind":"read_history","out":true}`)
+	effectHash := payload.HashBytes(effectPayload)
+	responsePayload := []byte(`{"schema_version":1,"pts":15,"pts_count":1}`)
+	responseHash := payload.HashBytes(responsePayload)
+	notifier := &fakePushOutboxNotifier{}
+	repo := &fakeUserUpdatesRepository{
+		applyResult: &repository.ApplyUserOperationResult{
+			UserID:          1001,
+			OperationID:     "v1:dialog:read_history:user:1001:peer:1002:max:9:auth:0",
+			Pts:             15,
+			PtsCount:        1,
+			ResponsePayload: responsePayload,
+			ResponseHash:    responseHash,
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo, PushOutboxNotifier: notifier})
+
+	got, err := core.UserupdatesProcessUserOperationWithEffects(&userupdates.TLUserupdatesProcessUserOperationWithEffects{
+		Operation: userupdates.MakeTLUserOperation(&userupdates.TLUserOperation{
+			UserId:               1001,
+			BucketId:             7,
+			PartitionId:          3,
+			OperationId:          "v1:dialog:read_history:user:1001:peer:1002:max:9:auth:0",
+			OpType:               repository.OpTypeSendMessage,
+			PeerType:             payload.PeerTypeUser,
+			PeerId:               1002,
+			PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+			PayloadCodec:         repository.PayloadCodecJSON,
+			PayloadHash:          requestHash,
+			Payload:              requestPayload,
+		}),
+		AffectedEffects: []userupdates.AffectedUserOperationClazz{
+			userupdates.MakeTLAffectedUserOperation(&userupdates.TLAffectedUserOperation{
+				RequesterUserId: 1001,
+				DeliveryPolicy:  repository.DeliveryPolicyDurableAsync,
+				OperationKind:   payload.OperationKindReadHistory,
+				Operation: userupdates.MakeTLUserOperation(&userupdates.TLUserOperation{
+					UserId:               1002,
+					BucketId:             8,
+					PartitionId:          4,
+					OperationId:          "v1:dialog:read_history:user:1002:peer:1001:max:9:auth:0",
+					OpType:               repository.OpTypeSendMessage,
+					PeerType:             payload.PeerTypeUser,
+					PeerId:               1001,
+					PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+					PayloadCodec:         repository.PayloadCodecJSON,
+					PayloadHash:          effectHash,
+					Payload:              effectPayload,
+				}),
+			}),
+		},
+	})
+	if err != nil {
+		t.Fatalf("ProcessUserOperationWithEffects returned error: %v", err)
+	}
+	if got.Pts != 15 || got.PtsCount != 1 || got.CurrentPts != 15 {
+		t.Fatalf("unexpected pts result: pts=%d pts_count=%d current_pts=%d", got.Pts, got.PtsCount, got.CurrentPts)
+	}
+	if repo.applyInput.UserID != 1001 ||
+		repo.applyInput.OperationID != "v1:dialog:read_history:user:1001:peer:1002:max:9:auth:0" ||
+		!bytes.Equal(repo.applyInput.PayloadHash, requestHash) ||
+		repo.applyInput.BucketID != 7 ||
+		repo.applyInput.PartitionID != 3 {
+		t.Fatalf("unexpected requester repository input: %+v", repo.applyInput)
+	}
+	if len(repo.applyInput.AffectedOutboxes) != 1 {
+		t.Fatalf("affected outbox count = %d, want 1", len(repo.applyInput.AffectedOutboxes))
+	}
+	gotOutbox := repo.applyInput.AffectedOutboxes[0]
+	if gotOutbox.RequesterUserID != 1001 ||
+		gotOutbox.TargetUserID != 1002 ||
+		gotOutbox.TargetBucketID != 8 ||
+		gotOutbox.TargetPartitionID != 4 ||
+		gotOutbox.OperationID != "v1:dialog:read_history:user:1002:peer:1001:max:9:auth:0" ||
+		gotOutbox.OperationKind != payload.OperationKindReadHistory ||
+		gotOutbox.PeerType != payload.PeerTypeUser ||
+		gotOutbox.PeerID != 1001 ||
+		gotOutbox.PayloadCodec != repository.PayloadCodecJSON ||
+		!bytes.Equal(gotOutbox.Payload, effectPayload) ||
+		!bytes.Equal(gotOutbox.PayloadHash, effectHash) ||
+		gotOutbox.DeliveryPolicy != repository.DeliveryPolicyDurableAsync {
+		t.Fatalf("unexpected affected outbox: %+v", gotOutbox)
+	}
+	if notifier.wakes != 1 {
+		t.Fatalf("notifier wakes = %d, want 1", notifier.wakes)
+	}
+}
+
+func TestProcessUserOperationWithEffectsRejectsUnsupportedPolicy(t *testing.T) {
+	requestPayload := []byte(`{"schema_version":1,"operation_kind":"read_history","out":false}`)
+	requestHash := payload.HashBytes(requestPayload)
+	effectPayload := []byte(`{"schema_version":1,"operation_kind":"read_history","out":true}`)
+	effectHash := payload.HashBytes(effectPayload)
+	core := New(context.Background(), &svc.ServiceContext{Repo: &fakeUserUpdatesRepository{}})
+
+	_, err := core.UserupdatesProcessUserOperationWithEffects(&userupdates.TLUserupdatesProcessUserOperationWithEffects{
+		Operation: userupdates.MakeTLUserOperation(&userupdates.TLUserOperation{
+			UserId:               1001,
+			BucketId:             7,
+			PartitionId:          3,
+			OperationId:          "requester",
+			OpType:               repository.OpTypeSendMessage,
+			PeerType:             payload.PeerTypeUser,
+			PeerId:               1002,
+			PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+			PayloadCodec:         repository.PayloadCodecJSON,
+			PayloadHash:          requestHash,
+			Payload:              requestPayload,
+		}),
+		AffectedEffects: []userupdates.AffectedUserOperationClazz{
+			userupdates.MakeTLAffectedUserOperation(&userupdates.TLAffectedUserOperation{
+				RequesterUserId: 1001,
+				DeliveryPolicy:  repository.DeliveryPolicyBrokerDurableAck,
+				OperationKind:   payload.OperationKindReadHistory,
+				Operation: userupdates.MakeTLUserOperation(&userupdates.TLUserOperation{
+					UserId:               1002,
+					BucketId:             8,
+					PartitionId:          4,
+					OperationId:          "affected",
+					OpType:               repository.OpTypeSendMessage,
+					PeerType:             payload.PeerTypeUser,
+					PeerId:               1001,
+					PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+					PayloadCodec:         repository.PayloadCodecJSON,
+					PayloadHash:          effectHash,
+					Payload:              effectPayload,
+				}),
+			}),
+		},
+	})
+	if !errors.Is(err, userupdates.ErrOperationTerminal) {
+		t.Fatalf("expected ErrOperationTerminal, got %v", err)
+	}
+}
+
 func TestGetOperationResultRejectsMismatchedPayloadHash(t *testing.T) {
 	goodPayload := []byte(`{"good":true}`)
 	badPayload := []byte(`{"good":false}`)
