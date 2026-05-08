@@ -776,7 +776,12 @@ func normalizeDBTestTime(t *testing.T, value any) int64 {
 
 func insertTestPushTask(t *testing.T, ctx context.Context, db *sqlx.DB, taskID int64, status int32, availableAt time.Time) {
 	t.Helper()
-	_, err := db.Exec(ctx, `
+	_, err := db.Exec(ctx, "DELETE FROM push_task_outbox WHERE task_id = ?", taskID)
+	if err != nil {
+		t.Fatalf("clean test push task: %v", err)
+	}
+
+	_, err = db.Exec(ctx, `
 INSERT INTO push_task_outbox
 	(task_id, user_id, pts, push_type, peer_type, peer_id, operation_id,
 	 push_partition_id, task_schema_version, task_codec, task_payload, status,
