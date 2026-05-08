@@ -48,12 +48,12 @@ func TestUserEventFromModelSkipsLegacyDialogPublicUpdateHydration(t *testing.T) 
 }
 
 func TestNeedsLegacyMessageHydrationOnlyForMessageProjectionEvents(t *testing.T) {
-	for _, eventType := range []int32{EventTypeNewMessage, EventTypeReadHistory, EventTypeEditMessage} {
+	for _, eventType := range []int32{EventTypeNewMessage, EventTypeReadHistory, EventTypeUpdatePinnedMessage, EventTypeEditMessage} {
 		if !needsLegacyMessageHydration(eventType) {
 			t.Fatalf("event type %d should need legacy message hydration", eventType)
 		}
 	}
-	for _, eventType := range []int32{EventTypeDialogPublicUpdate, EventTypeMarkDialogUnread, EventTypeScheduledMarker, EventTypeDeleteMessages, EventTypeDeleteHistory, EventTypeUpdatePinnedMessage} {
+	for _, eventType := range []int32{EventTypeDialogPublicUpdate, EventTypeMarkDialogUnread, EventTypeScheduledMarker, EventTypeDeleteMessages, EventTypeDeleteHistory} {
 		if needsLegacyMessageHydration(eventType) {
 			t.Fatalf("event type %d should not need legacy message hydration", eventType)
 		}

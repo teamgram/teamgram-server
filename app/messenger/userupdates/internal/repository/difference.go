@@ -211,6 +211,9 @@ func (r *Repository) hydrateLegacyMessageEvent(ctx context.Context, event UserEv
 		ReadMaxUserMessageID: userMessageID,
 		AuthKeyIdExclude:     old.AuthKeyIdExclude,
 	}
+	if event.EventType == EventTypeUpdatePinnedMessage || old.EventKind == payload.OperationKindUpdatePinnedMessage {
+		next.PinnedUserMessageID = userMessageID
+	}
 	body, err := json.Marshal(next)
 	if err != nil {
 		return UserEvent{}, storageError("marshal hydrated legacy message event", err)
@@ -223,7 +226,7 @@ func (r *Repository) hydrateLegacyMessageEvent(ctx context.Context, event UserEv
 
 func needsLegacyMessageHydration(eventType int32) bool {
 	switch eventType {
-	case EventTypeNewMessage, EventTypeReadHistory, EventTypeEditMessage:
+	case EventTypeNewMessage, EventTypeReadHistory, EventTypeUpdatePinnedMessage, EventTypeEditMessage:
 		return true
 	default:
 		return false

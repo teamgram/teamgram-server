@@ -1142,6 +1142,94 @@ func TestGetDifferenceLegacyMessageHydrationRequiresExactEventPeerSeq(t *testing
 	}
 }
 
+func TestGetDifferenceHydratesLegacyPinnedEventPublicMessageID(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	userID := base + 2521
+	peerID := base + 2522
+	canonicalID := userID*10 + 1
+	repo := NewForTest(db, &testIDGenerator{next: base + 25200}, "local-userupdates")
+
+	legacy := payload.MessageEventV1{
+		SchemaVersion:      payload.MessageEventSchemaVersionV1,
+		EventKind:          payload.OperationKindUpdatePinnedMessage,
+		CanonicalMessageID: canonicalID,
+		MessageID:          9,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             peerID,
+		FromUserID:         userID,
+		ToUserID:           peerID,
+		Date:               int32(time.Now().Unix()),
+		Out:                true,
+	}
+	body := mustMarshalMessageEvent(t, legacy)
+	if _, _, err := repo.models.UserMessageViewsModel.InsertOrUpdate(ctx, &model.UserMessageViews{
+		UserId:             userID,
+		PeerType:           payload.PeerTypeUser,
+		PeerId:             peerID,
+		PeerSeq:            9,
+		UserMessageId:      101,
+		CanonicalMessageId: canonicalID,
+		FromUserId:         userID,
+		Outgoing:           true,
+		MessageKind:        MessageKindText,
+		MessageStatus:      MessageStatusLive,
+		Date:               int64(legacy.Date),
+		ViewSchemaVersion:  payload.MessageEventSchemaVersionV1,
+		ViewPayload:        body,
+	}); err != nil {
+		t.Fatalf("insert message view: %v", err)
+	}
+	if _, _, err := repo.models.UserPtsEventsModel.Insert(ctx, &model.UserPtsEvents{
+		UserId:             userID,
+		Pts:                1,
+		PtsCount:           1,
+		OperationId:        fmt.Sprintf("legacy-pinned-%d", base),
+		OpType:             OpTypeSendMessage,
+		EventType:          EventTypeUpdatePinnedMessage,
+		PeerType:           payload.PeerTypeUser,
+		PeerId:             peerID,
+		CanonicalMessageId: canonicalID,
+		PeerSeq:            9,
+		ActorUserId:        userID,
+		EventSchemaVersion: payload.MessageEventSchemaVersionV1,
+		EventCodec:         PayloadCodecJSON,
+		EventPayload:       body,
+		EventPayloadHash:   payload.HashBytes(body),
+	}); err != nil {
+		t.Fatalf("insert legacy pinned event: %v", err)
+	}
+
+	diff, err := repo.GetDifference(ctx, GetDifferenceInput{UserID: userID, Pts: 0, Limit: 10})
+	if err != nil {
+		t.Fatalf("GetDifference() error = %v", err)
+	}
+	if len(diff.Events) != 1 {
+		t.Fatalf("events len = %d, want 1", len(diff.Events))
+	}
+	got := diff.Events[0]
+	if got.EventSchemaVersion != payload.MessageEventSchemaVersion {
+		t.Fatalf("event schema = %d, want %d", got.EventSchemaVersion, payload.MessageEventSchemaVersion)
+	}
+	var hydrated payload.MessageEventV2
+	if err := json.Unmarshal(got.EventPayload, &hydrated); err != nil {
+		t.Fatalf("decode hydrated event: %v", err)
+	}
+	if hydrated.EventKind != payload.OperationKindUpdatePinnedMessage {
+		t.Fatalf("event kind = %q, want %q", hydrated.EventKind, payload.OperationKindUpdatePinnedMessage)
+	}
+	if hydrated.PeerSeq != 9 {
+		t.Fatalf("peer_seq = %d, want 9", hydrated.PeerSeq)
+	}
+	if hydrated.MessageID != 101 {
+		t.Fatalf("message_id = %d, want public user_message_id 101", hydrated.MessageID)
+	}
+	if hydrated.PinnedUserMessageID != 101 {
+		t.Fatalf("pinned_user_message_id = %d, want public user_message_id 101", hydrated.PinnedUserMessageID)
+	}
+}
+
 func openIntegrationDB(t *testing.T) *sqlx.DB {
 	t.Helper()
 	if testing.Short() {
