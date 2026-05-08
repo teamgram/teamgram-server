@@ -280,6 +280,39 @@ CREATE TABLE IF NOT EXISTS `default_history_ttl` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE IF NOT EXISTS `affected_operation_outbox` (
+  `outbox_id` bigint NOT NULL,
+  `user_id` bigint NOT NULL,
+  `requester_user_id` bigint NOT NULL,
+  `operation_id` varchar(160) COLLATE utf8mb4_general_ci NOT NULL,
+  `op_type` int NOT NULL,
+  `operation_kind` varchar(64) COLLATE utf8mb4_general_ci NOT NULL,
+  `peer_type` int NOT NULL,
+  `peer_id` bigint NOT NULL,
+  `payload_codec` int NOT NULL,
+  `payload_hash` binary(32) NOT NULL,
+  `payload` blob NOT NULL,
+  `delivery_policy` int NOT NULL DEFAULT '3',
+  `status` int NOT NULL,
+  `retry_count` int NOT NULL DEFAULT '0',
+  `available_at` bigint NOT NULL DEFAULT '0',
+  `processing_deadline` bigint NOT NULL DEFAULT '0',
+  `last_error_code` varchar(128) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
+  `last_error_message` varchar(512) COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
+  `bucket_id` int NOT NULL DEFAULT '0',
+  `partition_id` int NOT NULL DEFAULT '0',
+  `owner_token_payload` blob DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`outbox_id`),
+  UNIQUE KEY `uk_user_operation` (`user_id`,`operation_id`),
+  KEY `idx_pending_available` (`status`,`available_at`,`outbox_id`),
+  KEY `idx_requester` (`requester_user_id`,`created_at`),
+  KEY `idx_completed_updated` (`status`,`updated_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE IF NOT EXISTS `delivery_failed_operations` (
   `failed_id` bigint NOT NULL,
   `user_id` bigint NOT NULL,

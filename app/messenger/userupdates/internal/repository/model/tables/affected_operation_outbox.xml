@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="affected_operation_outbox">
+    <operation name="InsertIgnore">
+        <sql>
+            INSERT IGNORE INTO affected_operation_outbox
+                (outbox_id, user_id, requester_user_id, operation_id, op_type, operation_kind, peer_type, peer_id, payload_codec, payload_hash, payload, delivery_policy, status, retry_count, available_at, processing_deadline, last_error_code, last_error_message, bucket_id, partition_id, owner_token_payload)
+            VALUES
+                (:outbox_id, :user_id, :requester_user_id, :operation_id, :op_type, :operation_kind, :peer_type, :peer_id, :payload_codec, :payload_hash, :payload, :delivery_policy, :status, :retry_count, :available_at, :processing_deadline, :last_error_code, :last_error_message, :bucket_id, :partition_id, :owner_token_payload)
+        </sql>
+    </operation>
+
+    <operation name="SelectByUserOperation">
+        <sql>
+            SELECT
+                outbox_id, user_id, requester_user_id, operation_id, op_type, operation_kind, peer_type, peer_id, payload_codec, payload_hash, payload, delivery_policy, status, retry_count, available_at, processing_deadline, last_error_code, last_error_message, bucket_id, partition_id, owner_token_payload
+            FROM
+                affected_operation_outbox
+            WHERE
+                user_id = :user_id AND operation_id = :operation_id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectPending" result_set="list">
+        <params>
+            <param name="availableAt" type="int64" />
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            SELECT
+                outbox_id, user_id, requester_user_id, operation_id, op_type, operation_kind, peer_type, peer_id, payload_codec, payload_hash, payload, delivery_policy, status, retry_count, available_at, processing_deadline, last_error_code, last_error_message, bucket_id, partition_id, owner_token_payload
+            FROM
+                affected_operation_outbox
+            WHERE
+                status = :status AND available_at &lt;= :available_at
+            ORDER BY
+                available_at, outbox_id LIMIT :limit
+        </sql>
+    </operation>
+
+    <operation name="TryMarkProcessing">
+        <params>
+            <param name="pendingStatus" type="int32" />
+            <param name="processingStatus" type="int32" />
+            <param name="now" type="int64" />
+            <param name="processingDeadline" type="int64" />
+        </params>
+        <sql>
+            UPDATE
+                affected_operation_outbox
+            SET
+                status = :processing_status,
+                processing_deadline = :processing_deadline
+            WHERE
+                outbox_id = :outbox_id
+                AND status = :pending_status
+                AND available_at &lt;= :now
+        </sql>
+    </operation>
+
+    <operation name="MarkCompleted">
+        <sql>
+            UPDATE
+                affected_operation_outbox
+            SET
+                status = :status,
+                processing_deadline = 0,
+                last_error_code = '',
+                last_error_message = ''
+            WHERE
+                outbox_id = :outbox_id
+        </sql>
+    </operation>
+
+    <operation name="MarkRetryable">
+        <params>
+            <param name="availableAt" type="int64" />
+        </params>
+        <sql>
+            UPDATE
+                affected_operation_outbox
+            SET
+                status = :status,
+                retry_count = retry_count + 1,
+                available_at = :available_at,
+                processing_deadline = 0,
+                last_error_code = :last_error_code,
+                last_error_message = :last_error_message
+            WHERE
+                outbox_id = :outbox_id
+        </sql>
+    </operation>
+
+    <operation name="MarkFailedTerminal">
+        <sql>
+            UPDATE
+                affected_operation_outbox
+            SET
+                status = :status,
+                processing_deadline = 0,
+                last_error_code = :last_error_code,
+                last_error_message = :last_error_message
+            WHERE
+                outbox_id = :outbox_id
+        </sql>
+    </operation>
+
+    <operation name="ResetExpiredProcessing">
+        <params>
+            <param name="processingStatus" type="int32" />
+            <param name="pendingStatus" type="int32" />
+            <param name="now" type="int64" />
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            UPDATE
+                affected_operation_outbox
+            SET
+                status = :pending_status,
+                available_at = :now,
+                processing_deadline = 0
+            WHERE
+                status = :processing_status
+                AND processing_deadline &gt; 0
+                AND processing_deadline &lt; :now
+            LIMIT :limit
+        </sql>
+    </operation>
+
+    <operation name="SelectTerminalBefore" result_set="list">
+        <params>
+            <param name="completedStatus" type="int32" />
+            <param name="failedTerminalStatus" type="int32" />
+            <param name="beforeUpdatedAt" type="string" />
+            <param name="limit" type="int32" />
+        </params>
+        <sql>
+            SELECT
+                outbox_id, user_id, requester_user_id, operation_id, op_type, operation_kind, peer_type, peer_id, payload_codec, payload_hash, payload, delivery_policy, status, retry_count, available_at, processing_deadline, last_error_code, last_error_message, bucket_id, partition_id, owner_token_payload
+            FROM
+                affected_operation_outbox
+            WHERE
+                status IN (:completed_status, :failed_terminal_status) AND updated_at &lt; :before_updated_at
+            ORDER BY
+                updated_at, outbox_id LIMIT :limit
+        </sql>
+    </operation>
+</table>

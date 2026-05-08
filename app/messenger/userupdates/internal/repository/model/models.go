@@ -15,6 +15,7 @@ import (
 )
 
 type Models struct {
+	AffectedOperationOutboxModel    AffectedOperationOutboxModel
 	DeliveryFailedOperationsModel   DeliveryFailedOperationsModel
 	DialogSideEffectOutboxModel     DialogSideEffectOutboxModel
 	HashTagsModel                   HashTagsModel
@@ -32,6 +33,7 @@ type Models struct {
 }
 
 type TxModels struct {
+	AffectedOperationOutboxModel    AffectedOperationOutboxTxModel
 	DeliveryFailedOperationsModel   DeliveryFailedOperationsTxModel
 	DialogSideEffectOutboxModel     DialogSideEffectOutboxTxModel
 	HashTagsModel                   HashTagsTxModel
@@ -50,6 +52,7 @@ type TxModels struct {
 
 func NewModels(db *sqlx.DB) *Models {
 	return &Models{
+		AffectedOperationOutboxModel:    NewAffectedOperationOutboxModel(db),
 		DeliveryFailedOperationsModel:   NewDeliveryFailedOperationsModel(db),
 		DialogSideEffectOutboxModel:     NewDialogSideEffectOutboxModel(db),
 		HashTagsModel:                   NewHashTagsModel(db),
@@ -69,6 +72,7 @@ func NewModels(db *sqlx.DB) *Models {
 
 func (m *Models) WithTx(tx *sqlx.Tx) *TxModels {
 	return &TxModels{
+		AffectedOperationOutboxModel:    NewAffectedOperationOutboxTxModel(tx),
 		DeliveryFailedOperationsModel:   NewDeliveryFailedOperationsTxModel(tx),
 		DialogSideEffectOutboxModel:     NewDialogSideEffectOutboxTxModel(tx),
 		HashTagsModel:                   NewHashTagsTxModel(tx),
