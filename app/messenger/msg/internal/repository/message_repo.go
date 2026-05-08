@@ -160,7 +160,16 @@ func (r *Repository) SearchHashTagMessages(ctx context.Context, in SearchHashTag
 	}
 	limit := pagination.NormalizeLimit(in.Limit)
 	likeTag := "%#" + tag + "%"
-	rows, err := r.models.CanonicalQueries.SearchHashTagMessages(ctx, tag, in.UserID, in.PeerType, in.PeerID, MessageStatusLive, int64(in.OffsetID), int64(in.OffsetID), likeTag, limit)
+	var resolvedOffset *ResolvedMessageID
+	if in.OffsetID > 0 {
+		var err error
+		resolvedOffset, err = r.ResolveMessageID(ctx, in.UserID, in.PeerType, in.PeerID, int64(in.OffsetID))
+		if err != nil {
+			return nil, err
+		}
+	}
+	offsetPeerSeq := searchHashTagOffsetPeerSeq(in.OffsetID, resolvedOffset)
+	rows, err := r.models.CanonicalQueries.SearchHashTagMessages(ctx, tag, in.UserID, in.PeerType, in.PeerID, MessageStatusLive, offsetPeerSeq, offsetPeerSeq, likeTag, limit)
 	if err != nil {
 		return nil, storageError("search hashtag messages", err)
 	}
@@ -173,6 +182,13 @@ func (r *Repository) SearchHashTagMessages(ctx context.Context, in SearchHashTag
 		out = append(out, item)
 	}
 	return out, nil
+}
+
+func searchHashTagOffsetPeerSeq(offsetID int32, resolved *ResolvedMessageID) int64 {
+	if offsetID <= 0 || resolved == nil {
+		return 0
+	}
+	return resolved.PeerSeq
 }
 
 func (r *Repository) GetCanonicalMessageByPeerSeq(ctx context.Context, userID int64, peerType int32, peerID int64, peerSeq int64) (*CanonicalMessage, error) {

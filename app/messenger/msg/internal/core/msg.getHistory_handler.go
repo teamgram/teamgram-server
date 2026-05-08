@@ -18,6 +18,9 @@
 package core
 
 import (
+	"fmt"
+	"math"
+
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/pkg/pagination"
@@ -63,12 +66,20 @@ func messagesFromHistory(history []repository.HistoryMessage) (*tg.MessagesMessa
 		if err != nil {
 			return nil, err
 		}
+		messageID, err := historyIDInt32(item.UserMessageID, "history message id")
+		if err != nil {
+			return nil, err
+		}
+		replyTo, err := historyReplyHeader(item.ReplyToUserMessageID)
+		if err != nil {
+			return nil, err
+		}
 		messages = append(messages, tg.MakeTLMessage(&tg.TLMessage{
 			Out:     item.Outgoing,
-			Id:      int32(item.PeerSeq),
+			Id:      messageID,
 			FromId:  tg.MakePeerUser(item.FromUserID),
 			PeerId:  tg.MakePeerUser(item.PeerID),
-			ReplyTo: historyReplyHeader(item.ReplyToPeerSeq),
+			ReplyTo: replyTo,
 			Date:    date,
 			Message: item.MessageText,
 		}))
@@ -80,12 +91,22 @@ func messagesFromHistory(history []repository.HistoryMessage) (*tg.MessagesMessa
 	}).ToMessagesMessages(), nil
 }
 
-func historyReplyHeader(peerSeq int64) tg.MessageReplyHeaderClazz {
-	if peerSeq <= 0 {
-		return nil
+func historyReplyHeader(userMessageID int64) (tg.MessageReplyHeaderClazz, error) {
+	if userMessageID <= 0 {
+		return nil, nil
 	}
-	replyToMsgID := int32(peerSeq)
-	return tg.MakeTLMessageReplyHeader(&tg.TLMessageReplyHeader{ReplyToMsgId: &replyToMsgID})
+	replyToMsgID, err := historyIDInt32(userMessageID, "history reply message id")
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLMessageReplyHeader(&tg.TLMessageReplyHeader{ReplyToMsgId: &replyToMsgID}), nil
+}
+
+func historyIDInt32(v int64, field string) (int32, error) {
+	if v < math.MinInt32 || v > math.MaxInt32 {
+		return 0, fmt.Errorf("%w: %s out of int32 range", msg.ErrMsgStorage, field)
+	}
+	return int32(v), nil
 }
 
 func emptyMsgMessages() *tg.MessagesMessages {
@@ -96,7 +117,7 @@ func emptyMsgMessages() *tg.MessagesMessages {
 func historyMessageIDs(history []repository.HistoryMessage) []int64 {
 	ids := make([]int64, 0, len(history))
 	for _, item := range history {
-		ids = append(ids, item.PeerSeq)
+		ids = append(ids, item.UserMessageID)
 	}
 	return ids
 }

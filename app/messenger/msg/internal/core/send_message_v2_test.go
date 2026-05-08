@@ -503,20 +503,22 @@ func TestMsgGetHistoryReturnsCanonicalTextMessages(t *testing.T) {
 	repo := &fakeMsgRepository{
 		history: []repository.HistoryMessage{
 			{
-				CanonicalMessageID: 9001,
-				PeerSeq:            2,
-				ReplyToPeerSeq:     1,
-				FromUserID:         1001,
-				Outgoing:           true,
-				PeerType:           payload.PeerTypeUser,
-				PeerID:             1002,
-				MessageKind:        repository.MessageKindText,
-				MessageText:        "second",
-				MessageDate:        1_772_000_020,
+				CanonicalMessageID:   9001,
+				PeerSeq:              2,
+				UserMessageID:        102,
+				ReplyToUserMessageID: 101,
+				FromUserID:           1001,
+				Outgoing:             true,
+				PeerType:             payload.PeerTypeUser,
+				PeerID:               1002,
+				MessageKind:          repository.MessageKindText,
+				MessageText:          "second",
+				MessageDate:          1_772_000_020,
 			},
 			{
 				CanonicalMessageID: 9000,
 				PeerSeq:            1,
+				UserMessageID:      101,
 				FromUserID:         1001,
 				Outgoing:           true,
 				PeerType:           payload.PeerTypeUser,
@@ -552,15 +554,15 @@ func TestMsgGetHistoryReturnsCanonicalTextMessages(t *testing.T) {
 	if !ok {
 		t.Fatalf("message[0] = %T, want *tg.TLMessage", messages.Messages[0])
 	}
-	if newest.Id != 2 || newest.Message != "second" || newest.Date != 1_772_000_020 || !newest.Out {
+	if newest.Id != 102 || newest.Message != "second" || newest.Date != 1_772_000_020 || !newest.Out {
 		t.Fatalf("unexpected newest message: %+v", newest)
 	}
 	reply, ok := newest.ReplyTo.(*tg.TLMessageReplyHeader)
 	if !ok {
 		t.Fatalf("newest ReplyTo = %T, want *tg.TLMessageReplyHeader", newest.ReplyTo)
 	}
-	if reply.ReplyToMsgId == nil || *reply.ReplyToMsgId != 1 {
-		t.Fatalf("reply_to_msg_id = %v, want 1", reply.ReplyToMsgId)
+	if reply.ReplyToMsgId == nil || *reply.ReplyToMsgId != 101 {
+		t.Fatalf("reply_to_msg_id = %v, want 101", reply.ReplyToMsgId)
 	}
 	if repo.historyInput.PeerType != payload.PeerTypeUser ||
 		repo.historyInput.UserID != 1001 ||
@@ -578,6 +580,7 @@ func TestMsgGetHistoryUsesViewerScopedOutgoingFlag(t *testing.T) {
 			{
 				CanonicalMessageID: 9201,
 				PeerSeq:            3,
+				UserMessageID:      103,
 				FromUserID:         1002,
 				Outgoing:           false,
 				PeerType:           payload.PeerTypeUser,
@@ -621,6 +624,7 @@ func TestMsgGetHistoryReturnsNotModifiedForMatchingHash(t *testing.T) {
 			{
 				CanonicalMessageID: 9101,
 				PeerSeq:            2,
+				UserMessageID:      102,
 				FromUserID:         1001,
 				PeerType:           payload.PeerTypeUser,
 				PeerID:             1002,
@@ -631,6 +635,7 @@ func TestMsgGetHistoryReturnsNotModifiedForMatchingHash(t *testing.T) {
 			{
 				CanonicalMessageID: 9100,
 				PeerSeq:            1,
+				UserMessageID:      101,
 				FromUserID:         1001,
 				PeerType:           payload.PeerTypeUser,
 				PeerID:             1002,
@@ -647,7 +652,7 @@ func TestMsgGetHistoryReturnsNotModifiedForMatchingHash(t *testing.T) {
 		PeerType: payload.PeerTypeUser,
 		PeerId:   1002,
 		Limit:    20,
-		Hash:     pagination.HashInt64IDs([]int64{2, 1}),
+		Hash:     pagination.HashInt64IDs([]int64{102, 101}),
 	})
 	if err != nil {
 		t.Fatalf("MsgGetHistory() error = %v", err)

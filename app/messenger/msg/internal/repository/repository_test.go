@@ -170,3 +170,20 @@ func TestHistoryPeerSeqBoundsKeepInt64Values(t *testing.T) {
 		t.Fatalf("historyOffsetMarker(%d).OffsetID = %d, want positive marker without int32 cast", bounds.OffsetPeerSeq, got.OffsetID)
 	}
 }
+
+func TestSearchHashTagOffsetUsesResolvedPeerSeq(t *testing.T) {
+	publicOffsetID := int32(42)
+	resolved := &ResolvedMessageID{
+		UserMessageID: int64(publicOffsetID),
+		PeerSeq:       9001,
+	}
+	if got := searchHashTagOffsetPeerSeq(publicOffsetID, resolved); got != 9001 {
+		t.Fatalf("searchHashTagOffsetPeerSeq() = %d, want resolved peer_seq 9001", got)
+	}
+	if got := searchHashTagOffsetPeerSeq(publicOffsetID, nil); got != 0 {
+		t.Fatalf("searchHashTagOffsetPeerSeq(nil) = %d, want 0", got)
+	}
+	if got := searchHashTagOffsetPeerSeq(0, resolved); got != 0 {
+		t.Fatalf("searchHashTagOffsetPeerSeq(0) = %d, want 0", got)
+	}
+}
