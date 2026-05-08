@@ -50,10 +50,11 @@ func (c *MsgCore) MsgReadHistoryV2(in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffe
 		if err != nil {
 			return nil, err
 		}
-		if resolved != nil {
-			maxPeerSeq = resolved.PeerSeq
-			maxUserMessageID = resolved.UserMessageID
+		if resolved == nil {
+			return tg.MakeTLMessagesAffectedMessages(&tg.TLMessagesAffectedMessages{}).ToMessagesAffectedMessages(), nil
 		}
+		maxPeerSeq = resolved.PeerSeq
+		maxUserMessageID = resolved.UserMessageID
 	}
 
 	date := int32(time.Now().Unix())

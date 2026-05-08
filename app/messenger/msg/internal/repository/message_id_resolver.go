@@ -23,6 +23,7 @@ type HistoryCursorBounds struct {
 	OffsetPeerSeq int64
 	MaxPeerSeq    int64
 	MinPeerSeq    int64
+	NoMatch       bool
 }
 
 func (r *Repository) ResolveMessageID(ctx context.Context, userID int64, peerType int32, peerID int64, userMessageID int64) (*ResolvedMessageID, error) {
@@ -66,27 +67,33 @@ func (r *Repository) ResolveHistoryCursorIDs(ctx context.Context, userID int64, 
 		if err != nil {
 			return out, err
 		}
-		if row != nil {
-			out.OffsetPeerSeq = row.PeerSeq
+		if row == nil {
+			out.NoMatch = true
+			return out, nil
 		}
+		out.OffsetPeerSeq = row.PeerSeq
 	}
 	if maxID > 0 {
 		row, err := r.ResolveMessageID(ctx, userID, peerType, peerID, int64(maxID))
 		if err != nil {
 			return out, err
 		}
-		if row != nil {
-			out.MaxPeerSeq = row.PeerSeq
+		if row == nil {
+			out.NoMatch = true
+			return out, nil
 		}
+		out.MaxPeerSeq = row.PeerSeq
 	}
 	if minID > 0 {
 		row, err := r.ResolveMessageID(ctx, userID, peerType, peerID, int64(minID))
 		if err != nil {
 			return out, err
 		}
-		if row != nil {
-			out.MinPeerSeq = row.PeerSeq
+		if row == nil {
+			out.NoMatch = true
+			return out, nil
 		}
+		out.MinPeerSeq = row.PeerSeq
 	}
 	return out, nil
 }

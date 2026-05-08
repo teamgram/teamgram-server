@@ -637,6 +637,47 @@ func TestMsgGetHistoryUsesViewerScopedOutgoingFlag(t *testing.T) {
 	}
 }
 
+func TestMsgGetHistoryMissingPublicCursorReturnsEmpty(t *testing.T) {
+	repo := &fakeMsgRepository{
+		historyCursorBounds: repository.HistoryCursorBounds{NoMatch: true},
+		history: []repository.HistoryMessage{
+			{
+				CanonicalMessageID: 9202,
+				PeerSeq:            4,
+				UserMessageID:      104,
+				FromUserID:         1002,
+				PeerType:           payload.PeerTypeUser,
+				PeerID:             1001,
+				MessageKind:        repository.MessageKindText,
+				MessageText:        "must not leak across unresolved cursor",
+				MessageDate:        1_772_000_040,
+			},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.MsgGetHistory(&msgpb.TLMsgGetHistory{
+		UserId:   1001,
+		PeerType: payload.PeerTypeUser,
+		PeerId:   1002,
+		MaxId:    999,
+		Limit:    20,
+	})
+	if err != nil {
+		t.Fatalf("MsgGetHistory() error = %v", err)
+	}
+	messages, ok := got.ToMessagesMessages()
+	if !ok {
+		t.Fatalf("expected messages.messages, got %s", got.ClazzName())
+	}
+	if len(messages.Messages) != 0 {
+		t.Fatalf("messages len = %d, want empty for unresolved positive public cursor", len(messages.Messages))
+	}
+	if !repo.historyInput.ResolvedCursorBounds.NoMatch || repo.resolveHistoryInput.maxID != 999 {
+		t.Fatalf("history no-match bounds not propagated: input=%+v resolved=%+v", repo.historyInput, repo.resolveHistoryInput)
+	}
+}
+
 func TestMsgGetHistoryReturnsNotModifiedForMatchingHash(t *testing.T) {
 	repo := &fakeMsgRepository{
 		history: []repository.HistoryMessage{
@@ -712,8 +753,8 @@ func TestMsgReadHistoryV2ReturnsAffectedMessagesAck(t *testing.T) {
 		}),
 	}
 	repo := &fakeMsgRepository{
-		resolveByUserMessageID: map[int64]*repository.ResolvedMessageID{
-			102: {
+		resolveByUserMessageID: map[resolveMessageKey]*repository.ResolvedMessageID{
+			{userID: 1001, peerType: payload.PeerTypeUser, peerID: 1002, userMessageID: 102}: {
 				UserID:             1001,
 				PeerType:           payload.PeerTypeUser,
 				PeerID:             1002,
@@ -793,6 +834,37 @@ func TestMsgReadHistoryV2ReturnsAffectedMessagesAck(t *testing.T) {
 	}
 }
 
+func TestMsgReadHistoryV2MissingPublicMaxIDNoopsWithoutPTS(t *testing.T) {
+	updatesClient := &fakeUserUpdatesClient{}
+	repo := &fakeMsgRepository{
+		resolveByUserMessageID: map[resolveMessageKey]*repository.ResolvedMessageID{},
+	}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:        repo,
+		UserUpdates: updatesClient,
+	})
+
+	got, err := core.MsgReadHistoryV2(&msgpb.TLMsgReadHistoryV2{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    1002,
+		MaxId:     102,
+	})
+	if err != nil {
+		t.Fatalf("MsgReadHistoryV2() error = %v", err)
+	}
+	if got == nil || got.Pts != 0 || got.PtsCount != 0 {
+		t.Fatalf("affected messages = %+v, want no-op pts=0 pts_count=0", got)
+	}
+	if updatesClient.processed != nil || updatesClient.processWithEffects != nil || len(updatesClient.processedList) != 0 {
+		t.Fatalf("missing public max_id dispatched side effects: processed=%+v with_effects=%+v list=%d", updatesClient.processed, updatesClient.processWithEffects, len(updatesClient.processedList))
+	}
+	if repo.resolveInput.UserID != 1001 || repo.resolveInput.PeerType != payload.PeerTypeUser || repo.resolveInput.PeerID != 1002 || repo.resolveInput.UserMessageID != 102 {
+		t.Fatalf("resolve input = %+v, want requester scoped public id", repo.resolveInput)
+	}
+}
+
 func TestMsgReadHistoryV2SkipsSelfAffectedOutbox(t *testing.T) {
 	updatesClient := &fakeUserUpdatesClient{
 		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
@@ -804,8 +876,20 @@ func TestMsgReadHistoryV2SkipsSelfAffectedOutbox(t *testing.T) {
 			CurrentPts:  16,
 		}),
 	}
+	repo := &fakeMsgRepository{
+		resolveByUserMessageID: map[resolveMessageKey]*repository.ResolvedMessageID{
+			{userID: 1001, peerType: payload.PeerTypeUser, peerID: 1001, userMessageID: 2}: {
+				UserID:             1001,
+				PeerType:           payload.PeerTypeUser,
+				PeerID:             1001,
+				UserMessageID:      2,
+				PeerSeq:            2,
+				CanonicalMessageID: 7002,
+			},
+		},
+	}
 	core := New(context.Background(), &svc.ServiceContext{
-		Repo:        &fakeMsgRepository{},
+		Repo:        repo,
 		UserUpdates: updatesClient,
 	})
 
@@ -835,8 +919,20 @@ func TestMsgReadHistoryV2ReturnsErrorWhenDurableEffectAcceptFails(t *testing.T) 
 	updatesClient := &fakeUserUpdatesClient{
 		processWithEffectsErr: acceptErr,
 	}
+	repo := &fakeMsgRepository{
+		resolveByUserMessageID: map[resolveMessageKey]*repository.ResolvedMessageID{
+			{userID: 1001, peerType: payload.PeerTypeUser, peerID: 1002, userMessageID: 2}: {
+				UserID:             1001,
+				PeerType:           payload.PeerTypeUser,
+				PeerID:             1002,
+				UserMessageID:      2,
+				PeerSeq:            2,
+				CanonicalMessageID: 7002,
+			},
+		},
+	}
 	core := New(context.Background(), &svc.ServiceContext{
-		Repo:        &fakeMsgRepository{},
+		Repo:        repo,
 		UserUpdates: updatesClient,
 	})
 
@@ -1262,7 +1358,7 @@ type fakeMsgRepository struct {
 		minID    int32
 	}
 	resolvedMessageID      *repository.ResolvedMessageID
-	resolveByUserMessageID map[int64]*repository.ResolvedMessageID
+	resolveByUserMessageID map[resolveMessageKey]*repository.ResolvedMessageID
 	resolveInput           repository.ResolvedMessageID
 	markCanonicalErr       error
 	markSenderErrs         []error
@@ -1271,6 +1367,13 @@ type fakeMsgRepository struct {
 	markReceiverAckedCalls int
 	markCompletedCalls     int
 	markRetryableCalls     int
+}
+
+type resolveMessageKey struct {
+	userID        int64
+	peerType      int32
+	peerID        int64
+	userMessageID int64
 }
 
 func (f *fakeMsgRepository) CreateOrLoadSendState(context.Context, repository.CreateSendStateInput) (*repository.SendState, error) {
@@ -1290,6 +1393,9 @@ func (f *fakeMsgRepository) GetCanonicalMessageByPeerSeq(context.Context, int64,
 
 func (f *fakeMsgRepository) ListHistoryMessages(_ context.Context, in repository.ListHistoryMessagesInput) ([]repository.HistoryMessage, error) {
 	f.historyInput = in
+	if in.ResolvedCursorBounds.NoMatch {
+		return []repository.HistoryMessage{}, nil
+	}
 	return f.history, nil
 }
 
@@ -1301,7 +1407,12 @@ func (f *fakeMsgRepository) ResolveMessageID(_ context.Context, userID int64, pe
 		UserMessageID: userMessageID,
 	}
 	if f.resolveByUserMessageID != nil {
-		return f.resolveByUserMessageID[userMessageID], nil
+		return f.resolveByUserMessageID[resolveMessageKey{
+			userID:        userID,
+			peerType:      peerType,
+			peerID:        peerID,
+			userMessageID: userMessageID,
+		}], nil
 	}
 	return f.resolvedMessageID, nil
 }

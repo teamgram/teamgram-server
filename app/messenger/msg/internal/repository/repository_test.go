@@ -171,6 +171,13 @@ func TestHistoryPeerSeqBoundsKeepInt64Values(t *testing.T) {
 	}
 }
 
+func TestHistoryPeerSeqBoundsNoMatchExcludesAllRows(t *testing.T) {
+	bounds := HistoryCursorBounds{NoMatch: true}
+	if historyMessageWithinBounds(1, bounds) {
+		t.Fatalf("historyMessageWithinBounds() = true, want false for unresolved positive public cursor")
+	}
+}
+
 func TestSearchHashTagOffsetUsesResolvedPeerSeq(t *testing.T) {
 	publicOffsetID := int32(42)
 	resolved := &ResolvedMessageID{

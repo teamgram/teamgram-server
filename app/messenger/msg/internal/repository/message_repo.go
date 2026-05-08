@@ -128,6 +128,9 @@ func (r *Repository) ListHistoryMessages(ctx context.Context, in ListHistoryMess
 			return nil, err
 		}
 	}
+	if bounds.NoMatch {
+		return []HistoryMessage{}, nil
+	}
 
 	limit := pagination.NormalizeLimit(in.Limit)
 	offset, err := r.historySliceOffset(ctx, in, bounds.OffsetPeerSeq)
@@ -412,6 +415,9 @@ func historyMessageRowToMessage(r model.HistoryMessageRow, resolveReply replyPub
 }
 
 func historyMessageWithinBounds(peerSeq int64, bounds HistoryCursorBounds) bool {
+	if bounds.NoMatch {
+		return false
+	}
 	if bounds.MaxPeerSeq > 0 && peerSeq >= bounds.MaxPeerSeq {
 		return false
 	}
