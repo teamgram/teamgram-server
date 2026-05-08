@@ -100,6 +100,14 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		sc.closers = append(sc.closers, publisher)
 	}
 
+	if c.AffectedOutboxWorker.Enabled {
+		sc.workers = append(sc.workers, repository.NewAffectedOutboxWorker(repo, repository.AffectedOutboxWorkerOptions{
+			Interval:          time.Duration(c.AffectedOutboxWorker.PollIntervalMs) * time.Millisecond,
+			BatchSize:         c.AffectedOutboxWorker.BatchSize,
+			ProcessingTimeout: time.Duration(c.AffectedOutboxWorker.ProcessingTimeoutMs) * time.Millisecond,
+		}))
+	}
+
 	if c.PushTaskConsumer != nil {
 		authsessionClient := authsessionclient.NewAuthsessionClient(authsessionclient.MustNewKitexClient(c.Authsession))
 		gatewayClient := gatewayclient.NewGatewayClient(gatewayclient.MustNewKitexClient(c.Gateway))

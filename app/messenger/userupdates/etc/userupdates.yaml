@@ -76,3 +76,9 @@ PushOutboxWorker:
   PollInterval: 200
   BatchSize: 100
   PublishingTimeoutMs: 60000
+
+AffectedOutboxWorker:
+  Enabled: true
+  PollIntervalMs: 200
+  BatchSize: 100
+  ProcessingTimeoutMs: 60000

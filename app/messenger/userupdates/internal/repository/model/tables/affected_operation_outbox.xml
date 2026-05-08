@@ -58,6 +58,10 @@
     </operation>
 
     <operation name="MarkCompleted">
+        <params>
+            <param name="processingStatus" type="int32" />
+            <param name="processingDeadline" type="int64" />
+        </params>
         <sql>
             UPDATE
                 affected_operation_outbox
@@ -68,12 +72,16 @@
                 last_error_message = ''
             WHERE
                 outbox_id = :outbox_id
+                AND status = :processing_status
+                AND processing_deadline = :processing_deadline
         </sql>
     </operation>
 
     <operation name="MarkRetryable">
         <params>
             <param name="availableAt" type="int64" />
+            <param name="processingStatus" type="int32" />
+            <param name="processingDeadline" type="int64" />
         </params>
         <sql>
             UPDATE
@@ -87,10 +95,16 @@
                 last_error_message = :last_error_message
             WHERE
                 outbox_id = :outbox_id
+                AND status = :processing_status
+                AND processing_deadline = :processing_deadline
         </sql>
     </operation>
 
     <operation name="MarkFailedTerminal">
+        <params>
+            <param name="processingStatus" type="int32" />
+            <param name="processingDeadline" type="int64" />
+        </params>
         <sql>
             UPDATE
                 affected_operation_outbox
@@ -101,6 +115,8 @@
                 last_error_message = :last_error_message
             WHERE
                 outbox_id = :outbox_id
+                AND status = :processing_status
+                AND processing_deadline = :processing_deadline
         </sql>
     </operation>
 

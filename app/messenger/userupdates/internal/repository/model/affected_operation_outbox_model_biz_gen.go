@@ -33,9 +33,9 @@ type bizAffectedOperationOutboxModel interface {
 	SelectPending(ctx context.Context, status int32, availableAt int64, limit int32) ([]AffectedOperationOutbox, error)
 	SelectPendingWithCB(ctx context.Context, status int32, availableAt int64, limit int32, cb func(sz, i int, v *AffectedOperationOutbox)) ([]AffectedOperationOutbox, error)
 	TryMarkProcessing(ctx context.Context, processingStatus int32, processingDeadline int64, outboxId int64, pendingStatus int32, now int64) (rowsAffected int64, err error)
-	MarkCompleted(ctx context.Context, status int32, outboxId int64) (rowsAffected int64, err error)
-	MarkRetryable(ctx context.Context, status int32, availableAt int64, lastErrorCode string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error)
-	MarkFailedTerminal(ctx context.Context, status int32, lastErrorCode string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error)
+	MarkCompleted(ctx context.Context, status int32, outboxId int64, processingStatus int32, processingDeadline int64) (rowsAffected int64, err error)
+	MarkRetryable(ctx context.Context, status int32, availableAt int64, lastErrorCode string, lastErrorMessage string, outboxId int64, processingStatus int32, processingDeadline int64) (rowsAffected int64, err error)
+	MarkFailedTerminal(ctx context.Context, status int32, lastErrorCode string, lastErrorMessage string, outboxId int64, processingStatus int32, processingDeadline int64) (rowsAffected int64, err error)
 	ResetExpiredProcessing(ctx context.Context, pendingStatus int32, now int64, processingStatus int32, limit int32) (rowsAffected int64, err error)
 	SelectTerminalBefore(ctx context.Context, completedStatus int32, failedTerminalStatus int32, beforeUpdatedAt string, limit int32) ([]AffectedOperationOutbox, error)
 	SelectTerminalBeforeWithCB(ctx context.Context, completedStatus int32, failedTerminalStatus int32, beforeUpdatedAt string, limit int32, cb func(sz, i int, v *AffectedOperationOutbox)) ([]AffectedOperationOutbox, error)
@@ -46,9 +46,9 @@ type AffectedOperationOutboxTxModel interface {
 	SelectByUserOperation(userId int64, operationId string) (*AffectedOperationOutbox, error)
 	SelectPending(status int32, availableAt int64, limit int32) ([]AffectedOperationOutbox, error)
 	TryMarkProcessing(processingStatus int32, processingDeadline int64, outboxId int64, pendingStatus int32, now int64) (rowsAffected int64, err error)
-	MarkCompleted(status int32, outboxId int64) (rowsAffected int64, err error)
-	MarkRetryable(status int32, availableAt int64, lastErrorCode string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error)
-	MarkFailedTerminal(status int32, lastErrorCode string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error)
+	MarkCompleted(status int32, outboxId int64, processingStatus int32, processingDeadline int64) (rowsAffected int64, err error)
+	MarkRetryable(status int32, availableAt int64, lastErrorCode string, lastErrorMessage string, outboxId int64, processingStatus int32, processingDeadline int64) (rowsAffected int64, err error)
+	MarkFailedTerminal(status int32, lastErrorCode string, lastErrorMessage string, outboxId int64, processingStatus int32, processingDeadline int64) (rowsAffected int64, err error)
 	ResetExpiredProcessing(pendingStatus int32, now int64, processingStatus int32, limit int32) (rowsAffected int64, err error)
 	SelectTerminalBefore(completedStatus int32, failedTerminalStatus int32, beforeUpdatedAt string, limit int32) ([]AffectedOperationOutbox, error)
 }
@@ -296,15 +296,15 @@ func (m *defaultAffectedOperationOutboxTxModel) TryMarkProcessing(processingStat
 }
 
 // MarkCompleted
-// update affected_operation_outbox set `status` = :status, processing_deadline = 0, last_error_code = ”, last_error_message = ” where outbox_id = :outbox_id
-func (m *defaultAffectedOperationOutboxModel) MarkCompleted(ctx context.Context, status int32, outboxId int64) (rowsAffected int64, err error) {
+// update affected_operation_outbox set `status` = :status, processing_deadline = 0, last_error_code = ”, last_error_message = ” where outbox_id = :outbox_id and `status` = :processing_status and processing_deadline = :processing_deadline
+func (m *defaultAffectedOperationOutboxModel) MarkCompleted(ctx context.Context, status int32, outboxId int64, processingStatus int32, processingDeadline int64) (rowsAffected int64, err error) {
 
 	var (
-		query   = "update affected_operation_outbox set `status` = ?, processing_deadline = 0, last_error_code = '', last_error_message = '' where outbox_id = ?"
+		query   = "update affected_operation_outbox set `status` = ?, processing_deadline = 0, last_error_code = '', last_error_message = '' where outbox_id = ? and `status` = ? and processing_deadline = ?"
 		rResult sql.Result
 	)
 
-	rResult, err = m.db.Exec(ctx, query, status, outboxId)
+	rResult, err = m.db.Exec(ctx, query, status, outboxId, processingStatus, processingDeadline)
 
 	if err != nil {
 		err = fmt.Errorf("affected_operation_outbox.MarkCompleted exec: %w", err)
@@ -321,13 +321,13 @@ func (m *defaultAffectedOperationOutboxModel) MarkCompleted(ctx context.Context,
 }
 
 // MarkCompleted
-// update affected_operation_outbox set `status` = :status, processing_deadline = 0, last_error_code = ”, last_error_message = ” where outbox_id = :outbox_id
-func (m *defaultAffectedOperationOutboxTxModel) MarkCompleted(status int32, outboxId int64) (rowsAffected int64, err error) {
+// update affected_operation_outbox set `status` = :status, processing_deadline = 0, last_error_code = ”, last_error_message = ” where outbox_id = :outbox_id and `status` = :processing_status and processing_deadline = :processing_deadline
+func (m *defaultAffectedOperationOutboxTxModel) MarkCompleted(status int32, outboxId int64, processingStatus int32, processingDeadline int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update affected_operation_outbox set `status` = ?, processing_deadline = 0, last_error_code = '', last_error_message = '' where outbox_id = ?"
+		query   = "update affected_operation_outbox set `status` = ?, processing_deadline = 0, last_error_code = '', last_error_message = '' where outbox_id = ? and `status` = ? and processing_deadline = ?"
 		rResult sql.Result
 	)
-	rResult, err = m.tx.Exec(query, status, outboxId)
+	rResult, err = m.tx.Exec(query, status, outboxId, processingStatus, processingDeadline)
 
 	if err != nil {
 		err = fmt.Errorf("affected_operation_outbox.MarkCompleted exec: %w", err)
@@ -344,15 +344,15 @@ func (m *defaultAffectedOperationOutboxTxModel) MarkCompleted(status int32, outb
 }
 
 // MarkRetryable
-// update affected_operation_outbox set `status` = :status, retry_count = retry_count + 1, available_at = :available_at, processing_deadline = 0, last_error_code = :last_error_code, last_error_message = :last_error_message where outbox_id = :outbox_id
-func (m *defaultAffectedOperationOutboxModel) MarkRetryable(ctx context.Context, status int32, availableAt int64, lastErrorCode string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error) {
+// update affected_operation_outbox set `status` = :status, retry_count = retry_count + 1, available_at = :available_at, processing_deadline = 0, last_error_code = :last_error_code, last_error_message = :last_error_message where outbox_id = :outbox_id and `status` = :processing_status and processing_deadline = :processing_deadline
+func (m *defaultAffectedOperationOutboxModel) MarkRetryable(ctx context.Context, status int32, availableAt int64, lastErrorCode string, lastErrorMessage string, outboxId int64, processingStatus int32, processingDeadline int64) (rowsAffected int64, err error) {
 
 	var (
-		query   = "update affected_operation_outbox set `status` = ?, retry_count = retry_count + 1, available_at = ?, processing_deadline = 0, last_error_code = ?, last_error_message = ? where outbox_id = ?"
+		query   = "update affected_operation_outbox set `status` = ?, retry_count = retry_count + 1, available_at = ?, processing_deadline = 0, last_error_code = ?, last_error_message = ? where outbox_id = ? and `status` = ? and processing_deadline = ?"
 		rResult sql.Result
 	)
 
-	rResult, err = m.db.Exec(ctx, query, status, availableAt, lastErrorCode, lastErrorMessage, outboxId)
+	rResult, err = m.db.Exec(ctx, query, status, availableAt, lastErrorCode, lastErrorMessage, outboxId, processingStatus, processingDeadline)
 
 	if err != nil {
 		err = fmt.Errorf("affected_operation_outbox.MarkRetryable exec: %w", err)
@@ -369,13 +369,13 @@ func (m *defaultAffectedOperationOutboxModel) MarkRetryable(ctx context.Context,
 }
 
 // MarkRetryable
-// update affected_operation_outbox set `status` = :status, retry_count = retry_count + 1, available_at = :available_at, processing_deadline = 0, last_error_code = :last_error_code, last_error_message = :last_error_message where outbox_id = :outbox_id
-func (m *defaultAffectedOperationOutboxTxModel) MarkRetryable(status int32, availableAt int64, lastErrorCode string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error) {
+// update affected_operation_outbox set `status` = :status, retry_count = retry_count + 1, available_at = :available_at, processing_deadline = 0, last_error_code = :last_error_code, last_error_message = :last_error_message where outbox_id = :outbox_id and `status` = :processing_status and processing_deadline = :processing_deadline
+func (m *defaultAffectedOperationOutboxTxModel) MarkRetryable(status int32, availableAt int64, lastErrorCode string, lastErrorMessage string, outboxId int64, processingStatus int32, processingDeadline int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update affected_operation_outbox set `status` = ?, retry_count = retry_count + 1, available_at = ?, processing_deadline = 0, last_error_code = ?, last_error_message = ? where outbox_id = ?"
+		query   = "update affected_operation_outbox set `status` = ?, retry_count = retry_count + 1, available_at = ?, processing_deadline = 0, last_error_code = ?, last_error_message = ? where outbox_id = ? and `status` = ? and processing_deadline = ?"
 		rResult sql.Result
 	)
-	rResult, err = m.tx.Exec(query, status, availableAt, lastErrorCode, lastErrorMessage, outboxId)
+	rResult, err = m.tx.Exec(query, status, availableAt, lastErrorCode, lastErrorMessage, outboxId, processingStatus, processingDeadline)
 
 	if err != nil {
 		err = fmt.Errorf("affected_operation_outbox.MarkRetryable exec: %w", err)
@@ -392,15 +392,15 @@ func (m *defaultAffectedOperationOutboxTxModel) MarkRetryable(status int32, avai
 }
 
 // MarkFailedTerminal
-// update affected_operation_outbox set `status` = :status, processing_deadline = 0, last_error_code = :last_error_code, last_error_message = :last_error_message where outbox_id = :outbox_id
-func (m *defaultAffectedOperationOutboxModel) MarkFailedTerminal(ctx context.Context, status int32, lastErrorCode string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error) {
+// update affected_operation_outbox set `status` = :status, processing_deadline = 0, last_error_code = :last_error_code, last_error_message = :last_error_message where outbox_id = :outbox_id and `status` = :processing_status and processing_deadline = :processing_deadline
+func (m *defaultAffectedOperationOutboxModel) MarkFailedTerminal(ctx context.Context, status int32, lastErrorCode string, lastErrorMessage string, outboxId int64, processingStatus int32, processingDeadline int64) (rowsAffected int64, err error) {
 
 	var (
-		query   = "update affected_operation_outbox set `status` = ?, processing_deadline = 0, last_error_code = ?, last_error_message = ? where outbox_id = ?"
+		query   = "update affected_operation_outbox set `status` = ?, processing_deadline = 0, last_error_code = ?, last_error_message = ? where outbox_id = ? and `status` = ? and processing_deadline = ?"
 		rResult sql.Result
 	)
 
-	rResult, err = m.db.Exec(ctx, query, status, lastErrorCode, lastErrorMessage, outboxId)
+	rResult, err = m.db.Exec(ctx, query, status, lastErrorCode, lastErrorMessage, outboxId, processingStatus, processingDeadline)
 
 	if err != nil {
 		err = fmt.Errorf("affected_operation_outbox.MarkFailedTerminal exec: %w", err)
@@ -417,13 +417,13 @@ func (m *defaultAffectedOperationOutboxModel) MarkFailedTerminal(ctx context.Con
 }
 
 // MarkFailedTerminal
-// update affected_operation_outbox set `status` = :status, processing_deadline = 0, last_error_code = :last_error_code, last_error_message = :last_error_message where outbox_id = :outbox_id
-func (m *defaultAffectedOperationOutboxTxModel) MarkFailedTerminal(status int32, lastErrorCode string, lastErrorMessage string, outboxId int64) (rowsAffected int64, err error) {
+// update affected_operation_outbox set `status` = :status, processing_deadline = 0, last_error_code = :last_error_code, last_error_message = :last_error_message where outbox_id = :outbox_id and `status` = :processing_status and processing_deadline = :processing_deadline
+func (m *defaultAffectedOperationOutboxTxModel) MarkFailedTerminal(status int32, lastErrorCode string, lastErrorMessage string, outboxId int64, processingStatus int32, processingDeadline int64) (rowsAffected int64, err error) {
 	var (
-		query   = "update affected_operation_outbox set `status` = ?, processing_deadline = 0, last_error_code = ?, last_error_message = ? where outbox_id = ?"
+		query   = "update affected_operation_outbox set `status` = ?, processing_deadline = 0, last_error_code = ?, last_error_message = ? where outbox_id = ? and `status` = ? and processing_deadline = ?"
 		rResult sql.Result
 	)
-	rResult, err = m.tx.Exec(query, status, lastErrorCode, lastErrorMessage, outboxId)
+	rResult, err = m.tx.Exec(query, status, lastErrorCode, lastErrorMessage, outboxId, processingStatus, processingDeadline)
 
 	if err != nil {
 		err = fmt.Errorf("affected_operation_outbox.MarkFailedTerminal exec: %w", err)

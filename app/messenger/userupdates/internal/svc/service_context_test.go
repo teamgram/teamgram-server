@@ -30,6 +30,41 @@ func TestServiceContextDoesNotStartPushWorkerWhenDisabled(t *testing.T) {
 	}
 }
 
+func TestServiceContextDoesNotStartAffectedOutboxWorkerWhenDisabled(t *testing.T) {
+	c := config.Config{
+		AffectedOutboxWorker: config.AffectedOutboxWorkerConf{
+			Enabled: false,
+		},
+	}
+	ctx := NewServiceContext(c)
+	for _, worker := range ctx.workers {
+		if _, ok := worker.(*repository.AffectedOutboxWorker); ok {
+			t.Fatal("affected outbox worker should not be installed when disabled")
+		}
+	}
+}
+
+func TestServiceContextStartsAffectedOutboxWorkerWhenEnabled(t *testing.T) {
+	c := config.Config{
+		AffectedOutboxWorker: config.AffectedOutboxWorkerConf{
+			Enabled:             true,
+			PollIntervalMs:      200,
+			BatchSize:           100,
+			ProcessingTimeoutMs: 60000,
+		},
+	}
+	ctx := NewServiceContext(c)
+	found := false
+	for _, worker := range ctx.workers {
+		if _, ok := worker.(*repository.AffectedOutboxWorker); ok {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatal("affected outbox worker was not installed when enabled")
+	}
+}
+
 type testCloser struct{ closed int }
 
 func (c *testCloser) Close() error {
