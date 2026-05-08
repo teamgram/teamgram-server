@@ -34,9 +34,9 @@ type (
 	userMessageViewsModel interface {
 		Insert2(ctx context.Context, data *UserMessageViews) (sql.Result, error)
 
-		FindOneByUserIdCanonicalMessageId(ctx context.Context, userId int64, canonicalMessageId int64) (*UserMessageViews, error)
-
 		FindOneByUserIdUserMessageId(ctx context.Context, userId int64, userMessageId int64) (*UserMessageViews, error)
+
+		FindOneByUserIdCanonicalMessageId(ctx context.Context, userId int64, canonicalMessageId int64) (*UserMessageViews, error)
 	}
 
 	defaultUserMessageViewsModel struct {
@@ -81,27 +81,6 @@ func (m *defaultUserMessageViewsModel) Insert2(ctx context.Context, data *UserMe
 	return r, nil
 }
 
-func (m *defaultUserMessageViewsModel) FindOneByUserIdCanonicalMessageId(ctx context.Context, userId int64, canonicalMessageId int64) (*UserMessageViews, error) {
-	tableName := "user_message_views"
-	query := fmt.Sprintf("select %s from %s where user_id = ? AND canonical_message_id = ? limit 1", userMessageViewsRows, tableName)
-	var resp UserMessageViews
-
-	err := m.db.QueryRowPartial(ctx, &resp, query, userId, canonicalMessageId)
-
-	if err != nil {
-		if errors.Is(err, sqlx.ErrNotFound) {
-			return nil, &NotFoundError{
-				Resource: "user_message_views",
-				Key:      fmt.Sprintf("user_id=%v,canonical_message_id=%v", userId, canonicalMessageId),
-				Cause:    err,
-			}
-		}
-		return nil, fmt.Errorf("user_message_views.FindOneByUserIdCanonicalMessageId: %w", err)
-	}
-
-	return &resp, nil
-}
-
 func (m *defaultUserMessageViewsModel) FindOneByUserIdUserMessageId(ctx context.Context, userId int64, userMessageId int64) (*UserMessageViews, error) {
 	tableName := "user_message_views"
 	query := fmt.Sprintf("select %s from %s where user_id = ? AND user_message_id = ? limit 1", userMessageViewsRows, tableName)
@@ -118,6 +97,27 @@ func (m *defaultUserMessageViewsModel) FindOneByUserIdUserMessageId(ctx context.
 			}
 		}
 		return nil, fmt.Errorf("user_message_views.FindOneByUserIdUserMessageId: %w", err)
+	}
+
+	return &resp, nil
+}
+
+func (m *defaultUserMessageViewsModel) FindOneByUserIdCanonicalMessageId(ctx context.Context, userId int64, canonicalMessageId int64) (*UserMessageViews, error) {
+	tableName := "user_message_views"
+	query := fmt.Sprintf("select %s from %s where user_id = ? AND canonical_message_id = ? limit 1", userMessageViewsRows, tableName)
+	var resp UserMessageViews
+
+	err := m.db.QueryRowPartial(ctx, &resp, query, userId, canonicalMessageId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "user_message_views",
+				Key:      fmt.Sprintf("user_id=%v,canonical_message_id=%v", userId, canonicalMessageId),
+				Cause:    err,
+			}
+		}
+		return nil, fmt.Errorf("user_message_views.FindOneByUserIdCanonicalMessageId: %w", err)
 	}
 
 	return &resp, nil

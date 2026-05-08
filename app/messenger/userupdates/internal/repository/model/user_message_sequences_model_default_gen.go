@@ -33,10 +33,13 @@ var (
 type (
 	userMessageSequencesModel interface {
 		Insert2(ctx context.Context, data *UserMessageSequences) (sql.Result, error)
-		FindOne(ctx context.Context, userId int64) (*UserMessageSequences, error)
-		FindListByUserIdList(ctx context.Context, userId ...int64) ([]UserMessageSequences, error)
+		FindOne(ctx context.Context, id int64) (*UserMessageSequences, error)
+		FindListByIdList(ctx context.Context, id ...int64) ([]UserMessageSequences, error)
 		Update2(ctx context.Context, data *UserMessageSequences) error
-		Delete2(ctx context.Context, userId int64) error
+		Delete2(ctx context.Context, id int64) error
+
+		FindOneByUserId(ctx context.Context, userId int64) (*UserMessageSequences, error)
+		FindListByUserIdList(ctx context.Context, userId ...int64) ([]UserMessageSequences, error)
 	}
 
 	defaultUserMessageSequencesModel struct {
@@ -44,6 +47,7 @@ type (
 	}
 
 	UserMessageSequences struct {
+		Id                int64 `db:"id" json:"id"`
 		UserId            int64 `db:"user_id" json:"user_id"`
 		NextUserMessageId int64 `db:"next_user_message_id" json:"next_user_message_id"`
 	}
@@ -57,9 +61,9 @@ func newUserMessageSequencesModel(db *sqlx.DB) *defaultUserMessageSequencesModel
 
 func (m *defaultUserMessageSequencesModel) Insert2(ctx context.Context, data *UserMessageSequences) (sql.Result, error) {
 	tableName := "user_message_sequences"
-	query := fmt.Sprintf("insert into `%s` (%s) values (?)", tableName, userMessageSequencesRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?)", tableName, userMessageSequencesRowsExpectAutoSet)
 
-	r, err := m.db.Exec(ctx, query, data.NextUserMessageId)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.NextUserMessageId)
 	if err != nil {
 		return nil, fmt.Errorf("user_message_sequences.Insert2 exec: %w", err)
 	}
@@ -67,11 +71,11 @@ func (m *defaultUserMessageSequencesModel) Insert2(ctx context.Context, data *Us
 	return r, nil
 }
 
-func (m *defaultUserMessageSequencesModel) Delete2(ctx context.Context, userId int64) error {
+func (m *defaultUserMessageSequencesModel) Delete2(ctx context.Context, id int64) error {
 	tableName := "user_message_sequences"
-	query := fmt.Sprintf("delete from `%s` where `user_id` = ?", tableName)
+	query := fmt.Sprintf("delete from `%s` where `id` = ?", tableName)
 
-	_, err := m.db.Exec(ctx, query, userId)
+	_, err := m.db.Exec(ctx, query, id)
 	if err != nil {
 		return fmt.Errorf("user_message_sequences.Delete2 exec: %w", err)
 	}
@@ -79,7 +83,60 @@ func (m *defaultUserMessageSequencesModel) Delete2(ctx context.Context, userId i
 	return nil
 }
 
-func (m *defaultUserMessageSequencesModel) FindOne(ctx context.Context, userId int64) (*UserMessageSequences, error) {
+func (m *defaultUserMessageSequencesModel) FindOne(ctx context.Context, id int64) (*UserMessageSequences, error) {
+	tableName := "user_message_sequences"
+	query := fmt.Sprintf("select %s from %s where id = ? limit 1", userMessageSequencesRows, tableName)
+	var resp UserMessageSequences
+
+	err := m.db.QueryRowPartial(ctx, &resp, query, id)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "user_message_sequences",
+				Key:      fmt.Sprintf("id=%v", id),
+				Cause:    err,
+			}
+		}
+		return nil, fmt.Errorf("user_message_sequences.FindOne: %w", err)
+	}
+
+	return &resp, nil
+}
+
+func (m *defaultUserMessageSequencesModel) FindListByIdList(ctx context.Context, id ...int64) ([]UserMessageSequences, error) {
+	if len(id) == 0 {
+		return []UserMessageSequences{}, nil
+	}
+	tableName := "user_message_sequences"
+
+	query := fmt.Sprintf("select %s from %s where id in (%s)", userMessageSequencesRows, tableName, sqlx.InInt64List(id))
+
+	var resp []UserMessageSequences
+	err := m.db.QueryRowsPartial(ctx, &resp, query)
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []UserMessageSequences{}, nil
+		}
+		return nil, fmt.Errorf("user_message_sequences.FindListByIdList: %w", err)
+	}
+
+	return resp, nil
+}
+
+func (m *defaultUserMessageSequencesModel) Update2(ctx context.Context, data *UserMessageSequences) error {
+	tableName := "user_message_sequences"
+	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, userMessageSequencesRowsWithPlaceHolder)
+
+	_, err := m.db.Exec(ctx, query, data.UserId, data.NextUserMessageId, data.Id)
+	if err != nil {
+		return fmt.Errorf("user_message_sequences.Update2 exec: %w", err)
+	}
+
+	return nil
+}
+
+func (m *defaultUserMessageSequencesModel) FindOneByUserId(ctx context.Context, userId int64) (*UserMessageSequences, error) {
 	tableName := "user_message_sequences"
 	query := fmt.Sprintf("select %s from %s where user_id = ? limit 1", userMessageSequencesRows, tableName)
 	var resp UserMessageSequences
@@ -94,7 +151,7 @@ func (m *defaultUserMessageSequencesModel) FindOne(ctx context.Context, userId i
 				Cause:    err,
 			}
 		}
-		return nil, fmt.Errorf("user_message_sequences.FindOne: %w", err)
+		return nil, fmt.Errorf("user_message_sequences.FindOneByUserId: %w", err)
 	}
 
 	return &resp, nil
@@ -118,16 +175,4 @@ func (m *defaultUserMessageSequencesModel) FindListByUserIdList(ctx context.Cont
 	}
 
 	return resp, nil
-}
-
-func (m *defaultUserMessageSequencesModel) Update2(ctx context.Context, data *UserMessageSequences) error {
-	tableName := "user_message_sequences"
-	query := fmt.Sprintf("update `%s` set %s where `user_id` = ?", tableName, userMessageSequencesRowsWithPlaceHolder)
-
-	_, err := m.db.Exec(ctx, query, data.NextUserMessageId, data.UserId)
-	if err != nil {
-		return fmt.Errorf("user_message_sequences.Update2 exec: %w", err)
-	}
-
-	return nil
 }

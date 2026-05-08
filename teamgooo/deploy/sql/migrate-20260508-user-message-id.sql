@@ -2,12 +2,47 @@
 -- This migration preserves peer_seq as the internal dialog ordering key.
 
 CREATE TABLE IF NOT EXISTS `user_message_sequences` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
   `user_id` bigint NOT NULL,
   `next_user_message_id` bigint NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`user_id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_user_message_sequences_user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+DROP PROCEDURE IF EXISTS ensure_user_message_sequences_schema;
+DELIMITER $$
+CREATE PROCEDURE ensure_user_message_sequences_schema()
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'user_message_sequences'
+      AND COLUMN_NAME = 'id'
+  ) THEN
+    ALTER TABLE `user_message_sequences`
+      DROP PRIMARY KEY,
+      ADD COLUMN `id` bigint NOT NULL AUTO_INCREMENT FIRST,
+      ADD PRIMARY KEY (`id`),
+      ADD UNIQUE KEY `uk_user_message_sequences_user_id` (`user_id`);
+  ELSEIF NOT EXISTS (
+    SELECT 1
+    FROM information_schema.STATISTICS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'user_message_sequences'
+      AND INDEX_NAME = 'uk_user_message_sequences_user_id'
+  ) THEN
+    ALTER TABLE `user_message_sequences`
+      ADD UNIQUE KEY `uk_user_message_sequences_user_id` (`user_id`);
+  END IF;
+END$$
+DELIMITER ;
+
+CALL ensure_user_message_sequences_schema();
+
+DROP PROCEDURE IF EXISTS ensure_user_message_sequences_schema;
 
 DROP PROCEDURE IF EXISTS add_user_message_id_column_if_missing;
 DELIMITER $$
@@ -140,10 +175,29 @@ BEGIN
 END$$
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS assert_user_message_ids_backfilled;
+DELIMITER $$
+CREATE PROCEDURE assert_user_message_ids_backfilled()
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM user_message_views
+    WHERE user_message_id = 0
+    LIMIT 1
+  ) THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'user_message_views.user_message_id has zero sentinel rows; deploy allocation writers/backfill before adding uk_user_message_id';
+  END IF;
+END$$
+DELIMITER ;
+
+CALL assert_user_message_ids_backfilled();
+
+DROP PROCEDURE IF EXISTS assert_user_message_ids_backfilled;
+
 CALL add_user_message_id_index_if_missing('user_message_views', 'uk_user_message_id', 'UNIQUE KEY `uk_user_message_id` (`user_id`, `user_message_id`)');
 CALL add_user_message_id_index_if_missing('user_message_views', 'uk_user_canonical', 'UNIQUE KEY `uk_user_canonical` (`user_id`, `canonical_message_id`)');
 CALL add_user_message_id_index_if_missing('user_message_views', 'idx_user_peer_message_id', 'KEY `idx_user_peer_message_id` (`user_id`, `peer_type`, `peer_id`, `user_message_id`)');
-CALL add_user_message_id_index_if_missing('user_message_views', 'idx_user_peer_seq', 'KEY `idx_user_peer_seq` (`user_id`, `peer_type`, `peer_id`, `peer_seq`)');
 CALL add_user_message_id_index_if_missing('hash_tags', 'idx_hash_tag_user_message_id', 'KEY `idx_hash_tag_user_message_id` (`user_id`, `hash_tag_user_message_id`)');
 
 DROP PROCEDURE IF EXISTS add_user_message_id_index_if_missing;

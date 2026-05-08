@@ -622,6 +622,7 @@ CREATE TABLE IF NOT EXISTS `hash_tags` (
   `peer_id` bigint NOT NULL,
   `hash_tag` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `hash_tag_message_id` int NOT NULL,
+  `hash_tag_user_message_id` bigint NOT NULL DEFAULT '0',
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -629,7 +630,8 @@ CREATE TABLE IF NOT EXISTS `hash_tags` (
   UNIQUE KEY `user_id_4` (`user_id`,`hash_tag`,`hash_tag_message_id`),
   KEY `user_id` (`user_id`,`hash_tag`),
   KEY `user_id_2` (`user_id`,`peer_type`,`peer_id`,`hash_tag`),
-  KEY `user_id_3` (`user_id`,`hash_tag_message_id`)
+  KEY `user_id_3` (`user_id`,`hash_tag_message_id`),
+  KEY `idx_hash_tag_user_message_id` (`user_id`,`hash_tag_user_message_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1001,23 +1003,28 @@ CREATE TABLE IF NOT EXISTS `user_dialogs` (
   `peer_type` int NOT NULL,
   `peer_id` bigint NOT NULL,
   `top_peer_seq` bigint DEFAULT NULL,
+  `top_user_message_id` bigint NOT NULL DEFAULT '0',
   `top_canonical_message_id` bigint DEFAULT NULL,
   `top_message_date` bigint NOT NULL DEFAULT '0',
   `top_message_status` int NOT NULL DEFAULT '1',
+  `read_inbox_max_peer_seq` bigint NOT NULL DEFAULT '0',
+  `read_inbox_max_user_message_id` bigint NOT NULL DEFAULT '0',
+  `read_outbox_max_peer_seq` bigint NOT NULL DEFAULT '0',
+  `read_outbox_max_user_message_id` bigint NOT NULL DEFAULT '0',
   `unread_count` int NOT NULL DEFAULT '0',
   `unread_mentions_count` int NOT NULL DEFAULT '0',
   `unread_reactions_count` int NOT NULL DEFAULT '0',
   `unread_mark` tinyint(1) NOT NULL DEFAULT '0',
   `pinned_peer_seq` bigint NOT NULL DEFAULT '0',
+  `pinned_user_message_id` bigint NOT NULL DEFAULT '0',
   `pinned_canonical_message_id` bigint NOT NULL DEFAULT '0',
   `has_scheduled` tinyint(1) NOT NULL DEFAULT '0',
   `available_min_peer_seq` bigint NOT NULL DEFAULT '0',
+  `available_min_user_message_id` bigint NOT NULL DEFAULT '0',
   `hidden` tinyint(1) NOT NULL DEFAULT '0',
   `deleted_at` bigint NOT NULL DEFAULT '0',
   `last_pts` bigint NOT NULL DEFAULT '0',
   `last_pts_at` bigint NOT NULL DEFAULT '0',
-  `read_inbox_max_peer_seq` bigint NOT NULL DEFAULT '0',
-  `read_outbox_max_peer_seq` bigint NOT NULL DEFAULT '0',
   `dialog_schema_version` int NOT NULL DEFAULT '1',
   `dialog_payload` blob,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -1045,11 +1052,24 @@ CREATE TABLE IF NOT EXISTS `user_global_privacy_settings` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE IF NOT EXISTS `user_message_sequences` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user_id` bigint NOT NULL,
+  `next_user_message_id` bigint NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_user_message_sequences_user_id` (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE IF NOT EXISTS `user_message_views` (
   `user_id` bigint NOT NULL,
   `peer_type` int NOT NULL,
   `peer_id` bigint NOT NULL,
   `peer_seq` bigint NOT NULL,
+  `user_message_id` bigint NOT NULL DEFAULT '0',
   `canonical_message_id` bigint NOT NULL,
   `from_user_id` bigint NOT NULL,
   `outgoing` tinyint(1) NOT NULL,
@@ -1064,7 +1084,9 @@ CREATE TABLE IF NOT EXISTS `user_message_views` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_id`,`peer_type`,`peer_id`,`peer_seq`),
+  UNIQUE KEY `uk_user_message_id` (`user_id`,`user_message_id`),
   UNIQUE KEY `uk_user_canonical` (`user_id`,`canonical_message_id`),
+  KEY `idx_user_peer_message_id` (`user_id`,`peer_type`,`peer_id`,`user_message_id`),
   KEY `idx_user_peer_date` (`user_id`,`peer_type`,`peer_id`,`date`),
   KEY `idx_user_date` (`user_id`,`date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
