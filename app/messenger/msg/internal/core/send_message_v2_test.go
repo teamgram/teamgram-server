@@ -1249,6 +1249,42 @@ func TestMsgSearchHashtagDelegatesPublicOffsetToRepository(t *testing.T) {
 	}
 }
 
+func TestMsgSearchHashtagMissingPublicOffsetReturnsEmpty(t *testing.T) {
+	repo := &fakeMsgRepository{
+		searchNoMatch: true,
+		history: []repository.HistoryMessage{{
+			UserMessageID: 707,
+			PeerSeq:       7,
+			FromUserID:    1001,
+			PeerType:      payload.PeerTypeUser,
+			PeerID:        1002,
+			MessageKind:   repository.MessageKindText,
+			MessageText:   "#tag first page",
+			MessageDate:   1_772_000_001,
+		}},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.MsgSearchHashtag(&msgpb.TLMsgSearchHashtag{
+		UserId:   1001,
+		PeerType: payload.PeerTypeUser,
+		PeerId:   1002,
+		HashTag:  "#tag",
+		OffsetId: 909,
+		Limit:    20,
+	})
+	if err != nil {
+		t.Fatalf("MsgSearchHashtag() error = %v", err)
+	}
+	messages, ok := got.ToMessagesMessages()
+	if !ok {
+		t.Fatalf("messages = %s, want messages.messages", got.ClazzName())
+	}
+	if len(messages.Messages) != 0 {
+		t.Fatalf("messages len = %d, want empty for missing positive offset", len(messages.Messages))
+	}
+}
+
 func TestTask6DialogOperationIDsUseV2ResolvedIdentity(t *testing.T) {
 	if got := readHistoryOperationID(1001, 1002, 102, 9001); got != "v2:dialog:read_history:user:1001:peer:1002:max_user:102:auth:9001" {
 		t.Fatalf("readHistoryOperationID() = %q", got)
@@ -1353,6 +1389,9 @@ func TestMsgEditMessageV2UpdatesCanonicalAndRoutesOperations(t *testing.T) {
 	if updatesClient.processed == nil || updatesClient.processed.OperationId != editMessageOperationID(7001, 1, 1001) {
 		t.Fatalf("sender edit operation was not sent to userupdates: %+v", updatesClient.processed)
 	}
+	if updatesClient.processed.OperationId != "v2:msg:7001:edit:1:1001" {
+		t.Fatalf("sender edit operation_id = %q, want v2 id", updatesClient.processed.OperationId)
+	}
 	var senderOp payload.MessageOperationV1
 	if err := json.Unmarshal(updatesClient.processed.Payload, &senderOp); err != nil {
 		t.Fatalf("decode sender edit payload: %v", err)
@@ -1363,6 +1402,9 @@ func TestMsgEditMessageV2UpdatesCanonicalAndRoutesOperations(t *testing.T) {
 	if publisher.published.UserID != 1002 || publisher.published.OperationID != editMessageOperationID(7001, 1, 1002) {
 		t.Fatalf("unexpected receiver edit operation: %+v", publisher.published)
 	}
+	if publisher.published.OperationID != "v2:msg:7001:edit:1:1002" {
+		t.Fatalf("receiver edit operation_id = %q, want v2 id", publisher.published.OperationID)
+	}
 }
 
 func TestMsgEditMessageV2OperationIDIncludesEditVersion(t *testing.T) {
@@ -1371,7 +1413,7 @@ func TestMsgEditMessageV2OperationIDIncludesEditVersion(t *testing.T) {
 	if first == second {
 		t.Fatalf("edit operation ids must differ across edit versions: %q", first)
 	}
-	if first != "v1:msg:7001:edit:1:1001" || second != "v1:msg:7001:edit:2:1001" {
+	if first != "v2:msg:7001:edit:1:1001" || second != "v2:msg:7001:edit:2:1001" {
 		t.Fatalf("unexpected edit operation ids: first=%q second=%q", first, second)
 	}
 }
@@ -1531,6 +1573,7 @@ type fakeMsgRepository struct {
 	history             []repository.HistoryMessage
 	historyInput        repository.ListHistoryMessagesInput
 	searchInput         repository.SearchHashTagMessagesInput
+	searchNoMatch       bool
 	historyCursorBounds repository.HistoryCursorBounds
 	resolveHistoryInput struct {
 		userID   int64
@@ -1585,6 +1628,9 @@ func (f *fakeMsgRepository) ListHistoryMessages(_ context.Context, in repository
 
 func (f *fakeMsgRepository) SearchHashTagMessages(_ context.Context, in repository.SearchHashTagMessagesInput) ([]repository.HistoryMessage, error) {
 	f.searchInput = in
+	if f.searchNoMatch && in.OffsetID > 0 {
+		return []repository.HistoryMessage{}, nil
+	}
 	return f.history, nil
 }
 

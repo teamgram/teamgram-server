@@ -184,13 +184,16 @@ func TestSearchHashTagOffsetUsesResolvedPeerSeq(t *testing.T) {
 		UserMessageID: int64(publicOffsetID),
 		PeerSeq:       9001,
 	}
-	if got := searchHashTagOffsetPeerSeq(publicOffsetID, resolved); got != 9001 {
+	got, noMatch := searchHashTagOffsetPeerSeq(publicOffsetID, resolved)
+	if got != 9001 || noMatch {
 		t.Fatalf("searchHashTagOffsetPeerSeq() = %d, want resolved peer_seq 9001", got)
 	}
-	if got := searchHashTagOffsetPeerSeq(publicOffsetID, nil); got != 0 {
-		t.Fatalf("searchHashTagOffsetPeerSeq(nil) = %d, want 0", got)
+	got, noMatch = searchHashTagOffsetPeerSeq(publicOffsetID, nil)
+	if got != 0 || !noMatch {
+		t.Fatalf("searchHashTagOffsetPeerSeq(nil) = (%d, %t), want no-match for positive unresolved offset", got, noMatch)
 	}
-	if got := searchHashTagOffsetPeerSeq(0, resolved); got != 0 {
+	got, noMatch = searchHashTagOffsetPeerSeq(0, resolved)
+	if got != 0 || noMatch {
 		t.Fatalf("searchHashTagOffsetPeerSeq(0) = %d, want 0", got)
 	}
 }

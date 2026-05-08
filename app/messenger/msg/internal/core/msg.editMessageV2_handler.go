@@ -227,5 +227,5 @@ func shortEditMessage(edited *repository.EditMessageResult, result *userupdates.
 }
 
 func editMessageOperationID(canonicalMessageID int64, editVersion int32, userID int64) string {
-	return fmt.Sprintf("v1:msg:%d:edit:%d:%d", canonicalMessageID, editVersion, userID)
+	return fmt.Sprintf("v2:msg:%d:edit:%d:%d", canonicalMessageID, editVersion, userID)
 }
