@@ -1280,6 +1280,27 @@ func TestMsgDeleteMessagesRevokeEnqueuesPeerEffect(t *testing.T) {
 	}
 }
 
+func TestMsgDeleteMessagesRevokeSelfDoesNotEnqueuePeerEffect(t *testing.T) {
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId: 1001, OperationId: deleteMessagesOperationID(1001, 1001, []int32{3}, true, 9001), Status: 1, Pts: 34, PtsCount: 1, CurrentPts: 34,
+		}),
+	}
+	repo := &fakeMsgRepository{
+		resolveManyByUserMessageID: map[int64]*repository.ResolvedMessageID{
+			3: {UserID: 1001, PeerType: payload.PeerTypeUser, PeerID: 1001, UserMessageID: 3, PeerSeq: 3, CanonicalMessageID: 7003},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo, UserUpdates: updatesClient})
+	_, err := core.MsgDeleteMessages(&msgpb.TLMsgDeleteMessages{UserId: 1001, AuthKeyId: 9001, Revoke: true, Id: []int32{3}})
+	if err != nil {
+		t.Fatalf("MsgDeleteMessages() error = %v", err)
+	}
+	if updatesClient.processWithEffects != nil && len(updatesClient.processWithEffects.AffectedEffects) != 0 {
+		t.Fatalf("self delete should not enqueue affected effect: %+v", updatesClient.processWithEffects)
+	}
+}
+
 func TestMsgDeleteMessagesRejectsPeerEmptyWithNonZeroPeerID(t *testing.T) {
 	updatesClient := &fakeUserUpdatesClient{
 		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
