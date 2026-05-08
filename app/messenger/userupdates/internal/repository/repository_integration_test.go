@@ -614,6 +614,144 @@ func TestApplyReadOutboxPreservesIncomingUnreadCount(t *testing.T) {
 	}
 }
 
+func TestGetOutboxReadDateResolvesPublicUserMessageID(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	userID := base + 2171
+	peerID := base + 2172
+	repo := NewForTest(db, &testIDGenerator{next: base + 21700}, "local-userupdates")
+	send := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion:      payload.MessageOperationSchemaVersion,
+		OperationKind:      payload.OperationKindSendMessage,
+		CanonicalMessageID: userID*10 + 1,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             peerID,
+		PeerSeq:            7,
+		FromUserID:         userID,
+		ToUserID:           peerID,
+		Date:               int32(time.Now().Unix()),
+		Out:                true,
+		MessageText:        "outgoing",
+	}, "send-public-read-date")
+	if _, err := repo.ClaimPartitionOwner(ctx, send.PartitionID); err != nil {
+		t.Fatalf("ClaimPartitionOwner() error = %v", err)
+	}
+	if _, err := repo.ApplyUserOperation(ctx, send); err != nil {
+		t.Fatalf("ApplyUserOperation(send) error = %v", err)
+	}
+	view, err := repo.models.UserMessageViewsModel.SelectByUserCanonical(ctx, userID, userID*10+1)
+	if err != nil {
+		t.Fatalf("SelectByUserCanonical() error = %v", err)
+	}
+	if view.UserMessageId == view.PeerSeq {
+		t.Fatalf("test setup requires public id != peer_seq, got %d", view.UserMessageId)
+	}
+
+	readDate := int32(time.Now().Unix())
+	readOutbox := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion:        payload.MessageOperationSchemaVersion,
+		OperationKind:        payload.OperationKindReadHistory,
+		PeerType:             payload.PeerTypeUser,
+		PeerID:               peerID,
+		PeerSeq:              7,
+		ReadOutboxMaxPeerSeq: 7,
+		FromUserID:           peerID,
+		ToUserID:             userID,
+		Date:                 readDate,
+		Out:                  true,
+	}, "read-outbox-public")
+	if _, err := repo.ApplyUserOperation(ctx, readOutbox); err != nil {
+		t.Fatalf("ApplyUserOperation(read outbox) error = %v", err)
+	}
+
+	got, err := repo.GetOutboxReadDate(ctx, OutboxReadDateInput{
+		UserID:   userID,
+		PeerType: payload.PeerTypeUser,
+		PeerID:   peerID,
+		MsgID:    int32(view.UserMessageId),
+	})
+	if err != nil {
+		t.Fatalf("GetOutboxReadDate(public id) error = %v", err)
+	}
+	if got != int64(readDate) {
+		t.Fatalf("read date = %d, want %d", got, readDate)
+	}
+
+	_, err = repo.GetOutboxReadDate(ctx, OutboxReadDateInput{
+		UserID:   userID,
+		PeerType: payload.PeerTypeUser,
+		PeerID:   peerID,
+		MsgID:    int32(view.PeerSeq),
+	})
+	if !errors.Is(err, userupdates.ErrOutboxReadMessageInvalid) {
+		t.Fatalf("GetOutboxReadDate(peer seq input) error = %v, want ErrOutboxReadMessageInvalid", err)
+	}
+}
+
+func TestGetOutboxReadDateSupportsLegacyPeerSeqInput(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	userID := base + 2181
+	peerID := base + 2182
+	repo := NewForTest(db, &testIDGenerator{next: base + 21800}, "local-userupdates")
+	legacyPayload := mustMarshalMessageEvent(t, payload.MessageEventV1{
+		SchemaVersion:      payload.MessageEventSchemaVersionV1,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: userID*10 + 1,
+		MessageID:          9,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             peerID,
+		FromUserID:         userID,
+		ToUserID:           peerID,
+		Date:               int32(time.Now().Unix()),
+		Out:                true,
+		MessageText:        "legacy outgoing",
+	})
+	if _, _, err := repo.models.UserMessageViewsModel.InsertOrUpdate(ctx, &model.UserMessageViews{
+		UserId:             userID,
+		PeerType:           payload.PeerTypeUser,
+		PeerId:             peerID,
+		PeerSeq:            9,
+		UserMessageId:      0,
+		CanonicalMessageId: userID*10 + 1,
+		FromUserId:         userID,
+		Outgoing:           true,
+		MessageKind:        MessageKindText,
+		MessageStatus:      MessageStatusLive,
+		Date:               int64(time.Now().Unix()),
+		ViewSchemaVersion:  payload.MessageEventSchemaVersionV1,
+		ViewPayload:        legacyPayload,
+	}); err != nil {
+		t.Fatalf("InsertOrUpdate(legacy view) error = %v", err)
+	}
+	readDate := int64(time.Now().Unix())
+	if _, _, err := repo.models.MessageReadOutboxModel.InsertOrUpdate(ctx, &model.MessageReadOutbox{
+		UserId:            userID,
+		PeerType:          payload.PeerTypeUser,
+		PeerId:            peerID,
+		ReadUserId:        peerID,
+		ReadOutboxMaxId:   9,
+		ReadOutboxMaxDate: readDate,
+	}); err != nil {
+		t.Fatalf("InsertOrUpdate(read outbox) error = %v", err)
+	}
+
+	got, err := repo.GetOutboxReadDate(ctx, OutboxReadDateInput{
+		UserID:   userID,
+		PeerType: payload.PeerTypeUser,
+		PeerID:   peerID,
+		MsgID:    9,
+	})
+	if err != nil {
+		t.Fatalf("GetOutboxReadDate(legacy peer seq) error = %v", err)
+	}
+	if got != readDate {
+		t.Fatalf("read date = %d, want %d", got, readDate)
+	}
+}
+
 func TestApplyUpdatePinnedMessageWritesProjectionAndPTSEvent(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)
@@ -1131,6 +1269,15 @@ func buildOperationApplyInput(t *testing.T, userID int64, op payload.MessageOper
 		BucketID:     int32(route.BucketID),
 		PartitionID:  int32(route.ReceiverPartitionID),
 	}
+}
+
+func mustMarshalMessageEvent(t *testing.T, event payload.MessageEventV1) []byte {
+	t.Helper()
+	body, err := json.Marshal(event)
+	if err != nil {
+		t.Fatalf("marshal message event: %v", err)
+	}
+	return body
 }
 
 func buildAffectedOutbox(t *testing.T, in ApplyUserOperationInput, targetUserID int64, suffix string) AffectedOutbox {
