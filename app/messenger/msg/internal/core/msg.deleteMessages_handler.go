@@ -27,6 +27,8 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
+const maxInt32 = int32(^uint32(0) >> 1)
+
 // MsgDeleteMessages
 // msg.deleteMessages flags:# user_id:long auth_key_id:long peer_type:int peer_id:long revoke:flags.1?true id:Vector<int> = messages.AffectedMessages;
 func (c *MsgCore) MsgDeleteMessages(in *msg.TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error) {
@@ -63,14 +65,14 @@ func (c *MsgCore) MsgDeleteMessages(in *msg.TLMsgDeleteMessages) (*tg.MessagesAf
 	var finalPTS int64
 	var ptsCount int32
 	for _, group := range groups {
-		body, hashBytes, err := buildDeleteMessagesPayload(in.UserId, in.UserId, group.peerType, group.peerID, group.peerSeqs, group.userMessageIDs, in.Revoke)
+		body, hashBytes, err := buildDeleteMessagesPayload(in.UserId, in.UserId, group.peerType, group.peerID, group.messageDate, group.peerSeqs, group.userMessageIDs, in.Revoke)
 		if err != nil {
 			return nil, err
 		}
 		authKeyID := in.AuthKeyId
 		var effects []OperationEnvelope
 		if in.Revoke && group.peerType == payload.PeerTypeUser && group.peerID != in.UserId {
-			peerBody, peerHash, err := buildDeleteMessagesPayload(in.UserId, group.peerID, group.peerType, in.UserId, group.peerSeqs, nil, in.Revoke)
+			peerBody, peerHash, err := buildDeleteMessagesPayload(in.UserId, group.peerID, group.peerType, in.UserId, group.messageDate, group.peerSeqs, nil, in.Revoke)
 			if err != nil {
 				return nil, err
 			}
@@ -129,6 +131,7 @@ func deleteMessagesPeerSeqOperationID(userID int64, peerID int64, peerSeqs []int
 type deleteMessageGroup struct {
 	peerType       int32
 	peerID         int64
+	messageDate    int32
 	peerSeqs       []int64
 	userMessageIDs []int64
 }
@@ -156,13 +159,16 @@ func groupDeleteMessageIDs(items []repository.ResolvedMessageID, peerType int32,
 			index[key] = groupIndex
 			groups = append(groups, deleteMessageGroup{peerType: item.PeerType, peerID: item.PeerID})
 		}
+		if date := stableDeleteMessageDate(item.MessageDate); date > groups[groupIndex].messageDate {
+			groups[groupIndex].messageDate = date
+		}
 		groups[groupIndex].peerSeqs = append(groups[groupIndex].peerSeqs, item.PeerSeq)
 		groups[groupIndex].userMessageIDs = append(groups[groupIndex].userMessageIDs, item.UserMessageID)
 	}
 	return groups
 }
 
-func buildDeleteMessagesPayload(fromUserID int64, toUserID int64, peerType int32, peerID int64, peerSeqs []int64, userMessageIDs []int64, revoke bool) ([]byte, []byte, error) {
+func buildDeleteMessagesPayload(fromUserID int64, toUserID int64, peerType int32, peerID int64, date int32, peerSeqs []int64, userMessageIDs []int64, revoke bool) ([]byte, []byte, error) {
 	body, err := json.Marshal(payload.MessageOperationV1{
 		SchemaVersion:        payload.MessageOperationSchemaVersion,
 		OperationKind:        payload.OperationKindDeleteMessages,
@@ -170,7 +176,7 @@ func buildDeleteMessagesPayload(fromUserID int64, toUserID int64, peerType int32
 		PeerID:               peerID,
 		FromUserID:           fromUserID,
 		ToUserID:             toUserID,
-		Date:                 0,
+		Date:                 date,
 		DeletePeerSeqs:       peerSeqs,
 		DeleteUserMessageIDs: userMessageIDs,
 		Revoke:               revoke,
@@ -179,6 +185,17 @@ func buildDeleteMessagesPayload(fromUserID int64, toUserID int64, peerType int32
 		return nil, nil, fmt.Errorf("%w: marshal delete messages operation user_id=%d peer_id=%d", msg.ErrMsgStorage, fromUserID, peerID)
 	}
 	return body, payload.HashBytes(body), nil
+}
+
+func stableDeleteMessageDate(messageDate int64) int32 {
+	switch {
+	case messageDate <= 0:
+		return 1
+	case messageDate > int64(maxInt32):
+		return maxInt32
+	default:
+		return int32(messageDate)
+	}
 }
 
 func int64SliceToInt32(values []int64) []int32 {

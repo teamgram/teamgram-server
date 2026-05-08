@@ -1246,11 +1246,12 @@ func TestMsgDeleteMessagesRetryResolvesDeletedViewAndReturnsStoredResult(t *test
 }
 
 func TestBuildDeleteMessagesPayloadUsesStableDateAndHash(t *testing.T) {
-	body1, hash1, err := buildDeleteMessagesPayload(1001, 1001, payload.PeerTypeUser, 1002, []int64{7}, []int64{107}, false)
+	const deleteDate = int32(1_772_000_123)
+	body1, hash1, err := buildDeleteMessagesPayload(1001, 1001, payload.PeerTypeUser, 1002, deleteDate, []int64{7}, []int64{107}, false)
 	if err != nil {
 		t.Fatalf("build payload 1: %v", err)
 	}
-	body2, hash2, err := buildDeleteMessagesPayload(1001, 1001, payload.PeerTypeUser, 1002, []int64{7}, []int64{107}, false)
+	body2, hash2, err := buildDeleteMessagesPayload(1001, 1001, payload.PeerTypeUser, 1002, deleteDate, []int64{7}, []int64{107}, false)
 	if err != nil {
 		t.Fatalf("build payload 2: %v", err)
 	}
@@ -1264,8 +1265,8 @@ func TestBuildDeleteMessagesPayloadUsesStableDateAndHash(t *testing.T) {
 	if err := json.Unmarshal(body1, &op); err != nil {
 		t.Fatalf("decode payload: %v", err)
 	}
-	if op.Date != 0 {
-		t.Fatalf("delete payload date = %d, want deterministic zero", op.Date)
+	if op.Date != deleteDate {
+		t.Fatalf("delete payload date = %d, want stable date %d", op.Date, deleteDate)
 	}
 }
 

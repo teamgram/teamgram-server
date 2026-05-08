@@ -200,6 +200,9 @@ func TestProjectDeleteMessagesForPushUsesSeqZero(t *testing.T) {
 	if updates.Seq != 0 {
 		t.Fatalf("updates seq = %d, want 0", updates.Seq)
 	}
+	if updates.Date != 1_772_000_000 {
+		t.Fatalf("updates date = %d, want event date", updates.Date)
+	}
 	update, ok := updates.Updates[0].(*tg.TLUpdateDeleteMessages)
 	if !ok {
 		t.Fatalf("update = %T, want *tg.TLUpdateDeleteMessages", updates.Updates[0])
