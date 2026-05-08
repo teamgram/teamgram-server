@@ -10,6 +10,7 @@
     <result name="HistoryMessageRow">
         <field name="CanonicalMessageID" type="int64" db="canonical_message_id"/>
         <field name="PeerSeq" type="int64" db="peer_seq"/>
+        <field name="UserMessageID" type="int64" db="user_message_id"/>
         <field name="FromUserID" type="int64" db="from_user_id"/>
         <field name="Outgoing" type="bool" db="outgoing"/>
         <field name="PeerType" type="int32" db="peer_type"/>
@@ -98,6 +99,7 @@
             SELECT
                 v.canonical_message_id,
                 v.peer_seq,
+                v.user_message_id,
                 c.from_user_id,
                 v.outgoing,
                 v.peer_type,
@@ -140,6 +142,7 @@
             SELECT DISTINCT
                 v.canonical_message_id,
                 v.peer_seq,
+                v.user_message_id,
                 c.from_user_id,
                 v.outgoing,
                 v.peer_type,
@@ -160,7 +163,7 @@
                 h.user_id = v.user_id
                 AND h.peer_type = v.peer_type
                 AND h.peer_id = v.peer_id
-                AND h.hash_tag_message_id = v.peer_seq
+                AND h.hash_tag_user_message_id = v.user_message_id
                 AND h.hash_tag = :hash_tag
                 AND h.deleted = 0
             WHERE
@@ -170,7 +173,7 @@
                 AND v.message_status = :message_status
                 AND (:offset_id &lt;= 0 OR v.peer_seq &lt; :offset_id_limit)
                 AND (
-                    h.hash_tag_message_id IS NOT NULL
+                    h.hash_tag_user_message_id IS NOT NULL
                     OR c.message_text LIKE :like_tag
                 )
             ORDER BY
@@ -192,6 +195,7 @@
             SELECT
                 v.canonical_message_id,
                 v.peer_seq,
+                v.user_message_id,
                 c.from_user_id,
                 v.outgoing,
                 v.peer_type,
@@ -290,6 +294,7 @@
             SELECT
                 v.canonical_message_id,
                 v.peer_seq,
+                v.user_message_id,
                 c.from_user_id,
                 v.outgoing,
                 v.peer_type,

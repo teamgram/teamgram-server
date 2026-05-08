@@ -3,10 +3,11 @@
     <operation name="InsertOrUpdate">
         <sql>
             INSERT INTO hash_tags
-                (user_id, peer_type, peer_id, hash_tag, hash_tag_message_id)
+                (user_id, peer_type, peer_id, hash_tag, hash_tag_message_id, hash_tag_user_message_id)
             VALUES
-                (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id)
+                (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id, :hash_tag_user_message_id)
             ON DUPLICATE KEY UPDATE
+                hash_tag_user_message_id = VALUES(hash_tag_user_message_id),
                 deleted = 0
         </sql>
     </operation>

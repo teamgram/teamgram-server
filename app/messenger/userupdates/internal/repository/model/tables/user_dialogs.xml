@@ -3,11 +3,12 @@
     <operation name="InsertOrUpdateMessageEvent">
         <sql>
             INSERT INTO user_dialogs
-                (user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, top_message_status, read_inbox_max_peer_seq, read_outbox_max_peer_seq, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, pinned_peer_seq, pinned_canonical_message_id, has_scheduled, available_min_peer_seq, hidden, deleted_at, last_pts, last_pts_at, dialog_schema_version, dialog_payload)
+                (user_id, peer_type, peer_id, top_peer_seq, top_user_message_id, top_canonical_message_id, top_message_date, top_message_status, read_inbox_max_peer_seq, read_inbox_max_user_message_id, read_outbox_max_peer_seq, read_outbox_max_user_message_id, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, pinned_peer_seq, pinned_user_message_id, pinned_canonical_message_id, has_scheduled, available_min_peer_seq, available_min_user_message_id, hidden, deleted_at, last_pts, last_pts_at, dialog_schema_version, dialog_payload)
             VALUES
-                (:user_id, :peer_type, :peer_id, :top_peer_seq, :top_canonical_message_id, :top_message_date, :top_message_status, :read_inbox_max_peer_seq, :read_outbox_max_peer_seq, :unread_count, :unread_mentions_count, :unread_reactions_count, :unread_mark, :pinned_peer_seq, :pinned_canonical_message_id, :has_scheduled, :available_min_peer_seq, :hidden, :deleted_at, :last_pts, :last_pts_at, :dialog_schema_version, :dialog_payload)
+                (:user_id, :peer_type, :peer_id, :top_peer_seq, :top_user_message_id, :top_canonical_message_id, :top_message_date, :top_message_status, :read_inbox_max_peer_seq, :read_inbox_max_user_message_id, :read_outbox_max_peer_seq, :read_outbox_max_user_message_id, :unread_count, :unread_mentions_count, :unread_reactions_count, :unread_mark, :pinned_peer_seq, :pinned_user_message_id, :pinned_canonical_message_id, :has_scheduled, :available_min_peer_seq, :available_min_user_message_id, :hidden, :deleted_at, :last_pts, :last_pts_at, :dialog_schema_version, :dialog_payload)
             ON DUPLICATE KEY UPDATE
                 top_peer_seq = VALUES(top_peer_seq),
+                top_user_message_id = VALUES(top_user_message_id),
                 top_canonical_message_id = VALUES(top_canonical_message_id),
                 top_message_date = VALUES(top_message_date),
                 top_message_status = VALUES(top_message_status),
@@ -27,7 +28,7 @@
     <operation name="SelectByUserPeer">
         <sql>
             SELECT
-                user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, top_message_status, read_inbox_max_peer_seq, read_outbox_max_peer_seq, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, pinned_peer_seq, pinned_canonical_message_id, has_scheduled, available_min_peer_seq, hidden, deleted_at, last_pts, last_pts_at, dialog_schema_version, dialog_payload
+                user_id, peer_type, peer_id, top_peer_seq, top_user_message_id, top_canonical_message_id, top_message_date, top_message_status, read_inbox_max_peer_seq, read_inbox_max_user_message_id, read_outbox_max_peer_seq, read_outbox_max_user_message_id, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, pinned_peer_seq, pinned_user_message_id, pinned_canonical_message_id, has_scheduled, available_min_peer_seq, available_min_user_message_id, hidden, deleted_at, last_pts, last_pts_at, dialog_schema_version, dialog_payload
             FROM
                 user_dialogs
             WHERE
@@ -41,7 +42,7 @@
         </params>
         <sql>
             SELECT
-                user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, top_message_status, read_inbox_max_peer_seq, read_outbox_max_peer_seq, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, pinned_peer_seq, pinned_canonical_message_id, has_scheduled, available_min_peer_seq, hidden, deleted_at, last_pts, last_pts_at, dialog_schema_version, dialog_payload
+                user_id, peer_type, peer_id, top_peer_seq, top_user_message_id, top_canonical_message_id, top_message_date, top_message_status, read_inbox_max_peer_seq, read_inbox_max_user_message_id, read_outbox_max_peer_seq, read_outbox_max_user_message_id, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, pinned_peer_seq, pinned_user_message_id, pinned_canonical_message_id, has_scheduled, available_min_peer_seq, available_min_user_message_id, hidden, deleted_at, last_pts, last_pts_at, dialog_schema_version, dialog_payload
             FROM
                 user_dialogs
             WHERE
@@ -59,7 +60,7 @@
         </params>
         <sql>
             SELECT
-                user_id, peer_type, peer_id, top_peer_seq, top_canonical_message_id, top_message_date, top_message_status, read_inbox_max_peer_seq, read_outbox_max_peer_seq, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, pinned_peer_seq, pinned_canonical_message_id, has_scheduled, available_min_peer_seq, hidden, deleted_at, last_pts, last_pts_at, dialog_schema_version, dialog_payload
+                user_id, peer_type, peer_id, top_peer_seq, top_user_message_id, top_canonical_message_id, top_message_date, top_message_status, read_inbox_max_peer_seq, read_inbox_max_user_message_id, read_outbox_max_peer_seq, read_outbox_max_user_message_id, unread_count, unread_mentions_count, unread_reactions_count, unread_mark, pinned_peer_seq, pinned_user_message_id, pinned_canonical_message_id, has_scheduled, available_min_peer_seq, available_min_user_message_id, hidden, deleted_at, last_pts, last_pts_at, dialog_schema_version, dialog_payload
             FROM
                 user_dialogs
             WHERE
@@ -87,7 +88,9 @@
                 unread_reactions_count = :unread_reactions_count,
                 unread_mark = :unread_mark,
                 read_inbox_max_peer_seq = :read_inbox_max_peer_seq,
+                read_inbox_max_user_message_id = :read_inbox_max_user_message_id,
                 read_outbox_max_peer_seq = :read_outbox_max_peer_seq,
+                read_outbox_max_user_message_id = :read_outbox_max_user_message_id,
                 last_pts = :last_pts,
                 last_pts_at = :last_pts_at
             WHERE
@@ -101,6 +104,7 @@
                 user_dialogs
             SET
                 pinned_peer_seq = :pinned_peer_seq,
+                pinned_user_message_id = :pinned_user_message_id,
                 pinned_canonical_message_id = :pinned_canonical_message_id,
                 last_pts = :last_pts,
                 last_pts_at = :last_pts_at
@@ -115,6 +119,7 @@
                 user_dialogs
             SET
                 available_min_peer_seq = :available_min_peer_seq,
+                available_min_user_message_id = :available_min_user_message_id,
                 last_pts = :last_pts,
                 last_pts_at = :last_pts_at
             WHERE
@@ -128,6 +133,7 @@
                 user_dialogs
             SET
                 top_peer_seq = 0,
+                top_user_message_id = 0,
                 top_canonical_message_id = 0,
                 top_message_status = :top_message_status,
                 hidden = 1,
@@ -145,6 +151,7 @@
                 user_dialogs
             SET
                 top_peer_seq = :top_peer_seq,
+                top_user_message_id = :top_user_message_id,
                 top_canonical_message_id = :top_canonical_message_id,
                 top_message_date = :top_message_date,
                 top_message_status = :top_message_status,

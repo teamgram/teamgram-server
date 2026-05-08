@@ -44,10 +44,10 @@ func NewHashTagsTxModel(tx *sqlx.Tx) HashTagsTxModel {
 }
 
 // InsertOrUpdate
-// insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id) on duplicate key update deleted = 0
+// insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id, hash_tag_user_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id, :hash_tag_user_message_id) on duplicate key update hash_tag_user_message_id = values(hash_tag_user_message_id), deleted = 0
 func (m *defaultHashTagsModel) InsertOrUpdate(ctx context.Context, data *HashTags) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id) on duplicate key update deleted = 0"
+		query = "insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id, hash_tag_user_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id, :hash_tag_user_message_id) on duplicate key update hash_tag_user_message_id = values(hash_tag_user_message_id), deleted = 0"
 		r     sql.Result
 	)
 
@@ -72,10 +72,10 @@ func (m *defaultHashTagsModel) InsertOrUpdate(ctx context.Context, data *HashTag
 }
 
 // InsertOrUpdate
-// insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id) on duplicate key update deleted = 0
+// insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id, hash_tag_user_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id, :hash_tag_user_message_id) on duplicate key update hash_tag_user_message_id = values(hash_tag_user_message_id), deleted = 0
 func (m *defaultHashTagsTxModel) InsertOrUpdate(data *HashTags) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id) on duplicate key update deleted = 0"
+		query = "insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id, hash_tag_user_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id, :hash_tag_user_message_id) on duplicate key update hash_tag_user_message_id = values(hash_tag_user_message_id), deleted = 0"
 		r     sql.Result
 	)
 

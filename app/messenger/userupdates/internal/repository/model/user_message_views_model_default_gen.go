@@ -35,6 +35,8 @@ type (
 		Insert2(ctx context.Context, data *UserMessageViews) (sql.Result, error)
 
 		FindOneByUserIdCanonicalMessageId(ctx context.Context, userId int64, canonicalMessageId int64) (*UserMessageViews, error)
+
+		FindOneByUserIdUserMessageId(ctx context.Context, userId int64, userMessageId int64) (*UserMessageViews, error)
 	}
 
 	defaultUserMessageViewsModel struct {
@@ -46,6 +48,7 @@ type (
 		PeerType           int32  `db:"peer_type" json:"peer_type"`
 		PeerId             int64  `db:"peer_id" json:"peer_id"`
 		PeerSeq            int64  `db:"peer_seq" json:"peer_seq"`
+		UserMessageId      int64  `db:"user_message_id" json:"user_message_id"`
 		CanonicalMessageId int64  `db:"canonical_message_id" json:"canonical_message_id"`
 		FromUserId         int64  `db:"from_user_id" json:"from_user_id"`
 		Outgoing           bool   `db:"outgoing" json:"outgoing"`
@@ -68,9 +71,9 @@ func newUserMessageViewsModel(db *sqlx.DB) *defaultUserMessageViewsModel {
 
 func (m *defaultUserMessageViewsModel) Insert2(ctx context.Context, data *UserMessageViews) (sql.Result, error) {
 	tableName := "user_message_views"
-	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName, userMessageViewsRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName, userMessageViewsRowsExpectAutoSet)
 
-	r, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.PeerSeq, data.CanonicalMessageId, data.FromUserId, data.Outgoing, data.MessageKind, data.MessageStatus, data.EditVersion, data.Date, data.EditDate, data.DeletedAt, data.ViewSchemaVersion, data.ViewPayload)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.PeerSeq, data.UserMessageId, data.CanonicalMessageId, data.FromUserId, data.Outgoing, data.MessageKind, data.MessageStatus, data.EditVersion, data.Date, data.EditDate, data.DeletedAt, data.ViewSchemaVersion, data.ViewPayload)
 	if err != nil {
 		return nil, fmt.Errorf("user_message_views.Insert2 exec: %w", err)
 	}
@@ -94,6 +97,27 @@ func (m *defaultUserMessageViewsModel) FindOneByUserIdCanonicalMessageId(ctx con
 			}
 		}
 		return nil, fmt.Errorf("user_message_views.FindOneByUserIdCanonicalMessageId: %w", err)
+	}
+
+	return &resp, nil
+}
+
+func (m *defaultUserMessageViewsModel) FindOneByUserIdUserMessageId(ctx context.Context, userId int64, userMessageId int64) (*UserMessageViews, error) {
+	tableName := "user_message_views"
+	query := fmt.Sprintf("select %s from %s where user_id = ? AND user_message_id = ? limit 1", userMessageViewsRows, tableName)
+	var resp UserMessageViews
+
+	err := m.db.QueryRowPartial(ctx, &resp, query, userId, userMessageId)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return nil, &NotFoundError{
+				Resource: "user_message_views",
+				Key:      fmt.Sprintf("user_id=%v,user_message_id=%v", userId, userMessageId),
+				Cause:    err,
+			}
+		}
+		return nil, fmt.Errorf("user_message_views.FindOneByUserIdUserMessageId: %w", err)
 	}
 
 	return &resp, nil

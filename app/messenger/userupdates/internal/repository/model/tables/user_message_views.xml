@@ -3,10 +3,11 @@
     <operation name="InsertOrUpdate">
         <sql>
             INSERT INTO user_message_views
-                (user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload)
+                (user_id, peer_type, peer_id, peer_seq, user_message_id, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload)
             VALUES
-                (:user_id, :peer_type, :peer_id, :peer_seq, :canonical_message_id, :from_user_id, :outgoing, :message_kind, :message_status, :edit_version, :date, :view_schema_version, :view_payload)
+                (:user_id, :peer_type, :peer_id, :peer_seq, :user_message_id, :canonical_message_id, :from_user_id, :outgoing, :message_kind, :message_status, :edit_version, :date, :view_schema_version, :view_payload)
             ON DUPLICATE KEY UPDATE
+                user_message_id = IF(user_message_id &lt;&gt; 0, user_message_id, VALUES(user_message_id)),
                 message_status = VALUES(message_status),
                 edit_version = VALUES(edit_version),
                 view_schema_version = VALUES(view_schema_version),
@@ -17,7 +18,7 @@
     <operation name="SelectByUserCanonical">
         <sql>
             SELECT
-                user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload
+                user_id, peer_type, peer_id, peer_seq, user_message_id, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload
             FROM
                 user_message_views
             WHERE
@@ -28,11 +29,33 @@
     <operation name="SelectByUserPeerSeq">
         <sql>
             SELECT
-                user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload
+                user_id, peer_type, peer_id, peer_seq, user_message_id, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload
             FROM
                 user_message_views
             WHERE
                 user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id AND peer_seq = :peer_seq LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectByUserMessageID">
+        <sql>
+            SELECT
+                user_id, peer_type, peer_id, peer_seq, user_message_id, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload
+            FROM
+                user_message_views
+            WHERE
+                user_id = :user_id AND user_message_id = :user_message_id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectByUserPeerMessageID">
+        <sql>
+            SELECT
+                user_id, peer_type, peer_id, peer_seq, user_message_id, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload
+            FROM
+                user_message_views
+            WHERE
+                user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id AND user_message_id = :user_message_id LIMIT 1
         </sql>
     </operation>
 
@@ -43,7 +66,7 @@
         </params>
         <sql>
             SELECT
-                user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload
+                user_id, peer_type, peer_id, peer_seq, user_message_id, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload
             FROM
                 user_message_views
             WHERE
@@ -83,13 +106,31 @@
     <operation name="SelectTopLiveByUserPeer">
         <sql>
             SELECT
-                user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload
+                user_id, peer_type, peer_id, peer_seq, user_message_id, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload
             FROM
                 user_message_views
             WHERE
                 user_id = :user_id
                 AND peer_type = :peer_type
                 AND peer_id = :peer_id
+                AND message_status = :message_status
+            ORDER BY
+                peer_seq DESC
+            LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectNearestLiveByUserPeerSeq">
+        <sql>
+            SELECT
+                user_id, peer_type, peer_id, peer_seq, user_message_id, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload
+            FROM
+                user_message_views
+            WHERE
+                user_id = :user_id
+                AND peer_type = :peer_type
+                AND peer_id = :peer_id
+                AND peer_seq &lt;= :peer_seq
                 AND message_status = :message_status
             ORDER BY
                 peer_seq DESC

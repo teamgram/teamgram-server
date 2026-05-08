@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="user_message_sequences">
+    <operation name="InsertIgnore">
+        <sql>
+            INSERT IGNORE INTO user_message_sequences
+                (user_id, next_user_message_id)
+            VALUES
+                (:user_id, :next_user_message_id)
+        </sql>
+    </operation>
+
+    <operation name="SelectForUpdate">
+        <sql>
+            SELECT
+                user_id, next_user_message_id
+            FROM
+                user_message_sequences
+            WHERE
+                user_id = :user_id
+            LIMIT 1
+            FOR UPDATE
+        </sql>
+    </operation>
+
+    <operation name="UpdateNext">
+        <sql>
+            UPDATE
+                user_message_sequences
+            SET
+                next_user_message_id = :next_user_message_id
+            WHERE
+                user_id = :user_id
+        </sql>
+    </operation>
+</table>
