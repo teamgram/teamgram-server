@@ -18,7 +18,6 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -36,8 +35,8 @@ func (c *MessagesCore) MessagesDeleteMessages(in *tg.TLMessagesDeleteMessages) (
 	r, err := deleteClient.MsgDeleteMessages(c.ctx, &msg.TLMsgDeleteMessages{
 		UserId:    md.UserId,
 		AuthKeyId: md.PermAuthKeyId,
-		PeerType:  payload.PeerTypeUser,
-		PeerId:    md.UserId,
+		PeerType:  0,
+		PeerId:    0,
 		Revoke:    in.Revoke,
 		Id:        in.Id,
 	})

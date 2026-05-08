@@ -547,7 +547,7 @@ func TestMessagesDeleteHistory_UserPeerSuccess(t *testing.T) {
 	}
 }
 
-func TestMessagesDeleteMessagesRoutesSelfPeerSlice(t *testing.T) {
+func TestMessagesDeleteMessagesRoutesGlobalPublicIDs(t *testing.T) {
 	var got *msg.TLMsgDeleteMessages
 	reply := tg.MakeTLMessagesAffectedMessages(&tg.TLMessagesAffectedMessages{Pts: 10, PtsCount: 1}).ToMessagesAffectedMessages()
 	c := newSendMsgCore(&messagesFakeMsgClient{
@@ -557,14 +557,14 @@ func TestMessagesDeleteMessagesRoutesSelfPeerSlice(t *testing.T) {
 		},
 	}, 100, 200)
 
-	r, err := c.MessagesDeleteMessages(&tg.TLMessagesDeleteMessages{Id: []int32{7, 8}})
+	r, err := c.MessagesDeleteMessages(&tg.TLMessagesDeleteMessages{Revoke: true, Id: []int32{7, 8}})
 	if err != nil {
 		t.Fatalf("MessagesDeleteMessages() error = %v", err)
 	}
 	if r != reply {
 		t.Fatalf("reply mismatch: got %p want %p", r, reply)
 	}
-	if got == nil || got.UserId != 100 || got.AuthKeyId != 200 || got.PeerType != payload.PeerTypeUser || got.PeerId != 100 || len(got.Id) != 2 {
+	if got == nil || got.UserId != 100 || got.AuthKeyId != 200 || got.PeerType != 0 || got.PeerId != 0 || !got.Revoke || len(got.Id) != 2 {
 		t.Fatalf("MsgDeleteMessages request = %+v", got)
 	}
 }
