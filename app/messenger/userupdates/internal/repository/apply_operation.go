@@ -195,6 +195,9 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 	if err := insertOperationResult(txModels, in, nextPTS, ptsCount, responsePayload, responsePayloadHash); err != nil {
 		return nil, err
 	}
+	if err := r.insertAffectedOutboxesTx(ctx, txModels, in.AffectedOutboxes); err != nil {
+		return nil, err
+	}
 	affected, err := txModels.UserPtsStateModel.UpdatePts(nextPTS, unixNow(), in.PartitionID, fence.OwnerEpoch, in.UserID)
 	if err != nil {
 		return nil, storageError("update user pts state", err)

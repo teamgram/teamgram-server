@@ -2,9 +2,11 @@ package repository
 
 import (
 	"encoding/json"
+	"errors"
 	"testing"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 )
 
 func TestBuildEventAndResponseCarriesAuthKeyExclude(t *testing.T) {
@@ -52,5 +54,20 @@ func TestExtractHashTagsNormalizesAndDeduplicates(t *testing.T) {
 		if got[i] != want[i] {
 			t.Fatalf("extractHashTags[%d] = %q, want %q; all=%#v", i, got[i], want[i], got)
 		}
+	}
+}
+
+func TestValidateAffectedOutboxRejectsPayloadHashMismatch(t *testing.T) {
+	err := validateAffectedOutbox(AffectedOutbox{
+		TargetUserID:   1001,
+		OperationID:    "affected-op",
+		OperationKind:  payload.OperationKindSendMessage,
+		DeliveryPolicy: DeliveryPolicyDurableAsync,
+		PayloadCodec:   PayloadCodecJSON,
+		Payload:        []byte(`{"ok":true}`),
+		PayloadHash:    []byte("wrong"),
+	})
+	if !errors.Is(err, userupdates.ErrOperationPayloadConflict) {
+		t.Fatalf("validateAffectedOutbox() error = %v, want ErrOperationPayloadConflict", err)
 	}
 }

@@ -20,13 +20,19 @@ import (
 )
 
 type testIDGenerator struct {
-	next int64
-	err  error
+	next      int64
+	err       error
+	failAfter int
+	calls     int
 }
 
 func (g *testIDGenerator) NextID(context.Context) (int64, error) {
 	if g.err != nil {
 		return 0, g.err
+	}
+	g.calls++
+	if g.failAfter > 0 && g.calls > g.failAfter {
+		return 0, errors.New("idgen down")
 	}
 	g.next++
 	return g.next, nil
@@ -373,6 +379,109 @@ func TestApplyUserOperationFinalTransaction(t *testing.T) {
 			t.Fatalf("state pts = %d, want rollback to 0", state.Pts)
 		}
 	})
+}
+
+func TestApplyUserOperationAffectedOutboxIdempotency(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	requesterID := base + 3101
+	targetID := base + 3102
+	repo := NewForTest(db, &testIDGenerator{next: base + 31000}, "local-userupdates")
+	in := buildApplyInput(t, requesterID, requesterID, targetID, true, "hello")
+	in.AffectedOutboxes = []AffectedOutbox{buildAffectedOutbox(t, in, targetID, "same")}
+	if _, err := repo.ClaimPartitionOwner(ctx, in.PartitionID); err != nil {
+		t.Fatalf("ClaimPartitionOwner() error = %v", err)
+	}
+	if _, err := repo.ApplyUserOperation(ctx, in); err != nil {
+		t.Fatalf("ApplyUserOperation() error = %v", err)
+	}
+
+	duplicate := buildOperationApplyInput(t, requesterID, payload.MessageOperationV1{
+		SchemaVersion:      payload.MessageOperationSchemaVersion,
+		OperationKind:      payload.OperationKindSendMessage,
+		CanonicalMessageID: requesterID*10 + 2,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             targetID,
+		PeerSeq:            2,
+		FromUserID:         requesterID,
+		ToUserID:           targetID,
+		Date:               int32(time.Now().Unix()),
+		Out:                true,
+		MessageText:        "second",
+	}, "duplicate-affected")
+	duplicate.AffectedOutboxes = []AffectedOutbox{buildAffectedOutbox(t, in, targetID, "same")}
+	if _, err := repo.ApplyUserOperation(ctx, duplicate); err != nil {
+		t.Fatalf("ApplyUserOperation() duplicate same hash error = %v", err)
+	}
+
+	row, err := repo.models.AffectedOperationOutboxModel.SelectByUserOperation(ctx, targetID, in.AffectedOutboxes[0].OperationID)
+	if err != nil {
+		t.Fatalf("SelectByUserOperation() error = %v", err)
+	}
+	if row.Status != AffectedOutboxStatusPending || row.UserId != targetID || row.RequesterUserId != requesterID {
+		t.Fatalf("affected outbox row = %+v, want pending target/requester", row)
+	}
+
+	conflict := buildOperationApplyInput(t, requesterID, payload.MessageOperationV1{
+		SchemaVersion:      payload.MessageOperationSchemaVersion,
+		OperationKind:      payload.OperationKindSendMessage,
+		CanonicalMessageID: requesterID*10 + 3,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             targetID,
+		PeerSeq:            3,
+		FromUserID:         requesterID,
+		ToUserID:           targetID,
+		Date:               int32(time.Now().Unix()),
+		Out:                true,
+		MessageText:        "third",
+	}, "conflict-affected")
+	conflict.AffectedOutboxes = []AffectedOutbox{buildAffectedOutbox(t, in, targetID, "different")}
+	_, err = repo.ApplyUserOperation(ctx, conflict)
+	if !errors.Is(err, userupdates.ErrOperationPayloadConflict) {
+		t.Fatalf("ApplyUserOperation() duplicate different hash error = %v, want ErrOperationPayloadConflict", err)
+	}
+}
+
+func TestApplyUserOperationRollsBackWhenAffectedOutboxInsertFails(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	requesterID := base + 3201
+	targetID := base + 3202
+	goodRepo := NewForTest(db, &testIDGenerator{next: base + 32000}, "local-userupdates")
+	in := buildApplyInput(t, requesterID, requesterID, targetID, true, "hello")
+	in.AffectedOutboxes = []AffectedOutbox{buildAffectedOutbox(t, in, targetID, "rollback")}
+	if _, err := goodRepo.ClaimPartitionOwner(ctx, in.PartitionID); err != nil {
+		t.Fatalf("ClaimPartitionOwner() error = %v", err)
+	}
+
+	failingRepo := NewForTest(db, &testIDGenerator{next: base + 33000, failAfter: 1}, "local-userupdates")
+	_, err := failingRepo.ApplyUserOperation(ctx, in)
+	if !errors.Is(err, userupdates.ErrUserupdatesStorage) {
+		t.Fatalf("ApplyUserOperation() error = %v, want ErrUserupdatesStorage", err)
+	}
+
+	state, err := goodRepo.GetState(ctx, requesterID, 0)
+	if err != nil {
+		t.Fatalf("GetState() error = %v", err)
+	}
+	if state.Pts != 0 {
+		t.Fatalf("state pts = %d, want rollback to 0", state.Pts)
+	}
+	diff, err := goodRepo.GetDifference(ctx, GetDifferenceInput{UserID: requesterID, Pts: 0, Limit: 10})
+	if err != nil {
+		t.Fatalf("GetDifference() error = %v", err)
+	}
+	if len(diff.Events) != 0 {
+		t.Fatalf("events length = %d, want 0", len(diff.Events))
+	}
+	if _, err := goodRepo.GetOperationResult(ctx, requesterID, in.OperationID); !errors.Is(err, userupdates.ErrOperationTerminal) {
+		t.Fatalf("GetOperationResult() error = %v, want ErrOperationTerminal", err)
+	}
+	if _, err := goodRepo.models.AffectedOperationOutboxModel.SelectByUserOperation(ctx, targetID, in.AffectedOutboxes[0].OperationID); !errors.Is(err, model.ErrNotFound) {
+		t.Fatalf("SelectByUserOperation() error = %v, want model.ErrNotFound", err)
+	}
 }
 
 func TestApplyReadHistoryUpdatesReadStateUnreadMarkAndPTS(t *testing.T) {
@@ -811,5 +920,26 @@ func buildOperationApplyInput(t *testing.T, userID int64, op payload.MessageOper
 		PayloadHash:  payload.HashBytes(body),
 		BucketID:     int32(route.BucketID),
 		PartitionID:  int32(route.ReceiverPartitionID),
+	}
+}
+
+func buildAffectedOutbox(t *testing.T, in ApplyUserOperationInput, targetUserID int64, suffix string) AffectedOutbox {
+	t.Helper()
+	targetRoute := payload.RouteUser(targetUserID)
+	body := []byte(fmt.Sprintf(`{"schema_version":1,"suffix":%q}`, suffix))
+	return AffectedOutbox{
+		RequesterUserID:   in.UserID,
+		TargetUserID:      targetUserID,
+		TargetBucketID:    int32(targetRoute.BucketID),
+		TargetPartitionID: int32(targetRoute.ReceiverPartitionID),
+		OperationID:       "affected-" + in.OperationID,
+		OpType:            in.OpType,
+		OperationKind:     payload.OperationKindSendMessage,
+		PeerType:          in.PeerType,
+		PeerID:            in.PeerID,
+		PayloadCodec:      PayloadCodecJSON,
+		Payload:           body,
+		PayloadHash:       payload.HashBytes(body),
+		DeliveryPolicy:    DeliveryPolicyDurableAsync,
 	}
 }

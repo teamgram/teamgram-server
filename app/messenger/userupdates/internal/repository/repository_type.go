@@ -56,6 +56,13 @@ const (
 )
 
 const (
+	AffectedOutboxStatusPending        int32 = 1
+	AffectedOutboxStatusProcessing     int32 = 2
+	AffectedOutboxStatusCompleted      int32 = 3
+	AffectedOutboxStatusFailedTerminal int32 = 4
+)
+
+const (
 	DialogSideEffectKindClearDraftAfterSend          = "clear_draft_after_send"
 	DialogSideEffectKindUpsertSavedDialogFromMessage = "upsert_saved_dialog_from_message"
 )
@@ -153,6 +160,7 @@ type AffectedOutbox struct {
 	Payload           []byte
 	PayloadHash       []byte
 	DeliveryPolicy    int32
+	OwnerTokenPayload []byte
 }
 
 type ApplyUserOperationInput struct {
