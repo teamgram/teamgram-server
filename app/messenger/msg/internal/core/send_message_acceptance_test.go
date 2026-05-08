@@ -4,6 +4,7 @@ package core
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"os"
 	"testing"
@@ -35,7 +36,7 @@ func TestSendMessageV2SingleChatAcceptance(t *testing.T) {
 	publisher := &msgrepo.InMemoryReceiverOperationPublisher{OnPublish: updatesKit.ProcessReceiverOperation}
 	msgCore := New(ctx, &svc.ServiceContext{
 		Repo:              msgRepo,
-		UserUpdates:       updatesKit,
+		UserUpdates:       acceptanceUserUpdates{kit: updatesKit},
 		ReceiverPublisher: publisher,
 	})
 
@@ -82,7 +83,7 @@ func TestSendMessageV2SingleChatAcceptanceRecoversSenderCommit(t *testing.T) {
 
 	msgCore := New(ctx, &svc.ServiceContext{
 		Repo:              msgRepo,
-		UserUpdates:       updatesKit,
+		UserUpdates:       acceptanceUserUpdates{kit: updatesKit},
 		ReceiverPublisher: &msgrepo.InMemoryReceiverOperationPublisher{OnPublish: updatesKit.ProcessReceiverOperation},
 	})
 
@@ -101,6 +102,42 @@ func TestSendMessageV2SingleChatAcceptanceRecoversSenderCommit(t *testing.T) {
 	assertDifferenceMessage(t, ctx, updatesKit, receiverID, false, "recover acceptance")
 }
 
+func TestMsgReadHistoryV2DurablyEnqueuesPeerReceiptAcceptance(t *testing.T) {
+	ctx := context.Background()
+	db := openAcceptanceDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	idgen := &acceptanceIDGenerator{next: base + 300_000}
+
+	msgRepo := msgrepo.NewForTest(db, idgen)
+	updatesKit := userupdatestestkit.New(db, idgen, "local-userupdates")
+	requesterID := base + 3001
+	peerID := base + 3002
+	authKeyID := int64(9003)
+	maxID := int32(7)
+	claimUserPartitions(t, ctx, updatesKit, requesterID, peerID)
+
+	msgCore := New(ctx, &svc.ServiceContext{
+		Repo:        msgRepo,
+		UserUpdates: acceptanceUserUpdates{kit: updatesKit},
+	})
+
+	affected, err := msgCore.MsgReadHistoryV2(&msgpb.TLMsgReadHistoryV2{
+		UserId:    requesterID,
+		AuthKeyId: authKeyID,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    peerID,
+		MaxId:     maxID,
+	})
+	if err != nil {
+		t.Fatalf("MsgReadHistoryV2() error = %v", err)
+	}
+	if affected == nil || affected.Pts != 1 || affected.PtsCount != 1 {
+		t.Fatalf("affected messages = %+v, want pts=1 pts_count=1", affected)
+	}
+
+	assertAffectedOutboxRow(t, ctx, db, peerID, readHistoryOperationID(peerID, requesterID, maxID, 0), requesterID, maxID)
+}
+
 type acceptanceIDGenerator struct {
 	next int64
 }
@@ -108,6 +145,32 @@ type acceptanceIDGenerator struct {
 func (g *acceptanceIDGenerator) NextID(context.Context) (int64, error) {
 	g.next++
 	return g.next, nil
+}
+
+type acceptanceUserUpdates struct {
+	kit *userupdatestestkit.Kit
+}
+
+func (u acceptanceUserUpdates) UserupdatesProcessUserOperation(ctx context.Context, in *userupdates.TLUserupdatesProcessUserOperation) (*userupdates.UserOperationResult, error) {
+	return u.kit.UserupdatesProcessUserOperation(ctx, in)
+}
+
+func (u acceptanceUserUpdates) UserupdatesProcessUserOperationWithEffects(ctx context.Context, in *userupdates.TLUserupdatesProcessUserOperationWithEffects) (*userupdates.UserOperationResult, error) {
+	return u.kit.UserupdatesProcessUserOperationWithEffects(ctx, in)
+}
+
+func (u acceptanceUserUpdates) UserupdatesGetOperationResult(ctx context.Context, in *userupdates.TLUserupdatesGetOperationResult) (*userupdates.UserOperationResult, error) {
+	return u.kit.UserupdatesGetOperationResult(ctx, in)
+}
+
+type affectedOutboxAcceptanceRow struct {
+	UserId          int64  `db:"user_id"`
+	RequesterUserId int64  `db:"requester_user_id"`
+	OperationKind   string `db:"operation_kind"`
+	PeerId          int64  `db:"peer_id"`
+	Status          int32  `db:"status"`
+	DeliveryPolicy  int32  `db:"delivery_policy"`
+	Payload         []byte `db:"payload"`
 }
 
 type acceptanceFailingSenderCommitRepo struct {
@@ -212,6 +275,31 @@ func assertDifferenceMessage(t *testing.T, ctx context.Context, kit *userupdates
 	}
 	if len(full.OtherUpdates) != 1 {
 		t.Fatalf("user %d updates len = %d, want 1", userID, len(full.OtherUpdates))
+	}
+}
+
+func assertAffectedOutboxRow(t *testing.T, ctx context.Context, db *sqlx.DB, userID int64, operationID string, requesterID int64, maxID int32) {
+	t.Helper()
+	var row affectedOutboxAcceptanceRow
+	if err := db.QueryRowPartial(ctx, &row, `
+		SELECT user_id, requester_user_id, operation_kind, peer_id, status, delivery_policy, payload
+		FROM affected_operation_outbox
+		WHERE user_id = ? AND operation_id = ?
+		LIMIT 1`, userID, operationID); err != nil {
+		t.Fatalf("select affected outbox row: %v", err)
+	}
+	if row.UserId != userID || row.RequesterUserId != requesterID || row.PeerId != requesterID {
+		t.Fatalf("affected outbox routing = %+v, want user=%d requester/peer=%d", row, userID, requesterID)
+	}
+	if row.OperationKind != payload.OperationKindReadHistory || row.Status != 1 || row.DeliveryPolicy != int32(DeliveryPolicyDurableAsync) {
+		t.Fatalf("affected outbox metadata = %+v", row)
+	}
+	var op payload.MessageOperationV1
+	if err := json.Unmarshal(row.Payload, &op); err != nil {
+		t.Fatalf("decode affected outbox payload: %v", err)
+	}
+	if op.OperationKind != payload.OperationKindReadHistory || op.PeerID != requesterID || op.ReadOutboxMaxPeerSeq != int64(maxID) || !op.Out {
+		t.Fatalf("affected outbox payload = %+v", op)
 	}
 }
 

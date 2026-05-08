@@ -24,7 +24,6 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -40,7 +39,7 @@ func (c *MsgCore) MsgReadHistoryV2(in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffe
 	if in.PeerType != payload.PeerTypeUser {
 		return nil, fmt.Errorf("%w: read history first slice only supports user peer", msg.ErrSendStateConflict)
 	}
-	if c.svcCtx.UserUpdates == nil {
+	if c == nil || c.svcCtx == nil || c.svcCtx.UserUpdates == nil {
 		return nil, msg.ErrSenderSyncFailed
 	}
 
@@ -60,41 +59,66 @@ func (c *MsgCore) MsgReadHistoryV2(in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffe
 		return nil, fmt.Errorf("%w: marshal read history operation user_id=%d peer_id=%d", msg.ErrMsgStorage, in.UserId, in.PeerId)
 	}
 	hashBytes := payload.HashBytes(body)
-	route := payload.RouteUser(in.UserId)
 	authKeyID := in.AuthKeyId
 	operationID := readHistoryOperationID(in.UserId, in.PeerId, in.MaxId, in.AuthKeyId)
-	result, err := c.svcCtx.UserUpdates.UserupdatesProcessUserOperation(c.ctx, &userupdates.TLUserupdatesProcessUserOperation{
-		Operation: userupdates.MakeTLUserOperation(&userupdates.TLUserOperation{
-			UserId:               in.UserId,
-			BucketId:             int32(route.BucketID),
-			PartitionId:          int32(route.ReceiverPartitionID),
-			OperationId:          operationID,
-			OpType:               payload.OpTypeSendMessage,
-			OpSource:             0,
-			ActorUserId:          in.UserId,
-			AuthKeyId:            &authKeyID,
-			AuthKeyIdExclude:     &authKeyID,
+
+	requester := OperationEnvelope{
+		UserID:               in.UserId,
+		OperationID:          operationID,
+		OpType:               payload.OpTypeSendMessage,
+		OperationKind:        payload.OperationKindReadHistory,
+		ActorUserID:          in.UserId,
+		AuthKeyID:            &authKeyID,
+		AuthKeyIDExclude:     &authKeyID,
+		PeerType:             in.PeerType,
+		PeerID:               in.PeerId,
+		CanonicalPeerSeq:     int64Ptr(int64(in.MaxId)),
+		CanonicalDate:        int64Ptr(int64(date)),
+		PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+		PayloadCodec:         payload.PayloadCodecJSON,
+		PayloadHash:          hashBytes,
+		Payload:              body,
+		DeliveryPolicy:       DeliveryPolicyRequesterSync,
+	}
+
+	var effects []OperationEnvelope
+	if in.UserId != in.PeerId {
+		peerBody, err := json.Marshal(payload.MessageOperationV1{
+			SchemaVersion:        payload.MessageOperationSchemaVersion,
+			OperationKind:        payload.OperationKindReadHistory,
 			PeerType:             in.PeerType,
-			PeerId:               in.PeerId,
+			PeerID:               in.UserId,
+			PeerSeq:              int64(in.MaxId),
+			FromUserID:           in.UserId,
+			ToUserID:             in.PeerId,
+			Date:                 date,
+			Out:                  true,
+			ReadOutboxMaxPeerSeq: int64(in.MaxId),
+		})
+		if err != nil {
+			return nil, fmt.Errorf("%w: marshal peer read outbox operation user_id=%d peer_id=%d", msg.ErrMsgStorage, in.UserId, in.PeerId)
+		}
+		effects = append(effects, OperationEnvelope{
+			UserID:               in.PeerId,
+			OperationID:          readHistoryOperationID(in.PeerId, in.UserId, in.MaxId, 0),
+			OpType:               payload.OpTypeSendMessage,
+			OperationKind:        payload.OperationKindReadHistory,
+			ActorUserID:          in.UserId,
+			PeerType:             in.PeerType,
+			PeerID:               in.UserId,
 			CanonicalPeerSeq:     int64Ptr(int64(in.MaxId)),
 			CanonicalDate:        int64Ptr(int64(date)),
 			PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
 			PayloadCodec:         payload.PayloadCodecJSON,
-			PayloadHash:          hashBytes,
-			Payload:              body,
-		}),
-	})
+			PayloadHash:          payload.HashBytes(peerBody),
+			Payload:              peerBody,
+			DeliveryPolicy:       DeliveryPolicyDurableAsync,
+		})
+	}
+
+	result, err := c.dispatchRequesterSync(requester, effects)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", msg.ErrSenderSyncFailed, err)
-	}
-	if result == nil {
-		return nil, msg.ErrSenderSyncFailed
-	}
-	if in.UserId != in.PeerId {
-		if err := c.processPeerReadOutboxOperation(in, date); err != nil {
-			c.Logger.Errorf("msg.readHistoryV2 - peer read outbox update failed: user_id=%d peer_id=%d max_id=%d err=%v",
-				in.UserId, in.PeerId, in.MaxId, err)
-		}
+		return nil, err
 	}
 	pts, err := int64ToInt32(result.Pts, "pts")
 	if err != nil {
@@ -104,50 +128,6 @@ func (c *MsgCore) MsgReadHistoryV2(in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffe
 		Pts:      pts,
 		PtsCount: result.PtsCount,
 	}).ToMessagesAffectedMessages(), nil
-}
-
-func (c *MsgCore) processPeerReadOutboxOperation(in *msg.TLMsgReadHistoryV2, date int32) error {
-	body, err := json.Marshal(payload.MessageOperationV1{
-		SchemaVersion:        payload.MessageOperationSchemaVersion,
-		OperationKind:        payload.OperationKindReadHistory,
-		PeerType:             in.PeerType,
-		PeerID:               in.UserId,
-		PeerSeq:              int64(in.MaxId),
-		FromUserID:           in.UserId,
-		ToUserID:             in.PeerId,
-		Date:                 date,
-		Out:                  true,
-		ReadOutboxMaxPeerSeq: int64(in.MaxId),
-	})
-	if err != nil {
-		return fmt.Errorf("%w: marshal peer read outbox operation user_id=%d peer_id=%d", msg.ErrMsgStorage, in.UserId, in.PeerId)
-	}
-	hashBytes := payload.HashBytes(body)
-	route := payload.RouteUser(in.PeerId)
-	operationID := readHistoryOperationID(in.PeerId, in.UserId, in.MaxId, 0)
-	_, err = c.svcCtx.UserUpdates.UserupdatesProcessUserOperation(c.ctx, &userupdates.TLUserupdatesProcessUserOperation{
-		Operation: userupdates.MakeTLUserOperation(&userupdates.TLUserOperation{
-			UserId:               in.PeerId,
-			BucketId:             int32(route.BucketID),
-			PartitionId:          int32(route.ReceiverPartitionID),
-			OperationId:          operationID,
-			OpType:               payload.OpTypeSendMessage,
-			OpSource:             0,
-			ActorUserId:          in.UserId,
-			PeerType:             in.PeerType,
-			PeerId:               in.UserId,
-			CanonicalPeerSeq:     int64Ptr(int64(in.MaxId)),
-			CanonicalDate:        int64Ptr(int64(date)),
-			PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
-			PayloadCodec:         payload.PayloadCodecJSON,
-			PayloadHash:          hashBytes,
-			Payload:              body,
-		}),
-	})
-	if err != nil {
-		return fmt.Errorf("%w: %v", msg.ErrSenderSyncFailed, err)
-	}
-	return nil
 }
 
 func readHistoryOperationID(userID int64, peerID int64, maxID int32, authKeyID int64) string {

@@ -573,7 +573,7 @@ func TestMsgGetHistoryPassesViewerUserID(t *testing.T) {
 
 func TestMsgReadHistoryV2ReturnsAffectedMessagesAck(t *testing.T) {
 	updatesClient := &fakeUserUpdatesClient{
-		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+		processWithEffectsResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
 			UserId:      1001,
 			OperationId: readHistoryOperationID(1001, 1002, 2, 9001),
 			Status:      1,
@@ -603,10 +603,16 @@ func TestMsgReadHistoryV2ReturnsAffectedMessagesAck(t *testing.T) {
 	if got.Pts != 15 || got.PtsCount != 1 {
 		t.Fatalf("affected messages = %+v, want pts=15 pts_count=1", got)
 	}
-	if len(updatesClient.processedList) != 2 {
-		t.Fatalf("processed operations = %d, want reader inbox and peer outbox updates", len(updatesClient.processedList))
+	if len(updatesClient.processedList) != 0 {
+		t.Fatalf("direct processed operations = %d, want 0", len(updatesClient.processedList))
 	}
-	readerOperation := updatesClient.processedList[0]
+	if updatesClient.processWithEffects == nil {
+		t.Fatal("UserupdatesProcessUserOperationWithEffects was not called")
+	}
+	readerOperation := updatesClient.processWithEffects.Operation
+	if readerOperation == nil {
+		t.Fatal("with-effects requester operation is nil")
+	}
 	if readerOperation.OperationId != readHistoryOperationID(1001, 1002, 2, 9001) {
 		t.Fatalf("reader operation_id = %q", readerOperation.OperationId)
 	}
@@ -620,7 +626,17 @@ func TestMsgReadHistoryV2ReturnsAffectedMessagesAck(t *testing.T) {
 	if readerOp.OperationKind != payload.OperationKindReadHistory || readerOp.PeerID != 1002 || readerOp.ReadInboxMaxPeerSeq != 2 || readerOp.ReadOutboxMaxPeerSeq != 0 || readerOp.Out {
 		t.Fatalf("unexpected reader read history payload: %+v", readerOp)
 	}
-	peerOperation := updatesClient.processedList[1]
+	if len(updatesClient.processWithEffects.AffectedEffects) != 1 {
+		t.Fatalf("affected effects = %d, want 1", len(updatesClient.processWithEffects.AffectedEffects))
+	}
+	affected := updatesClient.processWithEffects.AffectedEffects[0]
+	if affected.RequesterUserId != 1001 || affected.DeliveryPolicy != int32(DeliveryPolicyDurableAsync) || affected.OperationKind != payload.OperationKindReadHistory {
+		t.Fatalf("unexpected affected metadata: %+v", affected)
+	}
+	peerOperation := affected.Operation
+	if peerOperation == nil {
+		t.Fatal("affected peer operation is nil")
+	}
 	if peerOperation.UserId != 1002 || peerOperation.PeerId != 1001 {
 		t.Fatalf("unexpected peer operation routing: %+v", peerOperation)
 	}
@@ -633,6 +649,91 @@ func TestMsgReadHistoryV2ReturnsAffectedMessagesAck(t *testing.T) {
 	}
 	if peerOp.OperationKind != payload.OperationKindReadHistory || peerOp.PeerID != 1001 || peerOp.ReadInboxMaxPeerSeq != 0 || peerOp.ReadOutboxMaxPeerSeq != 2 || !peerOp.Out {
 		t.Fatalf("unexpected peer read outbox payload: %+v", peerOp)
+	}
+}
+
+func TestMsgReadHistoryV2SkipsSelfAffectedOutbox(t *testing.T) {
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:      1001,
+			OperationId: readHistoryOperationID(1001, 1001, 2, 9001),
+			Status:      1,
+			Pts:         16,
+			PtsCount:    1,
+			CurrentPts:  16,
+		}),
+	}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:        &fakeMsgRepository{},
+		UserUpdates: updatesClient,
+	})
+
+	got, err := core.MsgReadHistoryV2(&msgpb.TLMsgReadHistoryV2{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    1001,
+		MaxId:     2,
+	})
+	if err != nil {
+		t.Fatalf("MsgReadHistoryV2() error = %v", err)
+	}
+	if got == nil || got.Pts != 16 || got.PtsCount != 1 {
+		t.Fatalf("affected messages = %+v, want pts=16 pts_count=1", got)
+	}
+	if updatesClient.processWithEffects != nil {
+		t.Fatalf("with-effects call = %+v, want nil for self read history", updatesClient.processWithEffects)
+	}
+	if len(updatesClient.processedList) != 1 {
+		t.Fatalf("direct processed operations = %d, want 1", len(updatesClient.processedList))
+	}
+}
+
+func TestMsgReadHistoryV2ReturnsErrorWhenDurableEffectAcceptFails(t *testing.T) {
+	acceptErr := errors.New("affected effect accept failed")
+	updatesClient := &fakeUserUpdatesClient{
+		processWithEffectsErr: acceptErr,
+	}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:        &fakeMsgRepository{},
+		UserUpdates: updatesClient,
+	})
+
+	got, err := core.MsgReadHistoryV2(&msgpb.TLMsgReadHistoryV2{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    1002,
+		MaxId:     2,
+	})
+	if err == nil {
+		t.Fatalf("MsgReadHistoryV2() error = nil, got = %+v", got)
+	}
+	if !errors.Is(err, msgpb.ErrSenderSyncFailed) {
+		t.Fatalf("MsgReadHistoryV2() error = %v, want ErrSenderSyncFailed", err)
+	}
+	if !errors.Is(err, acceptErr) {
+		t.Fatalf("MsgReadHistoryV2() error = %v, want upstream accept error", err)
+	}
+	if updatesClient.processWithEffects == nil {
+		t.Fatal("UserupdatesProcessUserOperationWithEffects was not called")
+	}
+	if len(updatesClient.processedList) != 0 {
+		t.Fatalf("direct processed operations = %d, want 0", len(updatesClient.processedList))
+	}
+}
+
+func TestMsgReadHistoryV2NilServiceContextReturnsSenderSyncFailed(t *testing.T) {
+	core := New(context.Background(), nil)
+	_, err := core.MsgReadHistoryV2(&msgpb.TLMsgReadHistoryV2{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    1002,
+		MaxId:     2,
+	})
+	if !errors.Is(err, msgpb.ErrSenderSyncFailed) {
+		t.Fatalf("MsgReadHistoryV2() error = %v, want ErrSenderSyncFailed", err)
 	}
 }
 
@@ -957,11 +1058,14 @@ func (f *fakeMsgRepository) MarkRetryableFailure(context.Context, repository.Mar
 }
 
 type fakeUserUpdatesClient struct {
-	processed               *userupdates.TLUserOperation
-	processedList           []*userupdates.TLUserOperation
-	processResult           *userupdates.UserOperationResult
-	getResult               *userupdates.UserOperationResult
-	getOperationResultCalls int
+	processed                *userupdates.TLUserOperation
+	processedList            []*userupdates.TLUserOperation
+	processResult            *userupdates.UserOperationResult
+	processWithEffects       *userupdates.TLUserupdatesProcessUserOperationWithEffects
+	processWithEffectsResult *userupdates.UserOperationResult
+	processWithEffectsErr    error
+	getResult                *userupdates.UserOperationResult
+	getOperationResultCalls  int
 }
 
 func (f *fakeUserUpdatesClient) UserupdatesProcessUserOperation(_ context.Context, in *userupdates.TLUserupdatesProcessUserOperation) (*userupdates.UserOperationResult, error) {
