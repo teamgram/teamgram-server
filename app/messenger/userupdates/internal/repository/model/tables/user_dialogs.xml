@@ -98,6 +98,22 @@
         </sql>
     </operation>
 
+    <operation name="UpdateUnreadAfterDelete">
+        <sql>
+            UPDATE
+                user_dialogs
+            SET
+                unread_count = :unread_count,
+                unread_mentions_count = :unread_mentions_count,
+                unread_reactions_count = :unread_reactions_count,
+                unread_mark = :unread_mark,
+                last_pts = :last_pts,
+                last_pts_at = :last_pts_at
+            WHERE
+                user_id = :user_id AND peer_type = :peer_type AND peer_id = :peer_id
+        </sql>
+    </operation>
+
     <operation name="UpdatePinnedMessage">
         <sql>
             UPDATE

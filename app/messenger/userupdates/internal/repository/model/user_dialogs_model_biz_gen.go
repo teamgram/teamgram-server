@@ -35,6 +35,7 @@ type bizUserDialogsModel interface {
 	SelectByUserCursor(ctx context.Context, userId int64, topMessageDate int64, topPeerSeq int64, peerType int32, peerId int64, limit int32) ([]UserDialogs, error)
 	SelectByUserCursorWithCB(ctx context.Context, userId int64, topMessageDate int64, topPeerSeq int64, peerType int32, peerId int64, limit int32, cb func(sz, i int, v *UserDialogs)) ([]UserDialogs, error)
 	UpdateReadState(ctx context.Context, unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, readInboxMaxPeerSeq int64, readInboxMaxUserMessageId int64, readOutboxMaxPeerSeq int64, readOutboxMaxUserMessageId int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	UpdateUnreadAfterDelete(ctx context.Context, unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
 	UpdatePinnedMessage(ctx context.Context, pinnedPeerSeq int64, pinnedUserMessageId int64, pinnedCanonicalMessageId int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
 	UpdateAvailableMinPeerSeq(ctx context.Context, availableMinPeerSeq int64, availableMinUserMessageId int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
 	ClearDialogTopAfterDelete(ctx context.Context, topMessageStatus int32, deletedAt int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
@@ -47,6 +48,7 @@ type UserDialogsTxModel interface {
 	SelectByUserPeers(userId int64, peerIdList []int64) ([]UserDialogs, error)
 	SelectByUserCursor(userId int64, topMessageDate int64, topPeerSeq int64, peerType int32, peerId int64, limit int32) ([]UserDialogs, error)
 	UpdateReadState(unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, readInboxMaxPeerSeq int64, readInboxMaxUserMessageId int64, readOutboxMaxPeerSeq int64, readOutboxMaxUserMessageId int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
+	UpdateUnreadAfterDelete(unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
 	UpdatePinnedMessage(pinnedPeerSeq int64, pinnedUserMessageId int64, pinnedCanonicalMessageId int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
 	UpdateAvailableMinPeerSeq(availableMinPeerSeq int64, availableMinUserMessageId int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
 	ClearDialogTopAfterDelete(topMessageStatus int32, deletedAt int64, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error)
@@ -383,6 +385,54 @@ func (m *defaultUserDialogsTxModel) UpdateReadState(unreadCount int32, unreadMen
 	rowsAffected, err = rResult.RowsAffected()
 	if err != nil {
 		err = fmt.Errorf("user_dialogs.UpdateReadState rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// UpdateUnreadAfterDelete
+// update user_dialogs set unread_count = :unread_count, unread_mentions_count = :unread_mentions_count, unread_reactions_count = :unread_reactions_count, unread_mark = :unread_mark, last_pts = :last_pts, last_pts_at = :last_pts_at where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
+func (m *defaultUserDialogsModel) UpdateUnreadAfterDelete(ctx context.Context, unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+
+	var (
+		query   = "update user_dialogs set unread_count = ?, unread_mentions_count = ?, unread_reactions_count = ?, unread_mark = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
+		rResult sql.Result
+	)
+
+	rResult, err = m.db.Exec(ctx, query, unreadCount, unreadMentionsCount, unreadReactionsCount, unreadMark, lastPts, lastPtsAt, userId, peerType, peerId)
+
+	if err != nil {
+		err = fmt.Errorf("user_dialogs.UpdateUnreadAfterDelete exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("user_dialogs.UpdateUnreadAfterDelete rows affected: %w", err)
+		return
+	}
+
+	return
+}
+
+// UpdateUnreadAfterDelete
+// update user_dialogs set unread_count = :unread_count, unread_mentions_count = :unread_mentions_count, unread_reactions_count = :unread_reactions_count, unread_mark = :unread_mark, last_pts = :last_pts, last_pts_at = :last_pts_at where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id
+func (m *defaultUserDialogsTxModel) UpdateUnreadAfterDelete(unreadCount int32, unreadMentionsCount int32, unreadReactionsCount int32, unreadMark bool, lastPts int64, lastPtsAt int64, userId int64, peerType int32, peerId int64) (rowsAffected int64, err error) {
+	var (
+		query   = "update user_dialogs set unread_count = ?, unread_mentions_count = ?, unread_reactions_count = ?, unread_mark = ?, last_pts = ?, last_pts_at = ? where user_id = ? and peer_type = ? and peer_id = ?"
+		rResult sql.Result
+	)
+	rResult, err = m.tx.Exec(query, unreadCount, unreadMentionsCount, unreadReactionsCount, unreadMark, lastPts, lastPtsAt, userId, peerType, peerId)
+
+	if err != nil {
+		err = fmt.Errorf("user_dialogs.UpdateUnreadAfterDelete exec: %w", err)
+		return
+	}
+
+	rowsAffected, err = rResult.RowsAffected()
+	if err != nil {
+		err = fmt.Errorf("user_dialogs.UpdateUnreadAfterDelete rows affected: %w", err)
 		return
 	}
 
