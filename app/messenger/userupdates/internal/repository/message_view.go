@@ -19,6 +19,7 @@ type MessageView struct {
 	PeerType           int32
 	PeerID             int64
 	PeerSeq            int64
+	UserMessageID      int64
 	CanonicalMessageID int64
 	FromUserID         int64
 	Outgoing           bool
@@ -63,6 +64,7 @@ func mapMessageViewRow(row *model.UserMessageViews) MessageView {
 		PeerType:           row.PeerType,
 		PeerID:             row.PeerId,
 		PeerSeq:            row.PeerSeq,
+		UserMessageID:      row.UserMessageId,
 		CanonicalMessageID: row.CanonicalMessageId,
 		FromUserID:         row.FromUserId,
 		Outgoing:           row.Outgoing,

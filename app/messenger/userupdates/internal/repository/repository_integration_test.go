@@ -675,6 +675,13 @@ func TestApplyEditMessageCarriesPublicUserMessageID(t *testing.T) {
 	if sendResponse.UserMessageID == 0 {
 		t.Fatalf("send response user_message_id = 0")
 	}
+	sendView, err := repo.models.UserMessageViewsModel.SelectByUserCanonical(ctx, userID, userID*10+1)
+	if err != nil {
+		t.Fatalf("SelectByUserCanonical(send) error = %v", err)
+	}
+	if sendView.ViewSchemaVersion != payload.MessageEventSchemaVersion {
+		t.Fatalf("send view schema = %d, want %d", sendView.ViewSchemaVersion, payload.MessageEventSchemaVersion)
+	}
 
 	edit := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
 		SchemaVersion:      payload.MessageOperationSchemaVersion,
@@ -712,6 +719,13 @@ func TestApplyEditMessageCarriesPublicUserMessageID(t *testing.T) {
 	}
 	if editEvent.MessageID != sendResponse.UserMessageID {
 		t.Fatalf("edit event message_id = %d, want existing public id %d", editEvent.MessageID, sendResponse.UserMessageID)
+	}
+	editView, err := repo.models.UserMessageViewsModel.SelectByUserCanonical(ctx, userID, userID*10+1)
+	if err != nil {
+		t.Fatalf("SelectByUserCanonical(edit) error = %v", err)
+	}
+	if editView.ViewSchemaVersion != payload.MessageEventSchemaVersion {
+		t.Fatalf("edit view schema = %d, want %d", editView.ViewSchemaVersion, payload.MessageEventSchemaVersion)
 	}
 }
 

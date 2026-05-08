@@ -105,26 +105,54 @@ func messageViewToTLMessage(view repository.MessageView) (tg.MessageClazz, error
 	if view.MessageStatus != repository.MessageStatusLive {
 		return nil, nil
 	}
-	if view.ViewSchemaVersion != payload.MessageEventSchemaVersion {
+	switch view.ViewSchemaVersion {
+	case payload.MessageEventSchemaVersionV1:
+		return legacyMessageViewToTLMessage(view)
+	case payload.MessageEventSchemaVersion:
+		return currentMessageViewToTLMessage(view)
+	default:
 		return nil, fmt.Errorf("%w: unsupported message view schema=%d", userupdates.ErrUserupdatesStorage, view.ViewSchemaVersion)
 	}
+}
+
+func legacyMessageViewToTLMessage(view repository.MessageView) (tg.MessageClazz, error) {
 	var messageEvent payload.MessageEventV1
+	if err := json.Unmarshal(view.ViewPayload, &messageEvent); err != nil {
+		return nil, fmt.Errorf("%w: decode legacy message view payload: %v", userupdates.ErrUserupdatesStorage, err)
+	}
+	if messageEvent.SchemaVersion != payload.MessageEventSchemaVersionV1 {
+		return nil, fmt.Errorf("%w: unsupported legacy message view event schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.SchemaVersion)
+	}
+	if messageEvent.PeerType != view.PeerType || messageEvent.PeerID != view.PeerID || messageEvent.MessageID != view.PeerSeq {
+		return nil, fmt.Errorf("%w: legacy message view payload mismatch", userupdates.ErrUserupdatesStorage)
+	}
+	if messageEvent.EventKind == payload.OperationKindEditMessage {
+		return legacyEditMessageEventToTLMessage(messageEvent)
+	}
+	return legacyMessageEventToTLMessage(messageEvent)
+}
+
+func currentMessageViewToTLMessage(view repository.MessageView) (tg.MessageClazz, error) {
+	var messageEvent payload.MessageEventV2
 	if err := json.Unmarshal(view.ViewPayload, &messageEvent); err != nil {
 		return nil, fmt.Errorf("%w: decode message view payload: %v", userupdates.ErrUserupdatesStorage, err)
 	}
 	if messageEvent.SchemaVersion != payload.MessageEventSchemaVersion {
 		return nil, fmt.Errorf("%w: unsupported message view event schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.SchemaVersion)
 	}
-	if messageEvent.PeerType != view.PeerType || messageEvent.PeerID != view.PeerID || messageEvent.MessageID != view.PeerSeq {
+	if messageEvent.PeerType != view.PeerType ||
+		messageEvent.PeerID != view.PeerID ||
+		messageEvent.PeerSeq != view.PeerSeq ||
+		messageEvent.MessageID != view.UserMessageID {
 		return nil, fmt.Errorf("%w: message view payload mismatch", userupdates.ErrUserupdatesStorage)
 	}
 	if messageEvent.EventKind == payload.OperationKindEditMessage {
-		return editMessageEventToTLMessage(messageEvent)
+		return currentEditMessageEventToTLMessage(messageEvent)
 	}
-	return messageEventToTLMessage(messageEvent)
+	return currentMessageEventToTLMessage(messageEvent)
 }
 
-func messageEventToTLMessage(messageEvent payload.MessageEventV1) (tg.MessageClazz, error) {
+func legacyMessageEventToTLMessage(messageEvent payload.MessageEventV1) (tg.MessageClazz, error) {
 	if messageEvent.EventKind != payload.EventKindNewMessage {
 		return nil, fmt.Errorf("%w: unsupported event kind=%s schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.EventKind, messageEvent.SchemaVersion)
 	}
@@ -151,7 +179,65 @@ func messageEventToTLMessage(messageEvent payload.MessageEventV1) (tg.MessageCla
 	}), nil
 }
 
-func editMessageEventToTLMessage(messageEvent payload.MessageEventV1) (tg.MessageClazz, error) {
+func legacyEditMessageEventToTLMessage(messageEvent payload.MessageEventV1) (tg.MessageClazz, error) {
+	if messageEvent.EventKind != payload.OperationKindEditMessage {
+		return nil, fmt.Errorf("%w: unsupported edit event kind=%s schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.EventKind, messageEvent.SchemaVersion)
+	}
+	messageID, err := int64ToInt32(messageEvent.MessageID, "message id")
+	if err != nil {
+		return nil, err
+	}
+	editDate := messageEvent.EditDate
+	if editDate == 0 {
+		editDate = messageEvent.Date
+	}
+	date, err := userupdatesDateInt32FromUnixSeconds(int64(messageEvent.Date), "edit message date")
+	if err != nil {
+		return nil, err
+	}
+	editDate32, err := userupdatesDateInt32FromUnixSeconds(int64(editDate), "edit date")
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLMessage(&tg.TLMessage{
+		Out:      messageEvent.Out,
+		Id:       messageID,
+		FromId:   peerFromUser(messageEvent.FromUserID),
+		PeerId:   peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
+		Date:     date,
+		Message:  messageEvent.MessageText,
+		EditDate: &editDate32,
+	}), nil
+}
+
+func currentMessageEventToTLMessage(messageEvent payload.MessageEventV2) (tg.MessageClazz, error) {
+	if messageEvent.EventKind != payload.EventKindNewMessage {
+		return nil, fmt.Errorf("%w: unsupported event kind=%s schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.EventKind, messageEvent.SchemaVersion)
+	}
+	messageID, err := int64ToInt32(messageEvent.MessageID, "message id")
+	if err != nil {
+		return nil, err
+	}
+	replyTo, err := replyHeaderFromUserMessageID(messageEvent.ReplyToUserMessageID)
+	if err != nil {
+		return nil, err
+	}
+	date, err := userupdatesDateInt32FromUnixSeconds(int64(messageEvent.Date), "message date")
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLMessage(&tg.TLMessage{
+		Out:     messageEvent.Out,
+		Id:      messageID,
+		FromId:  peerFromUser(messageEvent.FromUserID),
+		PeerId:  peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
+		ReplyTo: replyTo,
+		Date:    date,
+		Message: messageEvent.MessageText,
+	}), nil
+}
+
+func currentEditMessageEventToTLMessage(messageEvent payload.MessageEventV2) (tg.MessageClazz, error) {
 	if messageEvent.EventKind != payload.OperationKindEditMessage {
 		return nil, fmt.Errorf("%w: unsupported edit event kind=%s schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.EventKind, messageEvent.SchemaVersion)
 	}
@@ -187,6 +273,17 @@ func replyHeaderFromPeerSeq(peerSeq int64) (tg.MessageReplyHeaderClazz, error) {
 		return nil, nil
 	}
 	replyToMsgID, err := int64ToInt32(peerSeq, "reply peer seq")
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLMessageReplyHeader(&tg.TLMessageReplyHeader{ReplyToMsgId: &replyToMsgID}), nil
+}
+
+func replyHeaderFromUserMessageID(userMessageID int64) (tg.MessageReplyHeaderClazz, error) {
+	if userMessageID <= 0 {
+		return nil, nil
+	}
+	replyToMsgID, err := int64ToInt32(userMessageID, "reply user message id")
 	if err != nil {
 		return nil, err
 	}

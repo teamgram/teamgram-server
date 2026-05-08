@@ -409,7 +409,7 @@ func insertUserMessageView(txModels *model.TxModels, in ApplyUserOperationInput,
 		Date:               int64(op.Date),
 		EditDate:           0,
 		DeletedAt:          0,
-		ViewSchemaVersion:  1,
+		ViewSchemaVersion:  int32(payload.MessageEventSchemaVersion),
 		ViewPayload:        viewPayload,
 	})
 	if err != nil {
@@ -657,6 +657,7 @@ func applyEditMessage(txModels *model.TxModels, in ApplyUserOperationInput, op p
 		editVersion = row.EditVersion + 1
 	}
 	row.EditVersion = editVersion
+	row.ViewSchemaVersion = int32(payload.MessageEventSchemaVersion)
 	row.ViewPayload = viewPayload
 	if _, _, err := txModels.UserMessageViewsModel.InsertOrUpdate(row); err != nil {
 		return storageError("update message view after edit", err)

@@ -281,25 +281,21 @@ func TestGetOperationResultRejectsMismatchedPayloadHash(t *testing.T) {
 }
 
 func TestGetDifferenceBuildsVisibleMessageFromEventPayload(t *testing.T) {
-	eventPayload := mustMarshalMessageEvent(t, payload.MessageEventV1{
-		SchemaVersion:      payload.MessageEventSchemaVersion,
-		EventKind:          payload.EventKindNewMessage,
-		CanonicalMessageID: 2001,
-		MessageID:          9,
-		PeerType:           payload.PeerTypeUser,
-		PeerID:             1002,
-		FromUserID:         1002,
-		ToUserID:           1001,
-		Date:               1_772_000_000,
-		Out:                false,
-		MessageText:        "hello from event payload",
+	eventPayload := mustMarshalMessageEventV2(t, payload.MessageEventV2{
+		SchemaVersion:        payload.MessageEventSchemaVersion,
+		EventKind:            payload.EventKindNewMessage,
+		CanonicalMessageID:   2001,
+		PeerSeq:              9,
+		MessageID:            9,
+		PeerType:             payload.PeerTypeUser,
+		PeerID:               1002,
+		FromUserID:           1002,
+		ToUserID:             1001,
+		Date:                 1_772_000_000,
+		Out:                  false,
+		MessageText:          "hello from event payload",
+		ReplyToUserMessageID: 55,
 	})
-	var eventWithReply map[string]any
-	if err := json.Unmarshal(eventPayload, &eventWithReply); err != nil {
-		t.Fatalf("decode event payload: %v", err)
-	}
-	eventWithReply["reply_to_peer_seq"] = float64(55)
-	eventPayload = mustMarshalJSONMap(t, eventWithReply)
 	repo := &fakeUserUpdatesRepository{
 		difference: &repository.GetDifferenceResult{
 			State: repository.UserState{UserID: 1001, Pts: 18},
@@ -434,18 +430,20 @@ func TestGetDifferenceBuildsReadHistoryOutboxUpdate(t *testing.T) {
 }
 
 func TestGetMessageViewsByPeerSeqsBuildsMessagesFromViews(t *testing.T) {
-	eventPayload := mustMarshalMessageEvent(t, payload.MessageEventV1{
-		SchemaVersion:      payload.MessageEventSchemaVersion,
-		EventKind:          payload.EventKindNewMessage,
-		CanonicalMessageID: 2001,
-		MessageID:          7,
-		PeerType:           payload.PeerTypeUser,
-		PeerID:             1002,
-		FromUserID:         1001,
-		ToUserID:           1002,
-		Date:               1_772_000_000,
-		Out:                true,
-		MessageText:        "dialog top",
+	eventPayload := mustMarshalMessageEventV2(t, payload.MessageEventV2{
+		SchemaVersion:        payload.MessageEventSchemaVersion,
+		EventKind:            payload.EventKindNewMessage,
+		CanonicalMessageID:   2001,
+		PeerSeq:              7,
+		MessageID:            101,
+		PeerType:             payload.PeerTypeUser,
+		PeerID:               1002,
+		FromUserID:           1001,
+		ToUserID:             1002,
+		Date:                 1_772_000_000,
+		Out:                  true,
+		MessageText:          "dialog top",
+		ReplyToUserMessageID: 88,
 	})
 	peer := repository.MessageViewPeerSeq{PeerType: payload.PeerTypeUser, PeerID: 1002, PeerSeq: 7}
 	repo := &fakeUserUpdatesRepository{
@@ -455,6 +453,7 @@ func TestGetMessageViewsByPeerSeqsBuildsMessagesFromViews(t *testing.T) {
 				PeerType:           payload.PeerTypeUser,
 				PeerID:             1002,
 				PeerSeq:            7,
+				UserMessageID:      101,
 				CanonicalMessageID: 2001,
 				FromUserID:         1001,
 				Outgoing:           true,
@@ -485,8 +484,56 @@ func TestGetMessageViewsByPeerSeqsBuildsMessagesFromViews(t *testing.T) {
 	if !ok {
 		t.Fatalf("expected TLMessage, got %T", got.Messages[0])
 	}
-	if message.Id != 7 || message.Message != "dialog top" || !message.Out {
+	if message.Id != 101 || message.Message != "dialog top" || !message.Out {
 		t.Fatalf("unexpected message view projection: %+v", message)
+	}
+	reply, ok := message.ReplyTo.(*tg.TLMessageReplyHeader)
+	if !ok {
+		t.Fatalf("reply header = %T, want *tg.TLMessageReplyHeader", message.ReplyTo)
+	}
+	if reply.ReplyToMsgId == nil || *reply.ReplyToMsgId != 88 {
+		t.Fatalf("reply_to_msg_id = %v, want public id 88", reply.ReplyToMsgId)
+	}
+}
+
+func TestMessageViewToTLMessageSupportsLegacyV1PeerSeqID(t *testing.T) {
+	eventPayload := mustMarshalMessageEvent(t, payload.MessageEventV1{
+		SchemaVersion:      payload.MessageEventSchemaVersionV1,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: 2001,
+		MessageID:          7,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             1002,
+		FromUserID:         1001,
+		ToUserID:           1002,
+		Date:               1_772_000_000,
+		Out:                true,
+		MessageText:        "legacy top",
+		ReplyToPeerSeq:     5,
+	})
+	message, err := messageViewToTLMessage(repository.MessageView{
+		UserID:             1001,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             1002,
+		PeerSeq:            7,
+		CanonicalMessageID: 2001,
+		MessageStatus:      repository.MessageStatusLive,
+		ViewSchemaVersion:  payload.MessageEventSchemaVersionV1,
+		ViewPayload:        eventPayload,
+	})
+	if err != nil {
+		t.Fatalf("messageViewToTLMessage error = %v", err)
+	}
+	tlMessage, ok := message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessage", message)
+	}
+	if tlMessage.Id != 7 || tlMessage.Message != "legacy top" {
+		t.Fatalf("unexpected legacy message: %+v", tlMessage)
+	}
+	reply, ok := tlMessage.ReplyTo.(*tg.TLMessageReplyHeader)
+	if !ok || reply.ReplyToMsgId == nil || *reply.ReplyToMsgId != 5 {
+		t.Fatalf("legacy reply header = %+v ok=%v, want peer seq 5", reply, ok)
 	}
 }
 
@@ -541,11 +588,12 @@ func TestEventToTLUpdateBuildsEditMessage(t *testing.T) {
 }
 
 func TestMessageViewToTLMessageAcceptsEditPayload(t *testing.T) {
-	eventPayload := mustMarshalMessageEvent(t, payload.MessageEventV1{
+	eventPayload := mustMarshalMessageEventV2(t, payload.MessageEventV2{
 		SchemaVersion:      payload.MessageEventSchemaVersion,
 		EventKind:          payload.OperationKindEditMessage,
 		CanonicalMessageID: 2001,
-		MessageID:          7,
+		PeerSeq:            7,
+		MessageID:          101,
 		PeerType:           payload.PeerTypeUser,
 		PeerID:             1002,
 		FromUserID:         1001,
@@ -560,6 +608,7 @@ func TestMessageViewToTLMessageAcceptsEditPayload(t *testing.T) {
 		PeerType:           payload.PeerTypeUser,
 		PeerID:             1002,
 		PeerSeq:            7,
+		UserMessageID:      101,
 		CanonicalMessageID: 2001,
 		MessageStatus:      repository.MessageStatusLive,
 		ViewSchemaVersion:  payload.MessageEventSchemaVersion,
@@ -572,7 +621,7 @@ func TestMessageViewToTLMessageAcceptsEditPayload(t *testing.T) {
 	if !ok {
 		t.Fatalf("message = %T, want *tg.TLMessage", message)
 	}
-	if tlMessage.Message != "edited" || tlMessage.EditDate == nil || *tlMessage.EditDate != 1_772_000_100 {
+	if tlMessage.Id != 101 || tlMessage.Message != "edited" || tlMessage.EditDate == nil || *tlMessage.EditDate != 1_772_000_100 {
 		t.Fatalf("unexpected message: %+v", tlMessage)
 	}
 }
@@ -1020,6 +1069,15 @@ func mustMarshalMessageEvent(t *testing.T, event payload.MessageEventV1) []byte 
 	b, err := json.Marshal(event)
 	if err != nil {
 		t.Fatalf("marshal message event: %v", err)
+	}
+	return b
+}
+
+func mustMarshalMessageEventV2(t *testing.T, event payload.MessageEventV2) []byte {
+	t.Helper()
+	b, err := json.Marshal(event)
+	if err != nil {
+		t.Fatalf("marshal message event v2: %v", err)
 	}
 	return b
 }
