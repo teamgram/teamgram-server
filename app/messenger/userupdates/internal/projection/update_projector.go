@@ -136,6 +136,19 @@ func projectMessageEvent(in messageEventProjectionInput) (Result, error) {
 			return Result{Updates: updates, AuthKeyIDExclude: in.message.AuthKeyIdExclude}, nil
 		}
 		return Result{Update: update}, nil
+	case payload.OperationKindUpdatePinnedMessage:
+		update, err := updatePinnedMessageUpdate(in)
+		if err != nil {
+			return Result{}, err
+		}
+		if in.mode == ModePush {
+			updates, err := wrapPushUpdate(update, in.message.Date)
+			if err != nil {
+				return Result{}, err
+			}
+			return Result{Updates: updates, AuthKeyIDExclude: in.message.AuthKeyIdExclude}, nil
+		}
+		return Result{Update: update}, nil
 	default:
 		return Result{}, fmt.Errorf("%w: unsupported event kind=%s schema=%d", userupdates.ErrUserupdatesStorage, in.message.EventKind, in.message.SchemaVersion)
 	}
@@ -317,6 +330,28 @@ func editMessageUpdate(in messageEventProjectionInput) (tg.UpdateClazz, error) {
 	}
 	return tg.MakeTLUpdateEditMessage(&tg.TLUpdateEditMessage{
 		Message:  message,
+		Pts:      pts,
+		PtsCount: in.ptsCount,
+	}), nil
+}
+
+func updatePinnedMessageUpdate(in messageEventProjectionInput) (tg.UpdateClazz, error) {
+	pts, err := int64ToInt32(in.pts, "pts")
+	if err != nil {
+		return nil, err
+	}
+	messages := []int32(nil)
+	if in.message.PinnedUserMessageID > 0 {
+		msgID, err := messageIDInt32(in.message.PinnedUserMessageID, "pinned user message id")
+		if err != nil {
+			return nil, err
+		}
+		messages = []int32{msgID}
+	}
+	return tg.MakeTLUpdatePinnedMessages(&tg.TLUpdatePinnedMessages{
+		Pinned:   in.message.PinnedUserMessageID > 0,
+		Peer:     peerFromEvent(in.message.PeerType, in.message.PeerID),
+		Messages: messages,
 		Pts:      pts,
 		PtsCount: in.ptsCount,
 	}), nil
