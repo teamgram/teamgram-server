@@ -83,7 +83,7 @@ func init() {
 	iface.RegisterClazzName(ClazzName_dialogPeer, 0, 0xb7789d79)                               // b7789d79
 	iface.RegisterClazzName(ClazzName_dialogCursor, 0, 0x5b146008)                             // 5b146008
 	iface.RegisterClazzName(ClazzName_dialogExtras, 0, 0x7a69125)                              // 7a69125
-	iface.RegisterClazzName(ClazzName_dialogExtV2, 0, 0x7c9d7c44)                              // 7c9d7c44
+	iface.RegisterClazzName(ClazzName_dialogExtV2, 0, 0xe274b20e)                              // e274b20e
 	iface.RegisterClazzName(ClazzName_dialogPage, 0, 0x92dbd5aa)                               // 92dbd5aa
 	iface.RegisterClazzName(ClazzName_dialogFilterExt, 0, 0xa6d498fe)                          // a6d498fe
 	iface.RegisterClazzName(ClazzName_simpleDialogsData, 0, 0x1d59b45d)                        // 1d59b45d
@@ -143,7 +143,7 @@ func init() {
 	iface.RegisterClazzIDName(ClazzName_dialogPeer, 0xb7789d79)                               // b7789d79
 	iface.RegisterClazzIDName(ClazzName_dialogCursor, 0x5b146008)                             // 5b146008
 	iface.RegisterClazzIDName(ClazzName_dialogExtras, 0x7a69125)                              // 7a69125
-	iface.RegisterClazzIDName(ClazzName_dialogExtV2, 0x7c9d7c44)                              // 7c9d7c44
+	iface.RegisterClazzIDName(ClazzName_dialogExtV2, 0xe274b20e)                              // e274b20e
 	iface.RegisterClazzIDName(ClazzName_dialogPage, 0x92dbd5aa)                               // 92dbd5aa
 	iface.RegisterClazzIDName(ClazzName_dialogFilterExt, 0xa6d498fe)                          // a6d498fe
 	iface.RegisterClazzIDName(ClazzName_simpleDialogsData, 0x1d59b45d)                        // 1d59b45d

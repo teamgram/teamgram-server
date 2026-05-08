@@ -21,7 +21,7 @@ func init() {
 	// Constructor
 	iface.RegisterClazzID(0x5b146008, func() iface.TLObject { return &TLDialogCursor{ClazzID: 0x5b146008} })       // 0x5b146008
 	iface.RegisterClazzID(0x730ba93f, func() iface.TLObject { return &TLDialogExt{ClazzID: 0x730ba93f} })          // 0x730ba93f
-	iface.RegisterClazzID(0x7c9d7c44, func() iface.TLObject { return &TLDialogExtV2{ClazzID: 0x7c9d7c44} })        // 0x7c9d7c44
+	iface.RegisterClazzID(0xe274b20e, func() iface.TLObject { return &TLDialogExtV2{ClazzID: 0xe274b20e} })        // 0xe274b20e
 	iface.RegisterClazzID(0x7a69125, func() iface.TLObject { return &TLDialogExtras{ClazzID: 0x7a69125} })         // 0x7a69125
 	iface.RegisterClazzID(0xa6d498fe, func() iface.TLObject { return &TLDialogFilterExt{ClazzID: 0xa6d498fe} })    // 0xa6d498fe
 	iface.RegisterClazzID(0x92dbd5aa, func() iface.TLObject { return &TLDialogPage{ClazzID: 0x92dbd5aa} })         // 0x92dbd5aa

@@ -22,7 +22,7 @@ userDifferenceSlice new_messages:Vector<Message> other_updates:Vector<Update> in
 userDifferenceTooLong pts:long = UserDifference;
 
 dialogProjectionPeer peer_type:int peer_id:long = DialogProjectionPeer;
-dialogProjection flags:# peer_type:int peer_id:long top_peer_seq:long top_canonical_message_id:long top_message_date:long top_message_status:int read_inbox_max_peer_seq:long read_outbox_max_peer_seq:long unread_count:int unread_mentions_count:int unread_reactions_count:int unread_mark:flags.0?true pinned_peer_seq:long pinned_canonical_message_id:long has_scheduled:flags.1?true available_min_peer_seq:long last_pts:long last_pts_at:long dialog_schema_version:int dialog_payload:bytes = DialogProjection;
+dialogProjection flags:# peer_type:int peer_id:long top_peer_seq:long top_user_message_id:long top_canonical_message_id:long top_message_date:long top_message_status:int read_inbox_max_peer_seq:long read_inbox_max_user_message_id:long read_outbox_max_peer_seq:long read_outbox_max_user_message_id:long unread_count:int unread_mentions_count:int unread_reactions_count:int unread_mark:flags.0?true pinned_peer_seq:long pinned_user_message_id:long pinned_canonical_message_id:long has_scheduled:flags.1?true available_min_peer_seq:long available_min_user_message_id:long last_pts:long last_pts_at:long dialog_schema_version:int dialog_payload:bytes = DialogProjection;
 dialogProjectionList projections:Vector<DialogProjection> next_top_message_date:long next_top_peer_seq:long next_peer_type:int next_peer_id:long exhausted:Bool = DialogProjectionList;
 messageViewPeerSeq peer_type:int peer_id:long peer_seq:long = MessageViewPeerSeq;
 messageViewList messages:Vector<Message> = MessageViewList;

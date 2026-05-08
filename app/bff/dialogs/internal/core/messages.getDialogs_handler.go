@@ -22,6 +22,7 @@ import (
 	"strconv"
 
 	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
+	msgpb "github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
@@ -40,6 +41,21 @@ func (c *DialogsCore) MessagesGetDialogs(in *tg.TLMessagesGetDialogs) (*tg.Messa
 	cursor, err := c.dialogCursorFromGetDialogs(in, folderID)
 	if err != nil {
 		return nil, err
+	}
+	if in.OffsetId > 0 {
+		resolved, err := c.resolveDialogCursorTopMessage(in.OffsetId)
+		if err != nil {
+			return nil, err
+		}
+		if resolved == nil {
+			return emptyMessagesDialogsSlice(0), nil
+		}
+		if cursorData := cursor.ToDialogCursor(); cursorData != nil {
+			cursorData.TopPeerSeq = resolved.PeerSeq
+			cursorData.TopMessageDate = resolved.MessageDate
+			cursorData.PeerType = resolved.PeerType
+			cursorData.PeerId = resolved.PeerId
+		}
 	}
 	limit := normalizeDialogLimit(in.Limit)
 	page, err := c.svcCtx.Repo.DialogClient.DialogGetDialogsV2(c.ctx, &dialogpb.TLDialogGetDialogsV2{
@@ -61,13 +77,7 @@ func (c *DialogsCore) MessagesGetDialogs(in *tg.TLMessagesGetDialogs) (*tg.Messa
 		return nil, err
 	}
 	if len(hydrated.Dialogs) == 0 {
-		return tg.MakeTLMessagesDialogsSlice(&tg.TLMessagesDialogsSlice{
-			Count:    totalCount,
-			Dialogs:  []tg.DialogClazz{},
-			Messages: []tg.MessageClazz{},
-			Chats:    []tg.ChatClazz{},
-			Users:    []tg.UserClazz{},
-		}).ToMessagesDialogs(), nil
+		return emptyMessagesDialogsSlice(totalCount), nil
 	}
 
 	return tg.MakeTLMessagesDialogsSlice(&tg.TLMessagesDialogsSlice{
@@ -77,6 +87,16 @@ func (c *DialogsCore) MessagesGetDialogs(in *tg.TLMessagesGetDialogs) (*tg.Messa
 		Chats:    hydrated.Chats,
 		Users:    hydrated.Users,
 	}).ToMessagesDialogs(), nil
+}
+
+func emptyMessagesDialogsSlice(count int32) *tg.MessagesDialogs {
+	return tg.MakeTLMessagesDialogsSlice(&tg.TLMessagesDialogsSlice{
+		Count:    count,
+		Dialogs:  []tg.DialogClazz{},
+		Messages: []tg.MessageClazz{},
+		Chats:    []tg.ChatClazz{},
+		Users:    []tg.UserClazz{},
+	}).ToMessagesDialogs()
 }
 
 func normalizeDialogLimit(limit int32) int32 {
@@ -108,8 +128,8 @@ type dialogTopMessageRef struct {
 }
 
 type dialogReadState struct {
-	ReadInboxMaxPeerSeq  int64
-	ReadOutboxMaxPeerSeq int64
+	ReadInboxMaxUserMessageID  int64
+	ReadOutboxMaxUserMessageID int64
 }
 
 func vectorDialogExtV2s(page *dialogpb.DialogPage) []dialogpb.DialogExtV2Clazz {
@@ -172,10 +192,10 @@ func (c *DialogsCore) hydrateDialogExtV2s(operation string, dialogExts []dialogp
 		if dialogExt == nil {
 			continue
 		}
-		topMessageID, err := int64ToDialogMessageID(dialogExt.TopPeerSeq)
+		topMessageID, err := int64ToDialogMessageID(dialogExt.TopUserMessageId)
 		if err != nil {
-			c.Logger.Errorf("%s - invalid top peer seq: user_id: %d, peer_type: %d, peer_id: %d, top_peer_seq: %d, top_canonical_message_id: %d, err: %v",
-				operation, c.MD.UserId, dialogExt.PeerType, dialogExt.PeerId, dialogExt.TopPeerSeq, dialogExt.TopCanonicalMessageId, err)
+			c.Logger.Errorf("%s - invalid top user message id: user_id: %d, peer_type: %d, peer_id: %d, top_user_message_id: %d, top_peer_seq: %d, err: %v",
+				operation, c.MD.UserId, dialogExt.PeerType, dialogExt.PeerId, dialogExt.TopUserMessageId, dialogExt.TopPeerSeq, err)
 			return nil, tg.ErrInternalServerError
 		}
 		notifyPeer, ok := notifyPeerFromDialogFacade(c.MD.UserId, dialogExt.PeerType, dialogExt.PeerId)
@@ -222,8 +242,8 @@ func (c *DialogsCore) hydrateDialogExtV2s(operation string, dialogExts []dialogp
 			continue
 		}
 		if state, ok := readStates[projectionKeys[i]]; ok {
-			dialog.ReadInboxMaxId = int64ToInt32Saturating(state.ReadInboxMaxPeerSeq)
-			dialog.ReadOutboxMaxId = int64ToInt32Saturating(state.ReadOutboxMaxPeerSeq)
+			dialog.ReadInboxMaxId = int64ToInt32Saturating(state.ReadInboxMaxUserMessageID)
+			dialog.ReadOutboxMaxId = int64ToInt32Saturating(state.ReadOutboxMaxUserMessageID)
 		}
 	}
 
@@ -280,8 +300,8 @@ func makePublicDialogFromExtV2(dialogExt *dialogpb.TLDialogExtV2, topMessageID i
 		UnreadMark:           dialogExt.UnreadMark,
 		Peer:                 makePublicPeerFromDialogFacade(dialogExt.PeerType, dialogExt.PeerId),
 		TopMessage:           topMessageID,
-		ReadInboxMaxId:       0,
-		ReadOutboxMaxId:      0,
+		ReadInboxMaxId:       int64ToInt32Saturating(dialogExt.ReadInboxMaxUserMessageId),
+		ReadOutboxMaxId:      int64ToInt32Saturating(dialogExt.ReadOutboxMaxUserMessageId),
 		UnreadCount:          dialogExt.UnreadCount,
 		UnreadMentionsCount:  dialogExt.UnreadMentionsCount,
 		UnreadReactionsCount: dialogExt.UnreadReactionsCount,
@@ -290,6 +310,25 @@ func makePublicDialogFromExtV2(dialogExt *dialogpb.TLDialogExtV2, topMessageID i
 		FolderId:             &folderID,
 		TtlPeriod:            &ttlPeriod,
 	}), nil
+}
+
+func (c *DialogsCore) resolveDialogCursorTopMessage(topMessageID int32) (*msgpb.ResolvedDialogCursor, error) {
+	if c.svcCtx.Repo.MsgClient == nil {
+		return nil, tg.ErrInternalServerError
+	}
+	resolved, err := c.svcCtx.Repo.MsgClient.MsgResolveDialogCursorTopMessage(c.ctx, &msgpb.TLMsgResolveDialogCursorTopMessage{
+		UserId:       c.MD.UserId,
+		TopMessageId: topMessageID,
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.getDialogs - msg.resolveDialogCursorTopMessage failed: user_id: %d, top_message_id: %d, err: %v",
+			c.MD.UserId, topMessageID, err)
+		return nil, tg.ErrInternalServerError
+	}
+	if resolved == nil || !tg.FromBoolClazz(resolved.Found) {
+		return nil, nil
+	}
+	return resolved, nil
 }
 
 type draftPayloadEnvelope struct {
@@ -403,8 +442,8 @@ func (c *DialogsCore) fetchDialogReadStates(operation string, peers []userupdate
 			continue
 		}
 		out[dialogProjectionKey(projection.PeerType, projection.PeerId)] = dialogReadState{
-			ReadInboxMaxPeerSeq:  projection.ReadInboxMaxPeerSeq,
-			ReadOutboxMaxPeerSeq: projection.ReadOutboxMaxPeerSeq,
+			ReadInboxMaxUserMessageID:  projection.ReadInboxMaxUserMessageId,
+			ReadOutboxMaxUserMessageID: projection.ReadOutboxMaxUserMessageId,
 		}
 	}
 	return out, nil

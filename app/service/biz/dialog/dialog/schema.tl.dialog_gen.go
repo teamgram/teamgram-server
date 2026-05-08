@@ -437,7 +437,7 @@ func DecodeDialogExtV2Clazz(d *bin.Decoder) (DialogExtV2Clazz, error) {
 	}
 
 	switch id {
-	case 0x7c9d7c44:
+	case 0xe274b20e:
 		x := &TLDialogExtV2{ClazzID: id, ClazzName2: ClazzName_dialogExtV2}
 		if err := x.Decode(d); err != nil {
 			return nil, err
@@ -451,25 +451,32 @@ func DecodeDialogExtV2Clazz(d *bin.Decoder) (DialogExtV2Clazz, error) {
 
 // TLDialogExtV2 <--
 type TLDialogExtV2 struct {
-	ClazzID                  uint32            `json:"_id"`
-	ClazzName2               string            `json:"_name"`
-	PeerType                 int32             `json:"peer_type"`
-	PeerId                   int64             `json:"peer_id"`
-	TopPeerSeq               int64             `json:"top_peer_seq"`
-	TopCanonicalMessageId    int64             `json:"top_canonical_message_id"`
-	TopMessageDate           int64             `json:"top_message_date"`
-	UnreadCount              int32             `json:"unread_count"`
-	UnreadMentionsCount      int32             `json:"unread_mentions_count"`
-	UnreadReactionsCount     int32             `json:"unread_reactions_count"`
-	UnreadMark               bool              `json:"unread_mark"`
-	PinnedPeerSeq            int64             `json:"pinned_peer_seq"`
-	PinnedCanonicalMessageId int64             `json:"pinned_canonical_message_id"`
-	HasScheduled             bool              `json:"has_scheduled"`
-	AvailableMinPeerSeq      int64             `json:"available_min_peer_seq"`
-	FolderId                 int32             `json:"folder_id"`
-	MainPinnedOrder          int64             `json:"main_pinned_order"`
-	FolderPinnedOrder        int64             `json:"folder_pinned_order"`
-	Extras                   DialogExtrasClazz `json:"extras"`
+	ClazzID                    uint32            `json:"_id"`
+	ClazzName2                 string            `json:"_name"`
+	PeerType                   int32             `json:"peer_type"`
+	PeerId                     int64             `json:"peer_id"`
+	TopPeerSeq                 int64             `json:"top_peer_seq"`
+	TopUserMessageId           int64             `json:"top_user_message_id"`
+	TopCanonicalMessageId      int64             `json:"top_canonical_message_id"`
+	TopMessageDate             int64             `json:"top_message_date"`
+	ReadInboxMaxPeerSeq        int64             `json:"read_inbox_max_peer_seq"`
+	ReadInboxMaxUserMessageId  int64             `json:"read_inbox_max_user_message_id"`
+	ReadOutboxMaxPeerSeq       int64             `json:"read_outbox_max_peer_seq"`
+	ReadOutboxMaxUserMessageId int64             `json:"read_outbox_max_user_message_id"`
+	UnreadCount                int32             `json:"unread_count"`
+	UnreadMentionsCount        int32             `json:"unread_mentions_count"`
+	UnreadReactionsCount       int32             `json:"unread_reactions_count"`
+	UnreadMark                 bool              `json:"unread_mark"`
+	PinnedPeerSeq              int64             `json:"pinned_peer_seq"`
+	PinnedUserMessageId        int64             `json:"pinned_user_message_id"`
+	PinnedCanonicalMessageId   int64             `json:"pinned_canonical_message_id"`
+	HasScheduled               bool              `json:"has_scheduled"`
+	AvailableMinPeerSeq        int64             `json:"available_min_peer_seq"`
+	AvailableMinUserMessageId  int64             `json:"available_min_user_message_id"`
+	FolderId                   int32             `json:"folder_id"`
+	MainPinnedOrder            int64             `json:"main_pinned_order"`
+	FolderPinnedOrder          int64             `json:"folder_pinned_order"`
+	Extras                     DialogExtrasClazz `json:"extras"`
 }
 
 func MakeTLDialogExtV2(m *TLDialogExtV2) *TLDialogExtV2 {
@@ -514,7 +521,7 @@ func (m *TLDialogExtV2) ToDialogExtV2() *DialogExtV2 {
 
 func (m *TLDialogExtV2) CalcSize(layer int32) int {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogExtV2, int(layer)); clazzId {
-	case 0x7c9d7c44:
+	case 0xe274b20e:
 		size := 4
 		size += 4
 		size += 4
@@ -522,9 +529,16 @@ func (m *TLDialogExtV2) CalcSize(layer int32) int {
 		size += 8
 		size += 8
 		size += 8
+		size += 8
+		size += 8
+		size += 8
+		size += 8
+		size += 8
 		size += 4
 		size += 4
 		size += 4
+		size += 8
+		size += 8
 		size += 8
 		size += 8
 		size += 8
@@ -541,7 +555,7 @@ func (m *TLDialogExtV2) CalcSize(layer int32) int {
 
 func (m *TLDialogExtV2) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogExtV2, int(layer)); clazzId {
-	case 0x7c9d7c44:
+	case 0xe274b20e:
 		if err := iface.ValidateRequiredObject("extras", m.Extras); err != nil {
 			return err
 		}
@@ -555,8 +569,8 @@ func (m *TLDialogExtV2) Validate(layer int32) error {
 // Encode <--
 func (m *TLDialogExtV2) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogExtV2, int(layer)); clazzId {
-	case 0x7c9d7c44:
-		x.PutClazzID(0x7c9d7c44)
+	case 0xe274b20e:
+		x.PutClazzID(0xe274b20e)
 
 		// set flags
 		var getFlags = func() uint32 {
@@ -579,22 +593,29 @@ func (m *TLDialogExtV2) Encode(x *bin.Encoder, layer int32) error {
 		x.PutInt32(m.PeerType)
 		x.PutInt64(m.PeerId)
 		x.PutInt64(m.TopPeerSeq)
+		x.PutInt64(m.TopUserMessageId)
 		x.PutInt64(m.TopCanonicalMessageId)
 		x.PutInt64(m.TopMessageDate)
+		x.PutInt64(m.ReadInboxMaxPeerSeq)
+		x.PutInt64(m.ReadInboxMaxUserMessageId)
+		x.PutInt64(m.ReadOutboxMaxPeerSeq)
+		x.PutInt64(m.ReadOutboxMaxUserMessageId)
 		x.PutInt32(m.UnreadCount)
 		x.PutInt32(m.UnreadMentionsCount)
 		x.PutInt32(m.UnreadReactionsCount)
 		x.PutInt64(m.PinnedPeerSeq)
+		x.PutInt64(m.PinnedUserMessageId)
 		x.PutInt64(m.PinnedCanonicalMessageId)
 		x.PutInt64(m.AvailableMinPeerSeq)
+		x.PutInt64(m.AvailableMinUserMessageId)
 		x.PutInt32(m.FolderId)
 		x.PutInt64(m.MainPinnedOrder)
 		x.PutInt64(m.FolderPinnedOrder)
 		if m.Extras == nil {
-			return fmt.Errorf("unable to encode dialogExtV2#0x7c9d7c44: field extras is nil")
+			return fmt.Errorf("unable to encode dialogExtV2#0xe274b20e: field extras is nil")
 		}
 		if err := m.Extras.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to encode dialogExtV2#0x7c9d7c44: field extras: %w", err)
+			return fmt.Errorf("unable to encode dialogExtV2#0xe274b20e: field extras: %w", err)
 		}
 
 		return nil
@@ -606,78 +627,106 @@ func (m *TLDialogExtV2) Encode(x *bin.Encoder, layer int32) error {
 // Decode <--
 func (m *TLDialogExtV2) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
-	case 0x7c9d7c44:
+	case 0xe274b20e:
 		flags, err := d.Uint32()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field flags: %w", err)
+			return fmt.Errorf("unable to decode dialogExtV2#0xe274b20e: field flags: %w", err)
 		}
 		_ = flags
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field peer_type: %w", err)
+			return fmt.Errorf("unable to decode dialogExtV2#0xe274b20e: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field peer_id: %w", err)
+			return fmt.Errorf("unable to decode dialogExtV2#0xe274b20e: field peer_id: %w", err)
 		}
 		m.TopPeerSeq, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field top_peer_seq: %w", err)
+			return fmt.Errorf("unable to decode dialogExtV2#0xe274b20e: field top_peer_seq: %w", err)
+		}
+		m.TopUserMessageId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtV2#0xe274b20e: field top_user_message_id: %w", err)
 		}
 		m.TopCanonicalMessageId, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field top_canonical_message_id: %w", err)
+			return fmt.Errorf("unable to decode dialogExtV2#0xe274b20e: field top_canonical_message_id: %w", err)
 		}
 		m.TopMessageDate, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field top_message_date: %w", err)
+			return fmt.Errorf("unable to decode dialogExtV2#0xe274b20e: field top_message_date: %w", err)
+		}
+		m.ReadInboxMaxPeerSeq, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtV2#0xe274b20e: field read_inbox_max_peer_seq: %w", err)
+		}
+		m.ReadInboxMaxUserMessageId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtV2#0xe274b20e: field read_inbox_max_user_message_id: %w", err)
+		}
+		m.ReadOutboxMaxPeerSeq, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtV2#0xe274b20e: field read_outbox_max_peer_seq: %w", err)
+		}
+		m.ReadOutboxMaxUserMessageId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtV2#0xe274b20e: field read_outbox_max_user_message_id: %w", err)
 		}
 		m.UnreadCount, err = d.Int32()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field unread_count: %w", err)
+			return fmt.Errorf("unable to decode dialogExtV2#0xe274b20e: field unread_count: %w", err)
 		}
 		m.UnreadMentionsCount, err = d.Int32()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field unread_mentions_count: %w", err)
+			return fmt.Errorf("unable to decode dialogExtV2#0xe274b20e: field unread_mentions_count: %w", err)
 		}
 		m.UnreadReactionsCount, err = d.Int32()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field unread_reactions_count: %w", err)
+			return fmt.Errorf("unable to decode dialogExtV2#0xe274b20e: field unread_reactions_count: %w", err)
 		}
 		if (flags & (1 << 0)) != 0 {
 			m.UnreadMark = true
 		}
 		m.PinnedPeerSeq, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field pinned_peer_seq: %w", err)
+			return fmt.Errorf("unable to decode dialogExtV2#0xe274b20e: field pinned_peer_seq: %w", err)
+		}
+		m.PinnedUserMessageId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtV2#0xe274b20e: field pinned_user_message_id: %w", err)
 		}
 		m.PinnedCanonicalMessageId, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field pinned_canonical_message_id: %w", err)
+			return fmt.Errorf("unable to decode dialogExtV2#0xe274b20e: field pinned_canonical_message_id: %w", err)
 		}
 		if (flags & (1 << 1)) != 0 {
 			m.HasScheduled = true
 		}
 		m.AvailableMinPeerSeq, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field available_min_peer_seq: %w", err)
+			return fmt.Errorf("unable to decode dialogExtV2#0xe274b20e: field available_min_peer_seq: %w", err)
+		}
+		m.AvailableMinUserMessageId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogExtV2#0xe274b20e: field available_min_user_message_id: %w", err)
 		}
 		m.FolderId, err = d.Int32()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field folder_id: %w", err)
+			return fmt.Errorf("unable to decode dialogExtV2#0xe274b20e: field folder_id: %w", err)
 		}
 		m.MainPinnedOrder, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field main_pinned_order: %w", err)
+			return fmt.Errorf("unable to decode dialogExtV2#0xe274b20e: field main_pinned_order: %w", err)
 		}
 		m.FolderPinnedOrder, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field folder_pinned_order: %w", err)
+			return fmt.Errorf("unable to decode dialogExtV2#0xe274b20e: field folder_pinned_order: %w", err)
 		}
 
 		m.Extras, err = DecodeDialogExtrasClazz(d)
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogExtV2#0x7c9d7c44: field extras: %w", err)
+			return fmt.Errorf("unable to decode dialogExtV2#0xe274b20e: field extras: %w", err)
 		}
 
 		return nil

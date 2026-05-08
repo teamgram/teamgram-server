@@ -20,7 +20,7 @@ const (
 	ClazzID_userDifferenceSlice                         = 0x4ef1987f // 4ef1987f
 	ClazzID_userDifferenceTooLong                       = 0x1d095703 // 1d095703
 	ClazzID_dialogProjectionPeer                        = 0x6d7ec124 // 6d7ec124
-	ClazzID_dialogProjection                            = 0xb9bc23fd // b9bc23fd
+	ClazzID_dialogProjection                            = 0xdf6c5662 // df6c5662
 	ClazzID_dialogProjectionList                        = 0x4e60f01f // 4e60f01f
 	ClazzID_messageViewPeerSeq                          = 0x8bf3b9a4 // 8bf3b9a4
 	ClazzID_messageViewList                             = 0x3127345e // 3127345e

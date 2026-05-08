@@ -17,7 +17,7 @@ const (
 	ClazzID_dialogPeer                               = 0xb7789d79 // b7789d79
 	ClazzID_dialogCursor                             = 0x5b146008 // 5b146008
 	ClazzID_dialogExtras                             = 0x7a69125  // 7a69125
-	ClazzID_dialogExtV2                              = 0x7c9d7c44 // 7c9d7c44
+	ClazzID_dialogExtV2                              = 0xe274b20e // e274b20e
 	ClazzID_dialogPage                               = 0x92dbd5aa // 92dbd5aa
 	ClazzID_dialogFilterExt                          = 0xa6d498fe // a6d498fe
 	ClazzID_simpleDialogsData                        = 0x1d59b45d // 1d59b45d

@@ -18,27 +18,32 @@ func TestUserupdatesListDialogsReturnsProjectionDTO(t *testing.T) {
 	repo := &fakeUserUpdatesRepository{
 		dialogProjections: []repository.DialogProjection{
 			{
-				UserID:                   1001,
-				PeerType:                 payload.PeerTypeUser,
-				PeerID:                   2002,
-				TopPeerSeq:               9,
-				TopCanonicalMessageID:    7001,
-				TopMessageDate:           1_778_201_600,
-				TopMessageStatus:         repository.MessageStatusLive,
-				ReadInboxMaxPeerSeq:      5,
-				ReadOutboxMaxPeerSeq:     6,
-				UnreadCount:              3,
-				UnreadMentionsCount:      1,
-				UnreadReactionsCount:     2,
-				UnreadMark:               true,
-				PinnedPeerSeq:            4,
-				PinnedCanonicalMessageID: 6001,
-				HasScheduled:             true,
-				AvailableMinPeerSeq:      2,
-				LastPTS:                  18,
-				LastPTSAt:                1_778_201_660,
-				DialogSchemaVersion:      1,
-				DialogPayload:            []byte(`{"projection":true}`),
+				UserID:                     1001,
+				PeerType:                   payload.PeerTypeUser,
+				PeerID:                     2002,
+				TopPeerSeq:                 9,
+				TopUserMessageID:           101,
+				TopCanonicalMessageID:      7001,
+				TopMessageDate:             1_778_201_600,
+				TopMessageStatus:           repository.MessageStatusLive,
+				ReadInboxMaxPeerSeq:        5,
+				ReadInboxMaxUserMessageID:  91,
+				ReadOutboxMaxPeerSeq:       6,
+				ReadOutboxMaxUserMessageID: 92,
+				UnreadCount:                3,
+				UnreadMentionsCount:        1,
+				UnreadReactionsCount:       2,
+				UnreadMark:                 true,
+				PinnedPeerSeq:              4,
+				PinnedUserMessageID:        93,
+				PinnedCanonicalMessageID:   6001,
+				HasScheduled:               true,
+				AvailableMinPeerSeq:        2,
+				AvailableMinUserMessageID:  81,
+				LastPTS:                    18,
+				LastPTSAt:                  1_778_201_660,
+				DialogSchemaVersion:        1,
+				DialogPayload:              []byte(`{"projection":true}`),
 			},
 		},
 	}
@@ -65,7 +70,12 @@ func TestUserupdatesListDialogsReturnsProjectionDTO(t *testing.T) {
 	if projection.PeerType != payload.PeerTypeUser ||
 		projection.PeerId != 2002 ||
 		projection.TopPeerSeq != 9 ||
+		projection.TopUserMessageId != 101 ||
 		projection.TopCanonicalMessageId != 7001 ||
+		projection.ReadInboxMaxUserMessageId != 91 ||
+		projection.ReadOutboxMaxUserMessageId != 92 ||
+		projection.PinnedUserMessageId != 93 ||
+		projection.AvailableMinUserMessageId != 81 ||
 		projection.UnreadCount != 3 ||
 		!projection.UnreadMark ||
 		!projection.HasScheduled ||

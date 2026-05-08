@@ -214,7 +214,7 @@ func DecodeDialogProjectionClazz(d *bin.Decoder) (DialogProjectionClazz, error) 
 	}
 
 	switch id {
-	case 0xb9bc23fd:
+	case 0xdf6c5662:
 		x := &TLDialogProjection{ClazzID: id, ClazzName2: ClazzName_dialogProjection}
 		if err := x.Decode(d); err != nil {
 			return nil, err
@@ -228,28 +228,33 @@ func DecodeDialogProjectionClazz(d *bin.Decoder) (DialogProjectionClazz, error) 
 
 // TLDialogProjection <--
 type TLDialogProjection struct {
-	ClazzID                  uint32 `json:"_id"`
-	ClazzName2               string `json:"_name"`
-	PeerType                 int32  `json:"peer_type"`
-	PeerId                   int64  `json:"peer_id"`
-	TopPeerSeq               int64  `json:"top_peer_seq"`
-	TopCanonicalMessageId    int64  `json:"top_canonical_message_id"`
-	TopMessageDate           int64  `json:"top_message_date"`
-	TopMessageStatus         int32  `json:"top_message_status"`
-	ReadInboxMaxPeerSeq      int64  `json:"read_inbox_max_peer_seq"`
-	ReadOutboxMaxPeerSeq     int64  `json:"read_outbox_max_peer_seq"`
-	UnreadCount              int32  `json:"unread_count"`
-	UnreadMentionsCount      int32  `json:"unread_mentions_count"`
-	UnreadReactionsCount     int32  `json:"unread_reactions_count"`
-	UnreadMark               bool   `json:"unread_mark"`
-	PinnedPeerSeq            int64  `json:"pinned_peer_seq"`
-	PinnedCanonicalMessageId int64  `json:"pinned_canonical_message_id"`
-	HasScheduled             bool   `json:"has_scheduled"`
-	AvailableMinPeerSeq      int64  `json:"available_min_peer_seq"`
-	LastPts                  int64  `json:"last_pts"`
-	LastPtsAt                int64  `json:"last_pts_at"`
-	DialogSchemaVersion      int32  `json:"dialog_schema_version"`
-	DialogPayload            []byte `json:"dialog_payload"`
+	ClazzID                    uint32 `json:"_id"`
+	ClazzName2                 string `json:"_name"`
+	PeerType                   int32  `json:"peer_type"`
+	PeerId                     int64  `json:"peer_id"`
+	TopPeerSeq                 int64  `json:"top_peer_seq"`
+	TopUserMessageId           int64  `json:"top_user_message_id"`
+	TopCanonicalMessageId      int64  `json:"top_canonical_message_id"`
+	TopMessageDate             int64  `json:"top_message_date"`
+	TopMessageStatus           int32  `json:"top_message_status"`
+	ReadInboxMaxPeerSeq        int64  `json:"read_inbox_max_peer_seq"`
+	ReadInboxMaxUserMessageId  int64  `json:"read_inbox_max_user_message_id"`
+	ReadOutboxMaxPeerSeq       int64  `json:"read_outbox_max_peer_seq"`
+	ReadOutboxMaxUserMessageId int64  `json:"read_outbox_max_user_message_id"`
+	UnreadCount                int32  `json:"unread_count"`
+	UnreadMentionsCount        int32  `json:"unread_mentions_count"`
+	UnreadReactionsCount       int32  `json:"unread_reactions_count"`
+	UnreadMark                 bool   `json:"unread_mark"`
+	PinnedPeerSeq              int64  `json:"pinned_peer_seq"`
+	PinnedUserMessageId        int64  `json:"pinned_user_message_id"`
+	PinnedCanonicalMessageId   int64  `json:"pinned_canonical_message_id"`
+	HasScheduled               bool   `json:"has_scheduled"`
+	AvailableMinPeerSeq        int64  `json:"available_min_peer_seq"`
+	AvailableMinUserMessageId  int64  `json:"available_min_user_message_id"`
+	LastPts                    int64  `json:"last_pts"`
+	LastPtsAt                  int64  `json:"last_pts_at"`
+	DialogSchemaVersion        int32  `json:"dialog_schema_version"`
+	DialogPayload              []byte `json:"dialog_payload"`
 }
 
 func MakeTLDialogProjection(m *TLDialogProjection) *TLDialogProjection {
@@ -294,7 +299,7 @@ func (m *TLDialogProjection) ToDialogProjection() *DialogProjection {
 
 func (m *TLDialogProjection) CalcSize(layer int32) int {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogProjection, int(layer)); clazzId {
-	case 0xb9bc23fd:
+	case 0xdf6c5662:
 		size := 4
 		size += 4
 		size += 4
@@ -302,12 +307,17 @@ func (m *TLDialogProjection) CalcSize(layer int32) int {
 		size += 8
 		size += 8
 		size += 8
+		size += 8
 		size += 4
+		size += 8
+		size += 8
 		size += 8
 		size += 8
 		size += 4
 		size += 4
 		size += 4
+		size += 8
+		size += 8
 		size += 8
 		size += 8
 		size += 8
@@ -324,7 +334,7 @@ func (m *TLDialogProjection) CalcSize(layer int32) int {
 
 func (m *TLDialogProjection) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogProjection, int(layer)); clazzId {
-	case 0xb9bc23fd:
+	case 0xdf6c5662:
 		if err := iface.ValidateRequiredBytes("dialog_payload", m.DialogPayload); err != nil {
 			return err
 		}
@@ -338,8 +348,8 @@ func (m *TLDialogProjection) Validate(layer int32) error {
 // Encode <--
 func (m *TLDialogProjection) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_dialogProjection, int(layer)); clazzId {
-	case 0xb9bc23fd:
-		x.PutClazzID(0xb9bc23fd)
+	case 0xdf6c5662:
+		x.PutClazzID(0xdf6c5662)
 
 		// set flags
 		var getFlags = func() uint32 {
@@ -362,17 +372,22 @@ func (m *TLDialogProjection) Encode(x *bin.Encoder, layer int32) error {
 		x.PutInt32(m.PeerType)
 		x.PutInt64(m.PeerId)
 		x.PutInt64(m.TopPeerSeq)
+		x.PutInt64(m.TopUserMessageId)
 		x.PutInt64(m.TopCanonicalMessageId)
 		x.PutInt64(m.TopMessageDate)
 		x.PutInt32(m.TopMessageStatus)
 		x.PutInt64(m.ReadInboxMaxPeerSeq)
+		x.PutInt64(m.ReadInboxMaxUserMessageId)
 		x.PutInt64(m.ReadOutboxMaxPeerSeq)
+		x.PutInt64(m.ReadOutboxMaxUserMessageId)
 		x.PutInt32(m.UnreadCount)
 		x.PutInt32(m.UnreadMentionsCount)
 		x.PutInt32(m.UnreadReactionsCount)
 		x.PutInt64(m.PinnedPeerSeq)
+		x.PutInt64(m.PinnedUserMessageId)
 		x.PutInt64(m.PinnedCanonicalMessageId)
 		x.PutInt64(m.AvailableMinPeerSeq)
+		x.PutInt64(m.AvailableMinUserMessageId)
 		x.PutInt64(m.LastPts)
 		x.PutInt64(m.LastPtsAt)
 		x.PutInt32(m.DialogSchemaVersion)
@@ -387,89 +402,109 @@ func (m *TLDialogProjection) Encode(x *bin.Encoder, layer int32) error {
 // Decode <--
 func (m *TLDialogProjection) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
-	case 0xb9bc23fd:
+	case 0xdf6c5662:
 		flags, err := d.Uint32()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field flags: %w", err)
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field flags: %w", err)
 		}
 		_ = flags
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field peer_type: %w", err)
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field peer_id: %w", err)
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field peer_id: %w", err)
 		}
 		m.TopPeerSeq, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field top_peer_seq: %w", err)
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field top_peer_seq: %w", err)
+		}
+		m.TopUserMessageId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field top_user_message_id: %w", err)
 		}
 		m.TopCanonicalMessageId, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field top_canonical_message_id: %w", err)
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field top_canonical_message_id: %w", err)
 		}
 		m.TopMessageDate, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field top_message_date: %w", err)
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field top_message_date: %w", err)
 		}
 		m.TopMessageStatus, err = d.Int32()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field top_message_status: %w", err)
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field top_message_status: %w", err)
 		}
 		m.ReadInboxMaxPeerSeq, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field read_inbox_max_peer_seq: %w", err)
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field read_inbox_max_peer_seq: %w", err)
+		}
+		m.ReadInboxMaxUserMessageId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field read_inbox_max_user_message_id: %w", err)
 		}
 		m.ReadOutboxMaxPeerSeq, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field read_outbox_max_peer_seq: %w", err)
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field read_outbox_max_peer_seq: %w", err)
+		}
+		m.ReadOutboxMaxUserMessageId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field read_outbox_max_user_message_id: %w", err)
 		}
 		m.UnreadCount, err = d.Int32()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field unread_count: %w", err)
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field unread_count: %w", err)
 		}
 		m.UnreadMentionsCount, err = d.Int32()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field unread_mentions_count: %w", err)
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field unread_mentions_count: %w", err)
 		}
 		m.UnreadReactionsCount, err = d.Int32()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field unread_reactions_count: %w", err)
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field unread_reactions_count: %w", err)
 		}
 		if (flags & (1 << 0)) != 0 {
 			m.UnreadMark = true
 		}
 		m.PinnedPeerSeq, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field pinned_peer_seq: %w", err)
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field pinned_peer_seq: %w", err)
+		}
+		m.PinnedUserMessageId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field pinned_user_message_id: %w", err)
 		}
 		m.PinnedCanonicalMessageId, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field pinned_canonical_message_id: %w", err)
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field pinned_canonical_message_id: %w", err)
 		}
 		if (flags & (1 << 1)) != 0 {
 			m.HasScheduled = true
 		}
 		m.AvailableMinPeerSeq, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field available_min_peer_seq: %w", err)
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field available_min_peer_seq: %w", err)
+		}
+		m.AvailableMinUserMessageId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field available_min_user_message_id: %w", err)
 		}
 		m.LastPts, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field last_pts: %w", err)
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field last_pts: %w", err)
 		}
 		m.LastPtsAt, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field last_pts_at: %w", err)
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field last_pts_at: %w", err)
 		}
 		m.DialogSchemaVersion, err = d.Int32()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field dialog_schema_version: %w", err)
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field dialog_schema_version: %w", err)
 		}
 		m.DialogPayload, err = d.Bytes()
 		if err != nil {
-			return fmt.Errorf("unable to decode dialogProjection#0xb9bc23fd: field dialog_payload: %w", err)
+			return fmt.Errorf("unable to decode dialogProjection#0xdf6c5662: field dialog_payload: %w", err)
 		}
 
 		return nil

@@ -21,27 +21,32 @@ type DialogProjectionCursor struct {
 }
 
 type DialogProjection struct {
-	UserID                   int64
-	PeerType                 int32
-	PeerID                   int64
-	TopPeerSeq               int64
-	TopCanonicalMessageID    int64
-	TopMessageDate           int64
-	TopMessageStatus         int32
-	ReadInboxMaxPeerSeq      int64
-	ReadOutboxMaxPeerSeq     int64
-	UnreadCount              int32
-	UnreadMentionsCount      int32
-	UnreadReactionsCount     int32
-	UnreadMark               bool
-	PinnedPeerSeq            int64
-	PinnedCanonicalMessageID int64
-	HasScheduled             bool
-	AvailableMinPeerSeq      int64
-	LastPTS                  int64
-	LastPTSAt                int64
-	DialogSchemaVersion      int32
-	DialogPayload            []byte
+	UserID                     int64
+	PeerType                   int32
+	PeerID                     int64
+	TopPeerSeq                 int64
+	TopUserMessageID           int64
+	TopCanonicalMessageID      int64
+	TopMessageDate             int64
+	TopMessageStatus           int32
+	ReadInboxMaxPeerSeq        int64
+	ReadInboxMaxUserMessageID  int64
+	ReadOutboxMaxPeerSeq       int64
+	ReadOutboxMaxUserMessageID int64
+	UnreadCount                int32
+	UnreadMentionsCount        int32
+	UnreadReactionsCount       int32
+	UnreadMark                 bool
+	PinnedPeerSeq              int64
+	PinnedUserMessageID        int64
+	PinnedCanonicalMessageID   int64
+	HasScheduled               bool
+	AvailableMinPeerSeq        int64
+	AvailableMinUserMessageID  int64
+	LastPTS                    int64
+	LastPTSAt                  int64
+	DialogSchemaVersion        int32
+	DialogPayload              []byte
 }
 
 func (r *Repository) ListDialogProjections(ctx context.Context, userID int64, cursor DialogProjectionCursor, limit int32) ([]DialogProjection, error) {
@@ -121,26 +126,31 @@ func mapDialogProjectionRows(rows []model.UserDialogs) []DialogProjection {
 
 func mapDialogProjectionRow(row model.UserDialogs) DialogProjection {
 	return DialogProjection{
-		UserID:                   row.UserId,
-		PeerType:                 row.PeerType,
-		PeerID:                   row.PeerId,
-		TopPeerSeq:               row.TopPeerSeq,
-		TopCanonicalMessageID:    row.TopCanonicalMessageId,
-		TopMessageDate:           row.TopMessageDate,
-		TopMessageStatus:         row.TopMessageStatus,
-		ReadInboxMaxPeerSeq:      row.ReadInboxMaxPeerSeq,
-		ReadOutboxMaxPeerSeq:     row.ReadOutboxMaxPeerSeq,
-		UnreadCount:              row.UnreadCount,
-		UnreadMentionsCount:      row.UnreadMentionsCount,
-		UnreadReactionsCount:     row.UnreadReactionsCount,
-		UnreadMark:               row.UnreadMark,
-		PinnedPeerSeq:            row.PinnedPeerSeq,
-		PinnedCanonicalMessageID: row.PinnedCanonicalMessageId,
-		HasScheduled:             row.HasScheduled,
-		AvailableMinPeerSeq:      row.AvailableMinPeerSeq,
-		LastPTS:                  row.LastPts,
-		LastPTSAt:                row.LastPtsAt,
-		DialogSchemaVersion:      row.DialogSchemaVersion,
-		DialogPayload:            row.DialogPayload,
+		UserID:                     row.UserId,
+		PeerType:                   row.PeerType,
+		PeerID:                     row.PeerId,
+		TopPeerSeq:                 row.TopPeerSeq,
+		TopUserMessageID:           row.TopUserMessageId,
+		TopCanonicalMessageID:      row.TopCanonicalMessageId,
+		TopMessageDate:             row.TopMessageDate,
+		TopMessageStatus:           row.TopMessageStatus,
+		ReadInboxMaxPeerSeq:        row.ReadInboxMaxPeerSeq,
+		ReadInboxMaxUserMessageID:  row.ReadInboxMaxUserMessageId,
+		ReadOutboxMaxPeerSeq:       row.ReadOutboxMaxPeerSeq,
+		ReadOutboxMaxUserMessageID: row.ReadOutboxMaxUserMessageId,
+		UnreadCount:                row.UnreadCount,
+		UnreadMentionsCount:        row.UnreadMentionsCount,
+		UnreadReactionsCount:       row.UnreadReactionsCount,
+		UnreadMark:                 row.UnreadMark,
+		PinnedPeerSeq:              row.PinnedPeerSeq,
+		PinnedUserMessageID:        row.PinnedUserMessageId,
+		PinnedCanonicalMessageID:   row.PinnedCanonicalMessageId,
+		HasScheduled:               row.HasScheduled,
+		AvailableMinPeerSeq:        row.AvailableMinPeerSeq,
+		AvailableMinUserMessageID:  row.AvailableMinUserMessageId,
+		LastPTS:                    row.LastPts,
+		LastPTSAt:                  row.LastPtsAt,
+		DialogSchemaVersion:        row.DialogSchemaVersion,
+		DialogPayload:              row.DialogPayload,
 	}
 }

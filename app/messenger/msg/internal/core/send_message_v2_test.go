@@ -1107,6 +1107,54 @@ func TestMsgUpdatePinnedMessageAllowsZeroIDForUnpin(t *testing.T) {
 	}
 }
 
+func TestMsgResolveDialogCursorTopMessageResolvesGlobalPublicID(t *testing.T) {
+	repo := &fakeMsgRepository{
+		resolveManyByUserMessageID: map[int64]*repository.ResolvedMessageID{
+			42: {
+				UserID:             1001,
+				PeerType:           payload.PeerTypeUser,
+				PeerID:             2002,
+				UserMessageID:      42,
+				PeerSeq:            7,
+				CanonicalMessageID: 7001,
+				MessageDate:        1_772_000_000,
+			},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.MsgResolveDialogCursorTopMessage(&msgpb.TLMsgResolveDialogCursorTopMessage{
+		UserId:       1001,
+		TopMessageId: 42,
+	})
+	if err != nil {
+		t.Fatalf("MsgResolveDialogCursorTopMessage error = %v", err)
+	}
+	if got.Found != tg.BoolTrueClazz || got.PeerType != payload.PeerTypeUser || got.PeerId != 2002 ||
+		got.PeerSeq != 7 || got.MessageDate != 1_772_000_000 {
+		t.Fatalf("resolved cursor = %+v, want public id mapped to internal cursor", got)
+	}
+	if repo.resolveInput.UserID != 1001 || repo.resolveInput.UserMessageID != 42 {
+		t.Fatalf("resolver input = %+v, want user/global public id", repo.resolveInput)
+	}
+}
+
+func TestMsgResolveDialogCursorTopMessageReturnsNotFoundForUnknownPositiveID(t *testing.T) {
+	repo := &fakeMsgRepository{resolveManyByUserMessageID: map[int64]*repository.ResolvedMessageID{}}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.MsgResolveDialogCursorTopMessage(&msgpb.TLMsgResolveDialogCursorTopMessage{
+		UserId:       1001,
+		TopMessageId: 404,
+	})
+	if err != nil {
+		t.Fatalf("MsgResolveDialogCursorTopMessage error = %v", err)
+	}
+	if got.Found != tg.BoolFalseClazz || got.PeerSeq != 0 || got.PeerId != 0 {
+		t.Fatalf("resolved cursor = %+v, want explicit not found", got)
+	}
+}
+
 func TestMsgDeleteMessagesRoutesProjectionOperation(t *testing.T) {
 	updatesClient := &fakeUserUpdatesClient{
 		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
