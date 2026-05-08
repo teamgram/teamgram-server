@@ -7,37 +7,44 @@ import (
 )
 
 type MessageOperationV1 struct {
-	SchemaVersion             int               `json:"schema_version"`
-	OperationKind             string            `json:"operation_kind"`
-	CanonicalMessageID        int64             `json:"canonical_message_id"`
-	PeerType                  int32             `json:"peer_type"`
-	PeerID                    int64             `json:"peer_id"`
-	PeerSeq                   int64             `json:"peer_seq"`
-	FromUserID                int64             `json:"from_user_id"`
-	ToUserID                  int64             `json:"to_user_id"`
-	Date                      int32             `json:"date"`
-	EditDate                  int32             `json:"edit_date,omitempty"`
-	EditVersion               int32             `json:"edit_version,omitempty"`
-	Out                       bool              `json:"out"`
-	MessageText               string            `json:"message_text"`
-	Entities                  []MessageEntityV1 `json:"entities,omitempty"`
-	ReplyToCanonicalMessageID int64             `json:"reply_to_canonical_message_id,omitempty"`
-	ReplyToPeerSeq            int64             `json:"reply_to_peer_seq,omitempty"`
-	DependencyPts             []int64           `json:"dependency_pts,omitempty"`
-	ClearDraft                bool              `json:"clear_draft,omitempty"`
-	SourcePermAuthKeyID       int64             `json:"source_perm_auth_key_id,omitempty"`
-	ClearDraftBeforeDate      int32             `json:"clear_draft_before_date,omitempty"`
-	SavedDialogSideEffect     bool              `json:"saved_dialog_side_effect,omitempty"`
-	ReadInboxMaxPeerSeq       int64             `json:"read_inbox_max_peer_seq,omitempty"`
-	ReadOutboxMaxPeerSeq      int64             `json:"read_outbox_max_peer_seq,omitempty"`
-	DeletePeerSeqs            []int64           `json:"delete_peer_seqs,omitempty"`
-	DeleteMaxPeerSeq          int64             `json:"delete_max_peer_seq,omitempty"`
-	JustClear                 bool              `json:"just_clear,omitempty"`
-	Revoke                    bool              `json:"revoke,omitempty"`
-	UnreadMark                *bool             `json:"unread_mark,omitempty"`
-	PinnedPeerSeq             int64             `json:"pinned_peer_seq,omitempty"`
-	PinnedCanonicalMessageID  int64             `json:"pinned_canonical_message_id,omitempty"`
-	HasScheduled              *bool             `json:"has_scheduled,omitempty"`
+	SchemaVersion              int               `json:"schema_version"`
+	OperationKind              string            `json:"operation_kind"`
+	CanonicalMessageID         int64             `json:"canonical_message_id"`
+	PeerType                   int32             `json:"peer_type"`
+	PeerID                     int64             `json:"peer_id"`
+	PeerSeq                    int64             `json:"peer_seq"`
+	FromUserID                 int64             `json:"from_user_id"`
+	ToUserID                   int64             `json:"to_user_id"`
+	Date                       int32             `json:"date"`
+	EditDate                   int32             `json:"edit_date,omitempty"`
+	EditVersion                int32             `json:"edit_version,omitempty"`
+	Out                        bool              `json:"out"`
+	MessageText                string            `json:"message_text"`
+	Entities                   []MessageEntityV1 `json:"entities,omitempty"`
+	UserMessageID              int64             `json:"user_message_id,omitempty"`
+	ReplyToCanonicalMessageID  int64             `json:"reply_to_canonical_message_id,omitempty"`
+	ReplyToPeerSeq             int64             `json:"reply_to_peer_seq,omitempty"`
+	ReplyToUserMessageID       int64             `json:"reply_to_user_message_id,omitempty"`
+	DependencyPts              []int64           `json:"dependency_pts,omitempty"`
+	ClearDraft                 bool              `json:"clear_draft,omitempty"`
+	SourcePermAuthKeyID        int64             `json:"source_perm_auth_key_id,omitempty"`
+	ClearDraftBeforeDate       int32             `json:"clear_draft_before_date,omitempty"`
+	SavedDialogSideEffect      bool              `json:"saved_dialog_side_effect,omitempty"`
+	ReadMaxUserMessageID       int64             `json:"read_max_user_message_id,omitempty"`
+	ReadInboxMaxPeerSeq        int64             `json:"read_inbox_max_peer_seq,omitempty"`
+	ReadInboxMaxUserMessageID  int64             `json:"read_inbox_max_user_message_id,omitempty"`
+	ReadOutboxMaxPeerSeq       int64             `json:"read_outbox_max_peer_seq,omitempty"`
+	ReadOutboxMaxUserMessageID int64             `json:"read_outbox_max_user_message_id,omitempty"`
+	DeletePeerSeqs             []int64           `json:"delete_peer_seqs,omitempty"`
+	DeleteUserMessageIDs       []int64           `json:"delete_user_message_ids,omitempty"`
+	DeleteMaxPeerSeq           int64             `json:"delete_max_peer_seq,omitempty"`
+	JustClear                  bool              `json:"just_clear,omitempty"`
+	Revoke                     bool              `json:"revoke,omitempty"`
+	UnreadMark                 *bool             `json:"unread_mark,omitempty"`
+	PinnedPeerSeq              int64             `json:"pinned_peer_seq,omitempty"`
+	PinnedUserMessageID        int64             `json:"pinned_user_message_id,omitempty"`
+	PinnedCanonicalMessageID   int64             `json:"pinned_canonical_message_id,omitempty"`
+	HasScheduled               *bool             `json:"has_scheduled,omitempty"`
 }
 
 type MessageEntityV1 struct {
@@ -53,6 +60,15 @@ type OperationResponseV1 struct {
 	Pts           int64  `json:"pts"`
 	PtsCount      int32  `json:"pts_count"`
 	EventType     string `json:"event_type,omitempty"`
+}
+
+type OperationResponseV2 struct {
+	SchemaVersion int    `json:"schema_version"`
+	OperationID   string `json:"operation_id,omitempty"`
+	Pts           int64  `json:"pts"`
+	PtsCount      int32  `json:"pts_count"`
+	EventType     string `json:"event_type,omitempty"`
+	UserMessageID int64  `json:"user_message_id,omitempty"`
 }
 
 type MessageEventV1 struct {
@@ -72,6 +88,28 @@ type MessageEventV1 struct {
 	Entities           []MessageEntityV1 `json:"entities,omitempty"`
 	ReplyToPeerSeq     int64             `json:"reply_to_peer_seq,omitempty"`
 	AuthKeyIdExclude   *int64            `json:"auth_key_id_exclude,omitempty"`
+}
+
+type MessageEventV2 struct {
+	SchemaVersion        int               `json:"schema_version"`
+	EventKind            string            `json:"event_kind"`
+	CanonicalMessageID   int64             `json:"canonical_message_id"`
+	PeerSeq              int64             `json:"peer_seq,omitempty"`
+	MessageID            int64             `json:"message_id"`
+	PeerType             int32             `json:"peer_type"`
+	PeerID               int64             `json:"peer_id"`
+	FromUserID           int64             `json:"from_user_id"`
+	ToUserID             int64             `json:"to_user_id"`
+	Date                 int32             `json:"date"`
+	EditDate             int32             `json:"edit_date,omitempty"`
+	EditVersion          int32             `json:"edit_version,omitempty"`
+	Out                  bool              `json:"out"`
+	MessageText          string            `json:"message_text"`
+	Entities             []MessageEntityV1 `json:"entities,omitempty"`
+	ReplyToUserMessageID int64             `json:"reply_to_user_message_id,omitempty"`
+	ReadMaxUserMessageID int64             `json:"read_max_user_message_id,omitempty"`
+	PinnedUserMessageID  int64             `json:"pinned_user_message_id,omitempty"`
+	AuthKeyIdExclude     *int64            `json:"auth_key_id_exclude,omitempty"`
 }
 
 func HashBytes(b []byte) []byte {

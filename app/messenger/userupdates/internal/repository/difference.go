@@ -2,9 +2,11 @@ package repository
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/model"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 )
 
@@ -96,7 +98,11 @@ func (r *Repository) GetDifference(ctx context.Context, in GetDifferenceInput) (
 	}
 	events := make([]UserEvent, 0, len(rows))
 	for _, row := range rows {
-		events = append(events, userEventFromModel(row))
+		event, err := r.userEventFromModel(ctx, row)
+		if err != nil {
+			return nil, err
+		}
+		events = append(events, event)
 	}
 	var authSeqEvents []AuthSeqEvent
 	if in.Date != nil {
@@ -130,24 +136,95 @@ func operationResultFromModel(r *model.UserOperationResults) *OperationResult {
 	}
 }
 
-func userEventFromModel(r model.UserPtsEvents) UserEvent {
-	return UserEvent{
-		UserID:             r.UserId,
-		Pts:                r.Pts,
-		PtsCount:           r.PtsCount,
-		OperationID:        r.OperationId,
-		OpType:             r.OpType,
-		EventType:          r.EventType,
-		PeerType:           r.PeerType,
-		PeerID:             r.PeerId,
-		CanonicalMessageID: r.CanonicalMessageId,
-		PeerSeq:            r.PeerSeq,
-		ActorUserID:        r.ActorUserId,
-		EventSchemaVersion: r.EventSchemaVersion,
-		EventCodec:         r.EventCodec,
-		EventPayload:       r.EventPayload,
-		EventPayloadHash:   r.EventPayloadHash,
+func (r *Repository) userEventFromModel(ctx context.Context, row model.UserPtsEvents) (UserEvent, error) {
+	event := UserEvent{
+		UserID:             row.UserId,
+		Pts:                row.Pts,
+		PtsCount:           row.PtsCount,
+		OperationID:        row.OperationId,
+		OpType:             row.OpType,
+		EventType:          row.EventType,
+		PeerType:           row.PeerType,
+		PeerID:             row.PeerId,
+		CanonicalMessageID: row.CanonicalMessageId,
+		PeerSeq:            row.PeerSeq,
+		ActorUserID:        row.ActorUserId,
+		EventSchemaVersion: row.EventSchemaVersion,
+		EventCodec:         row.EventCodec,
+		EventPayload:       row.EventPayload,
+		EventPayloadHash:   row.EventPayloadHash,
 	}
+	if row.EventSchemaVersion != payload.MessageEventSchemaVersionV1 || row.EventCodec != PayloadCodecJSON {
+		return event, nil
+	}
+	hydrated, err := r.hydrateLegacyMessageEvent(ctx, event)
+	if err != nil {
+		return UserEvent{}, err
+	}
+	return hydrated, nil
+}
+
+func (r *Repository) hydrateLegacyMessageEvent(ctx context.Context, event UserEvent) (UserEvent, error) {
+	var old payload.MessageEventV1
+	if err := json.Unmarshal(event.EventPayload, &old); err != nil {
+		return UserEvent{}, storageError("decode legacy message event", err)
+	}
+	if old.SchemaVersion != payload.MessageEventSchemaVersionV1 {
+		return UserEvent{}, storageError("decode legacy message event", userupdates.ErrOperationTerminal)
+	}
+	userMessageID, err := r.resolveUserMessageIDByPeerSeq(ctx, event.UserID, event.PeerType, event.PeerID, event.PeerSeq)
+	if err != nil {
+		return UserEvent{}, err
+	}
+	if userMessageID <= 0 {
+		return UserEvent{}, storageError("hydrate legacy message event", userupdates.ErrOperationTerminal)
+	}
+	replyToUserMessageID := int64(0)
+	if old.ReplyToPeerSeq > 0 {
+		replyToUserMessageID, err = r.resolveUserMessageIDByPeerSeq(ctx, event.UserID, event.PeerType, event.PeerID, old.ReplyToPeerSeq)
+		if err != nil {
+			return UserEvent{}, err
+		}
+	}
+	next := payload.MessageEventV2{
+		SchemaVersion:        payload.MessageEventSchemaVersion,
+		EventKind:            old.EventKind,
+		CanonicalMessageID:   old.CanonicalMessageID,
+		PeerSeq:              event.PeerSeq,
+		MessageID:            userMessageID,
+		PeerType:             old.PeerType,
+		PeerID:               old.PeerID,
+		FromUserID:           old.FromUserID,
+		ToUserID:             old.ToUserID,
+		Date:                 old.Date,
+		EditDate:             old.EditDate,
+		EditVersion:          old.EditVersion,
+		Out:                  old.Out,
+		MessageText:          old.MessageText,
+		Entities:             old.Entities,
+		ReplyToUserMessageID: replyToUserMessageID,
+		ReadMaxUserMessageID: userMessageID,
+		AuthKeyIdExclude:     old.AuthKeyIdExclude,
+	}
+	body, err := json.Marshal(next)
+	if err != nil {
+		return UserEvent{}, storageError("marshal hydrated legacy message event", err)
+	}
+	event.EventSchemaVersion = payload.MessageEventSchemaVersion
+	event.EventPayload = body
+	event.EventPayloadHash = payload.HashBytes(body)
+	return event, nil
+}
+
+func (r *Repository) resolveUserMessageIDByPeerSeq(ctx context.Context, userID int64, peerType int32, peerID, peerSeq int64) (int64, error) {
+	row, err := r.models.UserMessageViewsModel.SelectNearestLiveByUserPeerSeq(ctx, userID, peerType, peerID, peerSeq, MessageStatusLive)
+	if err != nil {
+		if errors.Is(err, model.ErrNotFound) {
+			return 0, nil
+		}
+		return 0, storageError("resolve user message id by peer seq", err)
+	}
+	return row.UserMessageId, nil
 }
 
 func selectOperationResult(txModels *model.TxModels, userID int64, operationID string) (*OperationResult, bool, error) {

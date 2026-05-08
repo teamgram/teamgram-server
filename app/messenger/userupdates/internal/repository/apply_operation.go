@@ -118,7 +118,7 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 	if err := json.Unmarshal(in.Payload, &op); err != nil {
 		return nil, fmt.Errorf("%w: decode message operation: %v", userupdates.ErrOperationTerminal, err)
 	}
-	if op.SchemaVersion != payload.MessageOperationSchemaVersion {
+	if op.SchemaVersion != payload.MessageOperationSchemaVersion && op.SchemaVersion != payload.MessageOperationSchemaVersionV1 {
 		return nil, fmt.Errorf("%w: unsupported operation schema=%d kind=%s", userupdates.ErrOperationTerminal, op.SchemaVersion, op.OperationKind)
 	}
 	if len(in.DependencyPts) != 0 || len(op.DependencyPts) != 0 {
@@ -136,6 +136,10 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 			return nil, storageError("select reply target view", err)
 		}
 		op.ReplyToPeerSeq = row.PeerSeq
+		op.ReplyToUserMessageID = row.UserMessageId
+	}
+	if err := resolvePublicIDsForOperation(txModels, in.UserID, &op); err != nil {
+		return nil, err
 	}
 
 	nextPTS := state.Pts + 1
@@ -215,6 +219,68 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 	}, nil
 }
 
+func resolvePublicIDsForOperation(txModels *model.TxModels, userID int64, op *payload.MessageOperationV1) error {
+	if op == nil {
+		return nil
+	}
+	if createsUserMessageView(op.OperationKind) {
+		existingID, found, err := existingUserMessageID(txModels, userID, op.CanonicalMessageID)
+		if err != nil {
+			return err
+		}
+		if found && existingID > 0 {
+			op.UserMessageID = existingID
+		}
+		if op.UserMessageID == 0 {
+			userMessageID, err := nextUserMessageID(txModels, userID)
+			if err != nil {
+				return err
+			}
+			op.UserMessageID = userMessageID
+		}
+	}
+	if op.ReplyToUserMessageID == 0 && op.ReplyToPeerSeq > 0 {
+		id, err := resolveUserMessageIDByPeerSeq(txModels, userID, op.PeerType, op.PeerID, op.ReplyToPeerSeq)
+		if err != nil {
+			return err
+		}
+		op.ReplyToUserMessageID = id
+	}
+	if op.ReadInboxMaxUserMessageID == 0 && op.ReadInboxMaxPeerSeq > 0 {
+		id, err := resolveUserMessageIDByPeerSeq(txModels, userID, op.PeerType, op.PeerID, op.ReadInboxMaxPeerSeq)
+		if err != nil {
+			return err
+		}
+		op.ReadInboxMaxUserMessageID = id
+	}
+	if op.ReadOutboxMaxUserMessageID == 0 && op.ReadOutboxMaxPeerSeq > 0 {
+		id, err := resolveUserMessageIDByPeerSeq(txModels, userID, op.PeerType, op.PeerID, op.ReadOutboxMaxPeerSeq)
+		if err != nil {
+			return err
+		}
+		op.ReadOutboxMaxUserMessageID = id
+	}
+	if op.ReadMaxUserMessageID == 0 {
+		if op.Out {
+			op.ReadMaxUserMessageID = op.ReadOutboxMaxUserMessageID
+		} else {
+			op.ReadMaxUserMessageID = op.ReadInboxMaxUserMessageID
+		}
+	}
+	if op.PinnedUserMessageID == 0 {
+		pinnedPeerSeq := op.PinnedPeerSeq
+		if pinnedPeerSeq == 0 {
+			pinnedPeerSeq = op.PeerSeq
+		}
+		id, err := resolveUserMessageIDByPeerSeq(txModels, userID, op.PeerType, op.PeerID, pinnedPeerSeq)
+		if err != nil {
+			return err
+		}
+		op.PinnedUserMessageID = id
+	}
+	return nil
+}
+
 func (r *Repository) lockPartitionFence(txModels *model.TxModels, partitionID int32) (*model.UserupdatesPartitionFences, error) {
 	fence, err := txModels.UserupdatesPartitionFencesModel.SelectByPartitionId(partitionID)
 	if err != nil {
@@ -277,34 +343,38 @@ func buildEventAndResponse(in ApplyUserOperationInput, op payload.MessageOperati
 	if op.OperationKind != payload.OperationKindSendMessage {
 		eventKind = op.OperationKind
 	}
-	event := payload.MessageEventV1{
-		SchemaVersion:      payload.MessageEventSchemaVersion,
-		EventKind:          eventKind,
-		CanonicalMessageID: op.CanonicalMessageID,
-		MessageID:          op.PeerSeq,
-		PeerType:           op.PeerType,
-		PeerID:             op.PeerID,
-		FromUserID:         op.FromUserID,
-		ToUserID:           op.ToUserID,
-		Date:               op.Date,
-		EditDate:           op.EditDate,
-		EditVersion:        op.EditVersion,
-		Out:                op.Out,
-		MessageText:        op.MessageText,
-		Entities:           op.Entities,
-		ReplyToPeerSeq:     op.ReplyToPeerSeq,
-		AuthKeyIdExclude:   in.AuthKeyIDExclude,
+	event := payload.MessageEventV2{
+		SchemaVersion:        payload.MessageEventSchemaVersion,
+		EventKind:            eventKind,
+		CanonicalMessageID:   op.CanonicalMessageID,
+		PeerSeq:              op.PeerSeq,
+		MessageID:            op.UserMessageID,
+		PeerType:             op.PeerType,
+		PeerID:               op.PeerID,
+		FromUserID:           op.FromUserID,
+		ToUserID:             op.ToUserID,
+		Date:                 op.Date,
+		EditDate:             op.EditDate,
+		EditVersion:          op.EditVersion,
+		Out:                  op.Out,
+		MessageText:          op.MessageText,
+		Entities:             op.Entities,
+		ReplyToUserMessageID: op.ReplyToUserMessageID,
+		ReadMaxUserMessageID: op.ReadMaxUserMessageID,
+		PinnedUserMessageID:  op.PinnedUserMessageID,
+		AuthKeyIdExclude:     in.AuthKeyIDExclude,
 	}
 	eventPayload, err := json.Marshal(event)
 	if err != nil {
 		return nil, nil, nil, nil, storageError("marshal message event", err)
 	}
-	response := payload.OperationResponseV1{
+	response := payload.OperationResponseV2{
 		SchemaVersion: payload.OperationResponseSchemaVersion,
 		OperationID:   in.OperationID,
 		Pts:           pts,
 		PtsCount:      ptsCount,
 		EventType:     eventKind,
+		UserMessageID: op.UserMessageID,
 	}
 	responsePayload, err := json.Marshal(response)
 	if err != nil {
@@ -320,6 +390,7 @@ func insertUserMessageView(txModels *model.TxModels, in ApplyUserOperationInput,
 		PeerId:             op.PeerID,
 		PeerSeq:            op.PeerSeq,
 		CanonicalMessageId: op.CanonicalMessageID,
+		UserMessageId:      op.UserMessageID,
 		FromUserId:         op.FromUserID,
 		Outgoing:           op.Out,
 		MessageKind:        MessageKindText,
@@ -347,29 +418,34 @@ func upsertUserDialog(txModels *model.TxModels, in ApplyUserOperationInput, op p
 	}
 	now := unixNow()
 	_, _, err := txModels.UserDialogsModel.InsertOrUpdateMessageEvent(&model.UserDialogs{
-		UserId:                   in.UserID,
-		PeerType:                 op.PeerType,
-		PeerId:                   op.PeerID,
-		TopPeerSeq:               op.PeerSeq,
-		TopCanonicalMessageId:    op.CanonicalMessageID,
-		TopMessageDate:           int64(op.Date),
-		TopMessageStatus:         MessageStatusLive,
-		ReadInboxMaxPeerSeq:      0,
-		ReadOutboxMaxPeerSeq:     0,
-		UnreadCount:              unread,
-		UnreadMentionsCount:      0,
-		UnreadReactionsCount:     0,
-		UnreadMark:               false,
-		PinnedPeerSeq:            0,
-		PinnedCanonicalMessageId: 0,
-		HasScheduled:             false,
-		AvailableMinPeerSeq:      0,
-		Hidden:                   false,
-		DeletedAt:                0,
-		LastPts:                  nextPTS,
-		LastPtsAt:                now,
-		DialogSchemaVersion:      1,
-		DialogPayload:            dialogPayload,
+		UserId:                     in.UserID,
+		PeerType:                   op.PeerType,
+		PeerId:                     op.PeerID,
+		TopPeerSeq:                 op.PeerSeq,
+		TopUserMessageId:           op.UserMessageID,
+		TopCanonicalMessageId:      op.CanonicalMessageID,
+		TopMessageDate:             int64(op.Date),
+		TopMessageStatus:           MessageStatusLive,
+		ReadInboxMaxPeerSeq:        op.ReadInboxMaxPeerSeq,
+		ReadInboxMaxUserMessageId:  op.ReadInboxMaxUserMessageID,
+		ReadOutboxMaxPeerSeq:       op.ReadOutboxMaxPeerSeq,
+		ReadOutboxMaxUserMessageId: op.ReadOutboxMaxUserMessageID,
+		UnreadCount:                unread,
+		UnreadMentionsCount:        0,
+		UnreadReactionsCount:       0,
+		UnreadMark:                 false,
+		PinnedPeerSeq:              op.PinnedPeerSeq,
+		PinnedUserMessageId:        op.PinnedUserMessageID,
+		PinnedCanonicalMessageId:   0,
+		HasScheduled:               false,
+		AvailableMinPeerSeq:        0,
+		AvailableMinUserMessageId:  0,
+		Hidden:                     false,
+		DeletedAt:                  0,
+		LastPts:                    nextPTS,
+		LastPtsAt:                  now,
+		DialogSchemaVersion:        1,
+		DialogPayload:              dialogPayload,
 	})
 	if err != nil {
 		return storageError("upsert user dialog", err)
@@ -380,15 +456,19 @@ func upsertUserDialog(txModels *model.TxModels, in ApplyUserOperationInput, op p
 func applyReadHistory(txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, nextPTS int64) error {
 	readInbox := op.ReadInboxMaxPeerSeq
 	readOutbox := op.ReadOutboxMaxPeerSeq
+	readInboxUserMessageID := op.ReadInboxMaxUserMessageID
+	readOutboxUserMessageID := op.ReadOutboxMaxUserMessageID
 	var row *model.UserDialogs
 	if readInbox == 0 || readOutbox == 0 || op.Out {
 		if current, err := txModels.UserDialogsModel.SelectByUserPeer(in.UserID, op.PeerType, op.PeerID); err == nil {
 			row = current
 			if readInbox == 0 {
 				readInbox = row.ReadInboxMaxPeerSeq
+				readInboxUserMessageID = row.ReadInboxMaxUserMessageId
 			}
 			if readOutbox == 0 {
 				readOutbox = row.ReadOutboxMaxPeerSeq
+				readOutboxUserMessageID = row.ReadOutboxMaxUserMessageId
 			}
 		} else if !errors.Is(err, model.ErrNotFound) {
 			return storageError("select dialog before read history", err)
@@ -397,8 +477,10 @@ func applyReadHistory(txModels *model.TxModels, in ApplyUserOperationInput, op p
 	if readInbox == 0 && readOutbox == 0 {
 		if op.Out {
 			readOutbox = op.PeerSeq
+			readOutboxUserMessageID = op.ReadMaxUserMessageID
 		} else {
 			readInbox = op.PeerSeq
+			readInboxUserMessageID = op.ReadMaxUserMessageID
 		}
 	}
 	unreadCount := int32(0)
@@ -411,7 +493,7 @@ func applyReadHistory(txModels *model.TxModels, in ApplyUserOperationInput, op p
 		unreadReactionsCount = row.UnreadReactionsCount
 		unreadMark = row.UnreadMark
 	}
-	_, err := txModels.UserDialogsModel.UpdateReadState(unreadCount, unreadMentionsCount, unreadReactionsCount, unreadMark, readInbox, readOutbox, nextPTS, unixNow(), in.UserID, op.PeerType, op.PeerID)
+	_, err := txModels.UserDialogsModel.UpdateReadState(unreadCount, unreadMentionsCount, unreadReactionsCount, unreadMark, readInbox, readInboxUserMessageID, readOutbox, readOutboxUserMessageID, nextPTS, unixNow(), in.UserID, op.PeerType, op.PeerID)
 	if err != nil {
 		return storageError("apply read history", err)
 	}
@@ -433,11 +515,12 @@ func insertHashTagsTx(txModels *model.TxModels, userID int64, op payload.Message
 	}
 	for _, tag := range tags {
 		if _, _, err := txModels.HashTagsModel.InsertOrUpdate(&model.HashTags{
-			UserId:           userID,
-			PeerType:         op.PeerType,
-			PeerId:           op.PeerID,
-			HashTag:          tag,
-			HashTagMessageId: int32(op.PeerSeq),
+			UserId:               userID,
+			PeerType:             op.PeerType,
+			PeerId:               op.PeerID,
+			HashTag:              tag,
+			HashTagMessageId:     int32(op.PeerSeq),
+			HashTagUserMessageId: op.UserMessageID,
 		}); err != nil {
 			return storageError("index hashtag", err)
 		}
@@ -537,7 +620,11 @@ func applyDeleteHistory(txModels *model.TxModels, in ApplyUserOperationInput, op
 		return err
 	}
 	if op.JustClear || maxPeerSeq > 0 {
-		if _, err := txModels.UserDialogsModel.UpdateAvailableMinPeerSeq(maxPeerSeq, nextPTS, unixNow(), in.UserID, op.PeerType, op.PeerID); err != nil {
+		availableMinUserMessageID, err := resolveUserMessageIDByPeerSeq(txModels, in.UserID, op.PeerType, op.PeerID, maxPeerSeq)
+		if err != nil {
+			return err
+		}
+		if _, err := txModels.UserDialogsModel.UpdateAvailableMinPeerSeq(maxPeerSeq, availableMinUserMessageID, nextPTS, unixNow(), in.UserID, op.PeerType, op.PeerID); err != nil {
 			return storageError("update dialog available min peer seq", err)
 		}
 	}
@@ -602,7 +689,7 @@ func recomputeDialogTop(txModels *model.TxModels, userID int64, peerType int32, 
 		}
 		return nil
 	}
-	if _, err := txModels.UserDialogsModel.UpdateDialogTopAfterDelete(top.PeerSeq, top.CanonicalMessageId, top.Date, top.MessageStatus, 0, nextPTS, unixNow(), userID, peerType, peerID); err != nil {
+	if _, err := txModels.UserDialogsModel.UpdateDialogTopAfterDelete(top.PeerSeq, top.UserMessageId, top.CanonicalMessageId, top.Date, top.MessageStatus, 0, nextPTS, unixNow(), userID, peerType, peerID); err != nil {
 		return storageError("update dialog top after delete", err)
 	}
 	return nil
@@ -617,7 +704,15 @@ func applyUpdatePinnedMessage(txModels *model.TxModels, in ApplyUserOperationInp
 	if pinnedCanonicalID == 0 {
 		pinnedCanonicalID = op.CanonicalMessageID
 	}
-	_, err := txModels.UserDialogsModel.UpdatePinnedMessage(pinnedPeerSeq, pinnedCanonicalID, nextPTS, unixNow(), in.UserID, op.PeerType, op.PeerID)
+	pinnedUserMessageID := op.PinnedUserMessageID
+	if pinnedUserMessageID == 0 {
+		resolvedID, err := resolveUserMessageIDByPeerSeq(txModels, in.UserID, op.PeerType, op.PeerID, pinnedPeerSeq)
+		if err != nil {
+			return err
+		}
+		pinnedUserMessageID = resolvedID
+	}
+	_, err := txModels.UserDialogsModel.UpdatePinnedMessage(pinnedPeerSeq, pinnedUserMessageID, pinnedCanonicalID, nextPTS, unixNow(), in.UserID, op.PeerType, op.PeerID)
 	if err != nil {
 		return storageError("apply update pinned message", err)
 	}
@@ -642,7 +737,9 @@ func applyMarkDialogUnread(txModels *model.TxModels, in ApplyUserOperationInput,
 		row.UnreadReactionsCount,
 		unreadMark,
 		row.ReadInboxMaxPeerSeq,
+		row.ReadInboxMaxUserMessageId,
 		row.ReadOutboxMaxPeerSeq,
+		row.ReadOutboxMaxUserMessageId,
 		nextPTS,
 		unixNow(),
 		in.UserID,
@@ -661,29 +758,34 @@ func applyScheduledMarker(txModels *model.TxModels, in ApplyUserOperationInput, 
 		hasScheduled = *op.HasScheduled
 	}
 	_, _, err := txModels.UserDialogsModel.InsertOrUpdateMessageEvent(&model.UserDialogs{
-		UserId:                   in.UserID,
-		PeerType:                 op.PeerType,
-		PeerId:                   op.PeerID,
-		TopPeerSeq:               op.PeerSeq,
-		TopCanonicalMessageId:    op.CanonicalMessageID,
-		TopMessageDate:           int64(op.Date),
-		TopMessageStatus:         MessageStatusLive,
-		ReadInboxMaxPeerSeq:      0,
-		ReadOutboxMaxPeerSeq:     0,
-		UnreadCount:              0,
-		UnreadMentionsCount:      0,
-		UnreadReactionsCount:     0,
-		UnreadMark:               false,
-		PinnedPeerSeq:            0,
-		PinnedCanonicalMessageId: 0,
-		HasScheduled:             hasScheduled,
-		AvailableMinPeerSeq:      0,
-		Hidden:                   false,
-		DeletedAt:                0,
-		LastPts:                  nextPTS,
-		LastPtsAt:                unixNow(),
-		DialogSchemaVersion:      1,
-		DialogPayload:            []byte(`{"schema_version":1}`),
+		UserId:                     in.UserID,
+		PeerType:                   op.PeerType,
+		PeerId:                     op.PeerID,
+		TopPeerSeq:                 op.PeerSeq,
+		TopUserMessageId:           op.UserMessageID,
+		TopCanonicalMessageId:      op.CanonicalMessageID,
+		TopMessageDate:             int64(op.Date),
+		TopMessageStatus:           MessageStatusLive,
+		ReadInboxMaxPeerSeq:        op.ReadInboxMaxPeerSeq,
+		ReadInboxMaxUserMessageId:  op.ReadInboxMaxUserMessageID,
+		ReadOutboxMaxPeerSeq:       op.ReadOutboxMaxPeerSeq,
+		ReadOutboxMaxUserMessageId: op.ReadOutboxMaxUserMessageID,
+		UnreadCount:                0,
+		UnreadMentionsCount:        0,
+		UnreadReactionsCount:       0,
+		UnreadMark:                 false,
+		PinnedPeerSeq:              op.PinnedPeerSeq,
+		PinnedUserMessageId:        op.PinnedUserMessageID,
+		PinnedCanonicalMessageId:   0,
+		HasScheduled:               hasScheduled,
+		AvailableMinPeerSeq:        0,
+		AvailableMinUserMessageId:  0,
+		Hidden:                     false,
+		DeletedAt:                  0,
+		LastPts:                    nextPTS,
+		LastPtsAt:                  unixNow(),
+		DialogSchemaVersion:        1,
+		DialogPayload:              []byte(`{"schema_version":1}`),
 	})
 	if err != nil {
 		return storageError("apply scheduled marker", err)
