@@ -51,7 +51,7 @@ func (c *MsgCore) MsgDeleteMessages(in *msg.TLMsgDeleteMessages) (*tg.MessagesAf
 	if err != nil {
 		return nil, err
 	}
-	groups := groupDeleteMessageIDs(resolved)
+	groups := groupDeleteMessageIDs(resolved, in.PeerType, in.PeerId)
 	if len(groups) == 0 {
 		return tg.MakeTLMessagesAffectedMessages(&tg.TLMessagesAffectedMessages{}).ToMessagesAffectedMessages(), nil
 	}
@@ -114,11 +114,11 @@ func (c *MsgCore) MsgDeleteMessages(in *msg.TLMsgDeleteMessages) (*tg.MessagesAf
 }
 
 func deleteMessagesOperationID(userID int64, peerID int64, ids []int32, revoke bool, authKeyID int64) string {
-	return fmt.Sprintf("v1:dialog:delete_messages:user:%d:peer:%d:ids:%v:revoke:%t:auth:%d", userID, peerID, ids, revoke, authKeyID)
+	return fmt.Sprintf("v2:dialog:delete_messages:user:%d:peer:%d:ids:%v:revoke:%t:auth:%d", userID, peerID, ids, revoke, authKeyID)
 }
 
 func deleteMessagesPeerSeqOperationID(userID int64, peerID int64, peerSeqs []int64, revoke bool) string {
-	return fmt.Sprintf("v1:dialog:delete_messages:user:%d:peer:%d:peer_seqs:%v:revoke:%t", userID, peerID, peerSeqs, revoke)
+	return fmt.Sprintf("v2:dialog:delete_messages:user:%d:peer:%d:peer_seqs:%v:revoke:%t", userID, peerID, peerSeqs, revoke)
 }
 
 type deleteMessageGroup struct {
@@ -128,7 +128,7 @@ type deleteMessageGroup struct {
 	userMessageIDs []int64
 }
 
-func groupDeleteMessageIDs(items []repository.ResolvedMessageID) []deleteMessageGroup {
+func groupDeleteMessageIDs(items []repository.ResolvedMessageID, peerType int32, peerID int64) []deleteMessageGroup {
 	groups := make([]deleteMessageGroup, 0, len(items))
 	index := map[struct {
 		peerType int32
@@ -136,6 +136,9 @@ func groupDeleteMessageIDs(items []repository.ResolvedMessageID) []deleteMessage
 	}]int{}
 	for _, item := range items {
 		if item.PeerSeq <= 0 || item.UserMessageID <= 0 {
+			continue
+		}
+		if item.PeerType != peerType || item.PeerID != peerID {
 			continue
 		}
 		key := struct {

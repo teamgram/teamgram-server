@@ -135,7 +135,7 @@ func TestMsgReadHistoryV2DurablyEnqueuesPeerReceiptAcceptance(t *testing.T) {
 		t.Fatalf("affected messages = %+v, want pts=1 pts_count=1", affected)
 	}
 
-	assertAffectedOutboxRow(t, ctx, db, peerID, readHistoryOperationID(peerID, requesterID, maxID, 0), requesterID, maxID)
+	assertAffectedOutboxRow(t, ctx, db, peerID, readHistoryOutboxOperationID(peerID, requesterID, int64(maxID)), requesterID, maxID)
 }
 
 type acceptanceIDGenerator struct {

@@ -133,5 +133,5 @@ func buildPinnedMessageOperation(in *msg.TLMsgUpdatePinnedMessage, pinnedPeerSeq
 }
 
 func updatePinnedOperationID(userID int64, peerID int64, id int32, unpin bool, authKeyID int64) string {
-	return fmt.Sprintf("v1:dialog:update_pinned:user:%d:peer:%d:id:%d:unpin:%t:auth:%d", userID, peerID, id, unpin, authKeyID)
+	return fmt.Sprintf("v2:dialog:update_pinned:user:%d:peer:%d:id:%d:unpin:%t:auth:%d", userID, peerID, id, unpin, authKeyID)
 }

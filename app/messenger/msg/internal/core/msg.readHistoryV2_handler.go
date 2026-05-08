@@ -115,7 +115,7 @@ func (c *MsgCore) MsgReadHistoryV2(in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffe
 		}
 		effects = append(effects, OperationEnvelope{
 			UserID:               in.PeerId,
-			OperationID:          readHistoryOperationID(in.PeerId, in.UserId, in.MaxId, 0),
+			OperationID:          readHistoryOutboxOperationID(in.PeerId, in.UserId, maxPeerSeq),
 			OpType:               payload.OpTypeSendMessage,
 			OperationKind:        payload.OperationKindReadHistory,
 			ActorUserID:          in.UserId,
@@ -146,5 +146,9 @@ func (c *MsgCore) MsgReadHistoryV2(in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffe
 }
 
 func readHistoryOperationID(userID int64, peerID int64, maxID int32, authKeyID int64) string {
-	return fmt.Sprintf("v1:dialog:read_history:user:%d:peer:%d:max:%d:auth:%d", userID, peerID, maxID, authKeyID)
+	return fmt.Sprintf("v2:dialog:read_history:user:%d:peer:%d:max_user:%d:auth:%d", userID, peerID, maxID, authKeyID)
+}
+
+func readHistoryOutboxOperationID(userID int64, peerID int64, maxPeerSeq int64) string {
+	return fmt.Sprintf("v2:dialog:read_history_outbox:user:%d:peer:%d:max_peer_seq:%d", userID, peerID, maxPeerSeq)
 }
