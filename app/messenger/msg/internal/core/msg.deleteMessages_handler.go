@@ -20,7 +20,6 @@ package core
 import (
 	"encoding/json"
 	"fmt"
-	"time"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
@@ -53,7 +52,7 @@ func (c *MsgCore) MsgDeleteMessages(in *msg.TLMsgDeleteMessages) (*tg.MessagesAf
 		}
 		userMessageIDs = append(userMessageIDs, int64(id))
 	}
-	resolved, err := c.svcCtx.Repo.ResolveMessageIDs(c.ctx, in.UserId, userMessageIDs)
+	resolved, err := c.svcCtx.Repo.ResolveMessageIDsForDelete(c.ctx, in.UserId, userMessageIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -171,7 +170,7 @@ func buildDeleteMessagesPayload(fromUserID int64, toUserID int64, peerType int32
 		PeerID:               peerID,
 		FromUserID:           fromUserID,
 		ToUserID:             toUserID,
-		Date:                 int32(time.Now().Unix()),
+		Date:                 0,
 		DeletePeerSeqs:       peerSeqs,
 		DeleteUserMessageIDs: userMessageIDs,
 		Revoke:               revoke,

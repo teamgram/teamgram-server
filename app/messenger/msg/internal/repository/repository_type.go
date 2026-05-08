@@ -183,6 +183,7 @@ type MessageRepository interface {
 	ListHistoryMessages(ctx context.Context, in ListHistoryMessagesInput) ([]HistoryMessage, error)
 	ResolveMessageID(ctx context.Context, userID int64, peerType int32, peerID int64, userMessageID int64) (*ResolvedMessageID, error)
 	ResolveMessageIDs(ctx context.Context, userID int64, userMessageIDs []int64) ([]ResolvedMessageID, error)
+	ResolveMessageIDsForDelete(ctx context.Context, userID int64, userMessageIDs []int64) ([]ResolvedMessageID, error)
 	ResolveHistoryCursorIDs(ctx context.Context, userID int64, peerType int32, peerID int64, offsetID int32, maxID int32, minID int32) (HistoryCursorBounds, error)
 	ResolvePeerSeqToUserMessageID(ctx context.Context, userID int64, peerType int32, peerID int64, peerSeq int64) (int64, error)
 }

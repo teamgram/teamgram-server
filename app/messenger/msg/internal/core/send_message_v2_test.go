@@ -1202,6 +1202,73 @@ func TestMsgDeleteMessagesRoutesGlobalPublicIDsByRealPeer(t *testing.T) {
 	}
 }
 
+func TestMsgDeleteMessagesRetryResolvesDeletedViewAndReturnsStoredResult(t *testing.T) {
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:      1001,
+			OperationId: deleteMessagesOperationID(1001, 1002, []int32{107}, false, 9001),
+			Status:      1,
+			Pts:         51,
+			PtsCount:    1,
+			CurrentPts:  51,
+		}),
+	}
+	repo := &fakeMsgRepository{
+		resolveManyByUserMessageID: map[int64]*repository.ResolvedMessageID{},
+		resolveDeleteByUserMessageID: map[int64]*repository.ResolvedMessageID{
+			107: {UserID: 1001, PeerType: payload.PeerTypeUser, PeerID: 1002, UserMessageID: 107, PeerSeq: 7, CanonicalMessageID: 7007},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo, UserUpdates: updatesClient})
+
+	got, err := core.MsgDeleteMessages(&msgpb.TLMsgDeleteMessages{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    1002,
+		Id:        []int32{107},
+	})
+	if err != nil {
+		t.Fatalf("MsgDeleteMessages() error = %v", err)
+	}
+	if got.Pts != 51 || got.PtsCount != 1 {
+		t.Fatalf("affected = %+v, want stored operation result", got)
+	}
+	if repo.resolveDeleteCalls != 1 {
+		t.Fatalf("delete resolver calls = %d, want 1", repo.resolveDeleteCalls)
+	}
+	if updatesClient.processed == nil {
+		t.Fatal("retry over deleted view should still dispatch requester operation")
+	}
+	if updatesClient.processed.OperationId != deleteMessagesOperationID(1001, 1002, []int32{107}, false, 9001) {
+		t.Fatalf("operation id = %s", updatesClient.processed.OperationId)
+	}
+}
+
+func TestBuildDeleteMessagesPayloadUsesStableDateAndHash(t *testing.T) {
+	body1, hash1, err := buildDeleteMessagesPayload(1001, 1001, payload.PeerTypeUser, 1002, []int64{7}, []int64{107}, false)
+	if err != nil {
+		t.Fatalf("build payload 1: %v", err)
+	}
+	body2, hash2, err := buildDeleteMessagesPayload(1001, 1001, payload.PeerTypeUser, 1002, []int64{7}, []int64{107}, false)
+	if err != nil {
+		t.Fatalf("build payload 2: %v", err)
+	}
+	if string(body1) != string(body2) {
+		t.Fatalf("delete payload changed across repeated builds:\n%s\n%s", body1, body2)
+	}
+	if string(hash1) != string(hash2) {
+		t.Fatalf("delete payload hash changed: %x != %x", hash1, hash2)
+	}
+	var op payload.MessageOperationV1
+	if err := json.Unmarshal(body1, &op); err != nil {
+		t.Fatalf("decode payload: %v", err)
+	}
+	if op.Date != 0 {
+		t.Fatalf("delete payload date = %d, want deterministic zero", op.Date)
+	}
+}
+
 func TestMsgDeleteMessagesGroupsGlobalIDsByPeer(t *testing.T) {
 	updatesClient := &fakeUserUpdatesClient{
 		processResults: []*userupdates.UserOperationResult{
@@ -1882,17 +1949,19 @@ type fakeMsgRepository struct {
 		maxID    int32
 		minID    int32
 	}
-	resolvedMessageID          *repository.ResolvedMessageID
-	resolveByUserMessageID     map[resolveMessageKey]*repository.ResolvedMessageID
-	resolveManyByUserMessageID map[int64]*repository.ResolvedMessageID
-	resolveInput               repository.ResolvedMessageID
-	markCanonicalErr           error
-	markSenderErrs             []error
-	markCanonicalCalls         int
-	markSenderCalls            int
-	markReceiverAckedCalls     int
-	markCompletedCalls         int
-	markRetryableCalls         int
+	resolvedMessageID            *repository.ResolvedMessageID
+	resolveByUserMessageID       map[resolveMessageKey]*repository.ResolvedMessageID
+	resolveManyByUserMessageID   map[int64]*repository.ResolvedMessageID
+	resolveDeleteByUserMessageID map[int64]*repository.ResolvedMessageID
+	resolveInput                 repository.ResolvedMessageID
+	resolveDeleteCalls           int
+	markCanonicalErr             error
+	markSenderErrs               []error
+	markCanonicalCalls           int
+	markSenderCalls              int
+	markReceiverAckedCalls       int
+	markCompletedCalls           int
+	markRetryableCalls           int
 }
 
 type resolveMessageKey struct {
@@ -1957,6 +2026,33 @@ func (f *fakeMsgRepository) ResolveMessageIDs(_ context.Context, userID int64, u
 		f.resolveInput = repository.ResolvedMessageID{
 			UserID:        userID,
 			UserMessageID: id,
+		}
+		if f.resolveManyByUserMessageID != nil {
+			if resolved := f.resolveManyByUserMessageID[id]; resolved != nil {
+				out = append(out, *resolved)
+			}
+			continue
+		}
+		if f.resolvedMessageID != nil && f.resolvedMessageID.UserMessageID == id {
+			out = append(out, *f.resolvedMessageID)
+		}
+	}
+	return out, nil
+}
+
+func (f *fakeMsgRepository) ResolveMessageIDsForDelete(_ context.Context, userID int64, userMessageIDs []int64) ([]repository.ResolvedMessageID, error) {
+	f.resolveDeleteCalls++
+	out := make([]repository.ResolvedMessageID, 0, len(userMessageIDs))
+	for _, id := range userMessageIDs {
+		f.resolveInput = repository.ResolvedMessageID{
+			UserID:        userID,
+			UserMessageID: id,
+		}
+		if f.resolveDeleteByUserMessageID != nil {
+			if resolved := f.resolveDeleteByUserMessageID[id]; resolved != nil {
+				out = append(out, *resolved)
+			}
+			continue
 		}
 		if f.resolveManyByUserMessageID != nil {
 			if resolved := f.resolveManyByUserMessageID[id]; resolved != nil {
