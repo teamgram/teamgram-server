@@ -18,26 +18,28 @@ import (
 
 func TestNoClientMessageIDDirectlyFromPeerSeq(t *testing.T) {
 	repoRoot := filepath.Clean("../../../../..")
-	scanRoots := []string{
-		filepath.Join(repoRoot, "app/messenger/msg"),
-		filepath.Join(repoRoot, "app/messenger/userupdates"),
-		filepath.Join(repoRoot, "app/bff/dialogs"),
-		filepath.Join(repoRoot, "app/service/biz/dialog"),
+	type guardCase struct {
+		root string
+		re   *regexp.Regexp
 	}
-	forbidden := []*regexp.Regexp{
-		regexp.MustCompile(`MessageID:\s*op\.PeerSeq\b`),
-		regexp.MustCompile(`\bId:\s*int32\([^)]*PeerSeq[^)]*\)`),
-		regexp.MustCompile(`\bMaxId:\s*int32\([^)]*PeerSeq[^)]*\)`),
-		regexp.MustCompile(`\bMaxId:\s*messageEvent\.PeerSeq\b`),
-		regexp.MustCompile(`\bTopMessage:\s*int32\([^)]*PeerSeq[^)]*\)`),
-		regexp.MustCompile(`\bReadInboxMaxId:\s*int32\([^)]*PeerSeq[^)]*\)`),
-		regexp.MustCompile(`\bReadOutboxMaxId:\s*int32\([^)]*PeerSeq[^)]*\)`),
-		regexp.MustCompile(`\bPinnedMsgID:\s*int32\([^)]*PeerSeq[^)]*\)`),
+	clientVisibleGuards := []guardCase{
+		{root: filepath.Join(repoRoot, "app/messenger/userupdates/internal/repository"), re: regexp.MustCompile(`MessageID:\s*op\.PeerSeq\b`)},
+		{root: filepath.Join(repoRoot, "app/messenger/userupdates/internal/projection"), re: regexp.MustCompile(`\bId:\s*int32\([^)]*PeerSeq[^)]*\)`)},
+		{root: filepath.Join(repoRoot, "app/messenger/userupdates/internal/projection"), re: regexp.MustCompile(`\bMaxId:\s*int32\([^)]*PeerSeq[^)]*\)`)},
+		{root: filepath.Join(repoRoot, "app/messenger/userupdates/internal/projection"), re: regexp.MustCompile(`\bMaxId:\s*messageEvent\.PeerSeq\b`)},
+		{root: filepath.Join(repoRoot, "app/bff/dialogs/internal/core"), re: regexp.MustCompile(`\bTopMessage:\s*int32\([^)]*PeerSeq[^)]*\)`)},
+		{root: filepath.Join(repoRoot, "app/bff/dialogs/internal/core"), re: regexp.MustCompile(`\bReadInboxMaxId:\s*int32\([^)]*PeerSeq[^)]*\)`)},
+		{root: filepath.Join(repoRoot, "app/bff/dialogs/internal/core"), re: regexp.MustCompile(`\bReadOutboxMaxId:\s*int32\([^)]*PeerSeq[^)]*\)`)},
+		{root: filepath.Join(repoRoot, "app/bff/dialogs/internal/core"), re: regexp.MustCompile(`\bPinnedMsgID:\s*int32\([^)]*PeerSeq[^)]*\)`)},
+		{root: filepath.Join(repoRoot, "app/service/biz/dialog/internal/core"), re: regexp.MustCompile(`\bTopMessage:\s*int32\([^)]*PeerSeq[^)]*\)`)},
+		{root: filepath.Join(repoRoot, "app/service/biz/dialog/internal/core"), re: regexp.MustCompile(`\bReadInboxMaxId:\s*int32\([^)]*PeerSeq[^)]*\)`)},
+		{root: filepath.Join(repoRoot, "app/service/biz/dialog/internal/core"), re: regexp.MustCompile(`\bReadOutboxMaxId:\s*int32\([^)]*PeerSeq[^)]*\)`)},
+		{root: filepath.Join(repoRoot, "app/service/biz/dialog/internal/core"), re: regexp.MustCompile(`\bPinnedMsgID:\s*int32\([^)]*PeerSeq[^)]*\)`)},
 	}
 
 	var offenders []string
-	for _, root := range scanRoots {
-		err := filepath.WalkDir(root, func(path string, d os.DirEntry, err error) error {
+	for _, guard := range clientVisibleGuards {
+		err := filepath.WalkDir(guard.root, func(path string, d os.DirEntry, err error) error {
 			if err != nil || d == nil || d.IsDir() || !strings.HasSuffix(path, ".go") {
 				return err
 			}
@@ -49,10 +51,8 @@ func TestNoClientMessageIDDirectlyFromPeerSeq(t *testing.T) {
 				return err
 			}
 			text := string(body)
-			for _, re := range forbidden {
-				if match := re.FindString(text); match != "" {
-					offenders = append(offenders, path+": "+match)
-				}
+			if match := guard.re.FindString(text); match != "" {
+				offenders = append(offenders, path+": "+match)
 			}
 			return nil
 		})

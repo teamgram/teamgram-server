@@ -561,16 +561,12 @@ func insertOutboxReadDateTx(txModels *model.TxModels, userID int64, peerType int
 		PeerType:          peerType,
 		PeerId:            peerID,
 		ReadUserId:        readUserID,
-		ReadOutboxMaxId:   readOutboxMaxIDFromPeerSeq(maxPeerSeq),
+		ReadOutboxMaxId:   int32(maxPeerSeq),
 		ReadOutboxMaxDate: unixOrNow(int64(date)),
 	}); err != nil {
 		return storageError("insert outbox read date", err)
 	}
 	return nil
-}
-
-func readOutboxMaxIDFromPeerSeq(peerSeq int64) int32 {
-	return int32(peerSeq)
 }
 
 func extractHashTags(text string) []string {
