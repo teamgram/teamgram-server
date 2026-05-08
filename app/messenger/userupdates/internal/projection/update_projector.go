@@ -54,12 +54,9 @@ func ProjectPushTask(msg *payload.PushTaskKafkaMessageV1) (Result, error) {
 	if msg == nil {
 		return Result{}, fmt.Errorf("%w: push task is nil", userupdates.ErrUserupdatesStorage)
 	}
-	var messageEvent payload.MessageEventV1
-	if err := json.Unmarshal(msg.Payload, &messageEvent); err != nil {
-		return Result{}, fmt.Errorf("%w: decode message event: %v", userupdates.ErrUserupdatesStorage, err)
-	}
-	if messageEvent.SchemaVersion != payload.MessageEventSchemaVersion {
-		return Result{}, fmt.Errorf("%w: unsupported message event schema=%d kind=%s", userupdates.ErrUserupdatesStorage, messageEvent.SchemaVersion, messageEvent.EventKind)
+	messageEvent, err := decodeMessageEventPayloadBytes(detectMessageEventSchemaVersion(msg.Payload), msg.Payload)
+	if err != nil {
+		return Result{}, err
 	}
 	return projectMessageEvent(messageEventProjectionInput{
 		mode:       ModePush,
@@ -79,8 +76,30 @@ type messageEventProjectionInput struct {
 	eventType  int32
 	peerType   int32
 	peerID     int64
-	message    payload.MessageEventV1
+	message    decodedMessageEvent
 	datePrefix string
+}
+
+type decodedMessageEvent struct {
+	SchemaVersion        int
+	EventKind            string
+	CanonicalMessageID   int64
+	PeerSeq              int64
+	MessageID            int64
+	PeerType             int32
+	PeerID               int64
+	FromUserID           int64
+	ToUserID             int64
+	Date                 int32
+	EditDate             int32
+	EditVersion          int32
+	Out                  bool
+	MessageText          string
+	Entities             []payload.MessageEntityV1
+	ReplyToUserMessageID int64
+	ReadMaxUserMessageID int64
+	PinnedUserMessageID  int64
+	AuthKeyIdExclude     *int64
 }
 
 func projectMessageEvent(in messageEventProjectionInput) (Result, error) {
@@ -117,26 +136,103 @@ func projectMessageEvent(in messageEventProjectionInput) (Result, error) {
 			return Result{Updates: updates, AuthKeyIDExclude: in.message.AuthKeyIdExclude}, nil
 		}
 		return Result{Update: update}, nil
+	case payload.OperationKindUpdatePinnedMessage:
+		update, err := updatePinnedMessageUpdate(in)
+		if err != nil {
+			return Result{}, err
+		}
+		if in.mode == ModePush {
+			updates, err := wrapPushUpdate(update, in.message.Date)
+			if err != nil {
+				return Result{}, err
+			}
+			return Result{Updates: updates, AuthKeyIDExclude: in.message.AuthKeyIdExclude}, nil
+		}
+		return Result{Update: update}, nil
 	default:
 		return Result{}, fmt.Errorf("%w: unsupported event kind=%s schema=%d", userupdates.ErrUserupdatesStorage, in.message.EventKind, in.message.SchemaVersion)
 	}
 }
 
-func decodeUserEventPayload(event repository.UserEvent) (payload.MessageEventV1, error) {
-	if event.EventCodec != repository.PayloadCodecJSON || event.EventSchemaVersion != payload.MessageEventSchemaVersion {
-		return payload.MessageEventV1{}, fmt.Errorf("%w: unsupported event codec=%d schema=%d", userupdates.ErrUserupdatesStorage, event.EventCodec, event.EventSchemaVersion)
+func decodeUserEventPayload(event repository.UserEvent) (decodedMessageEvent, error) {
+	if event.EventCodec != repository.PayloadCodecJSON {
+		return decodedMessageEvent{}, fmt.Errorf("%w: unsupported event codec=%d schema=%d", userupdates.ErrUserupdatesStorage, event.EventCodec, event.EventSchemaVersion)
 	}
 	if len(event.EventPayloadHash) != 0 && !bytes.Equal(payload.HashBytes(event.EventPayload), event.EventPayloadHash) {
-		return payload.MessageEventV1{}, fmt.Errorf("%w: event payload hash mismatch", userupdates.ErrUserupdatesStorage)
+		return decodedMessageEvent{}, fmt.Errorf("%w: event payload hash mismatch", userupdates.ErrUserupdatesStorage)
 	}
-	var messageEvent payload.MessageEventV1
-	if err := json.Unmarshal(event.EventPayload, &messageEvent); err != nil {
-		return payload.MessageEventV1{}, fmt.Errorf("%w: decode event payload: %v", userupdates.ErrUserupdatesStorage, err)
+	return decodeMessageEventPayloadBytes(event.EventSchemaVersion, event.EventPayload)
+}
+
+func decodeMessageEventPayloadBytes(schemaVersion int32, body []byte) (decodedMessageEvent, error) {
+	switch int(schemaVersion) {
+	case payload.MessageEventSchemaVersionV1:
+		var old payload.MessageEventV1
+		if err := json.Unmarshal(body, &old); err != nil {
+			return decodedMessageEvent{}, fmt.Errorf("%w: decode v1 message event: %v", userupdates.ErrUserupdatesStorage, err)
+		}
+		if old.SchemaVersion != payload.MessageEventSchemaVersionV1 {
+			return decodedMessageEvent{}, fmt.Errorf("%w: unsupported v1 message event schema=%d", userupdates.ErrUserupdatesStorage, old.SchemaVersion)
+		}
+		return decodedMessageEvent{
+			SchemaVersion:      old.SchemaVersion,
+			EventKind:          old.EventKind,
+			CanonicalMessageID: old.CanonicalMessageID,
+			PeerSeq:            old.MessageID,
+			PeerType:           old.PeerType,
+			PeerID:             old.PeerID,
+			FromUserID:         old.FromUserID,
+			ToUserID:           old.ToUserID,
+			Date:               old.Date,
+			EditDate:           old.EditDate,
+			EditVersion:        old.EditVersion,
+			Out:                old.Out,
+			MessageText:        old.MessageText,
+			Entities:           old.Entities,
+			AuthKeyIdExclude:   old.AuthKeyIdExclude,
+		}, nil
+	case payload.MessageEventSchemaVersion:
+		var next payload.MessageEventV2
+		if err := json.Unmarshal(body, &next); err != nil {
+			return decodedMessageEvent{}, fmt.Errorf("%w: decode v2 message event: %v", userupdates.ErrUserupdatesStorage, err)
+		}
+		if next.SchemaVersion != payload.MessageEventSchemaVersion {
+			return decodedMessageEvent{}, fmt.Errorf("%w: unsupported v2 message event schema=%d", userupdates.ErrUserupdatesStorage, next.SchemaVersion)
+		}
+		return decodedMessageEvent{
+			SchemaVersion:        next.SchemaVersion,
+			EventKind:            next.EventKind,
+			CanonicalMessageID:   next.CanonicalMessageID,
+			PeerSeq:              next.PeerSeq,
+			MessageID:            next.MessageID,
+			PeerType:             next.PeerType,
+			PeerID:               next.PeerID,
+			FromUserID:           next.FromUserID,
+			ToUserID:             next.ToUserID,
+			Date:                 next.Date,
+			EditDate:             next.EditDate,
+			EditVersion:          next.EditVersion,
+			Out:                  next.Out,
+			MessageText:          next.MessageText,
+			Entities:             next.Entities,
+			ReplyToUserMessageID: next.ReplyToUserMessageID,
+			ReadMaxUserMessageID: next.ReadMaxUserMessageID,
+			PinnedUserMessageID:  next.PinnedUserMessageID,
+			AuthKeyIdExclude:     next.AuthKeyIdExclude,
+		}, nil
+	default:
+		return decodedMessageEvent{}, fmt.Errorf("%w: unsupported message event schema=%d", userupdates.ErrUserupdatesStorage, schemaVersion)
 	}
-	if messageEvent.SchemaVersion != payload.MessageEventSchemaVersion {
-		return payload.MessageEventV1{}, fmt.Errorf("%w: unsupported event schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.SchemaVersion)
+}
+
+func detectMessageEventSchemaVersion(body []byte) int32 {
+	var envelope struct {
+		SchemaVersion int `json:"schema_version"`
 	}
-	return messageEvent, nil
+	if err := json.Unmarshal(body, &envelope); err != nil {
+		return 0
+	}
+	return int32(envelope.SchemaVersion)
 }
 
 func projectNewMessage(in messageEventProjectionInput) (Result, error) {
@@ -153,7 +249,7 @@ func projectNewMessage(in messageEventProjectionInput) (Result, error) {
 		if err != nil {
 			return Result{}, err
 		}
-		replyTo, err := replyHeaderFromPeerSeq(in.message.ReplyToPeerSeq)
+		replyTo, err := replyHeaderFromUserMessageID(in.message.ReplyToUserMessageID)
 		if err != nil {
 			return Result{}, err
 		}
@@ -193,7 +289,11 @@ func projectNewMessage(in messageEventProjectionInput) (Result, error) {
 }
 
 func readHistoryUpdate(in messageEventProjectionInput) (tg.UpdateClazz, error) {
-	maxID, err := int64ToInt32(in.message.MessageID, "message id")
+	maxUserMessageID := in.message.ReadMaxUserMessageID
+	if maxUserMessageID == 0 {
+		maxUserMessageID = in.message.MessageID
+	}
+	maxID, err := messageIDInt32(maxUserMessageID, "read max user message id")
 	if err != nil {
 		return nil, err
 	}
@@ -235,6 +335,28 @@ func editMessageUpdate(in messageEventProjectionInput) (tg.UpdateClazz, error) {
 	}), nil
 }
 
+func updatePinnedMessageUpdate(in messageEventProjectionInput) (tg.UpdateClazz, error) {
+	pts, err := int64ToInt32(in.pts, "pts")
+	if err != nil {
+		return nil, err
+	}
+	messages := []int32(nil)
+	if in.message.PinnedUserMessageID > 0 {
+		msgID, err := messageIDInt32(in.message.PinnedUserMessageID, "pinned user message id")
+		if err != nil {
+			return nil, err
+		}
+		messages = []int32{msgID}
+	}
+	return tg.MakeTLUpdatePinnedMessages(&tg.TLUpdatePinnedMessages{
+		Pinned:   in.message.PinnedUserMessageID > 0,
+		Peer:     peerFromEvent(in.message.PeerType, in.message.PeerID),
+		Messages: messages,
+		Pts:      pts,
+		PtsCount: in.ptsCount,
+	}), nil
+}
+
 func wrapPushUpdate(update tg.UpdateClazz, dateSeconds int32) (tg.UpdatesClazz, error) {
 	date, err := userupdatesDateInt32FromUnixSeconds(int64(dateSeconds), "updates date")
 	if err != nil {
@@ -249,15 +371,15 @@ func wrapPushUpdate(update tg.UpdateClazz, dateSeconds int32) (tg.UpdatesClazz, 
 	}), nil
 }
 
-func messageEventToTLMessage(messageEvent payload.MessageEventV1) (tg.MessageClazz, error) {
+func messageEventToTLMessage(messageEvent decodedMessageEvent) (tg.MessageClazz, error) {
 	if messageEvent.EventKind != payload.EventKindNewMessage {
 		return nil, fmt.Errorf("%w: unsupported event kind=%s schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.EventKind, messageEvent.SchemaVersion)
 	}
-	messageID, err := int64ToInt32(messageEvent.MessageID, "message id")
+	messageID, err := messageIDInt32(messageEvent.MessageID, "message id")
 	if err != nil {
 		return nil, err
 	}
-	replyTo, err := replyHeaderFromPeerSeq(messageEvent.ReplyToPeerSeq)
+	replyTo, err := replyHeaderFromUserMessageID(messageEvent.ReplyToUserMessageID)
 	if err != nil {
 		return nil, err
 	}
@@ -276,11 +398,11 @@ func messageEventToTLMessage(messageEvent payload.MessageEventV1) (tg.MessageCla
 	}), nil
 }
 
-func editMessageEventToTLMessage(messageEvent payload.MessageEventV1) (tg.MessageClazz, error) {
+func editMessageEventToTLMessage(messageEvent decodedMessageEvent) (tg.MessageClazz, error) {
 	if messageEvent.EventKind != payload.OperationKindEditMessage {
 		return nil, fmt.Errorf("%w: unsupported edit event kind=%s schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.EventKind, messageEvent.SchemaVersion)
 	}
-	messageID, err := int64ToInt32(messageEvent.MessageID, "message id")
+	messageID, err := messageIDInt32(messageEvent.MessageID, "message id")
 	if err != nil {
 		return nil, err
 	}
@@ -307,22 +429,29 @@ func editMessageEventToTLMessage(messageEvent payload.MessageEventV1) (tg.Messag
 	}), nil
 }
 
-func replyHeaderFromPeerSeq(peerSeq int64) (tg.MessageReplyHeaderClazz, error) {
-	if peerSeq <= 0 {
+func replyHeaderFromUserMessageID(userMessageID int64) (tg.MessageReplyHeaderClazz, error) {
+	if userMessageID <= 0 {
 		return nil, nil
 	}
-	replyToMsgID, err := int64ToInt32(peerSeq, "reply peer seq")
+	replyToMsgID, err := messageIDInt32(userMessageID, "reply user message id")
 	if err != nil {
 		return nil, err
 	}
 	return tg.MakeTLMessageReplyHeader(&tg.TLMessageReplyHeader{ReplyToMsgId: &replyToMsgID}), nil
 }
 
-func shortMessageUserID(event payload.MessageEventV1) int64 {
+func shortMessageUserID(event decodedMessageEvent) int64 {
 	if event.Out {
 		return event.PeerID
 	}
 	return event.FromUserID
+}
+
+func messageIDInt32(v int64, field string) (int32, error) {
+	if v <= 0 {
+		return 0, fmt.Errorf("%w: missing public %s", userupdates.ErrUserupdatesStorage, field)
+	}
+	return int64ToInt32(v, field)
 }
 
 func int64ToInt32(v int64, field string) (int32, error) {
@@ -360,7 +489,7 @@ func peerFromEvent(peerType int32, peerID int64) tg.PeerClazz {
 	}
 }
 
-func dialogEventFromMessageEvent(event repository.UserEvent, messageEvent payload.MessageEventV1) payload.DialogEventV1 {
+func dialogEventFromMessageEvent(event repository.UserEvent, messageEvent decodedMessageEvent) payload.DialogEventV1 {
 	return payload.DialogEventV1{
 		SchemaVersion:    payload.DialogEventSchemaVersion,
 		EventKind:        messageEvent.EventKind,

@@ -29,14 +29,14 @@ var _ *sqlx.Tx
 
 type bizHashTagsModel interface {
 	InsertOrUpdate(ctx context.Context, data *HashTags) (lastInsertId, rowsAffected int64, err error)
-	SelectPeerHashTagList(ctx context.Context, userId int64, peerType int32, peerId int64, hashTag string) ([]int32, error)
-	SelectPeerHashTagListWithCB(ctx context.Context, userId int64, peerType int32, peerId int64, hashTag string, cb func(sz, i int, v int32)) ([]int32, error)
+	SelectPeerHashTagList(ctx context.Context, userId int64, peerType int32, peerId int64, hashTag string) ([]int64, error)
+	SelectPeerHashTagListWithCB(ctx context.Context, userId int64, peerType int32, peerId int64, hashTag string, cb func(sz, i int, v int64)) ([]int64, error)
 	DeleteHashTagMessageId(ctx context.Context, userId int64, hashTagMessageId int32) (rowsAffected int64, err error)
 }
 
 type HashTagsTxModel interface {
 	InsertOrUpdate(data *HashTags) (lastInsertId, rowsAffected int64, err error)
-	SelectPeerHashTagList(userId int64, peerType int32, peerId int64, hashTag string) ([]int32, error)
+	SelectPeerHashTagList(userId int64, peerType int32, peerId int64, hashTag string) ([]int64, error)
 	DeleteHashTagMessageId(userId int64, hashTagMessageId int32) (rowsAffected int64, err error)
 }
 
@@ -49,10 +49,10 @@ func NewHashTagsTxModel(tx *sqlx.Tx) HashTagsTxModel {
 }
 
 // InsertOrUpdate
-// insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id) on duplicate key update deleted = 0
+// insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id, hash_tag_user_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id, :hash_tag_user_message_id) on duplicate key update hash_tag_user_message_id = values(hash_tag_user_message_id), deleted = 0
 func (m *defaultHashTagsModel) InsertOrUpdate(ctx context.Context, data *HashTags) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id) on duplicate key update deleted = 0"
+		query = "insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id, hash_tag_user_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id, :hash_tag_user_message_id) on duplicate key update hash_tag_user_message_id = values(hash_tag_user_message_id), deleted = 0"
 		r     sql.Result
 	)
 
@@ -77,10 +77,10 @@ func (m *defaultHashTagsModel) InsertOrUpdate(ctx context.Context, data *HashTag
 }
 
 // InsertOrUpdate
-// insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id) on duplicate key update deleted = 0
+// insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id, hash_tag_user_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id, :hash_tag_user_message_id) on duplicate key update hash_tag_user_message_id = values(hash_tag_user_message_id), deleted = 0
 func (m *defaultHashTagsTxModel) InsertOrUpdate(data *HashTags) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id) on duplicate key update deleted = 0"
+		query = "insert into hash_tags(user_id, peer_type, peer_id, hash_tag, hash_tag_message_id, hash_tag_user_message_id) values (:user_id, :peer_type, :peer_id, :hash_tag, :hash_tag_message_id, :hash_tag_user_message_id) on duplicate key update hash_tag_user_message_id = values(hash_tag_user_message_id), deleted = 0"
 		r     sql.Result
 	)
 
@@ -104,14 +104,14 @@ func (m *defaultHashTagsTxModel) InsertOrUpdate(data *HashTags) (lastInsertId, r
 }
 
 // SelectPeerHashTagList
-// select hash_tag_message_id from hash_tags where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and hash_tag = :hash_tag and deleted = 0
-func (m *defaultHashTagsModel) SelectPeerHashTagList(ctx context.Context, userId int64, peerType int32, peerId int64, hashTag string) (rList []int32, err error) {
-	var query = "select hash_tag_message_id from hash_tags where user_id = ? and peer_type = ? and peer_id = ? and hash_tag = ? and deleted = 0"
+// select hash_tag_user_message_id from hash_tags where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and hash_tag = :hash_tag and deleted = 0
+func (m *defaultHashTagsModel) SelectPeerHashTagList(ctx context.Context, userId int64, peerType int32, peerId int64, hashTag string) (rList []int64, err error) {
+	var query = "select hash_tag_user_message_id from hash_tags where user_id = ? and peer_type = ? and peer_id = ? and hash_tag = ? and deleted = 0"
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId, peerType, peerId, hashTag)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			rList = []int32{}
+			rList = []int64{}
 			err = nil
 			return
 		}
@@ -122,14 +122,14 @@ func (m *defaultHashTagsModel) SelectPeerHashTagList(ctx context.Context, userId
 }
 
 // SelectPeerHashTagList
-// select hash_tag_message_id from hash_tags where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and hash_tag = :hash_tag and deleted = 0
-func (m *defaultHashTagsTxModel) SelectPeerHashTagList(userId int64, peerType int32, peerId int64, hashTag string) (rList []int32, err error) {
-	var query = "select hash_tag_message_id from hash_tags where user_id = ? and peer_type = ? and peer_id = ? and hash_tag = ? and deleted = 0"
+// select hash_tag_user_message_id from hash_tags where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and hash_tag = :hash_tag and deleted = 0
+func (m *defaultHashTagsTxModel) SelectPeerHashTagList(userId int64, peerType int32, peerId int64, hashTag string) (rList []int64, err error) {
+	var query = "select hash_tag_user_message_id from hash_tags where user_id = ? and peer_type = ? and peer_id = ? and hash_tag = ? and deleted = 0"
 	err = m.tx.QueryRowsPartial(&rList, query, userId, peerType, peerId, hashTag)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			rList = []int32{}
+			rList = []int64{}
 			err = nil
 			return
 		}
@@ -140,14 +140,14 @@ func (m *defaultHashTagsTxModel) SelectPeerHashTagList(userId int64, peerType in
 }
 
 // SelectPeerHashTagListWithCB
-// select hash_tag_message_id from hash_tags where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and hash_tag = :hash_tag and deleted = 0
-func (m *defaultHashTagsModel) SelectPeerHashTagListWithCB(ctx context.Context, userId int64, peerType int32, peerId int64, hashTag string, cb func(sz, i int, v int32)) (rList []int32, err error) {
-	var query = "select hash_tag_message_id from hash_tags where user_id = ? and peer_type = ? and peer_id = ? and hash_tag = ? and deleted = 0"
+// select hash_tag_user_message_id from hash_tags where user_id = :user_id and peer_type = :peer_type and peer_id = :peer_id and hash_tag = :hash_tag and deleted = 0
+func (m *defaultHashTagsModel) SelectPeerHashTagListWithCB(ctx context.Context, userId int64, peerType int32, peerId int64, hashTag string, cb func(sz, i int, v int64)) (rList []int64, err error) {
+	var query = "select hash_tag_user_message_id from hash_tags where user_id = ? and peer_type = ? and peer_id = ? and hash_tag = ? and deleted = 0"
 	err = m.db.QueryRowsPartial(ctx, &rList, query, userId, peerType, peerId, hashTag)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
-			rList = []int32{}
+			rList = []int64{}
 			err = nil
 			return
 		}

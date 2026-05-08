@@ -35,6 +35,7 @@ type MsgClient interface {
 	MsgReadHistoryV2(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error)
 	MsgGetHistory(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error)
 	MsgSearchHashtag(ctx context.Context, in *msg.TLMsgSearchHashtag) (*tg.MessagesMessages, error)
+	MsgResolveDialogCursorTopMessage(ctx context.Context, in *msg.TLMsgResolveDialogCursorTopMessage) (*msg.ResolvedDialogCursor, error)
 	MsgUpdatePinnedMessage(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error)
 	MsgUnpinAllMessages(ctx context.Context, in *msg.TLMsgUnpinAllMessages) (*tg.MessagesAffectedHistory, error)
 }
@@ -121,6 +122,12 @@ func (m *defaultMsgClient) MsgGetHistory(ctx context.Context, in *msg.TLMsgGetHi
 // msg.searchHashtag user_id:long auth_key_id:long peer_type:int peer_id:long hash_tag:string offset_id:int limit:int = messages.Messages;
 func (m *defaultMsgClient) MsgSearchHashtag(ctx context.Context, in *msg.TLMsgSearchHashtag) (*tg.MessagesMessages, error) {
 	return m.rpc.MsgSearchHashtag(ctx, in)
+}
+
+// MsgResolveDialogCursorTopMessage
+// msg.resolveDialogCursorTopMessage user_id:long top_message_id:int = ResolvedDialogCursor;
+func (m *defaultMsgClient) MsgResolveDialogCursorTopMessage(ctx context.Context, in *msg.TLMsgResolveDialogCursorTopMessage) (*msg.ResolvedDialogCursor, error) {
+	return m.rpc.MsgResolveDialogCursorTopMessage(ctx, in)
 }
 
 // MsgUpdatePinnedMessage

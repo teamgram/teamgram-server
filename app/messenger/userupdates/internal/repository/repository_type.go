@@ -180,26 +180,28 @@ type ApplyUserOperationInput struct {
 }
 
 type ApplyUserOperationResult struct {
-	UserID          int64
-	OperationID     string
-	Pts             int64
-	PtsCount        int32
-	ResponsePayload []byte
-	ResponseHash    []byte
-	AlreadyApplied  bool
+	UserID                int64
+	OperationID           string
+	Pts                   int64
+	PtsCount              int32
+	ResponseSchemaVersion int32
+	ResponsePayload       []byte
+	ResponseHash          []byte
+	AlreadyApplied        bool
 }
 
 type OperationResult struct {
-	UserID            int64
-	OperationID       string
-	OpType            int32
-	Status            int32
-	Pts               int64
-	PtsCount          int32
-	PayloadHash       []byte
-	ResponsePayload   []byte
-	ResponseHash      []byte
-	TerminalErrorCode string
+	UserID                int64
+	OperationID           string
+	OpType                int32
+	Status                int32
+	Pts                   int64
+	PtsCount              int32
+	PayloadHash           []byte
+	ResponseSchemaVersion int32
+	ResponsePayload       []byte
+	ResponseHash          []byte
+	TerminalErrorCode     string
 }
 
 type UserState struct {

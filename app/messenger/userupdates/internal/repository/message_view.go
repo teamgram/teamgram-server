@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/model"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 )
 
@@ -19,6 +20,7 @@ type MessageView struct {
 	PeerType           int32
 	PeerID             int64
 	PeerSeq            int64
+	UserMessageID      int64
 	CanonicalMessageID int64
 	FromUserID         int64
 	Outgoing           bool
@@ -63,6 +65,7 @@ func mapMessageViewRow(row *model.UserMessageViews) MessageView {
 		PeerType:           row.PeerType,
 		PeerID:             row.PeerId,
 		PeerSeq:            row.PeerSeq,
+		UserMessageID:      row.UserMessageId,
 		CanonicalMessageID: row.CanonicalMessageId,
 		FromUserID:         row.FromUserId,
 		Outgoing:           row.Outgoing,
@@ -80,18 +83,15 @@ func (r *Repository) GetOutboxReadDate(ctx context.Context, in OutboxReadDateInp
 		return 0, err
 	}
 
-	view, err := r.models.UserMessageViewsModel.SelectByUserPeerSeq(ctx, in.UserID, in.PeerType, in.PeerID, int64(in.MsgID))
+	view, err := r.outboxReadDateMessageView(ctx, in)
 	if err != nil {
-		if errors.Is(err, model.ErrNotFound) {
-			return 0, userupdates.ErrOutboxReadMessageInvalid
-		}
-		return 0, storageError("validate outbox read message", err)
+		return 0, err
 	}
 	if !view.Outgoing || view.MessageStatus != MessageStatusLive {
 		return 0, userupdates.ErrOutboxReadMessageInvalid
 	}
 
-	rows, err := r.models.MessageReadOutboxModel.SelectFirstReadDate(ctx, in.UserID, in.PeerType, in.PeerID, in.PeerID, int64(in.MsgID), 1)
+	rows, err := r.models.MessageReadOutboxModel.SelectFirstReadDate(ctx, in.UserID, in.PeerType, in.PeerID, in.PeerID, view.PeerSeq, 1)
 	if err != nil {
 		return 0, storageError("get outbox read date", err)
 	}
@@ -99,4 +99,27 @@ func (r *Repository) GetOutboxReadDate(ctx context.Context, in OutboxReadDateInp
 		return 0, userupdates.ErrOutboxReadDateNotFound
 	}
 	return rows[0].ReadOutboxMaxDate, nil
+}
+
+func (r *Repository) outboxReadDateMessageView(ctx context.Context, in OutboxReadDateInput) (*model.UserMessageViews, error) {
+	publicMsgID := int64(in.MsgID)
+	view, err := r.models.UserMessageViewsModel.SelectByUserPeerMessageID(ctx, in.UserID, in.PeerType, in.PeerID, publicMsgID)
+	if err == nil {
+		return view, nil
+	}
+	if !errors.Is(err, model.ErrNotFound) {
+		return nil, storageError("resolve outbox read message by public id", err)
+	}
+
+	legacyView, err := r.models.UserMessageViewsModel.SelectByUserPeerSeq(ctx, in.UserID, in.PeerType, in.PeerID, publicMsgID)
+	if err != nil {
+		if errors.Is(err, model.ErrNotFound) {
+			return nil, userupdates.ErrOutboxReadMessageInvalid
+		}
+		return nil, storageError("resolve legacy outbox read message by peer seq", err)
+	}
+	if legacyView.UserMessageId > 0 && legacyView.ViewSchemaVersion != payload.MessageEventSchemaVersionV1 {
+		return nil, userupdates.ErrOutboxReadMessageInvalid
+	}
+	return legacyView, nil
 }

@@ -37,6 +37,7 @@ type Client interface {
 	MsgReadHistoryV2(ctx context.Context, req *msg.TLMsgReadHistoryV2, callOptions ...callopt.Option) (r *tg.MessagesAffectedMessages, err error)
 	MsgGetHistory(ctx context.Context, req *msg.TLMsgGetHistory, callOptions ...callopt.Option) (r *tg.MessagesMessages, err error)
 	MsgSearchHashtag(ctx context.Context, req *msg.TLMsgSearchHashtag, callOptions ...callopt.Option) (r *tg.MessagesMessages, err error)
+	MsgResolveDialogCursorTopMessage(ctx context.Context, req *msg.TLMsgResolveDialogCursorTopMessage, callOptions ...callopt.Option) (r *msg.ResolvedDialogCursor, err error)
 	MsgUpdatePinnedMessage(ctx context.Context, req *msg.TLMsgUpdatePinnedMessage, callOptions ...callopt.Option) (r *tg.Updates, err error)
 	MsgUnpinAllMessages(ctx context.Context, req *msg.TLMsgUnpinAllMessages, callOptions ...callopt.Option) (r *tg.MessagesAffectedHistory, err error)
 }
@@ -136,6 +137,11 @@ func (p *kMsgClient) MsgGetHistory(ctx context.Context, req *msg.TLMsgGetHistory
 func (p *kMsgClient) MsgSearchHashtag(ctx context.Context, req *msg.TLMsgSearchHashtag, callOptions ...callopt.Option) (r *tg.MessagesMessages, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.MsgSearchHashtag(ctx, req)
+}
+
+func (p *kMsgClient) MsgResolveDialogCursorTopMessage(ctx context.Context, req *msg.TLMsgResolveDialogCursorTopMessage, callOptions ...callopt.Option) (r *msg.ResolvedDialogCursor, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.MsgResolveDialogCursorTopMessage(ctx, req)
 }
 
 func (p *kMsgClient) MsgUpdatePinnedMessage(ctx context.Context, req *msg.TLMsgUpdatePinnedMessage, callOptions ...callopt.Option) (r *tg.Updates, err error) {

@@ -46,13 +46,14 @@ type (
 	}
 
 	HashTags struct {
-		Id               int64  `db:"id" json:"id"`
-		UserId           int64  `db:"user_id" json:"user_id"`
-		PeerType         int32  `db:"peer_type" json:"peer_type"`
-		PeerId           int64  `db:"peer_id" json:"peer_id"`
-		HashTag          string `db:"hash_tag" json:"hash_tag"`
-		HashTagMessageId int32  `db:"hash_tag_message_id" json:"hash_tag_message_id"`
-		Deleted          bool   `db:"deleted" json:"deleted"`
+		Id                   int64  `db:"id" json:"id"`
+		UserId               int64  `db:"user_id" json:"user_id"`
+		PeerType             int32  `db:"peer_type" json:"peer_type"`
+		PeerId               int64  `db:"peer_id" json:"peer_id"`
+		HashTag              string `db:"hash_tag" json:"hash_tag"`
+		HashTagMessageId     int32  `db:"hash_tag_message_id" json:"hash_tag_message_id"`
+		HashTagUserMessageId int64  `db:"hash_tag_user_message_id" json:"hash_tag_user_message_id"`
+		Deleted              bool   `db:"deleted" json:"deleted"`
 	}
 )
 
@@ -64,9 +65,9 @@ func newHashTagsModel(db *sqlx.DB) *defaultHashTagsModel {
 
 func (m *defaultHashTagsModel) Insert2(ctx context.Context, data *HashTags) (sql.Result, error) {
 	tableName := "hash_tags"
-	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?)", tableName, hashTagsRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?)", tableName, hashTagsRowsExpectAutoSet)
 
-	r, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.HashTag, data.HashTagMessageId, data.Deleted)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.HashTag, data.HashTagMessageId, data.HashTagUserMessageId, data.Deleted)
 	if err != nil {
 		return nil, fmt.Errorf("hash_tags.Insert2 exec: %w", err)
 	}
@@ -131,7 +132,7 @@ func (m *defaultHashTagsModel) Update2(ctx context.Context, data *HashTags) erro
 	tableName := "hash_tags"
 	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, hashTagsRowsWithPlaceHolder)
 
-	_, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.HashTag, data.HashTagMessageId, data.Deleted, data.Id)
+	_, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.HashTag, data.HashTagMessageId, data.HashTagUserMessageId, data.Deleted, data.Id)
 	if err != nil {
 		return fmt.Errorf("hash_tags.Update2 exec: %w", err)
 	}

@@ -120,9 +120,20 @@ func (r *Repository) ListHistoryMessages(ctx context.Context, in ListHistoryMess
 	if _, err := r.requireDB(); err != nil {
 		return nil, err
 	}
+	bounds := in.ResolvedCursorBounds
+	if !in.CursorsResolved {
+		var err error
+		bounds, err = r.ResolveHistoryCursorIDs(ctx, in.UserID, in.PeerType, in.PeerID, in.OffsetID, in.MaxID, in.MinID)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if bounds.NoMatch {
+		return []HistoryMessage{}, nil
+	}
 
 	limit := pagination.NormalizeLimit(in.Limit)
-	offset, err := r.historySliceOffset(ctx, in)
+	offset, err := r.historySliceOffset(ctx, in, bounds.OffsetPeerSeq)
 	if err != nil {
 		return nil, err
 	}
@@ -133,13 +144,10 @@ func (r *Repository) ListHistoryMessages(ctx context.Context, in ListHistoryMess
 	}
 	out := make([]HistoryMessage, 0, len(rows))
 	for _, row := range rows {
-		if in.MaxID > 0 && row.PeerSeq >= int64(in.MaxID) {
+		if !historyMessageWithinBounds(row.PeerSeq, bounds) {
 			continue
 		}
-		if in.MinID > 0 && row.PeerSeq <= int64(in.MinID) {
-			continue
-		}
-		item, err := historyMessageRowToMessage(row)
+		item, err := r.historyMessageRowToMessage(ctx, in.UserID, in.PeerType, in.PeerID, row)
 		if err != nil {
 			return nil, err
 		}
@@ -159,19 +167,41 @@ func (r *Repository) SearchHashTagMessages(ctx context.Context, in SearchHashTag
 	}
 	limit := pagination.NormalizeLimit(in.Limit)
 	likeTag := "%#" + tag + "%"
-	rows, err := r.models.CanonicalQueries.SearchHashTagMessages(ctx, tag, in.UserID, in.PeerType, in.PeerID, MessageStatusLive, int64(in.OffsetID), int64(in.OffsetID), likeTag, limit)
+	var resolvedOffset *ResolvedMessageID
+	if in.OffsetID > 0 {
+		var err error
+		resolvedOffset, err = r.ResolveMessageID(ctx, in.UserID, in.PeerType, in.PeerID, int64(in.OffsetID))
+		if err != nil {
+			return nil, err
+		}
+	}
+	offsetPeerSeq, noMatch := searchHashTagOffsetPeerSeq(in.OffsetID, resolvedOffset)
+	if noMatch {
+		return []HistoryMessage{}, nil
+	}
+	rows, err := r.models.CanonicalQueries.SearchHashTagMessages(ctx, tag, in.UserID, in.PeerType, in.PeerID, MessageStatusLive, offsetPeerSeq, offsetPeerSeq, likeTag, limit)
 	if err != nil {
 		return nil, storageError("search hashtag messages", err)
 	}
 	out := make([]HistoryMessage, 0, len(rows))
 	for _, row := range rows {
-		item, err := historyMessageRowToMessage(row)
+		item, err := r.historyMessageRowToMessage(ctx, in.UserID, in.PeerType, in.PeerID, row)
 		if err != nil {
 			return nil, err
 		}
 		out = append(out, item)
 	}
 	return out, nil
+}
+
+func searchHashTagOffsetPeerSeq(offsetID int32, resolved *ResolvedMessageID) (int64, bool) {
+	if offsetID <= 0 {
+		return 0, false
+	}
+	if resolved == nil {
+		return 0, true
+	}
+	return resolved.PeerSeq, false
 }
 
 func (r *Repository) GetCanonicalMessageByPeerSeq(ctx context.Context, userID int64, peerType int32, peerID int64, peerSeq int64) (*CanonicalMessage, error) {
@@ -311,21 +341,21 @@ func unixOrNow(seconds int64) int64 {
 	return unixNow()
 }
 
-func (r *Repository) historySliceOffset(ctx context.Context, in ListHistoryMessagesInput) (int64, error) {
-	if in.OffsetID <= 0 {
+func (r *Repository) historySliceOffset(ctx context.Context, in ListHistoryMessagesInput, offsetPeerSeq int64) (int64, error) {
+	if offsetPeerSeq <= 0 {
 		return pagination.SliceOffset(0, pagination.IDOffsetInput{
-			OffsetID:  in.OffsetID,
+			OffsetID:  historyOffsetMarker(offsetPeerSeq).OffsetID,
 			AddOffset: in.AddOffset,
 		}), nil
 	}
 
-	row, err := r.models.CanonicalQueries.CountHistoryOffset(ctx, in.UserID, int64(in.PeerType), in.PeerID, int64(in.OffsetID), in.UserID, in.PeerType, in.PeerID, MessageStatusLive)
+	row, err := r.models.CanonicalQueries.CountHistoryOffset(ctx, in.UserID, int64(in.PeerType), in.PeerID, offsetPeerSeq, in.UserID, in.PeerType, in.PeerID, MessageStatusLive)
 	if err != nil {
 		return 0, storageError("count history offset", err)
 	}
 
 	return pagination.SliceOffset(row.OffsetFromID, pagination.IDOffsetInput{
-		OffsetID:  in.OffsetID,
+		OffsetID:  historyOffsetMarker(offsetPeerSeq).OffsetID,
 		AddOffset: in.AddOffset,
 	}), nil
 }
@@ -334,27 +364,80 @@ func (r *Repository) selectHistoryMessagesSlice(ctx context.Context, in ListHist
 	return r.models.CanonicalQueries.SelectHistoryMessagesPage(ctx, in.UserID, in.PeerType, in.PeerID, MessageStatusLive, offset, limit)
 }
 
-func historyMessageRowToMessage(r model.HistoryMessageRow) (HistoryMessage, error) {
+func (r *Repository) historyMessageRowToMessage(ctx context.Context, userID int64, peerType int32, peerID int64, row model.HistoryMessageRow) (HistoryMessage, error) {
+	return historyMessageRowToMessage(row, func(replyPeerSeq int64) (int64, error) {
+		return r.ResolvePeerSeqToUserMessageID(ctx, userID, peerType, peerID, replyPeerSeq)
+	})
+}
+
+type replyPublicIDResolver func(peerSeq int64) (int64, error)
+
+func historyMessageRowToMessage(r model.HistoryMessageRow, resolveReply replyPublicIDResolver) (HistoryMessage, error) {
 	var replyToPeerSeq int64
+	var replyToUserMessageID int64
 	if len(r.ViewPayload) > 0 {
-		var event payload.MessageEventV1
-		if err := json.Unmarshal(r.ViewPayload, &event); err != nil {
+		var envelope struct {
+			SchemaVersion int `json:"schema_version"`
+		}
+		if err := json.Unmarshal(r.ViewPayload, &envelope); err != nil {
 			return HistoryMessage{}, storageError("decode history view payload", err)
 		}
-		replyToPeerSeq = event.ReplyToPeerSeq
+		switch envelope.SchemaVersion {
+		case payload.MessageEventSchemaVersion:
+			var event payload.MessageEventV2
+			if err := json.Unmarshal(r.ViewPayload, &event); err != nil {
+				return HistoryMessage{}, storageError("decode history view payload v2", err)
+			}
+			replyToUserMessageID = event.ReplyToUserMessageID
+		default:
+			var event payload.MessageEventV1
+			if err := json.Unmarshal(r.ViewPayload, &event); err != nil {
+				return HistoryMessage{}, storageError("decode history view payload v1", err)
+			}
+			replyToPeerSeq = event.ReplyToPeerSeq
+			if replyToPeerSeq > 0 && resolveReply != nil {
+				var err error
+				replyToUserMessageID, err = resolveReply(replyToPeerSeq)
+				if err != nil {
+					return HistoryMessage{}, err
+				}
+			}
+		}
 	}
 	return HistoryMessage{
-		CanonicalMessageID: r.CanonicalMessageID,
-		PeerSeq:            r.PeerSeq,
-		FromUserID:         r.FromUserID,
-		Outgoing:           r.Outgoing,
-		PeerType:           r.PeerType,
-		PeerID:             r.PeerID,
-		MessageKind:        r.MessageKind,
-		MessageText:        r.MessageText,
-		MessageDate:        r.MessageDate,
-		ReplyToPeerSeq:     replyToPeerSeq,
+		CanonicalMessageID:   r.CanonicalMessageID,
+		PeerSeq:              r.PeerSeq,
+		UserMessageID:        r.UserMessageID,
+		FromUserID:           r.FromUserID,
+		Outgoing:             r.Outgoing,
+		PeerType:             r.PeerType,
+		PeerID:               r.PeerID,
+		MessageKind:          r.MessageKind,
+		MessageText:          r.MessageText,
+		MessageDate:          r.MessageDate,
+		ReplyToPeerSeq:       replyToPeerSeq,
+		ReplyToUserMessageID: replyToUserMessageID,
 	}, nil
+}
+
+func historyMessageWithinBounds(peerSeq int64, bounds HistoryCursorBounds) bool {
+	if bounds.NoMatch {
+		return false
+	}
+	if bounds.MaxPeerSeq > 0 && peerSeq >= bounds.MaxPeerSeq {
+		return false
+	}
+	if bounds.MinPeerSeq > 0 && peerSeq <= bounds.MinPeerSeq {
+		return false
+	}
+	return true
+}
+
+func historyOffsetMarker(offsetPeerSeq int64) pagination.IDOffsetInput {
+	if offsetPeerSeq <= 0 {
+		return pagination.IDOffsetInput{}
+	}
+	return pagination.IDOffsetInput{OffsetID: 1}
 }
 
 func selectCanonicalByRandomTx(txModels *model.TxModels, senderUserID int64, peerType int32, peerID int64, clientRandomID int64) (*CanonicalMessageResult, bool, error) {

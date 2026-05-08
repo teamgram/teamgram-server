@@ -11,23 +11,25 @@ import (
 
 func TestBuildEventAndResponseCarriesAuthKeyExclude(t *testing.T) {
 	authKeyIDExclude := int64(9001)
-	eventPayload, _, _, _, err := buildEventAndResponse(
+	eventPayload, _, responsePayload, _, err := buildEventAndResponse(
 		ApplyUserOperationInput{
 			OperationID:      "op",
 			AuthKeyIDExclude: &authKeyIDExclude,
 		},
 		payload.MessageOperationV1{
-			SchemaVersion:      payload.MessageOperationSchemaVersion,
-			OperationKind:      payload.OperationKindSendMessage,
-			CanonicalMessageID: 7001,
-			PeerType:           payload.PeerTypeUser,
-			PeerID:             2002,
-			PeerSeq:            9,
-			FromUserID:         1001,
-			ToUserID:           2002,
-			Date:               1777781234,
-			Out:                true,
-			MessageText:        "hello",
+			SchemaVersion:        payload.MessageOperationSchemaVersion,
+			OperationKind:        payload.OperationKindSendMessage,
+			CanonicalMessageID:   7001,
+			PeerType:             payload.PeerTypeUser,
+			PeerID:               2002,
+			PeerSeq:              9,
+			UserMessageID:        101,
+			FromUserID:           1001,
+			ToUserID:             2002,
+			Date:                 1777781234,
+			Out:                  true,
+			MessageText:          "hello",
+			ReplyToUserMessageID: 77,
 		},
 		38,
 		1,
@@ -35,12 +37,63 @@ func TestBuildEventAndResponseCarriesAuthKeyExclude(t *testing.T) {
 	if err != nil {
 		t.Fatalf("buildEventAndResponse() error = %v", err)
 	}
-	var event payload.MessageEventV1
+	var event payload.MessageEventV2
 	if err := json.Unmarshal(eventPayload, &event); err != nil {
 		t.Fatalf("unmarshal event payload: %v", err)
 	}
 	if event.AuthKeyIdExclude == nil || *event.AuthKeyIdExclude != authKeyIDExclude {
 		t.Fatalf("auth_key_id_exclude = %v, want %d", event.AuthKeyIdExclude, authKeyIDExclude)
+	}
+	if event.MessageID != 101 || event.PeerSeq != 9 || event.ReplyToUserMessageID != 77 {
+		t.Fatalf("event public/internal ids = %+v, want message_id=101 peer_seq=9 reply=77", event)
+	}
+	var response payload.OperationResponseV2
+	if err := json.Unmarshal(responsePayload, &response); err != nil {
+		t.Fatalf("unmarshal response payload: %v", err)
+	}
+	if response.UserMessageID != 101 {
+		t.Fatalf("response user_message_id = %d, want 101", response.UserMessageID)
+	}
+}
+
+func TestBuildEditEventAndResponseCarriesPublicMessageID(t *testing.T) {
+	eventPayload, _, responsePayload, _, err := buildEventAndResponse(
+		ApplyUserOperationInput{OperationID: "edit-op"},
+		payload.MessageOperationV1{
+			SchemaVersion:      payload.MessageOperationSchemaVersion,
+			OperationKind:      payload.OperationKindEditMessage,
+			CanonicalMessageID: 7001,
+			PeerType:           payload.PeerTypeUser,
+			PeerID:             2002,
+			PeerSeq:            9,
+			UserMessageID:      101,
+			FromUserID:         1001,
+			ToUserID:           2002,
+			Date:               1777781234,
+			EditDate:           1777782234,
+			EditVersion:        2,
+			Out:                true,
+			MessageText:        "edited",
+		},
+		39,
+		1,
+	)
+	if err != nil {
+		t.Fatalf("buildEventAndResponse() error = %v", err)
+	}
+	var event payload.MessageEventV2
+	if err := json.Unmarshal(eventPayload, &event); err != nil {
+		t.Fatalf("unmarshal event payload: %v", err)
+	}
+	if event.EventKind != payload.OperationKindEditMessage || event.MessageID != 101 || event.PeerSeq != 9 {
+		t.Fatalf("edit event ids = %+v, want public message_id=101 and peer_seq=9", event)
+	}
+	var response payload.OperationResponseV2
+	if err := json.Unmarshal(responsePayload, &response); err != nil {
+		t.Fatalf("unmarshal response payload: %v", err)
+	}
+	if response.UserMessageID != 101 {
+		t.Fatalf("edit response user_message_id = %d, want 101", response.UserMessageID)
 	}
 }
 

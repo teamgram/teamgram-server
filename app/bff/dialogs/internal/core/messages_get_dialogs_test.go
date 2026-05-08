@@ -8,6 +8,8 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/app/bff/dialogs/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/bff/dialogs/internal/svc"
+	msgclient "github.com/teamgram/teamgram-server/v2/app/messenger/msg/client"
+	msgpb "github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	userupdatesclient "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/client"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
@@ -47,6 +49,15 @@ func (f *dialogsFakeDialogClient) DialogToggleDialogPin(ctx context.Context, in 
 
 func (f *dialogsFakeDialogClient) DialogReorderPinnedDialogs(ctx context.Context, in *dialogpb.TLDialogReorderPinnedDialogs) (*tg.Bool, error) {
 	return f.reorderPinned(ctx, in)
+}
+
+type dialogsFakeMsgClient struct {
+	msgclient.MsgClient
+	resolveDialogCursorTopMessage func(context.Context, *msgpb.TLMsgResolveDialogCursorTopMessage) (*msgpb.ResolvedDialogCursor, error)
+}
+
+func (f *dialogsFakeMsgClient) MsgResolveDialogCursorTopMessage(ctx context.Context, in *msgpb.TLMsgResolveDialogCursorTopMessage) (*msgpb.ResolvedDialogCursor, error) {
+	return f.resolveDialogCursorTopMessage(ctx, in)
 }
 
 type dialogsFakeUserClient struct {
@@ -149,6 +160,80 @@ func TestMessagesGetDialogsReturnsEmptySliceFromBizDialog(t *testing.T) {
 	}
 }
 
+func TestMessagesGetDialogsResolvesPublicOffsetIDToInternalCursor(t *testing.T) {
+	var gotResolve *msgpb.TLMsgResolveDialogCursorTopMessage
+	var gotDialogs *dialogpb.TLDialogGetDialogsV2
+	c := newDialogsGetDialogsCore(&repository.Repository{
+		MsgClient: &dialogsFakeMsgClient{
+			resolveDialogCursorTopMessage: func(_ context.Context, in *msgpb.TLMsgResolveDialogCursorTopMessage) (*msgpb.ResolvedDialogCursor, error) {
+				gotResolve = in
+				return msgpb.MakeTLResolvedDialogCursor(&msgpb.TLResolvedDialogCursor{
+					Found:       tg.BoolTrueClazz,
+					PeerType:    dialogPeerTypeUser,
+					PeerId:      200,
+					PeerSeq:     7,
+					MessageDate: 123,
+				}).ToResolvedDialogCursor(), nil
+			},
+		},
+		DialogClient: &dialogsFakeDialogClient{
+			getDialogsV2: func(_ context.Context, in *dialogpb.TLDialogGetDialogsV2) (*dialogpb.DialogPage, error) {
+				gotDialogs = in
+				return dialogpb.MakeTLDialogPage(&dialogpb.TLDialogPage{Dialogs: []dialogpb.DialogExtV2Clazz{}, Exhausted: tg.BoolTrueClazz}), nil
+			},
+		},
+	}, 100)
+
+	_, err := c.MessagesGetDialogs(&tg.TLMessagesGetDialogs{
+		OffsetId:   42,
+		OffsetPeer: tg.MakeTLInputPeerEmpty(&tg.TLInputPeerEmpty{}),
+		Limit:      20,
+	})
+	if err != nil {
+		t.Fatalf("MessagesGetDialogs error = %v", err)
+	}
+	if gotResolve == nil || gotResolve.UserId != 100 || gotResolve.TopMessageId != 42 {
+		t.Fatalf("resolver request = %+v, want user_id 100 top_message_id 42", gotResolve)
+	}
+	cursor := gotDialogs.Cursor.ToDialogCursor()
+	if cursor.TopPeerSeq != 7 || cursor.TopMessageDate != 123 || cursor.PeerType != dialogPeerTypeUser || cursor.PeerId != 200 {
+		t.Fatalf("dialog cursor = %+v, want resolved internal cursor", cursor)
+	}
+}
+
+func TestMessagesGetDialogsUnresolvedPositiveOffsetIDReturnsEmptySlice(t *testing.T) {
+	dialogCalled := false
+	c := newDialogsGetDialogsCore(&repository.Repository{
+		MsgClient: &dialogsFakeMsgClient{
+			resolveDialogCursorTopMessage: func(context.Context, *msgpb.TLMsgResolveDialogCursorTopMessage) (*msgpb.ResolvedDialogCursor, error) {
+				return msgpb.MakeTLResolvedDialogCursor(&msgpb.TLResolvedDialogCursor{Found: tg.BoolFalseClazz}).ToResolvedDialogCursor(), nil
+			},
+		},
+		DialogClient: &dialogsFakeDialogClient{
+			getDialogsV2: func(context.Context, *dialogpb.TLDialogGetDialogsV2) (*dialogpb.DialogPage, error) {
+				dialogCalled = true
+				return nil, nil
+			},
+		},
+	}, 100)
+
+	r, err := c.MessagesGetDialogs(&tg.TLMessagesGetDialogs{
+		OffsetId:   404,
+		OffsetPeer: tg.MakeTLInputPeerEmpty(&tg.TLInputPeerEmpty{}),
+		Limit:      20,
+	})
+	if err != nil {
+		t.Fatalf("MessagesGetDialogs error = %v", err)
+	}
+	if dialogCalled {
+		t.Fatal("DialogGetDialogsV2 was called for unresolved positive offset_id")
+	}
+	slice, ok := r.ToMessagesDialogsSlice()
+	if !ok || slice.Count != 0 || len(slice.Dialogs) != 0 {
+		t.Fatalf("reply = %+v ok=%v, want empty slice", r, ok)
+	}
+}
+
 func TestMessagesGetDialogsNoDifferenceFallback(t *testing.T) {
 	c := newDialogsGetDialogsCore(&repository.Repository{
 		DialogClient: &dialogsFakeDialogClient{
@@ -208,12 +293,14 @@ func TestMessagesGetPeerDialogsHydratesTopMessagesUsersChats(t *testing.T) {
 						PeerType:              dialogPeerTypeUser,
 						PeerId:                200,
 						TopPeerSeq:            7,
+						TopUserMessageId:      7,
 						TopCanonicalMessageId: 7,
 					}),
 					dialogpb.MakeTLDialogExtV2(&dialogpb.TLDialogExtV2{
 						PeerType:              dialogPeerTypeChat,
 						PeerId:                300,
 						TopPeerSeq:            8,
+						TopUserMessageId:      8,
 						TopCanonicalMessageId: 8,
 					}),
 				}}, nil
@@ -311,6 +398,7 @@ func TestMessagesGetPinnedDialogsHydratesFacadeProjection(t *testing.T) {
 						PeerType:              dialogPeerTypeUser,
 						PeerId:                200,
 						TopPeerSeq:            7,
+						TopUserMessageId:      7,
 						TopCanonicalMessageId: 7,
 						TopMessageDate:        123,
 						UnreadCount:           2,
@@ -326,18 +414,20 @@ func TestMessagesGetPinnedDialogsHydratesFacadeProjection(t *testing.T) {
 				}
 				return &userupdates.VectorDialogProjection{Datas: []userupdates.DialogProjectionClazz{
 					userupdates.MakeTLDialogProjection(&userupdates.TLDialogProjection{
-						PeerType:                 dialogPeerTypeUser,
-						PeerId:                   200,
-						ReadInboxMaxPeerSeq:      3,
-						ReadOutboxMaxPeerSeq:     0,
-						DialogSchemaVersion:      1,
-						TopPeerSeq:               7,
-						TopCanonicalMessageId:    7,
-						TopMessageDate:           123,
-						PinnedPeerSeq:            0,
-						PinnedCanonicalMessageId: 0,
-						LastPts:                  1,
-						LastPtsAt:                123,
+						PeerType:                  dialogPeerTypeUser,
+						PeerId:                    200,
+						ReadInboxMaxPeerSeq:       3,
+						ReadInboxMaxUserMessageId: 3,
+						ReadOutboxMaxPeerSeq:      0,
+						DialogSchemaVersion:       1,
+						TopPeerSeq:                7,
+						TopUserMessageId:          7,
+						TopCanonicalMessageId:     7,
+						TopMessageDate:            123,
+						PinnedPeerSeq:             0,
+						PinnedCanonicalMessageId:  0,
+						LastPts:                   1,
+						LastPtsAt:                 123,
 					}),
 				}}, nil
 			},
@@ -541,12 +631,15 @@ func TestMessagesGetDialogsMapsUserDialogAndTopMessage(t *testing.T) {
 				}
 				return dialogpb.MakeTLDialogPage(&dialogpb.TLDialogPage{Dialogs: []dialogpb.DialogExtV2Clazz{
 					dialogpb.MakeTLDialogExtV2(&dialogpb.TLDialogExtV2{
-						PeerType:              dialogPeerTypeUser,
-						PeerId:                200,
-						TopPeerSeq:            7,
-						TopCanonicalMessageId: 2051345931852316672,
-						TopMessageDate:        123,
-						UnreadCount:           1,
+						PeerType:                   dialogPeerTypeUser,
+						PeerId:                     200,
+						TopPeerSeq:                 7,
+						TopUserMessageId:           42,
+						TopCanonicalMessageId:      2051345931852316672,
+						TopMessageDate:             123,
+						ReadInboxMaxUserMessageId:  43,
+						ReadOutboxMaxUserMessageId: 44,
+						UnreadCount:                1,
 						Extras: dialogpb.MakeTLDialogExtras(&dialogpb.TLDialogExtras{
 							PeerType:     dialogPeerTypeUser,
 							PeerId:       200,
@@ -562,7 +655,7 @@ func TestMessagesGetDialogsMapsUserDialogAndTopMessage(t *testing.T) {
 				return userupdates.MakeTLMessageViewList(&userupdates.TLMessageViewList{Messages: []tg.MessageClazz{
 					tg.MakeTLMessage(&tg.TLMessage{
 						Out:     true,
-						Id:      7,
+						Id:      42,
 						PeerId:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 200}),
 						Message: "hello",
 						Date:    123,
@@ -615,8 +708,8 @@ func TestMessagesGetDialogsMapsUserDialogAndTopMessage(t *testing.T) {
 	if slice.Count != 1 || len(slice.Dialogs) != 1 || len(slice.Messages) != 1 || len(slice.Users) != 1 {
 		t.Fatalf("reply lens = count:%d dialogs:%d messages:%d users:%d", slice.Count, len(slice.Dialogs), len(slice.Messages), len(slice.Users))
 	}
-	if dialog, ok := (&tg.Dialog{Clazz: slice.Dialogs[0]}).ToDialog(); !ok || dialog.TopMessage != 7 || dialog.ReadInboxMaxId != 0 || dialog.ReadOutboxMaxId != 0 {
-		t.Fatalf("dialog = %+v, ok=%v, want top_message=7 and unread read state", dialog, ok)
+	if dialog, ok := (&tg.Dialog{Clazz: slice.Dialogs[0]}).ToDialog(); !ok || dialog.TopMessage != 42 || dialog.ReadInboxMaxId != 43 || dialog.ReadOutboxMaxId != 44 {
+		t.Fatalf("dialog = %+v, ok=%v, want public top/read ids", dialog, ok)
 	} else if settings := dialog.NotifySettings; settings == nil || settings.MuteUntil == nil || *settings.MuteUntil != 99 {
 		t.Fatalf("notify settings = %+v, want batched mute_until=99", dialog.NotifySettings)
 	} else if draft, ok := (&tg.DraftMessage{Clazz: dialog.Draft}).ToDraftMessage(); !ok || !draft.NoWebpage || draft.Message != "draft text" || draft.Date != 456 {

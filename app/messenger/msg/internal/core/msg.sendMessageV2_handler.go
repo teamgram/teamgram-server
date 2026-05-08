@@ -19,7 +19,6 @@ package core
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"math"
 	"time"
@@ -46,7 +45,7 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 		return nil, err
 	}
 	messageText := outboxTLMessage.Message
-	replyToCanonicalMessageID, err := c.replyToCanonicalMessageID(in, outboxTLMessage)
+	replyTo, err := c.resolveReplyToMessageID(in, outboxTLMessage)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +57,7 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 	if in.ClearDraftBeforeDate != nil {
 		clearDraftBeforeDate = *in.ClearDraftBeforeDate
 	}
-	_, requestHash, err := marshalSendRequest(in.UserId, in.PeerType, in.PeerId, outbox.RandomId, messageText, replyToCanonicalMessageID, in.ClearDraft, sourcePermAuthKeyID, clearDraftBeforeDate)
+	_, requestHash, err := marshalSendRequest(in.UserId, in.PeerType, in.PeerId, outbox.RandomId, messageText, replyTo.CanonicalMessageID, in.ClearDraft, sourcePermAuthKeyID, clearDraftBeforeDate)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +70,7 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 		RequestPayloadSchemaVersion: payload.MessageOperationSchemaVersion,
 		RequestPayloadHash:          requestHash,
 		MessageText:                 messageText,
-		ReplyToCanonicalMessageID:   replyToCanonicalMessageID,
+		ReplyToCanonicalMessageID:   replyTo.CanonicalMessageID,
 	})
 	if err != nil {
 		return nil, err
@@ -103,7 +102,7 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 		senderResult = senderResultFromSendState(sendState)
 	} else {
 		var senderHash []byte
-		senderResult, senderHash, err = c.processSenderOperation(in, canonical, senderOperationID, messageText, replyToCanonicalMessageID)
+		senderResult, senderHash, err = c.processSenderOperation(in, canonical, senderOperationID, messageText, replyTo)
 		if err != nil {
 			return nil, err
 		}
@@ -123,7 +122,7 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 	}
 
 	if in.UserId != in.PeerId && sendState.Status < repository.SendStateStatusReceiverAcked {
-		receiverOp, err := buildReceiverOperationEnvelope(in, canonical, messageText, replyToCanonicalMessageID)
+		receiverOp, err := buildReceiverOperationEnvelope(in, canonical, messageText, replyTo.CanonicalMessageID)
 		if err != nil {
 			return nil, err
 		}
@@ -210,28 +209,33 @@ func outboxTLMessage(outbox *msg.TLOutboxMessage) (*tg.TLMessage, error) {
 	return message, nil
 }
 
-func (c *MsgCore) replyToCanonicalMessageID(in *msg.TLMsgSendMessageV2, message *tg.TLMessage) (int64, error) {
+type resolvedReplyToMessage struct {
+	CanonicalMessageID int64
+	UserMessageID      int64
+}
+
+func (c *MsgCore) resolveReplyToMessageID(in *msg.TLMsgSendMessageV2, message *tg.TLMessage) (resolvedReplyToMessage, error) {
 	if message == nil || message.ReplyTo == nil {
-		return 0, nil
+		return resolvedReplyToMessage{}, nil
 	}
 	replyHeader, ok := message.ReplyTo.(*tg.TLMessageReplyHeader)
 	if !ok || replyHeader.ReplyToMsgId == nil || *replyHeader.ReplyToMsgId <= 0 {
-		return 0, msg.ErrReplyToInvalid
+		return resolvedReplyToMessage{}, msg.ErrReplyToInvalid
 	}
-	replyTo, err := c.svcCtx.Repo.GetCanonicalMessageByPeerSeq(c.ctx, in.UserId, in.PeerType, in.PeerId, int64(*replyHeader.ReplyToMsgId))
+	replyTo, err := c.svcCtx.Repo.ResolveMessageID(c.ctx, in.UserId, in.PeerType, in.PeerId, int64(*replyHeader.ReplyToMsgId))
 	if err != nil {
-		if errors.Is(err, msg.ErrSendStateConflict) {
-			return 0, msg.ErrReplyToInvalid
-		}
-		return 0, err
+		return resolvedReplyToMessage{}, err
 	}
-	if replyTo == nil || replyTo.CanonicalMessageID == 0 {
-		return 0, msg.ErrReplyToInvalid
+	if replyTo == nil || replyTo.CanonicalMessageID == 0 || replyTo.UserMessageID <= 0 {
+		return resolvedReplyToMessage{}, msg.ErrReplyToInvalid
 	}
-	return replyTo.CanonicalMessageID, nil
+	return resolvedReplyToMessage{
+		CanonicalMessageID: replyTo.CanonicalMessageID,
+		UserMessageID:      replyTo.UserMessageID,
+	}, nil
 }
 
-func (c *MsgCore) processSenderOperation(in *msg.TLMsgSendMessageV2, canonical *repository.CanonicalMessageResult, operationID string, text string, replyToCanonicalMessageID int64) (*userupdates.UserOperationResult, []byte, error) {
+func (c *MsgCore) processSenderOperation(in *msg.TLMsgSendMessageV2, canonical *repository.CanonicalMessageResult, operationID string, text string, replyTo resolvedReplyToMessage) (*userupdates.UserOperationResult, []byte, error) {
 	var sourcePermAuthKeyID int64
 	if in.SourcePermAuthKeyId != nil {
 		sourcePermAuthKeyID = *in.SourcePermAuthKeyId
@@ -240,7 +244,7 @@ func (c *MsgCore) processSenderOperation(in *msg.TLMsgSendMessageV2, canonical *
 	if in.ClearDraftBeforeDate != nil {
 		clearDraftBeforeDate = *in.ClearDraftBeforeDate
 	}
-	body, _, hashBytes, err := buildMessageOperationPayload(in.UserId, in.PeerId, in.PeerId, true, canonical, text, replyToCanonicalMessageID, in.ClearDraft, sourcePermAuthKeyID, clearDraftBeforeDate)
+	body, _, hashBytes, err := buildMessageOperationPayload(in.UserId, in.PeerId, in.PeerId, true, canonical, text, replyTo.CanonicalMessageID, 0, in.ClearDraft, sourcePermAuthKeyID, clearDraftBeforeDate)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -298,7 +302,7 @@ func (c *MsgCore) markSenderCommitted(canonical *repository.CanonicalMessageResu
 
 func buildReceiverOperationEnvelope(in *msg.TLMsgSendMessageV2, canonical *repository.CanonicalMessageResult, text string, replyToCanonicalMessageID int64) (OperationEnvelope, error) {
 	operationID := payload.ReceiverOperationID(canonical.CanonicalMessageID, in.PeerId)
-	body, hashBytes, _, err := buildMessageOperationPayload(in.UserId, in.PeerId, in.UserId, false, canonical, text, replyToCanonicalMessageID, false, 0, 0)
+	body, hashBytes, _, err := buildMessageOperationPayload(in.UserId, in.PeerId, in.UserId, false, canonical, text, replyToCanonicalMessageID, 0, false, 0, 0)
 	if err != nil {
 		return OperationEnvelope{}, err
 	}
@@ -321,7 +325,7 @@ func buildReceiverOperationEnvelope(in *msg.TLMsgSendMessageV2, canonical *repos
 	}, nil
 }
 
-func buildMessageOperationPayload(fromUserID int64, toUserID int64, peerID int64, out bool, canonical *repository.CanonicalMessageResult, text string, replyToCanonicalMessageID int64, clearDraft bool, sourcePermAuthKeyID int64, clearDraftBeforeDate int32) ([]byte, []byte, []byte, error) {
+func buildMessageOperationPayload(fromUserID int64, toUserID int64, peerID int64, out bool, canonical *repository.CanonicalMessageResult, text string, replyToCanonicalMessageID int64, replyToUserMessageID int64, clearDraft bool, sourcePermAuthKeyID int64, clearDraftBeforeDate int32) ([]byte, []byte, []byte, error) {
 	date, err := msgDateInt32FromUnixSeconds(canonical.MessageDate, "message date")
 	if err != nil {
 		return nil, nil, nil, err
@@ -339,6 +343,7 @@ func buildMessageOperationPayload(fromUserID int64, toUserID int64, peerID int64
 		Out:                       out,
 		MessageText:               text,
 		ReplyToCanonicalMessageID: replyToCanonicalMessageID,
+		ReplyToUserMessageID:      replyToUserMessageID,
 		ClearDraft:                clearDraft,
 		SourcePermAuthKeyID:       sourcePermAuthKeyID,
 		ClearDraftBeforeDate:      clearDraftBeforeDate,
@@ -354,11 +359,15 @@ func shortSentMessage(canonical *repository.CanonicalMessageResult, result *user
 	if canonical == nil || result == nil {
 		return nil, msg.ErrSenderSyncFailed
 	}
-	peerSeq, err := int64ToInt32(canonical.PeerSeq, "peer seq")
+	response, err := operationResponseV2(result, "sender")
 	if err != nil {
 		return nil, err
 	}
-	pts, err := int64ToInt32(result.Pts, "pts")
+	userMessageID, err := operationResponseUserMessageID(response, "sender")
+	if err != nil {
+		return nil, err
+	}
+	pts, err := int64ToInt32(response.Pts, "pts")
 	if err != nil {
 		return nil, err
 	}
@@ -368,11 +377,32 @@ func shortSentMessage(canonical *repository.CanonicalMessageResult, result *user
 	}
 	return tg.MakeTLUpdateShortSentMessage(&tg.TLUpdateShortSentMessage{
 		Out:      true,
-		Id:       peerSeq,
+		Id:       userMessageID,
 		Pts:      pts,
-		PtsCount: result.PtsCount,
+		PtsCount: response.PtsCount,
 		Date:     date,
 	}).ToUpdates(), nil
+}
+
+func operationResponseV2(result *userupdates.UserOperationResult, operation string) (payload.OperationResponseV2, error) {
+	if result == nil {
+		return payload.OperationResponseV2{}, msg.ErrSenderSyncFailed
+	}
+	var response payload.OperationResponseV2
+	if err := json.Unmarshal(result.ResponsePayload, &response); err != nil {
+		return payload.OperationResponseV2{}, fmt.Errorf("%w: decode %s operation response: %v", msg.ErrMsgStorage, operation, err)
+	}
+	if response.SchemaVersion != payload.OperationResponseSchemaVersion {
+		return payload.OperationResponseV2{}, fmt.Errorf("%w: unsupported %s operation response schema=%d", msg.ErrMsgStorage, operation, response.SchemaVersion)
+	}
+	return response, nil
+}
+
+func operationResponseUserMessageID(response payload.OperationResponseV2, operation string) (int32, error) {
+	if response.UserMessageID <= 0 {
+		return 0, fmt.Errorf("%w: %s operation missing user_message_id", msg.ErrMsgStorage, operation)
+	}
+	return int64ToInt32(response.UserMessageID, "user message id")
 }
 
 func int64ToInt32(v int64, field string) (int32, error) {

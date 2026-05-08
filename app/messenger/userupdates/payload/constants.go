@@ -10,9 +10,13 @@ const (
 
 	MaxOperationIDLength = 160
 
-	MessageOperationSchemaVersion  = 1
-	OperationResponseSchemaVersion = 1
-	MessageEventSchemaVersion      = 1
+	MessageOperationSchemaVersionV1  = 1
+	OperationResponseSchemaVersionV1 = 1
+	MessageEventSchemaVersionV1      = 1
+
+	MessageOperationSchemaVersion  = 2
+	OperationResponseSchemaVersion = 2
+	MessageEventSchemaVersion      = 2
 )
 
 const (

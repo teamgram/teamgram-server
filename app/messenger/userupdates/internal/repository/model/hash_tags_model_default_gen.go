@@ -38,7 +38,7 @@ type (
 		Update2(ctx context.Context, data *HashTags) error
 		Delete2(ctx context.Context, id int64) error
 
-		FindOneByUserIdPeerTypePeerIdHashTagHashTagMessageId(ctx context.Context, userId int64, peerType int32, peerId int64, hashTag string, hashTagMessageId int32) (*HashTags, error)
+		FindOneByUserIdHashTagHashTagMessageId(ctx context.Context, userId int64, hashTag string, hashTagMessageId int32) (*HashTags, error)
 	}
 
 	defaultHashTagsModel struct {
@@ -46,13 +46,14 @@ type (
 	}
 
 	HashTags struct {
-		Id               int64  `db:"id" json:"id"`
-		UserId           int64  `db:"user_id" json:"user_id"`
-		PeerType         int32  `db:"peer_type" json:"peer_type"`
-		PeerId           int64  `db:"peer_id" json:"peer_id"`
-		HashTag          string `db:"hash_tag" json:"hash_tag"`
-		HashTagMessageId int32  `db:"hash_tag_message_id" json:"hash_tag_message_id"`
-		Deleted          bool   `db:"deleted" json:"deleted"`
+		Id                   int64  `db:"id" json:"id"`
+		UserId               int64  `db:"user_id" json:"user_id"`
+		PeerType             int32  `db:"peer_type" json:"peer_type"`
+		PeerId               int64  `db:"peer_id" json:"peer_id"`
+		HashTag              string `db:"hash_tag" json:"hash_tag"`
+		HashTagMessageId     int32  `db:"hash_tag_message_id" json:"hash_tag_message_id"`
+		HashTagUserMessageId int64  `db:"hash_tag_user_message_id" json:"hash_tag_user_message_id"`
+		Deleted              bool   `db:"deleted" json:"deleted"`
 	}
 )
 
@@ -64,9 +65,9 @@ func newHashTagsModel(db *sqlx.DB) *defaultHashTagsModel {
 
 func (m *defaultHashTagsModel) Insert2(ctx context.Context, data *HashTags) (sql.Result, error) {
 	tableName := "hash_tags"
-	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?)", tableName, hashTagsRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?)", tableName, hashTagsRowsExpectAutoSet)
 
-	r, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.HashTag, data.HashTagMessageId, data.Deleted)
+	r, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.HashTag, data.HashTagMessageId, data.HashTagUserMessageId, data.Deleted)
 	if err != nil {
 		return nil, fmt.Errorf("hash_tags.Insert2 exec: %w", err)
 	}
@@ -131,7 +132,7 @@ func (m *defaultHashTagsModel) Update2(ctx context.Context, data *HashTags) erro
 	tableName := "hash_tags"
 	query := fmt.Sprintf("update `%s` set %s where `id` = ?", tableName, hashTagsRowsWithPlaceHolder)
 
-	_, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.HashTag, data.HashTagMessageId, data.Deleted, data.Id)
+	_, err := m.db.Exec(ctx, query, data.UserId, data.PeerType, data.PeerId, data.HashTag, data.HashTagMessageId, data.HashTagUserMessageId, data.Deleted, data.Id)
 	if err != nil {
 		return fmt.Errorf("hash_tags.Update2 exec: %w", err)
 	}
@@ -139,22 +140,22 @@ func (m *defaultHashTagsModel) Update2(ctx context.Context, data *HashTags) erro
 	return nil
 }
 
-func (m *defaultHashTagsModel) FindOneByUserIdPeerTypePeerIdHashTagHashTagMessageId(ctx context.Context, userId int64, peerType int32, peerId int64, hashTag string, hashTagMessageId int32) (*HashTags, error) {
+func (m *defaultHashTagsModel) FindOneByUserIdHashTagHashTagMessageId(ctx context.Context, userId int64, hashTag string, hashTagMessageId int32) (*HashTags, error) {
 	tableName := "hash_tags"
-	query := fmt.Sprintf("select %s from %s where user_id = ? AND peer_type = ? AND peer_id = ? AND hash_tag = ? AND hash_tag_message_id = ? limit 1", hashTagsRows, tableName)
+	query := fmt.Sprintf("select %s from %s where user_id = ? AND hash_tag = ? AND hash_tag_message_id = ? limit 1", hashTagsRows, tableName)
 	var resp HashTags
 
-	err := m.db.QueryRowPartial(ctx, &resp, query, userId, peerType, peerId, hashTag, hashTagMessageId)
+	err := m.db.QueryRowPartial(ctx, &resp, query, userId, hashTag, hashTagMessageId)
 
 	if err != nil {
 		if errors.Is(err, sqlx.ErrNotFound) {
 			return nil, &NotFoundError{
 				Resource: "hash_tags",
-				Key:      fmt.Sprintf("user_id=%v,peer_type=%v,peer_id=%v,hash_tag=%v,hash_tag_message_id=%v", userId, peerType, peerId, hashTag, hashTagMessageId),
+				Key:      fmt.Sprintf("user_id=%v,hash_tag=%v,hash_tag_message_id=%v", userId, hashTag, hashTagMessageId),
 				Cause:    err,
 			}
 		}
-		return nil, fmt.Errorf("hash_tags.FindOneByUserIdPeerTypePeerIdHashTagHashTagMessageId: %w", err)
+		return nil, fmt.Errorf("hash_tags.FindOneByUserIdHashTagHashTagMessageId: %w", err)
 	}
 
 	return &resp, nil

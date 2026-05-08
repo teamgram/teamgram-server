@@ -94,7 +94,7 @@ func TestMessageOperationV1UsesServerOwnedJSON(t *testing.T) {
 	if strings.Contains(text, "@type") || strings.Contains(text, "@id") || strings.Contains(text, "clazz") {
 		t.Fatalf("payload JSON contains TL-like fields: %s", text)
 	}
-	if !strings.Contains(text, `"schema_version":1`) {
+	if !strings.Contains(text, `"schema_version":2`) {
 		t.Fatalf("payload JSON missing schema_version: %s", text)
 	}
 
@@ -153,13 +153,44 @@ func TestMessageOperationV1SideEffectFieldsAffectPayloadHash(t *testing.T) {
 
 func TestOperationResponseAndEventCarrySchemaVersion(t *testing.T) {
 	resp := OperationResponseV1{SchemaVersion: OperationResponseSchemaVersion, Pts: 1, PtsCount: 1}
-	if resp.SchemaVersion != 1 {
-		t.Fatalf("response schema version = %d, want 1", resp.SchemaVersion)
+	if resp.SchemaVersion != OperationResponseSchemaVersion {
+		t.Fatalf("response schema version = %d, want %d", resp.SchemaVersion, OperationResponseSchemaVersion)
 	}
 
 	event := MessageEventV1{SchemaVersion: MessageEventSchemaVersion, CanonicalMessageID: 1, MessageText: "hello"}
-	if event.SchemaVersion != 1 {
-		t.Fatalf("event schema version = %d, want 1", event.SchemaVersion)
+	if event.SchemaVersion != MessageEventSchemaVersion {
+		t.Fatalf("event schema version = %d, want %d", event.SchemaVersion, MessageEventSchemaVersion)
+	}
+}
+
+func TestOperationResponseCarriesUserMessageID(t *testing.T) {
+	resp := OperationResponseV2{
+		SchemaVersion: OperationResponseSchemaVersion,
+		OperationID:   "op",
+		Pts:           11,
+		PtsCount:      1,
+		EventType:     EventKindNewMessage,
+		UserMessageID: 101,
+	}
+	if resp.UserMessageID != 101 {
+		t.Fatalf("user_message_id = %d, want 101", resp.UserMessageID)
+	}
+}
+
+func TestMessageEventV2PublicIDs(t *testing.T) {
+	event := MessageEventV2{
+		SchemaVersion:        MessageEventSchemaVersion,
+		EventKind:            EventKindNewMessage,
+		CanonicalMessageID:   200,
+		PeerSeq:              9,
+		MessageID:            101,
+		ReplyToUserMessageID: 88,
+	}
+	if event.MessageID == event.PeerSeq {
+		t.Fatalf("message_id must be public id, got peer_seq=%d", event.PeerSeq)
+	}
+	if event.ReplyToUserMessageID != 88 {
+		t.Fatalf("reply public id = %d, want 88", event.ReplyToUserMessageID)
 	}
 }
 

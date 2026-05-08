@@ -55,7 +55,7 @@ func init() {
 	iface.RegisterClazzName(ClazzName_userDifferenceSlice, 0, 0x4ef1987f)                         // 4ef1987f
 	iface.RegisterClazzName(ClazzName_userDifferenceTooLong, 0, 0x1d095703)                       // 1d095703
 	iface.RegisterClazzName(ClazzName_dialogProjectionPeer, 0, 0x6d7ec124)                        // 6d7ec124
-	iface.RegisterClazzName(ClazzName_dialogProjection, 0, 0xb9bc23fd)                            // b9bc23fd
+	iface.RegisterClazzName(ClazzName_dialogProjection, 0, 0xdf6c5662)                            // df6c5662
 	iface.RegisterClazzName(ClazzName_dialogProjectionList, 0, 0x4e60f01f)                        // 4e60f01f
 	iface.RegisterClazzName(ClazzName_messageViewPeerSeq, 0, 0x8bf3b9a4)                          // 8bf3b9a4
 	iface.RegisterClazzName(ClazzName_messageViewList, 0, 0x3127345e)                             // 3127345e
@@ -84,7 +84,7 @@ func init() {
 	iface.RegisterClazzIDName(ClazzName_userDifferenceSlice, 0x4ef1987f)                         // 4ef1987f
 	iface.RegisterClazzIDName(ClazzName_userDifferenceTooLong, 0x1d095703)                       // 1d095703
 	iface.RegisterClazzIDName(ClazzName_dialogProjectionPeer, 0x6d7ec124)                        // 6d7ec124
-	iface.RegisterClazzIDName(ClazzName_dialogProjection, 0xb9bc23fd)                            // b9bc23fd
+	iface.RegisterClazzIDName(ClazzName_dialogProjection, 0xdf6c5662)                            // df6c5662
 	iface.RegisterClazzIDName(ClazzName_dialogProjectionList, 0x4e60f01f)                        // 4e60f01f
 	iface.RegisterClazzIDName(ClazzName_messageViewPeerSeq, 0x8bf3b9a4)                          // 8bf3b9a4
 	iface.RegisterClazzIDName(ClazzName_messageViewList, 0x3127345e)                             // 3127345e

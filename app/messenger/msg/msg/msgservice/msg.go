@@ -139,6 +139,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"/msg.RPCMsg/msg.resolveDialogCursorTopMessage": kitex.NewMethodInfo(
+		resolveDialogCursorTopMessageHandler,
+		newResolveDialogCursorTopMessageArgs,
+		newResolveDialogCursorTopMessageResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 	"/msg.RPCMsg/msg.updatePinnedMessage": kitex.NewMethodInfo(
 		updatePinnedMessageHandler,
 		newUpdatePinnedMessageArgs,
@@ -1834,6 +1841,140 @@ func (p *SearchHashtagResult) GetResult() interface{} {
 	return p.Success
 }
 
+func resolveDialogCursorTopMessageHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*ResolveDialogCursorTopMessageArgs)
+	realResult := result.(*ResolveDialogCursorTopMessageResult)
+	success, err := handler.(msg.RPCMsg).MsgResolveDialogCursorTopMessage(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newResolveDialogCursorTopMessageArgs() interface{} {
+	return &ResolveDialogCursorTopMessageArgs{}
+}
+
+func newResolveDialogCursorTopMessageResult() interface{} {
+	return &ResolveDialogCursorTopMessageResult{}
+}
+
+type ResolveDialogCursorTopMessageArgs struct {
+	Req *msg.TLMsgResolveDialogCursorTopMessage
+}
+
+func (p *ResolveDialogCursorTopMessageArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in ResolveDialogCursorTopMessageArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *ResolveDialogCursorTopMessageArgs) Unmarshal(in []byte) error {
+	msg := new(msg.TLMsgResolveDialogCursorTopMessage)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *ResolveDialogCursorTopMessageArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in ResolveDialogCursorTopMessageArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *ResolveDialogCursorTopMessageArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(msg.TLMsgResolveDialogCursorTopMessage)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var ResolveDialogCursorTopMessageArgs_Req_DEFAULT *msg.TLMsgResolveDialogCursorTopMessage
+
+func (p *ResolveDialogCursorTopMessageArgs) GetReq() *msg.TLMsgResolveDialogCursorTopMessage {
+	if !p.IsSetReq() {
+		return ResolveDialogCursorTopMessageArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *ResolveDialogCursorTopMessageArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type ResolveDialogCursorTopMessageResult struct {
+	Success *msg.ResolvedDialogCursor
+}
+
+var ResolveDialogCursorTopMessageResult_Success_DEFAULT *msg.ResolvedDialogCursor
+
+func (p *ResolveDialogCursorTopMessageResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in ResolveDialogCursorTopMessageResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *ResolveDialogCursorTopMessageResult) Unmarshal(in []byte) error {
+	msg := new(msg.ResolvedDialogCursor)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ResolveDialogCursorTopMessageResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in ResolveDialogCursorTopMessageResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *ResolveDialogCursorTopMessageResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(msg.ResolvedDialogCursor)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ResolveDialogCursorTopMessageResult) GetSuccess() *msg.ResolvedDialogCursor {
+	if !p.IsSetSuccess() {
+		return ResolveDialogCursorTopMessageResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ResolveDialogCursorTopMessageResult) SetSuccess(x interface{}) {
+	p.Success = x.(*msg.ResolvedDialogCursor)
+}
+
+func (p *ResolveDialogCursorTopMessageResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ResolveDialogCursorTopMessageResult) GetResult() interface{} {
+	return p.Success
+}
+
 func updatePinnedMessageHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*UpdatePinnedMessageArgs)
 	realResult := result.(*UpdatePinnedMessageResult)
@@ -2250,6 +2391,16 @@ func (p *kClient) MsgSearchHashtag(ctx context.Context, req *msg.TLMsgSearchHash
 	var _result SearchHashtagResult
 
 	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.searchHashtag", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) MsgResolveDialogCursorTopMessage(ctx context.Context, req *msg.TLMsgResolveDialogCursorTopMessage) (r *msg.ResolvedDialogCursor, err error) {
+	var _result ResolveDialogCursorTopMessageResult
+
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.resolveDialogCursorTopMessage", req, &_result); err != nil {
 		return
 	}
 

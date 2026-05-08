@@ -1,6 +1,9 @@
 package core
 
 import (
+	"encoding/json"
+	"math"
+
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -12,13 +15,31 @@ func makeSavedDialogList(records []repository.SavedDialogRecord) *dialog.SavedDi
 		dialogs = append(dialogs, tg.MakeTLSavedDialog(&tg.TLSavedDialog{
 			Pinned:     record.Pinned,
 			Peer:       makeSavedDialogPeer(record.PeerType, record.PeerID),
-			TopMessage: int32(record.TopPeerSeq),
+			TopMessage: savedDialogTopMessageID(record),
 		}))
 	}
 	return dialog.MakeTLSavedDialogList(&dialog.TLSavedDialogList{
 		Count:   int32(len(records)),
 		Dialogs: dialogs,
 	})
+}
+
+type savedDialogPayloadV1 struct {
+	TopUserMessageID int64 `json:"top_user_message_id,omitempty"`
+}
+
+func savedDialogTopMessageID(record repository.SavedDialogRecord) int32 {
+	if len(record.SavedPayload) == 0 {
+		return 0
+	}
+	var payload savedDialogPayloadV1
+	if err := json.Unmarshal(record.SavedPayload, &payload); err != nil {
+		return 0
+	}
+	if payload.TopUserMessageID <= 0 || payload.TopUserMessageID > math.MaxInt32 {
+		return 0
+	}
+	return int32(payload.TopUserMessageID)
 }
 
 func unixOffsetDate(offsetDate int32) int64 {

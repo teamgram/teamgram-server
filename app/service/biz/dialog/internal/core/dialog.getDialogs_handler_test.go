@@ -350,6 +350,72 @@ func TestDialogGetPinnedDialogsHonorsRepositoryOrder(t *testing.T) {
 	}
 }
 
+func TestMakeDialogExtV2FromProjectionExposesPublicMessageIDs(t *testing.T) {
+	projection := testDialogProjection()
+	projection.TopPeerSeq = 99
+	projection.TopUserMessageId = 42
+	projection.ReadInboxMaxPeerSeq = 12
+	projection.ReadInboxMaxUserMessageId = 43
+	projection.ReadOutboxMaxPeerSeq = 13
+	projection.ReadOutboxMaxUserMessageId = 44
+	projection.PinnedPeerSeq = 33
+	projection.PinnedUserMessageId = 45
+	projection.AvailableMinPeerSeq = 2
+	projection.AvailableMinUserMessageId = 41
+
+	got := makeDialogExtV2FromProjection(projection, nil)
+
+	if got.TopPeerSeq != 99 || got.TopUserMessageId != 42 {
+		t.Fatalf("top ids = peer_seq:%d public:%d, want peer_seq 99 public 42", got.TopPeerSeq, got.TopUserMessageId)
+	}
+	if got.ReadInboxMaxPeerSeq != 12 || got.ReadInboxMaxUserMessageId != 43 ||
+		got.ReadOutboxMaxPeerSeq != 13 || got.ReadOutboxMaxUserMessageId != 44 {
+		t.Fatalf("read ids = %+v, want internal peer seqs with public mirrors", got)
+	}
+	if got.PinnedPeerSeq != 33 || got.PinnedUserMessageId != 45 ||
+		got.AvailableMinPeerSeq != 2 || got.AvailableMinUserMessageId != 41 {
+		t.Fatalf("pin/available ids = %+v, want internal peer seqs with public mirrors", got)
+	}
+}
+
+func TestMakeLegacyDialogExtV2UsesRecordPublicIDsWithoutInventingPeerSeq(t *testing.T) {
+	record := testDialogRecord()
+	record.TopMessage = 42
+	record.ReadInboxMaxID = 43
+	record.ReadOutboxMaxID = 44
+	record.PinnedMsgID = 45
+
+	got := makeDialogExtV2(record, nil)
+
+	if got.TopUserMessageId != 42 || got.ReadInboxMaxUserMessageId != 43 ||
+		got.ReadOutboxMaxUserMessageId != 44 || got.PinnedUserMessageId != 45 {
+		t.Fatalf("public ids = %+v, want record ids as public mirrors", got)
+	}
+	if got.TopPeerSeq != 42 || got.PinnedPeerSeq != 45 {
+		t.Fatalf("legacy internal ids = top:%d pinned:%d, want existing record ids preserved", got.TopPeerSeq, got.PinnedPeerSeq)
+	}
+}
+
+func TestMakeSavedDialogListUsesPayloadPublicTopMessageID(t *testing.T) {
+	got := makeSavedDialogList([]repository.SavedDialogRecord{{
+		UserID:       1001,
+		PeerType:     tg.PEER_USER,
+		PeerID:       2002,
+		TopPeerSeq:   7,
+		SavedPayload: []byte(`{"schema_version":1,"top_user_message_id":55}`),
+	}})
+	if len(got.Dialogs) != 1 {
+		t.Fatalf("saved dialogs len = %d, want 1", len(got.Dialogs))
+	}
+	saved, ok := got.Dialogs[0].(*tg.TLSavedDialog)
+	if !ok {
+		t.Fatalf("saved dialog = %T, want *tg.TLSavedDialog", got.Dialogs[0])
+	}
+	if saved.TopMessage != 55 || saved.TopMessage == 7 {
+		t.Fatalf("saved dialog top_message = %d, want public id 55 and not peer_seq 7", saved.TopMessage)
+	}
+}
+
 func testDialogRecord() repository.DialogRecord {
 	return repository.DialogRecord{
 		UserID:               1001,
@@ -376,20 +442,25 @@ func testDialogRecord() repository.DialogRecord {
 
 func testDialogProjection() *userupdates.TLDialogProjection {
 	return userupdates.MakeTLDialogProjection(&userupdates.TLDialogProjection{
-		PeerType:                 tg.PEER_USER,
-		PeerId:                   2002,
-		TopPeerSeq:               99,
-		TopCanonicalMessageId:    7001,
-		TopMessageDate:           1710000000,
-		ReadInboxMaxPeerSeq:      12,
-		ReadOutboxMaxPeerSeq:     13,
-		UnreadCount:              2,
-		UnreadMentionsCount:      1,
-		UnreadReactionsCount:     3,
-		UnreadMark:               true,
-		PinnedPeerSeq:            33,
-		PinnedCanonicalMessageId: 33,
-		HasScheduled:             true,
-		AvailableMinPeerSeq:      1,
+		PeerType:                   tg.PEER_USER,
+		PeerId:                     2002,
+		TopPeerSeq:                 99,
+		TopUserMessageId:           42,
+		TopCanonicalMessageId:      7001,
+		TopMessageDate:             1710000000,
+		ReadInboxMaxPeerSeq:        12,
+		ReadInboxMaxUserMessageId:  43,
+		ReadOutboxMaxPeerSeq:       13,
+		ReadOutboxMaxUserMessageId: 44,
+		UnreadCount:                2,
+		UnreadMentionsCount:        1,
+		UnreadReactionsCount:       3,
+		UnreadMark:                 true,
+		PinnedPeerSeq:              33,
+		PinnedUserMessageId:        45,
+		PinnedCanonicalMessageId:   33,
+		HasScheduled:               true,
+		AvailableMinPeerSeq:        1,
+		AvailableMinUserMessageId:  41,
 	})
 }

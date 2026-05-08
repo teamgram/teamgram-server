@@ -20,7 +20,7 @@ import (
 func init() {
 	// Constructor
 	iface.RegisterClazzID(0x96790279, func() iface.TLObject { return &TLAffectedUserOperation{ClazzID: 0x96790279} })   // 0x96790279
-	iface.RegisterClazzID(0xb9bc23fd, func() iface.TLObject { return &TLDialogProjection{ClazzID: 0xb9bc23fd} })        // 0xb9bc23fd
+	iface.RegisterClazzID(0xdf6c5662, func() iface.TLObject { return &TLDialogProjection{ClazzID: 0xdf6c5662} })        // 0xdf6c5662
 	iface.RegisterClazzID(0x4e60f01f, func() iface.TLObject { return &TLDialogProjectionList{ClazzID: 0x4e60f01f} })    // 0x4e60f01f
 	iface.RegisterClazzID(0x6d7ec124, func() iface.TLObject { return &TLDialogProjectionPeer{ClazzID: 0x6d7ec124} })    // 0x6d7ec124
 	iface.RegisterClazzID(0x3127345e, func() iface.TLObject { return &TLMessageViewList{ClazzID: 0x3127345e} })         // 0x3127345e

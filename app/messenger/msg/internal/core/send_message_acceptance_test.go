@@ -113,13 +113,20 @@ func TestMsgReadHistoryV2DurablyEnqueuesPeerReceiptAcceptance(t *testing.T) {
 	requesterID := base + 3001
 	peerID := base + 3002
 	authKeyID := int64(9003)
-	maxID := int32(7)
 	claimUserPartitions(t, ctx, updatesKit, requesterID, peerID)
 
 	msgCore := New(ctx, &svc.ServiceContext{
-		Repo:        msgRepo,
-		UserUpdates: acceptanceUserUpdates{kit: updatesKit},
+		Repo:              msgRepo,
+		UserUpdates:       acceptanceUserUpdates{kit: updatesKit},
+		ReceiverPublisher: &msgrepo.InMemoryReceiverOperationPublisher{OnPublish: updatesKit.ProcessReceiverOperation},
 	})
+
+	_, err := msgCore.MsgSendMessageV2(acceptanceSendRequest(peerID, requesterID, 9004, base+3003, "receipt acceptance"))
+	if err != nil {
+		t.Fatalf("seed MsgSendMessageV2() error = %v", err)
+	}
+	view := selectAcceptanceMessageView(t, ctx, db, requesterID, payload.PeerTypeUser, peerID)
+	maxID := int32(view.UserMessageId)
 
 	affected, err := msgCore.MsgReadHistoryV2(&msgpb.TLMsgReadHistoryV2{
 		UserId:    requesterID,
@@ -131,11 +138,11 @@ func TestMsgReadHistoryV2DurablyEnqueuesPeerReceiptAcceptance(t *testing.T) {
 	if err != nil {
 		t.Fatalf("MsgReadHistoryV2() error = %v", err)
 	}
-	if affected == nil || affected.Pts != 1 || affected.PtsCount != 1 {
-		t.Fatalf("affected messages = %+v, want pts=1 pts_count=1", affected)
+	if affected == nil || affected.Pts != 2 || affected.PtsCount != 1 {
+		t.Fatalf("affected messages = %+v, want pts=2 pts_count=1", affected)
 	}
 
-	assertAffectedOutboxRow(t, ctx, db, peerID, readHistoryOperationID(peerID, requesterID, maxID, 0), requesterID, maxID)
+	assertAffectedOutboxRow(t, ctx, db, peerID, readHistoryOutboxOperationID(peerID, requesterID, view.PeerSeq), requesterID, view.PeerSeq)
 }
 
 type acceptanceIDGenerator struct {
@@ -171,6 +178,11 @@ type affectedOutboxAcceptanceRow struct {
 	Status          int32  `db:"status"`
 	DeliveryPolicy  int32  `db:"delivery_policy"`
 	Payload         []byte `db:"payload"`
+}
+
+type acceptanceMessageViewRow struct {
+	UserMessageId int64 `db:"user_message_id"`
+	PeerSeq       int64 `db:"peer_seq"`
 }
 
 type acceptanceFailingSenderCommitRepo struct {
@@ -278,7 +290,24 @@ func assertDifferenceMessage(t *testing.T, ctx context.Context, kit *userupdates
 	}
 }
 
-func assertAffectedOutboxRow(t *testing.T, ctx context.Context, db *sqlx.DB, userID int64, operationID string, requesterID int64, maxID int32) {
+func selectAcceptanceMessageView(t *testing.T, ctx context.Context, db *sqlx.DB, userID int64, peerType int32, peerID int64) acceptanceMessageViewRow {
+	t.Helper()
+	var row acceptanceMessageViewRow
+	if err := db.QueryRowPartial(ctx, &row, `
+		SELECT user_message_id, peer_seq
+		FROM user_message_views
+		WHERE user_id = ? AND peer_type = ? AND peer_id = ? AND message_status = ?
+		ORDER BY user_message_id DESC
+		LIMIT 1`, userID, peerType, peerID, msgrepo.MessageStatusLive); err != nil {
+		t.Fatalf("select acceptance message view: %v", err)
+	}
+	if row.UserMessageId <= 0 || row.PeerSeq <= 0 {
+		t.Fatalf("invalid acceptance message view: %+v", row)
+	}
+	return row
+}
+
+func assertAffectedOutboxRow(t *testing.T, ctx context.Context, db *sqlx.DB, userID int64, operationID string, requesterID int64, maxPeerSeq int64) {
 	t.Helper()
 	var row affectedOutboxAcceptanceRow
 	if err := db.QueryRowPartial(ctx, &row, `
@@ -298,7 +327,7 @@ func assertAffectedOutboxRow(t *testing.T, ctx context.Context, db *sqlx.DB, use
 	if err := json.Unmarshal(row.Payload, &op); err != nil {
 		t.Fatalf("decode affected outbox payload: %v", err)
 	}
-	if op.OperationKind != payload.OperationKindReadHistory || op.PeerID != requesterID || op.ReadOutboxMaxPeerSeq != int64(maxID) || !op.Out {
+	if op.OperationKind != payload.OperationKindReadHistory || op.PeerID != requesterID || op.ReadOutboxMaxPeerSeq != maxPeerSeq || !op.Out {
 		t.Fatalf("affected outbox payload = %+v", op)
 	}
 }

@@ -22,7 +22,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -34,21 +33,29 @@ func (c *MsgCore) MsgUpdatePinnedMessage(in *msg.TLMsgUpdatePinnedMessage) (*tg.
 	if in == nil {
 		return nil, fmt.Errorf("%w: missing update pinned request", msg.ErrSendStateConflict)
 	}
-	if in.UserId <= 0 || in.PeerId <= 0 || in.Id < 0 {
+	if in.UserId <= 0 || in.PeerId <= 0 || in.Id < 0 || (!in.Unpin && in.Id == 0) {
 		return nil, fmt.Errorf("%w: invalid update pinned request", msg.ErrSendStateConflict)
 	}
 	if in.PeerType != payload.PeerTypeUser {
 		return nil, fmt.Errorf("%w: update pinned first slice only supports user peer", msg.ErrSendStateConflict)
 	}
-	var canonical *repository.CanonicalMessage
-	if !in.Unpin {
+	var pinnedPeerSeq int64
+	var pinnedCanonicalID int64
+	var pinnedUserMessageID int64
+	if !in.Unpin && in.Id > 0 {
 		var err error
-		canonical, err = c.svcCtx.Repo.GetCanonicalMessageByPeerSeq(c.ctx, in.UserId, in.PeerType, in.PeerId, int64(in.Id))
+		resolved, err := c.svcCtx.Repo.ResolveMessageID(c.ctx, in.UserId, in.PeerType, in.PeerId, int64(in.Id))
 		if err != nil {
 			return nil, err
 		}
+		if resolved == nil {
+			return nil, msg.ErrSendStateConflict
+		}
+		pinnedPeerSeq = resolved.PeerSeq
+		pinnedCanonicalID = resolved.CanonicalMessageID
+		pinnedUserMessageID = resolved.UserMessageID
 	}
-	body, hashBytes, err := buildPinnedMessageOperation(in, canonical)
+	body, hashBytes, err := buildPinnedMessageOperation(in, pinnedPeerSeq, pinnedCanonicalID, pinnedUserMessageID)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +70,8 @@ func (c *MsgCore) MsgUpdatePinnedMessage(in *msg.TLMsgUpdatePinnedMessage) (*tg.
 		AuthKeyIDExclude:     &authKeyID,
 		PeerType:             in.PeerType,
 		PeerID:               in.PeerId,
-		CanonicalPeerSeq:     int64Ptr(int64(in.Id)),
+		CanonicalMessageID:   int64Ptr(pinnedCanonicalID),
+		CanonicalPeerSeq:     int64Ptr(pinnedPeerSeq),
 		PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
 		PayloadCodec:         payload.PayloadCodecJSON,
 		PayloadHash:          hashBytes,
@@ -100,40 +108,23 @@ func (c *MsgCore) MsgUpdatePinnedMessage(in *msg.TLMsgUpdatePinnedMessage) (*tg.
 	}).ToUpdates(), nil
 }
 
-func buildPinnedMessageOperation(in *msg.TLMsgUpdatePinnedMessage, canonical *repository.CanonicalMessage) ([]byte, []byte, error) {
+func buildPinnedMessageOperation(in *msg.TLMsgUpdatePinnedMessage, pinnedPeerSeq int64, pinnedCanonicalID int64, pinnedUserMessageID int64) ([]byte, []byte, error) {
 	date, err := msgDateInt32FromUnixSeconds(time.Now().UTC().Unix(), "pinned operation date")
 	if err != nil {
 		return nil, nil, err
 	}
-	var canonicalID int64
-	var peerSeq int64
-	var fromUserID int64
-	var messageText string
-	if canonical != nil {
-		canonicalID = canonical.CanonicalMessageID
-		peerSeq = canonical.PeerSeq
-		fromUserID = canonical.FromUserID
-		messageText = canonical.MessageText
-		if canonical.MessageDate != 0 {
-			date, err = msgDateInt32FromUnixSeconds(canonical.MessageDate, "pinned canonical message date")
-			if err != nil {
-				return nil, nil, err
-			}
-		}
-	}
 	body, err := json.Marshal(payload.MessageOperationV1{
 		SchemaVersion:            payload.MessageOperationSchemaVersion,
 		OperationKind:            payload.OperationKindUpdatePinnedMessage,
-		CanonicalMessageID:       canonicalID,
+		CanonicalMessageID:       pinnedCanonicalID,
 		PeerType:                 in.PeerType,
 		PeerID:                   in.PeerId,
-		PeerSeq:                  peerSeq,
-		FromUserID:               fromUserID,
+		PeerSeq:                  pinnedPeerSeq,
 		ToUserID:                 in.UserId,
 		Date:                     date,
-		MessageText:              messageText,
-		PinnedPeerSeq:            peerSeq,
-		PinnedCanonicalMessageID: canonicalID,
+		PinnedPeerSeq:            pinnedPeerSeq,
+		PinnedUserMessageID:      pinnedUserMessageID,
+		PinnedCanonicalMessageID: pinnedCanonicalID,
 	})
 	if err != nil {
 		return nil, nil, fmt.Errorf("%w: marshal update pinned operation user_id=%d peer_id=%d", msg.ErrMsgStorage, in.UserId, in.PeerId)
@@ -142,5 +133,5 @@ func buildPinnedMessageOperation(in *msg.TLMsgUpdatePinnedMessage, canonical *re
 }
 
 func updatePinnedOperationID(userID int64, peerID int64, id int32, unpin bool, authKeyID int64) string {
-	return fmt.Sprintf("v1:dialog:update_pinned:user:%d:peer:%d:id:%d:unpin:%t:auth:%d", userID, peerID, id, unpin, authKeyID)
+	return fmt.Sprintf("v2:dialog:update_pinned:user:%d:peer:%d:id:%d:unpin:%t:auth:%d", userID, peerID, id, unpin, authKeyID)
 }

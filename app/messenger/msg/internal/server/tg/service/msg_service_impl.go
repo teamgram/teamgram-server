@@ -212,6 +212,22 @@ func (s *Service) MsgSearchHashtag(ctx context.Context, request *msg.TLMsgSearch
 	return r, err
 }
 
+// MsgResolveDialogCursorTopMessage
+// msg.resolveDialogCursorTopMessage user_id:long top_message_id:int = ResolvedDialogCursor;
+func (s *Service) MsgResolveDialogCursorTopMessage(ctx context.Context, request *msg.TLMsgResolveDialogCursorTopMessage) (*msg.ResolvedDialogCursor, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("msg.resolveDialogCursorTopMessage - request: %s", request)
+
+	r, err := c.MsgResolveDialogCursorTopMessage(request)
+	if err != nil {
+		c.Logger.Errorf("msg.resolveDialogCursorTopMessage - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("msg.resolveDialogCursorTopMessage - reply: %s", r)
+	return r, err
+}
+
 // MsgUpdatePinnedMessage
 // msg.updatePinnedMessage flags:# user_id:long auth_key_id:long silent:flags.0?true unpin:flags.1?true pm_oneside:flags.2?true peer_type:int peer_id:long id:int = Updates;
 func (s *Service) MsgUpdatePinnedMessage(ctx context.Context, request *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error) {

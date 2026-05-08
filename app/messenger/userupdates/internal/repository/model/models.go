@@ -24,6 +24,7 @@ type Models struct {
 	UserAuthSeqEventsModel          UserAuthSeqEventsModel
 	UserAuthSeqStateModel           UserAuthSeqStateModel
 	UserDialogsModel                UserDialogsModel
+	UserMessageSequencesModel       UserMessageSequencesModel
 	UserMessageViewsModel           UserMessageViewsModel
 	UserOperationResultsModel       UserOperationResultsModel
 	UserPtsEventsModel              UserPtsEventsModel
@@ -42,6 +43,7 @@ type TxModels struct {
 	UserAuthSeqEventsModel          UserAuthSeqEventsTxModel
 	UserAuthSeqStateModel           UserAuthSeqStateTxModel
 	UserDialogsModel                UserDialogsTxModel
+	UserMessageSequencesModel       UserMessageSequencesTxModel
 	UserMessageViewsModel           UserMessageViewsTxModel
 	UserOperationResultsModel       UserOperationResultsTxModel
 	UserPtsEventsModel              UserPtsEventsTxModel
@@ -61,6 +63,7 @@ func NewModels(db *sqlx.DB) *Models {
 		UserAuthSeqEventsModel:          NewUserAuthSeqEventsModel(db),
 		UserAuthSeqStateModel:           NewUserAuthSeqStateModel(db),
 		UserDialogsModel:                NewUserDialogsModel(db),
+		UserMessageSequencesModel:       NewUserMessageSequencesModel(db),
 		UserMessageViewsModel:           NewUserMessageViewsModel(db),
 		UserOperationResultsModel:       NewUserOperationResultsModel(db),
 		UserPtsEventsModel:              NewUserPtsEventsModel(db),
@@ -81,6 +84,7 @@ func (m *Models) WithTx(tx *sqlx.Tx) *TxModels {
 		UserAuthSeqEventsModel:          NewUserAuthSeqEventsTxModel(tx),
 		UserAuthSeqStateModel:           NewUserAuthSeqStateTxModel(tx),
 		UserDialogsModel:                NewUserDialogsTxModel(tx),
+		UserMessageSequencesModel:       NewUserMessageSequencesTxModel(tx),
 		UserMessageViewsModel:           NewUserMessageViewsTxModel(tx),
 		UserOperationResultsModel:       NewUserOperationResultsTxModel(tx),
 		UserPtsEventsModel:              NewUserPtsEventsTxModel(tx),

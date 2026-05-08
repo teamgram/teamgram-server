@@ -9,6 +9,7 @@ sender user_id:long type:int auth_key_id:long = Sender;
 outboxMessage flags:# no_webpage:flags.0?true background:flags.1?true random_id:long message:Message schedule_date:flags.2?int = OutboxMessage;
 
 contentMessage flags:# id:int dialog_message_id:long mentioned:flags.0?true media_unread:flags.1?true reaction:flags.2?true send_user_id:long = ContentMessage;
+resolvedDialogCursor found:Bool peer_type:int peer_id:long peer_seq:long message_date:long = ResolvedDialogCursor;
 
 ---functions---
 msg.pushUserMessage user_id:long auth_key_id:long peer_type:int peer_id:long push_type:int message:OutboxMessage = Bool;
@@ -27,6 +28,7 @@ msg.readHistory user_id:long auth_key_id:long peer_type:int peer_id:long max_id:
 msg.readHistoryV2 user_id:long auth_key_id:long peer_type:int peer_id:long max_id:int = messages.AffectedMessages;
 msg.getHistory user_id:long auth_key_id:long peer_type:int peer_id:long offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
 msg.searchHashtag user_id:long auth_key_id:long peer_type:int peer_id:long hash_tag:string offset_id:int limit:int = messages.Messages;
+msg.resolveDialogCursorTopMessage user_id:long top_message_id:int = ResolvedDialogCursor;
 
 msg.updatePinnedMessage flags:# user_id:long auth_key_id:long silent:flags.0?true unpin:flags.1?true pm_oneside:flags.2?true peer_type:int peer_id:long id:int = Updates;
 msg.unpinAllMessages user_id:long auth_key_id:long peer_type:int peer_id:long = messages.AffectedHistory;

@@ -10,6 +10,7 @@
     <result name="HistoryMessageRow">
         <field name="CanonicalMessageID" type="int64" db="canonical_message_id"/>
         <field name="PeerSeq" type="int64" db="peer_seq"/>
+        <field name="UserMessageID" type="int64" db="user_message_id"/>
         <field name="FromUserID" type="int64" db="from_user_id"/>
         <field name="Outgoing" type="bool" db="outgoing"/>
         <field name="PeerType" type="int32" db="peer_type"/>
@@ -18,6 +19,17 @@
         <field name="MessageText" type="string" db="message_text"/>
         <field name="MessageDate" type="int64" db="message_date"/>
         <field name="ViewPayload" type="[]byte" db="view_payload"/>
+    </result>
+
+    <result name="ResolvedMessageIDRow">
+        <field name="UserID" type="int64" db="user_id"/>
+        <field name="PeerType" type="int32" db="peer_type"/>
+        <field name="PeerID" type="int64" db="peer_id"/>
+        <field name="UserMessageID" type="int64" db="user_message_id"/>
+        <field name="PeerSeq" type="int64" db="peer_seq"/>
+        <field name="CanonicalMessageID" type="int64" db="canonical_message_id"/>
+        <field name="MessageDate" type="int64" db="message_date"/>
+        <field name="Outgoing" type="bool" db="outgoing"/>
     </result>
 
     <result name="EditableMessageRow">
@@ -86,6 +98,86 @@
         </sql>
     </query>
 
+    <query name="SelectUserMessageByID" result="ResolvedMessageIDRow">
+        <params>
+            <param name="peer_type" type="int32"/>
+            <param name="message_status" type="int32"/>
+        </params>
+        <sql>
+            SELECT
+                user_id,
+                peer_type,
+                peer_id,
+                user_message_id,
+                peer_seq,
+                canonical_message_id,
+                date AS message_date,
+                outgoing
+            FROM
+                user_message_views
+            WHERE
+                user_id = :user_id
+                AND peer_type = :peer_type
+                AND peer_id = :peer_id
+                AND user_message_id = :user_message_id
+                AND message_status = :message_status
+            LIMIT 1
+        </sql>
+    </query>
+
+    <query name="SelectUserMessageByGlobalID" result="ResolvedMessageIDRow">
+        <params>
+            <param name="message_status" type="int32"/>
+        </params>
+        <sql>
+            SELECT
+                user_id,
+                peer_type,
+                peer_id,
+                user_message_id,
+                peer_seq,
+                canonical_message_id,
+                date AS message_date,
+                outgoing
+            FROM
+                user_message_views
+            WHERE
+                user_id = :user_id
+                AND user_message_id = :user_message_id
+                AND message_status = :message_status
+            LIMIT 1
+        </sql>
+    </query>
+
+    <query name="SelectNearestLiveUserMessageByPeerSeq" result="ResolvedMessageIDRow">
+        <params>
+            <param name="peer_type" type="int32"/>
+            <param name="message_status" type="int32"/>
+        </params>
+        <sql>
+            SELECT
+                user_id,
+                peer_type,
+                peer_id,
+                user_message_id,
+                peer_seq,
+                canonical_message_id,
+                date AS message_date,
+                outgoing
+            FROM
+                user_message_views
+            WHERE
+                user_id = :user_id
+                AND peer_type = :peer_type
+                AND peer_id = :peer_id
+                AND peer_seq &lt;= :peer_seq
+                AND message_status = :message_status
+            ORDER BY
+                peer_seq DESC
+            LIMIT 1
+        </sql>
+    </query>
+
     <query name="SelectHistoryMessages" result="HistoryMessageRow" result_set="list">
         <params>
             <param name="peer_type" type="int32"/>
@@ -98,6 +190,7 @@
             SELECT
                 v.canonical_message_id,
                 v.peer_seq,
+                v.user_message_id,
                 c.from_user_id,
                 v.outgoing,
                 v.peer_type,
@@ -140,6 +233,7 @@
             SELECT DISTINCT
                 v.canonical_message_id,
                 v.peer_seq,
+                v.user_message_id,
                 c.from_user_id,
                 v.outgoing,
                 v.peer_type,
@@ -160,7 +254,7 @@
                 h.user_id = v.user_id
                 AND h.peer_type = v.peer_type
                 AND h.peer_id = v.peer_id
-                AND h.hash_tag_message_id = v.peer_seq
+                AND h.hash_tag_user_message_id = v.user_message_id
                 AND h.hash_tag = :hash_tag
                 AND h.deleted = 0
             WHERE
@@ -170,7 +264,7 @@
                 AND v.message_status = :message_status
                 AND (:offset_id &lt;= 0 OR v.peer_seq &lt; :offset_id_limit)
                 AND (
-                    h.hash_tag_message_id IS NOT NULL
+                    h.hash_tag_user_message_id IS NOT NULL
                     OR c.message_text LIKE :like_tag
                 )
             ORDER BY
@@ -192,6 +286,7 @@
             SELECT
                 v.canonical_message_id,
                 v.peer_seq,
+                v.user_message_id,
                 c.from_user_id,
                 v.outgoing,
                 v.peer_type,
@@ -290,6 +385,7 @@
             SELECT
                 v.canonical_message_id,
                 v.peer_seq,
+                v.user_message_id,
                 c.from_user_id,
                 v.outgoing,
                 v.peer_type,
