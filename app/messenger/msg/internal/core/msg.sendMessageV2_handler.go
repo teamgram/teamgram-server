@@ -244,7 +244,7 @@ func (c *MsgCore) processSenderOperation(in *msg.TLMsgSendMessageV2, canonical *
 	if in.ClearDraftBeforeDate != nil {
 		clearDraftBeforeDate = *in.ClearDraftBeforeDate
 	}
-	body, _, hashBytes, err := buildMessageOperationPayload(in.UserId, in.PeerId, in.PeerId, true, canonical, text, replyTo.CanonicalMessageID, replyTo.UserMessageID, in.ClearDraft, sourcePermAuthKeyID, clearDraftBeforeDate)
+	body, _, hashBytes, err := buildMessageOperationPayload(in.UserId, in.PeerId, in.PeerId, true, canonical, text, replyTo.CanonicalMessageID, 0, in.ClearDraft, sourcePermAuthKeyID, clearDraftBeforeDate)
 	if err != nil {
 		return nil, nil, err
 	}

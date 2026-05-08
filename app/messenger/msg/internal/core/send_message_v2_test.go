@@ -332,13 +332,8 @@ func TestMsgSendMessageV2ReplyToPayloadUsesPublicIDResolution(t *testing.T) {
 		if _, ok := raw["reply_to_peer_seq"]; ok {
 			t.Fatalf("%s payload leaked view peer_seq before projection: %s", name, string(body))
 		}
-		if name == "sender" && raw["reply_to_user_message_id"] != float64(42) {
-			t.Fatalf("%s reply_to_user_message_id = %v, want 42; payload=%s", name, raw["reply_to_user_message_id"], string(body))
-		}
-		if name == "receiver" {
-			if _, ok := raw["reply_to_user_message_id"]; ok {
-				t.Fatalf("%s payload reused sender reply public id across users: %s", name, string(body))
-			}
+		if _, ok := raw["reply_to_user_message_id"]; ok {
+			t.Fatalf("%s payload must not include reply_to_user_message_id for retry hash compatibility: %s", name, string(body))
 		}
 	}
 }
