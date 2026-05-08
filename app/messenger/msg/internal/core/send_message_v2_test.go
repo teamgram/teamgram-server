@@ -16,7 +16,7 @@ import (
 )
 
 func TestMsgSendMessageV2SingleUserPublishesReceiverOperation(t *testing.T) {
-	responsePayload := []byte(`{"schema_version":1,"pts":11,"pts_count":1}`)
+	responsePayload := []byte(`{"schema_version":2,"pts":11,"pts_count":1,"event_type":"new_message","user_message_id":42}`)
 	responseHash := mustHashBytes(t, responsePayload)
 	repo := &fakeMsgRepository{
 		sendState: &repository.SendState{SendStateID: 1, Status: repository.SendStateStatusInitialized},
@@ -56,7 +56,7 @@ func TestMsgSendMessageV2SingleUserPublishesReceiverOperation(t *testing.T) {
 	if !ok {
 		t.Fatalf("expected updateShortSentMessage, got %s", got.ClazzName())
 	}
-	if short.Id != 5 || short.Pts != 11 || short.PtsCount != 1 || short.Date != 1_772_000_000 {
+	if short.Id != 42 || short.Pts != 11 || short.PtsCount != 1 || short.Date != 1_772_000_000 {
 		t.Fatalf("unexpected short sent message: %+v", short)
 	}
 	if repo.markCanonicalCalls != 1 || repo.markSenderCalls != 1 || repo.markReceiverAckedCalls != 1 || repo.markCompletedCalls != 1 {
@@ -88,7 +88,7 @@ func TestMsgSendMessageV2SingleUserPublishesReceiverOperation(t *testing.T) {
 }
 
 func TestMsgSendMessageV2ClearDraftWritesSenderOperationPayload(t *testing.T) {
-	responsePayload := []byte(`{"schema_version":1,"pts":15,"pts_count":1}`)
+	responsePayload := []byte(`{"schema_version":2,"pts":15,"pts_count":1,"event_type":"new_message","user_message_id":45}`)
 	responseHash := mustHashBytes(t, responsePayload)
 	repo := &fakeMsgRepository{
 		sendState: &repository.SendState{SendStateID: 1, Status: repository.SendStateStatusInitialized},
@@ -139,7 +139,7 @@ func TestMsgSendMessageV2ClearDraftWritesSenderOperationPayload(t *testing.T) {
 }
 
 func TestMsgSendMessageV2ReceiverDispatchUsesBrokerDurableAck(t *testing.T) {
-	responsePayload := []byte(`{"schema_version":1,"pts":17,"pts_count":1}`)
+	responsePayload := []byte(`{"schema_version":2,"pts":17,"pts_count":1,"event_type":"new_message","user_message_id":47}`)
 	responseHash := mustHashBytes(t, responsePayload)
 	repo := &fakeMsgRepository{
 		sendState: &repository.SendState{SendStateID: 1, Status: repository.SendStateStatusInitialized},
@@ -265,8 +265,8 @@ func TestMarshalSendRequestHashIgnoresClearDraftBeforeDate(t *testing.T) {
 	}
 }
 
-func TestMsgSendMessageV2ReplyToPayloadUsesCanonicalMessageID(t *testing.T) {
-	responsePayload := []byte(`{"schema_version":1,"pts":16,"pts_count":1}`)
+func TestMsgSendMessageV2ReplyToPayloadUsesPublicIDResolution(t *testing.T) {
+	responsePayload := []byte(`{"schema_version":2,"pts":16,"pts_count":1,"event_type":"new_message","user_message_id":43}`)
 	responseHash := mustHashBytes(t, responsePayload)
 	repo := &fakeMsgRepository{
 		sendState: &repository.SendState{SendStateID: 1, Status: repository.SendStateStatusInitialized},
@@ -278,13 +278,13 @@ func TestMsgSendMessageV2ReplyToPayloadUsesCanonicalMessageID(t *testing.T) {
 			RequestPayloadHash: payload.HashBytes([]byte("request")),
 			CreatedNew:         true,
 		},
-		canonicalByPeerSeq: &repository.CanonicalMessage{
-			CanonicalMessageID: 7001,
-			PeerSeq:            7,
-			FromUserID:         1002,
+		resolvedMessageID: &repository.ResolvedMessageID{
+			UserID:             1001,
 			PeerType:           payload.PeerTypeUser,
 			PeerID:             1002,
-			MessageText:        "reply target",
+			UserMessageID:      42,
+			PeerSeq:            7,
+			CanonicalMessageID: 7001,
 		},
 	}
 	updatesClient := &fakeUserUpdatesClient{
@@ -307,13 +307,16 @@ func TestMsgSendMessageV2ReplyToPayloadUsesCanonicalMessageID(t *testing.T) {
 	})
 
 	req := sendMessageRequest(1001, 1002, 9001, "reply body")
-	replyToMsgID := int32(7)
+	replyToMsgID := int32(42)
 	req.Message[0].Message.(*tg.TLMessage).ReplyTo = tg.MakeTLMessageReplyHeader(&tg.TLMessageReplyHeader{
 		ReplyToMsgId: &replyToMsgID,
 	})
 
 	if _, err := core.MsgSendMessageV2(req); err != nil {
 		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	}
+	if repo.resolveInput.UserMessageID != 42 || repo.resolveInput.PeerSeq != 0 {
+		t.Fatalf("reply resolver input = %+v, want public user_message_id 42", repo.resolveInput)
 	}
 	for name, body := range map[string][]byte{
 		"sender":   updatesClient.processed.Payload,
@@ -329,11 +332,19 @@ func TestMsgSendMessageV2ReplyToPayloadUsesCanonicalMessageID(t *testing.T) {
 		if _, ok := raw["reply_to_peer_seq"]; ok {
 			t.Fatalf("%s payload leaked view peer_seq before projection: %s", name, string(body))
 		}
+		if name == "sender" && raw["reply_to_user_message_id"] != float64(42) {
+			t.Fatalf("%s reply_to_user_message_id = %v, want 42; payload=%s", name, raw["reply_to_user_message_id"], string(body))
+		}
+		if name == "receiver" {
+			if _, ok := raw["reply_to_user_message_id"]; ok {
+				t.Fatalf("%s payload reused sender reply public id across users: %s", name, string(body))
+			}
+		}
 	}
 }
 
 func TestMsgSendMessageV2RecoversSenderCommitFromUserUpdatesResult(t *testing.T) {
-	responsePayload := []byte(`{"schema_version":1,"pts":12,"pts_count":1}`)
+	responsePayload := []byte(`{"schema_version":2,"pts":12,"pts_count":1,"event_type":"new_message","user_message_id":44}`)
 	responseHash := mustHashBytes(t, responsePayload)
 	repo := &fakeMsgRepository{
 		sendState: &repository.SendState{SendStateID: 1, Status: repository.SendStateStatusInitialized},
@@ -395,7 +406,7 @@ func TestMsgSendMessageV2RecoversSenderCommitFromUserUpdatesResult(t *testing.T)
 }
 
 func TestMsgSendMessageV2RetrySkipsCanonicalMarkWhenAlreadyCanonical(t *testing.T) {
-	responsePayload := []byte(`{"schema_version":1,"pts":13,"pts_count":1}`)
+	responsePayload := []byte(`{"schema_version":2,"pts":13,"pts_count":1,"event_type":"new_message","user_message_id":46}`)
 	responseHash := mustHashBytes(t, responsePayload)
 	repo := &fakeMsgRepository{
 		sendState: &repository.SendState{
@@ -449,7 +460,7 @@ func TestMsgSendMessageV2RetrySkipsCanonicalMarkWhenAlreadyCanonical(t *testing.
 }
 
 func TestMsgSendMessageV2SelfRetryUsesCommittedSenderState(t *testing.T) {
-	responsePayload := []byte(`{"schema_version":1,"pts":14,"pts_count":1}`)
+	responsePayload := []byte(`{"schema_version":2,"pts":14,"pts_count":1,"event_type":"new_message","user_message_id":48}`)
 	responseHash := mustHashBytes(t, responsePayload)
 	repo := &fakeMsgRepository{
 		sendState: &repository.SendState{
@@ -488,7 +499,7 @@ func TestMsgSendMessageV2SelfRetryUsesCommittedSenderState(t *testing.T) {
 	if !ok {
 		t.Fatalf("expected updateShortSentMessage, got %s", got.ClazzName())
 	}
-	if short.Pts != 14 || short.PtsCount != 1 || short.Id != 8 {
+	if short.Pts != 14 || short.PtsCount != 1 || short.Id != 48 {
 		t.Fatalf("unexpected short sent message: %+v", short)
 	}
 	if updatesClient.processed != nil || repo.markSenderCalls != 0 || publisher.calls != 0 {
@@ -1221,6 +1232,8 @@ type fakeMsgRepository struct {
 	editInput              repository.EditCanonicalMessageInput
 	history                []repository.HistoryMessage
 	historyInput           repository.ListHistoryMessagesInput
+	resolvedMessageID      *repository.ResolvedMessageID
+	resolveInput           repository.ResolvedMessageID
 	markCanonicalErr       error
 	markSenderErrs         []error
 	markCanonicalCalls     int
@@ -1250,8 +1263,14 @@ func (f *fakeMsgRepository) ListHistoryMessages(_ context.Context, in repository
 	return f.history, nil
 }
 
-func (f *fakeMsgRepository) ResolveMessageID(context.Context, int64, int32, int64, int64) (*repository.ResolvedMessageID, error) {
-	return nil, nil
+func (f *fakeMsgRepository) ResolveMessageID(_ context.Context, userID int64, peerType int32, peerID int64, userMessageID int64) (*repository.ResolvedMessageID, error) {
+	f.resolveInput = repository.ResolvedMessageID{
+		UserID:        userID,
+		PeerType:      peerType,
+		PeerID:        peerID,
+		UserMessageID: userMessageID,
+	}
+	return f.resolvedMessageID, nil
 }
 
 func (f *fakeMsgRepository) ResolveHistoryCursorIDs(context.Context, int64, int32, int64, int32, int32, int32) (repository.HistoryCursorBounds, error) {
