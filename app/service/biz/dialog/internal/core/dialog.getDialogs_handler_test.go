@@ -396,6 +396,26 @@ func TestMakeLegacyDialogExtV2UsesRecordPublicIDsWithoutInventingPeerSeq(t *test
 	}
 }
 
+func TestMakeSavedDialogListUsesPayloadPublicTopMessageID(t *testing.T) {
+	got := makeSavedDialogList([]repository.SavedDialogRecord{{
+		UserID:       1001,
+		PeerType:     tg.PEER_USER,
+		PeerID:       2002,
+		TopPeerSeq:   7,
+		SavedPayload: []byte(`{"schema_version":1,"top_user_message_id":55}`),
+	}})
+	if len(got.Dialogs) != 1 {
+		t.Fatalf("saved dialogs len = %d, want 1", len(got.Dialogs))
+	}
+	saved, ok := got.Dialogs[0].(*tg.TLSavedDialog)
+	if !ok {
+		t.Fatalf("saved dialog = %T, want *tg.TLSavedDialog", got.Dialogs[0])
+	}
+	if saved.TopMessage != 55 || saved.TopMessage == 7 {
+		t.Fatalf("saved dialog top_message = %d, want public id 55 and not peer_seq 7", saved.TopMessage)
+	}
+}
+
 func testDialogRecord() repository.DialogRecord {
 	return repository.DialogRecord{
 		UserID:               1001,

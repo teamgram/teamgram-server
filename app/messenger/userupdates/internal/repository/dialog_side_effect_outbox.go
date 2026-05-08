@@ -17,6 +17,7 @@ type savedDialogSideEffectPayloadV1 struct {
 	SavedPeerType         int32 `json:"saved_peer_type"`
 	SavedPeerID           int64 `json:"saved_peer_id"`
 	TopPeerSeq            int64 `json:"top_peer_seq"`
+	TopUserMessageID      int64 `json:"top_user_message_id,omitempty"`
 	TopCanonicalMessageID int64 `json:"top_canonical_message_id"`
 	MessageDate           int32 `json:"message_date"`
 	Deleted               bool  `json:"deleted"`

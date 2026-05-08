@@ -561,12 +561,16 @@ func insertOutboxReadDateTx(txModels *model.TxModels, userID int64, peerType int
 		PeerType:          peerType,
 		PeerId:            peerID,
 		ReadUserId:        readUserID,
-		ReadOutboxMaxId:   int32(maxPeerSeq),
+		ReadOutboxMaxId:   readOutboxMaxIDFromPeerSeq(maxPeerSeq),
 		ReadOutboxMaxDate: unixOrNow(int64(date)),
 	}); err != nil {
 		return storageError("insert outbox read date", err)
 	}
 	return nil
+}
+
+func readOutboxMaxIDFromPeerSeq(peerSeq int64) int32 {
+	return int32(peerSeq)
 }
 
 func extractHashTags(text string) []string {
@@ -944,6 +948,7 @@ func insertDialogSideEffects(ctx context.Context, txModels *model.TxModels, r *R
 			SavedPeerType:         op.PeerType,
 			SavedPeerID:           op.PeerID,
 			TopPeerSeq:            op.PeerSeq,
+			TopUserMessageID:      op.UserMessageID,
 			TopCanonicalMessageID: op.CanonicalMessageID,
 			MessageDate:           op.Date,
 			Deleted:               false,
