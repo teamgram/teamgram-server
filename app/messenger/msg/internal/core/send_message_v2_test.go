@@ -1292,12 +1292,21 @@ func TestMsgDeleteMessagesRevokeSelfDoesNotEnqueuePeerEffect(t *testing.T) {
 		},
 	}
 	core := New(context.Background(), &svc.ServiceContext{Repo: repo, UserUpdates: updatesClient})
-	_, err := core.MsgDeleteMessages(&msgpb.TLMsgDeleteMessages{UserId: 1001, AuthKeyId: 9001, Revoke: true, Id: []int32{3}})
+	got, err := core.MsgDeleteMessages(&msgpb.TLMsgDeleteMessages{UserId: 1001, AuthKeyId: 9001, Revoke: true, Id: []int32{3}})
 	if err != nil {
 		t.Fatalf("MsgDeleteMessages() error = %v", err)
 	}
-	if updatesClient.processWithEffects != nil && len(updatesClient.processWithEffects.AffectedEffects) != 0 {
-		t.Fatalf("self delete should not enqueue affected effect: %+v", updatesClient.processWithEffects)
+	if got.Pts != 34 || got.PtsCount != 1 {
+		t.Fatalf("affected = %+v, want requester pts 34 and pts_count 1", got)
+	}
+	if updatesClient.processed == nil {
+		t.Fatal("requester delete operation was not dispatched")
+	}
+	if updatesClient.processed.OperationId != deleteMessagesOperationID(1001, 1001, []int32{3}, true, 9001) {
+		t.Fatalf("requester operation id = %s", updatesClient.processed.OperationId)
+	}
+	if updatesClient.processWithEffects != nil {
+		t.Fatalf("self delete should not use with-effects dispatch: %+v", updatesClient.processWithEffects)
 	}
 }
 
