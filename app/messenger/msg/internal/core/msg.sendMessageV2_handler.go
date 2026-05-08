@@ -359,17 +359,11 @@ func shortSentMessage(canonical *repository.CanonicalMessageResult, result *user
 	if canonical == nil || result == nil {
 		return nil, msg.ErrSenderSyncFailed
 	}
-	var response payload.OperationResponseV2
-	if err := json.Unmarshal(result.ResponsePayload, &response); err != nil {
-		return nil, fmt.Errorf("%w: decode sender operation response: %v", msg.ErrMsgStorage, err)
+	response, err := operationResponseV2(result, "sender")
+	if err != nil {
+		return nil, err
 	}
-	if response.SchemaVersion != payload.OperationResponseSchemaVersion {
-		return nil, fmt.Errorf("%w: unsupported sender operation response schema=%d", msg.ErrMsgStorage, response.SchemaVersion)
-	}
-	if response.UserMessageID <= 0 {
-		return nil, fmt.Errorf("%w: sender operation missing user_message_id", msg.ErrMsgStorage)
-	}
-	userMessageID, err := int64ToInt32(response.UserMessageID, "user message id")
+	userMessageID, err := operationResponseUserMessageID(response, "sender")
 	if err != nil {
 		return nil, err
 	}
@@ -388,6 +382,27 @@ func shortSentMessage(canonical *repository.CanonicalMessageResult, result *user
 		PtsCount: response.PtsCount,
 		Date:     date,
 	}).ToUpdates(), nil
+}
+
+func operationResponseV2(result *userupdates.UserOperationResult, operation string) (payload.OperationResponseV2, error) {
+	if result == nil {
+		return payload.OperationResponseV2{}, msg.ErrSenderSyncFailed
+	}
+	var response payload.OperationResponseV2
+	if err := json.Unmarshal(result.ResponsePayload, &response); err != nil {
+		return payload.OperationResponseV2{}, fmt.Errorf("%w: decode %s operation response: %v", msg.ErrMsgStorage, operation, err)
+	}
+	if response.SchemaVersion != payload.OperationResponseSchemaVersion {
+		return payload.OperationResponseV2{}, fmt.Errorf("%w: unsupported %s operation response schema=%d", msg.ErrMsgStorage, operation, response.SchemaVersion)
+	}
+	return response, nil
+}
+
+func operationResponseUserMessageID(response payload.OperationResponseV2, operation string) (int32, error) {
+	if response.UserMessageID <= 0 {
+		return 0, fmt.Errorf("%w: %s operation missing user_message_id", msg.ErrMsgStorage, operation)
+	}
+	return int64ToInt32(response.UserMessageID, "user message id")
 }
 
 func int64ToInt32(v int64, field string) (int32, error) {

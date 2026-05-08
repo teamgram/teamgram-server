@@ -43,6 +43,37 @@ func (r *Repository) ResolveMessageID(ctx context.Context, userID int64, peerTyp
 	return resolvedMessageIDFromRow(row), nil
 }
 
+func (r *Repository) ResolveMessageIDs(ctx context.Context, userID int64, userMessageIDs []int64) ([]ResolvedMessageID, error) {
+	if len(userMessageIDs) == 0 {
+		return nil, nil
+	}
+	if _, err := r.requireDB(); err != nil {
+		return nil, err
+	}
+	out := make([]ResolvedMessageID, 0, len(userMessageIDs))
+	seen := make(map[int64]struct{}, len(userMessageIDs))
+	for _, userMessageID := range userMessageIDs {
+		if userMessageID <= 0 {
+			continue
+		}
+		if _, ok := seen[userMessageID]; ok {
+			continue
+		}
+		seen[userMessageID] = struct{}{}
+		row, err := r.models.CanonicalQueries.SelectUserMessageByGlobalID(ctx, userID, userMessageID, MessageStatusLive)
+		if err != nil {
+			if isModelNotFound(err) {
+				continue
+			}
+			return nil, storageError("resolve message ids", err)
+		}
+		if resolved := resolvedMessageIDFromRow(row); resolved != nil {
+			out = append(out, *resolved)
+		}
+	}
+	return out, nil
+}
+
 func (r *Repository) ResolvePeerSeqToUserMessageID(ctx context.Context, userID int64, peerType int32, peerID int64, peerSeq int64) (int64, error) {
 	if peerSeq <= 0 {
 		return 0, nil

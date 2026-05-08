@@ -978,7 +978,7 @@ func TestMsgUpdatePinnedMessageRoutesProjectionOperation(t *testing.T) {
 	updatesClient := &fakeUserUpdatesClient{
 		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
 			UserId:      1001,
-			OperationId: updatePinnedOperationID(1001, 1002, 7, false, 9001),
+			OperationId: updatePinnedOperationID(1001, 1002, 107, false, 9001),
 			Status:      1,
 			Pts:         21,
 			PtsCount:    1,
@@ -986,14 +986,16 @@ func TestMsgUpdatePinnedMessageRoutesProjectionOperation(t *testing.T) {
 		}),
 	}
 	repo := &fakeMsgRepository{
-		canonicalByPeerSeq: &repository.CanonicalMessage{
-			CanonicalMessageID: 7001,
-			PeerSeq:            7,
-			FromUserID:         1002,
-			PeerType:           payload.PeerTypeUser,
-			PeerID:             1002,
-			MessageText:        "pin me",
-			MessageDate:        1_772_000_123,
+		resolveByUserMessageID: map[resolveMessageKey]*repository.ResolvedMessageID{
+			{userID: 1001, peerType: payload.PeerTypeUser, peerID: 1002, userMessageID: 107}: {
+				UserID:             1001,
+				PeerType:           payload.PeerTypeUser,
+				PeerID:             1002,
+				UserMessageID:      107,
+				PeerSeq:            7,
+				CanonicalMessageID: 7001,
+				MessageDate:        1_772_000_123,
+			},
 		},
 	}
 	core := New(context.Background(), &svc.ServiceContext{
@@ -1006,7 +1008,7 @@ func TestMsgUpdatePinnedMessageRoutesProjectionOperation(t *testing.T) {
 		AuthKeyId: 9001,
 		PeerType:  payload.PeerTypeUser,
 		PeerId:    1002,
-		Id:        7,
+		Id:        107,
 	})
 	if err != nil {
 		t.Fatalf("MsgUpdatePinnedMessage() error = %v", err)
@@ -1016,15 +1018,18 @@ func TestMsgUpdatePinnedMessageRoutesProjectionOperation(t *testing.T) {
 		t.Fatalf("MsgUpdatePinnedMessage() = %s, want updateShort", got.ClazzName())
 	}
 	pinned, ok := (&tg.Update{Clazz: short.Update}).ToUpdatePinnedMessages()
-	if !ok || !pinned.Pinned || len(pinned.Messages) != 1 || pinned.Messages[0] != 7 || pinned.Pts != 21 {
+	if !ok || !pinned.Pinned || len(pinned.Messages) != 1 || pinned.Messages[0] != 107 || pinned.Pts != 21 {
 		t.Fatalf("pinned update = %+v ok=%v", pinned, ok)
 	}
 	var op payload.MessageOperationV1
 	if err := json.Unmarshal(updatesClient.processed.Payload, &op); err != nil {
 		t.Fatalf("decode update pinned payload: %v", err)
 	}
-	if op.OperationKind != payload.OperationKindUpdatePinnedMessage || op.PinnedPeerSeq != 7 || op.PinnedCanonicalMessageID != 7001 {
+	if op.OperationKind != payload.OperationKindUpdatePinnedMessage || op.PinnedPeerSeq != 7 || op.PinnedUserMessageID != 107 || op.PinnedCanonicalMessageID != 7001 {
 		t.Fatalf("unexpected update pinned payload: %+v", op)
+	}
+	if updatesClient.processed.CanonicalPeerSeq == nil || *updatesClient.processed.CanonicalPeerSeq != 7 {
+		t.Fatalf("canonical peer seq = %v, want resolved peer_seq 7", updatesClient.processed.CanonicalPeerSeq)
 	}
 }
 
@@ -1032,21 +1037,27 @@ func TestMsgDeleteMessagesRoutesProjectionOperation(t *testing.T) {
 	updatesClient := &fakeUserUpdatesClient{
 		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
 			UserId:      1001,
-			OperationId: deleteMessagesOperationID(1001, 1002, []int32{7, 8}, false, 9001),
+			OperationId: deleteMessagesOperationID(1001, 1002, []int32{107, 108}, false, 9001),
 			Status:      1,
 			Pts:         31,
 			PtsCount:    1,
 			CurrentPts:  31,
 		}),
 	}
-	core := New(context.Background(), &svc.ServiceContext{Repo: &fakeMsgRepository{}, UserUpdates: updatesClient})
+	repo := &fakeMsgRepository{
+		resolveManyByUserMessageID: map[int64]*repository.ResolvedMessageID{
+			107: {UserID: 1001, PeerType: payload.PeerTypeUser, PeerID: 1002, UserMessageID: 107, PeerSeq: 7, CanonicalMessageID: 7007},
+			108: {UserID: 1001, PeerType: payload.PeerTypeUser, PeerID: 1002, UserMessageID: 108, PeerSeq: 8, CanonicalMessageID: 7008},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo, UserUpdates: updatesClient})
 
 	got, err := core.MsgDeleteMessages(&msgpb.TLMsgDeleteMessages{
 		UserId:    1001,
 		AuthKeyId: 9001,
 		PeerType:  payload.PeerTypeUser,
 		PeerId:    1002,
-		Id:        []int32{7, 8},
+		Id:        []int32{107, 108},
 	})
 	if err != nil {
 		t.Fatalf("MsgDeleteMessages() error = %v", err)
@@ -1058,8 +1069,34 @@ func TestMsgDeleteMessagesRoutesProjectionOperation(t *testing.T) {
 	if err := json.Unmarshal(updatesClient.processed.Payload, &op); err != nil {
 		t.Fatalf("decode delete payload: %v", err)
 	}
-	if op.OperationKind != payload.OperationKindDeleteMessages || len(op.DeletePeerSeqs) != 2 || op.DeletePeerSeqs[0] != 7 {
+	if op.OperationKind != payload.OperationKindDeleteMessages || len(op.DeletePeerSeqs) != 2 || op.DeletePeerSeqs[0] != 7 || op.DeletePeerSeqs[1] != 8 {
 		t.Fatalf("unexpected delete payload: %+v", op)
+	}
+	if len(op.DeleteUserMessageIDs) != 2 || op.DeleteUserMessageIDs[0] != 107 || op.DeleteUserMessageIDs[1] != 108 {
+		t.Fatalf("unexpected delete payload: %+v", op)
+	}
+}
+
+func TestMsgDeleteMessagesIgnoresMissingPublicIDs(t *testing.T) {
+	updatesClient := &fakeUserUpdatesClient{}
+	repo := &fakeMsgRepository{resolveManyByUserMessageID: map[int64]*repository.ResolvedMessageID{}}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo, UserUpdates: updatesClient})
+
+	got, err := core.MsgDeleteMessages(&msgpb.TLMsgDeleteMessages{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    1002,
+		Id:        []int32{404},
+	})
+	if err != nil {
+		t.Fatalf("MsgDeleteMessages() error = %v", err)
+	}
+	if got.Pts != 0 || got.PtsCount != 0 {
+		t.Fatalf("affected = %+v, want empty no-op", got)
+	}
+	if updatesClient.processed != nil || updatesClient.processWithEffects != nil {
+		t.Fatalf("missing public ids should not dispatch operations: processed=%+v with_effects=%+v", updatesClient.processed, updatesClient.processWithEffects)
 	}
 }
 
@@ -1074,7 +1111,19 @@ func TestMsgDeleteHistoryRoutesProjectionOperation(t *testing.T) {
 			CurrentPts:  32,
 		}),
 	}
-	core := New(context.Background(), &svc.ServiceContext{Repo: &fakeMsgRepository{}, UserUpdates: updatesClient})
+	repo := &fakeMsgRepository{
+		resolveByUserMessageID: map[resolveMessageKey]*repository.ResolvedMessageID{
+			{userID: 1001, peerType: payload.PeerTypeUser, peerID: 1002, userMessageID: 9}: {
+				UserID:             1001,
+				PeerType:           payload.PeerTypeUser,
+				PeerID:             1002,
+				UserMessageID:      9,
+				PeerSeq:            99,
+				CanonicalMessageID: 7099,
+			},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo, UserUpdates: updatesClient})
 
 	got, err := core.MsgDeleteHistory(&msgpb.TLMsgDeleteHistory{
 		UserId:    1001,
@@ -1094,23 +1143,90 @@ func TestMsgDeleteHistoryRoutesProjectionOperation(t *testing.T) {
 	if err := json.Unmarshal(updatesClient.processed.Payload, &op); err != nil {
 		t.Fatalf("decode delete history payload: %v", err)
 	}
-	if op.OperationKind != payload.OperationKindDeleteHistory || op.DeleteMaxPeerSeq != 9 || !op.JustClear {
+	if op.OperationKind != payload.OperationKindDeleteHistory || op.DeleteMaxPeerSeq != 99 || op.PeerSeq != 99 || !op.JustClear {
 		t.Fatalf("unexpected delete history payload: %+v", op)
 	}
 }
 
+func TestMsgDeleteHistoryMissingPositiveMaxIDIsNoOp(t *testing.T) {
+	updatesClient := &fakeUserUpdatesClient{}
+	repo := &fakeMsgRepository{resolveByUserMessageID: map[resolveMessageKey]*repository.ResolvedMessageID{}}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo, UserUpdates: updatesClient})
+
+	got, err := core.MsgDeleteHistory(&msgpb.TLMsgDeleteHistory{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    1002,
+		MaxId:     404,
+	})
+	if err != nil {
+		t.Fatalf("MsgDeleteHistory() error = %v", err)
+	}
+	if got.Pts != 0 || got.PtsCount != 0 || got.Offset != 0 {
+		t.Fatalf("affected history = %+v, want empty no-op", got)
+	}
+	if updatesClient.processed != nil || updatesClient.processWithEffects != nil {
+		t.Fatalf("missing max_id should not dispatch operations: processed=%+v with_effects=%+v", updatesClient.processed, updatesClient.processWithEffects)
+	}
+}
+
+func TestMsgSearchHashtagDelegatesPublicOffsetToRepository(t *testing.T) {
+	repo := &fakeMsgRepository{
+		history: []repository.HistoryMessage{{
+			UserMessageID: 707,
+			PeerSeq:       7,
+			FromUserID:    1001,
+			PeerType:      payload.PeerTypeUser,
+			PeerID:        1002,
+			MessageKind:   repository.MessageKindText,
+			MessageText:   "#tag result",
+			MessageDate:   1_772_000_001,
+		}},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.MsgSearchHashtag(&msgpb.TLMsgSearchHashtag{
+		UserId:   1001,
+		PeerType: payload.PeerTypeUser,
+		PeerId:   1002,
+		HashTag:  "#tag",
+		OffsetId: 909,
+		Limit:    20,
+	})
+	if err != nil {
+		t.Fatalf("MsgSearchHashtag() error = %v", err)
+	}
+	if repo.searchInput.OffsetID != 909 {
+		t.Fatalf("search offset id = %d, want public offset id 909 delegated to repository", repo.searchInput.OffsetID)
+	}
+	if repo.resolveInput.UserMessageID != 0 {
+		t.Fatalf("handler resolved offset id directly: %+v", repo.resolveInput)
+	}
+	messages, ok := got.ToMessagesMessages()
+	if !ok || len(messages.Messages) != 1 {
+		t.Fatalf("messages = %+v ok=%v", got, ok)
+	}
+	msg, ok := messages.Messages[0].(*tg.TLMessage)
+	if !ok || msg.Id != 707 {
+		t.Fatalf("search result message = %+v ok=%v, want public id 707", messages.Messages[0], ok)
+	}
+}
+
 func TestMsgEditMessageV2UpdatesCanonicalAndRoutesOperations(t *testing.T) {
-	responsePayload := []byte(`{"schema_version":1,"pts":41,"pts_count":1}`)
+	responsePayload := []byte(`{"schema_version":2,"pts":41,"pts_count":1,"user_message_id":107}`)
 	responseHash := mustHashBytes(t, responsePayload)
 	repo := &fakeMsgRepository{
-		canonicalByPeerSeq: &repository.CanonicalMessage{
-			CanonicalMessageID: 7001,
-			PeerSeq:            7,
-			FromUserID:         1001,
-			PeerType:           payload.PeerTypeUser,
-			PeerID:             1002,
-			MessageText:        "old",
-			MessageDate:        1_772_000_010,
+		resolveByUserMessageID: map[resolveMessageKey]*repository.ResolvedMessageID{
+			{userID: 1001, peerType: payload.PeerTypeUser, peerID: 1002, userMessageID: 107}: {
+				UserID:             1001,
+				PeerType:           payload.PeerTypeUser,
+				PeerID:             1002,
+				UserMessageID:      107,
+				PeerSeq:            7,
+				CanonicalMessageID: 7001,
+				MessageDate:        1_772_000_010,
+			},
 		},
 		editResult: &repository.EditMessageResult{
 			CanonicalMessageID: 7001,
@@ -1143,7 +1259,7 @@ func TestMsgEditMessageV2UpdatesCanonicalAndRoutesOperations(t *testing.T) {
 		ReceiverPublisher: publisher,
 	})
 
-	got, err := core.MsgEditMessageV2(editMessageRequest(1001, 1002, 9001, 7, "edited"))
+	got, err := core.MsgEditMessageV2(editMessageRequest(1001, 1002, 9001, 107, "edited"))
 	if err != nil {
 		t.Fatalf("MsgEditMessageV2() error = %v", err)
 	}
@@ -1171,6 +1287,9 @@ func TestMsgEditMessageV2UpdatesCanonicalAndRoutesOperations(t *testing.T) {
 	if peer, ok := editMessage.PeerId.(*tg.TLPeerUser); !ok || peer.UserId != 1002 {
 		t.Fatalf("edit response peer_id = %#v, want peerUser(1002)", editMessage.PeerId)
 	}
+	if editMessage.Id != 107 {
+		t.Fatalf("edit response id = %d, want public user_message_id 107", editMessage.Id)
+	}
 	if repo.editInput.NewMessageText != "edited" || repo.editInput.ActorUserID != 1001 || repo.editInput.PeerSeq != 7 {
 		t.Fatalf("unexpected edit input: %+v", repo.editInput)
 	}
@@ -1181,7 +1300,7 @@ func TestMsgEditMessageV2UpdatesCanonicalAndRoutesOperations(t *testing.T) {
 	if err := json.Unmarshal(updatesClient.processed.Payload, &senderOp); err != nil {
 		t.Fatalf("decode sender edit payload: %v", err)
 	}
-	if senderOp.OperationKind != payload.OperationKindEditMessage || senderOp.MessageText != "edited" || senderOp.PeerSeq != 7 || senderOp.Date != 1_772_000_010 || senderOp.EditDate != 1_772_000_100 || senderOp.EditVersion != 1 {
+	if senderOp.OperationKind != payload.OperationKindEditMessage || senderOp.MessageText != "edited" || senderOp.PeerSeq != 7 || senderOp.UserMessageID != 107 || senderOp.Date != 1_772_000_010 || senderOp.EditDate != 1_772_000_100 || senderOp.EditVersion != 1 {
 		t.Fatalf("unexpected sender edit payload: %+v", senderOp)
 	}
 	if publisher.published.UserID != 1002 || publisher.published.OperationID != editMessageOperationID(7001, 1, 1002) {
@@ -1201,17 +1320,18 @@ func TestMsgEditMessageV2OperationIDIncludesEditVersion(t *testing.T) {
 }
 
 func TestMsgEditMessageV2ReceiverDispatchUsesBrokerDurableAck(t *testing.T) {
-	responsePayload := []byte(`{"schema_version":1,"pts":42,"pts_count":1}`)
+	responsePayload := []byte(`{"schema_version":2,"pts":42,"pts_count":1,"user_message_id":108}`)
 	responseHash := mustHashBytes(t, responsePayload)
 	repo := &fakeMsgRepository{
-		canonicalByPeerSeq: &repository.CanonicalMessage{
-			CanonicalMessageID: 7101,
-			PeerSeq:            8,
-			FromUserID:         1001,
-			PeerType:           payload.PeerTypeUser,
-			PeerID:             1002,
-			MessageText:        "old",
-			MessageDate:        1_772_000_020,
+		resolveByUserMessageID: map[resolveMessageKey]*repository.ResolvedMessageID{
+			{userID: 1001, peerType: payload.PeerTypeUser, peerID: 1002, userMessageID: 108}: {
+				UserID:             1001,
+				PeerType:           payload.PeerTypeUser,
+				PeerID:             1002,
+				UserMessageID:      108,
+				PeerSeq:            8,
+				CanonicalMessageID: 7101,
+			},
 		},
 		editResult: &repository.EditMessageResult{
 			CanonicalMessageID: 7101,
@@ -1244,7 +1364,7 @@ func TestMsgEditMessageV2ReceiverDispatchUsesBrokerDurableAck(t *testing.T) {
 		ReceiverPublisher: publisher,
 	})
 
-	got, err := core.MsgEditMessageV2(editMessageRequest(1001, 1002, 9001, 8, "edited by broker ack"))
+	got, err := core.MsgEditMessageV2(editMessageRequest(1001, 1002, 9001, 108, "edited by broker ack"))
 	if err != nil {
 		t.Fatalf("MsgEditMessageV2() error = %v", err)
 	}
@@ -1266,14 +1386,15 @@ func TestMsgEditMessageV2ReceiverDispatchUsesBrokerDurableAck(t *testing.T) {
 
 	publishErr := errors.New("broker unavailable")
 	repo = &fakeMsgRepository{
-		canonicalByPeerSeq: &repository.CanonicalMessage{
-			CanonicalMessageID: 7201,
-			PeerSeq:            9,
-			FromUserID:         1001,
-			PeerType:           payload.PeerTypeUser,
-			PeerID:             1002,
-			MessageText:        "old",
-			MessageDate:        1_772_000_021,
+		resolveByUserMessageID: map[resolveMessageKey]*repository.ResolvedMessageID{
+			{userID: 1001, peerType: payload.PeerTypeUser, peerID: 1002, userMessageID: 109}: {
+				UserID:             1001,
+				PeerType:           payload.PeerTypeUser,
+				PeerID:             1002,
+				UserMessageID:      109,
+				PeerSeq:            9,
+				CanonicalMessageID: 7201,
+			},
 		},
 		editResult: &repository.EditMessageResult{
 			CanonicalMessageID: 7201,
@@ -1306,7 +1427,7 @@ func TestMsgEditMessageV2ReceiverDispatchUsesBrokerDurableAck(t *testing.T) {
 		ReceiverPublisher: publisher,
 	})
 
-	got, err = core.MsgEditMessageV2(editMessageRequest(1001, 1002, 9001, 9, "edited fail"))
+	got, err = core.MsgEditMessageV2(editMessageRequest(1001, 1002, 9001, 109, "edited fail"))
 	if err == nil {
 		t.Fatalf("MsgEditMessageV2() error = nil, got=%+v", got)
 	}
@@ -1323,18 +1444,21 @@ func TestMsgEditMessageV2ReceiverDispatchUsesBrokerDurableAck(t *testing.T) {
 
 func TestMsgEditMessageV2RejectsNonAuthor(t *testing.T) {
 	repo := &fakeMsgRepository{
-		canonicalByPeerSeq: &repository.CanonicalMessage{
-			CanonicalMessageID: 7001,
-			PeerSeq:            7,
-			FromUserID:         1002,
-			PeerType:           payload.PeerTypeUser,
-			PeerID:             1002,
-			MessageText:        "old",
+		resolveByUserMessageID: map[resolveMessageKey]*repository.ResolvedMessageID{
+			{userID: 1001, peerType: payload.PeerTypeUser, peerID: 1002, userMessageID: 107}: {
+				UserID:             1001,
+				PeerType:           payload.PeerTypeUser,
+				PeerID:             1002,
+				UserMessageID:      107,
+				PeerSeq:            7,
+				CanonicalMessageID: 7001,
+			},
 		},
+		editErr: msgpb.ErrMessageAuthorRequired,
 	}
 	core := New(context.Background(), &svc.ServiceContext{Repo: repo, UserUpdates: &fakeUserUpdatesClient{}, ReceiverPublisher: &fakeReceiverPublisher{}})
 
-	_, err := core.MsgEditMessageV2(editMessageRequest(1001, 1002, 9001, 7, "edited"))
+	_, err := core.MsgEditMessageV2(editMessageRequest(1001, 1002, 9001, 107, "edited"))
 	if !errors.Is(err, msgpb.ErrMessageAuthorRequired) {
 		t.Fatalf("MsgEditMessageV2 error = %v, want %v", err, msgpb.ErrMessageAuthorRequired)
 	}
@@ -1345,9 +1469,11 @@ type fakeMsgRepository struct {
 	canonical           *repository.CanonicalMessageResult
 	canonicalByPeerSeq  *repository.CanonicalMessage
 	editResult          *repository.EditMessageResult
+	editErr             error
 	editInput           repository.EditCanonicalMessageInput
 	history             []repository.HistoryMessage
 	historyInput        repository.ListHistoryMessagesInput
+	searchInput         repository.SearchHashTagMessagesInput
 	historyCursorBounds repository.HistoryCursorBounds
 	resolveHistoryInput struct {
 		userID   int64
@@ -1357,16 +1483,17 @@ type fakeMsgRepository struct {
 		maxID    int32
 		minID    int32
 	}
-	resolvedMessageID      *repository.ResolvedMessageID
-	resolveByUserMessageID map[resolveMessageKey]*repository.ResolvedMessageID
-	resolveInput           repository.ResolvedMessageID
-	markCanonicalErr       error
-	markSenderErrs         []error
-	markCanonicalCalls     int
-	markSenderCalls        int
-	markReceiverAckedCalls int
-	markCompletedCalls     int
-	markRetryableCalls     int
+	resolvedMessageID          *repository.ResolvedMessageID
+	resolveByUserMessageID     map[resolveMessageKey]*repository.ResolvedMessageID
+	resolveManyByUserMessageID map[int64]*repository.ResolvedMessageID
+	resolveInput               repository.ResolvedMessageID
+	markCanonicalErr           error
+	markSenderErrs             []error
+	markCanonicalCalls         int
+	markSenderCalls            int
+	markReceiverAckedCalls     int
+	markCompletedCalls         int
+	markRetryableCalls         int
 }
 
 type resolveMessageKey struct {
@@ -1399,6 +1526,11 @@ func (f *fakeMsgRepository) ListHistoryMessages(_ context.Context, in repository
 	return f.history, nil
 }
 
+func (f *fakeMsgRepository) SearchHashTagMessages(_ context.Context, in repository.SearchHashTagMessagesInput) ([]repository.HistoryMessage, error) {
+	f.searchInput = in
+	return f.history, nil
+}
+
 func (f *fakeMsgRepository) ResolveMessageID(_ context.Context, userID int64, peerType int32, peerID int64, userMessageID int64) (*repository.ResolvedMessageID, error) {
 	f.resolveInput = repository.ResolvedMessageID{
 		UserID:        userID,
@@ -1417,6 +1549,26 @@ func (f *fakeMsgRepository) ResolveMessageID(_ context.Context, userID int64, pe
 	return f.resolvedMessageID, nil
 }
 
+func (f *fakeMsgRepository) ResolveMessageIDs(_ context.Context, userID int64, userMessageIDs []int64) ([]repository.ResolvedMessageID, error) {
+	out := make([]repository.ResolvedMessageID, 0, len(userMessageIDs))
+	for _, id := range userMessageIDs {
+		f.resolveInput = repository.ResolvedMessageID{
+			UserID:        userID,
+			UserMessageID: id,
+		}
+		if f.resolveManyByUserMessageID != nil {
+			if resolved := f.resolveManyByUserMessageID[id]; resolved != nil {
+				out = append(out, *resolved)
+			}
+			continue
+		}
+		if f.resolvedMessageID != nil && f.resolvedMessageID.UserMessageID == id {
+			out = append(out, *f.resolvedMessageID)
+		}
+	}
+	return out, nil
+}
+
 func (f *fakeMsgRepository) ResolveHistoryCursorIDs(_ context.Context, userID int64, peerType int32, peerID int64, offsetID int32, maxID int32, minID int32) (repository.HistoryCursorBounds, error) {
 	f.resolveHistoryInput.userID = userID
 	f.resolveHistoryInput.peerType = peerType
@@ -1433,8 +1585,8 @@ func (f *fakeMsgRepository) ResolvePeerSeqToUserMessageID(context.Context, int64
 
 func (f *fakeMsgRepository) EditCanonicalMessage(_ context.Context, in repository.EditCanonicalMessageInput) (*repository.EditMessageResult, error) {
 	f.editInput = in
-	if f.canonicalByPeerSeq != nil && f.canonicalByPeerSeq.FromUserID != in.ActorUserID {
-		return nil, msgpb.ErrMessageAuthorRequired
+	if f.editErr != nil {
+		return nil, f.editErr
 	}
 	return f.editResult, nil
 }

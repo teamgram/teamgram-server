@@ -36,16 +36,27 @@ func (c *MsgCore) MsgDeleteHistory(in *msg.TLMsgDeleteHistory) (*tg.MessagesAffe
 	if in.PeerType != payload.PeerTypeUser {
 		return nil, fmt.Errorf("%w: delete history first slice only supports user peer", msg.ErrSendStateConflict)
 	}
+	maxPeerSeq := int64(0)
+	if in.MaxId > 0 {
+		resolved, err := c.svcCtx.Repo.ResolveMessageID(c.ctx, in.UserId, in.PeerType, in.PeerId, int64(in.MaxId))
+		if err != nil {
+			return nil, err
+		}
+		if resolved == nil {
+			return tg.MakeTLMessagesAffectedHistory(&tg.TLMessagesAffectedHistory{}).ToMessagesAffectedHistory(), nil
+		}
+		maxPeerSeq = resolved.PeerSeq
+	}
 	body, err := json.Marshal(payload.MessageOperationV1{
 		SchemaVersion:    payload.MessageOperationSchemaVersion,
 		OperationKind:    payload.OperationKindDeleteHistory,
 		PeerType:         in.PeerType,
 		PeerID:           in.PeerId,
-		PeerSeq:          int64(in.MaxId),
+		PeerSeq:          maxPeerSeq,
 		FromUserID:       in.UserId,
 		ToUserID:         in.UserId,
 		Date:             int32(time.Now().Unix()),
-		DeleteMaxPeerSeq: int64(in.MaxId),
+		DeleteMaxPeerSeq: maxPeerSeq,
 		JustClear:        in.JustClear,
 		Revoke:           in.Revoke,
 	})

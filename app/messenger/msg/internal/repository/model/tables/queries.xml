@@ -125,6 +125,30 @@
         </sql>
     </query>
 
+    <query name="SelectUserMessageByGlobalID" result="ResolvedMessageIDRow">
+        <params>
+            <param name="message_status" type="int32"/>
+        </params>
+        <sql>
+            SELECT
+                user_id,
+                peer_type,
+                peer_id,
+                user_message_id,
+                peer_seq,
+                canonical_message_id,
+                date AS message_date,
+                outgoing
+            FROM
+                user_message_views
+            WHERE
+                user_id = :user_id
+                AND user_message_id = :user_message_id
+                AND message_status = :message_status
+            LIMIT 1
+        </sql>
+    </query>
+
     <query name="SelectNearestLiveUserMessageByPeerSeq" result="ResolvedMessageIDRow">
         <params>
             <param name="peer_type" type="int32"/>

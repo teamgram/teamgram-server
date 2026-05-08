@@ -77,6 +77,7 @@ type CanonicalQueriesModel interface {
 	SelectCanonicalByRandom(ctx context.Context, senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (*CanonicalMessageRow, error)
 	SelectCanonicalByID(ctx context.Context, sendStateId int64, requestPayloadHash []byte, canonicalMessageId int64) (*CanonicalMessageRow, error)
 	SelectUserMessageByID(ctx context.Context, userId int64, peerType int32, peerId int64, userMessageId int64, messageStatus int32) (*ResolvedMessageIDRow, error)
+	SelectUserMessageByGlobalID(ctx context.Context, userId int64, userMessageId int64, messageStatus int32) (*ResolvedMessageIDRow, error)
 	SelectNearestLiveUserMessageByPeerSeq(ctx context.Context, userId int64, peerType int32, peerId int64, peerSeq int64, messageStatus int32) (*ResolvedMessageIDRow, error)
 	SelectHistoryMessages(ctx context.Context, userId int64, peerType int32, peerId int64, messageStatus int32, minPeerSeq int64, maxPeerSeq int64, limit int32) ([]HistoryMessageRow, error)
 	SearchHashTagMessages(ctx context.Context, hashTag string, userId int64, peerType int32, peerId int64, messageStatus int32, offsetId int64, offsetIdLimit int64, likeTag string, limit int32) ([]HistoryMessageRow, error)
@@ -91,6 +92,7 @@ type CanonicalQueriesTxModel interface {
 	SelectCanonicalByRandom(senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (*CanonicalMessageRow, error)
 	SelectCanonicalByID(sendStateId int64, requestPayloadHash []byte, canonicalMessageId int64) (*CanonicalMessageRow, error)
 	SelectUserMessageByID(userId int64, peerType int32, peerId int64, userMessageId int64, messageStatus int32) (*ResolvedMessageIDRow, error)
+	SelectUserMessageByGlobalID(userId int64, userMessageId int64, messageStatus int32) (*ResolvedMessageIDRow, error)
 	SelectNearestLiveUserMessageByPeerSeq(userId int64, peerType int32, peerId int64, peerSeq int64, messageStatus int32) (*ResolvedMessageIDRow, error)
 	SelectHistoryMessages(userId int64, peerType int32, peerId int64, messageStatus int32, minPeerSeq int64, maxPeerSeq int64, limit int32) ([]HistoryMessageRow, error)
 	SearchHashTagMessages(hashTag string, userId int64, peerType int32, peerId int64, messageStatus int32, offsetId int64, offsetIdLimit int64, likeTag string, limit int32) ([]HistoryMessageRow, error)
@@ -177,6 +179,28 @@ func (m *defaultCanonicalQueriesTxModel) SelectUserMessageByID(userId int64, pee
 	query := "select user_id, peer_type, peer_id, user_message_id, peer_seq, canonical_message_id, `date` as message_date, outgoing from user_message_views where user_id = ? and peer_type = ? and peer_id = ? and user_message_id = ? and message_status = ? limit 1"
 
 	err := m.tx.QueryRowPartial(&rValue, query, userId, peerType, peerId, userMessageId, messageStatus)
+	if err != nil {
+		return nil, err
+	}
+	return &rValue, nil
+}
+
+func (m *defaultCanonicalQueriesModel) SelectUserMessageByGlobalID(ctx context.Context, userId int64, userMessageId int64, messageStatus int32) (*ResolvedMessageIDRow, error) {
+	var rValue ResolvedMessageIDRow
+	query := "select user_id, peer_type, peer_id, user_message_id, peer_seq, canonical_message_id, `date` as message_date, outgoing from user_message_views where user_id = ? and user_message_id = ? and message_status = ? limit 1"
+
+	err := m.db.QueryRowPartial(ctx, &rValue, query, userId, userMessageId, messageStatus)
+	if err != nil {
+		return nil, err
+	}
+	return &rValue, nil
+}
+
+func (m *defaultCanonicalQueriesTxModel) SelectUserMessageByGlobalID(userId int64, userMessageId int64, messageStatus int32) (*ResolvedMessageIDRow, error) {
+	var rValue ResolvedMessageIDRow
+	query := "select user_id, peer_type, peer_id, user_message_id, peer_seq, canonical_message_id, `date` as message_date, outgoing from user_message_views where user_id = ? and user_message_id = ? and message_status = ? limit 1"
+
+	err := m.tx.QueryRowPartial(&rValue, query, userId, userMessageId, messageStatus)
 	if err != nil {
 		return nil, err
 	}

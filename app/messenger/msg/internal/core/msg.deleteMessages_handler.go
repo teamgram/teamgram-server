@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -39,38 +40,143 @@ func (c *MsgCore) MsgDeleteMessages(in *msg.TLMsgDeleteMessages) (*tg.MessagesAf
 	if c.svcCtx.UserUpdates == nil {
 		return nil, msg.ErrSenderSyncFailed
 	}
-	deletePeerSeqs := make([]int64, 0, len(in.Id))
+	userMessageIDs := make([]int64, 0, len(in.Id))
 	for _, id := range in.Id {
 		if id <= 0 {
 			return nil, fmt.Errorf("%w: invalid message id", msg.ErrSendStateConflict)
 		}
-		deletePeerSeqs = append(deletePeerSeqs, int64(id))
+		userMessageIDs = append(userMessageIDs, int64(id))
 	}
-	body, err := json.Marshal(payload.MessageOperationV1{
-		SchemaVersion:  payload.MessageOperationSchemaVersion,
-		OperationKind:  payload.OperationKindDeleteMessages,
-		PeerType:       in.PeerType,
-		PeerID:         in.PeerId,
-		FromUserID:     in.UserId,
-		ToUserID:       in.UserId,
-		Date:           int32(time.Now().Unix()),
-		DeletePeerSeqs: deletePeerSeqs,
-		Revoke:         in.Revoke,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("%w: marshal delete messages operation user_id=%d peer_id=%d", msg.ErrMsgStorage, in.UserId, in.PeerId)
-	}
-	result, err := c.processUserDialogOperation(in.UserId, in.AuthKeyId, in.PeerType, in.PeerId, deleteMessagesOperationID(in.UserId, in.PeerId, in.Id, in.Revoke, in.AuthKeyId), body)
+	resolved, err := c.svcCtx.Repo.ResolveMessageIDs(c.ctx, in.UserId, userMessageIDs)
 	if err != nil {
 		return nil, err
 	}
-	pts, err := int64ToInt32(result.Pts, "pts")
+	groups := groupDeleteMessageIDs(resolved)
+	if len(groups) == 0 {
+		return tg.MakeTLMessagesAffectedMessages(&tg.TLMessagesAffectedMessages{}).ToMessagesAffectedMessages(), nil
+	}
+	var finalPTS int64
+	var ptsCount int32
+	for _, group := range groups {
+		body, hashBytes, err := buildDeleteMessagesPayload(in.UserId, in.UserId, group.peerType, group.peerID, group.peerSeqs, group.userMessageIDs, in.Revoke)
+		if err != nil {
+			return nil, err
+		}
+		authKeyID := in.AuthKeyId
+		var effects []OperationEnvelope
+		if in.Revoke && group.peerType == payload.PeerTypeUser && group.peerID != in.UserId {
+			peerBody, peerHash, err := buildDeleteMessagesPayload(in.UserId, group.peerID, group.peerType, in.UserId, group.peerSeqs, nil, in.Revoke)
+			if err != nil {
+				return nil, err
+			}
+			effects = append(effects, OperationEnvelope{
+				UserID:               group.peerID,
+				OperationID:          deleteMessagesPeerSeqOperationID(group.peerID, in.UserId, group.peerSeqs, in.Revoke),
+				OpType:               payload.OpTypeSendMessage,
+				OperationKind:        payload.OperationKindDeleteMessages,
+				ActorUserID:          in.UserId,
+				PeerType:             group.peerType,
+				PeerID:               in.UserId,
+				PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+				PayloadCodec:         payload.PayloadCodecJSON,
+				PayloadHash:          peerHash,
+				Payload:              peerBody,
+				DeliveryPolicy:       DeliveryPolicyDurableAsync,
+			})
+		}
+		result, err := c.dispatchRequesterSync(OperationEnvelope{
+			UserID:               in.UserId,
+			OperationID:          deleteMessagesOperationID(in.UserId, group.peerID, int64SliceToInt32(group.userMessageIDs), in.Revoke, in.AuthKeyId),
+			OpType:               payload.OpTypeSendMessage,
+			OperationKind:        payload.OperationKindDeleteMessages,
+			ActorUserID:          in.UserId,
+			AuthKeyID:            &authKeyID,
+			AuthKeyIDExclude:     &authKeyID,
+			PeerType:             group.peerType,
+			PeerID:               group.peerID,
+			PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+			PayloadCodec:         payload.PayloadCodecJSON,
+			PayloadHash:          hashBytes,
+			Payload:              body,
+			DeliveryPolicy:       DeliveryPolicyRequesterSync,
+		}, effects)
+		if err != nil {
+			return nil, err
+		}
+		finalPTS = result.Pts
+		ptsCount += result.PtsCount
+	}
+	pts, err := int64ToInt32(finalPTS, "pts")
 	if err != nil {
 		return nil, err
 	}
-	return tg.MakeTLMessagesAffectedMessages(&tg.TLMessagesAffectedMessages{Pts: pts, PtsCount: result.PtsCount}).ToMessagesAffectedMessages(), nil
+	return tg.MakeTLMessagesAffectedMessages(&tg.TLMessagesAffectedMessages{Pts: pts, PtsCount: ptsCount}).ToMessagesAffectedMessages(), nil
 }
 
 func deleteMessagesOperationID(userID int64, peerID int64, ids []int32, revoke bool, authKeyID int64) string {
 	return fmt.Sprintf("v1:dialog:delete_messages:user:%d:peer:%d:ids:%v:revoke:%t:auth:%d", userID, peerID, ids, revoke, authKeyID)
+}
+
+func deleteMessagesPeerSeqOperationID(userID int64, peerID int64, peerSeqs []int64, revoke bool) string {
+	return fmt.Sprintf("v1:dialog:delete_messages:user:%d:peer:%d:peer_seqs:%v:revoke:%t", userID, peerID, peerSeqs, revoke)
+}
+
+type deleteMessageGroup struct {
+	peerType       int32
+	peerID         int64
+	peerSeqs       []int64
+	userMessageIDs []int64
+}
+
+func groupDeleteMessageIDs(items []repository.ResolvedMessageID) []deleteMessageGroup {
+	groups := make([]deleteMessageGroup, 0, len(items))
+	index := map[struct {
+		peerType int32
+		peerID   int64
+	}]int{}
+	for _, item := range items {
+		if item.PeerSeq <= 0 || item.UserMessageID <= 0 {
+			continue
+		}
+		key := struct {
+			peerType int32
+			peerID   int64
+		}{peerType: item.PeerType, peerID: item.PeerID}
+		groupIndex, ok := index[key]
+		if !ok {
+			groupIndex = len(groups)
+			index[key] = groupIndex
+			groups = append(groups, deleteMessageGroup{peerType: item.PeerType, peerID: item.PeerID})
+		}
+		groups[groupIndex].peerSeqs = append(groups[groupIndex].peerSeqs, item.PeerSeq)
+		groups[groupIndex].userMessageIDs = append(groups[groupIndex].userMessageIDs, item.UserMessageID)
+	}
+	return groups
+}
+
+func buildDeleteMessagesPayload(fromUserID int64, toUserID int64, peerType int32, peerID int64, peerSeqs []int64, userMessageIDs []int64, revoke bool) ([]byte, []byte, error) {
+	body, err := json.Marshal(payload.MessageOperationV1{
+		SchemaVersion:        payload.MessageOperationSchemaVersion,
+		OperationKind:        payload.OperationKindDeleteMessages,
+		PeerType:             peerType,
+		PeerID:               peerID,
+		FromUserID:           fromUserID,
+		ToUserID:             toUserID,
+		Date:                 int32(time.Now().Unix()),
+		DeletePeerSeqs:       peerSeqs,
+		DeleteUserMessageIDs: userMessageIDs,
+		Revoke:               revoke,
+	})
+	if err != nil {
+		return nil, nil, fmt.Errorf("%w: marshal delete messages operation user_id=%d peer_id=%d", msg.ErrMsgStorage, fromUserID, peerID)
+	}
+	return body, payload.HashBytes(body), nil
+}
+
+func int64SliceToInt32(values []int64) []int32 {
+	out := make([]int32, 0, len(values))
+	for _, value := range values {
+		out = append(out, int32(value))
+	}
+	return out
 }
