@@ -123,17 +123,13 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 	}
 
 	if in.UserId != in.PeerId && sendState.Status < repository.SendStateStatusReceiverAcked {
-		receiverOp, err := buildReceiverOperation(in, canonical, messageText, replyToCanonicalMessageID)
+		receiverOp, err := buildReceiverOperationEnvelope(in, canonical, messageText, replyToCanonicalMessageID)
 		if err != nil {
 			return nil, err
 		}
-		if c.svcCtx.ReceiverPublisher == nil {
-			return nil, msg.ErrReceiverBackpressure
-		}
-		ack, err := c.svcCtx.ReceiverPublisher.Publish(c.ctx, receiverOp)
+		ack, err := c.dispatchBrokerDurableAck(receiverOp)
 		if err != nil {
-			c.Logger.Errorf("msg.sendMessageV2 - receiver operation publish failed: operation_id=%s err=%v", receiverOp.OperationID, err)
-			return nil, msg.ErrReceiverBackpressure
+			return nil, err
 		}
 		c.Logger.Debugf(
 			"msg.sendMessageV2 - receiver operation published: operation_id=%s topic=%s partition=%d offset=%d",
@@ -248,35 +244,28 @@ func (c *MsgCore) processSenderOperation(in *msg.TLMsgSendMessageV2, canonical *
 	if err != nil {
 		return nil, nil, err
 	}
-	if c.svcCtx.UserUpdates == nil {
-		return nil, nil, msg.ErrSenderSyncFailed
-	}
-	route := payload.RouteUser(in.UserId)
 	authKeyID := in.AuthKeyId
-	result, err := c.svcCtx.UserUpdates.UserupdatesProcessUserOperation(c.ctx, &userupdates.TLUserupdatesProcessUserOperation{
-		Operation: userupdates.MakeTLUserOperation(&userupdates.TLUserOperation{
-			UserId:               in.UserId,
-			BucketId:             int32(route.BucketID),
-			PartitionId:          int32(route.ReceiverPartitionID),
-			OperationId:          operationID,
-			OpType:               payload.OpTypeSendMessage,
-			OpSource:             0,
-			ActorUserId:          in.UserId,
-			AuthKeyId:            &authKeyID,
-			AuthKeyIdExclude:     &authKeyID,
-			PeerType:             in.PeerType,
-			PeerId:               in.PeerId,
-			CanonicalMessageId:   &canonical.CanonicalMessageID,
-			CanonicalPeerSeq:     &canonical.PeerSeq,
-			CanonicalDate:        int64Ptr(canonical.MessageDate),
-			PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
-			PayloadCodec:         payload.PayloadCodecJSON,
-			PayloadHash:          hashBytes,
-			Payload:              body,
-		}),
-	})
+	result, err := c.dispatchRequesterSync(OperationEnvelope{
+		UserID:               in.UserId,
+		OperationID:          operationID,
+		OpType:               payload.OpTypeSendMessage,
+		OperationKind:        payload.OperationKindSendMessage,
+		ActorUserID:          in.UserId,
+		AuthKeyID:            &authKeyID,
+		AuthKeyIDExclude:     &authKeyID,
+		PeerType:             in.PeerType,
+		PeerID:               in.PeerId,
+		CanonicalMessageID:   &canonical.CanonicalMessageID,
+		CanonicalPeerSeq:     &canonical.PeerSeq,
+		CanonicalDate:        int64Ptr(canonical.MessageDate),
+		PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+		PayloadCodec:         payload.PayloadCodecJSON,
+		PayloadHash:          hashBytes,
+		Payload:              body,
+		DeliveryPolicy:       DeliveryPolicyRequesterSync,
+	}, nil)
 	if err != nil {
-		return nil, nil, fmt.Errorf("%w: %v", msg.ErrSenderSyncFailed, err)
+		return nil, nil, err
 	}
 	return result, hashBytes, nil
 }
@@ -307,24 +296,28 @@ func (c *MsgCore) markSenderCommitted(canonical *repository.CanonicalMessageResu
 	})
 }
 
-func buildReceiverOperation(in *msg.TLMsgSendMessageV2, canonical *repository.CanonicalMessageResult, text string, replyToCanonicalMessageID int64) (repository.ReceiverOperation, error) {
+func buildReceiverOperationEnvelope(in *msg.TLMsgSendMessageV2, canonical *repository.CanonicalMessageResult, text string, replyToCanonicalMessageID int64) (OperationEnvelope, error) {
 	operationID := payload.ReceiverOperationID(canonical.CanonicalMessageID, in.PeerId)
-	body, hashHex, _, err := buildMessageOperationPayload(in.UserId, in.PeerId, in.UserId, false, canonical, text, replyToCanonicalMessageID, false, 0, 0)
+	body, hashBytes, _, err := buildMessageOperationPayload(in.UserId, in.PeerId, in.UserId, false, canonical, text, replyToCanonicalMessageID, false, 0, 0)
 	if err != nil {
-		return repository.ReceiverOperation{}, err
+		return OperationEnvelope{}, err
 	}
-	route := payload.RouteUser(in.PeerId)
-	return repository.ReceiverOperation{
-		UserID:       in.PeerId,
-		BucketID:     int32(route.BucketID),
-		PartitionID:  int32(route.ReceiverPartitionID),
-		OperationID:  operationID,
-		OpType:       payload.OpTypeSendMessage,
-		PeerType:     in.PeerType,
-		PeerID:       in.UserId,
-		PayloadCodec: payload.PayloadCodecJSON,
-		Payload:      body,
-		PayloadHash:  hashHex,
+	return OperationEnvelope{
+		UserID:               in.PeerId,
+		OperationID:          operationID,
+		OpType:               payload.OpTypeSendMessage,
+		OperationKind:        payload.OperationKindSendMessage,
+		ActorUserID:          in.UserId,
+		PeerType:             in.PeerType,
+		PeerID:               in.UserId,
+		CanonicalMessageID:   &canonical.CanonicalMessageID,
+		CanonicalPeerSeq:     &canonical.PeerSeq,
+		CanonicalDate:        int64Ptr(canonical.MessageDate),
+		PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+		PayloadCodec:         payload.PayloadCodecJSON,
+		Payload:              body,
+		PayloadHash:          hashBytes,
+		DeliveryPolicy:       DeliveryPolicyBrokerDurableAck,
 	}, nil
 }
 

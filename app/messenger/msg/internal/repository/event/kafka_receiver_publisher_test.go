@@ -79,11 +79,15 @@ func TestKafkaReceiverOperationPublisherUsesExplicitPartition(t *testing.T) {
 }
 
 func TestKafkaReceiverOperationPublisherReturnsProducerError(t *testing.T) {
-	producer := &fakeSyncProducer{err: errors.New("broker unavailable")}
+	producerErr := errors.New("broker unavailable")
+	producer := &fakeSyncProducer{err: producerErr}
 	pub := NewKafkaReceiverOperationPublisherForTest("topic", producer)
 	_, err := pub.Publish(context.Background(), repository.ReceiverOperation{PartitionID: 1, OperationID: "op"})
 	if err == nil {
 		t.Fatal("expected publish error")
+	}
+	if !errors.Is(err, producerErr) {
+		t.Fatalf("Publish() error = %v, want producer error", err)
 	}
 }
 
@@ -117,9 +121,6 @@ func TestKafkaReceiverOperationPublisherCountsAndSanitizesProducerError(t *testi
 	})
 	if err == nil {
 		t.Fatal("expected publish error")
-	}
-	if strings.Contains(err.Error(), "broker 10.0.0.7 unavailable") {
-		t.Fatalf("error leaked raw kafka detail: %v", err)
 	}
 	if !strings.Contains(err.Error(), "receiver operation publish failed") {
 		t.Fatalf("error = %v, want sanitized publish failure", err)

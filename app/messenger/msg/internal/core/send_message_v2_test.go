@@ -138,6 +138,111 @@ func TestMsgSendMessageV2ClearDraftWritesSenderOperationPayload(t *testing.T) {
 	}
 }
 
+func TestMsgSendMessageV2ReceiverDispatchUsesBrokerDurableAck(t *testing.T) {
+	responsePayload := []byte(`{"schema_version":1,"pts":17,"pts_count":1}`)
+	responseHash := mustHashBytes(t, responsePayload)
+	repo := &fakeMsgRepository{
+		sendState: &repository.SendState{SendStateID: 1, Status: repository.SendStateStatusInitialized},
+		canonical: &repository.CanonicalMessageResult{
+			SendStateID:        1,
+			CanonicalMessageID: 9001,
+			PeerSeq:            11,
+			MessageDate:        1_772_000_070,
+			RequestPayloadHash: payload.HashBytes([]byte("request")),
+			CreatedNew:         true,
+		},
+	}
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:              1001,
+			OperationId:         payload.SenderOperationID(9001, 1001),
+			Status:              1,
+			Pts:                 17,
+			PtsCount:            1,
+			CurrentPts:          17,
+			ResponsePayload:     responsePayload,
+			ResponsePayloadHash: responseHash,
+		}),
+	}
+	publisher := &fakeReceiverPublisher{}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:              repo,
+		UserUpdates:       updatesClient,
+		ReceiverPublisher: publisher,
+	})
+
+	got, err := core.MsgSendMessageV2(sendMessageRequest(1001, 1002, 9001, "broker ack"))
+	if err != nil {
+		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	}
+	if _, ok := got.ToUpdateShortSentMessage(); !ok {
+		t.Fatalf("expected updateShortSentMessage, got %s", got.ClazzName())
+	}
+	if publisher.calls != 1 {
+		t.Fatalf("publisher calls = %d, want 1", publisher.calls)
+	}
+	if publisher.published.UserID != 1002 || publisher.published.OperationID != payload.ReceiverOperationID(9001, 1002) {
+		t.Fatalf("unexpected receiver operation: %+v", publisher.published)
+	}
+	if publisher.published.PeerID != 1001 || publisher.published.PayloadCodec != payload.PayloadCodecJSON {
+		t.Fatalf("unexpected receiver route payload metadata: %+v", publisher.published)
+	}
+	if len(updatesClient.processedList) != 1 || updatesClient.processWithEffects != nil {
+		t.Fatalf("sender path should use requester sync only, processed=%d with_effects=%+v", len(updatesClient.processedList), updatesClient.processWithEffects)
+	}
+	if repo.markReceiverAckedCalls != 1 {
+		t.Fatalf("mark receiver acked calls = %d, want 1", repo.markReceiverAckedCalls)
+	}
+
+	publishErr := errors.New("broker unavailable")
+	repo = &fakeMsgRepository{
+		sendState: &repository.SendState{SendStateID: 2, Status: repository.SendStateStatusInitialized},
+		canonical: &repository.CanonicalMessageResult{
+			SendStateID:        2,
+			CanonicalMessageID: 9002,
+			PeerSeq:            12,
+			MessageDate:        1_772_000_071,
+			RequestPayloadHash: payload.HashBytes([]byte("request")),
+			CreatedNew:         true,
+		},
+	}
+	updatesClient = &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:              1001,
+			OperationId:         payload.SenderOperationID(9002, 1001),
+			Status:              1,
+			Pts:                 18,
+			PtsCount:            1,
+			CurrentPts:          18,
+			ResponsePayload:     responsePayload,
+			ResponsePayloadHash: responseHash,
+		}),
+	}
+	publisher = &fakeReceiverPublisher{publishErr: publishErr}
+	core = New(context.Background(), &svc.ServiceContext{
+		Repo:              repo,
+		UserUpdates:       updatesClient,
+		ReceiverPublisher: publisher,
+	})
+
+	got, err = core.MsgSendMessageV2(sendMessageRequest(1001, 1002, 9001, "broker fail"))
+	if err == nil {
+		t.Fatalf("MsgSendMessageV2() error = nil, got=%+v", got)
+	}
+	if !errors.Is(err, msgpb.ErrReceiverBackpressure) {
+		t.Fatalf("MsgSendMessageV2() error = %v, want ErrReceiverBackpressure", err)
+	}
+	if !errors.Is(err, publishErr) {
+		t.Fatalf("MsgSendMessageV2() error = %v, want upstream publish error", err)
+	}
+	if publisher.calls != 1 {
+		t.Fatalf("publisher calls = %d, want 1", publisher.calls)
+	}
+	if repo.markReceiverAckedCalls != 0 {
+		t.Fatalf("mark receiver acked calls = %d, want 0 after publish failure", repo.markReceiverAckedCalls)
+	}
+}
+
 func TestMarshalSendRequestHashIgnoresClearDraftBeforeDate(t *testing.T) {
 	_, firstHash, err := marshalSendRequest(1001, payload.PeerTypeUser, 1001, 77, "hello", 0, true, 9001, 1_778_160_035)
 	if err != nil {
@@ -960,6 +1065,127 @@ func TestMsgEditMessageV2OperationIDIncludesEditVersion(t *testing.T) {
 	}
 	if first != "v1:msg:7001:edit:1:1001" || second != "v1:msg:7001:edit:2:1001" {
 		t.Fatalf("unexpected edit operation ids: first=%q second=%q", first, second)
+	}
+}
+
+func TestMsgEditMessageV2ReceiverDispatchUsesBrokerDurableAck(t *testing.T) {
+	responsePayload := []byte(`{"schema_version":1,"pts":42,"pts_count":1}`)
+	responseHash := mustHashBytes(t, responsePayload)
+	repo := &fakeMsgRepository{
+		canonicalByPeerSeq: &repository.CanonicalMessage{
+			CanonicalMessageID: 7101,
+			PeerSeq:            8,
+			FromUserID:         1001,
+			PeerType:           payload.PeerTypeUser,
+			PeerID:             1002,
+			MessageText:        "old",
+			MessageDate:        1_772_000_020,
+		},
+		editResult: &repository.EditMessageResult{
+			CanonicalMessageID: 7101,
+			PeerSeq:            8,
+			FromUserID:         1001,
+			PeerType:           payload.PeerTypeUser,
+			PeerID:             1002,
+			MessageText:        "edited by broker ack",
+			MessageDate:        1_772_000_020,
+			EditDate:           1_772_000_120,
+			EditVersion:        2,
+		},
+	}
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:              1001,
+			OperationId:         editMessageOperationID(7101, 2, 1001),
+			Status:              1,
+			Pts:                 42,
+			PtsCount:            1,
+			CurrentPts:          42,
+			ResponsePayload:     responsePayload,
+			ResponsePayloadHash: responseHash,
+		}),
+	}
+	publisher := &fakeReceiverPublisher{}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:              repo,
+		UserUpdates:       updatesClient,
+		ReceiverPublisher: publisher,
+	})
+
+	got, err := core.MsgEditMessageV2(editMessageRequest(1001, 1002, 9001, 8, "edited by broker ack"))
+	if err != nil {
+		t.Fatalf("MsgEditMessageV2() error = %v", err)
+	}
+	if _, ok := got.ToUpdates(); !ok {
+		t.Fatalf("expected updates, got %s", got.ClazzName())
+	}
+	if publisher.calls != 1 {
+		t.Fatalf("publisher calls = %d, want 1", publisher.calls)
+	}
+	if publisher.published.UserID != 1002 || publisher.published.OperationID != editMessageOperationID(7101, 2, 1002) {
+		t.Fatalf("unexpected receiver edit operation: %+v", publisher.published)
+	}
+	if publisher.published.PeerID != 1001 || publisher.published.PayloadCodec != payload.PayloadCodecJSON {
+		t.Fatalf("unexpected receiver edit metadata: %+v", publisher.published)
+	}
+	if len(updatesClient.processedList) != 1 || updatesClient.processWithEffects != nil {
+		t.Fatalf("edit sender path should use requester sync only, processed=%d with_effects=%+v", len(updatesClient.processedList), updatesClient.processWithEffects)
+	}
+
+	publishErr := errors.New("broker unavailable")
+	repo = &fakeMsgRepository{
+		canonicalByPeerSeq: &repository.CanonicalMessage{
+			CanonicalMessageID: 7201,
+			PeerSeq:            9,
+			FromUserID:         1001,
+			PeerType:           payload.PeerTypeUser,
+			PeerID:             1002,
+			MessageText:        "old",
+			MessageDate:        1_772_000_021,
+		},
+		editResult: &repository.EditMessageResult{
+			CanonicalMessageID: 7201,
+			PeerSeq:            9,
+			FromUserID:         1001,
+			PeerType:           payload.PeerTypeUser,
+			PeerID:             1002,
+			MessageText:        "edited fail",
+			MessageDate:        1_772_000_021,
+			EditDate:           1_772_000_121,
+			EditVersion:        3,
+		},
+	}
+	updatesClient = &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:              1001,
+			OperationId:         editMessageOperationID(7201, 3, 1001),
+			Status:              1,
+			Pts:                 43,
+			PtsCount:            1,
+			CurrentPts:          43,
+			ResponsePayload:     responsePayload,
+			ResponsePayloadHash: responseHash,
+		}),
+	}
+	publisher = &fakeReceiverPublisher{publishErr: publishErr}
+	core = New(context.Background(), &svc.ServiceContext{
+		Repo:              repo,
+		UserUpdates:       updatesClient,
+		ReceiverPublisher: publisher,
+	})
+
+	got, err = core.MsgEditMessageV2(editMessageRequest(1001, 1002, 9001, 9, "edited fail"))
+	if err == nil {
+		t.Fatalf("MsgEditMessageV2() error = nil, got=%+v", got)
+	}
+	if !errors.Is(err, msgpb.ErrReceiverBackpressure) {
+		t.Fatalf("MsgEditMessageV2() error = %v, want ErrReceiverBackpressure", err)
+	}
+	if !errors.Is(err, publishErr) {
+		t.Fatalf("MsgEditMessageV2() error = %v, want upstream publish error", err)
+	}
+	if publisher.calls != 1 {
+		t.Fatalf("publisher calls = %d, want 1", publisher.calls)
 	}
 }
 

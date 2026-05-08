@@ -71,16 +71,12 @@ func (c *MsgCore) MsgEditMessageV2(in *msg.TLMsgEditMessageV2) (*tg.Updates, err
 		return nil, err
 	}
 	if in.UserId != in.PeerId {
-		receiverOp, err := buildEditReceiverOperation(in, edited)
+		receiverOp, err := buildEditReceiverOperationEnvelope(in, edited)
 		if err != nil {
 			return nil, err
 		}
-		if c.svcCtx.ReceiverPublisher == nil {
-			return nil, msg.ErrReceiverBackpressure
-		}
-		if _, err := c.svcCtx.ReceiverPublisher.Publish(c.ctx, receiverOp); err != nil {
-			c.Logger.Errorf("msg.editMessageV2 - receiver operation publish failed: operation_id=%s err=%v", receiverOp.OperationID, err)
-			return nil, msg.ErrReceiverBackpressure
+		if _, err := c.dispatchBrokerDurableAck(receiverOp); err != nil {
+			return nil, err
 		}
 	}
 
@@ -88,59 +84,57 @@ func (c *MsgCore) MsgEditMessageV2(in *msg.TLMsgEditMessageV2) (*tg.Updates, err
 }
 
 func (c *MsgCore) processEditSenderOperation(in *msg.TLMsgEditMessageV2, edited *repository.EditMessageResult) (*userupdates.UserOperationResult, []byte, error) {
-	if c.svcCtx.UserUpdates == nil {
-		return nil, nil, msg.ErrSenderSyncFailed
-	}
 	body, hashBytes, err := buildEditMessageOperationPayload(in.UserId, in.PeerId, in.PeerId, true, edited)
 	if err != nil {
 		return nil, nil, err
 	}
-	route := payload.RouteUser(in.UserId)
 	authKeyID := in.AuthKeyId
-	result, err := c.svcCtx.UserUpdates.UserupdatesProcessUserOperation(c.ctx, &userupdates.TLUserupdatesProcessUserOperation{
-		Operation: userupdates.MakeTLUserOperation(&userupdates.TLUserOperation{
-			UserId:               in.UserId,
-			BucketId:             int32(route.BucketID),
-			PartitionId:          int32(route.ReceiverPartitionID),
-			OperationId:          editMessageOperationID(edited.CanonicalMessageID, edited.EditVersion, in.UserId),
-			OpType:               payload.OpTypeSendMessage,
-			ActorUserId:          in.UserId,
-			AuthKeyId:            &authKeyID,
-			AuthKeyIdExclude:     &authKeyID,
-			PeerType:             in.PeerType,
-			PeerId:               in.PeerId,
-			CanonicalMessageId:   &edited.CanonicalMessageID,
-			CanonicalPeerSeq:     &edited.PeerSeq,
-			CanonicalDate:        int64Ptr(edited.MessageDate),
-			PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
-			PayloadCodec:         payload.PayloadCodecJSON,
-			PayloadHash:          hashBytes,
-			Payload:              body,
-		}),
-	})
+	result, err := c.dispatchRequesterSync(OperationEnvelope{
+		UserID:               in.UserId,
+		OperationID:          editMessageOperationID(edited.CanonicalMessageID, edited.EditVersion, in.UserId),
+		OpType:               payload.OpTypeSendMessage,
+		OperationKind:        payload.OperationKindEditMessage,
+		ActorUserID:          in.UserId,
+		AuthKeyID:            &authKeyID,
+		AuthKeyIDExclude:     &authKeyID,
+		PeerType:             in.PeerType,
+		PeerID:               in.PeerId,
+		CanonicalMessageID:   &edited.CanonicalMessageID,
+		CanonicalPeerSeq:     &edited.PeerSeq,
+		CanonicalDate:        int64Ptr(edited.MessageDate),
+		PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+		PayloadCodec:         payload.PayloadCodecJSON,
+		PayloadHash:          hashBytes,
+		Payload:              body,
+		DeliveryPolicy:       DeliveryPolicyRequesterSync,
+	}, nil)
 	if err != nil {
-		return nil, nil, fmt.Errorf("%w: %v", msg.ErrSenderSyncFailed, err)
+		return nil, nil, err
 	}
 	return result, hashBytes, nil
 }
 
-func buildEditReceiverOperation(in *msg.TLMsgEditMessageV2, edited *repository.EditMessageResult) (repository.ReceiverOperation, error) {
+func buildEditReceiverOperationEnvelope(in *msg.TLMsgEditMessageV2, edited *repository.EditMessageResult) (OperationEnvelope, error) {
 	body, hashBytes, err := buildEditMessageOperationPayload(in.UserId, in.PeerId, in.UserId, false, edited)
 	if err != nil {
-		return repository.ReceiverOperation{}, err
+		return OperationEnvelope{}, err
 	}
-	route := payload.RouteUser(in.PeerId)
-	return repository.ReceiverOperation{
-		UserID:       in.PeerId,
-		BucketID:     int32(route.BucketID),
-		PartitionID:  int32(route.ReceiverPartitionID),
-		OperationID:  editMessageOperationID(edited.CanonicalMessageID, edited.EditVersion, in.PeerId),
-		OpType:       payload.OpTypeSendMessage,
-		PeerType:     in.PeerType,
-		PeerID:       in.UserId,
-		PayloadCodec: payload.PayloadCodecJSON,
-		Payload:      body,
-		PayloadHash:  hashBytes,
+	return OperationEnvelope{
+		UserID:               in.PeerId,
+		OperationID:          editMessageOperationID(edited.CanonicalMessageID, edited.EditVersion, in.PeerId),
+		OpType:               payload.OpTypeSendMessage,
+		OperationKind:        payload.OperationKindEditMessage,
+		ActorUserID:          in.UserId,
+		PeerType:             in.PeerType,
+		PeerID:               in.UserId,
+		CanonicalMessageID:   &edited.CanonicalMessageID,
+		CanonicalPeerSeq:     &edited.PeerSeq,
+		CanonicalDate:        int64Ptr(edited.MessageDate),
+		PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+		PayloadCodec:         payload.PayloadCodecJSON,
+		Payload:              body,
+		PayloadHash:          hashBytes,
+		DeliveryPolicy:       DeliveryPolicyBrokerDurableAck,
 	}, nil
 }
 

@@ -1,6 +1,7 @@
 package core
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
@@ -9,35 +10,25 @@ import (
 )
 
 func (c *MsgCore) processUserDialogOperation(userID int64, authKeyID int64, peerType int32, peerID int64, operationID string, body []byte) (*userupdates.UserOperationResult, error) {
-	if c.svcCtx.UserUpdates == nil {
-		return nil, msg.ErrSenderSyncFailed
-	}
-	route := payload.RouteUser(userID)
 	hashBytes := payload.HashBytes(body)
-	result, err := c.svcCtx.UserUpdates.UserupdatesProcessUserOperation(c.ctx, &userupdates.TLUserupdatesProcessUserOperation{
-		Operation: userupdates.MakeTLUserOperation(&userupdates.TLUserOperation{
-			UserId:               userID,
-			BucketId:             int32(route.BucketID),
-			PartitionId:          int32(route.ReceiverPartitionID),
-			OperationId:          operationID,
-			OpType:               payload.OpTypeSendMessage,
-			OpSource:             0,
-			ActorUserId:          userID,
-			AuthKeyId:            &authKeyID,
-			AuthKeyIdExclude:     &authKeyID,
-			PeerType:             peerType,
-			PeerId:               peerID,
-			PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
-			PayloadCodec:         payload.PayloadCodecJSON,
-			PayloadHash:          hashBytes,
-			Payload:              body,
-		}),
-	})
-	if err != nil {
-		return nil, fmt.Errorf("%w: %v", msg.ErrSenderSyncFailed, err)
+	var op payload.MessageOperationV1
+	if err := json.Unmarshal(body, &op); err != nil {
+		return nil, fmt.Errorf("%w: decode dialog operation kind: %v", msg.ErrMsgStorage, err)
 	}
-	if result == nil {
-		return nil, msg.ErrSenderSyncFailed
-	}
-	return result, nil
+	return c.dispatchRequesterSync(OperationEnvelope{
+		UserID:               userID,
+		OperationID:          operationID,
+		OpType:               payload.OpTypeSendMessage,
+		OperationKind:        op.OperationKind,
+		ActorUserID:          userID,
+		AuthKeyID:            &authKeyID,
+		AuthKeyIDExclude:     &authKeyID,
+		PeerType:             peerType,
+		PeerID:               peerID,
+		PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+		PayloadCodec:         payload.PayloadCodecJSON,
+		PayloadHash:          hashBytes,
+		Payload:              body,
+		DeliveryPolicy:       DeliveryPolicyRequesterSync,
+	}, nil)
 }

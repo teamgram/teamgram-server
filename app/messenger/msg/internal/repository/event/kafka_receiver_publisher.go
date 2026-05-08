@@ -9,7 +9,6 @@ import (
 	kafka "github.com/teamgram/marmota/pkg/mq"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type syncProducer interface {
@@ -85,8 +84,7 @@ func (p *KafkaReceiverOperationPublisher) Publish(ctx context.Context, op reposi
 	partition, offset, err := p.producer.SendMessage(msg)
 	if err != nil {
 		p.counters.IncPublishError()
-		logx.WithContext(ctx).Errorf("receiver operation publish failed: operation_id=%s topic=%s partition=%d err=%v", op.OperationID, p.topic, op.PartitionID, err)
-		return repository.KafkaAck{}, fmt.Errorf("receiver operation publish failed")
+		return repository.KafkaAck{}, fmt.Errorf("receiver operation publish failed: %w", err)
 	}
 	p.counters.IncPublishSuccess()
 	return repository.KafkaAck{Topic: p.topic, Partition: partition, Offset: offset}, nil

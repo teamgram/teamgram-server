@@ -25,7 +25,6 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -41,10 +40,6 @@ func (c *MsgCore) MsgUpdatePinnedMessage(in *msg.TLMsgUpdatePinnedMessage) (*tg.
 	if in.PeerType != payload.PeerTypeUser {
 		return nil, fmt.Errorf("%w: update pinned first slice only supports user peer", msg.ErrSendStateConflict)
 	}
-	if c.svcCtx.UserUpdates == nil {
-		return nil, msg.ErrSenderSyncFailed
-	}
-
 	var canonical *repository.CanonicalMessage
 	if !in.Unpin {
 		var err error
@@ -57,30 +52,26 @@ func (c *MsgCore) MsgUpdatePinnedMessage(in *msg.TLMsgUpdatePinnedMessage) (*tg.
 	if err != nil {
 		return nil, err
 	}
-	route := payload.RouteUser(in.UserId)
 	authKeyID := in.AuthKeyId
-	result, err := c.svcCtx.UserUpdates.UserupdatesProcessUserOperation(c.ctx, &userupdates.TLUserupdatesProcessUserOperation{
-		Operation: userupdates.MakeTLUserOperation(&userupdates.TLUserOperation{
-			UserId:               in.UserId,
-			BucketId:             int32(route.BucketID),
-			PartitionId:          int32(route.ReceiverPartitionID),
-			OperationId:          updatePinnedOperationID(in.UserId, in.PeerId, in.Id, in.Unpin, in.AuthKeyId),
-			OpType:               payload.OpTypeSendMessage,
-			OpSource:             0,
-			ActorUserId:          in.UserId,
-			AuthKeyId:            &authKeyID,
-			AuthKeyIdExclude:     &authKeyID,
-			PeerType:             in.PeerType,
-			PeerId:               in.PeerId,
-			CanonicalPeerSeq:     int64Ptr(int64(in.Id)),
-			PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
-			PayloadCodec:         payload.PayloadCodecJSON,
-			PayloadHash:          hashBytes,
-			Payload:              body,
-		}),
-	})
+	result, err := c.dispatchRequesterSync(OperationEnvelope{
+		UserID:               in.UserId,
+		OperationID:          updatePinnedOperationID(in.UserId, in.PeerId, in.Id, in.Unpin, in.AuthKeyId),
+		OpType:               payload.OpTypeSendMessage,
+		OperationKind:        payload.OperationKindUpdatePinnedMessage,
+		ActorUserID:          in.UserId,
+		AuthKeyID:            &authKeyID,
+		AuthKeyIDExclude:     &authKeyID,
+		PeerType:             in.PeerType,
+		PeerID:               in.PeerId,
+		CanonicalPeerSeq:     int64Ptr(int64(in.Id)),
+		PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+		PayloadCodec:         payload.PayloadCodecJSON,
+		PayloadHash:          hashBytes,
+		Payload:              body,
+		DeliveryPolicy:       DeliveryPolicyRequesterSync,
+	}, nil)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", msg.ErrSenderSyncFailed, err)
+		return nil, err
 	}
 	if result == nil {
 		return nil, msg.ErrSenderSyncFailed
