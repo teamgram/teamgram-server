@@ -376,6 +376,7 @@ func buildEventAndResponse(in ApplyUserOperationInput, op payload.MessageOperati
 		Entities:             op.Entities,
 		ReplyToUserMessageID: op.ReplyToUserMessageID,
 		ReadMaxUserMessageID: op.ReadMaxUserMessageID,
+		DeleteUserMessageIDs: append([]int64(nil), op.DeleteUserMessageIDs...),
 		PinnedUserMessageID:  op.PinnedUserMessageID,
 		AuthKeyIdExclude:     in.AuthKeyIDExclude,
 	}

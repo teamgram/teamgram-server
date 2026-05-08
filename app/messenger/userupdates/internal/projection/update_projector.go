@@ -98,6 +98,7 @@ type decodedMessageEvent struct {
 	Entities             []payload.MessageEntityV1
 	ReplyToUserMessageID int64
 	ReadMaxUserMessageID int64
+	DeleteUserMessageIDs []int64
 	PinnedUserMessageID  int64
 	AuthKeyIdExclude     *int64
 }
@@ -108,6 +109,19 @@ func projectMessageEvent(in messageEventProjectionInput) (Result, error) {
 		return projectNewMessage(in)
 	case payload.OperationKindReadHistory:
 		update, err := readHistoryUpdate(in)
+		if err != nil {
+			return Result{}, err
+		}
+		if in.mode == ModePush {
+			updates, err := wrapPushUpdate(update, in.message.Date)
+			if err != nil {
+				return Result{}, err
+			}
+			return Result{Updates: updates, AuthKeyIDExclude: in.message.AuthKeyIdExclude}, nil
+		}
+		return Result{Update: update}, nil
+	case payload.OperationKindDeleteMessages:
+		update, err := deleteMessagesUpdate(in)
 		if err != nil {
 			return Result{}, err
 		}
@@ -217,6 +231,7 @@ func decodeMessageEventPayloadBytes(schemaVersion int32, body []byte) (decodedMe
 			Entities:             next.Entities,
 			ReplyToUserMessageID: next.ReplyToUserMessageID,
 			ReadMaxUserMessageID: next.ReadMaxUserMessageID,
+			DeleteUserMessageIDs: append([]int64(nil), next.DeleteUserMessageIDs...),
 			PinnedUserMessageID:  next.PinnedUserMessageID,
 			AuthKeyIdExclude:     next.AuthKeyIdExclude,
 		}, nil
@@ -316,6 +331,28 @@ func readHistoryUpdate(in messageEventProjectionInput) (tg.UpdateClazz, error) {
 		StillUnreadCount: 0,
 		Pts:              pts,
 		PtsCount:         in.ptsCount,
+	}), nil
+}
+
+func deleteMessagesUpdate(in messageEventProjectionInput) (tg.UpdateClazz, error) {
+	messages := make([]int32, 0, len(in.message.DeleteUserMessageIDs))
+	for _, id := range in.message.DeleteUserMessageIDs {
+		msgID, err := messageIDInt32(id, "delete user message id")
+		if err != nil {
+			return nil, err
+		}
+		if msgID > 0 {
+			messages = append(messages, msgID)
+		}
+	}
+	pts, err := int64ToInt32(in.pts, "pts")
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLUpdateDeleteMessages(&tg.TLUpdateDeleteMessages{
+		Messages: messages,
+		Pts:      pts,
+		PtsCount: in.ptsCount,
 	}), nil
 }
 

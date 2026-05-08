@@ -194,6 +194,28 @@ func TestMessageEventV2PublicIDs(t *testing.T) {
 	}
 }
 
+func TestMessageEventV2DeleteMessagesCarriesPublicIDs(t *testing.T) {
+	event := MessageEventV2{
+		SchemaVersion:        MessageEventSchemaVersion,
+		EventKind:            OperationKindDeleteMessages,
+		PeerType:             PeerTypeUser,
+		PeerID:               1002,
+		Date:                 1_772_000_000,
+		DeleteUserMessageIDs: []int64{107, 108},
+	}
+	body, err := json.Marshal(event)
+	if err != nil {
+		t.Fatalf("marshal event: %v", err)
+	}
+	var got MessageEventV2
+	if err := json.Unmarshal(body, &got); err != nil {
+		t.Fatalf("unmarshal event: %v", err)
+	}
+	if len(got.DeleteUserMessageIDs) != 2 || got.DeleteUserMessageIDs[0] != 107 || got.DeleteUserMessageIDs[1] != 108 {
+		t.Fatalf("delete ids = %v", got.DeleteUserMessageIDs)
+	}
+}
+
 func TestReceiverKafkaMessageV1RoundTrip(t *testing.T) {
 	op := ReceiverOperationEnvelopeV1{
 		UserID:       1001,
