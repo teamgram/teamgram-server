@@ -9,3 +9,5 @@ Log:
   Mode: file
   Path: ../logs/geoip
   Level: debug
+
+MMDB: ./GeoLite2-City.mmdb
