@@ -8,6 +8,7 @@ import (
 	"math"
 	"testing"
 
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/projection"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/svc"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
@@ -378,16 +379,16 @@ func TestEventToTLUpdateBuildsEditMessage(t *testing.T) {
 		EventPayloadHash:   payload.HashBytes(eventPayload),
 	}
 
-	message, update, err := eventToTLUpdate(event)
+	projected, err := projection.ProjectUserEvent(event, projection.ModeDifference)
 	if err != nil {
-		t.Fatalf("eventToTLUpdate error = %v", err)
+		t.Fatalf("ProjectUserEvent error = %v", err)
 	}
-	if message != nil {
-		t.Fatalf("message = %T, want nil for edit update", message)
+	if projected.Message != nil {
+		t.Fatalf("message = %T, want nil for edit update", projected.Message)
 	}
-	edit, ok := update.(*tg.TLUpdateEditMessage)
+	edit, ok := projected.Update.(*tg.TLUpdateEditMessage)
 	if !ok {
-		t.Fatalf("update = %T, want *tg.TLUpdateEditMessage", update)
+		t.Fatalf("update = %T, want *tg.TLUpdateEditMessage", projected.Update)
 	}
 	if edit.Pts != 50 || edit.PtsCount != 1 {
 		t.Fatalf("unexpected edit update pts: %+v", edit)

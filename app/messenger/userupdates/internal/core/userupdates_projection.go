@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/projection"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
@@ -77,14 +78,14 @@ func differenceToTL(in *repository.GetDifferenceResult) (*userupdates.UserDiffer
 	newMessages := make([]tg.MessageClazz, 0, len(in.Events))
 	otherUpdates := make([]tg.UpdateClazz, 0, len(in.Events)+len(in.AuthSeqEvents))
 	for _, event := range in.Events {
-		message, update, err := eventToTLUpdate(event)
+		projected, err := projection.ProjectUserEvent(event, projection.ModeDifference)
 		if err != nil {
 			return nil, err
 		}
-		if message != nil {
-			newMessages = append(newMessages, message)
+		if projected.Message != nil {
+			newMessages = append(newMessages, projected.Message)
 		}
-		otherUpdates = append(otherUpdates, update)
+		otherUpdates = append(otherUpdates, projected.Update)
 	}
 	for _, event := range in.AuthSeqEvents {
 		update, err := authSeqEventToTLUpdate(event)
@@ -98,95 +99,6 @@ func differenceToTL(in *repository.GetDifferenceResult) (*userupdates.UserDiffer
 		OtherUpdates: otherUpdates,
 		State:        state,
 	}).ToUserDifference(), nil
-}
-
-func eventToTLUpdate(event repository.UserEvent) (tg.MessageClazz, tg.UpdateClazz, error) {
-	if event.EventCodec != repository.PayloadCodecJSON || event.EventSchemaVersion != payload.MessageEventSchemaVersion {
-		return nil, nil, fmt.Errorf("%w: unsupported event codec=%d schema=%d", userupdates.ErrUserupdatesStorage, event.EventCodec, event.EventSchemaVersion)
-	}
-	if len(event.EventPayloadHash) != 0 && !bytes.Equal(payload.HashBytes(event.EventPayload), event.EventPayloadHash) {
-		return nil, nil, fmt.Errorf("%w: event payload hash mismatch", userupdates.ErrUserupdatesStorage)
-	}
-
-	var messageEvent payload.MessageEventV1
-	if err := json.Unmarshal(event.EventPayload, &messageEvent); err != nil {
-		return nil, nil, fmt.Errorf("%w: decode event payload: %v", userupdates.ErrUserupdatesStorage, err)
-	}
-	if messageEvent.SchemaVersion != payload.MessageEventSchemaVersion {
-		return nil, nil, fmt.Errorf("%w: unsupported event schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.SchemaVersion)
-	}
-	if event.EventType == repository.EventTypeDialogPublicUpdate {
-		update, err := dialogEventToTLUpdate(dialogEventFromMessageEvent(event, messageEvent), event.Pts, event.PtsCount)
-		return nil, update, err
-	}
-	if messageEvent.EventKind == payload.OperationKindReadHistory {
-		update, err := readHistoryEventToTLUpdate(event, messageEvent)
-		return nil, update, err
-	}
-	if messageEvent.EventKind == payload.OperationKindEditMessage {
-		update, err := editMessageEventToTLUpdate(event, messageEvent)
-		return nil, update, err
-	}
-	if messageEvent.EventKind != payload.EventKindNewMessage {
-		return nil, nil, fmt.Errorf("%w: unsupported event kind=%s schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.EventKind, messageEvent.SchemaVersion)
-	}
-	message, err := messageEventToTLMessage(messageEvent)
-	if err != nil {
-		return nil, nil, err
-	}
-	pts, err := int64ToInt32(event.Pts, "pts")
-	if err != nil {
-		return nil, nil, err
-	}
-	update := tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
-		Message:  message,
-		Pts:      pts,
-		PtsCount: event.PtsCount,
-	})
-	return message, update, nil
-}
-
-func readHistoryEventToTLUpdate(event repository.UserEvent, messageEvent payload.MessageEventV1) (tg.UpdateClazz, error) {
-	maxID, err := int64ToInt32(messageEvent.MessageID, "message id")
-	if err != nil {
-		return nil, err
-	}
-	pts, err := int64ToInt32(event.Pts, "pts")
-	if err != nil {
-		return nil, err
-	}
-	peer := peerFromEvent(messageEvent.PeerType, messageEvent.PeerID)
-	if messageEvent.Out {
-		return tg.MakeTLUpdateReadHistoryOutbox(&tg.TLUpdateReadHistoryOutbox{
-			Peer:     peer,
-			MaxId:    maxID,
-			Pts:      pts,
-			PtsCount: event.PtsCount,
-		}), nil
-	}
-	return tg.MakeTLUpdateReadHistoryInbox(&tg.TLUpdateReadHistoryInbox{
-		Peer:             peer,
-		MaxId:            maxID,
-		StillUnreadCount: 0,
-		Pts:              pts,
-		PtsCount:         event.PtsCount,
-	}), nil
-}
-
-func editMessageEventToTLUpdate(event repository.UserEvent, messageEvent payload.MessageEventV1) (tg.UpdateClazz, error) {
-	message, err := editMessageEventToTLMessage(messageEvent)
-	if err != nil {
-		return nil, err
-	}
-	pts, err := int64ToInt32(event.Pts, "pts")
-	if err != nil {
-		return nil, err
-	}
-	return tg.MakeTLUpdateEditMessage(&tg.TLUpdateEditMessage{
-		Message:  message,
-		Pts:      pts,
-		PtsCount: event.PtsCount,
-	}), nil
 }
 
 func messageViewToTLMessage(view repository.MessageView) (tg.MessageClazz, error) {
