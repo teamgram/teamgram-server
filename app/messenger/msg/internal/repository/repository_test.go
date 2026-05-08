@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"math"
 	"testing"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository/model"
@@ -84,7 +85,7 @@ func TestHistoryMessageRowToMessageUsesPublicIDs(t *testing.T) {
 		MessageText:        "reply",
 		MessageDate:        1_772_000_000,
 		ViewPayload:        body,
-	})
+	}, nil)
 	if err != nil {
 		t.Fatalf("historyMessageRowToMessage error = %v", err)
 	}
@@ -99,5 +100,73 @@ func TestHistoryMessageRowToMessageUsesPublicIDs(t *testing.T) {
 	}
 	if msg.ReplyToPeerSeq != 0 {
 		t.Fatalf("ReplyToPeerSeq = %d, want 0 for v2 payload", msg.ReplyToPeerSeq)
+	}
+}
+
+func TestHistoryMessageRowToMessageResolvesLegacyReplyPeerSeq(t *testing.T) {
+	event := payload.MessageEventV1{
+		SchemaVersion:      1,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: 1001,
+		MessageID:          42,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             2002,
+		FromUserID:         1002,
+		ToUserID:           1001,
+		Date:               1_772_000_000,
+		MessageText:        "reply",
+		ReplyToPeerSeq:     9,
+	}
+	body, err := json.Marshal(event)
+	if err != nil {
+		t.Fatalf("marshal event: %v", err)
+	}
+
+	msg, err := historyMessageRowToMessage(model.HistoryMessageRow{
+		CanonicalMessageID: 1001,
+		PeerSeq:            17,
+		UserMessageID:      42,
+		FromUserID:         1002,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             2002,
+		MessageKind:        MessageKindText,
+		MessageText:        "reply",
+		MessageDate:        1_772_000_000,
+		ViewPayload:        body,
+	}, func(peerSeq int64) (int64, error) {
+		if peerSeq != 9 {
+			t.Fatalf("resolver peer_seq = %d, want 9", peerSeq)
+		}
+		return 84, nil
+	})
+	if err != nil {
+		t.Fatalf("historyMessageRowToMessage error = %v", err)
+	}
+	if msg.ReplyToPeerSeq != 9 {
+		t.Fatalf("ReplyToPeerSeq = %d, want internal fallback peer_seq 9", msg.ReplyToPeerSeq)
+	}
+	if msg.ReplyToUserMessageID != 84 {
+		t.Fatalf("ReplyToUserMessageID = %d, want resolved public id 84", msg.ReplyToUserMessageID)
+	}
+}
+
+func TestHistoryPeerSeqBoundsKeepInt64Values(t *testing.T) {
+	peerSeq := int64(math.MaxInt32) + 10
+	bounds := HistoryCursorBounds{
+		OffsetPeerSeq: int64(math.MaxInt32) + 20,
+		MaxPeerSeq:    int64(math.MaxInt32) + 20,
+		MinPeerSeq:    int64(math.MaxInt32) + 1,
+	}
+	if !historyMessageWithinBounds(peerSeq, bounds) {
+		t.Fatalf("peer_seq %d should be inside int64 bounds %+v", peerSeq, bounds)
+	}
+	if historyMessageWithinBounds(bounds.MaxPeerSeq, bounds) {
+		t.Fatalf("peer_seq equal max bound should be excluded")
+	}
+	if historyMessageWithinBounds(bounds.MinPeerSeq, bounds) {
+		t.Fatalf("peer_seq equal min bound should be excluded")
+	}
+	if got := historyOffsetMarker(bounds.OffsetPeerSeq); got.OffsetID <= 0 {
+		t.Fatalf("historyOffsetMarker(%d).OffsetID = %d, want positive marker without int32 cast", bounds.OffsetPeerSeq, got.OffsetID)
 	}
 }

@@ -1245,6 +1245,18 @@ func (f *fakeMsgRepository) ListHistoryMessages(_ context.Context, in repository
 	return f.history, nil
 }
 
+func (f *fakeMsgRepository) ResolveMessageID(context.Context, int64, int32, int64, int64) (*repository.ResolvedMessageID, error) {
+	return nil, nil
+}
+
+func (f *fakeMsgRepository) ResolveHistoryCursorIDs(context.Context, int64, int32, int64, int32, int32, int32) (repository.HistoryCursorBounds, error) {
+	return repository.HistoryCursorBounds{}, nil
+}
+
+func (f *fakeMsgRepository) ResolvePeerSeqToUserMessageID(context.Context, int64, int32, int64, int64) (int64, error) {
+	return 0, nil
+}
+
 func (f *fakeMsgRepository) EditCanonicalMessage(_ context.Context, in repository.EditCanonicalMessageInput) (*repository.EditMessageResult, error) {
 	f.editInput = in
 	if f.canonicalByPeerSeq != nil && f.canonicalByPeerSeq.FromUserID != in.ActorUserID {
