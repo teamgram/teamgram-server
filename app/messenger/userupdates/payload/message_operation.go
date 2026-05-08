@@ -108,6 +108,7 @@ type MessageEventV2 struct {
 	Entities             []MessageEntityV1 `json:"entities,omitempty"`
 	ReplyToUserMessageID int64             `json:"reply_to_user_message_id,omitempty"`
 	ReadMaxUserMessageID int64             `json:"read_max_user_message_id,omitempty"`
+	DeleteUserMessageIDs []int64           `json:"delete_user_message_ids,omitempty"`
 	PinnedUserMessageID  int64             `json:"pinned_user_message_id,omitempty"`
 	AuthKeyIdExclude     *int64            `json:"auth_key_id_exclude,omitempty"`
 }

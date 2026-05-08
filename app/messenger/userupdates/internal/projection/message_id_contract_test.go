@@ -79,3 +79,41 @@ func TestProjectionReadHistoryMaxIDUsesReadMaxUserMessageID(t *testing.T) {
 		t.Fatalf("read history max_id = %d, want public id 55 and not peer_seq 7", update.MaxId)
 	}
 }
+
+func TestDeleteMessagesProjectionUsesDeleteUserMessageIDsNotPeerSeq(t *testing.T) {
+	body := mustMarshalMessageEventV2(t, payload.MessageEventV2{
+		SchemaVersion:        payload.MessageEventSchemaVersion,
+		EventKind:            payload.OperationKindDeleteMessages,
+		PeerSeq:              7,
+		MessageID:            0,
+		PeerType:             payload.PeerTypeUser,
+		PeerID:               1002,
+		Date:                 1_772_000_000,
+		DeleteUserMessageIDs: []int64{107},
+	})
+	got, err := ProjectUserEvent(repository.UserEvent{
+		UserID:             1001,
+		Pts:                35,
+		PtsCount:           1,
+		EventType:          repository.EventTypeDeleteMessages,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             1002,
+		EventSchemaVersion: payload.MessageEventSchemaVersion,
+		EventCodec:         repository.PayloadCodecJSON,
+		EventPayload:       body,
+		EventPayloadHash:   payload.HashBytes(body),
+	}, ModeDifference)
+	if err != nil {
+		t.Fatalf("ProjectUserEvent() error = %v", err)
+	}
+	update, ok := got.Update.(*tg.TLUpdateDeleteMessages)
+	if !ok {
+		t.Fatalf("update = %T, want *tg.TLUpdateDeleteMessages", got.Update)
+	}
+	if len(update.Messages) != 1 || update.Messages[0] != 107 {
+		t.Fatalf("delete messages = %v, want public id 107", update.Messages)
+	}
+	if update.Messages[0] == 7 {
+		t.Fatalf("delete update leaked peer_seq as message id")
+	}
+}

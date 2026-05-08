@@ -165,7 +165,13 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 			return nil, err
 		}
 	case payload.OperationKindDeleteMessages:
-		if err := applyDeleteMessages(txModels, in, op, nextPTS); err != nil {
+		var err error
+		op, err = applyDeleteMessages(txModels, in, op, nextPTS)
+		if err != nil {
+			return nil, err
+		}
+		eventPayload, eventPayloadHash, responsePayload, responsePayloadHash, err = buildEventAndResponse(in, op, nextPTS, ptsCount)
+		if err != nil {
 			return nil, err
 		}
 	case payload.OperationKindDeleteHistory:
@@ -376,6 +382,7 @@ func buildEventAndResponse(in ApplyUserOperationInput, op payload.MessageOperati
 		Entities:             op.Entities,
 		ReplyToUserMessageID: op.ReplyToUserMessageID,
 		ReadMaxUserMessageID: op.ReadMaxUserMessageID,
+		DeleteUserMessageIDs: append([]int64(nil), op.DeleteUserMessageIDs...),
 		PinnedUserMessageID:  op.PinnedUserMessageID,
 		AuthKeyIdExclude:     in.AuthKeyIDExclude,
 	}
@@ -603,24 +610,62 @@ func isHashTagRune(r rune) bool {
 	return r == '_' || unicode.IsLetter(r) || unicode.IsDigit(r)
 }
 
-func applyDeleteMessages(txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, nextPTS int64) error {
+func applyDeleteMessages(txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, nextPTS int64) (payload.MessageOperationV1, error) {
 	deletedAt := unixNow()
+	deletedUserMessageIDs := make([]int64, 0, len(op.DeletePeerSeqs))
+	unreadDeletes := int32(0)
+	var dialog *model.UserDialogs
+	if row, err := txModels.UserDialogsModel.SelectByUserPeer(in.UserID, op.PeerType, op.PeerID); err == nil {
+		dialog = row
+	} else if !errors.Is(err, model.ErrNotFound) {
+		return op, storageError("select dialog before delete messages", err)
+	}
 	for _, peerSeq := range op.DeletePeerSeqs {
 		row, err := txModels.UserMessageViewsModel.SelectByUserPeerSeq(in.UserID, op.PeerType, op.PeerID, peerSeq)
 		if err != nil {
 			if errors.Is(err, model.ErrNotFound) {
 				continue
 			}
-			return storageError("select message before delete", err)
+			return op, storageError("select message before delete", err)
+		}
+		if row.MessageStatus == MessageStatusDeleted {
+			continue
+		}
+		deletedUserMessageIDs = append(deletedUserMessageIDs, row.UserMessageId)
+		if dialog != nil && !row.Outgoing && row.PeerSeq > dialog.ReadInboxMaxPeerSeq {
+			unreadDeletes++
 		}
 		row.MessageStatus = MessageStatusDeleted
 		row.DeletedAt = deletedAt
 		row.ViewPayload = []byte(`{"schema_version":1,"deleted":true}`)
 		if _, _, err := txModels.UserMessageViewsModel.InsertOrUpdate(row); err != nil {
-			return storageError("mark message deleted", err)
+			return op, storageError("mark message deleted", err)
 		}
 	}
-	return recomputeDialogTop(txModels, in.UserID, op.PeerType, op.PeerID, nextPTS)
+	op.DeleteUserMessageIDs = deletedUserMessageIDs
+	if dialog != nil && unreadDeletes > 0 {
+		unreadCount := dialog.UnreadCount - unreadDeletes
+		if unreadCount < 0 {
+			unreadCount = 0
+		}
+		if _, err := txModels.UserDialogsModel.UpdateUnreadAfterDelete(
+			unreadCount,
+			dialog.UnreadMentionsCount,
+			dialog.UnreadReactionsCount,
+			dialog.UnreadMark,
+			nextPTS,
+			unixNow(),
+			in.UserID,
+			op.PeerType,
+			op.PeerID,
+		); err != nil {
+			return op, storageError("update unread count after delete messages", err)
+		}
+	}
+	if err := recomputeDialogTop(txModels, in.UserID, op.PeerType, op.PeerID, nextPTS); err != nil {
+		return op, err
+	}
+	return op, nil
 }
 
 func applyDeleteHistory(txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, nextPTS int64) error {

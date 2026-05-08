@@ -614,6 +614,155 @@ func TestApplyReadOutboxPreservesIncomingUnreadCount(t *testing.T) {
 	}
 }
 
+func TestApplyDeleteMessagesMaterializesPublicIDsAndDialogTop(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	userID := base + 2311
+	peerID := base + 2312
+	cleanupDeleteMessagesIntegrationRows(t, ctx, db, userID)
+	repo := NewForTest(db, &testIDGenerator{next: base + 51000}, "local-userupdates")
+	if _, err := repo.ClaimPartitionOwner(ctx, int32(payload.RouteUser(userID).ReceiverPartitionID)); err != nil {
+		t.Fatalf("ClaimPartitionOwner() error = %v", err)
+	}
+	for i := int64(1); i <= 2; i++ {
+		in := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+			SchemaVersion:      payload.MessageOperationSchemaVersion,
+			OperationKind:      payload.OperationKindSendMessage,
+			CanonicalMessageID: userID*10 + i,
+			PeerType:           payload.PeerTypeUser,
+			PeerID:             peerID,
+			PeerSeq:            i,
+			FromUserID:         peerID,
+			ToUserID:           userID,
+			Date:               int32(time.Now().Unix()),
+			Out:                false,
+			MessageText:        fmt.Sprintf("incoming %d", i),
+		}, fmt.Sprintf("delete-materialize-send-%d", i))
+		if _, err := repo.ApplyUserOperation(ctx, in); err != nil {
+			t.Fatalf("ApplyUserOperation(send %d) error = %v", i, err)
+		}
+	}
+
+	deleteInput := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion: payload.MessageOperationSchemaVersion,
+		OperationKind: payload.OperationKindDeleteMessages,
+		PeerType:      payload.PeerTypeUser,
+		PeerID:        peerID,
+		PeerSeq:       2,
+		DeletePeerSeqs: []int64{
+			2,
+		},
+		FromUserID: userID,
+		ToUserID:   userID,
+		Date:       int32(time.Now().Unix()),
+	}, "delete-materialize")
+	result, err := repo.ApplyUserOperation(ctx, deleteInput)
+	if err != nil {
+		t.Fatalf("ApplyUserOperation(delete) error = %v", err)
+	}
+	if result.PtsCount != 1 {
+		t.Fatalf("delete pts_count = %d, want 1", result.PtsCount)
+	}
+	storedEvent, err := repo.models.UserPtsEventsModel.SelectByOperation(ctx, userID, deleteInput.OperationID)
+	if err != nil {
+		t.Fatalf("select delete event: %v", err)
+	}
+	var event payload.MessageEventV2
+	if err := json.Unmarshal(storedEvent.EventPayload, &event); err != nil {
+		t.Fatalf("decode delete event: %v", err)
+	}
+	if len(event.DeleteUserMessageIDs) != 1 || event.DeleteUserMessageIDs[0] != 2 {
+		t.Fatalf("delete event ids = %v, want [2]", event.DeleteUserMessageIDs)
+	}
+	dialog, err := repo.models.UserDialogsModel.SelectByUserPeer(ctx, userID, payload.PeerTypeUser, peerID)
+	if err != nil {
+		t.Fatalf("select dialog: %v", err)
+	}
+	if dialog.TopUserMessageId != 1 || dialog.TopPeerSeq != 1 {
+		t.Fatalf("dialog top = user_msg:%d peer_seq:%d, want 1/1", dialog.TopUserMessageId, dialog.TopPeerSeq)
+	}
+}
+
+func TestApplyDeleteMessagesDecrementsUnreadCount(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	userID := base + 2321
+	peerID := base + 2322
+	cleanupDeleteMessagesIntegrationRows(t, ctx, db, userID)
+	repo := NewForTest(db, &testIDGenerator{next: base + 52000}, "local-userupdates")
+	if _, err := repo.ClaimPartitionOwner(ctx, int32(payload.RouteUser(userID).ReceiverPartitionID)); err != nil {
+		t.Fatalf("ClaimPartitionOwner() error = %v", err)
+	}
+	for i := int64(1); i <= 2; i++ {
+		in := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+			SchemaVersion:      payload.MessageOperationSchemaVersion,
+			OperationKind:      payload.OperationKindSendMessage,
+			CanonicalMessageID: userID*10 + i,
+			PeerType:           payload.PeerTypeUser,
+			PeerID:             peerID,
+			PeerSeq:            i,
+			FromUserID:         peerID,
+			ToUserID:           userID,
+			Date:               int32(time.Now().Unix()),
+			Out:                false,
+			MessageText:        fmt.Sprintf("unread incoming %d", i),
+		}, fmt.Sprintf("delete-unread-send-%d", i))
+		if _, err := repo.ApplyUserOperation(ctx, in); err != nil {
+			t.Fatalf("ApplyUserOperation(send %d) error = %v", i, err)
+		}
+	}
+
+	firstDelete := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion: payload.MessageOperationSchemaVersion,
+		OperationKind: payload.OperationKindDeleteMessages,
+		PeerType:      payload.PeerTypeUser,
+		PeerID:        peerID,
+		PeerSeq:       2,
+		DeletePeerSeqs: []int64{
+			2,
+		},
+		FromUserID: userID,
+		ToUserID:   userID,
+		Date:       int32(time.Now().Unix()),
+	}, "delete-unread-first")
+	if _, err := repo.ApplyUserOperation(ctx, firstDelete); err != nil {
+		t.Fatalf("ApplyUserOperation(first delete) error = %v", err)
+	}
+	dialog, err := repo.models.UserDialogsModel.SelectByUserPeer(ctx, userID, payload.PeerTypeUser, peerID)
+	if err != nil {
+		t.Fatalf("select dialog after first delete: %v", err)
+	}
+	if dialog.UnreadCount != 1 {
+		t.Fatalf("unread_count = %d, want 1", dialog.UnreadCount)
+	}
+
+	secondDelete := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion: payload.MessageOperationSchemaVersion,
+		OperationKind: payload.OperationKindDeleteMessages,
+		PeerType:      payload.PeerTypeUser,
+		PeerID:        peerID,
+		PeerSeq:       1,
+		DeletePeerSeqs: []int64{
+			1,
+		},
+		FromUserID: userID,
+		ToUserID:   userID,
+		Date:       int32(time.Now().Unix()),
+	}, "delete-unread-second")
+	if _, err := repo.ApplyUserOperation(ctx, secondDelete); err != nil {
+		t.Fatalf("ApplyUserOperation(second delete) error = %v", err)
+	}
+	dialog, err = repo.models.UserDialogsModel.SelectByUserPeer(ctx, userID, payload.PeerTypeUser, peerID)
+	if err != nil {
+		t.Fatalf("select dialog after second delete: %v", err)
+	}
+	if dialog.UnreadCount != 0 {
+		t.Fatalf("unread_count = %d, want 0", dialog.UnreadCount)
+	}
+}
+
 func TestApplyDeleteHistoryPersistsAvailableMinPublicUserMessageID(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)
@@ -1254,6 +1403,24 @@ func openIntegrationDB(t *testing.T) *sqlx.DB {
 		t.Skipf("mysql unavailable: %v", err)
 	}
 	return db
+}
+
+func cleanupDeleteMessagesIntegrationRows(t *testing.T, ctx context.Context, db *sqlx.DB, userID int64) {
+	t.Helper()
+	statements := []string{
+		"DELETE FROM push_task_outbox WHERE user_id = ?",
+		"DELETE FROM user_pts_events WHERE user_id = ?",
+		"DELETE FROM user_operation_results WHERE user_id = ?",
+		"DELETE FROM user_message_views WHERE user_id = ?",
+		"DELETE FROM user_message_sequences WHERE user_id = ?",
+		"DELETE FROM user_dialogs WHERE user_id = ?",
+		"DELETE FROM user_pts_state WHERE user_id = ?",
+	}
+	for _, statement := range statements {
+		if _, err := db.Exec(ctx, statement, userID); err != nil {
+			t.Fatalf("cleanup %q: %v", statement, err)
+		}
+	}
 }
 
 func mysqlTestTime(t time.Time) int64 {

@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 	"math"
+	"os"
+	"strings"
 	"testing"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository/model"
@@ -50,6 +52,21 @@ func TestMessageIDResolversAllowZeroIDWithoutStorage(t *testing.T) {
 	}
 	if bounds != (HistoryCursorBounds{}) {
 		t.Fatalf("ResolveHistoryCursorIDs zero = %+v, want zero bounds", bounds)
+	}
+}
+
+func TestDeleteResolverQueryDoesNotFilterLiveStatus(t *testing.T) {
+	body, err := os.ReadFile("model/tables/queries.xml")
+	if err != nil {
+		t.Fatalf("read queries.xml: %v", err)
+	}
+	normal := queryXMLBlock(t, string(body), "SelectUserMessageByGlobalID")
+	if !strings.Contains(normal, "message_status = :message_status") {
+		t.Fatalf("normal resolver query should remain live-status filtered:\n%s", normal)
+	}
+	deleteQuery := queryXMLBlock(t, string(body), "SelectUserMessageByGlobalIDForDelete")
+	if strings.Contains(deleteQuery, "message_status") {
+		t.Fatalf("delete resolver query should include deleted views by omitting message_status:\n%s", deleteQuery)
 	}
 }
 
@@ -101,6 +118,20 @@ func TestHistoryMessageRowToMessageUsesPublicIDs(t *testing.T) {
 	if msg.ReplyToPeerSeq != 0 {
 		t.Fatalf("ReplyToPeerSeq = %d, want 0 for v2 payload", msg.ReplyToPeerSeq)
 	}
+}
+
+func queryXMLBlock(t *testing.T, body string, name string) string {
+	t.Helper()
+	startTag := `<query name="` + name + `"`
+	start := strings.Index(body, startTag)
+	if start < 0 {
+		t.Fatalf("query %s not found", name)
+	}
+	end := strings.Index(body[start:], "</query>")
+	if end < 0 {
+		t.Fatalf("query %s has no closing tag", name)
+	}
+	return body[start : start+end]
 }
 
 func TestHistoryMessageRowToMessageResolvesLegacyReplyPeerSeq(t *testing.T) {

@@ -137,6 +137,81 @@ func TestProjectReadHistoryUsesSeqZeroForPush(t *testing.T) {
 	}
 }
 
+func TestProjectDeleteMessagesForDifferenceUsesPublicIDs(t *testing.T) {
+	body := mustMarshalMessageEventV2(t, payload.MessageEventV2{
+		SchemaVersion:        payload.MessageEventSchemaVersion,
+		EventKind:            payload.OperationKindDeleteMessages,
+		PeerType:             payload.PeerTypeUser,
+		PeerID:               1002,
+		Date:                 1_772_000_000,
+		DeleteUserMessageIDs: []int64{107, 108},
+	})
+
+	got, err := ProjectUserEvent(repository.UserEvent{
+		UserID:             1001,
+		Pts:                31,
+		PtsCount:           1,
+		EventType:          repository.EventTypeDeleteMessages,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             1002,
+		EventSchemaVersion: payload.MessageEventSchemaVersion,
+		EventCodec:         repository.PayloadCodecJSON,
+		EventPayload:       body,
+		EventPayloadHash:   payload.HashBytes(body),
+	}, ModeDifference)
+	if err != nil {
+		t.Fatalf("ProjectUserEvent() error = %v", err)
+	}
+	update, ok := got.Update.(*tg.TLUpdateDeleteMessages)
+	if !ok {
+		t.Fatalf("update = %T, want *tg.TLUpdateDeleteMessages", got.Update)
+	}
+	if update.Pts != 31 || update.PtsCount != 1 || len(update.Messages) != 2 || update.Messages[0] != 107 || update.Messages[1] != 108 {
+		t.Fatalf("update = %+v", update)
+	}
+}
+
+func TestProjectDeleteMessagesForPushUsesSeqZero(t *testing.T) {
+	body := mustMarshalMessageEventV2(t, payload.MessageEventV2{
+		SchemaVersion:        payload.MessageEventSchemaVersion,
+		EventKind:            payload.OperationKindDeleteMessages,
+		PeerType:             payload.PeerTypeUser,
+		PeerID:               1002,
+		Date:                 1_772_000_000,
+		DeleteUserMessageIDs: []int64{107},
+	})
+
+	got, err := ProjectPushTask(&payload.PushTaskKafkaMessageV1{
+		SchemaVersion: payload.PushTaskKafkaMessageSchemaVersion,
+		UserID:        1001,
+		Pts:           32,
+		PushType:      1,
+		PeerType:      payload.PeerTypeUser,
+		PeerID:        1002,
+		Payload:       body,
+	})
+	if err != nil {
+		t.Fatalf("ProjectPushTask() error = %v", err)
+	}
+	updates, ok := got.Updates.(*tg.TLUpdates)
+	if !ok {
+		t.Fatalf("updates = %T, want *tg.TLUpdates", got.Updates)
+	}
+	if updates.Seq != 0 {
+		t.Fatalf("updates seq = %d, want 0", updates.Seq)
+	}
+	if updates.Date != 1_772_000_000 {
+		t.Fatalf("updates date = %d, want event date", updates.Date)
+	}
+	update, ok := updates.Updates[0].(*tg.TLUpdateDeleteMessages)
+	if !ok {
+		t.Fatalf("update = %T, want *tg.TLUpdateDeleteMessages", updates.Updates[0])
+	}
+	if update.Pts != 32 || update.PtsCount != 1 || len(update.Messages) != 1 || update.Messages[0] != 107 {
+		t.Fatalf("delete update = %+v", update)
+	}
+}
+
 func TestProjectEditMessageUsesSeqZeroForPush(t *testing.T) {
 	body := mustMarshalMessageEventV2(t, payload.MessageEventV2{
 		SchemaVersion:      payload.MessageEventSchemaVersion,

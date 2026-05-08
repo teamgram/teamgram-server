@@ -44,6 +44,14 @@ func (r *Repository) ResolveMessageID(ctx context.Context, userID int64, peerTyp
 }
 
 func (r *Repository) ResolveMessageIDs(ctx context.Context, userID int64, userMessageIDs []int64) ([]ResolvedMessageID, error) {
+	return r.resolveMessageIDs(ctx, userID, userMessageIDs, false)
+}
+
+func (r *Repository) ResolveMessageIDsForDelete(ctx context.Context, userID int64, userMessageIDs []int64) ([]ResolvedMessageID, error) {
+	return r.resolveMessageIDs(ctx, userID, userMessageIDs, true)
+}
+
+func (r *Repository) resolveMessageIDs(ctx context.Context, userID int64, userMessageIDs []int64, includeDeleted bool) ([]ResolvedMessageID, error) {
 	if len(userMessageIDs) == 0 {
 		return nil, nil
 	}
@@ -60,7 +68,15 @@ func (r *Repository) ResolveMessageIDs(ctx context.Context, userID int64, userMe
 			continue
 		}
 		seen[userMessageID] = struct{}{}
-		row, err := r.models.CanonicalQueries.SelectUserMessageByGlobalID(ctx, userID, userMessageID, MessageStatusLive)
+		var (
+			row *model.ResolvedMessageIDRow
+			err error
+		)
+		if includeDeleted {
+			row, err = r.models.CanonicalQueries.SelectUserMessageByGlobalIDForDelete(ctx, userID, userMessageID)
+		} else {
+			row, err = r.models.CanonicalQueries.SelectUserMessageByGlobalID(ctx, userID, userMessageID, MessageStatusLive)
+		}
 		if err != nil {
 			if isModelNotFound(err) {
 				continue
