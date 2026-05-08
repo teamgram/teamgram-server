@@ -163,6 +163,66 @@ func TestPushTaskDispatcherSkipsExcludedAuthKey(t *testing.T) {
 	}
 }
 
+func TestPushTaskDispatcherRoutesWrappedNewMessageWithZeroSeq(t *testing.T) {
+	eventPayload, err := json.Marshal(payload.MessageEventV1{
+		SchemaVersion:      payload.MessageEventSchemaVersion,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: 7001,
+		MessageID:          9,
+		PeerType:           payload.PeerTypeChat,
+		PeerID:             1001,
+		FromUserID:         2002,
+		ToUserID:           2002,
+		Date:               1777781234,
+		Out:                false,
+		MessageText:        "hello",
+	})
+	if err != nil {
+		t.Fatalf("marshal event payload: %v", err)
+	}
+	body, err := payload.MarshalPushTaskKafkaMessage(payload.PushTaskKafkaMessageV1{
+		SchemaVersion: payload.PushTaskKafkaMessageSchemaVersion,
+		TaskID:        3,
+		UserID:        2002,
+		Pts:           40,
+		PushType:      1,
+		PeerType:      payload.PeerTypeChat,
+		PeerID:        1001,
+		OperationID:   "chat-message",
+		Payload:       eventPayload,
+	})
+	if err != nil {
+		t.Fatalf("marshal push task: %v", err)
+	}
+	auth := &fakePushAuthsession{keys: []int64{444}}
+	gatewayClient := &fakePushGateway{}
+	dispatcher := NewPushTaskDispatcher(auth, gatewayClient, nil)
+
+	if err := dispatcher.HandlePushTaskKafkaRecord(context.Background(), PushTaskKafkaRecord{Value: body}); err != nil {
+		t.Fatalf("HandlePushTaskKafkaRecord() error = %v", err)
+	}
+	if len(gatewayClient.requests) != 1 {
+		t.Fatalf("gateway push count = %d, want 1", len(gatewayClient.requests))
+	}
+	updates, ok := gatewayClient.requests[0].Updates.(*tg.TLUpdates)
+	if !ok {
+		t.Fatalf("updates = %T, want *tg.TLUpdates", gatewayClient.requests[0].Updates)
+	}
+	if updates.Seq != 0 {
+		t.Fatalf("updates seq = %d, want 0", updates.Seq)
+	}
+	if len(updates.Updates) != 1 {
+		t.Fatalf("updates payload = %+v", updates)
+	}
+	update, ok := updates.Updates[0].(*tg.TLUpdateNewMessage)
+	if !ok {
+		t.Fatalf("update = %T, want *tg.TLUpdateNewMessage", updates.Updates[0])
+	}
+	if update.Pts != 40 || update.PtsCount != 1 {
+		t.Fatalf("update pts = %+v", update)
+	}
+}
+
 func TestPushTaskDispatcherRoutesReadHistoryOutboxUpdate(t *testing.T) {
 	eventPayload, err := json.Marshal(payload.MessageEventV1{
 		SchemaVersion: payload.MessageEventSchemaVersion,
@@ -206,6 +266,9 @@ func TestPushTaskDispatcherRoutesReadHistoryOutboxUpdate(t *testing.T) {
 	}
 	if len(updates.Updates) != 1 {
 		t.Fatalf("updates payload = %+v", updates)
+	}
+	if updates.Seq != 0 {
+		t.Fatalf("updates seq = %d, want 0", updates.Seq)
 	}
 	update, ok := updates.Updates[0].(*tg.TLUpdateReadHistoryOutbox)
 	if !ok {

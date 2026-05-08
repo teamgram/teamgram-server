@@ -221,7 +221,7 @@ func pushTaskUpdates(msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, *int
 		Users: []tg.UserClazz{},
 		Chats: []tg.ChatClazz{},
 		Date:  date,
-		Seq:   pts,
+		Seq:   0,
 	}), event.AuthKeyIdExclude, nil
 }
 
@@ -272,7 +272,7 @@ func readHistoryUpdates(msg *payload.PushTaskKafkaMessageV1, event payload.Messa
 		Users:   []tg.UserClazz{},
 		Chats:   []tg.ChatClazz{},
 		Date:    date,
-		Seq:     pts,
+		Seq:     0,
 	}), event.AuthKeyIdExclude, nil
 }
 
