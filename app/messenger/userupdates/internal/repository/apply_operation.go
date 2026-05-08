@@ -104,13 +104,14 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 			return nil, userupdates.ErrOperationPayloadConflict
 		}
 		return &ApplyUserOperationResult{
-			UserID:          in.UserID,
-			OperationID:     in.OperationID,
-			Pts:             existing.Pts,
-			PtsCount:        existing.PtsCount,
-			ResponsePayload: existing.ResponsePayload,
-			ResponseHash:    existing.ResponseHash,
-			AlreadyApplied:  true,
+			UserID:                in.UserID,
+			OperationID:           in.OperationID,
+			Pts:                   existing.Pts,
+			PtsCount:              existing.PtsCount,
+			ResponseSchemaVersion: existing.ResponseSchemaVersion,
+			ResponsePayload:       existing.ResponsePayload,
+			ResponseHash:          existing.ResponseHash,
+			AlreadyApplied:        true,
 		}, nil
 	}
 
@@ -210,12 +211,13 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 		return nil, userupdates.ErrPtsContinuityViolation
 	}
 	return &ApplyUserOperationResult{
-		UserID:          in.UserID,
-		OperationID:     in.OperationID,
-		Pts:             nextPTS,
-		PtsCount:        ptsCount,
-		ResponsePayload: responsePayload,
-		ResponseHash:    responsePayloadHash,
+		UserID:                in.UserID,
+		OperationID:           in.OperationID,
+		Pts:                   nextPTS,
+		PtsCount:              ptsCount,
+		ResponseSchemaVersion: payload.OperationResponseSchemaVersion,
+		ResponsePayload:       responsePayload,
+		ResponseHash:          responsePayloadHash,
 	}, nil
 }
 
@@ -224,12 +226,15 @@ func resolvePublicIDsForOperation(txModels *model.TxModels, userID int64, op *pa
 		return nil
 	}
 	if createsUserMessageView(op.OperationKind) {
-		existingID, found, err := existingUserMessageID(txModels, userID, op.CanonicalMessageID)
+		existing, found, err := existingUserMessageView(txModels, userID, op.CanonicalMessageID)
 		if err != nil {
 			return err
 		}
-		if found && existingID > 0 {
-			op.UserMessageID = existingID
+		if found {
+			if err := ensureExistingMessageViewMatchesOperation(existing, *op); err != nil {
+				return err
+			}
+			op.UserMessageID = existing.UserMessageId
 		}
 		if op.UserMessageID == 0 {
 			userMessageID, err := nextUserMessageID(txModels, userID)
@@ -394,7 +399,16 @@ func buildEventAndResponse(in ApplyUserOperationInput, op payload.MessageOperati
 }
 
 func insertUserMessageView(txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, viewPayload []byte) error {
-	_, _, err := txModels.UserMessageViewsModel.InsertOrUpdate(&model.UserMessageViews{
+	existing, err := txModels.UserMessageViewsModel.SelectByUserCanonical(in.UserID, op.CanonicalMessageID)
+	if err != nil && !errors.Is(err, model.ErrNotFound) {
+		return storageError("select existing user message view before insert", err)
+	}
+	if existing != nil {
+		if existing.UserMessageId != op.UserMessageID || !bytes.Equal(existing.ViewPayload, viewPayload) {
+			return userupdates.ErrOperationPayloadConflict
+		}
+	}
+	_, _, err = txModels.UserMessageViewsModel.InsertOrUpdate(&model.UserMessageViews{
 		UserId:             in.UserID,
 		PeerType:           op.PeerType,
 		PeerId:             op.PeerID,

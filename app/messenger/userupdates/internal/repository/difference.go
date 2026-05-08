@@ -123,16 +123,17 @@ func (r *Repository) GetDifference(ctx context.Context, in GetDifferenceInput) (
 
 func operationResultFromModel(r *model.UserOperationResults) *OperationResult {
 	return &OperationResult{
-		UserID:            r.UserId,
-		OperationID:       r.OperationId,
-		OpType:            r.OpType,
-		Status:            r.Status,
-		Pts:               r.Pts,
-		PtsCount:          r.PtsCount,
-		PayloadHash:       r.PayloadHash,
-		ResponsePayload:   r.ResponsePayload,
-		ResponseHash:      r.ResponsePayloadHash,
-		TerminalErrorCode: r.TerminalErrorCode,
+		UserID:                r.UserId,
+		OperationID:           r.OperationId,
+		OpType:                r.OpType,
+		Status:                r.Status,
+		Pts:                   r.Pts,
+		PtsCount:              r.PtsCount,
+		PayloadHash:           r.PayloadHash,
+		ResponseSchemaVersion: r.ResponseSchemaVersion,
+		ResponsePayload:       r.ResponsePayload,
+		ResponseHash:          r.ResponsePayloadHash,
+		TerminalErrorCode:     r.TerminalErrorCode,
 	}
 }
 

@@ -280,6 +280,46 @@ func TestGetOperationResultRejectsMismatchedPayloadHash(t *testing.T) {
 	}
 }
 
+func TestGetOperationResultPreservesLegacyResponseSchema(t *testing.T) {
+	responsePayload := mustMarshalOperationResponseV1(t, payload.OperationResponseV1{
+		SchemaVersion: payload.OperationResponseSchemaVersionV1,
+		OperationID:   "v1:msg:2001:receiver:1001:in",
+		Pts:           8,
+		PtsCount:      1,
+		EventType:     payload.EventKindNewMessage,
+	})
+	responseHash := payload.HashBytes(responsePayload)
+	repo := &fakeUserUpdatesRepository{
+		operationResult: &repository.OperationResult{
+			UserID:                1001,
+			OperationID:           "v1:msg:2001:receiver:1001:in",
+			Status:                repository.OperationResultStatusCompleted,
+			Pts:                   8,
+			PtsCount:              1,
+			PayloadHash:           []byte("payload-hash"),
+			ResponseSchemaVersion: payload.OperationResponseSchemaVersionV1,
+			ResponsePayload:       responsePayload,
+			ResponseHash:          responseHash,
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.UserupdatesGetOperationResult(&userupdates.TLUserupdatesGetOperationResult{
+		UserId:      1001,
+		OperationId: "v1:msg:2001:receiver:1001:in",
+		PayloadHash: []byte("payload-hash"),
+	})
+	if err != nil {
+		t.Fatalf("GetOperationResult returned error: %v", err)
+	}
+	if got.ResponseSchemaVersion == nil || *got.ResponseSchemaVersion != payload.OperationResponseSchemaVersionV1 {
+		t.Fatalf("response schema version = %v, want %d", got.ResponseSchemaVersion, payload.OperationResponseSchemaVersionV1)
+	}
+	if !bytes.Equal(got.ResponsePayload, responsePayload) || !bytes.Equal(got.ResponsePayloadHash, responseHash) {
+		t.Fatalf("unexpected response payload/hash: payload=%s hash=%x", string(got.ResponsePayload), got.ResponsePayloadHash)
+	}
+}
+
 func TestGetDifferenceBuildsVisibleMessageFromEventPayload(t *testing.T) {
 	eventPayload := mustMarshalMessageEventV2(t, payload.MessageEventV2{
 		SchemaVersion:        payload.MessageEventSchemaVersion,
@@ -1069,6 +1109,15 @@ func mustMarshalMessageEvent(t *testing.T, event payload.MessageEventV1) []byte 
 	b, err := json.Marshal(event)
 	if err != nil {
 		t.Fatalf("marshal message event: %v", err)
+	}
+	return b
+}
+
+func mustMarshalOperationResponseV1(t *testing.T, response payload.OperationResponseV1) []byte {
+	t.Helper()
+	b, err := json.Marshal(response)
+	if err != nil {
+		t.Fatalf("marshal operation response v1: %v", err)
 	}
 	return b
 }

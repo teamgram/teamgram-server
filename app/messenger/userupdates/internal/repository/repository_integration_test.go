@@ -729,6 +729,67 @@ func TestApplyEditMessageCarriesPublicUserMessageID(t *testing.T) {
 	}
 }
 
+func TestApplyUserOperationConflictsOnDifferentPayloadForExistingCanonicalView(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	userID := base + 4201
+	peerID := base + 4202
+	repo := NewForTest(db, &testIDGenerator{next: base + 42000}, "local-userupdates")
+	first := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion:      payload.MessageOperationSchemaVersion,
+		OperationKind:      payload.OperationKindSendMessage,
+		CanonicalMessageID: userID*10 + 1,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             peerID,
+		PeerSeq:            1,
+		FromUserID:         userID,
+		ToUserID:           peerID,
+		Date:               int32(time.Now().Unix()),
+		Out:                true,
+		MessageText:        "original",
+	}, "canonical-original")
+	if _, err := repo.ClaimPartitionOwner(ctx, first.PartitionID); err != nil {
+		t.Fatalf("ClaimPartitionOwner() error = %v", err)
+	}
+	if _, err := repo.ApplyUserOperation(ctx, first); err != nil {
+		t.Fatalf("ApplyUserOperation(first) error = %v", err)
+	}
+
+	conflict := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion:      payload.MessageOperationSchemaVersion,
+		OperationKind:      payload.OperationKindSendMessage,
+		CanonicalMessageID: userID*10 + 1,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             peerID,
+		PeerSeq:            2,
+		FromUserID:         userID,
+		ToUserID:           peerID,
+		Date:               int32(time.Now().Unix()),
+		Out:                true,
+		MessageText:        "different",
+	}, "canonical-conflict")
+	_, err := repo.ApplyUserOperation(ctx, conflict)
+	if !errors.Is(err, userupdates.ErrOperationPayloadConflict) {
+		t.Fatalf("ApplyUserOperation(conflict) error = %v, want ErrOperationPayloadConflict", err)
+	}
+
+	view, err := repo.models.UserMessageViewsModel.SelectByUserCanonical(ctx, userID, userID*10+1)
+	if err != nil {
+		t.Fatalf("SelectByUserCanonical() error = %v", err)
+	}
+	var event payload.MessageEventV2
+	if err := json.Unmarshal(view.ViewPayload, &event); err != nil {
+		t.Fatalf("decode view payload: %v", err)
+	}
+	if event.PeerSeq != 1 || event.MessageText != "original" {
+		t.Fatalf("existing view was overwritten: %+v", event)
+	}
+	if _, err := repo.GetOperationResult(ctx, userID, conflict.OperationID); !errors.Is(err, userupdates.ErrOperationTerminal) {
+		t.Fatalf("GetOperationResult(conflict) error = %v, want ErrOperationTerminal", err)
+	}
+}
+
 func TestApplyMarkDialogUnreadLivesWithReadStateOwner(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)

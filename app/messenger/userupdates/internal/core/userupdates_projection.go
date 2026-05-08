@@ -17,7 +17,10 @@ func applyResultToTL(in *repository.ApplyUserOperationResult) (*userupdates.User
 	if in == nil {
 		return nil, userupdates.ErrOperationTerminal
 	}
-	schemaVersion := int32(payload.OperationResponseSchemaVersion)
+	schemaVersion := in.ResponseSchemaVersion
+	if schemaVersion == 0 {
+		schemaVersion = payload.OperationResponseSchemaVersion
+	}
 	return userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
 		UserId:                in.UserID,
 		OperationId:           in.OperationID,
@@ -35,10 +38,9 @@ func operationResultToTL(in *repository.OperationResult) (*userupdates.UserOpera
 	if in == nil {
 		return nil, userupdates.ErrOperationTerminal
 	}
-	var schemaVersion *int32
-	if len(in.ResponsePayload) != 0 {
-		v := int32(payload.OperationResponseSchemaVersion)
-		schemaVersion = &v
+	schemaVersion, err := operationResponseSchemaVersion(in.ResponseSchemaVersion, in.ResponsePayload)
+	if err != nil {
+		return nil, err
 	}
 	return userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
 		UserId:                in.UserID,
@@ -51,6 +53,44 @@ func operationResultToTL(in *repository.OperationResult) (*userupdates.UserOpera
 		ResponsePayload:       in.ResponsePayload,
 		ResponsePayloadHash:   in.ResponseHash,
 	}).ToUserOperationResult(), nil
+}
+
+func operationResponseSchemaVersion(storedSchemaVersion int32, responsePayload []byte) (*int32, error) {
+	if len(responsePayload) == 0 {
+		return nil, nil
+	}
+	schemaVersion := storedSchemaVersion
+	if schemaVersion == 0 {
+		var header struct {
+			SchemaVersion int32 `json:"schema_version"`
+		}
+		if err := json.Unmarshal(responsePayload, &header); err != nil {
+			return nil, fmt.Errorf("%w: decode operation response schema: %v", userupdates.ErrUserupdatesStorage, err)
+		}
+		schemaVersion = header.SchemaVersion
+	}
+	switch schemaVersion {
+	case payload.OperationResponseSchemaVersionV1:
+		var response payload.OperationResponseV1
+		if err := json.Unmarshal(responsePayload, &response); err != nil {
+			return nil, fmt.Errorf("%w: decode legacy operation response: %v", userupdates.ErrUserupdatesStorage, err)
+		}
+		if response.SchemaVersion != payload.OperationResponseSchemaVersionV1 {
+			return nil, fmt.Errorf("%w: operation response schema mismatch stored=%d payload=%d", userupdates.ErrUserupdatesStorage, schemaVersion, response.SchemaVersion)
+		}
+	case payload.OperationResponseSchemaVersion:
+		var response payload.OperationResponseV2
+		if err := json.Unmarshal(responsePayload, &response); err != nil {
+			return nil, fmt.Errorf("%w: decode operation response: %v", userupdates.ErrUserupdatesStorage, err)
+		}
+		if response.SchemaVersion != payload.OperationResponseSchemaVersion {
+			return nil, fmt.Errorf("%w: operation response schema mismatch stored=%d payload=%d", userupdates.ErrUserupdatesStorage, schemaVersion, response.SchemaVersion)
+		}
+	default:
+		return nil, fmt.Errorf("%w: unsupported operation response schema=%d", userupdates.ErrUserupdatesStorage, schemaVersion)
+	}
+	v := schemaVersion
+	return &v, nil
 }
 
 func stateToTL(in repository.UserState) *userupdates.UserState {
