@@ -1155,7 +1155,7 @@ func TestMsgResolveDialogCursorTopMessageReturnsNotFoundForUnknownPositiveID(t *
 	}
 }
 
-func TestMsgDeleteMessagesRoutesProjectionOperation(t *testing.T) {
+func TestMsgDeleteMessagesRoutesGlobalPublicIDsByRealPeer(t *testing.T) {
 	updatesClient := &fakeUserUpdatesClient{
 		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
 			UserId:      1001,
@@ -1177,8 +1177,8 @@ func TestMsgDeleteMessagesRoutesProjectionOperation(t *testing.T) {
 	got, err := core.MsgDeleteMessages(&msgpb.TLMsgDeleteMessages{
 		UserId:    1001,
 		AuthKeyId: 9001,
-		PeerType:  payload.PeerTypeUser,
-		PeerId:    1002,
+		PeerType:  0,
+		PeerId:    0,
 		Id:        []int32{107, 108},
 	})
 	if err != nil {
@@ -1187,15 +1187,96 @@ func TestMsgDeleteMessagesRoutesProjectionOperation(t *testing.T) {
 	if got.Pts != 31 || got.PtsCount != 1 {
 		t.Fatalf("affected = %+v", got)
 	}
+	if updatesClient.processed == nil {
+		t.Fatalf("delete operation was not dispatched")
+	}
 	var op payload.MessageOperationV1
 	if err := json.Unmarshal(updatesClient.processed.Payload, &op); err != nil {
 		t.Fatalf("decode delete payload: %v", err)
 	}
-	if op.OperationKind != payload.OperationKindDeleteMessages || len(op.DeletePeerSeqs) != 2 || op.DeletePeerSeqs[0] != 7 || op.DeletePeerSeqs[1] != 8 {
+	if op.PeerID != 1002 || len(op.DeletePeerSeqs) != 2 || op.DeletePeerSeqs[0] != 7 || op.DeletePeerSeqs[1] != 8 {
 		t.Fatalf("unexpected delete payload: %+v", op)
 	}
 	if len(op.DeleteUserMessageIDs) != 2 || op.DeleteUserMessageIDs[0] != 107 || op.DeleteUserMessageIDs[1] != 108 {
-		t.Fatalf("unexpected delete payload: %+v", op)
+		t.Fatalf("unexpected public delete ids: %+v", op)
+	}
+}
+
+func TestMsgDeleteMessagesGroupsGlobalIDsByPeer(t *testing.T) {
+	updatesClient := &fakeUserUpdatesClient{
+		processResults: []*userupdates.UserOperationResult{
+			userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+				UserId: 1001, OperationId: deleteMessagesOperationID(1001, 1002, []int32{107}, false, 9001), Status: 1, Pts: 31, PtsCount: 1, CurrentPts: 31,
+			}),
+			userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+				UserId: 1001, OperationId: deleteMessagesOperationID(1001, 1003, []int32{208}, false, 9001), Status: 1, Pts: 32, PtsCount: 1, CurrentPts: 32,
+			}),
+		},
+	}
+	repo := &fakeMsgRepository{
+		resolveManyByUserMessageID: map[int64]*repository.ResolvedMessageID{
+			107: {UserID: 1001, PeerType: payload.PeerTypeUser, PeerID: 1002, UserMessageID: 107, PeerSeq: 7, CanonicalMessageID: 7007},
+			208: {UserID: 1001, PeerType: payload.PeerTypeUser, PeerID: 1003, UserMessageID: 208, PeerSeq: 2, CanonicalMessageID: 8002},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo, UserUpdates: updatesClient})
+
+	got, err := core.MsgDeleteMessages(&msgpb.TLMsgDeleteMessages{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		Id:        []int32{107, 208},
+	})
+	if err != nil {
+		t.Fatalf("MsgDeleteMessages() error = %v", err)
+	}
+	if got.Pts != 32 || got.PtsCount != 2 {
+		t.Fatalf("affected = %+v, want final pts 32 and two requester operations", got)
+	}
+	if len(updatesClient.processedOperations) != 2 {
+		t.Fatalf("processed operations = %d, want 2", len(updatesClient.processedOperations))
+	}
+}
+
+func TestMsgDeleteMessagesRevokeEnqueuesPeerEffect(t *testing.T) {
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:      1001,
+			OperationId: deleteMessagesOperationID(1001, 1002, []int32{107}, true, 9001),
+			Status:      1,
+			Pts:         33,
+			PtsCount:    1,
+			CurrentPts:  33,
+		}),
+	}
+	repo := &fakeMsgRepository{
+		resolveManyByUserMessageID: map[int64]*repository.ResolvedMessageID{
+			107: {UserID: 1001, PeerType: payload.PeerTypeUser, PeerID: 1002, UserMessageID: 107, PeerSeq: 7, CanonicalMessageID: 7007},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo, UserUpdates: updatesClient})
+
+	_, err := core.MsgDeleteMessages(&msgpb.TLMsgDeleteMessages{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		Revoke:    true,
+		Id:        []int32{107},
+	})
+	if err != nil {
+		t.Fatalf("MsgDeleteMessages() error = %v", err)
+	}
+	if updatesClient.processWithEffects == nil || len(updatesClient.processWithEffects.AffectedEffects) != 1 {
+		t.Fatalf("affected effects = %+v", updatesClient.processWithEffects)
+	}
+	effect := updatesClient.processWithEffects.AffectedEffects[0].ToAffectedUserOperation()
+	if effect == nil || effect.Operation == nil || effect.Operation.UserId != 1002 || effect.Operation.PeerId != 1001 {
+		t.Fatalf("peer effect = %+v", effect)
+	}
+	var peerOp payload.MessageOperationV1
+	if err := json.Unmarshal(effect.Operation.Payload, &peerOp); err != nil {
+		t.Fatalf("decode peer payload: %v", err)
+	}
+	if len(peerOp.DeleteUserMessageIDs) != 0 || len(peerOp.DeletePeerSeqs) != 1 || peerOp.DeletePeerSeqs[0] != 7 {
+		t.Fatalf("peer delete payload = %+v", peerOp)
 	}
 }
 
@@ -1843,18 +1924,34 @@ func (f *fakeMsgRepository) MarkRetryableFailure(context.Context, repository.Mar
 type fakeUserUpdatesClient struct {
 	processed                *userupdates.TLUserOperation
 	processedList            []*userupdates.TLUserOperation
+	processedOperations      []*userupdates.TLUserOperation
 	processResult            *userupdates.UserOperationResult
+	processResults           []*userupdates.UserOperationResult
 	processWithEffects       *userupdates.TLUserupdatesProcessUserOperationWithEffects
 	processWithEffectsResult *userupdates.UserOperationResult
+	processErr               error
 	processWithEffectsErr    error
 	getResult                *userupdates.UserOperationResult
 	getOperationResultCalls  int
 }
 
+func (f *fakeUserUpdatesClient) nextProcessResult() *userupdates.UserOperationResult {
+	if len(f.processResults) > 0 {
+		result := f.processResults[0]
+		f.processResults = f.processResults[1:]
+		return result
+	}
+	return f.processResult
+}
+
 func (f *fakeUserUpdatesClient) UserupdatesProcessUserOperation(_ context.Context, in *userupdates.TLUserupdatesProcessUserOperation) (*userupdates.UserOperationResult, error) {
 	f.processed = in.Operation
 	f.processedList = append(f.processedList, in.Operation)
-	return f.processResult, nil
+	f.processedOperations = append(f.processedOperations, in.Operation)
+	if f.processErr != nil {
+		return nil, f.processErr
+	}
+	return f.nextProcessResult(), nil
 }
 
 func (f *fakeUserUpdatesClient) UserupdatesGetOperationResult(_ context.Context, _ *userupdates.TLUserupdatesGetOperationResult) (*userupdates.UserOperationResult, error) {

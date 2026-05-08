@@ -31,11 +31,14 @@ import (
 // MsgDeleteMessages
 // msg.deleteMessages flags:# user_id:long auth_key_id:long peer_type:int peer_id:long revoke:flags.1?true id:Vector<int> = messages.AffectedMessages;
 func (c *MsgCore) MsgDeleteMessages(in *msg.TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error) {
-	if in == nil || in.UserId <= 0 || in.PeerId <= 0 || len(in.Id) == 0 {
+	if in == nil || in.UserId <= 0 || len(in.Id) == 0 {
 		return nil, fmt.Errorf("%w: invalid delete messages request", msg.ErrSendStateConflict)
 	}
-	if in.PeerType != payload.PeerTypeUser {
+	if in.PeerType != 0 && in.PeerType != payload.PeerTypeUser {
 		return nil, fmt.Errorf("%w: delete messages first slice only supports user peer", msg.ErrSendStateConflict)
+	}
+	if in.PeerType != 0 && in.PeerId <= 0 {
+		return nil, fmt.Errorf("%w: invalid delete messages peer", msg.ErrSendStateConflict)
 	}
 	if c.svcCtx.UserUpdates == nil {
 		return nil, msg.ErrSenderSyncFailed
@@ -138,7 +141,7 @@ func groupDeleteMessageIDs(items []repository.ResolvedMessageID, peerType int32,
 		if item.PeerSeq <= 0 || item.UserMessageID <= 0 {
 			continue
 		}
-		if item.PeerType != peerType || item.PeerID != peerID {
+		if peerType != 0 && (item.PeerType != peerType || item.PeerID != peerID) {
 			continue
 		}
 		key := struct {
