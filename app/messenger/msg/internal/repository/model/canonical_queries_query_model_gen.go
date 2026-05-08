@@ -41,6 +41,17 @@ type HistoryMessageRow struct {
 	ViewPayload        []byte `db:"view_payload"`
 }
 
+type ResolvedMessageIDRow struct {
+	UserID             int64 `db:"user_id"`
+	PeerType           int32 `db:"peer_type"`
+	PeerID             int64 `db:"peer_id"`
+	UserMessageID      int64 `db:"user_message_id"`
+	PeerSeq            int64 `db:"peer_seq"`
+	CanonicalMessageID int64 `db:"canonical_message_id"`
+	MessageDate        int64 `db:"message_date"`
+	Outgoing           bool  `db:"outgoing"`
+}
+
 type EditableMessageRow struct {
 	CanonicalMessageID int64  `db:"canonical_message_id"`
 	PeerSeq            int64  `db:"peer_seq"`
@@ -65,6 +76,8 @@ type PeerSeqFloorRow struct {
 type CanonicalQueriesModel interface {
 	SelectCanonicalByRandom(ctx context.Context, senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (*CanonicalMessageRow, error)
 	SelectCanonicalByID(ctx context.Context, sendStateId int64, requestPayloadHash []byte, canonicalMessageId int64) (*CanonicalMessageRow, error)
+	SelectUserMessageByID(ctx context.Context, userId int64, peerType int32, peerId int64, userMessageId int64, messageStatus int32) (*ResolvedMessageIDRow, error)
+	SelectNearestLiveUserMessageByPeerSeq(ctx context.Context, userId int64, peerType int32, peerId int64, peerSeq int64, messageStatus int32) (*ResolvedMessageIDRow, error)
 	SelectHistoryMessages(ctx context.Context, userId int64, peerType int32, peerId int64, messageStatus int32, minPeerSeq int64, maxPeerSeq int64, limit int32) ([]HistoryMessageRow, error)
 	SearchHashTagMessages(ctx context.Context, hashTag string, userId int64, peerType int32, peerId int64, messageStatus int32, offsetId int64, offsetIdLimit int64, likeTag string, limit int32) ([]HistoryMessageRow, error)
 	SelectCanonicalByUserView(ctx context.Context, userId int64, peerType int32, peerId int64, peerSeq int64, messageStatus int32) (*HistoryMessageRow, error)
@@ -77,6 +90,8 @@ type CanonicalQueriesModel interface {
 type CanonicalQueriesTxModel interface {
 	SelectCanonicalByRandom(senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (*CanonicalMessageRow, error)
 	SelectCanonicalByID(sendStateId int64, requestPayloadHash []byte, canonicalMessageId int64) (*CanonicalMessageRow, error)
+	SelectUserMessageByID(userId int64, peerType int32, peerId int64, userMessageId int64, messageStatus int32) (*ResolvedMessageIDRow, error)
+	SelectNearestLiveUserMessageByPeerSeq(userId int64, peerType int32, peerId int64, peerSeq int64, messageStatus int32) (*ResolvedMessageIDRow, error)
 	SelectHistoryMessages(userId int64, peerType int32, peerId int64, messageStatus int32, minPeerSeq int64, maxPeerSeq int64, limit int32) ([]HistoryMessageRow, error)
 	SearchHashTagMessages(hashTag string, userId int64, peerType int32, peerId int64, messageStatus int32, offsetId int64, offsetIdLimit int64, likeTag string, limit int32) ([]HistoryMessageRow, error)
 	SelectCanonicalByUserView(userId int64, peerType int32, peerId int64, peerSeq int64, messageStatus int32) (*HistoryMessageRow, error)
@@ -140,6 +155,50 @@ func (m *defaultCanonicalQueriesTxModel) SelectCanonicalByID(sendStateId int64, 
 	query := "select ? as send_state_id, canonical_message_id, peer_seq, `date` as message_date, ? as request_payload_hash from canonical_messages where canonical_message_id = ? limit 1"
 
 	err := m.tx.QueryRowPartial(&rValue, query, sendStateId, requestPayloadHash, canonicalMessageId)
+	if err != nil {
+		return nil, err
+	}
+	return &rValue, nil
+}
+
+func (m *defaultCanonicalQueriesModel) SelectUserMessageByID(ctx context.Context, userId int64, peerType int32, peerId int64, userMessageId int64, messageStatus int32) (*ResolvedMessageIDRow, error) {
+	var rValue ResolvedMessageIDRow
+	query := "select user_id, peer_type, peer_id, user_message_id, peer_seq, canonical_message_id, `date` as message_date, outgoing from user_message_views where user_id = ? and peer_type = ? and peer_id = ? and user_message_id = ? and message_status = ? limit 1"
+
+	err := m.db.QueryRowPartial(ctx, &rValue, query, userId, peerType, peerId, userMessageId, messageStatus)
+	if err != nil {
+		return nil, err
+	}
+	return &rValue, nil
+}
+
+func (m *defaultCanonicalQueriesTxModel) SelectUserMessageByID(userId int64, peerType int32, peerId int64, userMessageId int64, messageStatus int32) (*ResolvedMessageIDRow, error) {
+	var rValue ResolvedMessageIDRow
+	query := "select user_id, peer_type, peer_id, user_message_id, peer_seq, canonical_message_id, `date` as message_date, outgoing from user_message_views where user_id = ? and peer_type = ? and peer_id = ? and user_message_id = ? and message_status = ? limit 1"
+
+	err := m.tx.QueryRowPartial(&rValue, query, userId, peerType, peerId, userMessageId, messageStatus)
+	if err != nil {
+		return nil, err
+	}
+	return &rValue, nil
+}
+
+func (m *defaultCanonicalQueriesModel) SelectNearestLiveUserMessageByPeerSeq(ctx context.Context, userId int64, peerType int32, peerId int64, peerSeq int64, messageStatus int32) (*ResolvedMessageIDRow, error) {
+	var rValue ResolvedMessageIDRow
+	query := "select user_id, peer_type, peer_id, user_message_id, peer_seq, canonical_message_id, `date` as message_date, outgoing from user_message_views where user_id = ? and peer_type = ? and peer_id = ? and peer_seq <= ? and message_status = ? order by peer_seq desc limit 1"
+
+	err := m.db.QueryRowPartial(ctx, &rValue, query, userId, peerType, peerId, peerSeq, messageStatus)
+	if err != nil {
+		return nil, err
+	}
+	return &rValue, nil
+}
+
+func (m *defaultCanonicalQueriesTxModel) SelectNearestLiveUserMessageByPeerSeq(userId int64, peerType int32, peerId int64, peerSeq int64, messageStatus int32) (*ResolvedMessageIDRow, error) {
+	var rValue ResolvedMessageIDRow
+	query := "select user_id, peer_type, peer_id, user_message_id, peer_seq, canonical_message_id, `date` as message_date, outgoing from user_message_views where user_id = ? and peer_type = ? and peer_id = ? and peer_seq <= ? and message_status = ? order by peer_seq desc limit 1"
+
+	err := m.tx.QueryRowPartial(&rValue, query, userId, peerType, peerId, peerSeq, messageStatus)
 	if err != nil {
 		return nil, err
 	}

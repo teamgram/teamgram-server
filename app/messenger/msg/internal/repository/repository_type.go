@@ -110,16 +110,18 @@ type SearchHashTagMessagesInput struct {
 }
 
 type HistoryMessage struct {
-	CanonicalMessageID int64
-	PeerSeq            int64
-	ReplyToPeerSeq     int64
-	FromUserID         int64
-	Outgoing           bool
-	PeerType           int32
-	PeerID             int64
-	MessageKind        int32
-	MessageText        string
-	MessageDate        int64
+	CanonicalMessageID   int64
+	PeerSeq              int64
+	UserMessageID        int64
+	ReplyToPeerSeq       int64
+	ReplyToUserMessageID int64
+	FromUserID           int64
+	Outgoing             bool
+	PeerType             int32
+	PeerID               int64
+	MessageKind          int32
+	MessageText          string
+	MessageDate          int64
 }
 
 type CanonicalMessage struct {
@@ -177,6 +179,9 @@ type MessageRepository interface {
 	GetCanonicalMessageByPeerSeq(ctx context.Context, userID int64, peerType int32, peerID int64, peerSeq int64) (*CanonicalMessage, error)
 	EditCanonicalMessage(ctx context.Context, in EditCanonicalMessageInput) (*EditMessageResult, error)
 	ListHistoryMessages(ctx context.Context, in ListHistoryMessagesInput) ([]HistoryMessage, error)
+	ResolveMessageID(ctx context.Context, userID int64, peerType int32, peerID int64, userMessageID int64) (*ResolvedMessageID, error)
+	ResolveHistoryCursorIDs(ctx context.Context, userID int64, peerType int32, peerID int64, offsetID int32, maxID int32, minID int32) (HistoryCursorBounds, error)
+	ResolvePeerSeqToUserMessageID(ctx context.Context, userID int64, peerType int32, peerID int64, peerSeq int64) (int64, error)
 }
 
 type MessageSendStateRepository interface {

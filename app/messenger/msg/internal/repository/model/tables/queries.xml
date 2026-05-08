@@ -21,6 +21,17 @@
         <field name="ViewPayload" type="[]byte" db="view_payload"/>
     </result>
 
+    <result name="ResolvedMessageIDRow">
+        <field name="UserID" type="int64" db="user_id"/>
+        <field name="PeerType" type="int32" db="peer_type"/>
+        <field name="PeerID" type="int64" db="peer_id"/>
+        <field name="UserMessageID" type="int64" db="user_message_id"/>
+        <field name="PeerSeq" type="int64" db="peer_seq"/>
+        <field name="CanonicalMessageID" type="int64" db="canonical_message_id"/>
+        <field name="MessageDate" type="int64" db="message_date"/>
+        <field name="Outgoing" type="bool" db="outgoing"/>
+    </result>
+
     <result name="EditableMessageRow">
         <field name="CanonicalMessageID" type="int64" db="canonical_message_id"/>
         <field name="PeerSeq" type="int64" db="peer_seq"/>
@@ -83,6 +94,62 @@
                 canonical_messages
             WHERE
                 canonical_message_id = :canonical_message_id
+            LIMIT 1
+        </sql>
+    </query>
+
+    <query name="SelectUserMessageByID" result="ResolvedMessageIDRow">
+        <params>
+            <param name="peer_type" type="int32"/>
+            <param name="message_status" type="int32"/>
+        </params>
+        <sql>
+            SELECT
+                user_id,
+                peer_type,
+                peer_id,
+                user_message_id,
+                peer_seq,
+                canonical_message_id,
+                date AS message_date,
+                outgoing
+            FROM
+                user_message_views
+            WHERE
+                user_id = :user_id
+                AND peer_type = :peer_type
+                AND peer_id = :peer_id
+                AND user_message_id = :user_message_id
+                AND message_status = :message_status
+            LIMIT 1
+        </sql>
+    </query>
+
+    <query name="SelectNearestLiveUserMessageByPeerSeq" result="ResolvedMessageIDRow">
+        <params>
+            <param name="peer_type" type="int32"/>
+            <param name="message_status" type="int32"/>
+        </params>
+        <sql>
+            SELECT
+                user_id,
+                peer_type,
+                peer_id,
+                user_message_id,
+                peer_seq,
+                canonical_message_id,
+                date AS message_date,
+                outgoing
+            FROM
+                user_message_views
+            WHERE
+                user_id = :user_id
+                AND peer_type = :peer_type
+                AND peer_id = :peer_id
+                AND peer_seq &lt;= :peer_seq
+                AND message_status = :message_status
+            ORDER BY
+                peer_seq DESC
             LIMIT 1
         </sql>
     </query>

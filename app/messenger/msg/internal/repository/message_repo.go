@@ -120,6 +120,13 @@ func (r *Repository) ListHistoryMessages(ctx context.Context, in ListHistoryMess
 	if _, err := r.requireDB(); err != nil {
 		return nil, err
 	}
+	bounds, err := r.ResolveHistoryCursorIDs(ctx, in.UserID, in.PeerType, in.PeerID, in.OffsetID, in.MaxID, in.MinID)
+	if err != nil {
+		return nil, err
+	}
+	in.OffsetID = int32(bounds.OffsetPeerSeq)
+	in.MaxID = int32(bounds.MaxPeerSeq)
+	in.MinID = int32(bounds.MinPeerSeq)
 
 	limit := pagination.NormalizeLimit(in.Limit)
 	offset, err := r.historySliceOffset(ctx, in)
@@ -336,24 +343,42 @@ func (r *Repository) selectHistoryMessagesSlice(ctx context.Context, in ListHist
 
 func historyMessageRowToMessage(r model.HistoryMessageRow) (HistoryMessage, error) {
 	var replyToPeerSeq int64
+	var replyToUserMessageID int64
 	if len(r.ViewPayload) > 0 {
-		var event payload.MessageEventV1
-		if err := json.Unmarshal(r.ViewPayload, &event); err != nil {
+		var envelope struct {
+			SchemaVersion int `json:"schema_version"`
+		}
+		if err := json.Unmarshal(r.ViewPayload, &envelope); err != nil {
 			return HistoryMessage{}, storageError("decode history view payload", err)
 		}
-		replyToPeerSeq = event.ReplyToPeerSeq
+		switch envelope.SchemaVersion {
+		case payload.MessageEventSchemaVersion:
+			var event payload.MessageEventV2
+			if err := json.Unmarshal(r.ViewPayload, &event); err != nil {
+				return HistoryMessage{}, storageError("decode history view payload v2", err)
+			}
+			replyToUserMessageID = event.ReplyToUserMessageID
+		default:
+			var event payload.MessageEventV1
+			if err := json.Unmarshal(r.ViewPayload, &event); err != nil {
+				return HistoryMessage{}, storageError("decode history view payload v1", err)
+			}
+			replyToPeerSeq = event.ReplyToPeerSeq
+		}
 	}
 	return HistoryMessage{
-		CanonicalMessageID: r.CanonicalMessageID,
-		PeerSeq:            r.PeerSeq,
-		FromUserID:         r.FromUserID,
-		Outgoing:           r.Outgoing,
-		PeerType:           r.PeerType,
-		PeerID:             r.PeerID,
-		MessageKind:        r.MessageKind,
-		MessageText:        r.MessageText,
-		MessageDate:        r.MessageDate,
-		ReplyToPeerSeq:     replyToPeerSeq,
+		CanonicalMessageID:   r.CanonicalMessageID,
+		PeerSeq:              r.PeerSeq,
+		UserMessageID:        r.UserMessageID,
+		FromUserID:           r.FromUserID,
+		Outgoing:             r.Outgoing,
+		PeerType:             r.PeerType,
+		PeerID:               r.PeerID,
+		MessageKind:          r.MessageKind,
+		MessageText:          r.MessageText,
+		MessageDate:          r.MessageDate,
+		ReplyToPeerSeq:       replyToPeerSeq,
+		ReplyToUserMessageID: replyToUserMessageID,
 	}, nil
 }
 
