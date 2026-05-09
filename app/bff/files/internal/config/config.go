@@ -20,9 +20,14 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
+type DownloadConf struct {
+	LegacyDownloadFallback bool
+}
+
 type Config struct {
 	kitex.RpcServerConf
 	DfsClient   kitex.RpcClientConf
 	MediaClient kitex.RpcClientConf
 	UserClient  kitex.RpcClientConf
+	Download    DownloadConf
 }

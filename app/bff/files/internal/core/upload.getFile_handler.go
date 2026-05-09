@@ -17,13 +17,19 @@
 package core
 
 import (
+	"errors"
+
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
+	mediapb "github.com/teamgram/teamgram-server/v2/app/service/media/media"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UploadGetFile
 // upload.getFile#be5335be flags:# precise:flags.0?true cdn_supported:flags.1?true location:InputFileLocation offset:long limit:int = upload.File;
 func (c *FilesCore) UploadGetFile(in *tg.TLUploadGetFile) (*tg.UploadFile, error) {
+	if in == nil {
+		return nil, tg.ErrLocationInvalid
+	}
 	location := in.Location
 	if location == nil {
 		return nil, tg.ErrLocationInvalid
@@ -32,12 +38,17 @@ func (c *FilesCore) UploadGetFile(in *tg.TLUploadGetFile) (*tg.UploadFile, error
 	switch location.InputFileLocationClazzName() {
 	case tg.ClazzName_inputFileLocation:
 		return nil, tg.ErrInputRequestInvalid
-	case tg.ClazzName_inputEncryptedFileLocation,
-		tg.ClazzName_inputDocumentFileLocation,
-		tg.ClazzName_inputSecureFileLocation,
-		tg.ClazzName_inputTakeoutFileLocation,
+	case tg.ClazzName_inputDocumentFileLocation,
 		tg.ClazzName_inputPhotoFileLocation,
 		tg.ClazzName_inputPeerPhotoFileLocation:
+		return c.downloadResolvedFile(location, in.Offset, in.Limit)
+	case tg.ClazzName_inputEncryptedFileLocation,
+		tg.ClazzName_inputSecureFileLocation,
+		tg.ClazzName_inputTakeoutFileLocation:
+		if !c.svcCtx.Config.Download.LegacyDownloadFallback {
+			return nil, tg.ErrLocationInvalid
+		}
+		return c.downloadLegacyFile(location, in.Offset, in.Limit)
 	case tg.ClazzName_inputStickerSetThumb:
 		// TODO: master resolves sticker set thumbs through enterprise plugin hooks.
 		return nil, tg.ErrMethodNotImpl
@@ -47,15 +58,47 @@ func (c *FilesCore) UploadGetFile(in *tg.TLUploadGetFile) (*tg.UploadFile, error
 	default:
 		return nil, tg.ErrLocationInvalid
 	}
+}
 
-	uploadFile, err := c.svcCtx.Repo.DfsClient.DfsDownloadFile(c.ctx, &dfs.TLDfsDownloadFile{
+func (c *FilesCore) downloadResolvedFile(location tg.InputFileLocationClazz, offset int64, limit int32) (*tg.UploadFile, error) {
+	viewerID := int64(0)
+	if c.MD != nil {
+		viewerID = c.MD.UserId
+	}
+	resolved, err := c.svcCtx.Repo.MediaClient.MediaResolveFileLocation(c.ctx, &mediapb.TLMediaResolveFileLocation{
 		Location: location,
-		Offset:   in.Offset,
-		Limit:    in.Limit,
+		ViewerId: viewerID,
+	})
+	if err != nil {
+		return nil, mapUploadGetFileResolveError(err)
+	}
+	if resolved == nil || len(resolved.ReadLease) == 0 {
+		return nil, tg.ErrLocationInvalid
+	}
+	uploadFile, err := c.svcCtx.Repo.DfsClient.DfsGetFileByReadLease(c.ctx, &dfs.TLDfsGetFileByReadLease{
+		ReadLease: resolved.ReadLease,
+		Offset:    offset,
+		Limit:     limit,
 	})
 	if err != nil {
 		return nil, err
 	}
+	return normalizeUploadFile(uploadFile)
+}
+
+func (c *FilesCore) downloadLegacyFile(location tg.InputFileLocationClazz, offset int64, limit int32) (*tg.UploadFile, error) {
+	uploadFile, err := c.svcCtx.Repo.DfsClient.DfsDownloadFile(c.ctx, &dfs.TLDfsDownloadFile{
+		Location: location,
+		Offset:   offset,
+		Limit:    limit,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return normalizeUploadFile(uploadFile)
+}
+
+func normalizeUploadFile(uploadFile *tg.UploadFile) (*tg.UploadFile, error) {
 	if uploadFile == nil {
 		return nil, tg.ErrInputRequestInvalid
 	}
@@ -68,4 +111,22 @@ func (c *FilesCore) UploadGetFile(in *tg.TLUploadGetFile) (*tg.UploadFile, error
 	}
 
 	return uploadFile, nil
+}
+
+func mapUploadGetFileResolveError(err error) error {
+	switch {
+	case errors.Is(err, mediapb.ErrFileReferenceEmpty):
+		return tg.ErrFileReferenceEmpty
+	case errors.Is(err, mediapb.ErrFileReferenceExpired):
+		return tg.ErrFileReferenceExpired
+	case errors.Is(err, mediapb.ErrFileReferenceInvalid):
+		return tg.ErrFileReferenceInvalid
+	case errors.Is(err, mediapb.ErrFileLocationInvalid),
+		errors.Is(err, mediapb.ErrDocumentNotFound),
+		errors.Is(err, mediapb.ErrPhotoNotFound),
+		errors.Is(err, mediapb.ErrMediaInvalidArgument):
+		return tg.ErrLocationInvalid
+	default:
+		return err
+	}
 }

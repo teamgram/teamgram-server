@@ -17,16 +17,36 @@
 package repository
 
 import (
+	"context"
+
 	"github.com/teamgram/teamgram-server/v2/app/bff/files/internal/config"
 	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
 	dfsclient "github.com/teamgram/teamgram-server/v2/app/service/dfs/client"
+	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
 	mediaclient "github.com/teamgram/teamgram-server/v2/app/service/media/client"
+	"github.com/teamgram/teamgram-server/v2/app/service/media/media"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
+
+type DfsFilesClient interface {
+	DfsGetFileByReadLease(ctx context.Context, in *dfs.TLDfsGetFileByReadLease) (*tg.UploadFile, error)
+	DfsGetFileHashesByReadLease(ctx context.Context, in *dfs.TLDfsGetFileHashesByReadLease) (*dfs.VectorFileHash, error)
+	DfsWriteFilePartData(ctx context.Context, in *dfs.TLDfsWriteFilePartData) (*tg.Bool, error)
+	DfsDownloadFile(ctx context.Context, in *dfs.TLDfsDownloadFile) (*tg.UploadFile, error)
+}
+
+type MediaFilesClient interface {
+	MediaUploadPhotoFile(ctx context.Context, in *media.TLMediaUploadPhotoFile) (*tg.Photo, error)
+	MediaGetPhotoSizeList(ctx context.Context, in *media.TLMediaGetPhotoSizeList) (*media.PhotoSizeList, error)
+	MediaUploadedDocumentMedia(ctx context.Context, in *media.TLMediaUploadedDocumentMedia) (*tg.MessageMedia, error)
+	MediaGetDocument(ctx context.Context, in *media.TLMediaGetDocument) (*tg.Document, error)
+	MediaResolveFileLocation(ctx context.Context, in *media.TLMediaResolveFileLocation) (*media.MediaResolvedFileObject, error)
+}
 
 // Repository is the dependency container for repository instances.
 type Repository struct {
-	DfsClient   dfsclient.DfsClient
-	MediaClient mediaclient.MediaClient
+	DfsClient   DfsFilesClient
+	MediaClient MediaFilesClient
 	UserClient  userclient.UserClient
 }
 

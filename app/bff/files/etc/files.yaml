@@ -24,3 +24,6 @@ UserClient:
     Hosts:
       - 127.0.0.1:2379
     Key: service.biz_service.user
+
+Download:
+  LegacyDownloadFallback: false
