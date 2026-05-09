@@ -42,6 +42,7 @@ func TestMessagesSendMediaBuildsOutboxAndReturnsFullUpdates(t *testing.T) {
 	entity := tg.MakeTLMessageEntityBold(&tg.TLMessageEntityBold{Offset: 0, Length: 7})
 	result, err := c.MessagesSendMedia(&tg.TLMessagesSendMedia{
 		Silent:      true,
+		Background:  true,
 		ClearDraft:  true,
 		Noforwards:  true,
 		InvertMedia: true,
@@ -75,6 +76,9 @@ func TestMessagesSendMediaBuildsOutboxAndReturnsFullUpdates(t *testing.T) {
 	outbox := got.Message[0]
 	if outbox.RandomId != 42 {
 		t.Fatalf("RandomId = %d, want 42", outbox.RandomId)
+	}
+	if !outbox.Background {
+		t.Fatal("Background = false, want true")
 	}
 	message, ok := outbox.Message.(*tg.TLMessage)
 	if !ok {

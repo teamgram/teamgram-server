@@ -14,7 +14,8 @@ import (
 func buildMediaOutbox(in *tg.TLMessagesSendMedia, selfUserID, peerUserID int64, media tg.MessageMediaClazz, replyTo tg.MessageReplyHeaderClazz) (*msg.TLOutboxMessage, int32) {
 	date := int32(time.Now().Unix())
 	return msg.MakeTLOutboxMessage(&msg.TLOutboxMessage{
-		RandomId: in.RandomId,
+		RandomId:   in.RandomId,
+		Background: in.Background,
 		Message: tg.MakeTLMessage(&tg.TLMessage{
 			Out:         true,
 			Silent:      in.Silent,
