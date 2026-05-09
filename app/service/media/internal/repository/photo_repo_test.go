@@ -191,13 +191,16 @@ func TestGetPhotoReturnsPhoto(t *testing.T) {
 }
 
 func TestPhotoFromModelBuildsValidMinimalPhoto(t *testing.T) {
-	got := photoFromModel(&model.Photos{
+	got, err := mapPhotoAggregate(&model.Photos{
 		PhotoId:     10,
 		AccessHash:  20,
 		HasStickers: true,
 		DcId:        4,
 		Date2:       30,
-	})
+	}, nil, nil, []byte("file-reference"))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 	gotPhoto, ok := got.ToPhoto()
 	if !ok {
 		t.Fatalf("expected photo, got %#v", got)
@@ -481,7 +484,11 @@ func TestGetPhotoLoadsSizes(t *testing.T) {
 	photos := &capturePhotosModel{found: &model.Photos{PhotoId: 303, AccessHash: 404, SizeId: 303, VideoSizeId: 303, DcId: 2, Date2: 5}}
 	photoSizes := &capturePhotoSizesModel{byID: []model.PhotoSizes{{PhotoSizeId: 303, SizeType: "m", Width: 320, Height: 240, FileSize: 1000}}}
 	videoSizes := &captureVideoSizesModel{byID: []model.VideoSizes{{VideoSizeId: 303, SizeType: "v", Width: 320, Height: 240, FileSize: 2000, VideoStartTs: 1.5}}}
-	r := &Repository{model: &model.Models{PhotosModel: photos, PhotoSizesModel: photoSizes, VideoSizesModel: videoSizes}}
+	r := &Repository{
+		model:                &model.Models{PhotosModel: photos, PhotoSizesModel: photoSizes, VideoSizesModel: videoSizes},
+		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
+		fileReferenceTTL:     time.Hour,
+	}
 
 	got, err := r.GetPhoto(context.Background(), 303)
 	if err != nil {
@@ -493,6 +500,13 @@ func TestGetPhotoLoadsSizes(t *testing.T) {
 	}
 	if len(do.Sizes) != 1 || len(do.VideoSizes) != 1 {
 		t.Fatalf("expected one photo size and one video size, got %#v %#v", do.Sizes, do.VideoSizes)
+	}
+	claims, err := r.fileReferenceService.Validate(do.FileReference)
+	if err != nil {
+		t.Fatalf("expected valid loaded photo file_reference: %v", err)
+	}
+	if claims.OriginDomain != "photo" || claims.MediaID != 303 || claims.AccessHash != 404 {
+		t.Fatalf("unexpected loaded photo file_reference claims: %#v", claims)
 	}
 }
 

@@ -6,7 +6,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-func mapPhotoAggregate(photo *model.Photos, sizes []model.PhotoSizes, videoSizes []model.VideoSizes) (*tg.Photo, error) {
+func mapPhotoAggregate(photo *model.Photos, sizes []model.PhotoSizes, videoSizes []model.VideoSizes, fileReference []byte) (*tg.Photo, error) {
 	if photo == nil {
 		return nil, media.ErrPhotoNotFound
 	}
@@ -14,7 +14,7 @@ func mapPhotoAggregate(photo *model.Photos, sizes []model.PhotoSizes, videoSizes
 		HasStickers:   photo.HasStickers,
 		Id:            photo.PhotoId,
 		AccessHash:    photo.AccessHash,
-		FileReference: []byte{},
+		FileReference: fileReference,
 		Date:          int32(photo.Date2),
 		Sizes:         mapPhotoSizes(sizes),
 		VideoSizes:    mapVideoSizes(videoSizes),

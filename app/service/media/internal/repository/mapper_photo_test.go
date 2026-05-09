@@ -14,6 +14,7 @@ func TestMapPhotoIncludesPhotoAndVideoSizes(t *testing.T) {
 		&model.Photos{PhotoId: 10, AccessHash: 20, DcId: 1, Date2: 30, HasStickers: true},
 		[]model.PhotoSizes{{SizeType: "m", Width: 320, Height: 200, FileSize: 123}},
 		[]model.VideoSizes{{SizeType: "v", Width: 320, Height: 200, FileSize: 456, VideoStartTs: 1.5}},
+		[]byte("file-reference"),
 	)
 	if err != nil {
 		t.Fatalf("mapPhotoAggregate() error = %v", err)
@@ -37,7 +38,7 @@ func TestMapPhotoIncludesPhotoAndVideoSizes(t *testing.T) {
 }
 
 func TestMapPhotoReturnsNotFoundForNilPhotoRow(t *testing.T) {
-	_, err := mapPhotoAggregate(nil, nil, nil)
+	_, err := mapPhotoAggregate(nil, nil, nil, nil)
 	if !errors.Is(err, media.ErrPhotoNotFound) {
 		t.Fatalf("mapPhotoAggregate() error = %v, want ErrPhotoNotFound", err)
 	}

@@ -49,14 +49,6 @@ func (r *Repository) GetDocumentByRequest(ctx context.Context, in *media.TLMedia
 	return r.GetDocument(ctx, in.Id)
 }
 
-func documentFromModel(do *model.Documents) *tg.Document {
-	doc, err := mapDocumentAggregate(do, nil, nil)
-	if err != nil {
-		return nil
-	}
-	return doc
-}
-
 func (r *Repository) UploadedDocumentMedia(ctx context.Context, in *media.TLMediaUploadedDocumentMedia) (*tg.MessageMedia, error) {
 	if in == nil || in.Media == nil {
 		return nil, media.ErrMediaInvalidArgument
@@ -392,7 +384,11 @@ func (r *Repository) mapDocumentWithThumbs(ctx context.Context, doc *model.Docum
 			return nil, wrapStorage("load document video thumbs", err)
 		}
 	}
-	return mapDocumentAggregate(doc, thumbs, videoThumbs)
+	fileReference, err := r.generateLoadedFileReference("document", doc.DocumentId, doc.AccessHash, firstNonEmpty(doc.FilePath, fmt.Sprintf("document:%d", doc.DocumentId)))
+	if err != nil {
+		return nil, err
+	}
+	return mapDocumentAggregate(doc, thumbs, videoThumbs, fileReference)
 }
 
 func (r *Repository) saveDocumentAggregate(ctx context.Context, uploadedFileName string, doc *tg.Document) error {

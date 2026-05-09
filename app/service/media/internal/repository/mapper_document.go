@@ -13,7 +13,7 @@ import (
 
 const documentAttributeVectorLayer = 224
 
-func mapDocumentAggregate(doc *model.Documents, thumbs []model.PhotoSizes, videoThumbs []model.VideoSizes) (*tg.Document, error) {
+func mapDocumentAggregate(doc *model.Documents, thumbs []model.PhotoSizes, videoThumbs []model.VideoSizes, fileReference []byte) (*tg.Document, error) {
 	if doc == nil {
 		return nil, media.ErrDocumentNotFound
 	}
@@ -24,7 +24,7 @@ func mapDocumentAggregate(doc *model.Documents, thumbs []model.PhotoSizes, video
 	return tg.MakeTLDocument(&tg.TLDocument{
 		Id:            doc.DocumentId,
 		AccessHash:    doc.AccessHash,
-		FileReference: []byte{},
+		FileReference: fileReference,
 		Date:          int32(doc.Date2),
 		MimeType:      doc.MimeType,
 		Size2:         doc.FileSize,

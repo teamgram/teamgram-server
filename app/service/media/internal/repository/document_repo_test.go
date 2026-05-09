@@ -81,14 +81,17 @@ func TestGetDocumentReturnsDocument(t *testing.T) {
 }
 
 func TestDocumentFromModelBuildsValidMinimalDocument(t *testing.T) {
-	got := documentFromModel(&model.Documents{
+	got, err := mapDocumentAggregate(&model.Documents{
 		DocumentId: 20,
 		AccessHash: 30,
 		DcId:       4,
 		Date2:      40,
 		MimeType:   "image/jpeg",
 		FileSize:   50,
-	})
+	}, nil, nil, []byte("file-reference"))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
 	gotDocument, ok := got.ToDocument()
 	if !ok {
 		t.Fatalf("expected document, got %#v", got)
@@ -458,12 +461,17 @@ func TestGetDocumentLoadsThumbsAndAttributes(t *testing.T) {
 			DcId:       1,
 			MimeType:   "application/pdf",
 			FileSize:   123,
+			FilePath:   "document-object-700",
 			ThumbId:    700,
 			Attributes: `[{"_name":"documentAttributeFilename","_object":{"file_name":"report.pdf"}}]`,
 		},
 	}}
 	photoSizes := &capturePhotoSizesModel{byID: []model.PhotoSizes{{PhotoSizeId: 700, SizeType: "m", Width: 320, Height: 240, FileSize: 1000}}}
-	r := &Repository{model: &model.Models{DocumentsModel: documents, PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}}}
+	r := &Repository{
+		model:                &model.Models{DocumentsModel: documents, PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
+		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
+		fileReferenceTTL:     time.Hour,
+	}
 
 	got, err := r.GetDocument(context.Background(), 700)
 	if err != nil {
@@ -476,6 +484,13 @@ func TestGetDocumentLoadsThumbsAndAttributes(t *testing.T) {
 	if len(doc.Thumbs) != 1 || len(doc.Attributes) != 1 {
 		t.Fatalf("expected thumbs and attributes, got %#v %#v", doc.Thumbs, doc.Attributes)
 	}
+	claims, err := r.fileReferenceService.Validate(doc.FileReference)
+	if err != nil {
+		t.Fatalf("expected valid loaded document file_reference: %v", err)
+	}
+	if claims.OriginDomain != "document" || claims.MediaID != 700 || claims.AccessHash != 10 || claims.ObjectID != "document-object-700" {
+		t.Fatalf("unexpected loaded document file_reference claims: %#v", claims)
+	}
 }
 
 func TestGetDocumentListPreservesRequestedOrder(t *testing.T) {
@@ -483,7 +498,11 @@ func TestGetDocumentListPreservesRequestedOrder(t *testing.T) {
 		1: {DocumentId: 1, AccessHash: 10, DcId: 1},
 		2: {DocumentId: 2, AccessHash: 20, DcId: 1},
 	}}
-	r := &Repository{model: &model.Models{DocumentsModel: documents, PhotoSizesModel: &capturePhotoSizesModel{}, VideoSizesModel: &captureVideoSizesModel{}}}
+	r := &Repository{
+		model:                &model.Models{DocumentsModel: documents, PhotoSizesModel: &capturePhotoSizesModel{}, VideoSizesModel: &captureVideoSizesModel{}},
+		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
+		fileReferenceTTL:     time.Hour,
+	}
 
 	got, err := r.GetDocumentList(context.Background(), []int64{2, 99, 1})
 	if err != nil {

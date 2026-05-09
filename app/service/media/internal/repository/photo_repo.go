@@ -54,19 +54,15 @@ func (r *Repository) loadPhoto(ctx context.Context, id int64) (*tg.Photo, error)
 			return nil, wrapStorage("load video sizes", err)
 		}
 	}
-	return mapPhotoAggregate(do, sizes, videoSizes)
+	fileReference, err := r.generateLoadedFileReference("photo", do.PhotoId, do.AccessHash, fmt.Sprintf("photo:%d", do.PhotoId))
+	if err != nil {
+		return nil, err
+	}
+	return mapPhotoAggregate(do, sizes, videoSizes, fileReference)
 }
 
 func (r *Repository) GetPhotoByRequest(ctx context.Context, in *media.TLMediaGetPhoto) (*tg.Photo, error) {
 	return r.GetPhoto(ctx, in.PhotoId)
-}
-
-func photoFromModel(do *model.Photos) *tg.Photo {
-	photo, err := mapPhotoAggregate(do, nil, nil)
-	if err != nil {
-		return nil
-	}
-	return photo
 }
 
 func (r *Repository) UploadPhotoFile(ctx context.Context, in *media.TLMediaUploadPhotoFile) (*tg.Photo, error) {
