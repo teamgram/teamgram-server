@@ -117,6 +117,13 @@ type CanonicalMessageResult struct {
 	PeerSeq                      int64
 	MessageDate                  int64
 	RequestPayloadHash           []byte
+	SendStateStatus              int32
+	SenderOperationID            string
+	SenderPTS                    int64
+	SenderPTSCount               int32
+	SenderUpdateSchemaVersion    int32
+	SenderUpdatePayload          []byte
+	SenderUpdatePayloadHash      []byte
 	EntitiesPayloadSchemaVersion int32
 	EntitiesPayload              []byte
 	MediaRefSchemaVersion        int32

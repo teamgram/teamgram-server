@@ -442,6 +442,55 @@ func TestCreateOrGetCanonicalBatchExactRetryReturnsExistingRows(t *testing.T) {
 	}
 }
 
+func TestCreateOrGetCanonicalBatchRetryReturnsCommittedSenderResult(t *testing.T) {
+	repo, ctx := newIntegrationRepository(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	in := CreateCanonicalBatchInput{
+		SenderUserID: base + 135,
+		PeerType:     payload.PeerTypeUser,
+		PeerID:       base + 235,
+		Items: []CreateCanonicalBatchItem{
+			{ClientRandomID: base + 7351, RequestPayloadHash: payload.HashBytes([]byte("batch-committed-h1")), MessageText: "one", MessageDate: 1700000150},
+			{ClientRandomID: base + 7352, RequestPayloadHash: payload.HashBytes([]byte("batch-committed-h2")), MessageText: "two", MessageDate: 1700000151},
+		},
+	}
+	first, err := repo.CreateOrGetCanonicalBatchByClientRandom(ctx, in)
+	if err != nil {
+		t.Fatalf("first CreateOrGetCanonicalBatchByClientRandom() error = %v", err)
+	}
+	senderPayload := []byte(`{"schema_version":2,"pts":33,"pts_count":1,"event_type":"new_message","user_message_id":73}`)
+	senderHash := payload.HashBytes(senderPayload)
+	operationID := payload.SenderOperationID(first.Items[0].CanonicalMessageID, in.SenderUserID)
+	if err := repo.MarkSenderCommitted(ctx, MarkSenderCommittedInput{
+		SendStateID:               first.Items[0].SendStateID,
+		SenderOperationID:         operationID,
+		SenderPTS:                 33,
+		SenderPTSCount:            1,
+		SenderUpdateSchemaVersion: payload.OperationResponseSchemaVersion,
+		SenderUpdatePayload:       senderPayload,
+		SenderUpdatePayloadHash:   senderHash,
+	}); err != nil {
+		t.Fatalf("MarkSenderCommitted() error = %v", err)
+	}
+
+	again, err := repo.CreateOrGetCanonicalBatchByClientRandom(ctx, in)
+	if err != nil {
+		t.Fatalf("retry CreateOrGetCanonicalBatchByClientRandom() error = %v", err)
+	}
+	if again.Items[0].SendStateStatus != SendStateStatusSenderCommitted ||
+		again.Items[0].SenderOperationID != operationID ||
+		again.Items[0].SenderPTS != 33 ||
+		again.Items[0].SenderPTSCount != 1 ||
+		again.Items[0].SenderUpdateSchemaVersion != payload.OperationResponseSchemaVersion ||
+		!bytes.Equal(again.Items[0].SenderUpdatePayload, senderPayload) ||
+		!bytes.Equal(again.Items[0].SenderUpdatePayloadHash, senderHash) {
+		t.Fatalf("committed sender fields = %+v, want stored sender result", again.Items[0])
+	}
+	if again.Items[1].SendStateStatus >= SendStateStatusSenderCommitted {
+		t.Fatalf("second item status = %d, want below sender committed", again.Items[1].SendStateStatus)
+	}
+}
+
 func TestCreateOrGetCanonicalBatchCompletesMissingRowsOnRetry(t *testing.T) {
 	repo, ctx := newIntegrationRepository(t)
 	base := time.Now().UnixNano() % 1_000_000_000

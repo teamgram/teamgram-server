@@ -228,6 +228,49 @@ func TestMsgSendMessageV2BatchReturnsFullUpdates(t *testing.T) {
 	}
 }
 
+func TestMsgSendMessageV2BatchRetrySkipsCommittedSenderItems(t *testing.T) {
+	core, fakeRepo, fakeUpdates := newBatchMsgCoreForTest(t)
+	committedPayload := []byte(`{"schema_version":2,"pts":21,"pts_count":1,"event_type":"new_message","user_message_id":51}`)
+	fakeRepo.batchResult.Items[0].SendStateStatus = repository.SendStateStatusSenderCommitted
+	fakeRepo.batchResult.Items[0].SenderOperationID = payload.SenderOperationID(fakeRepo.batchResult.Items[0].CanonicalMessageID, 100)
+	fakeRepo.batchResult.Items[0].SenderPTS = 21
+	fakeRepo.batchResult.Items[0].SenderPTSCount = 1
+	fakeRepo.batchResult.Items[0].SenderUpdatePayload = committedPayload
+	fakeRepo.batchResult.Items[0].SenderUpdatePayloadHash = payload.HashBytes(committedPayload)
+	fakeRepo.batchResult.Items[1].SendStateStatus = repository.SendStateStatusCanonical
+
+	got, err := core.MsgSendMessageV2(buildBatchSendRequestForTest(100, 200, 9001, []int64{11, 12}))
+	if err != nil {
+		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	}
+	if fakeUpdates.batchApplyCalls != 1 {
+		t.Fatalf("batchApplyCalls = %d, want 1", fakeUpdates.batchApplyCalls)
+	}
+	if fakeUpdates.batchApplyLen != 1 {
+		t.Fatalf("batchApplyLen = %d, want 1", fakeUpdates.batchApplyLen)
+	}
+	if len(fakeUpdates.processedOperations) != 1 || fakeUpdates.processedOperations[0].OperationId != payload.SenderOperationID(9002, 100) {
+		t.Fatalf("processed operations = %+v, want only second sender operation", fakeUpdates.processedOperations)
+	}
+	if fakeRepo.markSenderCalls != 1 {
+		t.Fatalf("markSenderCalls = %d, want 1", fakeRepo.markSenderCalls)
+	}
+	if _, ok := got.Clazz.(*tg.TLUpdates); !ok {
+		t.Fatalf("updates = %T, want *tg.TLUpdates", got.Clazz)
+	}
+}
+
+func TestMsgSendMessageV2BatchTooLargeFailsBeforeRepositoryBatchCreate(t *testing.T) {
+	core, fakeRepo, _ := newBatchMsgCoreForTest(t)
+	_, err := core.MsgSendMessageV2(buildBatchSendRequestForTest(100, 200, 9001, makeSequentialRandomIDsForTest(101)))
+	if !errors.Is(err, msgpb.ErrBatchTooLarge) {
+		t.Fatalf("MsgSendMessageV2() error = %v, want %v", err, msgpb.ErrBatchTooLarge)
+	}
+	if fakeRepo.batchCreateCalls != 0 {
+		t.Fatalf("batchCreateCalls = %d, want 0", fakeRepo.batchCreateCalls)
+	}
+}
+
 func TestMsgSendMessageV2ClearDraftWritesSenderOperationPayload(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":2,"pts":15,"pts_count":1,"event_type":"new_message","user_message_id":45}`)
 	responseHash := mustHashBytes(t, responsePayload)
@@ -2386,6 +2429,14 @@ func buildBatchSendRequestForTest(senderID, peerID, authKeyID int64, randomIDs [
 			RandomId: randomID,
 			Message:  tg.MakeTLMessage(&tg.TLMessage{Message: string(rune('a' + i))}),
 		}))
+	}
+	return out
+}
+
+func makeSequentialRandomIDsForTest(count int) []int64 {
+	out := make([]int64, 0, count)
+	for i := 0; i < count; i++ {
+		out = append(out, int64(i+1))
 	}
 	return out
 }

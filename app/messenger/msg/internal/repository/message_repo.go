@@ -162,6 +162,13 @@ func (r *Repository) CreateOrGetCanonicalBatchByClientRandom(ctx context.Context
 				if !matches {
 					return msg.ErrRandomIdConflict
 				}
+				state, found, err := selectSendStateByRandomTx(txModels, in.SenderUserID, in.PeerType, in.PeerID, item.ClientRandomID)
+				if err != nil {
+					return err
+				}
+				if found {
+					attachSendStateToCanonicalResult(existing, state)
+				}
 				results[i] = *existing
 				continue
 			}
@@ -204,11 +211,16 @@ func (r *Repository) CreateOrGetCanonicalBatchByClientRandom(ctx context.Context
 				if !matches {
 					return msg.ErrRandomIdConflict
 				}
+				attachSendStateToCanonicalResult(existing, state)
 				results[i] = *existing
 				continue
 			}
 
-			results[i] = CanonicalMessageResult{SendStateID: state.SendStateID, RequestPayloadHash: item.RequestPayloadHash}
+			results[i] = CanonicalMessageResult{
+				SendStateID:        state.SendStateID,
+				RequestPayloadHash: item.RequestPayloadHash,
+				SendStateStatus:    state.Status,
+			}
 			pending = append(pending, i)
 		}
 
@@ -259,6 +271,7 @@ func (r *Repository) CreateOrGetCanonicalBatchByClientRandom(ctx context.Context
 					MessageAttrsPayload:          item.MessageAttrsPayload,
 					ForwardRefSchemaVersion:      item.ForwardRefSchemaVersion,
 					ForwardRefPayload:            item.ForwardRefPayload,
+					SendStateStatus:              SendStateStatusCanonical,
 					CreatedNew:                   true,
 				}
 			}
@@ -836,6 +849,20 @@ func canonicalMessageRowToResult(r *model.CanonicalMessageRow, created bool) *Ca
 		ForwardRefPayload:            r.ForwardRefPayload,
 		CreatedNew:                   created,
 	}
+}
+
+func attachSendStateToCanonicalResult(result *CanonicalMessageResult, state *SendState) {
+	if result == nil || state == nil {
+		return
+	}
+	result.SendStateID = state.SendStateID
+	result.SendStateStatus = state.Status
+	result.SenderOperationID = state.SenderOperationID
+	result.SenderPTS = state.SenderPTS
+	result.SenderPTSCount = state.SenderPTSCount
+	result.SenderUpdateSchemaVersion = state.SenderUpdateSchemaVersion
+	result.SenderUpdatePayload = state.SenderUpdatePayload
+	result.SenderUpdatePayloadHash = state.SenderUpdatePayloadHash
 }
 
 func canonicalMessageModelToDTO(row *model.CanonicalMessages) *CanonicalMessage {

@@ -30,11 +30,16 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
+const maxSendMessageV2BatchSize = 100
+
 // MsgSendMessageV2
 // msg.sendMessageV2 user_id:long auth_key_id:long peer_type:int peer_id:long message:Vector<OutboxMessage> = Updates;
 func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
 	if in == nil || len(in.Message) == 0 {
 		return nil, fmt.Errorf("%w: first slice requires at least one message", msg.ErrSendStateConflict)
+	}
+	if len(in.Message) > maxSendMessageV2BatchSize {
+		return nil, fmt.Errorf("%w: max=%d got=%d", msg.ErrBatchTooLarge, maxSendMessageV2BatchSize, len(in.Message))
 	}
 	if in.PeerType != payload.PeerTypeUser {
 		return nil, fmt.Errorf("%w: first slice only supports user peer", msg.ErrSendStateConflict)
@@ -211,27 +216,39 @@ func (c *MsgCore) sendMessageV2Batch(in *msg.TLMsgSendMessageV2, normalizedBatch
 		return nil, msg.ErrMsgStorage
 	}
 
+	results := make([]*userupdates.UserOperationResult, len(normalizedBatch))
 	envelopes := make([]OperationEnvelope, 0, len(normalizedBatch))
+	envelopeIndexes := make([]int, 0, len(normalizedBatch))
 	for i := range normalizedBatch {
 		canonical := &canonicalBatch.Items[i]
 		operationID := payload.SenderOperationID(canonical.CanonicalMessageID, in.UserId)
+		if canonical.SendStateStatus >= repository.SendStateStatusSenderCommitted {
+			results[i] = senderResultFromCanonical(canonical, operationID, in.UserId)
+			continue
+		}
 		envelope, _, err := c.buildSenderOperationEnvelope(in, canonical, operationID, normalizedBatch[i], sideEffects)
 		if err != nil {
 			return nil, err
 		}
 		envelopes = append(envelopes, envelope)
+		envelopeIndexes = append(envelopeIndexes, i)
 	}
-	results, err := c.dispatchRequesterBatchSync(envelopes)
+	dispatchedResults, err := c.dispatchRequesterBatchSync(envelopes)
 	if err != nil {
 		return nil, err
 	}
-	for i, result := range results {
-		canonical := &canonicalBatch.Items[i]
+	if len(dispatchedResults) != len(envelopeIndexes) {
+		return nil, msg.ErrSenderSyncFailed
+	}
+	for i, result := range dispatchedResults {
+		index := envelopeIndexes[i]
+		canonical := &canonicalBatch.Items[index]
 		operationID := payload.SenderOperationID(canonical.CanonicalMessageID, in.UserId)
 		if err := c.markSenderCommitted(canonical, operationID, result); err != nil {
 			_ = c.svcCtx.Repo.MarkRetryableFailure(c.ctx, repository.MarkRetryableFailureInput{SendStateID: canonical.SendStateID, LastErrorCode: "sender_batch_commit_failed", LastErrorMessage: "sender batch commit failed"})
 			return nil, fmt.Errorf("%w: %v", msg.ErrSenderSyncFailed, err)
 		}
+		results[index] = result
 	}
 	return fullSentMessageUpdates(in.UserId, in.PeerId, canonicalBatch.Items, results, normalizedBatch)
 }
@@ -249,6 +266,25 @@ func senderResultFromSendState(sendState *repository.SendState) *userupdates.Use
 		CurrentPts:          sendState.SenderPTS,
 		ResponsePayload:     sendState.SenderUpdatePayload,
 		ResponsePayloadHash: sendState.SenderUpdatePayloadHash,
+	})
+}
+
+func senderResultFromCanonical(canonical *repository.CanonicalMessageResult, operationID string, senderUserID int64) *userupdates.UserOperationResult {
+	if canonical == nil {
+		return nil
+	}
+	if canonical.SenderOperationID != "" {
+		operationID = canonical.SenderOperationID
+	}
+	return userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+		UserId:              senderUserID,
+		OperationId:         operationID,
+		Status:              1,
+		Pts:                 canonical.SenderPTS,
+		PtsCount:            canonical.SenderPTSCount,
+		CurrentPts:          canonical.SenderPTS,
+		ResponsePayload:     canonical.SenderUpdatePayload,
+		ResponsePayloadHash: canonical.SenderUpdatePayloadHash,
 	})
 }
 

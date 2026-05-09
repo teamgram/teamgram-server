@@ -13,4 +13,5 @@ var (
 	ErrMsgStorage            = errors.New("msg: storage failure")
 	ErrMethodNotImplemented  = errors.New("msg: method not implemented")
 	ErrMsgIdInvalid          = errors.New("msg: message id invalid")
+	ErrBatchTooLarge         = errors.New("msg: batch too large")
 )
