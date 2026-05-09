@@ -14,6 +14,8 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
+	idgenclient "github.com/teamgram/teamgram-server/v2/app/service/idgen/client"
+	idgenpb "github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -81,6 +83,20 @@ func (f *messagesFakeUserupdatesClient) UserupdatesGetOutboxReadDate(ctx context
 	return f.getOutboxReadDate(ctx, in)
 }
 
+type messagesFakeIdgenClient struct {
+	idgenclient.IdgenClient
+	nextID func(ctx context.Context, in *idgenpb.TLIdgenNextId) (*tg.Int64, error)
+	seq    int64
+}
+
+func (f *messagesFakeIdgenClient) IdgenNextId(ctx context.Context, in *idgenpb.TLIdgenNextId) (*tg.Int64, error) {
+	if f.nextID != nil {
+		return f.nextID(ctx, in)
+	}
+	f.seq++
+	return tg.MakeTLInt64(&tg.TLInt64{V: 900000 + f.seq}), nil
+}
+
 type messagesFakeUserClient struct {
 	userclient.UserClient
 	projectUsers func(ctx context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error)
@@ -92,7 +108,10 @@ func (f *messagesFakeUserClient) UserGetUserProjectionBundle(ctx context.Context
 
 func newSendMsgCore(client msgclient.MsgClient, selfID, authKeyID int64) *MessagesCore {
 	c := New(context.Background(), &svc.ServiceContext{
-		Repo: &repository.Repository{MsgClient: client},
+		Repo: &repository.Repository{
+			IdgenClient: &messagesFakeIdgenClient{},
+			MsgClient:   client,
+		},
 	})
 	c.MD = &metadata.RpcMetadata{
 		UserId:        selfID,
@@ -102,6 +121,9 @@ func newSendMsgCore(client msgclient.MsgClient, selfID, authKeyID int64) *Messag
 }
 
 func newMessagesCoreWithRepo(repo *repository.Repository, selfID, authKeyID int64) *MessagesCore {
+	if repo.IdgenClient == nil {
+		repo.IdgenClient = &messagesFakeIdgenClient{}
+	}
 	c := New(context.Background(), &svc.ServiceContext{Repo: repo})
 	c.MD = &metadata.RpcMetadata{
 		UserId:        selfID,

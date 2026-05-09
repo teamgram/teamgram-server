@@ -81,7 +81,10 @@ func (c *MessagesCore) MessagesForwardMessages(in *tg.TLMessagesForwardMessages)
 		if source.GroupedId != nil {
 			v, ok := forwardedGroupedIDs[*source.GroupedId]
 			if !ok {
-				v = newSendMultiMediaGroupedID()
+				v, err = c.newMessageGroupedID("messages.forwardMessages")
+				if err != nil {
+					return nil, err
+				}
 				forwardedGroupedIDs[*source.GroupedId] = v
 			}
 			groupedID = &v

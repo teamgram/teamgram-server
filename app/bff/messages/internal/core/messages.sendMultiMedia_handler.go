@@ -21,6 +21,7 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	idgenpb "github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -56,7 +57,10 @@ func (c *MessagesCore) MessagesSendMultiMedia(in *tg.TLMessagesSendMultiMedia) (
 		return nil, err
 	}
 
-	groupedID := newSendMultiMediaGroupedID()
+	groupedID, err := c.newMessageGroupedID("messages.sendMultiMedia")
+	if err != nil {
+		return nil, err
+	}
 	date := int32(time.Now().Unix())
 	outboxes := make([]msg.OutboxMessageClazz, 0, len(in.MultiMedia))
 	for _, item := range in.MultiMedia {
@@ -157,8 +161,20 @@ func checkSendMultiMediaItems(items []tg.InputSingleMediaClazz) error {
 	return nil
 }
 
-func newSendMultiMediaGroupedID() int64 {
-	// Development-only fallback: this can collide if two album requests are
-	// created in the same nanosecond. Task 12 must fail release if this remains.
-	return time.Now().UnixNano()
+func (c *MessagesCore) newMessageGroupedID(logPrefix string) (int64, error) {
+	var client idgenClient = c.svcCtx.Repo.IdgenClient
+	if client == nil {
+		c.Logger.Errorf("%s - idgen client is nil", logPrefix)
+		return 0, tg.ErrInternalServerError
+	}
+	id, err := client.IdgenNextId(c.ctx, &idgenpb.TLIdgenNextId{})
+	if err != nil {
+		c.Logger.Errorf("%s - idgen next id failed: err: %v", logPrefix, err)
+		return 0, tg.ErrInternalServerError
+	}
+	if id == nil || id.V <= 0 {
+		c.Logger.Errorf("%s - idgen next id invalid: id: %#v", logPrefix, id)
+		return 0, tg.ErrInternalServerError
+	}
+	return id.V, nil
 }

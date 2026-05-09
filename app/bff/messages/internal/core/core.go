@@ -21,6 +21,7 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/app/bff/messages/internal/svc"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
+	idgenpb "github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
 	mediapb "github.com/teamgram/teamgram-server/v2/app/service/media/media"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -32,6 +33,10 @@ type sendMessageClient interface {
 	MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error)
 	MsgGetUserMessage(ctx context.Context, in *msg.TLMsgGetUserMessage) (*tg.MessageBox, error)
 	MsgGetUserMessageList(ctx context.Context, in *msg.TLMsgGetUserMessageList) (*msg.VectorMessageBox, error)
+}
+
+type idgenClient interface {
+	IdgenNextId(ctx context.Context, in *idgenpb.TLIdgenNextId) (*tg.Int64, error)
 }
 
 type resolveMediaClient interface {
