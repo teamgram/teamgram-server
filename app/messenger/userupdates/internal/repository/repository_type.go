@@ -41,6 +41,7 @@ const (
 	OperationResultStatusCompleted int32 = 1
 
 	MessageKindText      int32 = 1
+	MessageKindMedia     int32 = 2
 	MessageStatusLive    int32 = 1
 	MessageStatusDeleted int32 = 2
 

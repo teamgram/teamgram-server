@@ -17,6 +17,12 @@ const (
 	MessageOperationSchemaVersion  = 2
 	OperationResponseSchemaVersion = 2
 	MessageEventSchemaVersion      = 2
+
+	MediaRefSchemaVersionV1         = 1
+	MessageAttrsSchemaVersionV1     = 1
+	ForwardRefSchemaVersionV1       = 1
+	MessageOperationSchemaVersionV3 = 3
+	MessageEventSchemaVersionV3     = 3
 )
 
 const (

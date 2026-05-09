@@ -30,11 +30,11 @@ func TestPublicMessageIDsCanIncrementAcrossDialogsWhilePeerSeqResets(t *testing.
 	second.UserMessageID = 2
 	second.MessageText = "second dialog"
 
-	firstEvent, _, firstResponse, _, err := buildEventAndResponse(ApplyUserOperationInput{OperationID: "first"}, first, 1, 1)
+	firstEvent, _, firstResponse, _, err := buildEventAndResponse(ApplyUserOperationInput{OperationID: "first"}, messageOperationFromV1(first), 1, 1)
 	if err != nil {
 		t.Fatalf("buildEventAndResponse(first) error = %v", err)
 	}
-	secondEvent, _, secondResponse, _, err := buildEventAndResponse(ApplyUserOperationInput{OperationID: "second"}, second, 2, 1)
+	secondEvent, _, secondResponse, _, err := buildEventAndResponse(ApplyUserOperationInput{OperationID: "second"}, messageOperationFromV1(second), 2, 1)
 	if err != nil {
 		t.Fatalf("buildEventAndResponse(second) error = %v", err)
 	}
@@ -77,11 +77,11 @@ func TestSenderAndReceiverEventsCanUseDifferentPublicIDsForSameCanonicalMessage(
 	receiver.UserMessageID = 4
 	receiver.Out = false
 
-	senderEventBody, _, senderResponseBody, _, err := buildEventAndResponse(ApplyUserOperationInput{OperationID: "sender"}, sender, 5, 1)
+	senderEventBody, _, senderResponseBody, _, err := buildEventAndResponse(ApplyUserOperationInput{OperationID: "sender"}, messageOperationFromV1(sender), 5, 1)
 	if err != nil {
 		t.Fatalf("buildEventAndResponse(sender) error = %v", err)
 	}
-	receiverEventBody, _, receiverResponseBody, _, err := buildEventAndResponse(ApplyUserOperationInput{OperationID: "receiver"}, receiver, 6, 1)
+	receiverEventBody, _, receiverResponseBody, _, err := buildEventAndResponse(ApplyUserOperationInput{OperationID: "receiver"}, messageOperationFromV1(receiver), 6, 1)
 	if err != nil {
 		t.Fatalf("buildEventAndResponse(receiver) error = %v", err)
 	}

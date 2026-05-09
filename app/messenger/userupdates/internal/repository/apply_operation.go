@@ -115,12 +115,9 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 		}, nil
 	}
 
-	var op payload.MessageOperationV1
-	if err := json.Unmarshal(in.Payload, &op); err != nil {
-		return nil, fmt.Errorf("%w: decode message operation: %v", userupdates.ErrOperationTerminal, err)
-	}
-	if op.SchemaVersion != payload.MessageOperationSchemaVersion && op.SchemaVersion != payload.MessageOperationSchemaVersionV1 {
-		return nil, fmt.Errorf("%w: unsupported operation schema=%d kind=%s", userupdates.ErrOperationTerminal, op.SchemaVersion, op.OperationKind)
+	op, err := decodeMessageOperation(in.Payload)
+	if err != nil {
+		return nil, err
 	}
 	if len(in.DependencyPts) != 0 || len(op.DependencyPts) != 0 {
 		return nil, userupdates.ErrOperationTerminal
@@ -139,7 +136,7 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 		op.ReplyToPeerSeq = row.PeerSeq
 		op.ReplyToUserMessageID = row.UserMessageId
 	}
-	if err := resolvePublicIDsForOperation(txModels, in.UserID, &op); err != nil {
+	if err := resolvePublicIDsForOperation(txModels, in.UserID, &op.MessageOperationV1); err != nil {
 		return nil, err
 	}
 
@@ -154,44 +151,45 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 		if err := insertUserMessageView(txModels, in, op, eventPayload); err != nil {
 			return nil, err
 		}
-		if err := upsertUserDialog(txModels, in, op, nextPTS, eventPayload); err != nil {
+		if err := upsertUserDialog(txModels, in, op.MessageOperationV1, nextPTS, eventPayload); err != nil {
 			return nil, err
 		}
-		if err := insertDialogSideEffects(ctx, txModels, r, in, op); err != nil {
+		if err := insertDialogSideEffects(ctx, txModels, r, in, op.MessageOperationV1); err != nil {
 			return nil, err
 		}
 	case payload.OperationKindReadHistory:
-		if err := applyReadHistory(txModels, in, op, nextPTS); err != nil {
+		if err := applyReadHistory(txModels, in, op.MessageOperationV1, nextPTS); err != nil {
 			return nil, err
 		}
 	case payload.OperationKindDeleteMessages:
-		var err error
-		op, err = applyDeleteMessages(txModels, in, op, nextPTS)
+		var updated payload.MessageOperationV1
+		updated, err = applyDeleteMessages(txModels, in, op.MessageOperationV1, nextPTS)
 		if err != nil {
 			return nil, err
 		}
+		op.MessageOperationV1 = updated
 		eventPayload, eventPayloadHash, responsePayload, responsePayloadHash, err = buildEventAndResponse(in, op, nextPTS, ptsCount)
 		if err != nil {
 			return nil, err
 		}
 	case payload.OperationKindDeleteHistory:
-		if err := applyDeleteHistory(txModels, in, op, nextPTS); err != nil {
+		if err := applyDeleteHistory(txModels, in, op.MessageOperationV1, nextPTS); err != nil {
 			return nil, err
 		}
 	case payload.OperationKindEditMessage:
-		if err := applyEditMessage(txModels, in, op, eventPayload, nextPTS); err != nil {
+		if err := applyEditMessage(txModels, in, op.MessageOperationV1, eventPayload, nextPTS); err != nil {
 			return nil, err
 		}
 	case payload.OperationKindUpdatePinnedMessage:
-		if err := applyUpdatePinnedMessage(txModels, in, op, nextPTS); err != nil {
+		if err := applyUpdatePinnedMessage(txModels, in, op.MessageOperationV1, nextPTS); err != nil {
 			return nil, err
 		}
 	case payload.OperationKindMarkDialogUnread:
-		if err := applyMarkDialogUnread(txModels, in, op, nextPTS); err != nil {
+		if err := applyMarkDialogUnread(txModels, in, op.MessageOperationV1, nextPTS); err != nil {
 			return nil, err
 		}
 	case payload.OperationKindScheduledMarker:
-		if err := applyScheduledMarker(txModels, in, op, nextPTS); err != nil {
+		if err := applyScheduledMarker(txModels, in, op.MessageOperationV1, nextPTS); err != nil {
 			return nil, err
 		}
 	default:
@@ -200,7 +198,7 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 	if err := insertPTSEvent(txModels, in, op, nextPTS, ptsCount, eventPayload, eventPayloadHash); err != nil {
 		return nil, err
 	}
-	if err := insertPushTask(ctx, txModels, r, in, op, nextPTS, eventPayload); err != nil {
+	if err := insertPushTask(ctx, txModels, r, in, op.MessageOperationV1, nextPTS, eventPayload); err != nil {
 		return nil, err
 	}
 	if err := insertOperationResult(txModels, in, nextPTS, ptsCount, responsePayload, responsePayloadHash); err != nil {
@@ -225,6 +223,96 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 		ResponsePayload:       responsePayload,
 		ResponseHash:          responsePayloadHash,
 	}, nil
+}
+
+type messageOperation struct {
+	payload.MessageOperationV1
+	EventSchemaVersion int
+	MediaRef           *payload.MediaRefV1
+	Attrs              *payload.MessageAttrsV1
+	ForwardRef         *payload.ForwardRefV1
+}
+
+func decodeMessageOperation(body []byte) (messageOperation, error) {
+	var envelope struct {
+		SchemaVersion int    `json:"schema_version"`
+		OperationKind string `json:"operation_kind"`
+	}
+	if err := json.Unmarshal(body, &envelope); err != nil {
+		return messageOperation{}, fmt.Errorf("%w: decode message operation envelope: %v", userupdates.ErrOperationTerminal, err)
+	}
+	switch envelope.SchemaVersion {
+	case payload.MessageOperationSchemaVersionV1, payload.MessageOperationSchemaVersion:
+		var op payload.MessageOperationV1
+		if err := json.Unmarshal(body, &op); err != nil {
+			return messageOperation{}, fmt.Errorf("%w: decode message operation: %v", userupdates.ErrOperationTerminal, err)
+		}
+		return messageOperationFromV1(op), nil
+	case payload.MessageOperationSchemaVersionV3:
+		var op payload.MessageOperationV3
+		if err := json.Unmarshal(body, &op); err != nil {
+			return messageOperation{}, fmt.Errorf("%w: decode v3 message operation: %v", userupdates.ErrOperationTerminal, err)
+		}
+		return messageOperationFromV3(op), nil
+	default:
+		return messageOperation{}, fmt.Errorf("%w: unsupported operation schema=%d kind=%s", userupdates.ErrOperationTerminal, envelope.SchemaVersion, envelope.OperationKind)
+	}
+}
+
+func messageOperationFromV1(op payload.MessageOperationV1) messageOperation {
+	return messageOperation{
+		MessageOperationV1: op,
+		EventSchemaVersion: payload.MessageEventSchemaVersion,
+	}
+}
+
+func messageOperationFromV3(op payload.MessageOperationV3) messageOperation {
+	return messageOperation{
+		MessageOperationV1: payload.MessageOperationV1{
+			SchemaVersion:              op.SchemaVersion,
+			OperationKind:              op.OperationKind,
+			CanonicalMessageID:         op.CanonicalMessageID,
+			PeerType:                   op.PeerType,
+			PeerID:                     op.PeerID,
+			PeerSeq:                    op.PeerSeq,
+			FromUserID:                 op.FromUserID,
+			ToUserID:                   op.ToUserID,
+			Date:                       op.Date,
+			EditDate:                   op.EditDate,
+			EditVersion:                op.EditVersion,
+			Out:                        op.Out,
+			MessageText:                op.MessageText,
+			Entities:                   op.Entities,
+			UserMessageID:              op.UserMessageID,
+			ReplyToCanonicalMessageID:  op.ReplyToCanonicalMessageID,
+			ReplyToPeerSeq:             op.ReplyToPeerSeq,
+			ReplyToUserMessageID:       op.ReplyToUserMessageID,
+			DependencyPts:              op.DependencyPts,
+			ClearDraft:                 op.ClearDraft,
+			SourcePermAuthKeyID:        op.SourcePermAuthKeyID,
+			ClearDraftBeforeDate:       op.ClearDraftBeforeDate,
+			SavedDialogSideEffect:      op.SavedDialogSideEffect,
+			ReadMaxUserMessageID:       op.ReadMaxUserMessageID,
+			ReadInboxMaxPeerSeq:        op.ReadInboxMaxPeerSeq,
+			ReadInboxMaxUserMessageID:  op.ReadInboxMaxUserMessageID,
+			ReadOutboxMaxPeerSeq:       op.ReadOutboxMaxPeerSeq,
+			ReadOutboxMaxUserMessageID: op.ReadOutboxMaxUserMessageID,
+			DeletePeerSeqs:             op.DeletePeerSeqs,
+			DeleteUserMessageIDs:       op.DeleteUserMessageIDs,
+			DeleteMaxPeerSeq:           op.DeleteMaxPeerSeq,
+			JustClear:                  op.JustClear,
+			Revoke:                     op.Revoke,
+			UnreadMark:                 op.UnreadMark,
+			PinnedPeerSeq:              op.PinnedPeerSeq,
+			PinnedUserMessageID:        op.PinnedUserMessageID,
+			PinnedCanonicalMessageID:   op.PinnedCanonicalMessageID,
+			HasScheduled:               op.HasScheduled,
+		},
+		EventSchemaVersion: payload.MessageEventSchemaVersionV3,
+		MediaRef:           op.MediaRef,
+		Attrs:              op.Attrs,
+		ForwardRef:         op.ForwardRef,
+	}
 }
 
 func resolvePublicIDsForOperation(txModels *model.TxModels, userID int64, op *payload.MessageOperationV1) error {
@@ -359,10 +447,62 @@ func (r *Repository) lockUserPTSState(txModels *model.TxModels, userID int64) (*
 	return state, nil
 }
 
-func buildEventAndResponse(in ApplyUserOperationInput, op payload.MessageOperationV1, pts int64, ptsCount int32) ([]byte, []byte, []byte, []byte, error) {
+func buildEventAndResponse(in ApplyUserOperationInput, op messageOperation, pts int64, ptsCount int32) ([]byte, []byte, []byte, []byte, error) {
 	eventKind := payload.EventKindNewMessage
 	if op.OperationKind != payload.OperationKindSendMessage {
 		eventKind = op.OperationKind
+	}
+	eventPayload, err := marshalMessageEvent(in, op, eventKind)
+	if err != nil {
+		return nil, nil, nil, nil, err
+	}
+	response := payload.OperationResponseV2{
+		SchemaVersion: payload.OperationResponseSchemaVersion,
+		OperationID:   in.OperationID,
+		Pts:           pts,
+		PtsCount:      ptsCount,
+		EventType:     eventKind,
+		UserMessageID: op.UserMessageID,
+	}
+	responsePayload, err := json.Marshal(response)
+	if err != nil {
+		return nil, nil, nil, nil, storageError("marshal operation response", err)
+	}
+	return eventPayload, payload.HashBytes(eventPayload), responsePayload, payload.HashBytes(responsePayload), nil
+}
+
+func marshalMessageEvent(in ApplyUserOperationInput, op messageOperation, eventKind string) ([]byte, error) {
+	if op.EventSchemaVersion == payload.MessageEventSchemaVersionV3 {
+		event := payload.MessageEventV3{
+			SchemaVersion:        payload.MessageEventSchemaVersionV3,
+			EventKind:            eventKind,
+			CanonicalMessageID:   op.CanonicalMessageID,
+			PeerSeq:              op.PeerSeq,
+			MessageID:            op.UserMessageID,
+			PeerType:             op.PeerType,
+			PeerID:               op.PeerID,
+			FromUserID:           op.FromUserID,
+			ToUserID:             op.ToUserID,
+			Date:                 op.Date,
+			EditDate:             op.EditDate,
+			EditVersion:          op.EditVersion,
+			Out:                  op.Out,
+			MessageText:          op.MessageText,
+			Entities:             op.Entities,
+			ReplyToUserMessageID: op.ReplyToUserMessageID,
+			ReadMaxUserMessageID: op.ReadMaxUserMessageID,
+			DeleteUserMessageIDs: append([]int64(nil), op.DeleteUserMessageIDs...),
+			PinnedUserMessageID:  op.PinnedUserMessageID,
+			AuthKeyIdExclude:     in.AuthKeyIDExclude,
+			MediaRef:             op.MediaRef,
+			Attrs:                op.Attrs,
+			ForwardRef:           op.ForwardRef,
+		}
+		body, err := json.Marshal(event)
+		if err != nil {
+			return nil, storageError("marshal v3 message event", err)
+		}
+		return body, nil
 	}
 	event := payload.MessageEventV2{
 		SchemaVersion:        payload.MessageEventSchemaVersion,
@@ -386,26 +526,14 @@ func buildEventAndResponse(in ApplyUserOperationInput, op payload.MessageOperati
 		PinnedUserMessageID:  op.PinnedUserMessageID,
 		AuthKeyIdExclude:     in.AuthKeyIDExclude,
 	}
-	eventPayload, err := json.Marshal(event)
+	body, err := json.Marshal(event)
 	if err != nil {
-		return nil, nil, nil, nil, storageError("marshal message event", err)
+		return nil, storageError("marshal message event", err)
 	}
-	response := payload.OperationResponseV2{
-		SchemaVersion: payload.OperationResponseSchemaVersion,
-		OperationID:   in.OperationID,
-		Pts:           pts,
-		PtsCount:      ptsCount,
-		EventType:     eventKind,
-		UserMessageID: op.UserMessageID,
-	}
-	responsePayload, err := json.Marshal(response)
-	if err != nil {
-		return nil, nil, nil, nil, storageError("marshal operation response", err)
-	}
-	return eventPayload, payload.HashBytes(eventPayload), responsePayload, payload.HashBytes(responsePayload), nil
+	return body, nil
 }
 
-func insertUserMessageView(txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, viewPayload []byte) error {
+func insertUserMessageView(txModels *model.TxModels, in ApplyUserOperationInput, op messageOperation, viewPayload []byte) error {
 	existing, err := txModels.UserMessageViewsModel.SelectByUserCanonical(in.UserID, op.CanonicalMessageID)
 	if err != nil && !errors.Is(err, model.ErrNotFound) {
 		return storageError("select existing user message view before insert", err)
@@ -424,22 +552,29 @@ func insertUserMessageView(txModels *model.TxModels, in ApplyUserOperationInput,
 		UserMessageId:      op.UserMessageID,
 		FromUserId:         op.FromUserID,
 		Outgoing:           op.Out,
-		MessageKind:        MessageKindText,
+		MessageKind:        messageKindForOperation(op),
 		MessageStatus:      MessageStatusLive,
 		EditVersion:        0,
 		Date:               int64(op.Date),
 		EditDate:           0,
 		DeletedAt:          0,
-		ViewSchemaVersion:  int32(payload.MessageEventSchemaVersion),
+		ViewSchemaVersion:  int32(op.EventSchemaVersion),
 		ViewPayload:        viewPayload,
 	})
 	if err != nil {
 		return storageError("insert user message view", err)
 	}
-	if err := insertHashTagsTx(txModels, in.UserID, op); err != nil {
+	if err := insertHashTagsTx(txModels, in.UserID, op.MessageOperationV1); err != nil {
 		return err
 	}
 	return nil
+}
+
+func messageKindForOperation(op messageOperation) int32 {
+	if op.MediaRef != nil {
+		return MessageKindMedia
+	}
+	return MessageKindText
 }
 
 func upsertUserDialog(txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, nextPTS int64, dialogPayload []byte) error {
@@ -868,7 +1003,7 @@ func applyScheduledMarker(txModels *model.TxModels, in ApplyUserOperationInput, 
 	return nil
 }
 
-func insertPTSEvent(txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, pts int64, ptsCount int32, eventPayload []byte, eventPayloadHash []byte) error {
+func insertPTSEvent(txModels *model.TxModels, in ApplyUserOperationInput, op messageOperation, pts int64, ptsCount int32, eventPayload []byte, eventPayloadHash []byte) error {
 	eventType := EventTypeNewMessage
 	switch op.OperationKind {
 	case payload.OperationKindReadHistory:
@@ -898,7 +1033,7 @@ func insertPTSEvent(txModels *model.TxModels, in ApplyUserOperationInput, op pay
 		CanonicalMessageId: op.CanonicalMessageID,
 		PeerSeq:            op.PeerSeq,
 		ActorUserId:        op.FromUserID,
-		EventSchemaVersion: payload.MessageEventSchemaVersion,
+		EventSchemaVersion: int32(op.EventSchemaVersion),
 		EventCodec:         PayloadCodecJSON,
 		EventPayload:       eventPayload,
 		EventPayloadHash:   eventPayloadHash,

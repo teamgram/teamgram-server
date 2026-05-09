@@ -415,6 +415,112 @@ func TestProjectMessageEventV2UsesReplyPublicID(t *testing.T) {
 	}
 }
 
+func TestProjectMessageEventV1LegacyCompatibility(t *testing.T) {
+	body := mustMarshalLegacyMessageEventV1(t, payload.MessageEventV1{
+		SchemaVersion:      payload.MessageEventSchemaVersionV1,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: 7001,
+		MessageID:          101,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             1002,
+		FromUserID:         1002,
+		ToUserID:           1001,
+		Date:               1_772_000_000,
+		MessageText:        "legacy",
+	})
+
+	_, err := ProjectUserEvent(repository.UserEvent{
+		UserID:             1001,
+		Pts:                18,
+		PtsCount:           1,
+		EventType:          repository.EventTypeNewMessage,
+		EventSchemaVersion: payload.MessageEventSchemaVersionV1,
+		EventCodec:         repository.PayloadCodecJSON,
+		EventPayload:       body,
+		EventPayloadHash:   payload.HashBytes(body),
+	}, ModeDifference)
+	if !errors.Is(err, userupdates.ErrUserupdatesStorage) {
+		t.Fatalf("ProjectUserEvent(V1) error = %v, want ErrUserupdatesStorage for unhydrated legacy public id", err)
+	}
+}
+
+func TestProjectMessageEventV2Compatibility(t *testing.T) {
+	body := mustMarshalMessageEventV2(t, payload.MessageEventV2{
+		SchemaVersion:      payload.MessageEventSchemaVersion,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: 7001,
+		PeerSeq:            9,
+		MessageID:          101,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             1002,
+		FromUserID:         1002,
+		ToUserID:           1001,
+		Date:               1_772_000_000,
+		MessageText:        "v2",
+	})
+
+	got, err := ProjectUserEvent(repository.UserEvent{
+		UserID:             1001,
+		Pts:                18,
+		PtsCount:           1,
+		EventType:          repository.EventTypeNewMessage,
+		EventSchemaVersion: payload.MessageEventSchemaVersion,
+		EventCodec:         repository.PayloadCodecJSON,
+		EventPayload:       body,
+		EventPayloadHash:   payload.HashBytes(body),
+	}, ModeDifference)
+	if err != nil {
+		t.Fatalf("ProjectUserEvent(V2) error = %v", err)
+	}
+	if _, ok := got.Message.(*tg.TLMessage); !ok {
+		t.Fatalf("message = %T, want *tg.TLMessage", got.Message)
+	}
+}
+
+func TestProjectMessageEventV3MediaGroupedForward(t *testing.T) {
+	body := mustMarshalMessageEventV3(t, payload.MessageEventV3{
+		SchemaVersion:      payload.MessageEventSchemaVersionV3,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: 101,
+		PeerSeq:            9,
+		MessageID:          77,
+		PeerType:           payload.PeerTypeChat,
+		PeerID:             202,
+		FromUserID:         101,
+		ToUserID:           202,
+		Date:               1700000000,
+		Out:                true,
+		MessageText:        "caption",
+		MediaRef:           &payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "photo", ID: 333},
+		Attrs:              &payload.MessageAttrsV1{SchemaVersion: payload.MessageAttrsSchemaVersionV1, GroupedID: 444},
+		ForwardRef:         &payload.ForwardRefV1{SchemaVersion: payload.ForwardRefSchemaVersionV1, FromUserID: 303, Date: 1700000001},
+	})
+	got, err := ProjectPushTask(&payload.PushTaskKafkaMessageV1{
+		Payload:  body,
+		Pts:      19,
+		PeerType: payload.PeerTypeChat,
+		PeerID:   202,
+	})
+	if err != nil {
+		t.Fatalf("ProjectPushTask() error = %v", err)
+	}
+	updates, ok := got.Updates.(*tg.TLUpdates)
+	if !ok || len(updates.Updates) == 0 {
+		t.Fatalf("updates = %#v, want non-empty TLUpdates", got.Updates)
+	}
+	update, ok := updates.Updates[0].(*tg.TLUpdateNewMessage)
+	if !ok {
+		t.Fatalf("update = %T, want *tg.TLUpdateNewMessage", updates.Updates[0])
+	}
+	message, ok := update.Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessage", update.Message)
+	}
+	if message.Media == nil || message.GroupedId == nil || *message.GroupedId != 444 || message.FwdFrom == nil {
+		t.Fatalf("message media/grouped/forward = media:%T grouped:%v fwd:%T", message.Media, message.GroupedId, message.FwdFrom)
+	}
+}
+
 func TestProjectRejectsUnhydratedLegacyV1MessageID(t *testing.T) {
 	body := mustMarshalLegacyMessageEventV1(t, payload.MessageEventV1{
 		SchemaVersion:      payload.MessageEventSchemaVersionV1,
@@ -449,6 +555,15 @@ func mustMarshalMessageEventV2(t *testing.T, event payload.MessageEventV2) []byt
 	body, err := json.Marshal(event)
 	if err != nil {
 		t.Fatalf("marshal message event: %v", err)
+	}
+	return body
+}
+
+func mustMarshalMessageEventV3(t *testing.T, event payload.MessageEventV3) []byte {
+	t.Helper()
+	body, err := json.Marshal(event)
+	if err != nil {
+		t.Fatalf("marshal MessageEventV3: %v", err)
 	}
 	return body
 }

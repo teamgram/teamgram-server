@@ -107,6 +107,55 @@ func TestMessageOperationV1UsesServerOwnedJSON(t *testing.T) {
 	}
 }
 
+func TestMessageOperationV2DecodesWithCurrentFields(t *testing.T) {
+	body := []byte(`{"schema_version":2,"operation_kind":"send_message","canonical_message_id":101,"peer_type":1,"peer_id":202,"peer_seq":7,"from_user_id":1010,"to_user_id":2020,"date":1700000000,"out":true,"message_text":"caption","reply_to_user_message_id":55}`)
+	var got MessageOperationV1
+	if err := json.Unmarshal(body, &got); err != nil {
+		t.Fatalf("Unmarshal() error = %v", err)
+	}
+	if got.SchemaVersion != MessageOperationSchemaVersion || got.MessageText != "caption" || got.ReplyToUserMessageID != 55 {
+		t.Fatalf("decoded V2 operation mismatch: %+v", got)
+	}
+}
+
+func TestMessageOperationV3CarriesV2AndMediaFields(t *testing.T) {
+	op := MessageOperationV3{
+		SchemaVersion:        MessageOperationSchemaVersionV3,
+		OperationKind:        OperationKindSendMessage,
+		CanonicalMessageID:   101,
+		PeerType:             PeerTypeUser,
+		PeerID:               202,
+		PeerSeq:              7,
+		FromUserID:           1010,
+		ToUserID:             2020,
+		Date:                 1700000000,
+		Out:                  true,
+		MessageText:          "caption",
+		ReplyToUserMessageID: 55,
+		MediaRef:             &MediaRefV1{SchemaVersion: MediaRefSchemaVersionV1, Kind: "photo", ID: 333},
+		Attrs:                &MessageAttrsV1{SchemaVersion: MessageAttrsSchemaVersionV1, GroupedID: 444, Silent: true},
+		ForwardRef:           &ForwardRefV1{SchemaVersion: ForwardRefSchemaVersionV1, FromUserID: 3030, Date: 1700000001, SourceMessageID: 66},
+	}
+	body, err := json.Marshal(op)
+	if err != nil {
+		t.Fatalf("Marshal() error = %v", err)
+	}
+	text := string(body)
+	if strings.Contains(text, "@type") || strings.Contains(text, "@id") || strings.Contains(text, "clazz") {
+		t.Fatalf("payload JSON contains TL-like fields: %s", text)
+	}
+	var got MessageOperationV3
+	if err := json.Unmarshal(body, &got); err != nil {
+		t.Fatalf("Unmarshal() error = %v", err)
+	}
+	if got.SchemaVersion != MessageOperationSchemaVersionV3 || got.MessageText != "caption" || got.ReplyToUserMessageID != 55 {
+		t.Fatalf("decoded V3 missing V2 fields: %+v", got)
+	}
+	if got.MediaRef == nil || got.MediaRef.Kind != "photo" || got.Attrs == nil || got.Attrs.GroupedID != 444 || got.ForwardRef == nil || got.ForwardRef.FromUserID != 3030 {
+		t.Fatalf("decoded V3 missing media/attrs/forward: %+v", got)
+	}
+}
+
 func TestMessageOperationV1SideEffectFieldsAffectPayloadHash(t *testing.T) {
 	base := MessageOperationV1{
 		SchemaVersion:      MessageOperationSchemaVersion,

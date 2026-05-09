@@ -1223,6 +1223,58 @@ func TestApplyScheduledMarkerDefaultsFalseUntilScheduledAPIsExist(t *testing.T) 
 	}
 }
 
+func TestApplyUserOperationV3PersistsMediaAttrsForwardEvent(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	userID := base + 2601
+	repo := NewForTest(db, &testIDGenerator{next: base + 26000}, "local-userupdates")
+	op := payload.MessageOperationV3{
+		SchemaVersion:      payload.MessageOperationSchemaVersionV3,
+		OperationKind:      payload.OperationKindSendMessage,
+		CanonicalMessageID: userID*10 + 1,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             base + 2602,
+		PeerSeq:            1,
+		FromUserID:         userID,
+		ToUserID:           base + 2602,
+		Date:               int32(time.Now().Unix()),
+		Out:                true,
+		MessageText:        "caption",
+		MediaRef:           &payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "photo", ID: 333},
+		Attrs:              &payload.MessageAttrsV1{SchemaVersion: payload.MessageAttrsSchemaVersionV1, GroupedID: 444},
+		ForwardRef:         &payload.ForwardRefV1{SchemaVersion: payload.ForwardRefSchemaVersionV1, FromUserID: base + 2603, Date: int64(time.Now().Unix())},
+	}
+	in := buildOperationApplyInputV3(t, userID, op, "operation-v3-media")
+	if _, err := repo.ClaimPartitionOwner(ctx, in.PartitionID); err != nil {
+		t.Fatalf("ClaimPartitionOwner() error = %v", err)
+	}
+	result, err := repo.ApplyUserOperation(ctx, in)
+	if err != nil {
+		t.Fatalf("ApplyUserOperation(V3) error = %v", err)
+	}
+	if result.UserID != userID || result.PtsCount != 1 {
+		t.Fatalf("result = %+v, want user_id=%d pts_count=1", result, userID)
+	}
+	view, err := repo.models.UserMessageViewsModel.SelectByUserCanonical(ctx, userID, op.CanonicalMessageID)
+	if err != nil {
+		t.Fatalf("SelectByUserCanonical() error = %v", err)
+	}
+	if view.ViewSchemaVersion != payload.MessageEventSchemaVersionV3 {
+		t.Fatalf("view schema = %d, want V3", view.ViewSchemaVersion)
+	}
+	var event payload.MessageEventV3
+	if err := json.Unmarshal(view.ViewPayload, &event); err != nil {
+		t.Fatalf("unmarshal V3 view payload: %v", err)
+	}
+	if event.MediaRef == nil || event.Attrs == nil || event.ForwardRef == nil {
+		t.Fatalf("V3 event lost media/attrs/forward: %+v", event)
+	}
+	if view.MessageKind != MessageKindMedia {
+		t.Fatalf("message kind = %d, want MessageKindMedia", view.MessageKind)
+	}
+}
+
 func TestGetDifferenceLegacyMessageHydrationRequiresExactEventPeerSeq(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)
@@ -1591,6 +1643,27 @@ func buildOperationApplyInput(t *testing.T, userID int64, op payload.MessageOper
 	return ApplyUserOperationInput{
 		UserID:       userID,
 		OperationID:  fmt.Sprintf("v1:%s:user:%d:%s:%d", op.OperationKind, userID, suffix, time.Now().UnixNano()),
+		OpType:       OpTypeSendMessage,
+		PeerType:     op.PeerType,
+		PeerID:       op.PeerID,
+		PayloadCodec: PayloadCodecJSON,
+		Payload:      body,
+		PayloadHash:  payload.HashBytes(body),
+		BucketID:     int32(route.BucketID),
+		PartitionID:  int32(route.ReceiverPartitionID),
+	}
+}
+
+func buildOperationApplyInputV3(t *testing.T, userID int64, op payload.MessageOperationV3, suffix string) ApplyUserOperationInput {
+	t.Helper()
+	route := payload.RouteUser(userID)
+	body, err := json.Marshal(op)
+	if err != nil {
+		t.Fatalf("marshal V3 operation: %v", err)
+	}
+	return ApplyUserOperationInput{
+		UserID:       userID,
+		OperationID:  fmt.Sprintf("v3:%s:user:%d:%s:%d", op.OperationKind, userID, suffix, time.Now().UnixNano()),
 		OpType:       OpTypeSendMessage,
 		PeerType:     op.PeerType,
 		PeerID:       op.PeerID,
