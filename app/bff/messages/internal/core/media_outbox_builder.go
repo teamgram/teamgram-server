@@ -76,7 +76,7 @@ func resolveMessageMedia(ctx context.Context, mediaClient resolveMediaClient, ow
 	switch input.InputMediaClazzName() {
 	case tg.ClazzName_inputMediaUploadedPhoto:
 		uploadedPhoto, ok := inputMedia.ToInputMediaUploadedPhoto()
-		if !ok {
+		if !ok || uploadedPhoto == nil {
 			return nil, tg.ErrMediaEmpty
 		}
 		photo, err := mediaClient.MediaUploadPhotoFile(ctx, &mediapb.TLMediaUploadPhotoFile{
@@ -97,11 +97,11 @@ func resolveMessageMedia(ctx context.Context, mediaClient resolveMediaClient, ow
 		}), nil
 	case tg.ClazzName_inputMediaPhoto:
 		mediaPhoto, ok := inputMedia.ToInputMediaPhoto()
-		if !ok {
+		if !ok || mediaPhoto == nil {
 			return nil, tg.ErrMediaEmpty
 		}
 		inputPhoto, ok := (&tg.InputPhoto{Clazz: mediaPhoto.Id}).ToInputPhoto()
-		if !ok {
+		if !ok || inputPhoto == nil {
 			return nil, tg.ErrMediaEmpty
 		}
 		sizeList, err := mediaClient.MediaGetPhotoSizeList(ctx, &mediapb.TLMediaGetPhotoSizeList{SizeId: inputPhoto.Id})
@@ -135,11 +135,11 @@ func resolveMessageMedia(ctx context.Context, mediaClient resolveMediaClient, ow
 		return documentMedia.Clazz, nil
 	case tg.ClazzName_inputMediaDocument:
 		mediaDocument, ok := inputMedia.ToInputMediaDocument()
-		if !ok {
+		if !ok || mediaDocument == nil {
 			return nil, tg.ErrMediaEmpty
 		}
 		inputDocument, ok := (&tg.InputDocument{Clazz: mediaDocument.Id}).ToInputDocument()
-		if !ok {
+		if !ok || inputDocument == nil {
 			return nil, tg.ErrMediaEmpty
 		}
 		document, err := mediaClient.MediaGetDocument(ctx, &mediapb.TLMediaGetDocument{Id: inputDocument.Id})
@@ -155,13 +155,13 @@ func resolveMessageMedia(ctx context.Context, mediaClient resolveMediaClient, ow
 		}), nil
 	case tg.ClazzName_inputMediaGeoPoint:
 		geoPoint, ok := inputMedia.ToInputMediaGeoPoint()
-		if !ok {
+		if !ok || geoPoint == nil {
 			return nil, tg.ErrMediaEmpty
 		}
 		return tg.MakeTLMessageMediaGeo(&tg.TLMessageMediaGeo{Geo: makeSendMediaGeoPoint(geoPoint.GeoPoint)}), nil
 	case tg.ClazzName_inputMediaContact:
 		contact, ok := inputMedia.ToInputMediaContact()
-		if !ok {
+		if !ok || contact == nil {
 			return nil, tg.ErrMediaEmpty
 		}
 		return tg.MakeTLMessageMediaContact(&tg.TLMessageMediaContact{
@@ -173,7 +173,7 @@ func resolveMessageMedia(ctx context.Context, mediaClient resolveMediaClient, ow
 		}), nil
 	case tg.ClazzName_inputMediaVenue:
 		venue, ok := inputMedia.ToInputMediaVenue()
-		if !ok {
+		if !ok || venue == nil {
 			return nil, tg.ErrMediaEmpty
 		}
 		return tg.MakeTLMessageMediaVenue(&tg.TLMessageMediaVenue{
@@ -186,7 +186,7 @@ func resolveMessageMedia(ctx context.Context, mediaClient resolveMediaClient, ow
 		}), nil
 	case tg.ClazzName_inputMediaGeoLive:
 		geoLive, ok := inputMedia.ToInputMediaGeoLive()
-		if !ok {
+		if !ok || geoLive == nil {
 			return nil, tg.ErrMediaEmpty
 		}
 		return tg.MakeTLMessageMediaGeoLive(&tg.TLMessageMediaGeoLive{
@@ -195,13 +195,13 @@ func resolveMessageMedia(ctx context.Context, mediaClient resolveMediaClient, ow
 		}), nil
 	case tg.ClazzName_inputMediaPoll:
 		poll, ok := inputMedia.ToInputMediaPoll()
-		if !ok {
+		if !ok || poll == nil {
 			return nil, tg.ErrMediaEmpty
 		}
 		return tg.MakeTLMessageMediaPoll(&tg.TLMessageMediaPoll{Poll: poll.Poll}), nil
 	case tg.ClazzName_inputMediaDice:
 		dice, ok := inputMedia.ToInputMediaDice()
-		if !ok {
+		if !ok || dice == nil {
 			return nil, tg.ErrMediaEmpty
 		}
 		return makeSendMediaDice(dice.Emoticon), nil
@@ -229,7 +229,7 @@ func mapMediaResolveError(err error) error {
 }
 
 func makeSendMediaGeoPoint(input tg.InputGeoPointClazz) tg.GeoPointClazz {
-	if inputPoint, ok := (&tg.InputGeoPoint{Clazz: input}).ToInputGeoPoint(); ok {
+	if inputPoint, ok := (&tg.InputGeoPoint{Clazz: input}).ToInputGeoPoint(); ok && inputPoint != nil {
 		return tg.MakeTLGeoPoint(&tg.TLGeoPoint{
 			Long:           inputPoint.Long,
 			Lat:            inputPoint.Lat,

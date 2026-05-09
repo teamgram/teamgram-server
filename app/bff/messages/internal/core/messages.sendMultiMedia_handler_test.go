@@ -140,6 +140,25 @@ func TestMessagesSendMultiMediaCaptionTooLongRejected(t *testing.T) {
 	}
 }
 
+func TestMessagesSendMultiMediaPreflightsLaterCaptionBeforeMediaResolve(t *testing.T) {
+	called := false
+	c := newMessagesCoreWithRepo(&repository.Repository{
+		MediaClient: &messagesFakeMediaClient{uploadPhotoFile: func(_ context.Context, _ *mediapb.TLMediaUploadPhotoFile) (*tg.Photo, error) {
+			called = true
+			return tg.MakeTLPhoto(&tg.TLPhoto{Id: 777}).ToPhoto(), nil
+		}},
+	}, 100, 200)
+	in := validSendMultiMediaRequest()
+	in.MultiMedia[1].Message = strings.Repeat("a", 4097)
+	_, err := c.MessagesSendMultiMedia(in)
+	if err != tg.ErrMediaCaptionTooLong {
+		t.Fatalf("error = %v, want MEDIA_CAPTION_TOO_LONG", err)
+	}
+	if called {
+		t.Fatal("media service was called before all captions were validated")
+	}
+}
+
 func TestMessagesSendMultiMediaRejectsInvalidBatchSize(t *testing.T) {
 	tests := []struct {
 		name       string
@@ -253,6 +272,26 @@ func TestMessagesSendMultiMediaMapsInvalidMediaToMediaEmpty(t *testing.T) {
 	_, err := c.MessagesSendMultiMedia(validSendMultiMediaRequest())
 	if !errors.Is(err, tg.ErrMediaEmpty) {
 		t.Fatalf("error = %v, want MEDIA_EMPTY", err)
+	}
+}
+
+func TestMessagesSendMultiMediaTypedNilMediaRejected(t *testing.T) {
+	called := false
+	c := newMessagesCoreWithRepo(&repository.Repository{
+		MediaClient: &messagesFakeMediaClient{uploadPhotoFile: func(_ context.Context, _ *mediapb.TLMediaUploadPhotoFile) (*tg.Photo, error) {
+			called = true
+			return nil, nil
+		}},
+	}, 100, 200)
+	in := validSendMultiMediaRequest()
+	var media *tg.TLInputMediaUploadedPhoto
+	in.MultiMedia[0].Media = media
+	_, err := c.MessagesSendMultiMedia(in)
+	if !errors.Is(err, tg.ErrMediaEmpty) {
+		t.Fatalf("error = %v, want MEDIA_EMPTY", err)
+	}
+	if called {
+		t.Fatal("media service was called for typed-nil media")
 	}
 }
 

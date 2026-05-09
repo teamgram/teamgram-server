@@ -60,9 +60,6 @@ func (c *MessagesCore) MessagesSendMultiMedia(in *tg.TLMessagesSendMultiMedia) (
 	date := int32(time.Now().Unix())
 	outboxes := make([]msg.OutboxMessageClazz, 0, len(in.MultiMedia))
 	for _, item := range in.MultiMedia {
-		if err := checkCaption(item.Message); err != nil {
-			return nil, err
-		}
 		media, err := resolveMessageMedia(c.ctx, c.svcCtx.Repo.MediaClient, authKeyID, item.Media)
 		if err != nil {
 			mappedErr := mapMediaResolveError(err)
@@ -148,6 +145,9 @@ func checkSendMultiMediaItems(items []tg.InputSingleMediaClazz) error {
 		}
 		if item.RandomId == 0 {
 			return tg.ErrRandomIdEmpty
+		}
+		if err := checkCaption(item.Message); err != nil {
+			return err
 		}
 		if _, ok := seen[item.RandomId]; ok {
 			return tg.ErrRandomIdDuplicate
