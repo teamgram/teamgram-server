@@ -319,6 +319,64 @@ func TestMessagesForwardMessagesDoesNotGroupPlainMessagesAfterGroupedMedia(t *te
 	}
 }
 
+func TestMessagesForwardMessagesMarksSavedPeerWhenForwardingToSelf(t *testing.T) {
+	var got *msg.TLMsgSendMessageV2
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		getUserMessageList: func(context.Context, *msg.TLMsgGetUserMessageList) (*msg.VectorMessageBox, error) {
+			return &msg.VectorMessageBox{Datas: []tg.MessageBoxClazz{
+				tg.MakeTLMessageBox(&tg.TLMessageBox{
+					MessageId: 1,
+					PeerType:  payload.PeerTypeUser,
+					PeerId:    300,
+					Message: tg.MakeTLMessage(&tg.TLMessage{
+						Id:      1,
+						FromId:  tg.MakePeerUser(100),
+						PeerId:  tg.MakePeerUser(300),
+						Date:    1,
+						Message: "saved outgoing",
+					}),
+				}),
+			}}, nil
+		},
+		sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+			got = in
+			return testUpdates(), nil
+		},
+	}, 100, 200)
+
+	_, err := c.MessagesForwardMessages(&tg.TLMessagesForwardMessages{
+		FromPeer: inputPeerUser(300),
+		ToPeer:   inputPeerSelf(),
+		Id:       []int32{1},
+		RandomId: []int64{11},
+	})
+	if err != nil {
+		t.Fatalf("MessagesForwardMessages() error = %v", err)
+	}
+	if got == nil || got.PeerId != 100 {
+		t.Fatalf("send target = %#v, want self user 100", got)
+	}
+	message := assertForwardOutbox(t, got.Message[0], 11, "saved outgoing")
+	if peerUserID(message.SavedPeerId) != 100 {
+		t.Fatalf("SavedPeerId = %#v, want source sender peerUser(100)", message.SavedPeerId)
+	}
+
+	got = nil
+	_, err = c.MessagesForwardMessages(&tg.TLMessagesForwardMessages{
+		FromPeer: inputPeerUser(300),
+		ToPeer:   inputPeerUser(400),
+		Id:       []int32{1},
+		RandomId: []int64{12},
+	})
+	if err != nil {
+		t.Fatalf("MessagesForwardMessages(non-saved) error = %v", err)
+	}
+	message = assertForwardOutbox(t, got.Message[0], 12, "saved outgoing")
+	if message.SavedPeerId != nil {
+		t.Fatalf("SavedPeerId = %#v, want nil when target is not self", message.SavedPeerId)
+	}
+}
+
 func validForwardMessagesRequest() *tg.TLMessagesForwardMessages {
 	return &tg.TLMessagesForwardMessages{
 		FromPeer: inputPeerUser(300),
@@ -341,6 +399,13 @@ func messageBox(id int32, text string) tg.MessageBoxClazz {
 			Message: text,
 		}),
 	})
+}
+
+func peerUserID(peer tg.PeerClazz) int64 {
+	if p, ok := peer.(*tg.TLPeerUser); ok && p != nil {
+		return p.UserId
+	}
+	return 0
 }
 
 func assertForwardOutbox(t *testing.T, outbox msg.OutboxMessageClazz, randomID int64, text string) *tg.TLMessage {
