@@ -13,6 +13,39 @@ import (
 
 func buildMediaOutbox(in *tg.TLMessagesSendMedia, selfUserID, peerUserID int64, media tg.MessageMediaClazz, replyTo tg.MessageReplyHeaderClazz) (*msg.TLOutboxMessage, int32) {
 	date := int32(time.Now().Unix())
+	return buildMessageMediaOutbox(mediaOutboxInput{
+		RandomId:    in.RandomId,
+		Background:  in.Background,
+		Silent:      in.Silent,
+		Noforwards:  in.Noforwards,
+		InvertMedia: in.InvertMedia,
+		FromId:      selfUserID,
+		PeerId:      peerUserID,
+		ReplyTo:     replyTo,
+		Date:        date,
+		Message:     in.Message,
+		Media:       media,
+		Entities:    in.Entities,
+	}), date
+}
+
+type mediaOutboxInput struct {
+	RandomId    int64
+	Background  bool
+	Silent      bool
+	Noforwards  bool
+	InvertMedia bool
+	FromId      int64
+	PeerId      int64
+	ReplyTo     tg.MessageReplyHeaderClazz
+	Date        int32
+	Message     string
+	Media       tg.MessageMediaClazz
+	Entities    []tg.MessageEntityClazz
+	GroupedId   *int64
+}
+
+func buildMessageMediaOutbox(in mediaOutboxInput) *msg.TLOutboxMessage {
 	return msg.MakeTLOutboxMessage(&msg.TLOutboxMessage{
 		RandomId:   in.RandomId,
 		Background: in.Background,
@@ -21,15 +54,16 @@ func buildMediaOutbox(in *tg.TLMessagesSendMedia, selfUserID, peerUserID int64, 
 			Silent:      in.Silent,
 			Noforwards:  in.Noforwards,
 			InvertMedia: in.InvertMedia,
-			FromId:      tg.MakePeerUser(selfUserID),
-			PeerId:      tg.MakePeerUser(peerUserID),
-			ReplyTo:     replyTo,
-			Date:        date,
+			FromId:      tg.MakePeerUser(in.FromId),
+			PeerId:      tg.MakePeerUser(in.PeerId),
+			ReplyTo:     in.ReplyTo,
+			Date:        in.Date,
 			Message:     in.Message,
-			Media:       media,
+			Media:       in.Media,
 			Entities:    in.Entities,
+			GroupedId:   in.GroupedId,
 		}),
-	}), date
+	})
 }
 
 func resolveMessageMedia(ctx context.Context, mediaClient resolveMediaClient, ownerID int64, input tg.InputMediaClazz) (tg.MessageMediaClazz, error) {
