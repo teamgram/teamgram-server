@@ -26,6 +26,7 @@ type fakeAuthKeyStore struct {
 	userKeyID         int64
 	userErr           error
 	futureSalt        *tg.FutureSalt
+	futureSalts       *tg.FutureSalts
 	expiresIn         int32
 	setCalls          int
 	clientSession     *authsession.ClientSession
@@ -49,7 +50,7 @@ func (f *fakeAuthKeyStore) SetAuthKey(ctx context.Context, authKey *tg.AuthKeyIn
 }
 
 func (f *fakeAuthKeyStore) GetFutureSalts(ctx context.Context, authKeyId int64, num int32) (*tg.FutureSalts, error) {
-	return nil, nil
+	return f.futureSalts, nil
 }
 
 func (f *fakeAuthKeyStore) GetUserId(ctx context.Context, authKeyId int64) (int64, error) {

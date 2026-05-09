@@ -111,9 +111,13 @@ func (p *Processor) HandleEncryptedWithSession(ctx context.Context, conn ConnInf
 	if err != nil || body == nil {
 		return nil, err
 	}
+	salt, err := p.responseSalt(ctx, msg.AuthKeyId, msg.Salt)
+	if err != nil {
+		return nil, err
+	}
 	return gmtproto.EncodeEncryptedMessage(gmtproto.EncryptedMessage{
 		AuthKeyId: msg.AuthKeyId,
-		Salt:      msg.Salt,
+		Salt:      salt,
 		SessionId: msg.SessionId,
 		MsgId:     gmtproto.NextServerMsgId(msg.MsgId),
 		SeqNo:     p.nextSeqNo(msg.AuthKeyId, authKeyType(keyInfo), msg.SessionId, true, seq),
@@ -149,6 +153,31 @@ func (p *Processor) authKey(ctx context.Context, authKeyId int64) (*crypto.AuthK
 	p.authKeys[authKeyId] = key
 	p.authKeyInfos[authKeyId] = keyInfo
 	return key, keyInfo, nil
+}
+
+func (p *Processor) responseSalt(ctx context.Context, authKeyId int64, requestSalt int64) (int64, error) {
+	if requestSalt != 0 || p.store == nil {
+		return requestSalt, nil
+	}
+	salts, err := p.store.GetFutureSalts(ctx, authKeyId, 1)
+	if err != nil {
+		return 0, fmt.Errorf("session processor: get response salt for auth key %d: %w", authKeyId, err)
+	}
+	if salts == nil || len(salts.Salts) == 0 {
+		return requestSalt, nil
+	}
+	now := int32(time.Now().Unix())
+	for _, salt := range salts.Salts {
+		if salt != nil && salt.ValidSince <= now && now < salt.ValidUntil {
+			return salt.Salt, nil
+		}
+	}
+	for _, salt := range salts.Salts {
+		if salt != nil {
+			return salt.Salt, nil
+		}
+	}
+	return requestSalt, nil
 }
 
 func (p *Processor) refreshAuthKeyInfo(ctx context.Context, authKeyId int64, current *tg.AuthKeyInfo) (*tg.AuthKeyInfo, error) {

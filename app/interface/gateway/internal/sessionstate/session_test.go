@@ -69,6 +69,40 @@ func TestSessionDispatchesRawRPCWithMetadata(t *testing.T) {
 	}
 }
 
+func TestSessionUsesFutureSaltForZeroSaltResponse(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	store := &fakeAuthKeyStore{
+		key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm),
+		futureSalts: tg.MakeTLFutureSalts(&tg.TLFutureSalts{
+			Salts: []*tg.TLFutureSalt{
+				tg.MakeTLFutureSalt(&tg.TLFutureSalt{ValidSince: 1, ValidUntil: 2000000000, Salt: 777}),
+			},
+		}),
+	}
+	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
+	processor := NewProcessor(store, dispatch)
+	payload, err := gmtproto.EncodeEncryptedMessage(gmtproto.EncryptedMessage{
+		AuthKeyId: clientKey.AuthKeyId(),
+		Salt:      0,
+		SessionId: 77,
+		MsgId:     100,
+		SeqNo:     1,
+		Body:      encodeTL(t, &mt.TLPing{PingId: 1}),
+	}, clientKey)
+	if err != nil {
+		t.Fatalf("EncodeEncryptedMessage() error = %v", err)
+	}
+
+	resp, err := processor.HandleEncrypted(context.Background(), ConnInfo{GatewayId: "gateway-test", ClientAddr: "127.0.0.1:1"}, payload)
+	if err != nil {
+		t.Fatalf("HandleEncrypted() error = %v", err)
+	}
+	decoded := decodeEncryptedForTest(t, clientKey, resp)
+	if decoded.Salt != 777 {
+		t.Fatalf("response salt = %d, want current future salt 777", decoded.Salt)
+	}
+}
+
 func TestSessionUnwrapsInitConnectionMetadata(t *testing.T) {
 	serverKey, clientKey := sessionTestKeys()
 	store := &fakeAuthKeyStore{key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)}
