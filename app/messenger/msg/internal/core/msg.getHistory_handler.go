@@ -62,36 +62,60 @@ func (c *MsgCore) MsgGetHistory(in *msg.TLMsgGetHistory) (*tg.MessagesMessages, 
 func messagesFromHistory(history []repository.HistoryMessage) (*tg.MessagesMessages, error) {
 	messages := make([]tg.MessageClazz, 0, len(history))
 	for _, item := range history {
-		if item.MessageKind != repository.MessageKindText {
-			continue
-		}
-		date, err := msgDateInt32FromUnixSeconds(item.MessageDate, "history message date")
+		message, err := messageFromHistoryItem(item)
 		if err != nil {
 			return nil, err
 		}
-		messageID, err := historyIDInt32(item.UserMessageID, "history message id")
-		if err != nil {
-			return nil, err
+		if message != nil {
+			messages = append(messages, message)
 		}
-		replyTo, err := historyReplyHeader(item.ReplyToUserMessageID)
-		if err != nil {
-			return nil, err
-		}
-		messages = append(messages, tg.MakeTLMessage(&tg.TLMessage{
-			Out:     item.Outgoing,
-			Id:      messageID,
-			FromId:  tg.MakePeerUser(item.FromUserID),
-			PeerId:  tg.MakePeerUser(item.PeerID),
-			ReplyTo: replyTo,
-			Date:    date,
-			Message: item.MessageText,
-		}))
 	}
 	return tg.MakeTLMessagesMessages(&tg.TLMessagesMessages{
 		Messages: messages,
 		Chats:    []tg.ChatClazz{},
 		Users:    []tg.UserClazz{},
 	}).ToMessagesMessages(), nil
+}
+
+func messageFromHistoryItem(item repository.HistoryMessage) (tg.MessageClazz, error) {
+	messageID, err := historyIDInt32(item.UserMessageID, "history message id")
+	if err != nil {
+		return nil, err
+	}
+	date, err := msgDateInt32FromUnixSeconds(item.MessageDate, "history message date")
+	if err != nil {
+		return nil, err
+	}
+	if len(item.ViewPayload) > 0 {
+		return userMessageBoxTLMessage(&repository.UserMessageBox{
+			UserMessageID:      item.UserMessageID,
+			CanonicalMessageID: item.CanonicalMessageID,
+			PeerType:           item.PeerType,
+			PeerID:             item.PeerID,
+			PeerSeq:            item.PeerSeq,
+			FromUserID:         item.FromUserID,
+			Outgoing:           item.Outgoing,
+			MessageText:        item.MessageText,
+			MessageDate:        item.MessageDate,
+			ViewPayload:        item.ViewPayload,
+		}, messageID, date)
+	}
+	if item.MessageKind != repository.MessageKindText {
+		return nil, nil
+	}
+	replyTo, err := historyReplyHeader(item.ReplyToUserMessageID)
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLMessage(&tg.TLMessage{
+		Out:     item.Outgoing,
+		Id:      messageID,
+		FromId:  tg.MakePeerUser(item.FromUserID),
+		PeerId:  tg.MakePeerUser(item.PeerID),
+		ReplyTo: replyTo,
+		Date:    date,
+		Message: item.MessageText,
+	}), nil
 }
 
 func historyReplyHeader(userMessageID int64) (tg.MessageReplyHeaderClazz, error) {

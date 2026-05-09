@@ -1195,6 +1195,91 @@ func TestMsgGetHistoryReturnsCanonicalTextMessages(t *testing.T) {
 	}
 }
 
+func TestMsgGetHistoryReturnsMediaFromViewPayload(t *testing.T) {
+	viewPayload, err := json.Marshal(payload.MessageEventV3{
+		SchemaVersion:      payload.MessageEventSchemaVersionV3,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: 9002,
+		PeerSeq:            3,
+		MessageID:          103,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             1002,
+		FromUserID:         1001,
+		ToUserID:           1002,
+		Date:               1_772_000_030,
+		Out:                true,
+		MessageText:        "photo caption",
+		MediaRef: &payload.MediaRefV1{
+			SchemaVersion: payload.MediaRefSchemaVersionV1,
+			Kind:          "photo",
+			ID:            7001,
+			AccessHash:    8001,
+			FileReference: []byte("photo-ref"),
+			Date:          1_772_000_030,
+			DcID:          2,
+			PhotoSizes: []payload.PhotoSizeRefV1{
+				{Kind: "size", Type: "m", W: 320, H: 240, Size: 12345},
+			},
+		},
+	})
+	if err != nil {
+		t.Fatalf("marshal view payload: %v", err)
+	}
+	repo := &fakeMsgRepository{
+		history: []repository.HistoryMessage{
+			{
+				CanonicalMessageID: 9002,
+				PeerSeq:            3,
+				UserMessageID:      103,
+				FromUserID:         1001,
+				Outgoing:           true,
+				PeerType:           payload.PeerTypeUser,
+				PeerID:             1002,
+				MessageKind:        repository.MessageKindText,
+				MessageText:        "photo caption",
+				MessageDate:        1_772_000_030,
+				ViewPayload:        viewPayload,
+			},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.MsgGetHistory(&msgpb.TLMsgGetHistory{
+		UserId:   1001,
+		PeerType: payload.PeerTypeUser,
+		PeerId:   1002,
+		Limit:    20,
+	})
+	if err != nil {
+		t.Fatalf("MsgGetHistory() error = %v", err)
+	}
+	messages, ok := got.ToMessagesMessages()
+	if !ok {
+		t.Fatalf("expected messages.messages, got %s", got.ClazzName())
+	}
+	if len(messages.Messages) != 1 {
+		t.Fatalf("messages len = %d, want 1", len(messages.Messages))
+	}
+	message, ok := messages.Messages[0].(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("message[0] = %T, want *tg.TLMessage", messages.Messages[0])
+	}
+	if message.Message != "photo caption" || message.Media == nil {
+		t.Fatalf("history message missing caption/media: %+v", message)
+	}
+	media, ok := message.Media.(*tg.TLMessageMediaPhoto)
+	if !ok {
+		t.Fatalf("message media = %T, want *tg.TLMessageMediaPhoto", message.Media)
+	}
+	photo, ok := media.Photo.(*tg.TLPhoto)
+	if !ok {
+		t.Fatalf("media photo = %T, want *tg.TLPhoto", media.Photo)
+	}
+	if photo.Id != 7001 || photo.AccessHash != 8001 || photo.DcId != 2 || len(photo.Sizes) != 1 {
+		t.Fatalf("unexpected photo projection: %+v", photo)
+	}
+}
+
 func TestMsgGetHistoryUsesViewerScopedOutgoingFlag(t *testing.T) {
 	repo := &fakeMsgRepository{
 		history: []repository.HistoryMessage{

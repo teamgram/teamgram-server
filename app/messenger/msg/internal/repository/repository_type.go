@@ -174,6 +174,7 @@ type HistoryMessage struct {
 	MessageKind          int32
 	MessageText          string
 	MessageDate          int64
+	ViewPayload          []byte
 }
 
 type UserMessageBox struct {

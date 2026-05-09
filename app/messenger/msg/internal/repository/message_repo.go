@@ -550,6 +550,12 @@ func historyMessageRowToMessage(r model.HistoryMessageRow, resolveReply replyPub
 				return HistoryMessage{}, storageError("decode history view payload v2", err)
 			}
 			replyToUserMessageID = event.ReplyToUserMessageID
+		case payload.MessageEventSchemaVersionV3:
+			var event payload.MessageEventV3
+			if err := json.Unmarshal(r.ViewPayload, &event); err != nil {
+				return HistoryMessage{}, storageError("decode history view payload v3", err)
+			}
+			replyToUserMessageID = event.ReplyToUserMessageID
 		default:
 			var event payload.MessageEventV1
 			if err := json.Unmarshal(r.ViewPayload, &event); err != nil {
@@ -576,6 +582,7 @@ func historyMessageRowToMessage(r model.HistoryMessageRow, resolveReply replyPub
 		MessageKind:          r.MessageKind,
 		MessageText:          r.MessageText,
 		MessageDate:          r.MessageDate,
+		ViewPayload:          append([]byte(nil), r.ViewPayload...),
 		ReplyToPeerSeq:       replyToPeerSeq,
 		ReplyToUserMessageID: replyToUserMessageID,
 	}, nil
