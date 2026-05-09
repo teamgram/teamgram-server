@@ -19,8 +19,14 @@ import (
 
 func init() {
 	// Constructor
+	iface.RegisterClazzID(0xe83380f0, func() iface.TLObject { return &TLFileFinalizedObject{ClazzID: 0xe83380f0} }) // 0xe83380f0
+	iface.RegisterClazzID(0x146aad14, func() iface.TLObject { return &TLFileHashChunk{ClazzID: 0x146aad14} })       // 0x146aad14
 
 	// Method
+	iface.RegisterClazzID(0xdddb9d2c, func() iface.TLObject { return &TLDfsCommitUpload{ClazzID: 0xdddb9d2c} })             // 0xdddb9d2c
+	iface.RegisterClazzID(0x6e20c3e7, func() iface.TLObject { return &TLDfsPutFile{ClazzID: 0x6e20c3e7} })                  // 0x6e20c3e7
+	iface.RegisterClazzID(0x86c7c115, func() iface.TLObject { return &TLDfsGetFileByReadLease{ClazzID: 0x86c7c115} })       // 0x86c7c115
+	iface.RegisterClazzID(0xff974b78, func() iface.TLObject { return &TLDfsGetFileHashesByReadLease{ClazzID: 0xff974b78} }) // 0xff974b78
 	iface.RegisterClazzID(0x1a484107, func() iface.TLObject { return &TLDfsWriteFilePartData{ClazzID: 0x1a484107} })        // 0x1a484107
 	iface.RegisterClazzID(0x2410d1a2, func() iface.TLObject { return &TLDfsUploadPhotoFileV2{ClazzID: 0x2410d1a2} })        // 0x2410d1a2
 	iface.RegisterClazzID(0x872313d8, func() iface.TLObject { return &TLDfsUploadProfilePhotoFileV2{ClazzID: 0x872313d8} }) // 0x872313d8

@@ -55,6 +55,34 @@ func decodeConstructorIfPresent(d *bin.Decoder, msg interface{}) error {
 }
 
 var serviceMethods = map[string]kitex.MethodInfo{
+	"/dfs.RPCDfs/dfs.commitUpload": kitex.NewMethodInfo(
+		commitUploadHandler,
+		newCommitUploadArgs,
+		newCommitUploadResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/dfs.RPCDfs/dfs.putFile": kitex.NewMethodInfo(
+		putFileHandler,
+		newPutFileArgs,
+		newPutFileResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/dfs.RPCDfs/dfs.getFileByReadLease": kitex.NewMethodInfo(
+		getFileByReadLeaseHandler,
+		newGetFileByReadLeaseArgs,
+		newGetFileByReadLeaseResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/dfs.RPCDfs/dfs.getFileHashesByReadLease": kitex.NewMethodInfo(
+		getFileHashesByReadLeaseHandler,
+		newGetFileHashesByReadLeaseArgs,
+		newGetFileHashesByReadLeaseResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 	"/dfs.RPCDfs/dfs.writeFilePartData": kitex.NewMethodInfo(
 		writeFilePartDataHandler,
 		newWriteFilePartDataArgs,
@@ -210,6 +238,542 @@ func newServiceInfo(hasStreaming bool, keepStreamingMethods bool, keepNonStreami
 		Extra:           extra,
 	}
 	return svcInfo
+}
+
+func commitUploadHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*CommitUploadArgs)
+	realResult := result.(*CommitUploadResult)
+	success, err := handler.(dfs.RPCDfs).DfsCommitUpload(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newCommitUploadArgs() interface{} {
+	return &CommitUploadArgs{}
+}
+
+func newCommitUploadResult() interface{} {
+	return &CommitUploadResult{}
+}
+
+type CommitUploadArgs struct {
+	Req *dfs.TLDfsCommitUpload
+}
+
+func (p *CommitUploadArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in CommitUploadArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *CommitUploadArgs) Unmarshal(in []byte) error {
+	msg := new(dfs.TLDfsCommitUpload)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *CommitUploadArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in CommitUploadArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *CommitUploadArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(dfs.TLDfsCommitUpload)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var CommitUploadArgs_Req_DEFAULT *dfs.TLDfsCommitUpload
+
+func (p *CommitUploadArgs) GetReq() *dfs.TLDfsCommitUpload {
+	if !p.IsSetReq() {
+		return CommitUploadArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *CommitUploadArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type CommitUploadResult struct {
+	Success *dfs.FileFinalizedObject
+}
+
+var CommitUploadResult_Success_DEFAULT *dfs.FileFinalizedObject
+
+func (p *CommitUploadResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in CommitUploadResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *CommitUploadResult) Unmarshal(in []byte) error {
+	msg := new(dfs.FileFinalizedObject)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CommitUploadResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in CommitUploadResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *CommitUploadResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(dfs.FileFinalizedObject)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CommitUploadResult) GetSuccess() *dfs.FileFinalizedObject {
+	if !p.IsSetSuccess() {
+		return CommitUploadResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *CommitUploadResult) SetSuccess(x interface{}) {
+	p.Success = x.(*dfs.FileFinalizedObject)
+}
+
+func (p *CommitUploadResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *CommitUploadResult) GetResult() interface{} {
+	return p.Success
+}
+
+func putFileHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*PutFileArgs)
+	realResult := result.(*PutFileResult)
+	success, err := handler.(dfs.RPCDfs).DfsPutFile(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newPutFileArgs() interface{} {
+	return &PutFileArgs{}
+}
+
+func newPutFileResult() interface{} {
+	return &PutFileResult{}
+}
+
+type PutFileArgs struct {
+	Req *dfs.TLDfsPutFile
+}
+
+func (p *PutFileArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in PutFileArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *PutFileArgs) Unmarshal(in []byte) error {
+	msg := new(dfs.TLDfsPutFile)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *PutFileArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in PutFileArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *PutFileArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(dfs.TLDfsPutFile)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var PutFileArgs_Req_DEFAULT *dfs.TLDfsPutFile
+
+func (p *PutFileArgs) GetReq() *dfs.TLDfsPutFile {
+	if !p.IsSetReq() {
+		return PutFileArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *PutFileArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type PutFileResult struct {
+	Success *dfs.FileFinalizedObject
+}
+
+var PutFileResult_Success_DEFAULT *dfs.FileFinalizedObject
+
+func (p *PutFileResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in PutFileResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *PutFileResult) Unmarshal(in []byte) error {
+	msg := new(dfs.FileFinalizedObject)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *PutFileResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in PutFileResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *PutFileResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(dfs.FileFinalizedObject)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *PutFileResult) GetSuccess() *dfs.FileFinalizedObject {
+	if !p.IsSetSuccess() {
+		return PutFileResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *PutFileResult) SetSuccess(x interface{}) {
+	p.Success = x.(*dfs.FileFinalizedObject)
+}
+
+func (p *PutFileResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *PutFileResult) GetResult() interface{} {
+	return p.Success
+}
+
+func getFileByReadLeaseHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*GetFileByReadLeaseArgs)
+	realResult := result.(*GetFileByReadLeaseResult)
+	success, err := handler.(dfs.RPCDfs).DfsGetFileByReadLease(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newGetFileByReadLeaseArgs() interface{} {
+	return &GetFileByReadLeaseArgs{}
+}
+
+func newGetFileByReadLeaseResult() interface{} {
+	return &GetFileByReadLeaseResult{}
+}
+
+type GetFileByReadLeaseArgs struct {
+	Req *dfs.TLDfsGetFileByReadLease
+}
+
+func (p *GetFileByReadLeaseArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in GetFileByReadLeaseArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *GetFileByReadLeaseArgs) Unmarshal(in []byte) error {
+	msg := new(dfs.TLDfsGetFileByReadLease)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *GetFileByReadLeaseArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in GetFileByReadLeaseArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *GetFileByReadLeaseArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(dfs.TLDfsGetFileByReadLease)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetFileByReadLeaseArgs_Req_DEFAULT *dfs.TLDfsGetFileByReadLease
+
+func (p *GetFileByReadLeaseArgs) GetReq() *dfs.TLDfsGetFileByReadLease {
+	if !p.IsSetReq() {
+		return GetFileByReadLeaseArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetFileByReadLeaseArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type GetFileByReadLeaseResult struct {
+	Success *tg.UploadFile
+}
+
+var GetFileByReadLeaseResult_Success_DEFAULT *tg.UploadFile
+
+func (p *GetFileByReadLeaseResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in GetFileByReadLeaseResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *GetFileByReadLeaseResult) Unmarshal(in []byte) error {
+	msg := new(tg.UploadFile)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetFileByReadLeaseResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in GetFileByReadLeaseResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *GetFileByReadLeaseResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.UploadFile)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetFileByReadLeaseResult) GetSuccess() *tg.UploadFile {
+	if !p.IsSetSuccess() {
+		return GetFileByReadLeaseResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetFileByReadLeaseResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.UploadFile)
+}
+
+func (p *GetFileByReadLeaseResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetFileByReadLeaseResult) GetResult() interface{} {
+	return p.Success
+}
+
+func getFileHashesByReadLeaseHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*GetFileHashesByReadLeaseArgs)
+	realResult := result.(*GetFileHashesByReadLeaseResult)
+	success, err := handler.(dfs.RPCDfs).DfsGetFileHashesByReadLease(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newGetFileHashesByReadLeaseArgs() interface{} {
+	return &GetFileHashesByReadLeaseArgs{}
+}
+
+func newGetFileHashesByReadLeaseResult() interface{} {
+	return &GetFileHashesByReadLeaseResult{}
+}
+
+type GetFileHashesByReadLeaseArgs struct {
+	Req *dfs.TLDfsGetFileHashesByReadLease
+}
+
+func (p *GetFileHashesByReadLeaseArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in GetFileHashesByReadLeaseArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *GetFileHashesByReadLeaseArgs) Unmarshal(in []byte) error {
+	msg := new(dfs.TLDfsGetFileHashesByReadLease)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *GetFileHashesByReadLeaseArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in GetFileHashesByReadLeaseArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *GetFileHashesByReadLeaseArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(dfs.TLDfsGetFileHashesByReadLease)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetFileHashesByReadLeaseArgs_Req_DEFAULT *dfs.TLDfsGetFileHashesByReadLease
+
+func (p *GetFileHashesByReadLeaseArgs) GetReq() *dfs.TLDfsGetFileHashesByReadLease {
+	if !p.IsSetReq() {
+		return GetFileHashesByReadLeaseArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetFileHashesByReadLeaseArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type GetFileHashesByReadLeaseResult struct {
+	Success *dfs.VectorFileHash
+}
+
+var GetFileHashesByReadLeaseResult_Success_DEFAULT *dfs.VectorFileHash
+
+func (p *GetFileHashesByReadLeaseResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in GetFileHashesByReadLeaseResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *GetFileHashesByReadLeaseResult) Unmarshal(in []byte) error {
+	msg := new(dfs.VectorFileHash)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetFileHashesByReadLeaseResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in GetFileHashesByReadLeaseResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *GetFileHashesByReadLeaseResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(dfs.VectorFileHash)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetFileHashesByReadLeaseResult) GetSuccess() *dfs.VectorFileHash {
+	if !p.IsSetSuccess() {
+		return GetFileHashesByReadLeaseResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetFileHashesByReadLeaseResult) SetSuccess(x interface{}) {
+	p.Success = x.(*dfs.VectorFileHash)
+}
+
+func (p *GetFileHashesByReadLeaseResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetFileHashesByReadLeaseResult) GetResult() interface{} {
+	return p.Success
 }
 
 func writeFilePartDataHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
@@ -1828,6 +2392,54 @@ func newServiceClient(c client.Client) *kClient {
 	return &kClient{
 		c: c,
 	}
+}
+
+func (p *kClient) DfsCommitUpload(ctx context.Context, req *dfs.TLDfsCommitUpload) (r *dfs.FileFinalizedObject, err error) {
+	// var _args CommitUploadArgs
+	// _args.Req = req
+	var _result CommitUploadResult
+
+	if err = p.c.Call(ctx, "/dfs.RPCDfs/dfs.commitUpload", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) DfsPutFile(ctx context.Context, req *dfs.TLDfsPutFile) (r *dfs.FileFinalizedObject, err error) {
+	// var _args PutFileArgs
+	// _args.Req = req
+	var _result PutFileResult
+
+	if err = p.c.Call(ctx, "/dfs.RPCDfs/dfs.putFile", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) DfsGetFileByReadLease(ctx context.Context, req *dfs.TLDfsGetFileByReadLease) (r *tg.UploadFile, err error) {
+	// var _args GetFileByReadLeaseArgs
+	// _args.Req = req
+	var _result GetFileByReadLeaseResult
+
+	if err = p.c.Call(ctx, "/dfs.RPCDfs/dfs.getFileByReadLease", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) DfsGetFileHashesByReadLease(ctx context.Context, req *dfs.TLDfsGetFileHashesByReadLease) (r *dfs.VectorFileHash, err error) {
+	// var _args GetFileHashesByReadLeaseArgs
+	// _args.Req = req
+	var _result GetFileHashesByReadLeaseResult
+
+	if err = p.c.Call(ctx, "/dfs.RPCDfs/dfs.getFileHashesByReadLease", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
 }
 
 func (p *kClient) DfsWriteFilePartData(ctx context.Context, req *dfs.TLDfsWriteFilePartData) (r *tg.Bool, err error) {

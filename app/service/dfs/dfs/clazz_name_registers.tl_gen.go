@@ -15,6 +15,12 @@ import (
 )
 
 const (
+	ClazzName_fileFinalizedObject          = "fileFinalizedObject"
+	ClazzName_fileHashChunk                = "fileHashChunk"
+	ClazzName_dfs_commitUpload             = "dfs_commitUpload"
+	ClazzName_dfs_putFile                  = "dfs_putFile"
+	ClazzName_dfs_getFileByReadLease       = "dfs_getFileByReadLease"
+	ClazzName_dfs_getFileHashesByReadLease = "dfs_getFileHashesByReadLease"
 	ClazzName_dfs_writeFilePartData        = "dfs_writeFilePartData"
 	ClazzName_dfs_uploadPhotoFileV2        = "dfs_uploadPhotoFileV2"
 	ClazzName_dfs_uploadProfilePhotoFileV2 = "dfs_uploadProfilePhotoFileV2"
@@ -31,6 +37,12 @@ const (
 
 func init() {
 	// RegisterClazzNameList
+	iface.RegisterClazzName(ClazzName_fileFinalizedObject, 0, 0xe83380f0)          // e83380f0
+	iface.RegisterClazzName(ClazzName_fileHashChunk, 0, 0x146aad14)                // 146aad14
+	iface.RegisterClazzName(ClazzName_dfs_commitUpload, 0, 0xdddb9d2c)             // dddb9d2c
+	iface.RegisterClazzName(ClazzName_dfs_putFile, 0, 0x6e20c3e7)                  // 6e20c3e7
+	iface.RegisterClazzName(ClazzName_dfs_getFileByReadLease, 0, 0x86c7c115)       // 86c7c115
+	iface.RegisterClazzName(ClazzName_dfs_getFileHashesByReadLease, 0, 0xff974b78) // ff974b78
 	iface.RegisterClazzName(ClazzName_dfs_writeFilePartData, 0, 0x1a484107)        // 1a484107
 	iface.RegisterClazzName(ClazzName_dfs_uploadPhotoFileV2, 0, 0x2410d1a2)        // 2410d1a2
 	iface.RegisterClazzName(ClazzName_dfs_uploadProfilePhotoFileV2, 0, 0x872313d8) // 872313d8
@@ -45,6 +57,12 @@ func init() {
 	iface.RegisterClazzName(ClazzName_dfs_uploadedProfilePhoto, 0, 0xa3aa2874)     // a3aa2874
 
 	//RegisterClazzIDNameList
+	iface.RegisterClazzIDName(ClazzName_fileFinalizedObject, 0xe83380f0)          // e83380f0
+	iface.RegisterClazzIDName(ClazzName_fileHashChunk, 0x146aad14)                // 146aad14
+	iface.RegisterClazzIDName(ClazzName_dfs_commitUpload, 0xdddb9d2c)             // dddb9d2c
+	iface.RegisterClazzIDName(ClazzName_dfs_putFile, 0x6e20c3e7)                  // 6e20c3e7
+	iface.RegisterClazzIDName(ClazzName_dfs_getFileByReadLease, 0x86c7c115)       // 86c7c115
+	iface.RegisterClazzIDName(ClazzName_dfs_getFileHashesByReadLease, 0xff974b78) // ff974b78
 	iface.RegisterClazzIDName(ClazzName_dfs_writeFilePartData, 0x1a484107)        // 1a484107
 	iface.RegisterClazzIDName(ClazzName_dfs_uploadPhotoFileV2, 0x2410d1a2)        // 2410d1a2
 	iface.RegisterClazzIDName(ClazzName_dfs_uploadProfilePhotoFileV2, 0x872313d8) // 872313d8

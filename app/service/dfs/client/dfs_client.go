@@ -23,6 +23,10 @@ import (
 var _ *tg.Bool
 
 type DfsClient interface {
+	DfsCommitUpload(ctx context.Context, in *dfs.TLDfsCommitUpload) (*dfs.FileFinalizedObject, error)
+	DfsPutFile(ctx context.Context, in *dfs.TLDfsPutFile) (*dfs.FileFinalizedObject, error)
+	DfsGetFileByReadLease(ctx context.Context, in *dfs.TLDfsGetFileByReadLease) (*tg.UploadFile, error)
+	DfsGetFileHashesByReadLease(ctx context.Context, in *dfs.TLDfsGetFileHashesByReadLease) (*dfs.VectorFileHash, error)
 	DfsWriteFilePartData(ctx context.Context, in *dfs.TLDfsWriteFilePartData) (*tg.Bool, error)
 	DfsUploadPhotoFileV2(ctx context.Context, in *dfs.TLDfsUploadPhotoFileV2) (*tg.Photo, error)
 	DfsUploadProfilePhotoFileV2(ctx context.Context, in *dfs.TLDfsUploadProfilePhotoFileV2) (*tg.Photo, error)
@@ -47,6 +51,30 @@ func NewDfsClient(cli client.Client) DfsClient {
 		cli: cli,
 		rpc: dfsservice.NewRPCDfsClient(cli),
 	}
+}
+
+// DfsCommitUpload
+// dfs.commitUpload upload_session_id:string owner_id:long file:InputFile purpose:string = FileFinalizedObject;
+func (m *defaultDfsClient) DfsCommitUpload(ctx context.Context, in *dfs.TLDfsCommitUpload) (*dfs.FileFinalizedObject, error) {
+	return m.rpc.DfsCommitUpload(ctx, in)
+}
+
+// DfsPutFile
+// dfs.putFile owner_id:long purpose:string file_name:string mime_type:string bytes:bytes = FileFinalizedObject;
+func (m *defaultDfsClient) DfsPutFile(ctx context.Context, in *dfs.TLDfsPutFile) (*dfs.FileFinalizedObject, error) {
+	return m.rpc.DfsPutFile(ctx, in)
+}
+
+// DfsGetFileByReadLease
+// dfs.getFileByReadLease read_lease:bytes offset:long limit:int = upload.File;
+func (m *defaultDfsClient) DfsGetFileByReadLease(ctx context.Context, in *dfs.TLDfsGetFileByReadLease) (*tg.UploadFile, error) {
+	return m.rpc.DfsGetFileByReadLease(ctx, in)
+}
+
+// DfsGetFileHashesByReadLease
+// dfs.getFileHashesByReadLease read_lease:bytes offset:long limit:int = Vector<FileHash>;
+func (m *defaultDfsClient) DfsGetFileHashesByReadLease(ctx context.Context, in *dfs.TLDfsGetFileHashesByReadLease) (*dfs.VectorFileHash, error) {
+	return m.rpc.DfsGetFileHashesByReadLease(ctx, in)
 }
 
 // DfsWriteFilePartData

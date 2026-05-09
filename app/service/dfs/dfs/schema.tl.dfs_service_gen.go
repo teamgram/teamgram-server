@@ -28,6 +28,259 @@ var (
 	_ json.Marshaler
 )
 
+// TLDfsCommitUpload <--
+type TLDfsCommitUpload struct {
+	ClazzID         uint32            `json:"_id"`
+	UploadSessionId string            `json:"upload_session_id"`
+	OwnerId         int64             `json:"owner_id"`
+	File            tg.InputFileClazz `json:"file"`
+	Purpose         string            `json:"purpose"`
+}
+
+func (m *TLDfsCommitUpload) String() string {
+	return iface.DebugStringWithName(ClazzName_dfs_commitUpload, m)
+}
+
+// Encode <--
+func (m *TLDfsCommitUpload) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dfs_commitUpload, int(layer)); clazzId {
+	case 0xdddb9d2c:
+		x.PutClazzID(0xdddb9d2c)
+
+		x.PutString(m.UploadSessionId)
+		x.PutInt64(m.OwnerId)
+		if m.File == nil {
+			return fmt.Errorf("unable to encode dfs_commitUpload#0xdddb9d2c: field file is nil")
+		}
+		if err := m.File.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode dfs_commitUpload#0xdddb9d2c: field file: %w", err)
+		}
+		x.PutString(m.Purpose)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode dfs_commitUpload: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLDfsCommitUpload) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return fmt.Errorf("unable to decode dfs_commitUpload: constructor: %w", err)
+		}
+	}
+	switch m.ClazzID {
+	case 0xdddb9d2c:
+		m.UploadSessionId, err = d.String()
+		if err != nil {
+			return fmt.Errorf("unable to decode dfs_commitUpload#0xdddb9d2c: field upload_session_id: %w", err)
+		}
+		m.OwnerId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dfs_commitUpload#0xdddb9d2c: field owner_id: %w", err)
+		}
+
+		m.File, err = tg.DecodeInputFileClazz(d)
+		if err != nil {
+			return fmt.Errorf("unable to decode dfs_commitUpload#0xdddb9d2c: field file: %w", err)
+		}
+
+		m.Purpose, err = d.String()
+		if err != nil {
+			return fmt.Errorf("unable to decode dfs_commitUpload#0xdddb9d2c: field purpose: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode dfs_commitUpload: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// TLDfsPutFile <--
+type TLDfsPutFile struct {
+	ClazzID  uint32 `json:"_id"`
+	OwnerId  int64  `json:"owner_id"`
+	Purpose  string `json:"purpose"`
+	FileName string `json:"file_name"`
+	MimeType string `json:"mime_type"`
+	Bytes    []byte `json:"bytes"`
+}
+
+func (m *TLDfsPutFile) String() string {
+	return iface.DebugStringWithName(ClazzName_dfs_putFile, m)
+}
+
+// Encode <--
+func (m *TLDfsPutFile) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dfs_putFile, int(layer)); clazzId {
+	case 0x6e20c3e7:
+		x.PutClazzID(0x6e20c3e7)
+
+		x.PutInt64(m.OwnerId)
+		x.PutString(m.Purpose)
+		x.PutString(m.FileName)
+		x.PutString(m.MimeType)
+		x.PutBytes(m.Bytes)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode dfs_putFile: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLDfsPutFile) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return fmt.Errorf("unable to decode dfs_putFile: constructor: %w", err)
+		}
+	}
+	switch m.ClazzID {
+	case 0x6e20c3e7:
+		m.OwnerId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dfs_putFile#0x6e20c3e7: field owner_id: %w", err)
+		}
+		m.Purpose, err = d.String()
+		if err != nil {
+			return fmt.Errorf("unable to decode dfs_putFile#0x6e20c3e7: field purpose: %w", err)
+		}
+		m.FileName, err = d.String()
+		if err != nil {
+			return fmt.Errorf("unable to decode dfs_putFile#0x6e20c3e7: field file_name: %w", err)
+		}
+		m.MimeType, err = d.String()
+		if err != nil {
+			return fmt.Errorf("unable to decode dfs_putFile#0x6e20c3e7: field mime_type: %w", err)
+		}
+		m.Bytes, err = d.Bytes()
+		if err != nil {
+			return fmt.Errorf("unable to decode dfs_putFile#0x6e20c3e7: field bytes: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode dfs_putFile: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// TLDfsGetFileByReadLease <--
+type TLDfsGetFileByReadLease struct {
+	ClazzID   uint32 `json:"_id"`
+	ReadLease []byte `json:"read_lease"`
+	Offset    int64  `json:"offset"`
+	Limit     int32  `json:"limit"`
+}
+
+func (m *TLDfsGetFileByReadLease) String() string {
+	return iface.DebugStringWithName(ClazzName_dfs_getFileByReadLease, m)
+}
+
+// Encode <--
+func (m *TLDfsGetFileByReadLease) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dfs_getFileByReadLease, int(layer)); clazzId {
+	case 0x86c7c115:
+		x.PutClazzID(0x86c7c115)
+
+		x.PutBytes(m.ReadLease)
+		x.PutInt64(m.Offset)
+		x.PutInt32(m.Limit)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode dfs_getFileByReadLease: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLDfsGetFileByReadLease) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return fmt.Errorf("unable to decode dfs_getFileByReadLease: constructor: %w", err)
+		}
+	}
+	switch m.ClazzID {
+	case 0x86c7c115:
+		m.ReadLease, err = d.Bytes()
+		if err != nil {
+			return fmt.Errorf("unable to decode dfs_getFileByReadLease#0x86c7c115: field read_lease: %w", err)
+		}
+		m.Offset, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dfs_getFileByReadLease#0x86c7c115: field offset: %w", err)
+		}
+		m.Limit, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dfs_getFileByReadLease#0x86c7c115: field limit: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode dfs_getFileByReadLease: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// TLDfsGetFileHashesByReadLease <--
+type TLDfsGetFileHashesByReadLease struct {
+	ClazzID   uint32 `json:"_id"`
+	ReadLease []byte `json:"read_lease"`
+	Offset    int64  `json:"offset"`
+	Limit     int32  `json:"limit"`
+}
+
+func (m *TLDfsGetFileHashesByReadLease) String() string {
+	return iface.DebugStringWithName(ClazzName_dfs_getFileHashesByReadLease, m)
+}
+
+// Encode <--
+func (m *TLDfsGetFileHashesByReadLease) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_dfs_getFileHashesByReadLease, int(layer)); clazzId {
+	case 0xff974b78:
+		x.PutClazzID(0xff974b78)
+
+		x.PutBytes(m.ReadLease)
+		x.PutInt64(m.Offset)
+		x.PutInt32(m.Limit)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode dfs_getFileHashesByReadLease: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLDfsGetFileHashesByReadLease) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return fmt.Errorf("unable to decode dfs_getFileHashesByReadLease: constructor: %w", err)
+		}
+	}
+	switch m.ClazzID {
+	case 0xff974b78:
+		m.ReadLease, err = d.Bytes()
+		if err != nil {
+			return fmt.Errorf("unable to decode dfs_getFileHashesByReadLease#0xff974b78: field read_lease: %w", err)
+		}
+		m.Offset, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode dfs_getFileHashesByReadLease#0xff974b78: field offset: %w", err)
+		}
+		m.Limit, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode dfs_getFileHashesByReadLease#0xff974b78: field limit: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode dfs_getFileHashesByReadLease: invalid constructor %x", m.ClazzID)
+	}
+}
+
 // TLDfsWriteFilePartData <--
 type TLDfsWriteFilePartData struct {
 	ClazzID        uint32 `json:"_id"`
@@ -904,10 +1157,38 @@ func (m *TLDfsUploadedProfilePhoto) Decode(d *bin.Decoder) (err error) {
 // ----------------------------------------------------------------------------
 // VectorResList <--
 
+// VectorFileHash <--
+type VectorFileHash struct {
+	Datas []tg.FileHashClazz `json:"_datas"`
+}
+
+func (m *VectorFileHash) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
+}
+
+// Encode <--
+func (m *VectorFileHash) Encode(x *bin.Encoder, layer int32) error {
+	_ = iface.EncodeObjectList(x, m.Datas, layer)
+
+	return nil
+}
+
+// Decode <--
+func (m *VectorFileHash) Decode(d *bin.Decoder) (err error) {
+	m.Datas, err = iface.DecodeObjectList[tg.FileHashClazz](d)
+
+	return err
+}
+
 // ----------------------------------------------------------------------------
 // rpc
 
 type RPCDfs interface {
+	DfsCommitUpload(ctx context.Context, in *TLDfsCommitUpload) (*FileFinalizedObject, error)
+	DfsPutFile(ctx context.Context, in *TLDfsPutFile) (*FileFinalizedObject, error)
+	DfsGetFileByReadLease(ctx context.Context, in *TLDfsGetFileByReadLease) (*tg.UploadFile, error)
+	DfsGetFileHashesByReadLease(ctx context.Context, in *TLDfsGetFileHashesByReadLease) (*VectorFileHash, error)
 	DfsWriteFilePartData(ctx context.Context, in *TLDfsWriteFilePartData) (*tg.Bool, error)
 	DfsUploadPhotoFileV2(ctx context.Context, in *TLDfsUploadPhotoFileV2) (*tg.Photo, error)
 	DfsUploadProfilePhotoFileV2(ctx context.Context, in *TLDfsUploadProfilePhotoFileV2) (*tg.Photo, error)

@@ -20,6 +20,70 @@ import (
 
 var _ *tg.Bool
 
+// DfsCommitUpload
+// dfs.commitUpload upload_session_id:string owner_id:long file:InputFile purpose:string = FileFinalizedObject;
+func (s *Service) DfsCommitUpload(ctx context.Context, request *dfs.TLDfsCommitUpload) (*dfs.FileFinalizedObject, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dfs.commitUpload - request: %s", request)
+
+	r, err := c.DfsCommitUpload(request)
+	if err != nil {
+		c.Logger.Errorf("dfs.commitUpload - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("dfs.commitUpload - reply: %s", r)
+	return r, err
+}
+
+// DfsPutFile
+// dfs.putFile owner_id:long purpose:string file_name:string mime_type:string bytes:bytes = FileFinalizedObject;
+func (s *Service) DfsPutFile(ctx context.Context, request *dfs.TLDfsPutFile) (*dfs.FileFinalizedObject, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dfs.putFile - request: %s", request)
+
+	r, err := c.DfsPutFile(request)
+	if err != nil {
+		c.Logger.Errorf("dfs.putFile - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("dfs.putFile - reply: %s", r)
+	return r, err
+}
+
+// DfsGetFileByReadLease
+// dfs.getFileByReadLease read_lease:bytes offset:long limit:int = upload.File;
+func (s *Service) DfsGetFileByReadLease(ctx context.Context, request *dfs.TLDfsGetFileByReadLease) (*tg.UploadFile, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dfs.getFileByReadLease - request: %s", request)
+
+	r, err := c.DfsGetFileByReadLease(request)
+	if err != nil {
+		c.Logger.Errorf("dfs.getFileByReadLease - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("dfs.getFileByReadLease - reply: %s", r)
+	return r, err
+}
+
+// DfsGetFileHashesByReadLease
+// dfs.getFileHashesByReadLease read_lease:bytes offset:long limit:int = Vector<FileHash>;
+func (s *Service) DfsGetFileHashesByReadLease(ctx context.Context, request *dfs.TLDfsGetFileHashesByReadLease) (*dfs.VectorFileHash, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("dfs.getFileHashesByReadLease - request: %s", request)
+
+	r, err := c.DfsGetFileHashesByReadLease(request)
+	if err != nil {
+		c.Logger.Errorf("dfs.getFileHashesByReadLease - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("dfs.getFileHashesByReadLease - reply: %s", r)
+	return r, err
+}
+
 // DfsWriteFilePartData
 // dfs.writeFilePartData flags:# creator:long file_id:long file_part:int bytes:bytes big:flags.0?true file_total_parts:flags.1?int = Bool;
 func (s *Service) DfsWriteFilePartData(ctx context.Context, request *dfs.TLDfsWriteFilePartData) (*tg.Bool, error) {
