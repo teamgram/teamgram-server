@@ -284,7 +284,9 @@ func TestMessagesSendMultiMediaRejectsUnsupportedMediaBeforeMsgSend(t *testing.T
 		}},
 	}, 100, 200)
 	in := validSendMultiMediaRequest()
-	in.MultiMedia[0].Media = tg.MakeTLInputMediaContact(&tg.TLInputMediaContact{PhoneNumber: "1", FirstName: "a"})
+	in.MultiMedia[0].Media = tg.MakeTLInputMediaGeoPoint(&tg.TLInputMediaGeoPoint{
+		GeoPoint: tg.MakeTLInputGeoPoint(&tg.TLInputGeoPoint{Lat: 1, Long: 2}),
+	})
 	_, err := c.MessagesSendMultiMedia(in)
 	if !errors.Is(err, tg.ErrMediaEmpty) {
 		t.Fatalf("error = %v, want MEDIA_EMPTY", err)

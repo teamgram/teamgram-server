@@ -99,11 +99,19 @@ func (f *messagesFakeIdgenClient) IdgenNextId(ctx context.Context, in *idgenpb.T
 
 type messagesFakeUserClient struct {
 	userclient.UserClient
-	projectUsers func(ctx context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error)
+	projectUsers     func(ctx context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error)
+	getUserIDByPhone func(ctx context.Context, in *userpb.TLUserGetUserIdByPhone) (*tg.Int64, error)
 }
 
 func (f *messagesFakeUserClient) UserGetUserProjectionBundle(ctx context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
 	return f.projectUsers(ctx, in)
+}
+
+func (f *messagesFakeUserClient) UserGetUserIdByPhone(ctx context.Context, in *userpb.TLUserGetUserIdByPhone) (*tg.Int64, error) {
+	if f.getUserIDByPhone == nil {
+		return nil, nil
+	}
+	return f.getUserIDByPhone(ctx, in)
 }
 
 func newSendMsgCore(client msgclient.MsgClient, selfID, authKeyID int64) *MessagesCore {

@@ -65,7 +65,7 @@ func (c *MessagesCore) MessagesSendMultiMedia(in *tg.TLMessagesSendMultiMedia) (
 	date := int32(time.Now().Unix())
 	outboxes := make([]msg.OutboxMessageClazz, 0, len(in.MultiMedia))
 	for _, item := range in.MultiMedia {
-		media, err := resolveMessageMedia(c.ctx, c.svcCtx.Repo.MediaClient, authKeyID, item.Media)
+		media, err := resolveMessageMedia(c.ctx, c.svcCtx.Repo.MediaClient, c.svcCtx.Repo.UserClient, authKeyID, item.Media)
 		if err != nil {
 			mappedErr := mapMediaResolveError(err)
 			if mappedErr == tg.ErrInternalServerError {

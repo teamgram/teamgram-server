@@ -58,7 +58,7 @@ func (c *MessagesCore) MessagesSendMedia(in *tg.TLMessagesSendMedia) (*tg.Update
 		return nil, err
 	}
 
-	media, err := resolveMessageMedia(c.ctx, c.svcCtx.Repo.MediaClient, authKeyID, in.Media)
+	media, err := resolveMessageMedia(c.ctx, c.svcCtx.Repo.MediaClient, c.svcCtx.Repo.UserClient, authKeyID, in.Media)
 	if err != nil {
 		mappedErr := mapMediaResolveError(err)
 		if mappedErr == tg.ErrInternalServerError {

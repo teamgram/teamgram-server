@@ -235,13 +235,59 @@ func TestMessagesSendMediaRejectsUnsupportedMediaBeforeMsgSend(t *testing.T) {
 		}},
 	}, 100, 200)
 	in := validSendMediaRequest()
-	in.Media = tg.MakeTLInputMediaContact(&tg.TLInputMediaContact{PhoneNumber: "1", FirstName: "a"})
+	in.Media = tg.MakeTLInputMediaGeoPoint(&tg.TLInputMediaGeoPoint{
+		GeoPoint: tg.MakeTLInputGeoPoint(&tg.TLInputGeoPoint{Lat: 1, Long: 2}),
+	})
 	_, err := c.MessagesSendMedia(in)
 	if !errors.Is(err, tg.ErrMediaEmpty) {
 		t.Fatalf("error = %v, want MEDIA_EMPTY", err)
 	}
 	if called {
 		t.Fatal("msg send was called for unsupported media")
+	}
+}
+
+func TestMessagesSendMediaSupportsContactMedia(t *testing.T) {
+	var got *msg.TLMsgSendMessageV2
+	c := newMessagesCoreWithRepo(&repository.Repository{
+		MsgClient: &messagesFakeMsgClient{sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+			got = in
+			return testUpdates(), nil
+		}},
+		UserClient: &messagesFakeUserClient{
+			getUserIDByPhone: func(_ context.Context, in *userpb.TLUserGetUserIdByPhone) (*tg.Int64, error) {
+				if in.Phone != "8613000000001" {
+					t.Fatalf("phone lookup = %q, want normalized contact phone", in.Phone)
+				}
+				return tg.MakeTLInt64(&tg.TLInt64{V: 1571266964}), nil
+			},
+		},
+	}, 100, 200)
+	in := validSendMediaRequest()
+	in.Media = tg.MakeTLInputMediaContact(&tg.TLInputMediaContact{
+		PhoneNumber: "8613000000001",
+		FirstName:   "13000000001",
+		LastName:    "t2",
+		Vcard:       "",
+	})
+
+	_, err := c.MessagesSendMedia(in)
+	if err != nil {
+		t.Fatalf("MessagesSendMedia() error = %v", err)
+	}
+	if got == nil || len(got.Message) != 1 {
+		t.Fatalf("MsgSendMessageV2 input = %#v, want one outbox", got)
+	}
+	message, ok := got.Message[0].Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("outbox message type = %T, want *tg.TLMessage", got.Message[0].Message)
+	}
+	contact, ok := message.Media.(*tg.TLMessageMediaContact)
+	if !ok {
+		t.Fatalf("Media = %T, want *tg.TLMessageMediaContact", message.Media)
+	}
+	if contact.PhoneNumber != "8613000000001" || contact.FirstName != "13000000001" || contact.LastName != "t2" || contact.UserId != 1571266964 {
+		t.Fatalf("contact media = %#v, want shared contact fields and user id", contact)
 	}
 }
 

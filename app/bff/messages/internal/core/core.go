@@ -21,6 +21,7 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/app/bff/messages/internal/svc"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	idgenpb "github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
 	mediapb "github.com/teamgram/teamgram-server/v2/app/service/media/media"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
@@ -44,6 +45,10 @@ type resolveMediaClient interface {
 	MediaGetPhotoSizeList(ctx context.Context, in *mediapb.TLMediaGetPhotoSizeList) (*mediapb.PhotoSizeList, error)
 	MediaUploadedDocumentMedia(ctx context.Context, in *mediapb.TLMediaUploadedDocumentMedia) (*tg.MessageMedia, error)
 	MediaGetDocument(ctx context.Context, in *mediapb.TLMediaGetDocument) (*tg.Document, error)
+}
+
+type userLookupClient interface {
+	UserGetUserIdByPhone(ctx context.Context, in *userpb.TLUserGetUserIdByPhone) (*tg.Int64, error)
 }
 
 type getHistoryClient interface {
