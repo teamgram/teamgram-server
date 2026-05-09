@@ -1,6 +1,7 @@
 package core
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -14,6 +15,98 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/pagination"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
+
+func TestNormalizeOutboxMessageUsesAttrsGroupedID(t *testing.T) {
+	groupedID := int64(12345)
+	message := tg.MakeTLMessage(&tg.TLMessage{
+		Message:   "caption",
+		GroupedId: &groupedID,
+		Media:     tg.MakeTLMessageMediaPhoto(&tg.TLMessageMediaPhoto{}),
+	})
+	outbox := msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{RandomId: 99, Message: message})
+	got, err := normalizeOutboxMessage(normalizeOutboxInput{
+		SenderUserID: 100,
+		PeerType:     payload.PeerTypeUser,
+		PeerID:       200,
+		Outbox:       outbox,
+	})
+	if err != nil {
+		t.Fatalf("normalizeOutboxMessage() error = %v", err)
+	}
+	if got.Attrs.GroupedID != 12345 {
+		t.Fatalf("GroupedID = %d, want 12345", got.Attrs.GroupedID)
+	}
+}
+
+func TestMarshalSendRequestV3IncludesMediaAttrsForward(t *testing.T) {
+	msg1 := normalizedOutboxMessage{
+		SchemaVersion: NormalizedOutboxSchemaVersionV1,
+		RandomID:      11,
+		FromUserID:    100,
+		PeerType:      payload.PeerTypeUser,
+		PeerID:        200,
+		MessageText:   "caption",
+		MediaRef:      &payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "photo", ID: 300},
+		Attrs:         payload.MessageAttrsV1{SchemaVersion: payload.MessageAttrsSchemaVersionV1, GroupedID: 400},
+		ForwardRef:    &payload.ForwardRefV1{SchemaVersion: payload.ForwardRefSchemaVersionV1, FromUserID: 500, Date: 1700000000},
+	}
+	msg2 := msg1
+	msg2.MediaRef = &payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "photo", ID: 301}
+	_, hash1, err := marshalSendRequestV3(msg1, batchSideEffects{})
+	if err != nil {
+		t.Fatalf("marshalSendRequestV3(msg1) error = %v", err)
+	}
+	body1, _, err := marshalSendRequestV3(msg1, batchSideEffects{})
+	if err != nil {
+		t.Fatalf("marshalSendRequestV3(body1) error = %v", err)
+	}
+	var raw map[string]any
+	if err := json.Unmarshal(body1, &raw); err != nil {
+		t.Fatalf("decode request v3: %v", err)
+	}
+	if _, ok := raw["grouped_id"]; ok {
+		t.Fatalf("request payload has top-level grouped_id: %s", string(body1))
+	}
+	attrs, ok := raw["attrs"].(map[string]any)
+	if !ok || attrs["grouped_id"] != float64(400) {
+		t.Fatalf("request payload attrs grouped_id missing: %s", string(body1))
+	}
+	_, hash2, err := marshalSendRequestV3(msg2, batchSideEffects{})
+	if err != nil {
+		t.Fatalf("marshalSendRequestV3(msg2) error = %v", err)
+	}
+	if bytes.Equal(hash1, hash2) {
+		t.Fatal("request hash did not change when media ref changed")
+	}
+
+	msg3 := msg1
+	msg3.Attrs.Silent = true
+	_, hash3, err := marshalSendRequestV3(msg3, batchSideEffects{})
+	if err != nil {
+		t.Fatalf("marshalSendRequestV3(msg3) error = %v", err)
+	}
+	if bytes.Equal(hash1, hash3) {
+		t.Fatal("request hash did not change when attrs changed")
+	}
+
+	msg4 := msg1
+	msg4.ForwardRef = &payload.ForwardRefV1{SchemaVersion: payload.ForwardRefSchemaVersionV1, FromUserID: 501, Date: 1700000000}
+	_, hash4, err := marshalSendRequestV3(msg4, batchSideEffects{})
+	if err != nil {
+		t.Fatalf("marshalSendRequestV3(msg4) error = %v", err)
+	}
+	if bytes.Equal(hash1, hash4) {
+		t.Fatal("request hash did not change when forward ref changed")
+	}
+
+	_, sideEffectHash, err := marshalSendRequestV3(msg1, batchSideEffects{ClearDraft: true, SourcePermAuthKeyID: 9001, ClearDraftBeforeDate: 1700000002})
+	if err != nil {
+		t.Fatalf("marshalSendRequestV3(side effects) error = %v", err)
+	}
+	if bytes.Equal(hash1, sideEffectHash) {
+		t.Fatal("request hash did not change when batch side effects changed")
+	}
+}
 
 func TestMsgSendMessageV2SingleUserPublishesReceiverOperation(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":2,"pts":11,"pts_count":1,"event_type":"new_message","user_message_id":42}`)

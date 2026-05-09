@@ -40,24 +40,19 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 		return nil, fmt.Errorf("%w: first slice only supports user peer", msg.ErrSendStateConflict)
 	}
 	outbox := in.Message[0]
-	outboxTLMessage, err := outboxTLMessage(outbox)
+	normalized, err := normalizeOutboxMessage(normalizeOutboxInput{
+		Ctx:          c.ctx,
+		SenderUserID: in.UserId,
+		PeerType:     in.PeerType,
+		PeerID:       in.PeerId,
+		Outbox:       outbox,
+		Repo:         c.svcCtx.Repo,
+	})
 	if err != nil {
 		return nil, err
 	}
-	messageText := outboxTLMessage.Message
-	replyTo, err := c.resolveReplyToMessageID(in, outboxTLMessage)
-	if err != nil {
-		return nil, err
-	}
-	var sourcePermAuthKeyID int64
-	if in.SourcePermAuthKeyId != nil {
-		sourcePermAuthKeyID = *in.SourcePermAuthKeyId
-	}
-	var clearDraftBeforeDate int32
-	if in.ClearDraftBeforeDate != nil {
-		clearDraftBeforeDate = *in.ClearDraftBeforeDate
-	}
-	_, requestHash, err := marshalSendRequest(in.UserId, in.PeerType, in.PeerId, outbox.RandomId, messageText, replyTo.CanonicalMessageID, in.ClearDraft, sourcePermAuthKeyID, clearDraftBeforeDate)
+	sideEffects := batchSideEffectsFromRequest(in)
+	_, requestHash, err := marshalSendRequestV3(normalized, sideEffects)
 	if err != nil {
 		return nil, err
 	}
@@ -66,26 +61,38 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 		SenderUserID:                in.UserId,
 		PeerType:                    in.PeerType,
 		PeerID:                      in.PeerId,
-		ClientRandomID:              outbox.RandomId,
-		RequestPayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+		ClientRandomID:              normalized.RandomID,
+		RequestPayloadSchemaVersion: payload.MessageOperationSchemaVersionV3,
 		RequestPayloadHash:          requestHash,
-		MessageText:                 messageText,
-		ReplyToCanonicalMessageID:   replyTo.CanonicalMessageID,
+		MessageText:                 normalized.MessageText,
+		ReplyToCanonicalMessageID:   normalized.ReplyToCanonicalMessageID,
 	})
 	if err != nil {
 		return nil, err
 	}
 
+	canonicalPayloads, err := normalizedCanonicalPayloads(normalized)
+	if err != nil {
+		return nil, err
+	}
 	messageDate := time.Now().UTC().Unix()
 	canonical, err := c.svcCtx.Repo.CreateOrGetByClientRandom(c.ctx, repository.CreateCanonicalMessageInput{
-		SendStateID:        sendState.SendStateID,
-		SenderUserID:       in.UserId,
-		PeerType:           in.PeerType,
-		PeerID:             in.PeerId,
-		ClientRandomID:     outbox.RandomId,
-		RequestPayloadHash: requestHash,
-		MessageText:        messageText,
-		MessageDate:        messageDate,
+		SendStateID:                  sendState.SendStateID,
+		SenderUserID:                 in.UserId,
+		PeerType:                     in.PeerType,
+		PeerID:                       in.PeerId,
+		ClientRandomID:               normalized.RandomID,
+		RequestPayloadHash:           requestHash,
+		MessageText:                  normalized.MessageText,
+		MessageDate:                  messageDate,
+		EntitiesPayloadSchemaVersion: canonicalPayloads.EntitiesPayloadSchemaVersion,
+		EntitiesPayload:              canonicalPayloads.EntitiesPayload,
+		MediaRefSchemaVersion:        canonicalPayloads.MediaRefSchemaVersion,
+		MediaRefPayload:              canonicalPayloads.MediaRefPayload,
+		MessageAttrsSchemaVersion:    canonicalPayloads.MessageAttrsSchemaVersion,
+		MessageAttrsPayload:          canonicalPayloads.MessageAttrsPayload,
+		ForwardRefSchemaVersion:      canonicalPayloads.ForwardRefSchemaVersion,
+		ForwardRefPayload:            canonicalPayloads.ForwardRefPayload,
 	})
 	if err != nil {
 		return nil, err
@@ -102,7 +109,7 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 		senderResult = senderResultFromSendState(sendState)
 	} else {
 		var senderHash []byte
-		senderResult, senderHash, err = c.processSenderOperation(in, canonical, senderOperationID, messageText, replyTo)
+		senderResult, senderHash, err = c.processSenderOperation(in, canonical, senderOperationID, normalized, sideEffects)
 		if err != nil {
 			return nil, err
 		}
@@ -122,7 +129,7 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 	}
 
 	if in.UserId != in.PeerId && sendState.Status < repository.SendStateStatusReceiverAcked {
-		receiverOp, err := buildReceiverOperationEnvelope(in, canonical, messageText, replyTo.CanonicalMessageID)
+		receiverOp, err := buildReceiverOperationEnvelope(in, canonical, normalized)
 		if err != nil {
 			return nil, err
 		}
@@ -166,6 +173,25 @@ func senderResultFromSendState(sendState *repository.SendState) *userupdates.Use
 		ResponsePayload:     sendState.SenderUpdatePayload,
 		ResponsePayloadHash: sendState.SenderUpdatePayloadHash,
 	})
+}
+
+func batchSideEffectsFromRequest(in *msg.TLMsgSendMessageV2) batchSideEffects {
+	if in == nil {
+		return batchSideEffects{}
+	}
+	var sourcePermAuthKeyID int64
+	if in.SourcePermAuthKeyId != nil {
+		sourcePermAuthKeyID = *in.SourcePermAuthKeyId
+	}
+	var clearDraftBeforeDate int32
+	if in.ClearDraftBeforeDate != nil {
+		clearDraftBeforeDate = *in.ClearDraftBeforeDate
+	}
+	return batchSideEffects{
+		ClearDraft:           in.ClearDraft,
+		SourcePermAuthKeyID:  sourcePermAuthKeyID,
+		ClearDraftBeforeDate: clearDraftBeforeDate,
+	}
 }
 
 type sendRequestPayloadV1 struct {
@@ -214,37 +240,8 @@ type resolvedReplyToMessage struct {
 	UserMessageID      int64
 }
 
-func (c *MsgCore) resolveReplyToMessageID(in *msg.TLMsgSendMessageV2, message *tg.TLMessage) (resolvedReplyToMessage, error) {
-	if message == nil || message.ReplyTo == nil {
-		return resolvedReplyToMessage{}, nil
-	}
-	replyHeader, ok := message.ReplyTo.(*tg.TLMessageReplyHeader)
-	if !ok || replyHeader.ReplyToMsgId == nil || *replyHeader.ReplyToMsgId <= 0 {
-		return resolvedReplyToMessage{}, msg.ErrReplyToInvalid
-	}
-	replyTo, err := c.svcCtx.Repo.ResolveMessageID(c.ctx, in.UserId, in.PeerType, in.PeerId, int64(*replyHeader.ReplyToMsgId))
-	if err != nil {
-		return resolvedReplyToMessage{}, err
-	}
-	if replyTo == nil || replyTo.CanonicalMessageID == 0 || replyTo.UserMessageID <= 0 {
-		return resolvedReplyToMessage{}, msg.ErrReplyToInvalid
-	}
-	return resolvedReplyToMessage{
-		CanonicalMessageID: replyTo.CanonicalMessageID,
-		UserMessageID:      replyTo.UserMessageID,
-	}, nil
-}
-
-func (c *MsgCore) processSenderOperation(in *msg.TLMsgSendMessageV2, canonical *repository.CanonicalMessageResult, operationID string, text string, replyTo resolvedReplyToMessage) (*userupdates.UserOperationResult, []byte, error) {
-	var sourcePermAuthKeyID int64
-	if in.SourcePermAuthKeyId != nil {
-		sourcePermAuthKeyID = *in.SourcePermAuthKeyId
-	}
-	var clearDraftBeforeDate int32
-	if in.ClearDraftBeforeDate != nil {
-		clearDraftBeforeDate = *in.ClearDraftBeforeDate
-	}
-	body, _, hashBytes, err := buildMessageOperationPayload(in.UserId, in.PeerId, in.PeerId, true, canonical, text, replyTo.CanonicalMessageID, 0, in.ClearDraft, sourcePermAuthKeyID, clearDraftBeforeDate)
+func (c *MsgCore) processSenderOperation(in *msg.TLMsgSendMessageV2, canonical *repository.CanonicalMessageResult, operationID string, normalized normalizedOutboxMessage, sideEffects batchSideEffects) (*userupdates.UserOperationResult, []byte, error) {
+	body, _, hashBytes, err := buildNormalizedMessageOperationPayload(normalized, in.PeerId, in.PeerId, true, canonical, sideEffects)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -262,7 +259,7 @@ func (c *MsgCore) processSenderOperation(in *msg.TLMsgSendMessageV2, canonical *
 		CanonicalMessageID:   &canonical.CanonicalMessageID,
 		CanonicalPeerSeq:     &canonical.PeerSeq,
 		CanonicalDate:        int64Ptr(canonical.MessageDate),
-		PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+		PayloadSchemaVersion: payload.MessageOperationSchemaVersionV3,
 		PayloadCodec:         payload.PayloadCodecJSON,
 		PayloadHash:          hashBytes,
 		Payload:              body,
@@ -300,9 +297,9 @@ func (c *MsgCore) markSenderCommitted(canonical *repository.CanonicalMessageResu
 	})
 }
 
-func buildReceiverOperationEnvelope(in *msg.TLMsgSendMessageV2, canonical *repository.CanonicalMessageResult, text string, replyToCanonicalMessageID int64) (OperationEnvelope, error) {
+func buildReceiverOperationEnvelope(in *msg.TLMsgSendMessageV2, canonical *repository.CanonicalMessageResult, normalized normalizedOutboxMessage) (OperationEnvelope, error) {
 	operationID := payload.ReceiverOperationID(canonical.CanonicalMessageID, in.PeerId)
-	body, hashBytes, _, err := buildMessageOperationPayload(in.UserId, in.PeerId, in.UserId, false, canonical, text, replyToCanonicalMessageID, 0, false, 0, 0)
+	body, hashBytes, _, err := buildNormalizedMessageOperationPayload(normalized, in.PeerId, in.UserId, false, canonical, batchSideEffects{})
 	if err != nil {
 		return OperationEnvelope{}, err
 	}
@@ -317,42 +314,12 @@ func buildReceiverOperationEnvelope(in *msg.TLMsgSendMessageV2, canonical *repos
 		CanonicalMessageID:   &canonical.CanonicalMessageID,
 		CanonicalPeerSeq:     &canonical.PeerSeq,
 		CanonicalDate:        int64Ptr(canonical.MessageDate),
-		PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+		PayloadSchemaVersion: payload.MessageOperationSchemaVersionV3,
 		PayloadCodec:         payload.PayloadCodecJSON,
 		Payload:              body,
 		PayloadHash:          hashBytes,
 		DeliveryPolicy:       DeliveryPolicyBrokerDurableAck,
 	}, nil
-}
-
-func buildMessageOperationPayload(fromUserID int64, toUserID int64, peerID int64, out bool, canonical *repository.CanonicalMessageResult, text string, replyToCanonicalMessageID int64, replyToUserMessageID int64, clearDraft bool, sourcePermAuthKeyID int64, clearDraftBeforeDate int32) ([]byte, []byte, []byte, error) {
-	date, err := msgDateInt32FromUnixSeconds(canonical.MessageDate, "message date")
-	if err != nil {
-		return nil, nil, nil, err
-	}
-	body, err := json.Marshal(payload.MessageOperationV1{
-		SchemaVersion:             payload.MessageOperationSchemaVersion,
-		OperationKind:             payload.OperationKindSendMessage,
-		CanonicalMessageID:        canonical.CanonicalMessageID,
-		PeerType:                  payload.PeerTypeUser,
-		PeerID:                    peerID,
-		PeerSeq:                   canonical.PeerSeq,
-		FromUserID:                fromUserID,
-		ToUserID:                  toUserID,
-		Date:                      date,
-		Out:                       out,
-		MessageText:               text,
-		ReplyToCanonicalMessageID: replyToCanonicalMessageID,
-		ReplyToUserMessageID:      replyToUserMessageID,
-		ClearDraft:                clearDraft,
-		SourcePermAuthKeyID:       sourcePermAuthKeyID,
-		ClearDraftBeforeDate:      clearDraftBeforeDate,
-	})
-	if err != nil {
-		return nil, nil, nil, fmt.Errorf("%w: marshal message operation from_user_id=%d peer_id=%d", msg.ErrMsgStorage, fromUserID, peerID)
-	}
-	hashBytes := payload.HashBytes(body)
-	return body, hashBytes, hashBytes, nil
 }
 
 func shortSentMessage(canonical *repository.CanonicalMessageResult, result *userupdates.UserOperationResult) (*tg.Updates, error) {
