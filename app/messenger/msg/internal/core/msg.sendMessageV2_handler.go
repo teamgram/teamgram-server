@@ -144,14 +144,15 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 		}
 	}
 
-	if in.UserId != in.PeerId && sendState.Status < repository.SendStateStatusReceiverAcked {
+	if in.UserId != in.PeerId && needsReceiverAck(sendState.Status) {
 		receiverOp, err := buildReceiverOperationEnvelope(in, canonical, normalized)
 		if err != nil {
 			return nil, err
 		}
 		ack, err := c.dispatchBrokerDurableAck(receiverOp)
 		if err != nil {
-			return nil, err
+			_ = c.svcCtx.Repo.MarkRetryableFailure(c.ctx, repository.MarkRetryableFailureInput{SendStateID: canonical.SendStateID, LastErrorCode: "receiver_ack_failed", LastErrorMessage: "receiver durable ack failed"})
+			return nil, fmt.Errorf("%w: %w", msg.ErrSenderSyncFailed, err)
 		}
 		c.Logger.Debugf(
 			"msg.sendMessageV2 - receiver operation published: operation_id=%s topic=%s partition=%d offset=%d",
@@ -161,17 +162,20 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 			ack.Offset,
 		)
 	}
-	if sendState.Status < repository.SendStateStatusReceiverAcked {
+	if needsReceiverAck(sendState.Status) {
 		if err := c.svcCtx.Repo.MarkReceiverOpsAcked(c.ctx, canonical.SendStateID, 0); err != nil {
 			return nil, err
 		}
 	}
-	if sendState.Status < repository.SendStateStatusCompleted {
+	if !isCompleted(sendState.Status) {
 		if err := c.svcCtx.Repo.MarkCompleted(c.ctx, canonical.SendStateID); err != nil {
 			return nil, err
 		}
 	}
 
+	if requiresFullSentUpdates(normalized) {
+		return fullSentMessageUpdates(in.UserId, in.PeerId, []repository.CanonicalMessageResult{*canonical}, []*userupdates.UserOperationResult{senderResult}, []normalizedOutboxMessage{normalized})
+	}
 	return shortSentMessage(canonical, senderResult)
 }
 
@@ -222,7 +226,7 @@ func (c *MsgCore) sendMessageV2Batch(in *msg.TLMsgSendMessageV2, normalizedBatch
 	for i := range normalizedBatch {
 		canonical := &canonicalBatch.Items[i]
 		operationID := payload.SenderOperationID(canonical.CanonicalMessageID, in.UserId)
-		if canonical.SendStateStatus >= repository.SendStateStatusSenderCommitted {
+		if isSenderCommitted(canonical) {
 			results[i] = senderResultFromCanonical(canonical, operationID, in.UserId)
 			continue
 		}
@@ -250,7 +254,74 @@ func (c *MsgCore) sendMessageV2Batch(in *msg.TLMsgSendMessageV2, normalizedBatch
 		}
 		results[index] = result
 	}
+	if err := c.dispatchBatchReceiverOps(in, canonicalBatch.Items, normalizedBatch); err != nil {
+		return nil, err
+	}
+	for i := range canonicalBatch.Items {
+		canonical := &canonicalBatch.Items[i]
+		if needsReceiverAck(canonical.SendStateStatus) {
+			if err := c.svcCtx.Repo.MarkReceiverOpsAcked(c.ctx, canonical.SendStateID, 0); err != nil {
+				return nil, err
+			}
+		}
+		if !isCompleted(canonical.SendStateStatus) {
+			if err := c.svcCtx.Repo.MarkCompleted(c.ctx, canonical.SendStateID); err != nil {
+				return nil, err
+			}
+		}
+	}
 	return fullSentMessageUpdates(in.UserId, in.PeerId, canonicalBatch.Items, results, normalizedBatch)
+}
+
+func (c *MsgCore) dispatchBatchReceiverOps(in *msg.TLMsgSendMessageV2, canonicals []repository.CanonicalMessageResult, normalizedBatch []normalizedOutboxMessage) error {
+	if in.UserId == in.PeerId {
+		return nil
+	}
+	envelopes := make([]OperationEnvelope, 0, len(canonicals))
+	sendStateIDs := make([]int64, 0, len(canonicals))
+	for i := range canonicals {
+		canonical := &canonicals[i]
+		if !needsReceiverAck(canonical.SendStateStatus) {
+			continue
+		}
+		envelope, err := buildReceiverOperationEnvelope(in, canonical, normalizedBatch[i])
+		if err != nil {
+			return err
+		}
+		envelopes = append(envelopes, envelope)
+		sendStateIDs = append(sendStateIDs, canonical.SendStateID)
+	}
+	for _, envelope := range envelopes {
+		if _, err := c.dispatchBrokerDurableAck(envelope); err != nil {
+			for _, sendStateID := range sendStateIDs {
+				_ = c.svcCtx.Repo.MarkRetryableFailure(c.ctx, repository.MarkRetryableFailureInput{SendStateID: sendStateID, LastErrorCode: "receiver_batch_ack_failed", LastErrorMessage: "receiver batch durable ack failed"})
+			}
+			return fmt.Errorf("%w: %w", msg.ErrSenderSyncFailed, err)
+		}
+	}
+	return nil
+}
+
+func isSenderCommitted(canonical *repository.CanonicalMessageResult) bool {
+	if canonical == nil {
+		return false
+	}
+	if canonical.SendStateStatus == repository.SendStateStatusSenderCommitted ||
+		canonical.SendStateStatus == repository.SendStateStatusReceiverAcked ||
+		canonical.SendStateStatus == repository.SendStateStatusCompleted {
+		return true
+	}
+	return canonical.SendStateStatus == repository.SendStateStatusFailedRetryable &&
+		canonical.SenderOperationID != "" &&
+		len(canonical.SenderUpdatePayload) > 0
+}
+
+func needsReceiverAck(status int32) bool {
+	return status != repository.SendStateStatusReceiverAcked && status != repository.SendStateStatusCompleted
+}
+
+func isCompleted(status int32) bool {
+	return status == repository.SendStateStatusCompleted
 }
 
 func senderResultFromSendState(sendState *repository.SendState) *userupdates.UserOperationResult {
@@ -498,12 +569,21 @@ func fullSentMessageUpdates(senderUserID int64, peerID int64, canonicals []repos
 		updatesDate = date
 		updates = append(updates, tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
 			Message: tg.MakeTLMessage(&tg.TLMessage{
-				Out:     true,
-				Id:      userMessageID,
-				FromId:  tg.MakePeerUser(senderUserID),
-				PeerId:  tg.MakePeerUser(peerID),
-				Date:    date,
-				Message: normalized[i].MessageText,
+				Out:         true,
+				Silent:      normalized[i].Attrs.Silent,
+				Noforwards:  normalized[i].Attrs.Noforwards,
+				InvertMedia: normalized[i].Attrs.InvertMedia,
+				Id:          userMessageID,
+				FromId:      tg.MakePeerUser(senderUserID),
+				PeerId:      tg.MakePeerUser(peerID),
+				FwdFrom:     sentMessageForwardHeader(normalized[i].ForwardRef),
+				ReplyTo:     sentMessageReplyHeader(normalized[i].ReplyToUserMessageID),
+				Date:        date,
+				Message:     normalized[i].MessageText,
+				Media:       sentMessageMedia(normalized[i].MediaRef),
+				Entities:    sentMessageEntities(normalized[i].Entities),
+				GroupedId:   sentMessageGroupedID(normalized[i].attrsPtr()),
+				TtlPeriod:   sentMessageTTLPeriod(normalized[i].MediaRef),
 			}),
 			Pts:      pts,
 			PtsCount: response.PtsCount,
@@ -516,6 +596,171 @@ func fullSentMessageUpdates(senderUserID int64, peerID int64, canonicals []repos
 		Date:    updatesDate,
 		Seq:     0,
 	}).ToUpdates(), nil
+}
+
+func requiresFullSentUpdates(normalized normalizedOutboxMessage) bool {
+	if normalized.MediaRef != nil || normalized.ForwardRef != nil || len(normalized.Entities) > 0 {
+		return true
+	}
+	return normalized.hasAttrs()
+}
+
+func sentMessageMedia(media *payload.MediaRefV1) tg.MessageMediaClazz {
+	if media == nil {
+		return nil
+	}
+	ttl := sentMessageTTLPeriod(media)
+	switch media.Kind {
+	case "photo":
+		return tg.MakeTLMessageMediaPhoto(&tg.TLMessageMediaPhoto{
+			Photo:      tg.MakeTLPhotoEmpty(&tg.TLPhotoEmpty{Id: media.ID}),
+			TtlSeconds: ttl,
+		})
+	case "document":
+		return tg.MakeTLMessageMediaDocument(&tg.TLMessageMediaDocument{
+			Document:   tg.MakeTLDocumentEmpty(&tg.TLDocumentEmpty{Id: media.ID}),
+			TtlSeconds: ttl,
+		})
+	default:
+		return tg.MakeTLMessageMediaEmpty(&tg.TLMessageMediaEmpty{})
+	}
+}
+
+func sentMessageTTLPeriod(media *payload.MediaRefV1) *int32 {
+	if media == nil || media.TTLSeconds == 0 {
+		return nil
+	}
+	ttl := media.TTLSeconds
+	return &ttl
+}
+
+func sentMessageGroupedID(attrs *payload.MessageAttrsV1) *int64 {
+	if attrs == nil || attrs.GroupedID == 0 {
+		return nil
+	}
+	groupedID := attrs.GroupedID
+	return &groupedID
+}
+
+func sentMessageForwardHeader(ref *payload.ForwardRefV1) tg.MessageFwdHeaderClazz {
+	if ref == nil {
+		return nil
+	}
+	date, err := msgDateInt32FromUnixSeconds(ref.Date, "forward date")
+	if err != nil {
+		return nil
+	}
+	var sourceMessageID *int32
+	if ref.SourceMessageID > 0 {
+		v, err := int64ToInt32(ref.SourceMessageID, "forward source message id")
+		if err != nil {
+			return nil
+		}
+		sourceMessageID = &v
+	}
+	var savedFromMessageID *int32
+	if ref.SavedFromMessageID > 0 {
+		v, err := int64ToInt32(ref.SavedFromMessageID, "forward saved message id")
+		if err != nil {
+			return nil
+		}
+		savedFromMessageID = &v
+	}
+	return tg.MakeTLMessageFwdHeader(&tg.TLMessageFwdHeader{
+		FromId:         sentMessageForwardPeer(ref),
+		FromName:       stringPtr(ref.FromName),
+		Date:           date,
+		ChannelPost:    sourceMessageID,
+		SavedFromPeer:  sentMessagePeerFromOptional(ref.SavedFromPeerType, ref.SavedFromPeerID),
+		SavedFromMsgId: savedFromMessageID,
+	})
+}
+
+func sentMessageForwardPeer(ref *payload.ForwardRefV1) tg.PeerClazz {
+	if ref.FromUserID > 0 {
+		return tg.MakePeerUser(ref.FromUserID)
+	}
+	return sentMessagePeerFromOptional(ref.SourcePeerType, ref.SourcePeerID)
+}
+
+func sentMessagePeerFromOptional(peerType int32, peerID int64) tg.PeerClazz {
+	if peerID == 0 {
+		return nil
+	}
+	switch peerType {
+	case payload.PeerTypeUser:
+		return tg.MakePeerUser(peerID)
+	case payload.PeerTypeChat:
+		return tg.MakePeerChat(peerID)
+	case payload.PeerTypeChannel:
+		return tg.MakePeerChannel(peerID)
+	default:
+		return nil
+	}
+}
+
+func sentMessageReplyHeader(userMessageID int64) tg.MessageReplyHeaderClazz {
+	if userMessageID <= 0 {
+		return nil
+	}
+	replyToMsgID, err := int64ToInt32(userMessageID, "reply user message id")
+	if err != nil {
+		return nil
+	}
+	return tg.MakeTLMessageReplyHeader(&tg.TLMessageReplyHeader{ReplyToMsgId: &replyToMsgID})
+}
+
+func sentMessageEntities(entities []payload.MessageEntityV1) []tg.MessageEntityClazz {
+	if len(entities) == 0 {
+		return nil
+	}
+	out := make([]tg.MessageEntityClazz, 0, len(entities))
+	for _, entity := range entities {
+		switch entity.Kind {
+		case "mention":
+			out = append(out, tg.MakeTLMessageEntityMention(&tg.TLMessageEntityMention{Offset: entity.Offset, Length: entity.Length}))
+		case "hashtag":
+			out = append(out, tg.MakeTLMessageEntityHashtag(&tg.TLMessageEntityHashtag{Offset: entity.Offset, Length: entity.Length}))
+		case "bot_command":
+			out = append(out, tg.MakeTLMessageEntityBotCommand(&tg.TLMessageEntityBotCommand{Offset: entity.Offset, Length: entity.Length}))
+		case "url":
+			out = append(out, tg.MakeTLMessageEntityUrl(&tg.TLMessageEntityUrl{Offset: entity.Offset, Length: entity.Length}))
+		case "email":
+			out = append(out, tg.MakeTLMessageEntityEmail(&tg.TLMessageEntityEmail{Offset: entity.Offset, Length: entity.Length}))
+		case "bold":
+			out = append(out, tg.MakeTLMessageEntityBold(&tg.TLMessageEntityBold{Offset: entity.Offset, Length: entity.Length}))
+		case "italic":
+			out = append(out, tg.MakeTLMessageEntityItalic(&tg.TLMessageEntityItalic{Offset: entity.Offset, Length: entity.Length}))
+		case "code":
+			out = append(out, tg.MakeTLMessageEntityCode(&tg.TLMessageEntityCode{Offset: entity.Offset, Length: entity.Length}))
+		case "pre":
+			out = append(out, tg.MakeTLMessageEntityPre(&tg.TLMessageEntityPre{Offset: entity.Offset, Length: entity.Length, Language: entity.URL}))
+		case "text_url":
+			out = append(out, tg.MakeTLMessageEntityTextUrl(&tg.TLMessageEntityTextUrl{Offset: entity.Offset, Length: entity.Length, Url: entity.URL}))
+		case "phone":
+			out = append(out, tg.MakeTLMessageEntityPhone(&tg.TLMessageEntityPhone{Offset: entity.Offset, Length: entity.Length}))
+		case "cashtag":
+			out = append(out, tg.MakeTLMessageEntityCashtag(&tg.TLMessageEntityCashtag{Offset: entity.Offset, Length: entity.Length}))
+		case "underline":
+			out = append(out, tg.MakeTLMessageEntityUnderline(&tg.TLMessageEntityUnderline{Offset: entity.Offset, Length: entity.Length}))
+		case "strike":
+			out = append(out, tg.MakeTLMessageEntityStrike(&tg.TLMessageEntityStrike{Offset: entity.Offset, Length: entity.Length}))
+		case "bank_card":
+			out = append(out, tg.MakeTLMessageEntityBankCard(&tg.TLMessageEntityBankCard{Offset: entity.Offset, Length: entity.Length}))
+		case "spoiler":
+			out = append(out, tg.MakeTLMessageEntitySpoiler(&tg.TLMessageEntitySpoiler{Offset: entity.Offset, Length: entity.Length}))
+		case "blockquote":
+			out = append(out, tg.MakeTLMessageEntityBlockquote(&tg.TLMessageEntityBlockquote{Offset: entity.Offset, Length: entity.Length}))
+		}
+	}
+	return out
+}
+
+func stringPtr(v string) *string {
+	if v == "" {
+		return nil
+	}
+	return &v
 }
 
 func operationResponseV2(result *userupdates.UserOperationResult, operation string) (payload.OperationResponseV2, error) {
