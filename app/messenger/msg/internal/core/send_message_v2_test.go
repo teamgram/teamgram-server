@@ -844,6 +844,62 @@ func TestMsgSendMessageV2RetrySkipsCanonicalMarkWhenAlreadyCanonical(t *testing.
 	}
 }
 
+func TestMsgSendMessageV2RetryableWithoutSenderResultReprocessesSender(t *testing.T) {
+	responsePayload := []byte(`{"schema_version":2,"pts":15,"pts_count":1,"event_type":"new_message","user_message_id":50}`)
+	responseHash := mustHashBytes(t, responsePayload)
+	repo := &fakeMsgRepository{
+		sendState: &repository.SendState{
+			SendStateID:        1,
+			Status:             repository.SendStateStatusFailedRetryable,
+			CanonicalMessageID: 6001,
+			PeerSeq:            9,
+		},
+		canonical: &repository.CanonicalMessageResult{
+			SendStateID:        1,
+			CanonicalMessageID: 6001,
+			PeerSeq:            9,
+			MessageDate:        1_772_000_050,
+			RequestPayloadHash: payload.HashBytes([]byte("request")),
+			CreatedNew:         false,
+		},
+	}
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:              1001,
+			OperationId:         payload.SenderOperationID(6001, 1001),
+			Status:              1,
+			Pts:                 15,
+			PtsCount:            1,
+			CurrentPts:          15,
+			ResponsePayload:     responsePayload,
+			ResponsePayloadHash: responseHash,
+		}),
+	}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:              repo,
+		UserUpdates:       updatesClient,
+		ReceiverPublisher: &fakeReceiverPublisher{},
+	})
+
+	got, err := core.MsgSendMessageV2(sendMessageRequest(1001, 1001, 9001, "retryable"))
+	if err != nil {
+		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	}
+	short, ok := got.ToUpdateShortSentMessage()
+	if !ok {
+		t.Fatalf("expected updateShortSentMessage, got %s", got.ClazzName())
+	}
+	if short.Pts != 15 || short.PtsCount != 1 || short.Id != 50 {
+		t.Fatalf("unexpected short sent message: %+v", short)
+	}
+	if updatesClient.processed == nil {
+		t.Fatal("UserupdatesProcessUserOperation was not called")
+	}
+	if repo.markSenderCalls != 1 {
+		t.Fatalf("mark sender calls = %d, want 1", repo.markSenderCalls)
+	}
+}
+
 func TestMsgSendMessageV2SelfRetryUsesCommittedSenderState(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":2,"pts":14,"pts_count":1,"event_type":"new_message","user_message_id":48}`)
 	responseHash := mustHashBytes(t, responsePayload)

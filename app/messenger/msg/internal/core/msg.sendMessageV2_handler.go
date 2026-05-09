@@ -121,7 +121,7 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 
 	senderOperationID := payload.SenderOperationID(canonical.CanonicalMessageID, in.UserId)
 	var senderResult *userupdates.UserOperationResult
-	if sendState.Status >= repository.SendStateStatusSenderCommitted {
+	if isSendStateSenderCommitted(sendState) {
 		senderResult = senderResultFromSendState(sendState)
 	} else {
 		var senderHash []byte
@@ -314,6 +314,20 @@ func isSenderCommitted(canonical *repository.CanonicalMessageResult) bool {
 	return canonical.SendStateStatus == repository.SendStateStatusFailedRetryable &&
 		canonical.SenderOperationID != "" &&
 		len(canonical.SenderUpdatePayload) > 0
+}
+
+func isSendStateSenderCommitted(sendState *repository.SendState) bool {
+	if sendState == nil {
+		return false
+	}
+	if sendState.Status == repository.SendStateStatusSenderCommitted ||
+		sendState.Status == repository.SendStateStatusReceiverAcked ||
+		sendState.Status == repository.SendStateStatusCompleted {
+		return true
+	}
+	return sendState.Status == repository.SendStateStatusFailedRetryable &&
+		sendState.SenderOperationID != "" &&
+		len(sendState.SenderUpdatePayload) > 0
 }
 
 func needsReceiverAck(status int32) bool {
