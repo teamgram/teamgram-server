@@ -21,6 +21,8 @@ import (
 type messagesFakeMsgClient struct {
 	msgclient.MsgClient
 	sendMessageV2       func(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error)
+	getUserMessage      func(ctx context.Context, in *msg.TLMsgGetUserMessage) (*tg.MessageBox, error)
+	getUserMessageList  func(ctx context.Context, in *msg.TLMsgGetUserMessageList) (*msg.VectorMessageBox, error)
 	getHistory          func(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error)
 	readHistoryV2       func(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error)
 	updatePinnedMessage func(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error)
@@ -32,6 +34,14 @@ type messagesFakeMsgClient struct {
 
 func (f *messagesFakeMsgClient) MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
 	return f.sendMessageV2(ctx, in)
+}
+
+func (f *messagesFakeMsgClient) MsgGetUserMessage(ctx context.Context, in *msg.TLMsgGetUserMessage) (*tg.MessageBox, error) {
+	return f.getUserMessage(ctx, in)
+}
+
+func (f *messagesFakeMsgClient) MsgGetUserMessageList(ctx context.Context, in *msg.TLMsgGetUserMessageList) (*msg.VectorMessageBox, error) {
+	return f.getUserMessageList(ctx, in)
 }
 
 func (f *messagesFakeMsgClient) MsgGetHistory(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error) {

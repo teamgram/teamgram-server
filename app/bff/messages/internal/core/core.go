@@ -30,6 +30,8 @@ import (
 
 type sendMessageClient interface {
 	MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error)
+	MsgGetUserMessage(ctx context.Context, in *msg.TLMsgGetUserMessage) (*tg.MessageBox, error)
+	MsgGetUserMessageList(ctx context.Context, in *msg.TLMsgGetUserMessageList) (*msg.VectorMessageBox, error)
 }
 
 type resolveMediaClient interface {
