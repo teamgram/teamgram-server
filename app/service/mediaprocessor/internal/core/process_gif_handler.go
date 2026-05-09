@@ -24,5 +24,81 @@ import (
 // MediaProcessorProcessGif
 // mediaProcessor.processGif owner_id:long object_id:string read_lease:bytes file_name:string thumb_object_id:string thumb_read_lease:bytes = ProcessedDocument;
 func (c *MediaProcessorCore) MediaProcessorProcessGif(in *mediaprocessor.TLMediaProcessorProcessGif) (*mediaprocessor.ProcessedDocument, error) {
-	return nil, mediaprocessor.ErrMediaProcessorInvalidArgument
+	if in == nil || !validProcessInput(in.OwnerId, in.ObjectId, in.ReadLease, in.FileName) {
+		return nil, mediaprocessor.ErrMediaProcessorInvalidArgument
+	}
+	original, err := c.readOriginalBytes(in.ReadLease)
+	if err != nil {
+		return nil, err
+	}
+	if len(original) < minGifBytes {
+		return nil, mediaprocessor.ErrMediaProcessorInvalidArgument
+	}
+
+	mp4Bytes, err := c.svcCtx.Processor.ConvertGIFToMP4(c.ctx, original)
+	if err != nil {
+		return nil, err
+	}
+	metadata, err := c.svcCtx.Processor.ProbeMP4(c.ctx, mp4Bytes)
+	if err != nil {
+		return nil, err
+	}
+
+	mp4Name := mp4FileName(in.FileName)
+	stored, err := putDerivative(c, in.OwnerId, mp4Name, mp4MimeType, mp4Bytes)
+	if err != nil {
+		return nil, err
+	}
+	size := int64(len(mp4Bytes))
+	objectID := ""
+	if stored != nil {
+		objectID = stored.ObjectId
+		if stored.Size2 > 0 {
+			size = stored.Size2
+		}
+	}
+	if objectID == "" {
+		return nil, mediaprocessor.ErrMediaProcessorInvalidArgument
+	}
+
+	attributes, err := encodeVideoAttributes(metadata, mp4Name, true)
+	if err != nil {
+		return nil, err
+	}
+	out := mediaprocessor.MakeTLProcessedDocument(&mediaprocessor.TLProcessedDocument{
+		ObjectId:   objectID,
+		MimeType:   mp4MimeType,
+		Size2:      size,
+		Attributes: attributes,
+	})
+
+	if len(in.ThumbReadLease) != 0 {
+		if in.ThumbObjectId == "" {
+			return nil, mediaprocessor.ErrMediaProcessorInvalidArgument
+		}
+		thumb, err := c.readOriginalBytes(in.ThumbReadLease)
+		if err != nil {
+			return nil, err
+		}
+		thumbName := thumbFileName(in.FileName)
+		thumbStored, err := putDerivative(c, in.OwnerId, thumbName, jpegMimeType, thumb)
+		if err != nil {
+			return nil, err
+		}
+		out.Thumbs = append(out.Thumbs, makeThumbDerivative(thumbStored, thumbName, metadata, thumb))
+		return out.ToProcessedDocument(), nil
+	}
+
+	cover, err := c.svcCtx.Processor.ExtractMP4Cover(c.ctx, mp4Bytes)
+	if err != nil {
+		c.Logger.Errorf("mediaProcessor.processGif - cover extraction failed: object_id: %s, file_name: %s, err: %v", in.ObjectId, in.FileName, err)
+		return out.ToProcessedDocument(), nil
+	}
+	thumbName := thumbFileName(mp4Name)
+	thumbStored, err := putDerivative(c, in.OwnerId, thumbName, jpegMimeType, cover)
+	if err != nil {
+		return nil, err
+	}
+	out.Thumbs = append(out.Thumbs, makeThumbDerivative(thumbStored, thumbName, metadata, cover))
+	return out.ToProcessedDocument(), nil
 }

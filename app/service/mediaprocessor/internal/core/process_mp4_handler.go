@@ -24,5 +24,38 @@ import (
 // MediaProcessorProcessMp4
 // mediaProcessor.processMp4 owner_id:long object_id:string read_lease:bytes file_name:string attributes:bytes = ProcessedDocument;
 func (c *MediaProcessorCore) MediaProcessorProcessMp4(in *mediaprocessor.TLMediaProcessorProcessMp4) (*mediaprocessor.ProcessedDocument, error) {
-	return nil, mediaprocessor.ErrMediaProcessorInvalidArgument
+	if in == nil || !validProcessInput(in.OwnerId, in.ObjectId, in.ReadLease, in.FileName) {
+		return nil, mediaprocessor.ErrMediaProcessorInvalidArgument
+	}
+	original, err := c.readOriginalBytes(in.ReadLease)
+	if err != nil {
+		return nil, err
+	}
+	metadata, err := c.svcCtx.Processor.ProbeMP4(c.ctx, original)
+	if err != nil {
+		return nil, err
+	}
+	attributes, err := encodeVideoAttributes(metadata, in.FileName, false)
+	if err != nil {
+		return nil, err
+	}
+
+	out := mediaprocessor.MakeTLProcessedDocument(&mediaprocessor.TLProcessedDocument{
+		ObjectId:   in.ObjectId,
+		MimeType:   mp4MimeType,
+		Size2:      int64(len(original)),
+		Attributes: attributes,
+	})
+	cover, err := c.svcCtx.Processor.ExtractMP4Cover(c.ctx, original)
+	if err != nil {
+		c.Logger.Errorf("mediaProcessor.processMp4 - cover extraction failed: object_id: %s, file_name: %s, err: %v", in.ObjectId, in.FileName, err)
+		return out.ToProcessedDocument(), nil
+	}
+	thumbName := thumbFileName(in.FileName)
+	thumbStored, err := putDerivative(c, in.OwnerId, thumbName, jpegMimeType, cover)
+	if err != nil {
+		return nil, err
+	}
+	out.Thumbs = append(out.Thumbs, makeThumbDerivative(thumbStored, thumbName, metadata, cover))
+	return out.ToProcessedDocument(), nil
 }

@@ -18,13 +18,24 @@
 package svc
 
 import (
+	"context"
+
 	dfsclient "github.com/teamgram/teamgram-server/v2/app/service/dfs/client"
+	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
 	"github.com/teamgram/teamgram-server/v2/app/service/mediaprocessor/internal/config"
+	"github.com/teamgram/teamgram-server/v2/app/service/mediaprocessor/internal/processor"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
+
+type DfsClient interface {
+	DfsGetFileByReadLease(ctx context.Context, in *dfs.TLDfsGetFileByReadLease) (*tg.UploadFile, error)
+	DfsPutFile(ctx context.Context, in *dfs.TLDfsPutFile) (*dfs.FileFinalizedObject, error)
+}
 
 type ServiceContext struct {
 	Config    config.Config
-	DfsClient dfsclient.DfsClient
+	DfsClient DfsClient
+	Processor processor.MediaProcessor
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -32,6 +43,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:    c,
 		DfsClient: dfsclient.NewDfsClient(dfsKitexClient),
+		Processor: processor.New(),
 	}
 }
 

@@ -18,11 +18,46 @@
 package core
 
 import (
+	"path"
+
+	"github.com/teamgram/teamgram-server/v2/app/service/mediaprocessor/internal/processor"
 	"github.com/teamgram/teamgram-server/v2/app/service/mediaprocessor/mediaprocessor"
 )
 
 // MediaProcessorProcessPhoto
 // mediaProcessor.processPhoto owner_id:long object_id:string read_lease:bytes file_name:string profile:Bool = ProcessedPhoto;
 func (c *MediaProcessorCore) MediaProcessorProcessPhoto(in *mediaprocessor.TLMediaProcessorProcessPhoto) (*mediaprocessor.ProcessedPhoto, error) {
-	return nil, mediaprocessor.ErrMediaProcessorInvalidArgument
+	if in == nil || !validProcessInput(in.OwnerId, in.ObjectId, in.ReadLease, in.FileName) {
+		return nil, mediaprocessor.ErrMediaProcessorInvalidArgument
+	}
+	original, err := c.readOriginalBytes(in.ReadLease)
+	if err != nil {
+		return nil, err
+	}
+	sizes, err := c.svcCtx.Processor.ResizePhoto(c.ctx, original, path.Ext(in.FileName), profileBool(in.Profile))
+	if err != nil {
+		return nil, err
+	}
+
+	out := mediaprocessor.MakeTLProcessedPhoto(&mediaprocessor.TLProcessedPhoto{
+		OriginalObjectId: in.ObjectId,
+	})
+	for _, size := range sizes {
+		fileName := size.Type + "_" + in.FileName
+		stored, err := putDerivative(c, in.OwnerId, fileName, jpegMimeType, size.Bytes)
+		if err != nil {
+			return nil, err
+		}
+		out.Sizes = append(out.Sizes, makeDerivative(
+			processor.DerivativePhotoSize,
+			stored,
+			fileName,
+			jpegMimeType,
+			int64(len(size.Bytes)),
+			size.W,
+			size.H,
+			size.Bytes,
+		))
+	}
+	return out.ToProcessedPhoto(), nil
 }
