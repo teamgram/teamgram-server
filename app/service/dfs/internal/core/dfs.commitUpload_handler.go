@@ -19,12 +19,13 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // DfsCommitUpload
 // dfs.commitUpload upload_session_id:string owner_id:long file:InputFile purpose:string = FileFinalizedObject;
 func (c *DfsCore) DfsCommitUpload(in *dfs.TLDfsCommitUpload) (*dfs.FileFinalizedObject, error) {
-	// TODO: not impl
-	return nil, tg.ErrMethodNotImpl
+	if in == nil || in.UploadSessionId == "" || in.OwnerId == 0 || in.File == nil || in.Purpose == "" {
+		return nil, dfs.ErrDfsInvalidArgument
+	}
+	return c.fileObjects().CommitUpload(c.ctx, in.UploadSessionId, in.OwnerId, in.File, in.Purpose)
 }

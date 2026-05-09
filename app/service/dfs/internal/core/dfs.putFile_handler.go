@@ -19,12 +19,13 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // DfsPutFile
 // dfs.putFile owner_id:long purpose:string file_name:string mime_type:string bytes:bytes = FileFinalizedObject;
 func (c *DfsCore) DfsPutFile(in *dfs.TLDfsPutFile) (*dfs.FileFinalizedObject, error) {
-	// TODO: not impl
-	return nil, tg.ErrMethodNotImpl
+	if in == nil || in.OwnerId == 0 || in.Purpose == "" || in.FileName == "" || len(in.Bytes) == 0 {
+		return nil, dfs.ErrDfsInvalidArgument
+	}
+	return c.fileObjects().PutInternalFile(c.ctx, in.OwnerId, in.Purpose, in.FileName, in.MimeType, in.Bytes)
 }

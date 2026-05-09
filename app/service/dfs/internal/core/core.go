@@ -34,6 +34,7 @@ type DfsCore struct {
 	photoRepository      photoRepository
 	documentRepository   documentRepository
 	downloadRepository   downloadRepository
+	fileObjectRepository fileObjectRepository
 }
 
 func New(ctx context.Context, svcCtx *svc.ServiceContext) *DfsCore {

@@ -25,6 +25,12 @@ import (
 // DfsGetFileByReadLease
 // dfs.getFileByReadLease read_lease:bytes offset:long limit:int = upload.File;
 func (c *DfsCore) DfsGetFileByReadLease(in *dfs.TLDfsGetFileByReadLease) (*tg.UploadFile, error) {
-	// TODO: not impl
-	return nil, tg.ErrMethodNotImpl
+	if in == nil || len(in.ReadLease) == 0 || in.Offset < 0 || in.Limit < 0 {
+		return nil, dfs.ErrDfsInvalidArgument
+	}
+	data, storageType, err := c.fileObjects().ReadByLease(c.ctx, in.ReadLease, in.Offset, in.Limit)
+	if err != nil {
+		return nil, err
+	}
+	return makeUploadFile(storageType, data), nil
 }

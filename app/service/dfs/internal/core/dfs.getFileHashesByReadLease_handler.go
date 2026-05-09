@@ -25,6 +25,20 @@ import (
 // DfsGetFileHashesByReadLease
 // dfs.getFileHashesByReadLease read_lease:bytes offset:long limit:int = Vector<FileHash>;
 func (c *DfsCore) DfsGetFileHashesByReadLease(in *dfs.TLDfsGetFileHashesByReadLease) (*dfs.VectorFileHash, error) {
-	// TODO: not impl
-	return nil, tg.ErrMethodNotImpl
+	if in == nil || len(in.ReadLease) == 0 || in.Offset < 0 || in.Limit < 0 {
+		return nil, dfs.ErrDfsInvalidArgument
+	}
+	chunks, err := c.fileObjects().HashesByLease(c.ctx, in.ReadLease, in.Offset, in.Limit)
+	if err != nil {
+		return nil, err
+	}
+	out := &dfs.VectorFileHash{Datas: make([]tg.FileHashClazz, 0, len(chunks))}
+	for _, chunk := range chunks {
+		out.Datas = append(out.Datas, tg.MakeTLFileHash(&tg.TLFileHash{
+			Offset: chunk.Offset,
+			Limit:  chunk.Limit,
+			Hash:   chunk.Hash,
+		}))
+	}
+	return out, nil
 }
