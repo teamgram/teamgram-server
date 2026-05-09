@@ -78,12 +78,25 @@ func (m *captureVideoSizesModel) SelectListByVideoSizeId(_ context.Context, _ in
 type fakeDfsMediaClient struct {
 	photo              *tg.Photo
 	document           *tg.Document
+	finalized          *dfsapi.FileFinalizedObject
+	commitReq          *dfsapi.TLDfsCommitUpload
+	putReq             *dfsapi.TLDfsPutFile
 	uploadPhotoRequest *dfsapi.TLDfsUploadPhotoFileV2
 	uploadProfileReq   *dfsapi.TLDfsUploadProfilePhotoFileV2
 	uploadedProfileReq *dfsapi.TLDfsUploadedProfilePhoto
 	uploadDocumentReq  *dfsapi.TLDfsUploadDocumentFileV2
 	uploadGifReq       *dfsapi.TLDfsUploadGifDocumentMedia
 	uploadMp4Req       *dfsapi.TLDfsUploadMp4DocumentMedia
+}
+
+func (c *fakeDfsMediaClient) CommitUpload(_ context.Context, in *dfsapi.TLDfsCommitUpload) (*dfsapi.FileFinalizedObject, error) {
+	c.commitReq = in
+	return c.finalized, nil
+}
+
+func (c *fakeDfsMediaClient) PutFile(_ context.Context, in *dfsapi.TLDfsPutFile) (*dfsapi.FileFinalizedObject, error) {
+	c.putReq = in
+	return c.finalized, nil
 }
 
 func (c *fakeDfsMediaClient) UploadPhotoFileV2(_ context.Context, in *dfsapi.TLDfsUploadPhotoFileV2) (*tg.Photo, error) {

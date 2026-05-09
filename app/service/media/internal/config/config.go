@@ -21,8 +21,21 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
+type FileReferenceConf struct {
+	Secret     string
+	TTLSeconds int64
+}
+
+type ReadLeaseConf struct {
+	Secret     string
+	TTLSeconds int64
+}
+
 type Config struct {
 	kitex.RpcServerConf
-	Mysql sqlx.Config
-	Dfs   kitex.RpcClientConf
+	Mysql          sqlx.Config
+	Dfs            kitex.RpcClientConf
+	MediaProcessor kitex.RpcClientConf
+	FileReference  FileReferenceConf
+	ReadLease      ReadLeaseConf
 }

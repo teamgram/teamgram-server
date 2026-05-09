@@ -11,6 +11,8 @@ import (
 )
 
 type DfsMediaClient interface {
+	CommitUpload(ctx context.Context, in *dfs.TLDfsCommitUpload) (*dfs.FileFinalizedObject, error)
+	PutFile(ctx context.Context, in *dfs.TLDfsPutFile) (*dfs.FileFinalizedObject, error)
 	UploadPhotoFileV2(ctx context.Context, in *dfs.TLDfsUploadPhotoFileV2) (*tg.Photo, error)
 	UploadProfilePhotoFileV2(ctx context.Context, in *dfs.TLDfsUploadProfilePhotoFileV2) (*tg.Photo, error)
 	UploadDocumentFileV2(ctx context.Context, in *dfs.TLDfsUploadDocumentFileV2) (*tg.Document, error)
@@ -25,6 +27,20 @@ type DFSClient struct {
 
 func NewDFSClient(client dfsclient.DfsClient) *DFSClient {
 	return &DFSClient{client: client}
+}
+
+func (c *DFSClient) CommitUpload(ctx context.Context, in *dfs.TLDfsCommitUpload) (*dfs.FileFinalizedObject, error) {
+	if c == nil || c.client == nil {
+		return nil, errDFSClientUnavailable("commit upload")
+	}
+	return c.client.DfsCommitUpload(ctx, in)
+}
+
+func (c *DFSClient) PutFile(ctx context.Context, in *dfs.TLDfsPutFile) (*dfs.FileFinalizedObject, error) {
+	if c == nil || c.client == nil {
+		return nil, errDFSClientUnavailable("put file")
+	}
+	return c.client.DfsPutFile(ctx, in)
 }
 
 func (c *DFSClient) UploadPhotoFileV2(ctx context.Context, in *dfs.TLDfsUploadPhotoFileV2) (*tg.Photo, error) {
