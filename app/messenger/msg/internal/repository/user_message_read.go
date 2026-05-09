@@ -43,6 +43,11 @@ func (r *Repository) GetUserMessageList(ctx context.Context, userID int64, ids [
 	if userID <= 0 {
 		return nil, msg.ErrMsgIdInvalid
 	}
+	for _, id := range ids {
+		if id <= 0 {
+			return nil, msg.ErrMsgIdInvalid
+		}
+	}
 	if len(ids) == 0 {
 		return nil, nil
 	}
@@ -50,25 +55,19 @@ func (r *Repository) GetUserMessageList(ctx context.Context, userID int64, ids [
 		return nil, err
 	}
 	out := make([]UserMessageBox, 0, len(ids))
-	seen := make(map[int64]struct{}, len(ids))
 	for _, id := range ids {
-		if id <= 0 {
-			continue
-		}
-		if _, ok := seen[id]; ok {
-			continue
-		}
-		seen[id] = struct{}{}
 		row, err := r.models.CanonicalQueries.SelectUserMessageBoxByGlobalID(ctx, userID, id, MessageStatusLive)
 		if err != nil {
 			if isModelNotFound(err) {
-				continue
+				return nil, msg.ErrMsgIdInvalid
 			}
 			return nil, storageError("get user message list", err)
 		}
-		if box := userMessageBoxFromRow(row); box != nil {
-			out = append(out, *box)
+		box := userMessageBoxFromRow(row)
+		if box == nil {
+			return nil, msg.ErrMsgIdInvalid
 		}
+		out = append(out, *box)
 	}
 	return out, nil
 }

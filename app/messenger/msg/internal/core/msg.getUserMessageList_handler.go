@@ -11,9 +11,7 @@ func (c *MsgCore) MsgGetUserMessageList(in *msg.TLMsgGetUserMessageList) (*msg.V
 	}
 	ids := make([]int64, 0, len(in.IdList))
 	for _, id := range in.IdList {
-		if id > 0 {
-			ids = append(ids, int64(id))
-		}
+		ids = append(ids, int64(id))
 	}
 	boxes, err := c.svcCtx.Repo.GetUserMessageList(c.ctx, in.UserId, ids)
 	if err != nil {

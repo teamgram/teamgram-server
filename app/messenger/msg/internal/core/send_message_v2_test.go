@@ -263,6 +263,91 @@ func TestMsgGetUserMessageReadsViewerMessageID(t *testing.T) {
 	}
 }
 
+func TestMsgGetUserMessageListRejectsInvalidID(t *testing.T) {
+	core, fakeRepo := newMsgReadCoreForTest(t)
+	fakeRepo.userMessages = map[int64]*repository.UserMessageBox{
+		7: {UserID: 100, UserMessageID: 7, MessageText: "source", MessageDate: 1_772_000_300},
+	}
+
+	_, err := core.MsgGetUserMessageList(&msgpb.TLMsgGetUserMessageList{UserId: 100, IdList: []int32{7, 0}})
+	if !errors.Is(err, msgpb.ErrMsgIdInvalid) {
+		t.Fatalf("MsgGetUserMessageList() error = %v, want ErrMsgIdInvalid", err)
+	}
+	if len(fakeRepo.getUserMessageListInput.IDs) != 2 || fakeRepo.getUserMessageListInput.IDs[1] != 0 {
+		t.Fatalf("GetUserMessageList ids = %+v, want invalid id preserved for repository validation", fakeRepo.getUserMessageListInput.IDs)
+	}
+}
+
+func TestMsgGetUserMessageListRejectsMissingID(t *testing.T) {
+	core, fakeRepo := newMsgReadCoreForTest(t)
+	fakeRepo.userMessages = map[int64]*repository.UserMessageBox{
+		7: {UserID: 100, UserMessageID: 7, MessageText: "source", MessageDate: 1_772_000_300},
+	}
+
+	_, err := core.MsgGetUserMessageList(&msgpb.TLMsgGetUserMessageList{UserId: 100, IdList: []int32{7, 99}})
+	if !errors.Is(err, msgpb.ErrMsgIdInvalid) {
+		t.Fatalf("MsgGetUserMessageList() error = %v, want ErrMsgIdInvalid", err)
+	}
+}
+
+func TestMsgGetUserMessagePreservesV3ViewPayloadShape(t *testing.T) {
+	core, fakeRepo := newMsgReadCoreForTest(t)
+	eventPayload := mustMarshalMsgMessageEventV3(t, payload.MessageEventV3{
+		SchemaVersion:        payload.MessageEventSchemaVersionV3,
+		EventKind:            payload.EventKindNewMessage,
+		CanonicalMessageID:   900,
+		PeerSeq:              3,
+		MessageID:            7,
+		PeerType:             payload.PeerTypeUser,
+		PeerID:               200,
+		FromUserID:           200,
+		ToUserID:             100,
+		Date:                 1_772_000_300,
+		Out:                  false,
+		MessageText:          "caption",
+		ReplyToUserMessageID: 5,
+		MediaRef:             &payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "document", ID: 333},
+		Attrs:                &payload.MessageAttrsV1{SchemaVersion: payload.MessageAttrsSchemaVersionV1, GroupedID: 444, Noforwards: true},
+		ForwardRef:           &payload.ForwardRefV1{SchemaVersion: payload.ForwardRefSchemaVersionV1, FromUserID: 300, Date: 1_772_000_001},
+	})
+	fakeRepo.userMessages = map[int64]*repository.UserMessageBox{
+		7: {
+			UserID:             100,
+			UserMessageID:      7,
+			CanonicalMessageID: 900,
+			PeerType:           payload.PeerTypeUser,
+			PeerID:             200,
+			PeerSeq:            3,
+			FromUserID:         200,
+			MessageText:        "plain fallback must not win",
+			MessageDate:        1_772_000_300,
+			ViewPayload:        eventPayload,
+		},
+	}
+
+	got, err := core.MsgGetUserMessage(&msgpb.TLMsgGetUserMessage{UserId: 100, Id: 7})
+	if err != nil {
+		t.Fatalf("MsgGetUserMessage() error = %v", err)
+	}
+	message, ok := got.Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("Message = %T, want *tg.TLMessage", got.Message)
+	}
+	if message.Message != "caption" || message.Noforwards != true {
+		t.Fatalf("message text/noforwards = %q/%t, want persisted V3 shape", message.Message, message.Noforwards)
+	}
+	if _, ok := message.Media.(*tg.TLMessageMediaDocument); !ok {
+		t.Fatalf("media = %T, want *tg.TLMessageMediaDocument", message.Media)
+	}
+	if message.GroupedId == nil || *message.GroupedId != 444 || message.FwdFrom == nil {
+		t.Fatalf("grouped/forward = grouped:%v fwd:%T", message.GroupedId, message.FwdFrom)
+	}
+	reply, ok := message.ReplyTo.(*tg.TLMessageReplyHeader)
+	if !ok || reply.ReplyToMsgId == nil || *reply.ReplyToMsgId != 5 {
+		t.Fatalf("reply = %#v, want reply_to_msg_id 5", message.ReplyTo)
+	}
+}
+
 func TestForwardRevalidationRejectsInvisibleSource(t *testing.T) {
 	core, fakeRepo, _ := newBatchMsgCoreForTest(t)
 	fakeRepo.forwardVisible = false
@@ -2619,9 +2704,14 @@ func (f *fakeMsgRepository) GetUserMessageList(_ context.Context, userID int64, 
 	f.getUserMessageListInput.IDs = append([]int64(nil), ids...)
 	out := make([]repository.UserMessageBox, 0, len(ids))
 	for _, id := range ids {
-		if box := f.userMessages[id]; box != nil && box.UserID == userID {
-			out = append(out, *box)
+		if id <= 0 {
+			return nil, msgpb.ErrMsgIdInvalid
 		}
+		box := f.userMessages[id]
+		if box == nil || box.UserID != userID {
+			return nil, msgpb.ErrMsgIdInvalid
+		}
+		out = append(out, *box)
 	}
 	return out, nil
 }
@@ -2933,6 +3023,15 @@ func firstSentUpdateMessage(t *testing.T, got *tg.Updates) *tg.TLMessage {
 		t.Fatalf("message = %T, want *tg.TLMessage", update.Message)
 	}
 	return message
+}
+
+func mustMarshalMsgMessageEventV3(t *testing.T, event payload.MessageEventV3) []byte {
+	t.Helper()
+	body, err := json.Marshal(event)
+	if err != nil {
+		t.Fatalf("marshal MessageEventV3: %v", err)
+	}
+	return body
 }
 
 func makeSequentialRandomIDsForTest(count int) []int64 {
