@@ -23,14 +23,14 @@ import (
 
 	"github.com/teamgram/marmota/pkg/stores/kv"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/config"
-	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/ffmpeg2"
-	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/imaging2"
 	minioadapter "github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/minio"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/objectstore"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/rpc"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/spool"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/xkv"
 	idgenclient "github.com/teamgram/teamgram-server/v2/app/service/idgen/client"
+	"github.com/teamgram/teamgram-server/v2/pkg/media/ffmpeg2"
+	"github.com/teamgram/teamgram-server/v2/pkg/media/imaging2"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 

@@ -1,0 +1,34 @@
+/*
+ * WARNING! All changes made in this file will be lost!
+ * Created from 'scheme.tl' by 'mtprotoc'
+ *
+ * Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
+ *  All rights reserved.
+ *
+ * Author: teamgramio (teamgram.io@gmail.com)
+ */
+
+package mediaprocessorclient
+
+import (
+	"github.com/teamgram/teamgram-server/v2/app/service/mediaprocessor/mediaprocessor/mediaprocessorservice"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
+
+	"github.com/cloudwego/kitex/client"
+)
+
+func MustNewKitexClient(c kitex.RpcClientConf) client.Client {
+	return kitex.MustNewClient(
+		c,
+		func(opts ...client.Option) (client.Client, error) {
+			return client.NewClient(mediaprocessorservice.NewServiceInfoForClient(), opts...)
+		})
+}
+
+func NewKitexClient(c kitex.RpcClientConf) (client.Client, error) {
+	return kitex.NewClient(
+		c,
+		func(opts ...client.Option) (client.Client, error) {
+			return client.NewClient(mediaprocessorservice.NewServiceInfoForClient(), opts...)
+		})
+}

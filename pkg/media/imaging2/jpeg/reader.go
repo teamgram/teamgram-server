@@ -12,7 +12,7 @@ import (
 	"image/color"
 	"io"
 
-	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/imaging2/jpeg/imageutil"
+	"github.com/teamgram/teamgram-server/v2/pkg/media/imaging2/jpeg/imageutil"
 )
 
 // TODO(nigeltao): fix up the doc comment style so that sentences start with

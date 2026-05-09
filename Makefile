@@ -15,7 +15,7 @@ gitTreeState=$(shell if git status|grep -q 'clean';then echo clean; else echo di
 
 ldflags="-s -w -X ${versionDir}.gitTag=${gitTag} -X ${versionDir}.buildDate=${buildDate} -X ${versionDir}.gitCommit=${gitCommit} -X ${versionDir}.gitTreeState=${gitTreeState} -X ${versionDir}.version=${VERSION} -X ${versionDir}.gitBranch=${gitBranch}"
 
-all: geoip idgen presence dfs media authsession biz userupdates msg sync bff gateway
+all: geoip idgen presence dfs media mediaprocessor authsession biz userupdates msg sync bff gateway
 
 lint: lint-tg-primitives
 
@@ -41,6 +41,10 @@ dfs:
 media:
 	@echo "build media..."
 	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/media -tags=jsoniter app/service/media/cmd/media/*.go
+
+mediaprocessor:
+	@echo "build mediaprocessor..."
+	@go build -ldflags ${ldflags} -o ${INSTALL}/bin/mediaprocessor -tags=jsoniter app/service/mediaprocessor/cmd/mediaprocessor/*.go
 
 authsession:
 	@echo "build authsession..."
@@ -76,6 +80,7 @@ clean:
 	@rm -rf ${INSTALL}/bin/presence
 	@rm -rf ${INSTALL}/bin/dfs
 	@rm -rf ${INSTALL}/bin/media
+	@rm -rf ${INSTALL}/bin/mediaprocessor
 	@rm -rf ${INSTALL}/bin/authsession
 	@rm -rf ${INSTALL}/bin/biz
 	@rm -rf ${INSTALL}/bin/userupdates

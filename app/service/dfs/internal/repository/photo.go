@@ -7,8 +7,8 @@ import (
 	"fmt"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
-	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/ffmpeg2"
-	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/imaging2"
+	"github.com/teamgram/teamgram-server/v2/pkg/media/ffmpeg2"
+	"github.com/teamgram/teamgram-server/v2/pkg/media/imaging2"
 )
 
 type StoredPhotoSize struct {
