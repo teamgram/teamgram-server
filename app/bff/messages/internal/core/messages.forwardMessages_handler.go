@@ -74,14 +74,17 @@ func (c *MessagesCore) MessagesForwardMessages(in *tg.TLMessagesForwardMessages)
 
 	date := int32(time.Now().Unix())
 	sourcePeer := tg.MakePeerUser(sourcePeerID)
-	var forwardedGroupedID *int64
+	forwardedGroupedIDs := make(map[int64]int64)
 	outboxes := make([]msg.OutboxMessageClazz, 0, len(sources))
 	for i, source := range sources {
+		var groupedID *int64
 		if source.GroupedId != nil {
-			if forwardedGroupedID == nil {
-				v := newSendMultiMediaGroupedID()
-				forwardedGroupedID = &v
+			v, ok := forwardedGroupedIDs[*source.GroupedId]
+			if !ok {
+				v = newSendMultiMediaGroupedID()
+				forwardedGroupedIDs[*source.GroupedId] = v
 			}
+			groupedID = &v
 		}
 		outboxes = append(outboxes, buildForwardOutbox(forwardOutboxInput{
 			RandomID:        in.RandomId[i],
@@ -94,7 +97,7 @@ func (c *MessagesCore) MessagesForwardMessages(in *tg.TLMessagesForwardMessages)
 			SourceMessageID: in.Id[i],
 			Date:            date,
 			Source:          source,
-			GroupedID:       forwardedGroupedID,
+			GroupedID:       groupedID,
 		}))
 	}
 

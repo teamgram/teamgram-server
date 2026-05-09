@@ -266,6 +266,36 @@ func TestMessagesForwardMessagesAssignsNewGroupedIDForGroupedMedia(t *testing.T)
 	}
 }
 
+func TestMessagesForwardMessagesDoesNotGroupPlainMessagesAfterGroupedMedia(t *testing.T) {
+	groupedID := int64(99)
+	var got *msg.TLMsgSendMessageV2
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		getUserMessageList: func(context.Context, *msg.TLMsgGetUserMessageList) (*msg.VectorMessageBox, error) {
+			return &msg.VectorMessageBox{Datas: []tg.MessageBoxClazz{
+				tg.MakeTLMessageBox(&tg.TLMessageBox{MessageId: 1, PeerType: payload.PeerTypeUser, PeerId: 300, Message: tg.MakeTLMessage(&tg.TLMessage{Id: 1, FromId: tg.MakePeerUser(300), PeerId: tg.MakePeerUser(100), Date: 1, Message: "grouped", GroupedId: &groupedID})}),
+				messageBox(2, "plain"),
+			}}, nil
+		},
+		sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+			got = in
+			return testUpdates(), nil
+		},
+	}, 100, 200)
+
+	_, err := c.MessagesForwardMessages(validForwardMessagesRequest())
+	if err != nil {
+		t.Fatalf("MessagesForwardMessages() error = %v", err)
+	}
+	first := assertForwardOutbox(t, got.Message[0], 11, "grouped")
+	second := assertForwardOutbox(t, got.Message[1], 12, "plain")
+	if first.GroupedId == nil || *first.GroupedId == 0 || *first.GroupedId == groupedID {
+		t.Fatalf("first grouped_id = %v source=%d, want new non-zero id", first.GroupedId, groupedID)
+	}
+	if second.GroupedId != nil {
+		t.Fatalf("second grouped_id = %v, want nil for non-grouped source", second.GroupedId)
+	}
+}
+
 func validForwardMessagesRequest() *tg.TLMessagesForwardMessages {
 	return &tg.TLMessagesForwardMessages{
 		FromPeer: inputPeerUser(300),
