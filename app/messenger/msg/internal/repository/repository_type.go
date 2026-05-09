@@ -176,6 +176,33 @@ type HistoryMessage struct {
 	MessageDate          int64
 }
 
+type UserMessageBox struct {
+	UserID             int64
+	UserMessageID      int64
+	CanonicalMessageID int64
+	PeerType           int32
+	PeerID             int64
+	PeerSeq            int64
+	FromUserID         int64
+	Outgoing           bool
+	MessageText        string
+	MessageDate        int64
+	ViewPayload        []byte
+}
+
+type ForwardSourceIdentity struct {
+	UserID             int64
+	UserMessageID      int64
+	CanonicalMessageID int64
+}
+
+type ForwardSourceLookup struct {
+	UserID              int64
+	SourcePeerType      int32
+	SourcePeerID        int64
+	SourceUserMessageID int64
+}
+
 type CanonicalMessage struct {
 	CanonicalMessageID           int64
 	PeerSeq                      int64
@@ -240,6 +267,10 @@ type MessageRepository interface {
 	GetCanonicalMessageByPeerSeq(ctx context.Context, userID int64, peerType int32, peerID int64, peerSeq int64) (*CanonicalMessage, error)
 	EditCanonicalMessage(ctx context.Context, in EditCanonicalMessageInput) (*EditMessageResult, error)
 	ListHistoryMessages(ctx context.Context, in ListHistoryMessagesInput) ([]HistoryMessage, error)
+	GetUserMessage(ctx context.Context, userID int64, userMessageID int64) (*UserMessageBox, error)
+	GetUserMessageList(ctx context.Context, userID int64, ids []int64) ([]UserMessageBox, error)
+	ResolveForwardSourceIdentity(ctx context.Context, lookup ForwardSourceLookup) (*ForwardSourceIdentity, error)
+	RevalidateForwardSources(ctx context.Context, sources []ForwardSourceIdentity) error
 	ResolveMessageID(ctx context.Context, userID int64, peerType int32, peerID int64, userMessageID int64) (*ResolvedMessageID, error)
 	ResolveMessageIDs(ctx context.Context, userID int64, userMessageIDs []int64) ([]ResolvedMessageID, error)
 	ResolveMessageIDsForDelete(ctx context.Context, userID int64, userMessageIDs []int64) ([]ResolvedMessageID, error)

@@ -87,7 +87,7 @@ func normalizeOutboxMessage(in normalizeOutboxInput) (normalizedOutboxMessage, e
 	if err != nil {
 		return normalizedOutboxMessage{}, err
 	}
-	forwardRef, err := normalizeForwardRef(message)
+	forwardRef, forwardSource, err := normalizeForwardRef(in, message)
 	if err != nil {
 		return normalizedOutboxMessage{}, err
 	}
@@ -105,20 +105,22 @@ func normalizeOutboxMessage(in normalizeOutboxInput) (normalizedOutboxMessage, e
 		attrs.GroupedID = *message.GroupedId
 	}
 	return normalizedOutboxMessage{
-		SchemaVersion:             NormalizedOutboxSchemaVersionV1,
-		RandomID:                  in.Outbox.RandomId,
-		Background:                in.Outbox.Background,
-		FromUserID:                in.SenderUserID,
-		PeerType:                  in.PeerType,
-		PeerID:                    in.PeerID,
-		Out:                       true,
-		MessageText:               message.Message,
-		Entities:                  entities,
-		ReplyToUserMessageID:      replyTo.UserMessageID,
-		ReplyToCanonicalMessageID: replyTo.CanonicalMessageID,
-		MediaRef:                  mediaRef,
-		Attrs:                     attrs,
-		ForwardRef:                forwardRef,
+		SchemaVersion:              NormalizedOutboxSchemaVersionV1,
+		RandomID:                   in.Outbox.RandomId,
+		Background:                 in.Outbox.Background,
+		FromUserID:                 in.SenderUserID,
+		PeerType:                   in.PeerType,
+		PeerID:                     in.PeerID,
+		Out:                        true,
+		MessageText:                message.Message,
+		Entities:                   entities,
+		ReplyToUserMessageID:       replyTo.UserMessageID,
+		ReplyToCanonicalMessageID:  replyTo.CanonicalMessageID,
+		MediaRef:                   mediaRef,
+		Attrs:                      attrs,
+		ForwardRef:                 forwardRef,
+		ForwardSourceCanonicalID:   forwardSource.CanonicalMessageID,
+		ForwardSourceUserMessageID: forwardSource.UserMessageID,
 	}, nil
 }
 
@@ -198,9 +200,9 @@ func documentIdentity(document tg.DocumentClazz) (int64, int64, []byte, string) 
 	}
 }
 
-func normalizeForwardRef(message *tg.TLMessage) (*payload.ForwardRefV1, error) {
+func normalizeForwardRef(in normalizeOutboxInput, message *tg.TLMessage) (*payload.ForwardRefV1, repository.ForwardSourceIdentity, error) {
 	if message == nil || message.FwdFrom == nil {
-		return nil, nil
+		return nil, repository.ForwardSourceIdentity{}, nil
 	}
 	fwd := message.FwdFrom
 	ref := &payload.ForwardRefV1{
@@ -225,7 +227,28 @@ func normalizeForwardRef(message *tg.TLMessage) (*payload.ForwardRefV1, error) {
 			ref.SourceMessageID = int64(*fwd.SavedFromMsgId)
 		}
 	}
-	return ref, nil
+	if savedPeerType == 0 || savedPeerID <= 0 || ref.SavedFromMessageID <= 0 {
+		return nil, repository.ForwardSourceIdentity{}, msg.ErrMsgIdInvalid
+	}
+	if in.Repo == nil {
+		return nil, repository.ForwardSourceIdentity{}, fmt.Errorf("%w: forward resolver is required", msg.ErrSendStateConflict)
+	}
+	ref.SourcePeerType = savedPeerType
+	ref.SourcePeerID = savedPeerID
+	ref.SourceMessageID = ref.SavedFromMessageID
+	source, err := in.Repo.ResolveForwardSourceIdentity(in.Ctx, repository.ForwardSourceLookup{
+		UserID:              in.SenderUserID,
+		SourcePeerType:      savedPeerType,
+		SourcePeerID:        savedPeerID,
+		SourceUserMessageID: ref.SavedFromMessageID,
+	})
+	if err != nil {
+		return nil, repository.ForwardSourceIdentity{}, err
+	}
+	if source == nil || source.CanonicalMessageID <= 0 {
+		return nil, repository.ForwardSourceIdentity{}, msg.ErrMsgIdInvalid
+	}
+	return ref, *source, nil
 }
 
 func forwardSourcePeer(peer tg.PeerClazz) (fromUserID int64, sourcePeerType int32, sourcePeerID int64) {

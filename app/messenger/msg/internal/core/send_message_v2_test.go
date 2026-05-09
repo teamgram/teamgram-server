@@ -228,6 +228,54 @@ func TestMsgSendMessageV2BatchReturnsFullUpdates(t *testing.T) {
 	}
 }
 
+func TestMsgGetUserMessageReadsViewerMessageID(t *testing.T) {
+	core, fakeRepo := newMsgReadCoreForTest(t)
+	fakeRepo.userMessages = map[int64]*repository.UserMessageBox{
+		7: {
+			UserID:             100,
+			UserMessageID:      7,
+			CanonicalMessageID: 900,
+			PeerType:           payload.PeerTypeUser,
+			PeerID:             200,
+			PeerSeq:            3,
+			FromUserID:         200,
+			MessageText:        "source",
+			MessageDate:        1_772_000_300,
+		},
+	}
+
+	got, err := core.MsgGetUserMessage(&msgpb.TLMsgGetUserMessage{UserId: 100, Id: 7})
+	if err != nil {
+		t.Fatalf("MsgGetUserMessage() error = %v", err)
+	}
+	if got == nil || got.Message == nil {
+		t.Fatalf("MessageBox = %#v, want message", got)
+	}
+	if got.MessageId != 7 {
+		t.Fatalf("MessageId = %d, want viewer public id 7", got.MessageId)
+	}
+	message, ok := got.Message.(*tg.TLMessage)
+	if !ok || message.Id != 7 || message.Message != "source" {
+		t.Fatalf("Message = %+v ok=%v, want public id text message", got.Message, ok)
+	}
+	if fakeRepo.getUserMessageInput.UserID != 100 || fakeRepo.getUserMessageInput.UserMessageID != 7 {
+		t.Fatalf("GetUserMessage input = %+v", fakeRepo.getUserMessageInput)
+	}
+}
+
+func TestForwardRevalidationRejectsInvisibleSource(t *testing.T) {
+	core, fakeRepo, _ := newBatchMsgCoreForTest(t)
+	fakeRepo.forwardVisible = false
+
+	_, err := core.MsgSendMessageV2(buildForwardSendRequestForTest(100, 200, 9001, 11, 7))
+	if !errors.Is(err, msgpb.ErrMsgIdInvalid) {
+		t.Fatalf("error = %v, want ErrMsgIdInvalid", err)
+	}
+	if fakeRepo.batchCreateCalls != 0 {
+		t.Fatal("canonical rows were created before forward revalidation")
+	}
+}
+
 func TestMsgSendMessageV2BatchReceiverAckFailureIsRetryable(t *testing.T) {
 	core, fakeRepo, fakeUpdates := newBatchMsgCoreForTest(t)
 	fakeUpdates.receiverErr = errors.New("broker unavailable")
@@ -330,8 +378,10 @@ func TestMsgSendMessageV2BatchReceiverPayloadIncludesRichFields(t *testing.T) {
 			}),
 			GroupedId: &groupedID,
 			FwdFrom: tg.MakeTLMessageFwdHeader(&tg.TLMessageFwdHeader{
-				FromId: tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 300}),
-				Date:   forwardDate,
+				FromId:         tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 300}),
+				Date:           forwardDate,
+				SavedFromPeer:  tg.MakePeerUser(200),
+				SavedFromMsgId: &replyToMsgID,
 			}),
 			Entities: []tg.MessageEntityClazz{
 				tg.MakeTLMessageEntityBold(&tg.TLMessageEntityBold{Offset: 0, Length: 7}),
@@ -450,9 +500,12 @@ func TestMsgSendMessageV2GroupedAndForwardReturnTLUpdates(t *testing.T) {
 	t.Run("forward", func(t *testing.T) {
 		core := newSingleSendMsgCoreForTest(t, 100, 9103, 63)
 		req := sendMessageRequest(100, 200, 9001, "forwarded")
+		sourceID := int32(7)
 		req.Message[0].Message.(*tg.TLMessage).FwdFrom = tg.MakeTLMessageFwdHeader(&tg.TLMessageFwdHeader{
-			FromId: tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 300}),
-			Date:   1_772_000_011,
+			FromId:         tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 300}),
+			Date:           1_772_000_011,
+			SavedFromPeer:  tg.MakePeerUser(200),
+			SavedFromMsgId: &sourceID,
 		})
 
 		got, err := core.MsgSendMessageV2(req)
@@ -2403,14 +2456,27 @@ type fakeMsgRepository struct {
 	resolveDeleteByUserMessageID map[int64]*repository.ResolvedMessageID
 	resolveInput                 repository.ResolvedMessageID
 	resolveDeleteCalls           int
-	markCanonicalErr             error
-	markSenderErrs               []error
-	batchCreateCalls             int
-	markCanonicalCalls           int
-	markSenderCalls              int
-	markReceiverAckedCalls       int
-	markCompletedCalls           int
-	markRetryableCalls           int
+	userMessages                 map[int64]*repository.UserMessageBox
+	getUserMessageInput          struct {
+		UserID        int64
+		UserMessageID int64
+	}
+	getUserMessageListInput struct {
+		UserID int64
+		IDs    []int64
+	}
+	forwardVisible             bool
+	resolveForwardInput        repository.ForwardSourceLookup
+	revalidateForwardSources   []repository.ForwardSourceIdentity
+	revalidateForwardCallCount int
+	markCanonicalErr           error
+	markSenderErrs             []error
+	batchCreateCalls           int
+	markCanonicalCalls         int
+	markSenderCalls            int
+	markReceiverAckedCalls     int
+	markCompletedCalls         int
+	markRetryableCalls         int
 }
 
 type resolveMessageKey struct {
@@ -2533,6 +2599,52 @@ func (f *fakeMsgRepository) ResolveHistoryCursorIDs(_ context.Context, userID in
 
 func (f *fakeMsgRepository) ResolvePeerSeqToUserMessageID(context.Context, int64, int32, int64, int64) (int64, error) {
 	return 0, nil
+}
+
+func (f *fakeMsgRepository) GetUserMessage(_ context.Context, userID int64, userMessageID int64) (*repository.UserMessageBox, error) {
+	f.getUserMessageInput.UserID = userID
+	f.getUserMessageInput.UserMessageID = userMessageID
+	if f.userMessages == nil {
+		return nil, msgpb.ErrMsgIdInvalid
+	}
+	box := f.userMessages[userMessageID]
+	if box == nil || box.UserID != userID {
+		return nil, msgpb.ErrMsgIdInvalid
+	}
+	return box, nil
+}
+
+func (f *fakeMsgRepository) GetUserMessageList(_ context.Context, userID int64, ids []int64) ([]repository.UserMessageBox, error) {
+	f.getUserMessageListInput.UserID = userID
+	f.getUserMessageListInput.IDs = append([]int64(nil), ids...)
+	out := make([]repository.UserMessageBox, 0, len(ids))
+	for _, id := range ids {
+		if box := f.userMessages[id]; box != nil && box.UserID == userID {
+			out = append(out, *box)
+		}
+	}
+	return out, nil
+}
+
+func (f *fakeMsgRepository) ResolveForwardSourceIdentity(_ context.Context, lookup repository.ForwardSourceLookup) (*repository.ForwardSourceIdentity, error) {
+	f.resolveForwardInput = lookup
+	if !f.forwardVisible {
+		return nil, msgpb.ErrMsgIdInvalid
+	}
+	return &repository.ForwardSourceIdentity{
+		UserID:             lookup.UserID,
+		UserMessageID:      lookup.SourceUserMessageID,
+		CanonicalMessageID: 7000 + lookup.SourceUserMessageID,
+	}, nil
+}
+
+func (f *fakeMsgRepository) RevalidateForwardSources(_ context.Context, sources []repository.ForwardSourceIdentity) error {
+	f.revalidateForwardCallCount++
+	f.revalidateForwardSources = append([]repository.ForwardSourceIdentity(nil), sources...)
+	if !f.forwardVisible {
+		return msgpb.ErrMsgIdInvalid
+	}
+	return nil
 }
 
 func (f *fakeMsgRepository) EditCanonicalMessage(_ context.Context, in repository.EditCanonicalMessageInput) (*repository.EditMessageResult, error) {
@@ -2676,6 +2788,7 @@ func newBatchMsgCoreForTest(t *testing.T) (*MsgCore, *fakeMsgRepository, *fakeUs
 	senderPayload1 := []byte(`{"schema_version":2,"pts":11,"pts_count":1,"event_type":"new_message","user_message_id":41}`)
 	senderPayload2 := []byte(`{"schema_version":2,"pts":12,"pts_count":1,"event_type":"new_message","user_message_id":42}`)
 	fakeRepo := &fakeMsgRepository{
+		forwardVisible: true,
 		batchResult: &repository.CanonicalBatchResult{Items: []repository.CanonicalMessageResult{
 			{SendStateID: 501, CanonicalMessageID: 9001, PeerSeq: 1, MessageDate: 1_772_000_000, RequestPayloadHash: payload.HashBytes([]byte("h1")), CreatedNew: true},
 			{SendStateID: 502, CanonicalMessageID: 9002, PeerSeq: 2, MessageDate: 1_772_000_001, RequestPayloadHash: payload.HashBytes([]byte("h2")), CreatedNew: true},
@@ -2729,6 +2842,35 @@ func buildMediaSendRequestForTest(senderID, peerID, authKeyID, randomID int64, c
 	}
 }
 
+func buildForwardSendRequestForTest(senderID, peerID, authKeyID, randomID, sourceUserMessageID int64) *msgpb.TLMsgSendMessageV2 {
+	sourceID := int32(sourceUserMessageID)
+	return &msgpb.TLMsgSendMessageV2{
+		UserId:    senderID,
+		AuthKeyId: authKeyID,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    peerID,
+		Message: []msgpb.OutboxMessageClazz{
+			msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
+				RandomId: randomID,
+				Message: tg.MakeTLMessage(&tg.TLMessage{
+					Message: "forwarded",
+					FwdFrom: tg.MakeTLMessageFwdHeader(&tg.TLMessageFwdHeader{
+						Date:           1_772_000_301,
+						SavedFromPeer:  tg.MakePeerUser(peerID),
+						SavedFromMsgId: &sourceID,
+					}),
+				}),
+			}),
+		},
+	}
+}
+
+func newMsgReadCoreForTest(t *testing.T) (*MsgCore, *fakeMsgRepository) {
+	t.Helper()
+	repo := &fakeMsgRepository{forwardVisible: true}
+	return New(context.Background(), &svc.ServiceContext{Repo: repo}), repo
+}
+
 func newSingleSendMsgCoreForTest(t *testing.T, userID int64, canonicalMessageID int64, userMessageID int64) *MsgCore {
 	t.Helper()
 	responsePayload := []byte(`{"schema_version":2,"pts":31,"pts_count":1,"event_type":"new_message","user_message_id":61}`)
@@ -2743,7 +2885,8 @@ func newSingleSendMsgCoreForTest(t *testing.T, userID int64, canonicalMessageID 
 	}
 	responseHash := mustHashBytes(t, responsePayload)
 	repo := &fakeMsgRepository{
-		sendState: &repository.SendState{SendStateID: 1, Status: repository.SendStateStatusInitialized},
+		forwardVisible: true,
+		sendState:      &repository.SendState{SendStateID: 1, Status: repository.SendStateStatusInitialized},
 		canonical: &repository.CanonicalMessageResult{
 			SendStateID:        1,
 			CanonicalMessageID: canonicalMessageID,

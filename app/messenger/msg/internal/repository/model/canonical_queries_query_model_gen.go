@@ -49,6 +49,26 @@ type HistoryMessageRow struct {
 	ViewPayload        []byte `db:"view_payload"`
 }
 
+type UserMessageBoxRow struct {
+	UserID             int64  `db:"user_id"`
+	UserMessageID      int64  `db:"user_message_id"`
+	CanonicalMessageID int64  `db:"canonical_message_id"`
+	PeerType           int32  `db:"peer_type"`
+	PeerID             int64  `db:"peer_id"`
+	PeerSeq            int64  `db:"peer_seq"`
+	FromUserID         int64  `db:"from_user_id"`
+	Outgoing           bool   `db:"outgoing"`
+	MessageText        string `db:"message_text"`
+	MessageDate        int64  `db:"message_date"`
+	ViewPayload        []byte `db:"view_payload"`
+}
+
+type ForwardSourceIdentityRow struct {
+	UserID             int64 `db:"user_id"`
+	UserMessageID      int64 `db:"user_message_id"`
+	CanonicalMessageID int64 `db:"canonical_message_id"`
+}
+
 type ResolvedMessageIDRow struct {
 	UserID             int64 `db:"user_id"`
 	PeerType           int32 `db:"peer_type"`
@@ -87,6 +107,8 @@ type CanonicalQueriesModel interface {
 	SelectUserMessageByID(ctx context.Context, userId int64, peerType int32, peerId int64, userMessageId int64, messageStatus int32) (*ResolvedMessageIDRow, error)
 	SelectUserMessageByGlobalID(ctx context.Context, userId int64, userMessageId int64, messageStatus int32) (*ResolvedMessageIDRow, error)
 	SelectUserMessageByGlobalIDForDelete(ctx context.Context, userId int64, userMessageId int64) (*ResolvedMessageIDRow, error)
+	SelectUserMessageBoxByGlobalID(ctx context.Context, userId int64, userMessageId int64, messageStatus int32) (*UserMessageBoxRow, error)
+	SelectForwardSourceIdentity(ctx context.Context, userId int64, userMessageId int64, messageStatus int32) (*ForwardSourceIdentityRow, error)
 	SelectNearestLiveUserMessageByPeerSeq(ctx context.Context, userId int64, peerType int32, peerId int64, peerSeq int64, messageStatus int32) (*ResolvedMessageIDRow, error)
 	SelectHistoryMessages(ctx context.Context, userId int64, peerType int32, peerId int64, messageStatus int32, minPeerSeq int64, maxPeerSeq int64, limit int32) ([]HistoryMessageRow, error)
 	SearchHashTagMessages(ctx context.Context, hashTag string, userId int64, peerType int32, peerId int64, messageStatus int32, offsetId int64, offsetIdLimit int64, likeTag string, limit int32) ([]HistoryMessageRow, error)
@@ -103,6 +125,8 @@ type CanonicalQueriesTxModel interface {
 	SelectUserMessageByID(userId int64, peerType int32, peerId int64, userMessageId int64, messageStatus int32) (*ResolvedMessageIDRow, error)
 	SelectUserMessageByGlobalID(userId int64, userMessageId int64, messageStatus int32) (*ResolvedMessageIDRow, error)
 	SelectUserMessageByGlobalIDForDelete(userId int64, userMessageId int64) (*ResolvedMessageIDRow, error)
+	SelectUserMessageBoxByGlobalID(userId int64, userMessageId int64, messageStatus int32) (*UserMessageBoxRow, error)
+	SelectForwardSourceIdentity(userId int64, userMessageId int64, messageStatus int32) (*ForwardSourceIdentityRow, error)
 	SelectNearestLiveUserMessageByPeerSeq(userId int64, peerType int32, peerId int64, peerSeq int64, messageStatus int32) (*ResolvedMessageIDRow, error)
 	SelectHistoryMessages(userId int64, peerType int32, peerId int64, messageStatus int32, minPeerSeq int64, maxPeerSeq int64, limit int32) ([]HistoryMessageRow, error)
 	SearchHashTagMessages(hashTag string, userId int64, peerType int32, peerId int64, messageStatus int32, offsetId int64, offsetIdLimit int64, likeTag string, limit int32) ([]HistoryMessageRow, error)
@@ -233,6 +257,50 @@ func (m *defaultCanonicalQueriesTxModel) SelectUserMessageByGlobalIDForDelete(us
 	query := "select user_id, peer_type, peer_id, user_message_id, peer_seq, canonical_message_id, `date` as message_date, outgoing from user_message_views where user_id = ? and user_message_id = ? limit 1"
 
 	err := m.tx.QueryRowPartial(&rValue, query, userId, userMessageId)
+	if err != nil {
+		return nil, err
+	}
+	return &rValue, nil
+}
+
+func (m *defaultCanonicalQueriesModel) SelectUserMessageBoxByGlobalID(ctx context.Context, userId int64, userMessageId int64, messageStatus int32) (*UserMessageBoxRow, error) {
+	var rValue UserMessageBoxRow
+	query := "select v.user_id, v.user_message_id, v.canonical_message_id, v.peer_type, v.peer_id, v.peer_seq, c.from_user_id, v.outgoing, c.message_text, v.`date` as message_date, v.view_payload from user_message_views as v join canonical_messages as c on c.canonical_message_id = v.canonical_message_id where v.user_id = ? and v.user_message_id = ? and v.message_status = ? limit 1"
+
+	err := m.db.QueryRowPartial(ctx, &rValue, query, userId, userMessageId, messageStatus)
+	if err != nil {
+		return nil, err
+	}
+	return &rValue, nil
+}
+
+func (m *defaultCanonicalQueriesTxModel) SelectUserMessageBoxByGlobalID(userId int64, userMessageId int64, messageStatus int32) (*UserMessageBoxRow, error) {
+	var rValue UserMessageBoxRow
+	query := "select v.user_id, v.user_message_id, v.canonical_message_id, v.peer_type, v.peer_id, v.peer_seq, c.from_user_id, v.outgoing, c.message_text, v.`date` as message_date, v.view_payload from user_message_views as v join canonical_messages as c on c.canonical_message_id = v.canonical_message_id where v.user_id = ? and v.user_message_id = ? and v.message_status = ? limit 1"
+
+	err := m.tx.QueryRowPartial(&rValue, query, userId, userMessageId, messageStatus)
+	if err != nil {
+		return nil, err
+	}
+	return &rValue, nil
+}
+
+func (m *defaultCanonicalQueriesModel) SelectForwardSourceIdentity(ctx context.Context, userId int64, userMessageId int64, messageStatus int32) (*ForwardSourceIdentityRow, error) {
+	var rValue ForwardSourceIdentityRow
+	query := "select user_id, user_message_id, canonical_message_id from user_message_views where user_id = ? and user_message_id = ? and message_status = ? limit 1"
+
+	err := m.db.QueryRowPartial(ctx, &rValue, query, userId, userMessageId, messageStatus)
+	if err != nil {
+		return nil, err
+	}
+	return &rValue, nil
+}
+
+func (m *defaultCanonicalQueriesTxModel) SelectForwardSourceIdentity(userId int64, userMessageId int64, messageStatus int32) (*ForwardSourceIdentityRow, error) {
+	var rValue ForwardSourceIdentityRow
+	query := "select user_id, user_message_id, canonical_message_id from user_message_views where user_id = ? and user_message_id = ? and message_status = ? limit 1"
+
+	err := m.tx.QueryRowPartial(&rValue, query, userId, userMessageId, messageStatus)
 	if err != nil {
 		return nil, err
 	}

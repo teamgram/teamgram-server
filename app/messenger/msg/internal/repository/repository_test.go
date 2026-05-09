@@ -70,6 +70,47 @@ func TestDeleteResolverQueryDoesNotFilterLiveStatus(t *testing.T) {
 	}
 }
 
+func TestGetUserMessageQueriesUseViewerPublicMessageID(t *testing.T) {
+	body, err := os.ReadFile("model/tables/queries.xml")
+	if err != nil {
+		t.Fatalf("read queries.xml: %v", err)
+	}
+	query := queryXMLBlock(t, string(body), "SelectUserMessageBoxByGlobalID")
+	for _, want := range []string{
+		"v.user_id = :user_id",
+		"v.user_message_id = :user_message_id",
+		"v.message_status = :message_status",
+		"JOIN",
+		"canonical_messages c",
+		"c.canonical_message_id = v.canonical_message_id",
+	} {
+		if !strings.Contains(query, want) {
+			t.Fatalf("get user message query missing %q:\n%s", want, query)
+		}
+	}
+	if strings.Contains(query, "v.peer_type = :peer_type") || strings.Contains(query, "v.peer_id = :peer_id") {
+		t.Fatalf("get user message query must use user_id + user_message_id public identity only:\n%s", query)
+	}
+}
+
+func TestRevalidateForwardSourcesQueriesLiveViewerPublicMessageID(t *testing.T) {
+	body, err := os.ReadFile("model/tables/queries.xml")
+	if err != nil {
+		t.Fatalf("read queries.xml: %v", err)
+	}
+	query := queryXMLBlock(t, string(body), "SelectForwardSourceIdentity")
+	for _, want := range []string{
+		"user_id = :user_id",
+		"user_message_id = :user_message_id",
+		"message_status = :message_status",
+		"canonical_message_id",
+	} {
+		if !strings.Contains(query, want) {
+			t.Fatalf("forward source query missing %q:\n%s", want, query)
+		}
+	}
+}
+
 func TestHistoryMessageRowToMessageUsesPublicIDs(t *testing.T) {
 	event := payload.MessageEventV2{
 		SchemaVersion:        payload.MessageEventSchemaVersion,

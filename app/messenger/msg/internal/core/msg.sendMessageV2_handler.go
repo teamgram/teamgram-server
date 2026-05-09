@@ -62,6 +62,9 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 		}
 		normalizedBatch = append(normalizedBatch, normalized)
 	}
+	if err := c.revalidateForwardSources(normalizedBatch); err != nil {
+		return nil, err
+	}
 	sideEffects := batchSideEffectsFromRequest(in)
 	if len(normalizedBatch) > 1 {
 		return c.sendMessageV2Batch(in, normalizedBatch, sideEffects)
@@ -177,6 +180,27 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 		return fullSentMessageUpdates(in.UserId, in.PeerId, []repository.CanonicalMessageResult{*canonical}, []*userupdates.UserOperationResult{senderResult}, []normalizedOutboxMessage{normalized})
 	}
 	return shortSentMessage(canonical, senderResult)
+}
+
+func (c *MsgCore) revalidateForwardSources(normalizedBatch []normalizedOutboxMessage) error {
+	sources := make([]repository.ForwardSourceIdentity, 0, len(normalizedBatch))
+	for _, normalized := range normalizedBatch {
+		if normalized.ForwardRef == nil {
+			continue
+		}
+		if normalized.ForwardSourceCanonicalID <= 0 || normalized.ForwardSourceUserMessageID <= 0 {
+			return msg.ErrMsgIdInvalid
+		}
+		sources = append(sources, repository.ForwardSourceIdentity{
+			UserID:             normalized.FromUserID,
+			UserMessageID:      normalized.ForwardSourceUserMessageID,
+			CanonicalMessageID: normalized.ForwardSourceCanonicalID,
+		})
+	}
+	if len(sources) == 0 {
+		return nil
+	}
+	return c.svcCtx.Repo.RevalidateForwardSources(c.ctx, sources)
 }
 
 func (c *MsgCore) sendMessageV2Batch(in *msg.TLMsgSendMessageV2, normalizedBatch []normalizedOutboxMessage, sideEffects batchSideEffects) (*tg.Updates, error) {
