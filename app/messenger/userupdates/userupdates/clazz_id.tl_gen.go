@@ -28,6 +28,7 @@ const (
 	ClazzID_userPtsAppendResult                         = 0xaa3fff4f // aa3fff4f
 	ClazzID_userupdates_processUserOperation            = 0xc200ea59 // c200ea59
 	ClazzID_userupdates_processUserOperationWithEffects = 0xbacea5bf // bacea5bf
+	ClazzID_userupdates_processUserOperationBatch       = 0x5ee575b0 // 5ee575b0
 	ClazzID_userupdates_getOperationResult              = 0x47a995d1 // 47a995d1
 	ClazzID_userupdates_getState                        = 0x3bbbad80 // 3bbbad80
 	ClazzID_userupdates_getDifference                   = 0x38cdd9fc // 38cdd9fc

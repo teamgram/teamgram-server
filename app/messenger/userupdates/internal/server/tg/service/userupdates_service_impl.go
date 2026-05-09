@@ -52,6 +52,22 @@ func (s *Service) UserupdatesProcessUserOperationWithEffects(ctx context.Context
 	return r, err
 }
 
+// UserupdatesProcessUserOperationBatch
+// userupdates.processUserOperationBatch operations:Vector<UserOperation> = Vector<UserOperationResult>;
+func (s *Service) UserupdatesProcessUserOperationBatch(ctx context.Context, request *userupdates.TLUserupdatesProcessUserOperationBatch) (*userupdates.VectorUserOperationResult, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("userupdates.processUserOperationBatch - request: %s", request)
+
+	r, err := c.UserupdatesProcessUserOperationBatch(request)
+	if err != nil {
+		c.Logger.Errorf("userupdates.processUserOperationBatch - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("userupdates.processUserOperationBatch - reply: %s", r)
+	return r, err
+}
+
 // UserupdatesGetOperationResult
 // userupdates.getOperationResult user_id:long operation_id:string payload_hash:bytes = UserOperationResult;
 func (s *Service) UserupdatesGetOperationResult(ctx context.Context, request *userupdates.TLUserupdatesGetOperationResult) (*userupdates.UserOperationResult, error) {

@@ -30,6 +30,8 @@ const (
 	ClazzName_msg_readHistory                   = "msg_readHistory"
 	ClazzName_msg_readHistoryV2                 = "msg_readHistoryV2"
 	ClazzName_msg_getHistory                    = "msg_getHistory"
+	ClazzName_msg_getUserMessage                = "msg_getUserMessage"
+	ClazzName_msg_getUserMessageList            = "msg_getUserMessageList"
 	ClazzName_msg_searchHashtag                 = "msg_searchHashtag"
 	ClazzName_msg_resolveDialogCursorTopMessage = "msg_resolveDialogCursorTopMessage"
 	ClazzName_msg_updatePinnedMessage           = "msg_updatePinnedMessage"
@@ -53,6 +55,8 @@ func init() {
 	iface.RegisterClazzName(ClazzName_msg_readHistory, 0, 0x5a0f6e12)                   // 5a0f6e12
 	iface.RegisterClazzName(ClazzName_msg_readHistoryV2, 0, 0xfb9b206)                  // fb9b206
 	iface.RegisterClazzName(ClazzName_msg_getHistory, 0, 0x7f4083df)                    // 7f4083df
+	iface.RegisterClazzName(ClazzName_msg_getUserMessage, 0, 0x385f5e90)                // 385f5e90
+	iface.RegisterClazzName(ClazzName_msg_getUserMessageList, 0, 0xfb80f3c1)            // fb80f3c1
 	iface.RegisterClazzName(ClazzName_msg_searchHashtag, 0, 0x7e39bca9)                 // 7e39bca9
 	iface.RegisterClazzName(ClazzName_msg_resolveDialogCursorTopMessage, 0, 0xc5d16bc5) // c5d16bc5
 	iface.RegisterClazzName(ClazzName_msg_updatePinnedMessage, 0, 0xe5ae51a9)           // e5ae51a9
@@ -74,6 +78,8 @@ func init() {
 	iface.RegisterClazzIDName(ClazzName_msg_readHistory, 0x5a0f6e12)                   // 5a0f6e12
 	iface.RegisterClazzIDName(ClazzName_msg_readHistoryV2, 0xfb9b206)                  // fb9b206
 	iface.RegisterClazzIDName(ClazzName_msg_getHistory, 0x7f4083df)                    // 7f4083df
+	iface.RegisterClazzIDName(ClazzName_msg_getUserMessage, 0x385f5e90)                // 385f5e90
+	iface.RegisterClazzIDName(ClazzName_msg_getUserMessageList, 0xfb80f3c1)            // fb80f3c1
 	iface.RegisterClazzIDName(ClazzName_msg_searchHashtag, 0x7e39bca9)                 // 7e39bca9
 	iface.RegisterClazzIDName(ClazzName_msg_resolveDialogCursorTopMessage, 0xc5d16bc5) // c5d16bc5
 	iface.RegisterClazzIDName(ClazzName_msg_updatePinnedMessage, 0xe5ae51a9)           // e5ae51a9

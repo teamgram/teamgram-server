@@ -11,4 +11,6 @@ var (
 	ErrSenderSyncFailed      = errors.New("msg: sender sync failed")
 	ErrReceiverBackpressure  = errors.New("msg: receiver backpressure")
 	ErrMsgStorage            = errors.New("msg: storage failure")
+	ErrMethodNotImplemented  = errors.New("msg: method not implemented")
+	ErrMsgIdInvalid          = errors.New("msg: message id invalid")
 )

@@ -38,6 +38,7 @@ func init() {
 	// Method
 	iface.RegisterClazzID(0xc200ea59, func() iface.TLObject { return &TLUserupdatesProcessUserOperation{ClazzID: 0xc200ea59} })            // 0xc200ea59
 	iface.RegisterClazzID(0xbacea5bf, func() iface.TLObject { return &TLUserupdatesProcessUserOperationWithEffects{ClazzID: 0xbacea5bf} }) // 0xbacea5bf
+	iface.RegisterClazzID(0x5ee575b0, func() iface.TLObject { return &TLUserupdatesProcessUserOperationBatch{ClazzID: 0x5ee575b0} })       // 0x5ee575b0
 	iface.RegisterClazzID(0x47a995d1, func() iface.TLObject { return &TLUserupdatesGetOperationResult{ClazzID: 0x47a995d1} })              // 0x47a995d1
 	iface.RegisterClazzID(0x3bbbad80, func() iface.TLObject { return &TLUserupdatesGetState{ClazzID: 0x3bbbad80} })                        // 0x3bbbad80
 	iface.RegisterClazzID(0x38cdd9fc, func() iface.TLObject { return &TLUserupdatesGetDifference{ClazzID: 0x38cdd9fc} })                   // 0x38cdd9fc

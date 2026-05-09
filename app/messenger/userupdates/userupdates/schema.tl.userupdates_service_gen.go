@@ -156,6 +156,69 @@ func (m *TLUserupdatesProcessUserOperationWithEffects) Decode(d *bin.Decoder) (e
 	}
 }
 
+// TLUserupdatesProcessUserOperationBatch <--
+type TLUserupdatesProcessUserOperationBatch struct {
+	ClazzID    uint32               `json:"_id"`
+	Operations []UserOperationClazz `json:"operations"`
+}
+
+func (m *TLUserupdatesProcessUserOperationBatch) String() string {
+	return iface.DebugStringWithName(ClazzName_userupdates_processUserOperationBatch, m)
+}
+
+// Encode <--
+func (m *TLUserupdatesProcessUserOperationBatch) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_userupdates_processUserOperationBatch, int(layer)); clazzId {
+	case 0x5ee575b0:
+		x.PutClazzID(0x5ee575b0)
+
+		if err := iface.EncodeObjectList(x, m.Operations, layer); err != nil {
+			return fmt.Errorf("unable to encode userupdates_processUserOperationBatch#0x5ee575b0: field operations: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode userupdates_processUserOperationBatch: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLUserupdatesProcessUserOperationBatch) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return fmt.Errorf("unable to decode userupdates_processUserOperationBatch: constructor: %w", err)
+		}
+	}
+	switch m.ClazzID {
+	case 0x5ee575b0:
+		l1, err3 := d.VectorHeader()
+		if err3 != nil {
+			return fmt.Errorf("unable to decode userupdates_processUserOperationBatch#0x5ee575b0: field operations: %w", err3)
+		}
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode userupdates_processUserOperationBatch#0x5ee575b0: field operations: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]UserOperationClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
+			vv1, err3 := DecodeUserOperationClazz(d)
+			if err3 != nil {
+				return fmt.Errorf("unable to decode userupdates_processUserOperationBatch#0x5ee575b0: field operations: %w", err3)
+			}
+			v1 = append(v1, vv1)
+		}
+		m.Operations = v1
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode userupdates_processUserOperationBatch: invalid constructor %x", m.ClazzID)
+	}
+}
+
 // TLUserupdatesGetOperationResult <--
 type TLUserupdatesGetOperationResult struct {
 	ClazzID     uint32 `json:"_id"`
@@ -921,6 +984,30 @@ func (m *TLUserupdatesAppendDialogPtsSideEffect) Decode(d *bin.Decoder) (err err
 // ----------------------------------------------------------------------------
 // VectorResList <--
 
+// VectorUserOperationResult <--
+type VectorUserOperationResult struct {
+	Datas []UserOperationResultClazz `json:"_datas"`
+}
+
+func (m *VectorUserOperationResult) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
+}
+
+// Encode <--
+func (m *VectorUserOperationResult) Encode(x *bin.Encoder, layer int32) error {
+	_ = iface.EncodeObjectList(x, m.Datas, layer)
+
+	return nil
+}
+
+// Decode <--
+func (m *VectorUserOperationResult) Decode(d *bin.Decoder) (err error) {
+	m.Datas, err = iface.DecodeObjectList[UserOperationResultClazz](d)
+
+	return err
+}
+
 // VectorDialogProjection <--
 type VectorDialogProjection struct {
 	Datas []DialogProjectionClazz `json:"_datas"`
@@ -951,6 +1038,7 @@ func (m *VectorDialogProjection) Decode(d *bin.Decoder) (err error) {
 type RPCUserupdates interface {
 	UserupdatesProcessUserOperation(ctx context.Context, in *TLUserupdatesProcessUserOperation) (*UserOperationResult, error)
 	UserupdatesProcessUserOperationWithEffects(ctx context.Context, in *TLUserupdatesProcessUserOperationWithEffects) (*UserOperationResult, error)
+	UserupdatesProcessUserOperationBatch(ctx context.Context, in *TLUserupdatesProcessUserOperationBatch) (*VectorUserOperationResult, error)
 	UserupdatesGetOperationResult(ctx context.Context, in *TLUserupdatesGetOperationResult) (*UserOperationResult, error)
 	UserupdatesGetState(ctx context.Context, in *TLUserupdatesGetState) (*UserState, error)
 	UserupdatesGetDifference(ctx context.Context, in *TLUserupdatesGetDifference) (*UserDifference, error)

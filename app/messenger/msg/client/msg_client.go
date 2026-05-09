@@ -34,6 +34,8 @@ type MsgClient interface {
 	MsgReadHistory(ctx context.Context, in *msg.TLMsgReadHistory) (*tg.MessagesAffectedMessages, error)
 	MsgReadHistoryV2(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error)
 	MsgGetHistory(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error)
+	MsgGetUserMessage(ctx context.Context, in *msg.TLMsgGetUserMessage) (*tg.MessageBox, error)
+	MsgGetUserMessageList(ctx context.Context, in *msg.TLMsgGetUserMessageList) (*msg.VectorMessageBox, error)
 	MsgSearchHashtag(ctx context.Context, in *msg.TLMsgSearchHashtag) (*tg.MessagesMessages, error)
 	MsgResolveDialogCursorTopMessage(ctx context.Context, in *msg.TLMsgResolveDialogCursorTopMessage) (*msg.ResolvedDialogCursor, error)
 	MsgUpdatePinnedMessage(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error)
@@ -116,6 +118,18 @@ func (m *defaultMsgClient) MsgReadHistoryV2(ctx context.Context, in *msg.TLMsgRe
 // msg.getHistory user_id:long auth_key_id:long peer_type:int peer_id:long offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
 func (m *defaultMsgClient) MsgGetHistory(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error) {
 	return m.rpc.MsgGetHistory(ctx, in)
+}
+
+// MsgGetUserMessage
+// msg.getUserMessage user_id:long id:int = MessageBox;
+func (m *defaultMsgClient) MsgGetUserMessage(ctx context.Context, in *msg.TLMsgGetUserMessage) (*tg.MessageBox, error) {
+	return m.rpc.MsgGetUserMessage(ctx, in)
+}
+
+// MsgGetUserMessageList
+// msg.getUserMessageList user_id:long id_list:Vector<int> = Vector<MessageBox>;
+func (m *defaultMsgClient) MsgGetUserMessageList(ctx context.Context, in *msg.TLMsgGetUserMessageList) (*msg.VectorMessageBox, error) {
+	return m.rpc.MsgGetUserMessageList(ctx, in)
 }
 
 // MsgSearchHashtag
