@@ -4,13 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	dfsapi "github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
 	"github.com/teamgram/teamgram-server/v2/app/service/media/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/app/service/media/media"
+	"github.com/teamgram/teamgram-server/v2/app/service/mediaprocessor/mediaprocessor"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -66,22 +69,34 @@ func (r *Repository) UploadedDocumentMedia(ctx context.Context, in *media.TLMedi
 		return nil, wrapMediaDownstream("dfs upload document", media.ErrMediaDownstream)
 	}
 
-	var (
-		doc *tg.Document
-		err error
-	)
+	finalized, err := r.dfsClient.CommitUpload(ctx, &dfsapi.TLDfsCommitUpload{
+		UploadSessionId: externalUploadSessionID(in.OwnerId, uploaded.File),
+		OwnerId:         in.OwnerId,
+		File:            uploaded.File,
+		Purpose:         "media_original",
+	})
+	if err != nil {
+		return nil, wrapDfsUploadError("dfs commit document upload", err)
+	}
+	if finalized == nil || finalized.ObjectId == "" {
+		return nil, wrapMediaInvalidUploadedFile("dfs commit document upload", errors.New("missing finalized object"))
+	}
+
+	var doc *tg.Document
+	documentObjectID := finalized.ObjectId
+	thumbObjectIDs := map[string]string(nil)
 	switch {
 	case isAnimatedGif(uploaded):
-		doc, err = r.dfsClient.UploadGifDocumentMedia(ctx, &dfsapi.TLDfsUploadGifDocumentMedia{Creator: in.OwnerId, Media: uploaded})
+		doc, documentObjectID, thumbObjectIDs, err = r.processUploadedGifDocument(ctx, in.OwnerId, finalized, uploaded)
 	case uploaded.MimeType == "video/mp4":
-		doc, err = r.dfsClient.UploadMp4DocumentMedia(ctx, &dfsapi.TLDfsUploadMp4DocumentMedia{Creator: in.OwnerId, Media: uploaded})
+		doc, documentObjectID, thumbObjectIDs, err = r.processUploadedMp4Document(ctx, in.OwnerId, finalized, uploaded)
 	default:
-		doc, err = r.dfsClient.UploadDocumentFileV2(ctx, &dfsapi.TLDfsUploadDocumentFileV2{Creator: in.OwnerId, Media: uploaded})
+		doc, err = r.documentFromOriginalUpload(in.OwnerId, finalized, uploaded)
 	}
 	if err != nil {
-		return nil, wrapDfsUploadError("dfs upload document", err)
+		return nil, err
 	}
-	if err := r.saveDocumentAggregate(ctx, uploadedFileName(uploaded), doc); err != nil {
+	if err := r.saveDocumentAggregateWithPaths(ctx, uploadedFileName(uploaded), doc, documentObjectID, thumbObjectIDs); err != nil {
 		return nil, err
 	}
 	docClazz, ok := doc.ToDocument()
@@ -93,6 +108,208 @@ func (r *Repository) UploadedDocumentMedia(ctx context.Context, in *media.TLMedi
 		Document:   docClazz,
 		TtlSeconds: uploaded.TtlSeconds,
 	}).ToMessageMedia(), nil
+}
+
+func (r *Repository) processUploadedGifDocument(ctx context.Context, ownerID int64, finalized *dfsapi.FileFinalizedObject, uploaded *tg.TLInputMediaUploadedDocument) (*tg.Document, string, map[string]string, error) {
+	if r.processorClient == nil {
+		return nil, "", nil, wrapMediaDownstream("mediaprocessor process gif", media.ErrMediaDownstream)
+	}
+	if len(finalized.ReadLease) == 0 {
+		return nil, "", nil, wrapMediaInvalidUploadedFile("dfs commit document upload", errors.New("missing finalized read lease"))
+	}
+	req := &mediaprocessor.TLMediaProcessorProcessGif{
+		OwnerId:   ownerID,
+		ObjectId:  finalized.ObjectId,
+		ReadLease: finalized.ReadLease,
+		FileName:  uploadedFileName(uploaded),
+	}
+	if uploaded.Thumb != nil {
+		thumbFinalized, err := r.dfsClient.CommitUpload(ctx, &dfsapi.TLDfsCommitUpload{
+			UploadSessionId: externalUploadSessionID(ownerID, uploaded.Thumb),
+			OwnerId:         ownerID,
+			File:            uploaded.Thumb,
+			Purpose:         "media_thumbnail",
+		})
+		if err != nil {
+			return nil, "", nil, wrapDfsUploadError("dfs commit document thumb upload", err)
+		}
+		if thumbFinalized == nil || thumbFinalized.ObjectId == "" || len(thumbFinalized.ReadLease) == 0 {
+			return nil, "", nil, wrapMediaInvalidUploadedFile("dfs commit document thumb upload", errors.New("missing finalized thumb object"))
+		}
+		req.ThumbObjectId = thumbFinalized.ObjectId
+		req.ThumbReadLease = thumbFinalized.ReadLease
+	}
+	processed, err := r.processorClient.ProcessGif(ctx, req)
+	if err != nil {
+		return nil, "", nil, wrapMediaDownstream("mediaprocessor process gif", err)
+	}
+	doc, thumbObjectIDs, err := r.documentFromProcessedUpload(ownerID, finalized, processed)
+	if err != nil {
+		return nil, "", nil, err
+	}
+	return doc, processed.ObjectId, thumbObjectIDs, nil
+}
+
+func (r *Repository) processUploadedMp4Document(ctx context.Context, ownerID int64, finalized *dfsapi.FileFinalizedObject, uploaded *tg.TLInputMediaUploadedDocument) (*tg.Document, string, map[string]string, error) {
+	if r.processorClient == nil {
+		return nil, "", nil, wrapMediaDownstream("mediaprocessor process mp4", media.ErrMediaDownstream)
+	}
+	if len(finalized.ReadLease) == 0 {
+		return nil, "", nil, wrapMediaInvalidUploadedFile("dfs commit document upload", errors.New("missing finalized read lease"))
+	}
+	attrs, err := encodeDocumentAttributeVector(uploaded.Attributes)
+	if err != nil {
+		return nil, "", nil, err
+	}
+	processed, err := r.processorClient.ProcessMp4(ctx, &mediaprocessor.TLMediaProcessorProcessMp4{
+		OwnerId:    ownerID,
+		ObjectId:   finalized.ObjectId,
+		ReadLease:  finalized.ReadLease,
+		FileName:   uploadedFileName(uploaded),
+		Attributes: attrs,
+	})
+	if err != nil {
+		return nil, "", nil, wrapMediaDownstream("mediaprocessor process mp4", err)
+	}
+	doc, thumbObjectIDs, err := r.documentFromProcessedUpload(ownerID, finalized, processed)
+	if err != nil {
+		return nil, "", nil, err
+	}
+	return doc, processed.ObjectId, thumbObjectIDs, nil
+}
+
+func (r *Repository) documentFromOriginalUpload(ownerID int64, finalized *dfsapi.FileFinalizedObject, uploaded *tg.TLInputMediaUploadedDocument) (*tg.Document, error) {
+	if finalized == nil || finalized.ObjectId == "" || uploaded == nil {
+		return nil, wrapMediaInvalidUploadedFile("dfs commit document upload", errors.New("missing finalized object"))
+	}
+	if finalized.Size2 <= 0 {
+		return nil, wrapMediaInvalidUploadedFile("dfs commit document upload", errors.New("invalid finalized object size"))
+	}
+	now := r.repositoryNow()
+	docID := stablePositiveID("document:" + finalized.ObjectId)
+	accessHash := stablePositiveID("document-access:" + finalized.ObjectId)
+	fileReference, err := r.generateDocumentFileReference(ownerID, docID, accessHash, finalized.ObjectId, now)
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLDocument(&tg.TLDocument{
+		Id:            docID,
+		AccessHash:    accessHash,
+		FileReference: fileReference,
+		Date:          int32(now.Unix()),
+		MimeType:      uploaded.MimeType,
+		Size2:         finalized.Size2,
+		Thumbs:        nil,
+		VideoThumbs:   nil,
+		DcId:          finalized.DcId,
+		Attributes:    uploaded.Attributes,
+	}).ToDocument(), nil
+}
+
+func (r *Repository) documentFromProcessedUpload(ownerID int64, finalized *dfsapi.FileFinalizedObject, processed *mediaprocessor.ProcessedDocument) (*tg.Document, map[string]string, error) {
+	if finalized == nil || processed == nil || processed.ObjectId == "" || processed.MimeType == "" || processed.Size2 <= 0 {
+		return nil, nil, wrapMediaInvalidUploadedFile("mediaprocessor process document", errors.New("missing processed document object"))
+	}
+	attrs, err := decodeDocumentAttributeVector(processed.Attributes)
+	if err != nil {
+		return nil, nil, err
+	}
+	if len(attrs) == 0 {
+		return nil, nil, wrapMediaInvalidUploadedFile("mediaprocessor process document", errors.New("missing processed document attributes"))
+	}
+	thumbs, thumbObjectIDs, err := mapProcessedDocumentThumbs(processed.Thumbs)
+	if err != nil {
+		return nil, nil, wrapMediaInvalidUploadedFile("mediaprocessor process document", err)
+	}
+	now := r.repositoryNow()
+	docID := stablePositiveID("document:" + processed.ObjectId)
+	accessHash := stablePositiveID("document-access:" + processed.ObjectId)
+	fileReference, err := r.generateDocumentFileReference(ownerID, docID, accessHash, processed.ObjectId, now)
+	if err != nil {
+		return nil, nil, err
+	}
+	return tg.MakeTLDocument(&tg.TLDocument{
+		Id:            docID,
+		AccessHash:    accessHash,
+		FileReference: fileReference,
+		Date:          int32(now.Unix()),
+		MimeType:      processed.MimeType,
+		Size2:         processed.Size2,
+		Thumbs:        thumbs,
+		VideoThumbs:   nil,
+		DcId:          finalized.DcId,
+		Attributes:    attrs,
+	}).ToDocument(), thumbObjectIDs, nil
+}
+
+func (r *Repository) generateDocumentFileReference(ownerID, docID, accessHash int64, objectID string, now time.Time) ([]byte, error) {
+	if r == nil || r.fileReferenceService == nil {
+		return nil, media.ErrFileReferenceInvalid
+	}
+	ttl := r.fileReferenceTTL
+	if ttl <= 0 {
+		ttl = 24 * time.Hour
+	}
+	fileReference, err := r.fileReferenceService.Generate(FileReferenceClaims{
+		MediaID:      docID,
+		ObjectID:     objectID,
+		OriginDomain: "document",
+		OriginID:     ownerID,
+		ExpireAt:     now.Add(ttl).Unix(),
+		AccessHash:   accessHash,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return fileReference, nil
+}
+
+func (r *Repository) repositoryNow() time.Time {
+	if r != nil && r.fileReferenceService != nil {
+		return r.fileReferenceService.now()
+	}
+	return time.Now()
+}
+
+func mapProcessedDocumentThumbs(derivatives []mediaprocessor.ProcessorDerivativeClazz) ([]tg.PhotoSizeClazz, map[string]string, error) {
+	const (
+		maxInt32                         = int64(^uint32(0) >> 1)
+		processorDerivativeDocumentThumb = "document_thumb"
+		documentThumbSizeType            = "m"
+	)
+	if len(derivatives) == 0 {
+		return nil, nil, nil
+	}
+	sizes := make([]tg.PhotoSizeClazz, 0, len(derivatives))
+	objectIDs := make(map[string]string, len(derivatives))
+	for i, derivative := range derivatives {
+		if derivative == nil {
+			return nil, nil, errors.New("document thumb derivative is nil")
+		}
+		if derivative.Kind != processorDerivativeDocumentThumb {
+			return nil, nil, fmt.Errorf("document thumb derivative %d has unknown kind %q", i, derivative.Kind)
+		}
+		if derivative.ObjectId == "" {
+			return nil, nil, fmt.Errorf("document thumb derivative %d missing object id", i)
+		}
+		if derivative.Width <= 0 || derivative.Height <= 0 {
+			return nil, nil, fmt.Errorf("document thumb derivative %d has invalid dimensions", i)
+		}
+		if derivative.Size2 <= 0 || derivative.Size2 > maxInt32 {
+			return nil, nil, fmt.Errorf("document thumb derivative %d has invalid size", i)
+		}
+		if _, exists := objectIDs[documentThumbSizeType]; exists {
+			return nil, nil, fmt.Errorf("document thumb derivative %d duplicates size type %q", i, documentThumbSizeType)
+		}
+		sizes = append(sizes, tg.MakeTLPhotoSize(&tg.TLPhotoSize{
+			Type:  documentThumbSizeType,
+			W:     derivative.Width,
+			H:     derivative.Height,
+			Size2: int32(derivative.Size2),
+		}))
+		objectIDs[documentThumbSizeType] = derivative.ObjectId
+	}
+	return sizes, objectIDs, nil
 }
 
 func (r *Repository) GetDocumentList(ctx context.Context, ids []int64) (*media.VectorDocument, error) {
@@ -135,6 +352,10 @@ func (r *Repository) mapDocumentWithThumbs(ctx context.Context, doc *model.Docum
 }
 
 func (r *Repository) saveDocumentAggregate(ctx context.Context, uploadedFileName string, doc *tg.Document) error {
+	return r.saveDocumentAggregateWithPaths(ctx, uploadedFileName, doc, "", nil)
+}
+
+func (r *Repository) saveDocumentAggregateWithPaths(ctx context.Context, uploadedFileName string, doc *tg.Document, documentObjectID string, thumbObjectIDs map[string]string) error {
 	if r == nil || r.model == nil || doc == nil {
 		return nil
 	}
@@ -150,7 +371,7 @@ func (r *Repository) saveDocumentAggregate(ctx context.Context, uploadedFileName
 		DocumentId:       do.Id,
 		AccessHash:       do.AccessHash,
 		DcId:             do.DcId,
-		FilePath:         documentObjectPath(do.Id),
+		FilePath:         firstNonEmpty(documentObjectID, documentObjectPath(do.Id)),
 		FileSize:         do.Size2,
 		UploadedFileName: uploadedFileName,
 		Ext:              strings.TrimPrefix(strings.ToLower(filepath.Ext(uploadedFileName)), "."),
@@ -168,7 +389,7 @@ func (r *Repository) saveDocumentAggregate(ctx context.Context, uploadedFileName
 		return wrapStorage("save document", err)
 	}
 	for _, thumb := range do.Thumbs {
-		if err := r.savePhotoSize(ctx, do.Id, thumb); err != nil {
+		if err := r.savePhotoSizeWithPath(ctx, do.Id, thumb, thumbObjectIDs); err != nil {
 			return err
 		}
 	}

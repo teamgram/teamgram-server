@@ -133,7 +133,10 @@ func (c *fakeDfsMediaClient) UploadedProfilePhoto(_ context.Context, in *dfsapi.
 
 type fakeMediaProcessorClient struct {
 	photoReq *mediaprocessor.TLMediaProcessorProcessPhoto
+	gifReq   *mediaprocessor.TLMediaProcessorProcessGif
+	mp4Req   *mediaprocessor.TLMediaProcessorProcessMp4
 	photo    *mediaprocessor.ProcessedPhoto
+	document *mediaprocessor.ProcessedDocument
 }
 
 func (c *fakeMediaProcessorClient) ProcessPhoto(_ context.Context, in *mediaprocessor.TLMediaProcessorProcessPhoto) (*mediaprocessor.ProcessedPhoto, error) {
@@ -141,12 +144,14 @@ func (c *fakeMediaProcessorClient) ProcessPhoto(_ context.Context, in *mediaproc
 	return c.photo, nil
 }
 
-func (c *fakeMediaProcessorClient) ProcessGif(context.Context, *mediaprocessor.TLMediaProcessorProcessGif) (*mediaprocessor.ProcessedDocument, error) {
-	return nil, nil
+func (c *fakeMediaProcessorClient) ProcessGif(_ context.Context, in *mediaprocessor.TLMediaProcessorProcessGif) (*mediaprocessor.ProcessedDocument, error) {
+	c.gifReq = in
+	return c.document, nil
 }
 
-func (c *fakeMediaProcessorClient) ProcessMp4(context.Context, *mediaprocessor.TLMediaProcessorProcessMp4) (*mediaprocessor.ProcessedDocument, error) {
-	return nil, nil
+func (c *fakeMediaProcessorClient) ProcessMp4(_ context.Context, in *mediaprocessor.TLMediaProcessorProcessMp4) (*mediaprocessor.ProcessedDocument, error) {
+	c.mp4Req = in
+	return c.document, nil
 }
 
 func TestGetPhotoReturnsStorageError(t *testing.T) {
