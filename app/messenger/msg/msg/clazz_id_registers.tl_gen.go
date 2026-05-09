@@ -20,7 +20,7 @@ import (
 func init() {
 	// Constructor
 	iface.RegisterClazzID(0x8d64b133, func() iface.TLObject { return &TLContentMessage{ClazzID: 0x8d64b133} })       // 0x8d64b133
-	iface.RegisterClazzID(0x539524b1, func() iface.TLObject { return &TLOutboxMessage{ClazzID: 0x539524b1} })        // 0x539524b1
+	iface.RegisterClazzID(0x625d8b25, func() iface.TLObject { return &TLOutboxMessage{ClazzID: 0x625d8b25} })        // 0x625d8b25
 	iface.RegisterClazzID(0x7debda91, func() iface.TLObject { return &TLResolvedDialogCursor{ClazzID: 0x7debda91} }) // 0x7debda91
 	iface.RegisterClazzID(0x5a3864ba, func() iface.TLObject { return &TLSender{ClazzID: 0x5a3864ba} })               // 0x5a3864ba
 

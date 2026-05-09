@@ -41,7 +41,7 @@ const (
 func init() {
 	// RegisterClazzNameList
 	iface.RegisterClazzName(ClazzName_sender, 0, 0x5a3864ba)                            // 5a3864ba
-	iface.RegisterClazzName(ClazzName_outboxMessage, 0, 0x539524b1)                     // 539524b1
+	iface.RegisterClazzName(ClazzName_outboxMessage, 0, 0x625d8b25)                     // 625d8b25
 	iface.RegisterClazzName(ClazzName_contentMessage, 0, 0x8d64b133)                    // 8d64b133
 	iface.RegisterClazzName(ClazzName_resolvedDialogCursor, 0, 0x7debda91)              // 7debda91
 	iface.RegisterClazzName(ClazzName_msg_pushUserMessage, 0, 0x35d0fa1a)               // 35d0fa1a
@@ -64,7 +64,7 @@ func init() {
 
 	//RegisterClazzIDNameList
 	iface.RegisterClazzIDName(ClazzName_sender, 0x5a3864ba)                            // 5a3864ba
-	iface.RegisterClazzIDName(ClazzName_outboxMessage, 0x539524b1)                     // 539524b1
+	iface.RegisterClazzIDName(ClazzName_outboxMessage, 0x625d8b25)                     // 625d8b25
 	iface.RegisterClazzIDName(ClazzName_contentMessage, 0x8d64b133)                    // 8d64b133
 	iface.RegisterClazzIDName(ClazzName_resolvedDialogCursor, 0x7debda91)              // 7debda91
 	iface.RegisterClazzIDName(ClazzName_msg_pushUserMessage, 0x35d0fa1a)               // 35d0fa1a

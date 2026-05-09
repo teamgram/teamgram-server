@@ -12,7 +12,7 @@ package msg
 
 const (
 	ClazzID_sender                            = 0x5a3864ba // 5a3864ba
-	ClazzID_outboxMessage                     = 0x539524b1 // 539524b1
+	ClazzID_outboxMessage                     = 0x625d8b25 // 625d8b25
 	ClazzID_contentMessage                    = 0x8d64b133 // 8d64b133
 	ClazzID_resolvedDialogCursor              = 0x7debda91 // 7debda91
 	ClazzID_msg_pushUserMessage               = 0x35d0fa1a // 35d0fa1a

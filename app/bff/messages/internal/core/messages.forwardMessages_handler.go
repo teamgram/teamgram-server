@@ -287,9 +287,10 @@ func buildForwardOutbox(in forwardOutboxInput) msg.OutboxMessageClazz {
 		message.SavedPeerId = savedPeer
 	}
 	return msg.MakeTLOutboxMessage(&msg.TLOutboxMessage{
-		RandomId:   in.RandomID,
-		Background: in.Background,
-		Message:    message,
+		RandomId:        in.RandomID,
+		Background:      in.Background,
+		Message:         message,
+		ForwardSourceId: &sourceMsgID,
 	})
 }
 
@@ -301,9 +302,11 @@ func forwardSavedPeerForSource(source *tg.TLMessage, fallback tg.PeerClazz) tg.P
 }
 
 func forwardHeaderForSource(source *tg.TLMessage, sourcePeer tg.PeerClazz, sourceMessageID int32, saved bool, savedPeer tg.PeerClazz) tg.MessageFwdHeaderClazz {
-	savedFromPeer := sourcePeer
+	var savedFromPeer tg.PeerClazz
+	var savedFromMessageID *int32
 	if saved {
 		savedFromPeer = savedPeer
+		savedFromMessageID = &sourceMessageID
 	}
 	if source != nil && source.FwdFrom != nil {
 		return tg.MakeTLMessageFwdHeader(&tg.TLMessageFwdHeader{
@@ -315,7 +318,7 @@ func forwardHeaderForSource(source *tg.TLMessage, sourcePeer tg.PeerClazz, sourc
 			ChannelPost:    source.FwdFrom.ChannelPost,
 			PostAuthor:     source.FwdFrom.PostAuthor,
 			SavedFromPeer:  savedFromPeer,
-			SavedFromMsgId: &sourceMessageID,
+			SavedFromMsgId: savedFromMessageID,
 			SavedFromId:    source.FwdFrom.SavedFromId,
 			SavedFromName:  source.FwdFrom.SavedFromName,
 			SavedDate:      source.FwdFrom.SavedDate,
@@ -332,6 +335,6 @@ func forwardHeaderForSource(source *tg.TLMessage, sourcePeer tg.PeerClazz, sourc
 		FromId:         fromID,
 		Date:           date,
 		SavedFromPeer:  savedFromPeer,
-		SavedFromMsgId: &sourceMessageID,
+		SavedFromMsgId: savedFromMessageID,
 	})
 }

@@ -76,14 +76,11 @@ func (r *Repository) ResolveForwardSourceIdentity(ctx context.Context, lookup Fo
 	if lookup.UserID <= 0 || lookup.SourceUserMessageID <= 0 {
 		return nil, msg.ErrMsgIdInvalid
 	}
-	if lookup.SourcePeerType == 0 || lookup.SourcePeerID <= 0 {
-		return nil, msg.ErrMsgIdInvalid
-	}
 	box, err := r.GetUserMessage(ctx, lookup.UserID, lookup.SourceUserMessageID)
 	if err != nil {
 		return nil, err
 	}
-	if box.PeerType != lookup.SourcePeerType || box.PeerID != lookup.SourcePeerID {
+	if lookup.SourcePeerType != 0 && lookup.SourcePeerID > 0 && (box.PeerType != lookup.SourcePeerType || box.PeerID != lookup.SourcePeerID) {
 		return nil, msg.ErrMsgIdInvalid
 	}
 	return &ForwardSourceIdentity{

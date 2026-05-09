@@ -455,7 +455,8 @@ func TestMsgSendMessageV2BatchReceiverPayloadIncludesRichFields(t *testing.T) {
 	forwardDate := int32(1_772_000_010)
 	replyToMsgID := int32(77)
 	req.Message[0] = msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
-		RandomId: 11,
+		RandomId:        11,
+		ForwardSourceId: &replyToMsgID,
 		Message: tg.MakeTLMessage(&tg.TLMessage{
 			Message: "caption",
 			Media: tg.MakeTLMessageMediaPhoto(&tg.TLMessageMediaPhoto{
@@ -463,10 +464,8 @@ func TestMsgSendMessageV2BatchReceiverPayloadIncludesRichFields(t *testing.T) {
 			}),
 			GroupedId: &groupedID,
 			FwdFrom: tg.MakeTLMessageFwdHeader(&tg.TLMessageFwdHeader{
-				FromId:         tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 300}),
-				Date:           forwardDate,
-				SavedFromPeer:  tg.MakePeerUser(200),
-				SavedFromMsgId: &replyToMsgID,
+				FromId: tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 300}),
+				Date:   forwardDate,
 			}),
 			Entities: []tg.MessageEntityClazz{
 				tg.MakeTLMessageEntityBold(&tg.TLMessageEntityBold{Offset: 0, Length: 7}),
@@ -501,6 +500,9 @@ func TestMsgSendMessageV2BatchReceiverPayloadIncludesRichFields(t *testing.T) {
 	if receiverOp.ForwardRef == nil || receiverOp.ForwardRef.FromUserID != 300 {
 		t.Fatalf("receiver forward ref = %+v, want from user 300", receiverOp.ForwardRef)
 	}
+	if receiverOp.ForwardRef.SourceMessageID != 0 {
+		t.Fatalf("receiver source_message_id = %d, want empty for non-channel user forward", receiverOp.ForwardRef.SourceMessageID)
+	}
 	if receiverOp.ForwardRef.SavedFromPeerType != 0 || receiverOp.ForwardRef.SavedFromPeerID != 0 || receiverOp.ForwardRef.SavedFromMessageID != 0 {
 		t.Fatalf("receiver saved forward fields = %+v, want empty for non-saved forward", receiverOp.ForwardRef)
 	}
@@ -527,6 +529,9 @@ func TestMsgSendMessageV2BatchReceiverPayloadIncludesRichFields(t *testing.T) {
 	if sentMessage.FwdFrom.SavedFromPeer != nil || sentMessage.FwdFrom.SavedFromMsgId != nil {
 		t.Fatalf("sent fwd_from saved fields = %+v, want nil for non-saved forward", sentMessage.FwdFrom)
 	}
+	if sentMessage.FwdFrom.ChannelPost != nil {
+		t.Fatalf("sent fwd_from channel_post = %v, want nil for non-channel user forward", sentMessage.FwdFrom.ChannelPost)
+	}
 }
 
 func TestNormalizeOutboxMessageKeepsSavedForwardFieldsOnlyForSavedMessages(t *testing.T) {
@@ -539,7 +544,8 @@ func TestNormalizeOutboxMessageKeepsSavedForwardFieldsOnlyForSavedMessages(t *te
 		PeerID:       100,
 		Repo:         repo,
 		Outbox: msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
-			RandomId: 11,
+			RandomId:        11,
+			ForwardSourceId: &sourceID,
 			Message: tg.MakeTLMessage(&tg.TLMessage{
 				Message:     "saved forward",
 				SavedPeerId: tg.MakePeerUser(200),
@@ -560,7 +566,7 @@ func TestNormalizeOutboxMessageKeepsSavedForwardFieldsOnlyForSavedMessages(t *te
 	}
 	if got.ForwardRef == nil ||
 		got.ForwardRef.SourcePeerID != 200 ||
-		got.ForwardRef.SourceMessageID != 77 ||
+		got.ForwardRef.SourceMessageID != 0 ||
 		got.ForwardRef.SavedFromPeerID != 200 ||
 		got.ForwardRef.SavedFromMessageID != 77 {
 		t.Fatalf("forward ref = %+v, want saved and source fields", got.ForwardRef)
@@ -3111,13 +3117,13 @@ func buildForwardSendRequestForTest(senderID, peerID, authKeyID, randomID, sourc
 		PeerId:    peerID,
 		Message: []msgpb.OutboxMessageClazz{
 			msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
-				RandomId: randomID,
+				RandomId:        randomID,
+				ForwardSourceId: &sourceID,
 				Message: tg.MakeTLMessage(&tg.TLMessage{
 					Message: "forwarded",
 					FwdFrom: tg.MakeTLMessageFwdHeader(&tg.TLMessageFwdHeader{
-						Date:           1_772_000_301,
-						SavedFromPeer:  tg.MakePeerUser(peerID),
-						SavedFromMsgId: &sourceID,
+						FromId: tg.MakePeerUser(peerID),
+						Date:   1_772_000_301,
 					}),
 				}),
 			}),

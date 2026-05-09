@@ -295,34 +295,42 @@ func normalizeForwardRef(in normalizeOutboxInput, message *tg.TLMessage) (*paylo
 	if fwd.ChannelPost != nil {
 		ref.SourceMessageID = int64(*fwd.ChannelPost)
 	}
-	sourcePeerType, sourcePeerID := peerIdentity(fwd.SavedFromPeer)
 	var sourceMessageID int64
+	if in.Outbox.ForwardSourceId != nil {
+		sourceMessageID = int64(*in.Outbox.ForwardSourceId)
+	}
+	var sourceLookupPeerType int32
+	var sourceLookupPeerID int64
+	var savedPeerType int32
+	var savedPeerID int64
 	if fwd.SavedFromMsgId != nil {
-		sourceMessageID = int64(*fwd.SavedFromMsgId)
-		if ref.SourcePeerType == 0 && sourcePeerType != 0 {
-			ref.SourcePeerType = sourcePeerType
-			ref.SourcePeerID = sourcePeerID
-			ref.SourceMessageID = sourceMessageID
+		savedPeerType, savedPeerID = peerIdentity(fwd.SavedFromPeer)
+		if sourceMessageID == 0 {
+			sourceMessageID = int64(*fwd.SavedFromMsgId)
 		}
 	}
-	if sourcePeerType == 0 || sourcePeerID <= 0 || sourceMessageID <= 0 {
+	if sourceMessageID <= 0 {
 		return nil, repository.ForwardSourceIdentity{}, msg.ErrMsgIdInvalid
 	}
 	if in.Repo == nil {
 		return nil, repository.ForwardSourceIdentity{}, fmt.Errorf("%w: forward resolver is required", msg.ErrSendStateConflict)
 	}
-	ref.SourcePeerType = sourcePeerType
-	ref.SourcePeerID = sourcePeerID
-	ref.SourceMessageID = sourceMessageID
 	if message.SavedPeerId != nil {
-		ref.SavedFromPeerType = sourcePeerType
-		ref.SavedFromPeerID = sourcePeerID
+		if savedPeerType == 0 || savedPeerID <= 0 || fwd.SavedFromMsgId == nil {
+			return nil, repository.ForwardSourceIdentity{}, msg.ErrMsgIdInvalid
+		}
+		sourceLookupPeerType = savedPeerType
+		sourceLookupPeerID = savedPeerID
+		ref.SourcePeerType = savedPeerType
+		ref.SourcePeerID = savedPeerID
+		ref.SavedFromPeerType = savedPeerType
+		ref.SavedFromPeerID = savedPeerID
 		ref.SavedFromMessageID = sourceMessageID
 	}
 	source, err := in.Repo.ResolveForwardSourceIdentity(in.Ctx, repository.ForwardSourceLookup{
 		UserID:              in.SenderUserID,
-		SourcePeerType:      sourcePeerType,
-		SourcePeerID:        sourcePeerID,
+		SourcePeerType:      sourceLookupPeerType,
+		SourcePeerID:        sourceLookupPeerID,
 		SourceUserMessageID: sourceMessageID,
 	})
 	if err != nil {

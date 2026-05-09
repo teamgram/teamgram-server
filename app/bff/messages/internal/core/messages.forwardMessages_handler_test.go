@@ -111,14 +111,23 @@ func TestMessagesForwardMessagesReordersSourcesAndSendsBatch(t *testing.T) {
 	if len(first.Entities) != 1 || first.Entities[0] != entity {
 		t.Fatalf("first entities = %#v, want source entities", first.Entities)
 	}
-	if first.FwdFrom == nil || first.FwdFrom.FromId == nil || first.FwdFrom.SavedFromPeer == nil || first.FwdFrom.SavedFromMsgId == nil || *first.FwdFrom.SavedFromMsgId != 1 {
-		t.Fatalf("first fwd_from = %#v, want source identity for requested id 1", first.FwdFrom)
+	if first.FwdFrom == nil || first.FwdFrom.FromId == nil || first.FwdFrom.ChannelPost != nil || first.FwdFrom.SavedFromPeer != nil || first.FwdFrom.SavedFromMsgId != nil {
+		t.Fatalf("first fwd_from = %#v, want master-style user forward header", first.FwdFrom)
+	}
+	if got.Message[0].ForwardSourceId == nil || *got.Message[0].ForwardSourceId != 1 {
+		t.Fatalf("first ForwardSourceId = %v, want 1", got.Message[0].ForwardSourceId)
 	}
 	if second.Media != media {
 		t.Fatalf("second media = %#v, want source media", second.Media)
 	}
-	if second.FwdFrom == nil || second.FwdFrom.FromId == nil || second.FwdFrom.SavedFromPeer == nil || second.FwdFrom.SavedFromMsgId == nil || *second.FwdFrom.SavedFromMsgId != 2 {
-		t.Fatalf("second fwd_from = %#v, want source identity for requested id 2", second.FwdFrom)
+	if second.FwdFrom == nil || second.FwdFrom.FromId == nil || second.FwdFrom.SavedFromPeer != nil || second.FwdFrom.SavedFromMsgId != nil {
+		t.Fatalf("second fwd_from = %#v, want existing forward header with cleared saved fields", second.FwdFrom)
+	}
+	if second.FwdFrom.ChannelPost != nil {
+		t.Fatalf("second channel_post = %v, want nil for user forward", second.FwdFrom.ChannelPost)
+	}
+	if got.Message[1].ForwardSourceId == nil || *got.Message[1].ForwardSourceId != 2 {
+		t.Fatalf("second ForwardSourceId = %v, want 2", got.Message[1].ForwardSourceId)
 	}
 	if second.FwdFrom.Date != 1900 {
 		t.Fatalf("second fwd date = %d, want preserved existing forward date", second.FwdFrom.Date)

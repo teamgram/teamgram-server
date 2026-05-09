@@ -216,7 +216,7 @@ func DecodeOutboxMessageClazz(d *bin.Decoder) (OutboxMessageClazz, error) {
 	}
 
 	switch id {
-	case 0x539524b1:
+	case 0x625d8b25:
 		x := &TLOutboxMessage{ClazzID: id, ClazzName2: ClazzName_outboxMessage}
 		if err := x.Decode(d); err != nil {
 			return nil, err
@@ -230,13 +230,14 @@ func DecodeOutboxMessageClazz(d *bin.Decoder) (OutboxMessageClazz, error) {
 
 // TLOutboxMessage <--
 type TLOutboxMessage struct {
-	ClazzID      uint32          `json:"_id"`
-	ClazzName2   string          `json:"_name"`
-	NoWebpage    bool            `json:"no_webpage"`
-	Background   bool            `json:"background"`
-	RandomId     int64           `json:"random_id"`
-	Message      tg.MessageClazz `json:"message"`
-	ScheduleDate *int32          `json:"schedule_date"`
+	ClazzID         uint32          `json:"_id"`
+	ClazzName2      string          `json:"_name"`
+	NoWebpage       bool            `json:"no_webpage"`
+	Background      bool            `json:"background"`
+	RandomId        int64           `json:"random_id"`
+	Message         tg.MessageClazz `json:"message"`
+	ScheduleDate    *int32          `json:"schedule_date"`
+	ForwardSourceId *int32          `json:"forward_source_id"`
 }
 
 func MakeTLOutboxMessage(m *TLOutboxMessage) *TLOutboxMessage {
@@ -281,12 +282,16 @@ func (m *TLOutboxMessage) ToOutboxMessage() *OutboxMessage {
 
 func (m *TLOutboxMessage) CalcSize(layer int32) int {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_outboxMessage, int(layer)); clazzId {
-	case 0x539524b1:
+	case 0x625d8b25:
 		size := 4
 		size += 4
 		size += 8
 		size += iface.CalcObjectSize(m.Message, layer)
 		if m.ScheduleDate != nil {
+			size += 4
+		}
+
+		if m.ForwardSourceId != nil {
 			size += 4
 		}
 
@@ -298,7 +303,7 @@ func (m *TLOutboxMessage) CalcSize(layer int32) int {
 
 func (m *TLOutboxMessage) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_outboxMessage, int(layer)); clazzId {
-	case 0x539524b1:
+	case 0x625d8b25:
 		if err := iface.ValidateRequiredObject("message", m.Message); err != nil {
 			return err
 		}
@@ -312,8 +317,8 @@ func (m *TLOutboxMessage) Validate(layer int32) error {
 // Encode <--
 func (m *TLOutboxMessage) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_outboxMessage, int(layer)); clazzId {
-	case 0x539524b1:
-		x.PutClazzID(0x539524b1)
+	case 0x625d8b25:
+		x.PutClazzID(0x625d8b25)
 
 		// set flags
 		var getFlags = func() uint32 {
@@ -329,6 +334,9 @@ func (m *TLOutboxMessage) Encode(x *bin.Encoder, layer int32) error {
 			if m.ScheduleDate != nil {
 				flags |= 1 << 2
 			}
+			if m.ForwardSourceId != nil {
+				flags |= 1 << 3
+			}
 
 			return flags
 		}
@@ -338,13 +346,17 @@ func (m *TLOutboxMessage) Encode(x *bin.Encoder, layer int32) error {
 		x.PutUint32(flags)
 		x.PutInt64(m.RandomId)
 		if m.Message == nil {
-			return fmt.Errorf("unable to encode outboxMessage#0x539524b1: field message is nil")
+			return fmt.Errorf("unable to encode outboxMessage#0x625d8b25: field message is nil")
 		}
 		if err := m.Message.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to encode outboxMessage#0x539524b1: field message: %w", err)
+			return fmt.Errorf("unable to encode outboxMessage#0x625d8b25: field message: %w", err)
 		}
 		if m.ScheduleDate != nil {
 			x.PutInt32(*m.ScheduleDate)
+		}
+
+		if m.ForwardSourceId != nil {
+			x.PutInt32(*m.ForwardSourceId)
 		}
 
 		return nil
@@ -356,10 +368,10 @@ func (m *TLOutboxMessage) Encode(x *bin.Encoder, layer int32) error {
 // Decode <--
 func (m *TLOutboxMessage) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
-	case 0x539524b1:
+	case 0x625d8b25:
 		flags, err := d.Uint32()
 		if err != nil {
-			return fmt.Errorf("unable to decode outboxMessage#0x539524b1: field flags: %w", err)
+			return fmt.Errorf("unable to decode outboxMessage#0x625d8b25: field flags: %w", err)
 		}
 		_ = flags
 		if (flags & (1 << 0)) != 0 {
@@ -370,19 +382,26 @@ func (m *TLOutboxMessage) Decode(d *bin.Decoder) (err error) {
 		}
 		m.RandomId, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode outboxMessage#0x539524b1: field random_id: %w", err)
+			return fmt.Errorf("unable to decode outboxMessage#0x625d8b25: field random_id: %w", err)
 		}
 
 		m.Message, err = tg.DecodeMessageClazz(d)
 		if err != nil {
-			return fmt.Errorf("unable to decode outboxMessage#0x539524b1: field message: %w", err)
+			return fmt.Errorf("unable to decode outboxMessage#0x625d8b25: field message: %w", err)
 		}
 
 		if (flags & (1 << 2)) != 0 {
 			m.ScheduleDate = new(int32)
 			*m.ScheduleDate, err = d.Int32()
 			if err != nil {
-				return fmt.Errorf("unable to decode outboxMessage#0x539524b1: field schedule_date: %w", err)
+				return fmt.Errorf("unable to decode outboxMessage#0x625d8b25: field schedule_date: %w", err)
+			}
+		}
+		if (flags & (1 << 3)) != 0 {
+			m.ForwardSourceId = new(int32)
+			*m.ForwardSourceId, err = d.Int32()
+			if err != nil {
+				return fmt.Errorf("unable to decode outboxMessage#0x625d8b25: field forward_source_id: %w", err)
 			}
 		}
 
