@@ -21,6 +21,14 @@ func TestBuildBizBackedConfigSetsConcreteKitexClients(t *testing.T) {
 			DestService: "messenger.msg",
 			ServiceName: "RPCMsg",
 		},
+		MediaClient: kitex.RpcClientConf{
+			DestService: "service.media",
+			ServiceName: "RPCMedia",
+		},
+		IdgenClient: kitex.RpcClientConf{
+			DestService: "service.idgen",
+			ServiceName: "RPCIdgen",
+		},
 		SyncClient: kitex.RpcClientConf{
 			DestService: "messenger.sync",
 			ServiceName: "RPCSync",
@@ -57,6 +65,18 @@ func TestBuildBizBackedConfigSetsConcreteKitexClients(t *testing.T) {
 	}
 	if messages.MsgClient.ServiceName != "RPCMsg" {
 		t.Fatalf("expected msg client service name RPCMsg, got %#v", messages.MsgClient)
+	}
+	if messages.MediaClient.DestService != "service.media" {
+		t.Fatalf("expected media client dest service to be forwarded, got %#v", messages.MediaClient)
+	}
+	if messages.MediaClient.ServiceName != "RPCMedia" {
+		t.Fatalf("expected media client service name RPCMedia, got %#v", messages.MediaClient)
+	}
+	if messages.IdgenClient.DestService != "service.idgen" {
+		t.Fatalf("expected idgen client dest service to be forwarded, got %#v", messages.IdgenClient)
+	}
+	if messages.IdgenClient.ServiceName != "RPCIdgen" {
+		t.Fatalf("expected idgen client service name RPCIdgen, got %#v", messages.IdgenClient)
 	}
 	if messages.UserClient.DestService != "service.biz_service" {
 		t.Fatalf("expected messages user client dest service to be forwarded, got %#v", messages.UserClient)

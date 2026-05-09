@@ -17,14 +17,107 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesSendMedia
 // messages.sendMedia#330e77f flags:# silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo media:InputMedia message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int schedule_repeat_period:flags.24?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long allow_paid_stars:flags.21?long suggested_post:flags.22?SuggestedPost = Updates;
 func (c *MessagesCore) MessagesSendMedia(in *tg.TLMessagesSendMedia) (*tg.Updates, error) {
-	// TODO: not impl
-	c.Logger.Errorf("messages.sendMedia - error: method MessagesSendMedia not impl")
+	md := c.MD
+	if md == nil || md.UserId <= 0 {
+		return nil, tg.ErrUserIdInvalid
+	}
+	selfUserID := md.UserId
+	authKeyID := md.PermAuthKeyId
 
-	return nil, tg.ErrMethodNotImpl
+	if in == nil {
+		return nil, tg.ErrInputRequestInvalid
+	}
+
+	peerUserID, ok := resolveUserPeerID(in.Peer, selfUserID)
+	if !ok {
+		return nil, tg.Err400PeerIdInvalid
+	}
+
+	if err := checkCaption(in.Message); err != nil {
+		return nil, err
+	}
+
+	if in.RandomId == 0 {
+		return nil, tg.ErrRandomIdEmpty
+	}
+
+	if err := checkSendMediaUnsupportedFields(in); err != nil {
+		return nil, err
+	}
+	replyHeader, err := makeMessageReplyHeader(in.ReplyTo)
+	if err != nil {
+		return nil, err
+	}
+
+	media, err := resolveMessageMedia(c.ctx, c.svcCtx.Repo.MediaClient, authKeyID, in.Media)
+	if err != nil {
+		mappedErr := mapMediaResolveError(err)
+		if mappedErr == tg.ErrInternalServerError {
+			c.Logger.Errorf("messages.sendMedia - media resolve failed: self_user_id: %d, peer_id: %d, random_id: %d, err: %v",
+				selfUserID, peerUserID, in.RandomId, err)
+		}
+		return nil, mappedErr
+	}
+
+	outbox, clearDraftBeforeDate := buildMediaOutbox(in, selfUserID, peerUserID, media, replyHeader)
+	var sendClient sendMessageClient = c.svcCtx.Repo.MsgClient
+	updates, err := sendClient.MsgSendMessageV2(c.ctx, &msg.TLMsgSendMessageV2{
+		ClearDraft:           in.ClearDraft,
+		UserId:               selfUserID,
+		AuthKeyId:            authKeyID,
+		SourcePermAuthKeyId:  &authKeyID,
+		ClearDraftBeforeDate: &clearDraftBeforeDate,
+		PeerType:             payload.PeerTypeUser,
+		PeerId:               peerUserID,
+		Message:              []msg.OutboxMessageClazz{outbox},
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.sendMedia - msg error: self_user_id: %d, peer_id: %d, random_id: %d, err: %v",
+			selfUserID, peerUserID, in.RandomId, err)
+		return nil, mapMsgSendError(err)
+	}
+
+	return updates, nil
+}
+
+func checkSendMediaUnsupportedFields(in *tg.TLMessagesSendMedia) error {
+	if in.ReplyMarkup != nil {
+		return tg.ErrInputRequestInvalid
+	}
+	if in.ScheduleDate != nil {
+		return tg.ErrInputRequestInvalid
+	}
+	if in.ScheduleRepeatPeriod != nil {
+		return tg.ErrInputRequestInvalid
+	}
+	if in.UpdateStickersetsOrder {
+		return tg.ErrInputRequestInvalid
+	}
+	if in.SendAs != nil {
+		return tg.ErrInputRequestInvalid
+	}
+	if in.QuickReplyShortcut != nil {
+		return tg.ErrInputRequestInvalid
+	}
+	if in.Effect != nil {
+		return tg.ErrInputRequestInvalid
+	}
+	if in.AllowPaidFloodskip {
+		return tg.ErrInputRequestInvalid
+	}
+	if in.AllowPaidStars != nil {
+		return tg.ErrInputRequestInvalid
+	}
+	if in.SuggestedPost != nil {
+		return tg.ErrInputRequestInvalid
+	}
+	return nil
 }

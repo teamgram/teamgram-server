@@ -36,6 +36,8 @@ type Client interface {
 	MsgReadHistory(ctx context.Context, req *msg.TLMsgReadHistory, callOptions ...callopt.Option) (r *tg.MessagesAffectedMessages, err error)
 	MsgReadHistoryV2(ctx context.Context, req *msg.TLMsgReadHistoryV2, callOptions ...callopt.Option) (r *tg.MessagesAffectedMessages, err error)
 	MsgGetHistory(ctx context.Context, req *msg.TLMsgGetHistory, callOptions ...callopt.Option) (r *tg.MessagesMessages, err error)
+	MsgGetUserMessage(ctx context.Context, req *msg.TLMsgGetUserMessage, callOptions ...callopt.Option) (r *tg.MessageBox, err error)
+	MsgGetUserMessageList(ctx context.Context, req *msg.TLMsgGetUserMessageList, callOptions ...callopt.Option) (r *msg.VectorMessageBox, err error)
 	MsgSearchHashtag(ctx context.Context, req *msg.TLMsgSearchHashtag, callOptions ...callopt.Option) (r *tg.MessagesMessages, err error)
 	MsgResolveDialogCursorTopMessage(ctx context.Context, req *msg.TLMsgResolveDialogCursorTopMessage, callOptions ...callopt.Option) (r *msg.ResolvedDialogCursor, err error)
 	MsgUpdatePinnedMessage(ctx context.Context, req *msg.TLMsgUpdatePinnedMessage, callOptions ...callopt.Option) (r *tg.Updates, err error)
@@ -132,6 +134,16 @@ func (p *kMsgClient) MsgReadHistoryV2(ctx context.Context, req *msg.TLMsgReadHis
 func (p *kMsgClient) MsgGetHistory(ctx context.Context, req *msg.TLMsgGetHistory, callOptions ...callopt.Option) (r *tg.MessagesMessages, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.MsgGetHistory(ctx, req)
+}
+
+func (p *kMsgClient) MsgGetUserMessage(ctx context.Context, req *msg.TLMsgGetUserMessage, callOptions ...callopt.Option) (r *tg.MessageBox, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.MsgGetUserMessage(ctx, req)
+}
+
+func (p *kMsgClient) MsgGetUserMessageList(ctx context.Context, req *msg.TLMsgGetUserMessageList, callOptions ...callopt.Option) (r *msg.VectorMessageBox, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.MsgGetUserMessageList(ctx, req)
 }
 
 func (p *kMsgClient) MsgSearchHashtag(ctx context.Context, req *msg.TLMsgSearchHashtag, callOptions ...callopt.Option) (r *tg.MessagesMessages, err error) {

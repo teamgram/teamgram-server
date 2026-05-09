@@ -196,6 +196,38 @@ func (s *Service) MsgGetHistory(ctx context.Context, request *msg.TLMsgGetHistor
 	return r, err
 }
 
+// MsgGetUserMessage
+// msg.getUserMessage user_id:long id:int = MessageBox;
+func (s *Service) MsgGetUserMessage(ctx context.Context, request *msg.TLMsgGetUserMessage) (*tg.MessageBox, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("msg.getUserMessage - request: %s", request)
+
+	r, err := c.MsgGetUserMessage(request)
+	if err != nil {
+		c.Logger.Errorf("msg.getUserMessage - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("msg.getUserMessage - reply: %s", r)
+	return r, err
+}
+
+// MsgGetUserMessageList
+// msg.getUserMessageList user_id:long id_list:Vector<int> = Vector<MessageBox>;
+func (s *Service) MsgGetUserMessageList(ctx context.Context, request *msg.TLMsgGetUserMessageList) (*msg.VectorMessageBox, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("msg.getUserMessageList - request: %s", request)
+
+	r, err := c.MsgGetUserMessageList(request)
+	if err != nil {
+		c.Logger.Errorf("msg.getUserMessageList - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("msg.getUserMessageList - reply: %s", r)
+	return r, err
+}
+
 // MsgSearchHashtag
 // msg.searchHashtag user_id:long auth_key_id:long peer_type:int peer_id:long hash_tag:string offset_id:int limit:int = messages.Messages;
 func (s *Service) MsgSearchHashtag(ctx context.Context, request *msg.TLMsgSearchHashtag) (*tg.MessagesMessages, error) {

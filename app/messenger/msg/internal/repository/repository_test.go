@@ -12,6 +12,8 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+
+	"github.com/teamgram/marmota/pkg/stores/sqlx"
 )
 
 func TestStorageErrorPreservesCause(t *testing.T) {
@@ -67,6 +69,83 @@ func TestDeleteResolverQueryDoesNotFilterLiveStatus(t *testing.T) {
 	deleteQuery := queryXMLBlock(t, string(body), "SelectUserMessageByGlobalIDForDelete")
 	if strings.Contains(deleteQuery, "message_status") {
 		t.Fatalf("delete resolver query should include deleted views by omitting message_status:\n%s", deleteQuery)
+	}
+}
+
+func TestGetUserMessageQueriesUseViewerPublicMessageID(t *testing.T) {
+	body, err := os.ReadFile("model/tables/queries.xml")
+	if err != nil {
+		t.Fatalf("read queries.xml: %v", err)
+	}
+	query := queryXMLBlock(t, string(body), "SelectUserMessageBoxByGlobalID")
+	for _, want := range []string{
+		"v.user_id = :user_id",
+		"v.user_message_id = :user_message_id",
+		"v.message_status = :message_status",
+		"JOIN",
+		"canonical_messages c",
+		"c.canonical_message_id = v.canonical_message_id",
+	} {
+		if !strings.Contains(query, want) {
+			t.Fatalf("get user message query missing %q:\n%s", want, query)
+		}
+	}
+	if strings.Contains(query, "v.peer_type = :peer_type") || strings.Contains(query, "v.peer_id = :peer_id") {
+		t.Fatalf("get user message query must use user_id + user_message_id public identity only:\n%s", query)
+	}
+}
+
+func TestGetUserMessageListRejectsInvalidIDBeforeStorage(t *testing.T) {
+	repo := &Repository{}
+
+	_, err := repo.GetUserMessageList(context.Background(), 100, []int64{7, 0})
+	if !errors.Is(err, msg.ErrMsgIdInvalid) {
+		t.Fatalf("GetUserMessageList() error = %v, want ErrMsgIdInvalid", err)
+	}
+}
+
+func TestGetUserMessageListRejectsMissingID(t *testing.T) {
+	repo := &Repository{
+		db: &sqlx.DB{},
+		models: &model.Models{
+			CanonicalQueries: fakeCanonicalQueriesModel{
+				boxes: map[int64]*model.UserMessageBoxRow{
+					7: {
+						UserID:             100,
+						UserMessageID:      7,
+						CanonicalMessageID: 900,
+						PeerType:           payload.PeerTypeUser,
+						PeerID:             200,
+						PeerSeq:            3,
+						FromUserID:         200,
+						MessageDate:        1_772_000_300,
+					},
+				},
+			},
+		},
+	}
+
+	_, err := repo.GetUserMessageList(context.Background(), 100, []int64{7, 99})
+	if !errors.Is(err, msg.ErrMsgIdInvalid) {
+		t.Fatalf("GetUserMessageList() error = %v, want ErrMsgIdInvalid", err)
+	}
+}
+
+func TestRevalidateForwardSourcesQueriesLiveViewerPublicMessageID(t *testing.T) {
+	body, err := os.ReadFile("model/tables/queries.xml")
+	if err != nil {
+		t.Fatalf("read queries.xml: %v", err)
+	}
+	query := queryXMLBlock(t, string(body), "SelectForwardSourceIdentity")
+	for _, want := range []string{
+		"user_id = :user_id",
+		"user_message_id = :user_message_id",
+		"message_status = :message_status",
+		"canonical_message_id",
+	} {
+		if !strings.Contains(query, want) {
+			t.Fatalf("forward source query missing %q:\n%s", want, query)
+		}
 	}
 }
 
@@ -227,4 +306,72 @@ func TestSearchHashTagOffsetUsesResolvedPeerSeq(t *testing.T) {
 	if got != 0 || noMatch {
 		t.Fatalf("searchHashTagOffsetPeerSeq(0) = %d, want 0", got)
 	}
+}
+
+type fakeCanonicalQueriesModel struct {
+	boxes map[int64]*model.UserMessageBoxRow
+}
+
+func (f fakeCanonicalQueriesModel) SelectUserMessageBoxByGlobalID(_ context.Context, userID int64, userMessageID int64, messageStatus int32) (*model.UserMessageBoxRow, error) {
+	row := f.boxes[userMessageID]
+	if row == nil || row.UserID != userID || messageStatus != MessageStatusLive {
+		return nil, model.ErrNotFound
+	}
+	return row, nil
+}
+
+func (fakeCanonicalQueriesModel) SelectCanonicalByRandom(context.Context, int64, int32, int64, int64) (*model.CanonicalMessageRow, error) {
+	return nil, model.ErrNotFound
+}
+
+func (fakeCanonicalQueriesModel) SelectCanonicalByID(context.Context, int64, []byte, int64) (*model.CanonicalMessageRow, error) {
+	return nil, model.ErrNotFound
+}
+
+func (fakeCanonicalQueriesModel) SelectUserMessageByID(context.Context, int64, int32, int64, int64, int32) (*model.ResolvedMessageIDRow, error) {
+	return nil, model.ErrNotFound
+}
+
+func (fakeCanonicalQueriesModel) SelectUserMessageByGlobalID(context.Context, int64, int64, int32) (*model.ResolvedMessageIDRow, error) {
+	return nil, model.ErrNotFound
+}
+
+func (fakeCanonicalQueriesModel) SelectUserMessageByGlobalIDForDelete(context.Context, int64, int64) (*model.ResolvedMessageIDRow, error) {
+	return nil, model.ErrNotFound
+}
+
+func (fakeCanonicalQueriesModel) SelectForwardSourceIdentity(context.Context, int64, int64, int32) (*model.ForwardSourceIdentityRow, error) {
+	return nil, model.ErrNotFound
+}
+
+func (fakeCanonicalQueriesModel) SelectNearestLiveUserMessageByPeerSeq(context.Context, int64, int32, int64, int64, int32) (*model.ResolvedMessageIDRow, error) {
+	return nil, model.ErrNotFound
+}
+
+func (fakeCanonicalQueriesModel) SelectHistoryMessages(context.Context, int64, int32, int64, int32, int64, int64, int32) ([]model.HistoryMessageRow, error) {
+	return nil, nil
+}
+
+func (fakeCanonicalQueriesModel) SearchHashTagMessages(context.Context, string, int64, int32, int64, int32, int64, int64, string, int32) ([]model.HistoryMessageRow, error) {
+	return nil, nil
+}
+
+func (fakeCanonicalQueriesModel) SelectCanonicalByUserView(context.Context, int64, int32, int64, int64, int32) (*model.HistoryMessageRow, error) {
+	return nil, model.ErrNotFound
+}
+
+func (fakeCanonicalQueriesModel) SelectEditableMessageForUpdate(context.Context, int64, int32, int64, int64, int32) (*model.EditableMessageRow, error) {
+	return nil, model.ErrNotFound
+}
+
+func (fakeCanonicalQueriesModel) CountHistoryOffset(context.Context, int64, int64, int64, int64, int64, int32, int64, int32) (*model.HistoryOffsetRow, error) {
+	return &model.HistoryOffsetRow{}, nil
+}
+
+func (fakeCanonicalQueriesModel) SelectHistoryMessagesPage(context.Context, int64, int32, int64, int32, int64, int32) ([]model.HistoryMessageRow, error) {
+	return nil, nil
+}
+
+func (fakeCanonicalQueriesModel) SelectConversationViewPeerSeqFloor(context.Context, int32, int64, int64, int64, int64) (*model.PeerSeqFloorRow, error) {
+	return &model.PeerSeqFloorRow{}, nil
 }

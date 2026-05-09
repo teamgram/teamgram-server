@@ -132,6 +132,20 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"/msg.RPCMsg/msg.getUserMessage": kitex.NewMethodInfo(
+		getUserMessageHandler,
+		newGetUserMessageArgs,
+		newGetUserMessageResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/msg.RPCMsg/msg.getUserMessageList": kitex.NewMethodInfo(
+		getUserMessageListHandler,
+		newGetUserMessageListArgs,
+		newGetUserMessageListResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 	"/msg.RPCMsg/msg.searchHashtag": kitex.NewMethodInfo(
 		searchHashtagHandler,
 		newSearchHashtagArgs,
@@ -1707,6 +1721,271 @@ func (p *GetHistoryResult) GetResult() interface{} {
 	return p.Success
 }
 
+func getUserMessageHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*GetUserMessageArgs)
+	realResult := result.(*GetUserMessageResult)
+	success, err := handler.(msg.RPCMsg).MsgGetUserMessage(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newGetUserMessageArgs() interface{} {
+	return &GetUserMessageArgs{}
+}
+
+func newGetUserMessageResult() interface{} {
+	return &GetUserMessageResult{}
+}
+
+type GetUserMessageArgs struct {
+	Req *msg.TLMsgGetUserMessage
+}
+
+func (p *GetUserMessageArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in GetUserMessageArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *GetUserMessageArgs) Unmarshal(in []byte) error {
+	msg := new(msg.TLMsgGetUserMessage)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *GetUserMessageArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in GetUserMessageArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *GetUserMessageArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(msg.TLMsgGetUserMessage)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetUserMessageArgs_Req_DEFAULT *msg.TLMsgGetUserMessage
+
+func (p *GetUserMessageArgs) GetReq() *msg.TLMsgGetUserMessage {
+	if !p.IsSetReq() {
+		return GetUserMessageArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetUserMessageArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type GetUserMessageResult struct {
+	Success *tg.MessageBox
+}
+
+var GetUserMessageResult_Success_DEFAULT *tg.MessageBox
+
+func (p *GetUserMessageResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in GetUserMessageResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *GetUserMessageResult) Unmarshal(in []byte) error {
+	msg := new(tg.MessageBox)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetUserMessageResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in GetUserMessageResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *GetUserMessageResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(tg.MessageBox)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetUserMessageResult) GetSuccess() *tg.MessageBox {
+	if !p.IsSetSuccess() {
+		return GetUserMessageResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetUserMessageResult) SetSuccess(x interface{}) {
+	p.Success = x.(*tg.MessageBox)
+}
+
+func (p *GetUserMessageResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetUserMessageResult) GetResult() interface{} {
+	return p.Success
+}
+
+func getUserMessageListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*GetUserMessageListArgs)
+	realResult := result.(*GetUserMessageListResult)
+	success, err := handler.(msg.RPCMsg).MsgGetUserMessageList(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newGetUserMessageListArgs() interface{} {
+	return &GetUserMessageListArgs{}
+}
+
+func newGetUserMessageListResult() interface{} {
+	return &GetUserMessageListResult{}
+}
+
+type GetUserMessageListArgs struct {
+	Req *msg.TLMsgGetUserMessageList
+}
+
+func (p *GetUserMessageListArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in GetUserMessageListArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *GetUserMessageListArgs) Unmarshal(in []byte) error {
+	msg := new(msg.TLMsgGetUserMessageList)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *GetUserMessageListArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in GetUserMessageListArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *GetUserMessageListArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(msg.TLMsgGetUserMessageList)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetUserMessageListArgs_Req_DEFAULT *msg.TLMsgGetUserMessageList
+
+func (p *GetUserMessageListArgs) GetReq() *msg.TLMsgGetUserMessageList {
+	if !p.IsSetReq() {
+		return GetUserMessageListArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetUserMessageListArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type GetUserMessageListResult struct {
+	Success *msg.VectorMessageBox
+}
+
+var GetUserMessageListResult_Success_DEFAULT *msg.VectorMessageBox
+
+func (p *GetUserMessageListResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in GetUserMessageListResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *GetUserMessageListResult) Unmarshal(in []byte) error {
+	msg := new(msg.VectorMessageBox)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetUserMessageListResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in GetUserMessageListResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *GetUserMessageListResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(msg.VectorMessageBox)
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetUserMessageListResult) GetSuccess() *msg.VectorMessageBox {
+	if !p.IsSetSuccess() {
+		return GetUserMessageListResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetUserMessageListResult) SetSuccess(x interface{}) {
+	p.Success = x.(*msg.VectorMessageBox)
+}
+
+func (p *GetUserMessageListResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetUserMessageListResult) GetResult() interface{} {
+	return p.Success
+}
+
 func searchHashtagHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*SearchHashtagArgs)
 	realResult := result.(*SearchHashtagResult)
@@ -2379,6 +2658,26 @@ func (p *kClient) MsgGetHistory(ctx context.Context, req *msg.TLMsgGetHistory) (
 	var _result GetHistoryResult
 
 	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.getHistory", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) MsgGetUserMessage(ctx context.Context, req *msg.TLMsgGetUserMessage) (r *tg.MessageBox, err error) {
+	var _result GetUserMessageResult
+
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.getUserMessage", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) MsgGetUserMessageList(ctx context.Context, req *msg.TLMsgGetUserMessageList) (r *msg.VectorMessageBox, err error) {
+	var _result GetUserMessageListResult
+
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.getUserMessageList", req, &_result); err != nil {
 		return
 	}
 

@@ -32,6 +32,7 @@ const (
 	ClazzName_userPtsAppendResult                         = "userPtsAppendResult"
 	ClazzName_userupdates_processUserOperation            = "userupdates_processUserOperation"
 	ClazzName_userupdates_processUserOperationWithEffects = "userupdates_processUserOperationWithEffects"
+	ClazzName_userupdates_processUserOperationBatch       = "userupdates_processUserOperationBatch"
 	ClazzName_userupdates_getOperationResult              = "userupdates_getOperationResult"
 	ClazzName_userupdates_getState                        = "userupdates_getState"
 	ClazzName_userupdates_getDifference                   = "userupdates_getDifference"
@@ -63,6 +64,7 @@ func init() {
 	iface.RegisterClazzName(ClazzName_userPtsAppendResult, 0, 0xaa3fff4f)                         // aa3fff4f
 	iface.RegisterClazzName(ClazzName_userupdates_processUserOperation, 0, 0xc200ea59)            // c200ea59
 	iface.RegisterClazzName(ClazzName_userupdates_processUserOperationWithEffects, 0, 0xbacea5bf) // bacea5bf
+	iface.RegisterClazzName(ClazzName_userupdates_processUserOperationBatch, 0, 0x5ee575b0)       // 5ee575b0
 	iface.RegisterClazzName(ClazzName_userupdates_getOperationResult, 0, 0x47a995d1)              // 47a995d1
 	iface.RegisterClazzName(ClazzName_userupdates_getState, 0, 0x3bbbad80)                        // 3bbbad80
 	iface.RegisterClazzName(ClazzName_userupdates_getDifference, 0, 0x38cdd9fc)                   // 38cdd9fc
@@ -92,6 +94,7 @@ func init() {
 	iface.RegisterClazzIDName(ClazzName_userPtsAppendResult, 0xaa3fff4f)                         // aa3fff4f
 	iface.RegisterClazzIDName(ClazzName_userupdates_processUserOperation, 0xc200ea59)            // c200ea59
 	iface.RegisterClazzIDName(ClazzName_userupdates_processUserOperationWithEffects, 0xbacea5bf) // bacea5bf
+	iface.RegisterClazzIDName(ClazzName_userupdates_processUserOperationBatch, 0x5ee575b0)       // 5ee575b0
 	iface.RegisterClazzIDName(ClazzName_userupdates_getOperationResult, 0x47a995d1)              // 47a995d1
 	iface.RegisterClazzIDName(ClazzName_userupdates_getState, 0x3bbbad80)                        // 3bbbad80
 	iface.RegisterClazzIDName(ClazzName_userupdates_getDifference, 0x38cdd9fc)                   // 38cdd9fc

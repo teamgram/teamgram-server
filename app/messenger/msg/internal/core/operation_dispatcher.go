@@ -136,6 +136,40 @@ func (c *MsgCore) dispatchRequesterSync(requester OperationEnvelope, effects []O
 	return result, nil
 }
 
+func (c *MsgCore) dispatchRequesterBatchSync(requesters []OperationEnvelope) ([]*userupdates.UserOperationResult, error) {
+	if len(requesters) == 0 {
+		return []*userupdates.UserOperationResult{}, nil
+	}
+	if c == nil || c.svcCtx == nil || c.svcCtx.UserUpdates == nil {
+		return nil, msg.ErrSenderSyncFailed
+	}
+	operations := make([]userupdates.UserOperationClazz, 0, len(requesters))
+	for _, requester := range requesters {
+		if requester.DeliveryPolicy != DeliveryPolicyRequesterSync {
+			return nil, fmt.Errorf("%w: unsupported requester delivery policy=%d", msg.ErrSenderSyncFailed, requester.DeliveryPolicy)
+		}
+		operations = append(operations, requester.toTLUserOperation())
+	}
+	vector, err := c.svcCtx.UserUpdates.UserupdatesProcessUserOperationBatch(c.ctx, &userupdates.TLUserupdatesProcessUserOperationBatch{
+		Operations: operations,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("%w: %w", msg.ErrSenderSyncFailed, err)
+	}
+	if vector == nil || len(vector.Datas) != len(requesters) {
+		return nil, msg.ErrSenderSyncFailed
+	}
+	out := make([]*userupdates.UserOperationResult, 0, len(vector.Datas))
+	for _, item := range vector.Datas {
+		result := item
+		if result == nil {
+			return nil, msg.ErrSenderSyncFailed
+		}
+		out = append(out, result)
+	}
+	return out, nil
+}
+
 func (c *MsgCore) dispatchBrokerDurableAck(effect OperationEnvelope) (repository.KafkaAck, error) {
 	if effect.DeliveryPolicy != DeliveryPolicyBrokerDurableAck {
 		return repository.KafkaAck{}, fmt.Errorf("%w: unsupported receiver delivery policy=%d", msg.ErrReceiverBackpressure, effect.DeliveryPolicy)

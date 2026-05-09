@@ -26,6 +26,8 @@ const (
 	ClazzID_msg_readHistory                   = 0x5a0f6e12 // 5a0f6e12
 	ClazzID_msg_readHistoryV2                 = 0xfb9b206  // fb9b206
 	ClazzID_msg_getHistory                    = 0x7f4083df // 7f4083df
+	ClazzID_msg_getUserMessage                = 0x385f5e90 // 385f5e90
+	ClazzID_msg_getUserMessageList            = 0xfb80f3c1 // fb80f3c1
 	ClazzID_msg_searchHashtag                 = 0x7e39bca9 // 7e39bca9
 	ClazzID_msg_resolveDialogCursorTopMessage = 0xc5d16bc5 // c5d16bc5
 	ClazzID_msg_updatePinnedMessage           = 0xe5ae51a9 // e5ae51a9

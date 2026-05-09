@@ -25,6 +25,7 @@ var _ *tg.Bool
 type UserupdatesClient interface {
 	UserupdatesProcessUserOperation(ctx context.Context, in *userupdates.TLUserupdatesProcessUserOperation) (*userupdates.UserOperationResult, error)
 	UserupdatesProcessUserOperationWithEffects(ctx context.Context, in *userupdates.TLUserupdatesProcessUserOperationWithEffects) (*userupdates.UserOperationResult, error)
+	UserupdatesProcessUserOperationBatch(ctx context.Context, in *userupdates.TLUserupdatesProcessUserOperationBatch) (*userupdates.VectorUserOperationResult, error)
 	UserupdatesGetOperationResult(ctx context.Context, in *userupdates.TLUserupdatesGetOperationResult) (*userupdates.UserOperationResult, error)
 	UserupdatesGetState(ctx context.Context, in *userupdates.TLUserupdatesGetState) (*userupdates.UserState, error)
 	UserupdatesGetDifference(ctx context.Context, in *userupdates.TLUserupdatesGetDifference) (*userupdates.UserDifference, error)
@@ -59,6 +60,12 @@ func (m *defaultUserupdatesClient) UserupdatesProcessUserOperation(ctx context.C
 // userupdates.processUserOperationWithEffects operation:UserOperation affected_effects:Vector<AffectedUserOperation> = UserOperationResult;
 func (m *defaultUserupdatesClient) UserupdatesProcessUserOperationWithEffects(ctx context.Context, in *userupdates.TLUserupdatesProcessUserOperationWithEffects) (*userupdates.UserOperationResult, error) {
 	return m.rpc.UserupdatesProcessUserOperationWithEffects(ctx, in)
+}
+
+// UserupdatesProcessUserOperationBatch
+// userupdates.processUserOperationBatch operations:Vector<UserOperation> = Vector<UserOperationResult>;
+func (m *defaultUserupdatesClient) UserupdatesProcessUserOperationBatch(ctx context.Context, in *userupdates.TLUserupdatesProcessUserOperationBatch) (*userupdates.VectorUserOperationResult, error) {
+	return m.rpc.UserupdatesProcessUserOperationBatch(ctx, in)
 }
 
 // UserupdatesGetOperationResult

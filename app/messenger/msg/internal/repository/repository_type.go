@@ -70,23 +70,73 @@ type SendState struct {
 }
 
 type CreateCanonicalMessageInput struct {
-	SendStateID        int64
-	SenderUserID       int64
-	PeerType           int32
-	PeerID             int64
-	ClientRandomID     int64
-	RequestPayloadHash []byte
-	MessageText        string
-	MessageDate        int64
+	SendStateID                  int64
+	SenderUserID                 int64
+	PeerType                     int32
+	PeerID                       int64
+	ClientRandomID               int64
+	RequestPayloadHash           []byte
+	MessageText                  string
+	MessageDate                  int64
+	EntitiesPayloadSchemaVersion int32
+	EntitiesPayload              []byte
+	MediaRefSchemaVersion        int32
+	MediaRefPayload              []byte
+	MessageAttrsSchemaVersion    int32
+	MessageAttrsPayload          []byte
+	ForwardRefSchemaVersion      int32
+	ForwardRefPayload            []byte
+}
+
+type CreateCanonicalBatchInput struct {
+	SenderUserID int64
+	PeerType     int32
+	PeerID       int64
+	Items        []CreateCanonicalBatchItem
+}
+
+type CreateCanonicalBatchItem struct {
+	ClientRandomID               int64
+	RequestPayloadSchemaVersion  int32
+	RequestPayloadHash           []byte
+	MessageText                  string
+	MessageDate                  int64
+	MediaRefSchemaVersion        int32
+	MediaRefPayload              []byte
+	EntitiesPayloadSchemaVersion int32
+	EntitiesPayload              []byte
+	MessageAttrsSchemaVersion    int32
+	MessageAttrsPayload          []byte
+	ForwardRefSchemaVersion      int32
+	ForwardRefPayload            []byte
 }
 
 type CanonicalMessageResult struct {
-	SendStateID        int64
-	CanonicalMessageID int64
-	PeerSeq            int64
-	MessageDate        int64
-	RequestPayloadHash []byte
-	CreatedNew         bool
+	SendStateID                  int64
+	CanonicalMessageID           int64
+	PeerSeq                      int64
+	MessageDate                  int64
+	RequestPayloadHash           []byte
+	SendStateStatus              int32
+	SenderOperationID            string
+	SenderPTS                    int64
+	SenderPTSCount               int32
+	SenderUpdateSchemaVersion    int32
+	SenderUpdatePayload          []byte
+	SenderUpdatePayloadHash      []byte
+	EntitiesPayloadSchemaVersion int32
+	EntitiesPayload              []byte
+	MediaRefSchemaVersion        int32
+	MediaRefPayload              []byte
+	MessageAttrsSchemaVersion    int32
+	MessageAttrsPayload          []byte
+	ForwardRefSchemaVersion      int32
+	ForwardRefPayload            []byte
+	CreatedNew                   bool
+}
+
+type CanonicalBatchResult struct {
+	Items []CanonicalMessageResult
 }
 
 type ListHistoryMessagesInput struct {
@@ -126,15 +176,50 @@ type HistoryMessage struct {
 	MessageDate          int64
 }
 
-type CanonicalMessage struct {
+type UserMessageBox struct {
+	UserID             int64
+	UserMessageID      int64
 	CanonicalMessageID int64
-	PeerSeq            int64
-	FromUserID         int64
 	PeerType           int32
 	PeerID             int64
-	MessageKind        int32
+	PeerSeq            int64
+	FromUserID         int64
+	Outgoing           bool
 	MessageText        string
 	MessageDate        int64
+	ViewPayload        []byte
+}
+
+type ForwardSourceIdentity struct {
+	UserID             int64
+	UserMessageID      int64
+	CanonicalMessageID int64
+}
+
+type ForwardSourceLookup struct {
+	UserID              int64
+	SourcePeerType      int32
+	SourcePeerID        int64
+	SourceUserMessageID int64
+}
+
+type CanonicalMessage struct {
+	CanonicalMessageID           int64
+	PeerSeq                      int64
+	FromUserID                   int64
+	PeerType                     int32
+	PeerID                       int64
+	MessageKind                  int32
+	MessageText                  string
+	MessageDate                  int64
+	EntitiesPayloadSchemaVersion int32
+	EntitiesPayload              []byte
+	MediaRefSchemaVersion        int32
+	MediaRefPayload              []byte
+	MessageAttrsSchemaVersion    int32
+	MessageAttrsPayload          []byte
+	ForwardRefSchemaVersion      int32
+	ForwardRefPayload            []byte
 }
 
 type EditCanonicalMessageInput struct {
@@ -178,9 +263,14 @@ type MarkRetryableFailureInput struct {
 
 type MessageRepository interface {
 	CreateOrGetByClientRandom(ctx context.Context, in CreateCanonicalMessageInput) (*CanonicalMessageResult, error)
+	CreateOrGetCanonicalBatchByClientRandom(ctx context.Context, in CreateCanonicalBatchInput) (*CanonicalBatchResult, error)
 	GetCanonicalMessageByPeerSeq(ctx context.Context, userID int64, peerType int32, peerID int64, peerSeq int64) (*CanonicalMessage, error)
 	EditCanonicalMessage(ctx context.Context, in EditCanonicalMessageInput) (*EditMessageResult, error)
 	ListHistoryMessages(ctx context.Context, in ListHistoryMessagesInput) ([]HistoryMessage, error)
+	GetUserMessage(ctx context.Context, userID int64, userMessageID int64) (*UserMessageBox, error)
+	GetUserMessageList(ctx context.Context, userID int64, ids []int64) ([]UserMessageBox, error)
+	ResolveForwardSourceIdentity(ctx context.Context, lookup ForwardSourceLookup) (*ForwardSourceIdentity, error)
+	RevalidateForwardSources(ctx context.Context, sources []ForwardSourceIdentity) error
 	ResolveMessageID(ctx context.Context, userID int64, peerType int32, peerID int64, userMessageID int64) (*ResolvedMessageID, error)
 	ResolveMessageIDs(ctx context.Context, userID int64, userMessageIDs []int64) ([]ResolvedMessageID, error)
 	ResolveMessageIDsForDelete(ctx context.Context, userID int64, userMessageIDs []int64) ([]ResolvedMessageID, error)

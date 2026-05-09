@@ -443,6 +443,138 @@ func TestApplyUserOperationAffectedOutboxIdempotency(t *testing.T) {
 	}
 }
 
+func TestApplyUserOperationBatchIsAtomic(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	userID := base + 43001
+	repo := NewForTest(db, &testIDGenerator{next: base + 43000}, "local-userupdates")
+	first := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion:      payload.MessageOperationSchemaVersion,
+		OperationKind:      payload.OperationKindSendMessage,
+		CanonicalMessageID: base + 9001,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             base + 2002,
+		PeerSeq:            1,
+		FromUserID:         userID,
+		ToUserID:           base + 2002,
+		Date:               int32(time.Now().Unix()),
+		Out:                true,
+		MessageText:        "one",
+	}, "batch-one")
+	second := first
+	second.OperationID = first.OperationID + "-conflict"
+	second.PayloadHash = []byte("bad-hash")
+
+	_, err := repo.ApplyUserOperationBatch(ctx, []ApplyUserOperationInput{first, second})
+	if err == nil {
+		t.Fatal("ApplyUserOperationBatch() error = nil, want atomic failure")
+	}
+	row, findErr := repo.GetOperationResult(ctx, userID, first.OperationID)
+	if !errors.Is(findErr, userupdates.ErrOperationTerminal) {
+		t.Fatalf("GetOperationResult() error = %v, want ErrOperationTerminal", findErr)
+	}
+	if row != nil {
+		t.Fatalf("first operation committed despite batch failure: %+v", row)
+	}
+}
+
+func TestApplyUserOperationBatchRollsBackWhenSecondOperationFailsDuringApply(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	userID := base + 44001
+	repo := NewForTest(db, &testIDGenerator{next: base + 44000}, "local-userupdates")
+	first := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion:      payload.MessageOperationSchemaVersion,
+		OperationKind:      payload.OperationKindSendMessage,
+		CanonicalMessageID: base + 9101,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             base + 2002,
+		PeerSeq:            1,
+		FromUserID:         userID,
+		ToUserID:           base + 2002,
+		Date:               int32(time.Now().Unix()),
+		Out:                true,
+		MessageText:        "one",
+	}, "batch-apply-one")
+	second := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion:       payload.MessageOperationSchemaVersion,
+		OperationKind:       payload.OperationKindSendMessage,
+		CanonicalMessageID:  base + 9102,
+		PeerType:            payload.PeerTypeUser,
+		PeerID:              base + 2002,
+		PeerSeq:             2,
+		FromUserID:          userID,
+		ToUserID:            base + 2002,
+		Date:                int32(time.Now().Unix()) + 1,
+		Out:                 true,
+		MessageText:         "two",
+		ClearDraft:          true,
+		SourcePermAuthKeyID: 0,
+	}, "batch-apply-two")
+
+	_, err := repo.ApplyUserOperationBatch(ctx, []ApplyUserOperationInput{first, second})
+	if err == nil {
+		t.Fatal("ApplyUserOperationBatch() error = nil, want apply failure")
+	}
+	row, findErr := repo.GetOperationResult(ctx, userID, first.OperationID)
+	if !errors.Is(findErr, userupdates.ErrOperationTerminal) {
+		t.Fatalf("GetOperationResult() error = %v, want ErrOperationTerminal", findErr)
+	}
+	if row != nil {
+		t.Fatalf("first operation committed despite second apply failure: %+v", row)
+	}
+}
+
+func TestApplyUserOperationBatchRetryAllowsAlreadyAppliedPrefix(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	userID := base + 45001
+	repo := NewForTest(db, &testIDGenerator{next: base + 45000}, "local-userupdates")
+	first := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion:      payload.MessageOperationSchemaVersion,
+		OperationKind:      payload.OperationKindSendMessage,
+		CanonicalMessageID: base + 9201,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             base + 2002,
+		PeerSeq:            1,
+		FromUserID:         userID,
+		ToUserID:           base + 2002,
+		Date:               int32(time.Now().Unix()),
+		Out:                true,
+		MessageText:        "already applied",
+	}, "batch-retry-one")
+	if _, err := repo.ApplyUserOperation(ctx, first); err != nil {
+		t.Fatalf("pre-apply first operation: %v", err)
+	}
+	second := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion:      payload.MessageOperationSchemaVersion,
+		OperationKind:      payload.OperationKindSendMessage,
+		CanonicalMessageID: base + 9202,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             base + 2002,
+		PeerSeq:            2,
+		FromUserID:         userID,
+		ToUserID:           base + 2002,
+		Date:               int32(time.Now().Unix()) + 1,
+		Out:                true,
+		MessageText:        "new on retry",
+	}, "batch-retry-two")
+
+	results, err := repo.ApplyUserOperationBatch(ctx, []ApplyUserOperationInput{first, second})
+	if err != nil {
+		t.Fatalf("ApplyUserOperationBatch retry error = %v", err)
+	}
+	if len(results) != 2 || !results[0].AlreadyApplied || results[1].AlreadyApplied {
+		t.Fatalf("results = %+v, want first already-applied and second newly applied", results)
+	}
+	if results[1].Pts <= results[0].Pts {
+		t.Fatalf("pts order = %+v, want new operation pts after already-applied prefix", results)
+	}
+}
+
 func TestApplyUserOperationRollsBackWhenAffectedOutboxInsertFails(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)
@@ -1223,6 +1355,92 @@ func TestApplyScheduledMarkerDefaultsFalseUntilScheduledAPIsExist(t *testing.T) 
 	}
 }
 
+func TestApplyUserOperationV3PersistsMediaAttrsForwardEvent(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	userID := base + 2601
+	repo := NewForTest(db, &testIDGenerator{next: base + 26000}, "local-userupdates")
+	op := payload.MessageOperationV3{
+		SchemaVersion:      payload.MessageOperationSchemaVersionV3,
+		OperationKind:      payload.OperationKindSendMessage,
+		CanonicalMessageID: userID*10 + 1,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             base + 2602,
+		PeerSeq:            1,
+		FromUserID:         userID,
+		ToUserID:           base + 2602,
+		Date:               int32(time.Now().Unix()),
+		Out:                true,
+		MessageText:        "caption",
+		MediaRef:           &payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "photo", ID: 333},
+		Attrs:              &payload.MessageAttrsV1{SchemaVersion: payload.MessageAttrsSchemaVersionV1, GroupedID: 444},
+		ForwardRef:         &payload.ForwardRefV1{SchemaVersion: payload.ForwardRefSchemaVersionV1, FromUserID: base + 2603, Date: int64(time.Now().Unix())},
+	}
+	in := buildOperationApplyInputV3(t, userID, op, "operation-v3-media")
+	if _, err := repo.ClaimPartitionOwner(ctx, in.PartitionID); err != nil {
+		t.Fatalf("ClaimPartitionOwner() error = %v", err)
+	}
+	result, err := repo.ApplyUserOperation(ctx, in)
+	if err != nil {
+		t.Fatalf("ApplyUserOperation(V3) error = %v", err)
+	}
+	if result.UserID != userID || result.PtsCount != 1 {
+		t.Fatalf("result = %+v, want user_id=%d pts_count=1", result, userID)
+	}
+	view, err := repo.models.UserMessageViewsModel.SelectByUserCanonical(ctx, userID, op.CanonicalMessageID)
+	if err != nil {
+		t.Fatalf("SelectByUserCanonical() error = %v", err)
+	}
+	if view.ViewSchemaVersion != payload.MessageEventSchemaVersionV3 {
+		t.Fatalf("view schema = %d, want V3", view.ViewSchemaVersion)
+	}
+	var event payload.MessageEventV3
+	if err := json.Unmarshal(view.ViewPayload, &event); err != nil {
+		t.Fatalf("unmarshal V3 view payload: %v", err)
+	}
+	if event.MediaRef == nil || event.Attrs == nil || event.ForwardRef == nil {
+		t.Fatalf("V3 event lost media/attrs/forward: %+v", event)
+	}
+	if view.MessageKind != MessageKindMedia {
+		t.Fatalf("message kind = %d, want MessageKindMedia", view.MessageKind)
+	}
+	edit := op
+	edit.OperationKind = payload.OperationKindEditMessage
+	edit.EditDate = int32(time.Now().Unix())
+	edit.EditVersion = 2
+	edit.MessageText = "edited caption"
+	edit.MediaRef = &payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "document", ID: 444}
+	edit.Attrs = &payload.MessageAttrsV1{SchemaVersion: payload.MessageAttrsSchemaVersionV1, GroupedID: 555, Noforwards: true}
+	edit.ForwardRef = &payload.ForwardRefV1{SchemaVersion: payload.ForwardRefSchemaVersionV1, FromUserID: base + 2604, Date: int64(time.Now().Unix())}
+	editIn := buildOperationApplyInputV3(t, userID, edit, "operation-v3-edit")
+	editResult, err := repo.ApplyUserOperation(ctx, editIn)
+	if err != nil {
+		t.Fatalf("ApplyUserOperation(V3 edit) error = %v", err)
+	}
+	var editResponse payload.OperationResponseV2
+	if err := json.Unmarshal(editResult.ResponsePayload, &editResponse); err != nil {
+		t.Fatalf("unmarshal V3 edit response: %v", err)
+	}
+	if editResponse.UserMessageID != view.UserMessageId {
+		t.Fatalf("edit response user_message_id = %d, want %d", editResponse.UserMessageID, view.UserMessageId)
+	}
+	editView, err := repo.models.UserMessageViewsModel.SelectByUserCanonical(ctx, userID, op.CanonicalMessageID)
+	if err != nil {
+		t.Fatalf("SelectByUserCanonical(edit) error = %v", err)
+	}
+	if editView.ViewSchemaVersion != payload.MessageEventSchemaVersionV3 {
+		t.Fatalf("edit view schema = %d, want V3", editView.ViewSchemaVersion)
+	}
+	var editEvent payload.MessageEventV3
+	if err := json.Unmarshal(editView.ViewPayload, &editEvent); err != nil {
+		t.Fatalf("unmarshal V3 edit view payload: %v", err)
+	}
+	if editEvent.SchemaVersion != payload.MessageEventSchemaVersionV3 || editEvent.MessageID != view.UserMessageId || editEvent.MediaRef == nil || editEvent.Attrs == nil || editEvent.ForwardRef == nil {
+		t.Fatalf("V3 edit event lost schema/media/attrs/forward: %+v", editEvent)
+	}
+}
+
 func TestGetDifferenceLegacyMessageHydrationRequiresExactEventPeerSeq(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)
@@ -1591,6 +1809,27 @@ func buildOperationApplyInput(t *testing.T, userID int64, op payload.MessageOper
 	return ApplyUserOperationInput{
 		UserID:       userID,
 		OperationID:  fmt.Sprintf("v1:%s:user:%d:%s:%d", op.OperationKind, userID, suffix, time.Now().UnixNano()),
+		OpType:       OpTypeSendMessage,
+		PeerType:     op.PeerType,
+		PeerID:       op.PeerID,
+		PayloadCodec: PayloadCodecJSON,
+		Payload:      body,
+		PayloadHash:  payload.HashBytes(body),
+		BucketID:     int32(route.BucketID),
+		PartitionID:  int32(route.ReceiverPartitionID),
+	}
+}
+
+func buildOperationApplyInputV3(t *testing.T, userID int64, op payload.MessageOperationV3, suffix string) ApplyUserOperationInput {
+	t.Helper()
+	route := payload.RouteUser(userID)
+	body, err := json.Marshal(op)
+	if err != nil {
+		t.Fatalf("marshal V3 operation: %v", err)
+	}
+	return ApplyUserOperationInput{
+		UserID:       userID,
+		OperationID:  fmt.Sprintf("v3:%s:user:%d:%s:%d", op.OperationKind, userID, suffix, time.Now().UnixNano()),
 		OpType:       OpTypeSendMessage,
 		PeerType:     op.PeerType,
 		PeerID:       op.PeerID,

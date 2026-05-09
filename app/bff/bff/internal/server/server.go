@@ -139,7 +139,9 @@ func buildMessagesConfig(c config.Config) messageshelper.Config {
 	return messageshelper.Config{
 		RpcServerConf:     c.RpcServerConf,
 		ChatClient:        withServiceName(c.BizServiceClient, "RPCChat"),
+		IdgenClient:       withServiceName(c.IdgenClient, "RPCIdgen"),
 		MsgClient:         withServiceName(c.MsgClient, "RPCMsg"),
+		MediaClient:       withServiceName(c.MediaClient, "RPCMedia"),
 		UserupdatesClient: withServiceName(c.UserupdatesClient, "RPCUserupdates"),
 		UserClient:        withServiceName(c.BizServiceClient, "RPCUser"),
 	}

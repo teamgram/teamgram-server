@@ -101,6 +101,9 @@ type decodedMessageEvent struct {
 	DeleteUserMessageIDs []int64
 	PinnedUserMessageID  int64
 	AuthKeyIdExclude     *int64
+	MediaRef             *payload.MediaRefV1
+	Attrs                *payload.MessageAttrsV1
+	ForwardRef           *payload.ForwardRefV1
 }
 
 func projectMessageEvent(in messageEventProjectionInput) (Result, error) {
@@ -235,6 +238,39 @@ func decodeMessageEventPayloadBytes(schemaVersion int32, body []byte) (decodedMe
 			PinnedUserMessageID:  next.PinnedUserMessageID,
 			AuthKeyIdExclude:     next.AuthKeyIdExclude,
 		}, nil
+	case payload.MessageEventSchemaVersionV3:
+		var next payload.MessageEventV3
+		if err := json.Unmarshal(body, &next); err != nil {
+			return decodedMessageEvent{}, fmt.Errorf("%w: decode v3 message event: %v", userupdates.ErrUserupdatesStorage, err)
+		}
+		if next.SchemaVersion != payload.MessageEventSchemaVersionV3 {
+			return decodedMessageEvent{}, fmt.Errorf("%w: unsupported v3 message event schema=%d", userupdates.ErrUserupdatesStorage, next.SchemaVersion)
+		}
+		return decodedMessageEvent{
+			SchemaVersion:        next.SchemaVersion,
+			EventKind:            next.EventKind,
+			CanonicalMessageID:   next.CanonicalMessageID,
+			PeerSeq:              next.PeerSeq,
+			MessageID:            next.MessageID,
+			PeerType:             next.PeerType,
+			PeerID:               next.PeerID,
+			FromUserID:           next.FromUserID,
+			ToUserID:             next.ToUserID,
+			Date:                 next.Date,
+			EditDate:             next.EditDate,
+			EditVersion:          next.EditVersion,
+			Out:                  next.Out,
+			MessageText:          next.MessageText,
+			Entities:             next.Entities,
+			ReplyToUserMessageID: next.ReplyToUserMessageID,
+			ReadMaxUserMessageID: next.ReadMaxUserMessageID,
+			DeleteUserMessageIDs: append([]int64(nil), next.DeleteUserMessageIDs...),
+			PinnedUserMessageID:  next.PinnedUserMessageID,
+			AuthKeyIdExclude:     next.AuthKeyIdExclude,
+			MediaRef:             next.MediaRef,
+			Attrs:                next.Attrs,
+			ForwardRef:           next.ForwardRef,
+		}, nil
 	default:
 		return decodedMessageEvent{}, fmt.Errorf("%w: unsupported message event schema=%d", userupdates.ErrUserupdatesStorage, schemaVersion)
 	}
@@ -268,7 +304,7 @@ func projectNewMessage(in messageEventProjectionInput) (Result, error) {
 		if err != nil {
 			return Result{}, err
 		}
-		if in.message.PeerType == payload.PeerTypeUser {
+		if in.message.PeerType == payload.PeerTypeUser && !requiresFullPushMessage(in.message) {
 			return Result{
 				Updates: tg.MakeTLUpdateShortMessage(&tg.TLUpdateShortMessage{
 					Out:      in.message.Out,
@@ -278,6 +314,7 @@ func projectNewMessage(in messageEventProjectionInput) (Result, error) {
 					Pts:      pts,
 					PtsCount: in.ptsCount,
 					Date:     date,
+					Silent:   messageAttrsSilent(in.message.Attrs),
 					ReplyTo:  replyTo,
 				}),
 				AuthKeyIDExclude: in.message.AuthKeyIdExclude,
@@ -424,14 +461,25 @@ func messageEventToTLMessage(messageEvent decodedMessageEvent) (tg.MessageClazz,
 	if err != nil {
 		return nil, err
 	}
+	fwdFrom, err := messageForwardHeader(messageEvent.ForwardRef)
+	if err != nil {
+		return nil, err
+	}
 	return tg.MakeTLMessage(&tg.TLMessage{
-		Out:     messageEvent.Out,
-		Id:      messageID,
-		FromId:  peerFromUser(messageEvent.FromUserID),
-		PeerId:  peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
-		ReplyTo: replyTo,
-		Date:    date,
-		Message: messageEvent.MessageText,
+		Out:         messageEvent.Out,
+		Silent:      messageAttrsSilent(messageEvent.Attrs),
+		Noforwards:  messageAttrsNoforwards(messageEvent.Attrs),
+		InvertMedia: messageAttrsInvertMedia(messageEvent.Attrs),
+		Id:          messageID,
+		FromId:      peerFromUser(messageEvent.FromUserID),
+		PeerId:      peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
+		FwdFrom:     fwdFrom,
+		ReplyTo:     replyTo,
+		Date:        date,
+		Message:     messageEvent.MessageText,
+		Media:       messageMedia(messageEvent.MediaRef),
+		GroupedId:   messageGroupedID(messageEvent.Attrs),
+		TtlPeriod:   messageTTLPeriod(messageEvent.MediaRef),
 	}), nil
 }
 
@@ -455,15 +503,138 @@ func editMessageEventToTLMessage(messageEvent decodedMessageEvent) (tg.MessageCl
 	if err != nil {
 		return nil, err
 	}
+	fwdFrom, err := messageForwardHeader(messageEvent.ForwardRef)
+	if err != nil {
+		return nil, err
+	}
 	return tg.MakeTLMessage(&tg.TLMessage{
-		Out:      messageEvent.Out,
-		Id:       messageID,
-		FromId:   peerFromUser(messageEvent.FromUserID),
-		PeerId:   peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
-		Date:     date,
-		Message:  messageEvent.MessageText,
-		EditDate: &editDate32,
+		Out:         messageEvent.Out,
+		Silent:      messageAttrsSilent(messageEvent.Attrs),
+		Noforwards:  messageAttrsNoforwards(messageEvent.Attrs),
+		InvertMedia: messageAttrsInvertMedia(messageEvent.Attrs),
+		Id:          messageID,
+		FromId:      peerFromUser(messageEvent.FromUserID),
+		PeerId:      peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
+		FwdFrom:     fwdFrom,
+		Date:        date,
+		Message:     messageEvent.MessageText,
+		Media:       messageMedia(messageEvent.MediaRef),
+		GroupedId:   messageGroupedID(messageEvent.Attrs),
+		TtlPeriod:   messageTTLPeriod(messageEvent.MediaRef),
+		EditDate:    &editDate32,
 	}), nil
+}
+
+func messageMedia(media *payload.MediaRefV1) tg.MessageMediaClazz {
+	if media == nil {
+		return nil
+	}
+	ttl := messageTTLPeriod(media)
+	switch media.Kind {
+	case "photo":
+		return tg.MakeTLMessageMediaPhoto(&tg.TLMessageMediaPhoto{
+			Photo:      tg.MakeTLPhotoEmpty(&tg.TLPhotoEmpty{Id: media.ID}),
+			TtlSeconds: ttl,
+		})
+	case "document":
+		return tg.MakeTLMessageMediaDocument(&tg.TLMessageMediaDocument{
+			Document:   tg.MakeTLDocumentEmpty(&tg.TLDocumentEmpty{Id: media.ID}),
+			TtlSeconds: ttl,
+		})
+	default:
+		return tg.MakeTLMessageMediaEmpty(&tg.TLMessageMediaEmpty{})
+	}
+}
+
+func messageGroupedID(attrs *payload.MessageAttrsV1) *int64 {
+	if attrs == nil || attrs.GroupedID == 0 {
+		return nil
+	}
+	groupedID := attrs.GroupedID
+	return &groupedID
+}
+
+func messageTTLPeriod(media *payload.MediaRefV1) *int32 {
+	if media == nil || media.TTLSeconds == 0 {
+		return nil
+	}
+	ttl := media.TTLSeconds
+	return &ttl
+}
+
+func messageAttrsSilent(attrs *payload.MessageAttrsV1) bool {
+	return attrs != nil && attrs.Silent
+}
+
+func messageAttrsNoforwards(attrs *payload.MessageAttrsV1) bool {
+	return attrs != nil && attrs.Noforwards
+}
+
+func messageAttrsInvertMedia(attrs *payload.MessageAttrsV1) bool {
+	return attrs != nil && attrs.InvertMedia
+}
+
+func messageForwardHeader(ref *payload.ForwardRefV1) (tg.MessageFwdHeaderClazz, error) {
+	if ref == nil {
+		return nil, nil
+	}
+	date, err := userupdatesDateInt32FromUnixSeconds(ref.Date, "forward date")
+	if err != nil {
+		return nil, err
+	}
+	fromName := stringPtr(ref.FromName)
+	var sourceMessageID *int32
+	if ref.SourceMessageID > 0 {
+		v, err := int64ToInt32(ref.SourceMessageID, "forward source message id")
+		if err != nil {
+			return nil, err
+		}
+		sourceMessageID = &v
+	}
+	var savedFromMessageID *int32
+	if ref.SavedFromMessageID > 0 {
+		v, err := int64ToInt32(ref.SavedFromMessageID, "forward saved message id")
+		if err != nil {
+			return nil, err
+		}
+		savedFromMessageID = &v
+	}
+	return tg.MakeTLMessageFwdHeader(&tg.TLMessageFwdHeader{
+		FromId:         forwardPeer(ref.FromUserID, ref.SourcePeerType, ref.SourcePeerID),
+		FromName:       fromName,
+		Date:           date,
+		ChannelPost:    sourceMessageID,
+		SavedFromPeer:  peerFromOptional(ref.SavedFromPeerType, ref.SavedFromPeerID),
+		SavedFromMsgId: savedFromMessageID,
+	}), nil
+}
+
+func requiresFullPushMessage(event decodedMessageEvent) bool {
+	if event.MediaRef != nil || event.ForwardRef != nil {
+		return true
+	}
+	return event.Attrs != nil && (event.Attrs.GroupedID != 0 || event.Attrs.Noforwards || event.Attrs.InvertMedia)
+}
+
+func forwardPeer(fromUserID int64, sourcePeerType int32, sourcePeerID int64) tg.PeerClazz {
+	if fromUserID > 0 {
+		return peerFromUser(fromUserID)
+	}
+	return peerFromOptional(sourcePeerType, sourcePeerID)
+}
+
+func peerFromOptional(peerType int32, peerID int64) tg.PeerClazz {
+	if peerID == 0 {
+		return nil
+	}
+	return peerFromEvent(peerType, peerID)
+}
+
+func stringPtr(v string) *string {
+	if v == "" {
+		return nil
+	}
+	return &v
 }
 
 func replyHeaderFromUserMessageID(userMessageID int64) (tg.MessageReplyHeaderClazz, error) {

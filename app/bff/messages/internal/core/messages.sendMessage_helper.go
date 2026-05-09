@@ -116,6 +116,8 @@ func mapMsgSendError(err error) error {
 		return tg.ErrRandomIdDuplicate
 	case errors.Is(err, msg.ErrReplyToInvalid):
 		return tg.ErrReplyToInvalid
+	case errors.Is(err, msg.ErrMsgIdInvalid):
+		return tg.ErrMessageIdInvalid
 	case isMsgServiceError(err, msg.ErrMessageAuthorRequired):
 		return tg.ErrMessageAuthorRequired
 	case isMsgServiceError(err, msg.ErrMessageNotModified):

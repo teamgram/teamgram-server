@@ -32,7 +32,7 @@ func (c *UserupdatesCore) UserupdatesProcessUserOperationWithEffects(in *userupd
 	if in == nil || in.Operation == nil {
 		return nil, fmt.Errorf("%w: missing operation", userupdates.ErrOperationTerminal)
 	}
-	applyIn, err := userOperationToRepositoryInput(in.Operation)
+	applyIn, err := operationToApplyInput(in.Operation)
 	if err != nil {
 		return nil, err
 	}

@@ -57,6 +57,10 @@ type (
 		EntitiesPayload              []byte `db:"entities_payload" json:"entities_payload"`
 		MediaRefSchemaVersion        int32  `db:"media_ref_schema_version" json:"media_ref_schema_version"`
 		MediaRefPayload              []byte `db:"media_ref_payload" json:"media_ref_payload"`
+		MessageAttrsSchemaVersion    int32  `db:"message_attrs_schema_version" json:"message_attrs_schema_version"`
+		MessageAttrsPayload          []byte `db:"message_attrs_payload" json:"message_attrs_payload"`
+		ForwardRefSchemaVersion      int32  `db:"forward_ref_schema_version" json:"forward_ref_schema_version"`
+		ForwardRefPayload            []byte `db:"forward_ref_payload" json:"forward_ref_payload"`
 		ServiceActionSchemaVersion   int32  `db:"service_action_schema_version" json:"service_action_schema_version"`
 		ServiceActionPayload         []byte `db:"service_action_payload" json:"service_action_payload"`
 		MessageStatus                int32  `db:"message_status" json:"message_status"`
@@ -76,9 +80,9 @@ func newCanonicalMessagesModel(db *sqlx.DB) *defaultCanonicalMessagesModel {
 
 func (m *defaultCanonicalMessagesModel) Insert2(ctx context.Context, data *CanonicalMessages) (sql.Result, error) {
 	tableName := "canonical_messages"
-	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName, canonicalMessagesRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", tableName, canonicalMessagesRowsExpectAutoSet)
 
-	r, err := m.db.Exec(ctx, query, data.PeerType, data.PeerId, data.PeerSeq, data.FromUserId, data.MessageKind, data.MessageText, data.EntitiesPayloadSchemaVersion, data.EntitiesPayload, data.MediaRefSchemaVersion, data.MediaRefPayload, data.ServiceActionSchemaVersion, data.ServiceActionPayload, data.MessageStatus, data.EditVersion, data.Date, data.EditDate, data.DeletedAt, data.StorageSchemaVersion)
+	r, err := m.db.Exec(ctx, query, data.PeerType, data.PeerId, data.PeerSeq, data.FromUserId, data.MessageKind, data.MessageText, data.EntitiesPayloadSchemaVersion, data.EntitiesPayload, data.MediaRefSchemaVersion, data.MediaRefPayload, data.MessageAttrsSchemaVersion, data.MessageAttrsPayload, data.ForwardRefSchemaVersion, data.ForwardRefPayload, data.ServiceActionSchemaVersion, data.ServiceActionPayload, data.MessageStatus, data.EditVersion, data.Date, data.EditDate, data.DeletedAt, data.StorageSchemaVersion)
 	if err != nil {
 		return nil, fmt.Errorf("canonical_messages.Insert2 exec: %w", err)
 	}
@@ -143,7 +147,7 @@ func (m *defaultCanonicalMessagesModel) Update2(ctx context.Context, data *Canon
 	tableName := "canonical_messages"
 	query := fmt.Sprintf("update `%s` set %s where `canonical_message_id` = ?", tableName, canonicalMessagesRowsWithPlaceHolder)
 
-	_, err := m.db.Exec(ctx, query, data.PeerType, data.PeerId, data.PeerSeq, data.FromUserId, data.MessageKind, data.MessageText, data.EntitiesPayloadSchemaVersion, data.EntitiesPayload, data.MediaRefSchemaVersion, data.MediaRefPayload, data.ServiceActionSchemaVersion, data.ServiceActionPayload, data.MessageStatus, data.EditVersion, data.Date, data.EditDate, data.DeletedAt, data.StorageSchemaVersion, data.CanonicalMessageId)
+	_, err := m.db.Exec(ctx, query, data.PeerType, data.PeerId, data.PeerSeq, data.FromUserId, data.MessageKind, data.MessageText, data.EntitiesPayloadSchemaVersion, data.EntitiesPayload, data.MediaRefSchemaVersion, data.MediaRefPayload, data.MessageAttrsSchemaVersion, data.MessageAttrsPayload, data.ForwardRefSchemaVersion, data.ForwardRefPayload, data.ServiceActionSchemaVersion, data.ServiceActionPayload, data.MessageStatus, data.EditVersion, data.Date, data.EditDate, data.DeletedAt, data.StorageSchemaVersion, data.CanonicalMessageId)
 	if err != nil {
 		return fmt.Errorf("canonical_messages.Update2 exec: %w", err)
 	}

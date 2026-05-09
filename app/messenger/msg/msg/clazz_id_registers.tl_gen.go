@@ -36,6 +36,8 @@ func init() {
 	iface.RegisterClazzID(0x5a0f6e12, func() iface.TLObject { return &TLMsgReadHistory{ClazzID: 0x5a0f6e12} })                   // 0x5a0f6e12
 	iface.RegisterClazzID(0xfb9b206, func() iface.TLObject { return &TLMsgReadHistoryV2{ClazzID: 0xfb9b206} })                   // 0xfb9b206
 	iface.RegisterClazzID(0x7f4083df, func() iface.TLObject { return &TLMsgGetHistory{ClazzID: 0x7f4083df} })                    // 0x7f4083df
+	iface.RegisterClazzID(0x385f5e90, func() iface.TLObject { return &TLMsgGetUserMessage{ClazzID: 0x385f5e90} })                // 0x385f5e90
+	iface.RegisterClazzID(0xfb80f3c1, func() iface.TLObject { return &TLMsgGetUserMessageList{ClazzID: 0xfb80f3c1} })            // 0xfb80f3c1
 	iface.RegisterClazzID(0x7e39bca9, func() iface.TLObject { return &TLMsgSearchHashtag{ClazzID: 0x7e39bca9} })                 // 0x7e39bca9
 	iface.RegisterClazzID(0xc5d16bc5, func() iface.TLObject { return &TLMsgResolveDialogCursorTopMessage{ClazzID: 0xc5d16bc5} }) // 0xc5d16bc5
 	iface.RegisterClazzID(0xe5ae51a9, func() iface.TLObject { return &TLMsgUpdatePinnedMessage{ClazzID: 0xe5ae51a9} })           // 0xe5ae51a9

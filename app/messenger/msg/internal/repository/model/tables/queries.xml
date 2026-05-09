@@ -5,6 +5,14 @@
         <field name="PeerSeq" type="int64" db="peer_seq"/>
         <field name="MessageDate" type="int64" db="message_date"/>
         <field name="RequestPayloadHash" type="[]byte" db="request_payload_hash"/>
+        <field name="EntitiesPayloadSchemaVersion" type="int32" db="entities_payload_schema_version"/>
+        <field name="EntitiesPayload" type="[]byte" db="entities_payload"/>
+        <field name="MediaRefSchemaVersion" type="int32" db="media_ref_schema_version"/>
+        <field name="MediaRefPayload" type="[]byte" db="media_ref_payload"/>
+        <field name="MessageAttrsSchemaVersion" type="int32" db="message_attrs_schema_version"/>
+        <field name="MessageAttrsPayload" type="[]byte" db="message_attrs_payload"/>
+        <field name="ForwardRefSchemaVersion" type="int32" db="forward_ref_schema_version"/>
+        <field name="ForwardRefPayload" type="[]byte" db="forward_ref_payload"/>
     </result>
 
     <result name="HistoryMessageRow">
@@ -19,6 +27,26 @@
         <field name="MessageText" type="string" db="message_text"/>
         <field name="MessageDate" type="int64" db="message_date"/>
         <field name="ViewPayload" type="[]byte" db="view_payload"/>
+    </result>
+
+    <result name="UserMessageBoxRow">
+        <field name="UserID" type="int64" db="user_id"/>
+        <field name="UserMessageID" type="int64" db="user_message_id"/>
+        <field name="CanonicalMessageID" type="int64" db="canonical_message_id"/>
+        <field name="PeerType" type="int32" db="peer_type"/>
+        <field name="PeerID" type="int64" db="peer_id"/>
+        <field name="PeerSeq" type="int64" db="peer_seq"/>
+        <field name="FromUserID" type="int64" db="from_user_id"/>
+        <field name="Outgoing" type="bool" db="outgoing"/>
+        <field name="MessageText" type="string" db="message_text"/>
+        <field name="MessageDate" type="int64" db="message_date"/>
+        <field name="ViewPayload" type="[]byte" db="view_payload"/>
+    </result>
+
+    <result name="ForwardSourceIdentityRow">
+        <field name="UserID" type="int64" db="user_id"/>
+        <field name="UserMessageID" type="int64" db="user_message_id"/>
+        <field name="CanonicalMessageID" type="int64" db="canonical_message_id"/>
     </result>
 
     <result name="ResolvedMessageIDRow">
@@ -63,7 +91,15 @@
                 r.canonical_message_id,
                 c.peer_seq,
                 c.date AS message_date,
-                r.request_payload_hash
+                r.request_payload_hash,
+                c.entities_payload_schema_version,
+                c.entities_payload,
+                c.media_ref_schema_version,
+                c.media_ref_payload,
+                c.message_attrs_schema_version,
+                c.message_attrs_payload,
+                c.forward_ref_schema_version,
+                c.forward_ref_payload
             FROM
                 message_client_randoms r
             JOIN
@@ -89,7 +125,15 @@
                 canonical_message_id,
                 peer_seq,
                 date AS message_date,
-                :request_payload_hash AS request_payload_hash
+                :request_payload_hash AS request_payload_hash,
+                entities_payload_schema_version,
+                entities_payload,
+                media_ref_schema_version,
+                media_ref_payload,
+                message_attrs_schema_version,
+                message_attrs_payload,
+                forward_ref_schema_version,
+                forward_ref_payload
             FROM
                 canonical_messages
             WHERE
@@ -165,6 +209,56 @@
             WHERE
                 user_id = :user_id
                 AND user_message_id = :user_message_id
+            LIMIT 1
+        </sql>
+    </query>
+
+    <query name="SelectUserMessageBoxByGlobalID" result="UserMessageBoxRow">
+        <params>
+            <param name="message_status" type="int32"/>
+        </params>
+        <sql>
+            SELECT
+                v.user_id,
+                v.user_message_id,
+                v.canonical_message_id,
+                v.peer_type,
+                v.peer_id,
+                v.peer_seq,
+                c.from_user_id,
+                v.outgoing,
+                c.message_text,
+                v.date AS message_date,
+                v.view_payload
+            FROM
+                user_message_views v
+            JOIN
+                canonical_messages c
+            ON
+                c.canonical_message_id = v.canonical_message_id
+            WHERE
+                v.user_id = :user_id
+                AND v.user_message_id = :user_message_id
+                AND v.message_status = :message_status
+            LIMIT 1
+        </sql>
+    </query>
+
+    <query name="SelectForwardSourceIdentity" result="ForwardSourceIdentityRow">
+        <params>
+            <param name="message_status" type="int32"/>
+        </params>
+        <sql>
+            SELECT
+                user_id,
+                user_message_id,
+                canonical_message_id
+            FROM
+                user_message_views
+            WHERE
+                user_id = :user_id
+                AND user_message_id = :user_message_id
+                AND message_status = :message_status
             LIMIT 1
         </sql>
     </query>

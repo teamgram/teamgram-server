@@ -101,13 +101,183 @@ func (r *Repository) CreateOrGetByClientRandom(ctx context.Context, in CreateCan
 			return err
 		}
 		out = &CanonicalMessageResult{
-			SendStateID:        in.SendStateID,
-			CanonicalMessageID: canonicalID,
-			PeerSeq:            peerSeq,
-			MessageDate:        messageDate,
-			RequestPayloadHash: in.RequestPayloadHash,
-			CreatedNew:         true,
+			SendStateID:                  in.SendStateID,
+			CanonicalMessageID:           canonicalID,
+			PeerSeq:                      peerSeq,
+			MessageDate:                  messageDate,
+			RequestPayloadHash:           in.RequestPayloadHash,
+			EntitiesPayloadSchemaVersion: canonicalEntitiesSchemaVersion(in.EntitiesPayloadSchemaVersion),
+			EntitiesPayload:              in.EntitiesPayload,
+			MediaRefSchemaVersion:        canonicalMediaSchemaVersion(in.MediaRefSchemaVersion),
+			MediaRefPayload:              in.MediaRefPayload,
+			MessageAttrsSchemaVersion:    in.MessageAttrsSchemaVersion,
+			MessageAttrsPayload:          in.MessageAttrsPayload,
+			ForwardRefSchemaVersion:      in.ForwardRefSchemaVersion,
+			ForwardRefPayload:            in.ForwardRefPayload,
+			CreatedNew:                   true,
 		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (r *Repository) CreateOrGetCanonicalBatchByClientRandom(ctx context.Context, in CreateCanonicalBatchInput) (*CanonicalBatchResult, error) {
+	db, err := r.requireDB()
+	if err != nil {
+		return nil, err
+	}
+	if len(in.Items) == 0 {
+		return &CanonicalBatchResult{}, nil
+	}
+
+	var out *CanonicalBatchResult
+	err = db.Transact(ctx, func(tx *sqlx.Tx) error {
+		txModels := r.models.WithTx(tx)
+		results := make([]CanonicalMessageResult, len(in.Items))
+		pending := make([]int, 0, len(in.Items))
+		seenRandoms := make(map[int64]struct{}, len(in.Items))
+
+		for i, item := range in.Items {
+			if _, ok := seenRandoms[item.ClientRandomID]; ok {
+				return msg.ErrRandomIdConflict
+			}
+			seenRandoms[item.ClientRandomID] = struct{}{}
+
+			canonicalInput := batchItemToCanonicalInput(in, item, 0)
+			existing, found, err := selectCanonicalByRandomTx(txModels, in.SenderUserID, in.PeerType, in.PeerID, item.ClientRandomID)
+			if err != nil {
+				return err
+			}
+			if found {
+				if !bytes.Equal(existing.RequestPayloadHash, item.RequestPayloadHash) {
+					return msg.ErrRandomIdConflict
+				}
+				matches, err := existingCanonicalMatchesRetryTx(txModels, existing.CanonicalMessageID, canonicalInput)
+				if err != nil {
+					return err
+				}
+				if !matches {
+					return msg.ErrRandomIdConflict
+				}
+				state, found, err := selectSendStateByRandomTx(txModels, in.SenderUserID, in.PeerType, in.PeerID, item.ClientRandomID)
+				if err != nil {
+					return err
+				}
+				if found {
+					attachSendStateToCanonicalResult(existing, state)
+				}
+				results[i] = *existing
+				continue
+			}
+
+			state, found, err := selectSendStateByRandomTx(txModels, in.SenderUserID, in.PeerType, in.PeerID, item.ClientRandomID)
+			if err != nil {
+				return err
+			}
+			if !found {
+				state, err = r.insertSendStateTx(ctx, txModels, CreateSendStateInput{
+					SenderUserID:                in.SenderUserID,
+					PeerType:                    in.PeerType,
+					PeerID:                      in.PeerID,
+					ClientRandomID:              item.ClientRandomID,
+					RequestPayloadSchemaVersion: item.RequestPayloadSchemaVersion,
+					RequestPayloadHash:          item.RequestPayloadHash,
+					MessageText:                 item.MessageText,
+				})
+				if err != nil {
+					return err
+				}
+			} else if state.SenderUserID != in.SenderUserID ||
+				state.PeerType != in.PeerType ||
+				state.PeerID != in.PeerID ||
+				state.ClientRandomID != item.ClientRandomID ||
+				!bytes.Equal(state.RequestPayloadHash, item.RequestPayloadHash) {
+				return msg.ErrRandomIdConflict
+			}
+
+			canonicalInput.SendStateID = state.SendStateID
+			if state.CanonicalMessageID != 0 {
+				existing, err := selectCanonicalByIDTx(txModels, state.CanonicalMessageID, item.RequestPayloadHash, state.SendStateID)
+				if err != nil {
+					return err
+				}
+				matches, err := existingCanonicalMatchesRetryTx(txModels, existing.CanonicalMessageID, canonicalInput)
+				if err != nil {
+					return err
+				}
+				if !matches {
+					return msg.ErrRandomIdConflict
+				}
+				attachSendStateToCanonicalResult(existing, state)
+				results[i] = *existing
+				continue
+			}
+
+			results[i] = CanonicalMessageResult{
+				SendStateID:        state.SendStateID,
+				RequestPayloadHash: item.RequestPayloadHash,
+				SendStateStatus:    state.Status,
+			}
+			pending = append(pending, i)
+		}
+
+		if len(pending) > 0 {
+			sequencePeerID, sequenceScoped := messageSequencePeerID(in.PeerType, in.SenderUserID, in.PeerID)
+			var minNextPeerSeq int64
+			if sequenceScoped {
+				minNextPeerSeq, err = nextConversationViewPeerSeqFloorTx(txModels, in.PeerType, in.SenderUserID, in.PeerID)
+				if err != nil {
+					return err
+				}
+			}
+			firstPeerSeq, err := nextPeerSeqBlockTx(txModels, in.PeerType, sequencePeerID, minNextPeerSeq, int64(len(pending)))
+			if err != nil {
+				return err
+			}
+			for offset, index := range pending {
+				item := in.Items[index]
+				messageDate := unixOrNow(item.MessageDate)
+				peerSeq := firstPeerSeq + int64(offset)
+				canonicalID, err := r.nextID(ctx, "next canonical message id")
+				if err != nil {
+					return err
+				}
+				canonicalInput := batchItemToCanonicalInput(in, item, results[index].SendStateID)
+				if err := insertCanonicalMessageTx(txModels, canonicalID, sequencePeerID, peerSeq, messageDate, canonicalInput); err != nil {
+					return err
+				}
+				if err := insertClientRandomTx(txModels, canonicalID, peerSeq, messageDate, canonicalInput); err != nil {
+					return err
+				}
+				if affected, err := txModels.MessageSendStatesModel.MarkCanonicalCreated(canonicalID, peerSeq, SendStateStatusCanonical, results[index].SendStateID); err != nil {
+					return storageError("mark batch canonical created", err)
+				} else if affected == 0 {
+					return msg.ErrSendStateConflict
+				}
+				results[index] = CanonicalMessageResult{
+					SendStateID:                  results[index].SendStateID,
+					CanonicalMessageID:           canonicalID,
+					PeerSeq:                      peerSeq,
+					MessageDate:                  messageDate,
+					RequestPayloadHash:           item.RequestPayloadHash,
+					EntitiesPayloadSchemaVersion: canonicalEntitiesSchemaVersion(item.EntitiesPayloadSchemaVersion),
+					EntitiesPayload:              item.EntitiesPayload,
+					MediaRefSchemaVersion:        canonicalMediaSchemaVersion(item.MediaRefSchemaVersion),
+					MediaRefPayload:              item.MediaRefPayload,
+					MessageAttrsSchemaVersion:    item.MessageAttrsSchemaVersion,
+					MessageAttrsPayload:          item.MessageAttrsPayload,
+					ForwardRefSchemaVersion:      item.ForwardRefSchemaVersion,
+					ForwardRefPayload:            item.ForwardRefPayload,
+					SendStateStatus:              SendStateStatusCanonical,
+					CreatedNew:                   true,
+				}
+			}
+		}
+
+		out = &CanonicalBatchResult{Items: results}
 		return nil
 	})
 	if err != nil {
@@ -227,16 +397,7 @@ func (r *Repository) GetCanonicalMessageByPeerSeq(ctx context.Context, userID in
 		}
 		return nil, storageError("select canonical by peer seq", err)
 	}
-	return &CanonicalMessage{
-		CanonicalMessageID: row.CanonicalMessageId,
-		PeerSeq:            row.PeerSeq,
-		FromUserID:         row.FromUserId,
-		PeerType:           row.PeerType,
-		PeerID:             row.PeerId,
-		MessageKind:        row.MessageKind,
-		MessageText:        row.MessageText,
-		MessageDate:        row.Date,
-	}, nil
+	return canonicalMessageModelToDTO(row), nil
 }
 
 func (r *Repository) EditCanonicalMessage(ctx context.Context, in EditCanonicalMessageInput) (*EditMessageResult, error) {
@@ -465,11 +626,19 @@ func selectCanonicalByIDOnlyTx(txModels *model.TxModels, canonicalMessageID int6
 		return nil, storageError("select canonical by id", err)
 	}
 	return &CanonicalMessageResult{
-		SendStateID:        sendStateID,
-		CanonicalMessageID: row.CanonicalMessageId,
-		PeerSeq:            row.PeerSeq,
-		MessageDate:        row.Date,
-		CreatedNew:         false,
+		SendStateID:                  sendStateID,
+		CanonicalMessageID:           row.CanonicalMessageId,
+		PeerSeq:                      row.PeerSeq,
+		MessageDate:                  row.Date,
+		EntitiesPayloadSchemaVersion: row.EntitiesPayloadSchemaVersion,
+		EntitiesPayload:              row.EntitiesPayload,
+		MediaRefSchemaVersion:        row.MediaRefSchemaVersion,
+		MediaRefPayload:              row.MediaRefPayload,
+		MessageAttrsSchemaVersion:    row.MessageAttrsSchemaVersion,
+		MessageAttrsPayload:          row.MessageAttrsPayload,
+		ForwardRefSchemaVersion:      row.ForwardRefSchemaVersion,
+		ForwardRefPayload:            row.ForwardRefPayload,
+		CreatedNew:                   false,
 	}, nil
 }
 
@@ -484,12 +653,51 @@ func existingCanonicalMatchesRetryTx(txModels *model.TxModels, canonicalMessageI
 		}
 		return false, storageError("select canonical for random retry", err)
 	}
-	return row.MessageText == in.MessageText &&
-		row.FromUserId == in.SenderUserID &&
-		row.MessageKind == MessageKindText, nil
+	return canonicalMessageMatchesRetryInput(row, in), nil
+}
+
+func canonicalMessageMatchesRetryInput(row *model.CanonicalMessages, in CreateCanonicalMessageInput) bool {
+	if row.MessageText != in.MessageText ||
+		row.FromUserId != in.SenderUserID ||
+		row.MessageKind != MessageKindText {
+		return false
+	}
+	if canonicalRetryHasNoRichPayload(row, in) {
+		return true
+	}
+	return row.EntitiesPayloadSchemaVersion == canonicalEntitiesSchemaVersion(in.EntitiesPayloadSchemaVersion) &&
+		payloadBytesEqual(row.EntitiesPayload, in.EntitiesPayload) &&
+		row.MediaRefSchemaVersion == canonicalMediaSchemaVersion(in.MediaRefSchemaVersion) &&
+		payloadBytesEqual(row.MediaRefPayload, in.MediaRefPayload) &&
+		row.MessageAttrsSchemaVersion == in.MessageAttrsSchemaVersion &&
+		payloadBytesEqual(row.MessageAttrsPayload, in.MessageAttrsPayload) &&
+		row.ForwardRefSchemaVersion == in.ForwardRefSchemaVersion &&
+		payloadBytesEqual(row.ForwardRefPayload, in.ForwardRefPayload)
+}
+
+func canonicalRetryHasNoRichPayload(row *model.CanonicalMessages, in CreateCanonicalMessageInput) bool {
+	return len(row.EntitiesPayload) == 0 &&
+		len(in.EntitiesPayload) == 0 &&
+		len(row.MediaRefPayload) == 0 &&
+		len(in.MediaRefPayload) == 0 &&
+		len(row.MessageAttrsPayload) == 0 &&
+		len(in.MessageAttrsPayload) == 0 &&
+		len(row.ForwardRefPayload) == 0 &&
+		len(in.ForwardRefPayload) == 0
+}
+
+func payloadBytesEqual(a []byte, b []byte) bool {
+	return bytes.Equal(a, b) || len(a) == 0 && len(b) == 0
 }
 
 func nextPeerSeqTx(txModels *model.TxModels, peerType int32, peerID int64, minNextPeerSeq int64) (int64, error) {
+	return nextPeerSeqBlockTx(txModels, peerType, peerID, minNextPeerSeq, 1)
+}
+
+func nextPeerSeqBlockTx(txModels *model.TxModels, peerType int32, peerID int64, minNextPeerSeq int64, count int64) (int64, error) {
+	if count <= 0 {
+		return 0, msg.ErrSendStateConflict
+	}
 	if minNextPeerSeq < 1 {
 		minNextPeerSeq = 1
 	}
@@ -508,12 +716,33 @@ func nextPeerSeqTx(txModels *model.TxModels, peerType int32, peerID int64, minNe
 	if peerSeq < minNextPeerSeq {
 		peerSeq = minNextPeerSeq
 	}
-	if affected, err := txModels.MessagePeerSequencesModel.UpdateNextPeerSeq(peerSeq+1, peerType, peerID); err != nil {
+	if affected, err := txModels.MessagePeerSequencesModel.UpdateNextPeerSeq(peerSeq+count, peerType, peerID); err != nil {
 		return 0, storageError("advance peer sequence", err)
 	} else if affected == 0 {
 		return 0, msg.ErrSendStateConflict
 	}
 	return peerSeq, nil
+}
+
+func batchItemToCanonicalInput(batch CreateCanonicalBatchInput, item CreateCanonicalBatchItem, sendStateID int64) CreateCanonicalMessageInput {
+	return CreateCanonicalMessageInput{
+		SendStateID:                  sendStateID,
+		SenderUserID:                 batch.SenderUserID,
+		PeerType:                     batch.PeerType,
+		PeerID:                       batch.PeerID,
+		ClientRandomID:               item.ClientRandomID,
+		RequestPayloadHash:           item.RequestPayloadHash,
+		MessageText:                  item.MessageText,
+		MessageDate:                  item.MessageDate,
+		EntitiesPayloadSchemaVersion: item.EntitiesPayloadSchemaVersion,
+		EntitiesPayload:              item.EntitiesPayload,
+		MediaRefSchemaVersion:        item.MediaRefSchemaVersion,
+		MediaRefPayload:              item.MediaRefPayload,
+		MessageAttrsSchemaVersion:    item.MessageAttrsSchemaVersion,
+		MessageAttrsPayload:          item.MessageAttrsPayload,
+		ForwardRefSchemaVersion:      item.ForwardRefSchemaVersion,
+		ForwardRefPayload:            item.ForwardRefPayload,
+	}
 }
 
 func insertCanonicalMessageTx(txModels *model.TxModels, canonicalID int64, canonicalPeerID int64, peerSeq int64, messageDate int64, in CreateCanonicalMessageInput) error {
@@ -525,10 +754,14 @@ func insertCanonicalMessageTx(txModels *model.TxModels, canonicalID int64, canon
 		FromUserId:                   in.SenderUserID,
 		MessageKind:                  MessageKindText,
 		MessageText:                  in.MessageText,
-		EntitiesPayloadSchemaVersion: 1,
-		EntitiesPayload:              nil,
-		MediaRefSchemaVersion:        1,
-		MediaRefPayload:              nil,
+		EntitiesPayloadSchemaVersion: canonicalEntitiesSchemaVersion(in.EntitiesPayloadSchemaVersion),
+		EntitiesPayload:              in.EntitiesPayload,
+		MediaRefSchemaVersion:        canonicalMediaSchemaVersion(in.MediaRefSchemaVersion),
+		MediaRefPayload:              in.MediaRefPayload,
+		MessageAttrsSchemaVersion:    in.MessageAttrsSchemaVersion,
+		MessageAttrsPayload:          in.MessageAttrsPayload,
+		ForwardRefSchemaVersion:      in.ForwardRefSchemaVersion,
+		ForwardRefPayload:            in.ForwardRefPayload,
 		ServiceActionSchemaVersion:   1,
 		ServiceActionPayload:         nil,
 		MessageStatus:                MessageStatusLive,
@@ -566,6 +799,20 @@ func messageSequencePeerID(peerType int32, userID int64, peerID int64) (int64, b
 	return int64((uint64(lo) << 32) | uint64(hi)), true
 }
 
+func canonicalEntitiesSchemaVersion(version int32) int32 {
+	if version > 0 {
+		return version
+	}
+	return 1
+}
+
+func canonicalMediaSchemaVersion(version int32) int32 {
+	if version > 0 {
+		return version
+	}
+	return 1
+}
+
 func insertClientRandomTx(txModels *model.TxModels, canonicalID int64, _ int64, _ int64, in CreateCanonicalMessageInput) error {
 	_, _, err := txModels.MessageClientRandomsModel.Insert(&model.MessageClientRandoms{
 		SenderUserId:       in.SenderUserID,
@@ -587,11 +834,57 @@ func canonicalMessageRowToResult(r *model.CanonicalMessageRow, created bool) *Ca
 		return nil
 	}
 	return &CanonicalMessageResult{
-		SendStateID:        r.SendStateID,
-		CanonicalMessageID: r.CanonicalMessageID,
-		PeerSeq:            r.PeerSeq,
-		MessageDate:        r.MessageDate,
-		RequestPayloadHash: r.RequestPayloadHash,
-		CreatedNew:         created,
+		SendStateID:                  r.SendStateID,
+		CanonicalMessageID:           r.CanonicalMessageID,
+		PeerSeq:                      r.PeerSeq,
+		MessageDate:                  r.MessageDate,
+		RequestPayloadHash:           r.RequestPayloadHash,
+		EntitiesPayloadSchemaVersion: r.EntitiesPayloadSchemaVersion,
+		EntitiesPayload:              r.EntitiesPayload,
+		MediaRefSchemaVersion:        r.MediaRefSchemaVersion,
+		MediaRefPayload:              r.MediaRefPayload,
+		MessageAttrsSchemaVersion:    r.MessageAttrsSchemaVersion,
+		MessageAttrsPayload:          r.MessageAttrsPayload,
+		ForwardRefSchemaVersion:      r.ForwardRefSchemaVersion,
+		ForwardRefPayload:            r.ForwardRefPayload,
+		CreatedNew:                   created,
+	}
+}
+
+func attachSendStateToCanonicalResult(result *CanonicalMessageResult, state *SendState) {
+	if result == nil || state == nil {
+		return
+	}
+	result.SendStateID = state.SendStateID
+	result.SendStateStatus = state.Status
+	result.SenderOperationID = state.SenderOperationID
+	result.SenderPTS = state.SenderPTS
+	result.SenderPTSCount = state.SenderPTSCount
+	result.SenderUpdateSchemaVersion = state.SenderUpdateSchemaVersion
+	result.SenderUpdatePayload = state.SenderUpdatePayload
+	result.SenderUpdatePayloadHash = state.SenderUpdatePayloadHash
+}
+
+func canonicalMessageModelToDTO(row *model.CanonicalMessages) *CanonicalMessage {
+	if row == nil {
+		return nil
+	}
+	return &CanonicalMessage{
+		CanonicalMessageID:           row.CanonicalMessageId,
+		PeerSeq:                      row.PeerSeq,
+		FromUserID:                   row.FromUserId,
+		PeerType:                     row.PeerType,
+		PeerID:                       row.PeerId,
+		MessageKind:                  row.MessageKind,
+		MessageText:                  row.MessageText,
+		MessageDate:                  row.Date,
+		EntitiesPayloadSchemaVersion: row.EntitiesPayloadSchemaVersion,
+		EntitiesPayload:              row.EntitiesPayload,
+		MediaRefSchemaVersion:        row.MediaRefSchemaVersion,
+		MediaRefPayload:              row.MediaRefPayload,
+		MessageAttrsSchemaVersion:    row.MessageAttrsSchemaVersion,
+		MessageAttrsPayload:          row.MessageAttrsPayload,
+		ForwardRefSchemaVersion:      row.ForwardRefSchemaVersion,
+		ForwardRefPayload:            row.ForwardRefPayload,
 	}
 }

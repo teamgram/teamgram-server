@@ -994,6 +994,110 @@ func (m *TLMsgGetHistory) Decode(d *bin.Decoder) (err error) {
 	}
 }
 
+// TLMsgGetUserMessage <--
+type TLMsgGetUserMessage struct {
+	ClazzID uint32 `json:"_id"`
+	UserId  int64  `json:"user_id"`
+	Id      int32  `json:"id"`
+}
+
+func (m *TLMsgGetUserMessage) String() string {
+	return iface.DebugStringWithName(ClazzName_msg_getUserMessage, m)
+}
+
+// Encode <--
+func (m *TLMsgGetUserMessage) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_msg_getUserMessage, int(layer)); clazzId {
+	case 0x385f5e90:
+		x.PutClazzID(0x385f5e90)
+
+		x.PutInt64(m.UserId)
+		x.PutInt32(m.Id)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode msg_getUserMessage: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLMsgGetUserMessage) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return fmt.Errorf("unable to decode msg_getUserMessage: constructor: %w", err)
+		}
+	}
+	switch m.ClazzID {
+	case 0x385f5e90:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode msg_getUserMessage#0x385f5e90: field user_id: %w", err)
+		}
+		m.Id, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode msg_getUserMessage#0x385f5e90: field id: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode msg_getUserMessage: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// TLMsgGetUserMessageList <--
+type TLMsgGetUserMessageList struct {
+	ClazzID uint32  `json:"_id"`
+	UserId  int64   `json:"user_id"`
+	IdList  []int32 `json:"id_list"`
+}
+
+func (m *TLMsgGetUserMessageList) String() string {
+	return iface.DebugStringWithName(ClazzName_msg_getUserMessageList, m)
+}
+
+// Encode <--
+func (m *TLMsgGetUserMessageList) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_msg_getUserMessageList, int(layer)); clazzId {
+	case 0xfb80f3c1:
+		x.PutClazzID(0xfb80f3c1)
+
+		x.PutInt64(m.UserId)
+
+		iface.EncodeInt32List(x, m.IdList)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode msg_getUserMessageList: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLMsgGetUserMessageList) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return fmt.Errorf("unable to decode msg_getUserMessageList: constructor: %w", err)
+		}
+	}
+	switch m.ClazzID {
+	case 0xfb80f3c1:
+		m.UserId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode msg_getUserMessageList#0xfb80f3c1: field user_id: %w", err)
+		}
+
+		m.IdList, err = iface.DecodeInt32List(d)
+		if err != nil {
+			return fmt.Errorf("unable to decode msg_getUserMessageList#0xfb80f3c1: field id_list: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode msg_getUserMessageList: invalid constructor %x", m.ClazzID)
+	}
+}
+
 // TLMsgSearchHashtag <--
 type TLMsgSearchHashtag struct {
 	ClazzID   uint32 `json:"_id"`
@@ -1299,6 +1403,30 @@ func (m *TLMsgUnpinAllMessages) Decode(d *bin.Decoder) (err error) {
 // ----------------------------------------------------------------------------
 // VectorResList <--
 
+// VectorMessageBox <--
+type VectorMessageBox struct {
+	Datas []tg.MessageBoxClazz `json:"_datas"`
+}
+
+func (m *VectorMessageBox) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
+}
+
+// Encode <--
+func (m *VectorMessageBox) Encode(x *bin.Encoder, layer int32) error {
+	_ = iface.EncodeObjectList(x, m.Datas, layer)
+
+	return nil
+}
+
+// Decode <--
+func (m *VectorMessageBox) Decode(d *bin.Decoder) (err error) {
+	m.Datas, err = iface.DecodeObjectList[tg.MessageBoxClazz](d)
+
+	return err
+}
+
 // ----------------------------------------------------------------------------
 // rpc
 
@@ -1314,6 +1442,8 @@ type RPCMsg interface {
 	MsgReadHistory(ctx context.Context, in *TLMsgReadHistory) (*tg.MessagesAffectedMessages, error)
 	MsgReadHistoryV2(ctx context.Context, in *TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error)
 	MsgGetHistory(ctx context.Context, in *TLMsgGetHistory) (*tg.MessagesMessages, error)
+	MsgGetUserMessage(ctx context.Context, in *TLMsgGetUserMessage) (*tg.MessageBox, error)
+	MsgGetUserMessageList(ctx context.Context, in *TLMsgGetUserMessageList) (*VectorMessageBox, error)
 	MsgSearchHashtag(ctx context.Context, in *TLMsgSearchHashtag) (*tg.MessagesMessages, error)
 	MsgResolveDialogCursorTopMessage(ctx context.Context, in *TLMsgResolveDialogCursorTopMessage) (*ResolvedDialogCursor, error)
 	MsgUpdatePinnedMessage(ctx context.Context, in *TLMsgUpdatePinnedMessage) (*tg.Updates, error)

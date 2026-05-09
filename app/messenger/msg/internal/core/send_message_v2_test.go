@@ -1,6 +1,7 @@
 package core
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -14,6 +15,121 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/pagination"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
+
+func TestNormalizeOutboxMessageUsesAttrsGroupedID(t *testing.T) {
+	groupedID := int64(12345)
+	message := tg.MakeTLMessage(&tg.TLMessage{
+		Message:   "caption",
+		GroupedId: &groupedID,
+		Media:     tg.MakeTLMessageMediaPhoto(&tg.TLMessageMediaPhoto{}),
+	})
+	outbox := msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{RandomId: 99, Message: message})
+	got, err := normalizeOutboxMessage(normalizeOutboxInput{
+		SenderUserID: 100,
+		PeerType:     payload.PeerTypeUser,
+		PeerID:       200,
+		Outbox:       outbox,
+	})
+	if err != nil {
+		t.Fatalf("normalizeOutboxMessage() error = %v", err)
+	}
+	if got.Attrs.GroupedID != 12345 {
+		t.Fatalf("GroupedID = %d, want 12345", got.Attrs.GroupedID)
+	}
+}
+
+func TestNormalizeOutboxMessageRejectsUnsupportedEntity(t *testing.T) {
+	message := tg.MakeTLMessage(&tg.TLMessage{
+		Message: "emoji",
+		Entities: []tg.MessageEntityClazz{
+			tg.MakeTLMessageEntityCustomEmoji(&tg.TLMessageEntityCustomEmoji{
+				Offset:     0,
+				Length:     5,
+				DocumentId: 12345,
+			}),
+		},
+	})
+	outbox := msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{RandomId: 99, Message: message})
+	_, err := normalizeOutboxMessage(normalizeOutboxInput{
+		SenderUserID: 100,
+		PeerType:     payload.PeerTypeUser,
+		PeerID:       200,
+		Outbox:       outbox,
+	})
+	if !errors.Is(err, msgpb.ErrSendStateConflict) {
+		t.Fatalf("normalizeOutboxMessage() error = %v, want ErrSendStateConflict", err)
+	}
+}
+
+func TestMarshalSendRequestV3IncludesMediaAttrsForward(t *testing.T) {
+	msg1 := normalizedOutboxMessage{
+		SchemaVersion: NormalizedOutboxSchemaVersionV1,
+		RandomID:      11,
+		FromUserID:    100,
+		PeerType:      payload.PeerTypeUser,
+		PeerID:        200,
+		MessageText:   "caption",
+		MediaRef:      &payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "photo", ID: 300},
+		Attrs:         payload.MessageAttrsV1{SchemaVersion: payload.MessageAttrsSchemaVersionV1, GroupedID: 400},
+		ForwardRef:    &payload.ForwardRefV1{SchemaVersion: payload.ForwardRefSchemaVersionV1, FromUserID: 500, Date: 1700000000},
+	}
+	msg2 := msg1
+	msg2.MediaRef = &payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "photo", ID: 301}
+	_, hash1, err := marshalSendRequestV3(msg1, batchSideEffects{})
+	if err != nil {
+		t.Fatalf("marshalSendRequestV3(msg1) error = %v", err)
+	}
+	body1, _, err := marshalSendRequestV3(msg1, batchSideEffects{})
+	if err != nil {
+		t.Fatalf("marshalSendRequestV3(body1) error = %v", err)
+	}
+	var raw map[string]any
+	if err := json.Unmarshal(body1, &raw); err != nil {
+		t.Fatalf("decode request v3: %v", err)
+	}
+	if _, ok := raw["grouped_id"]; ok {
+		t.Fatalf("request payload has top-level grouped_id: %s", string(body1))
+	}
+	attrs, ok := raw["attrs"].(map[string]any)
+	if !ok || attrs["grouped_id"] != float64(400) {
+		t.Fatalf("request payload attrs grouped_id missing: %s", string(body1))
+	}
+	_, hash2, err := marshalSendRequestV3(msg2, batchSideEffects{})
+	if err != nil {
+		t.Fatalf("marshalSendRequestV3(msg2) error = %v", err)
+	}
+	if bytes.Equal(hash1, hash2) {
+		t.Fatal("request hash did not change when media ref changed")
+	}
+
+	msg3 := msg1
+	msg3.Attrs.Silent = true
+	_, hash3, err := marshalSendRequestV3(msg3, batchSideEffects{})
+	if err != nil {
+		t.Fatalf("marshalSendRequestV3(msg3) error = %v", err)
+	}
+	if bytes.Equal(hash1, hash3) {
+		t.Fatal("request hash did not change when attrs changed")
+	}
+
+	msg4 := msg1
+	msg4.ForwardRef = &payload.ForwardRefV1{SchemaVersion: payload.ForwardRefSchemaVersionV1, FromUserID: 501, Date: 1700000000}
+	_, hash4, err := marshalSendRequestV3(msg4, batchSideEffects{})
+	if err != nil {
+		t.Fatalf("marshalSendRequestV3(msg4) error = %v", err)
+	}
+	if bytes.Equal(hash1, hash4) {
+		t.Fatal("request hash did not change when forward ref changed")
+	}
+
+	_, sideEffectHash, err := marshalSendRequestV3(msg1, batchSideEffects{ClearDraft: true, SourcePermAuthKeyID: 9001, ClearDraftBeforeDate: 1700000002})
+	if err != nil {
+		t.Fatalf("marshalSendRequestV3(side effects) error = %v", err)
+	}
+	if bytes.Equal(hash1, sideEffectHash) {
+		t.Fatal("request hash did not change when batch side effects changed")
+	}
+}
 
 func TestMsgSendMessageV2SingleUserPublishesReceiverOperation(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":2,"pts":11,"pts_count":1,"event_type":"new_message","user_message_id":42}`)
@@ -84,6 +200,418 @@ func TestMsgSendMessageV2SingleUserPublishesReceiverOperation(t *testing.T) {
 	}
 	if !senderOp.Out || senderOp.PeerID != 1002 || senderOp.FromUserID != 1001 || senderOp.ToUserID != 1002 || senderOp.MessageText != "hello" {
 		t.Fatalf("unexpected sender payload: %+v", senderOp)
+	}
+}
+
+func TestMsgSendMessageV2BatchReturnsFullUpdates(t *testing.T) {
+	core, fakeRepo, fakeUpdates := newBatchMsgCoreForTest(t)
+	in := buildBatchSendRequestForTest(100, 200, 9001, []int64{11, 12})
+
+	got, err := core.MsgSendMessageV2(in)
+	if err != nil {
+		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	}
+	if fakeRepo.batchCreateCalls != 1 {
+		t.Fatalf("batchCreateCalls = %d, want 1", fakeRepo.batchCreateCalls)
+	}
+	if fakeRepo.markSenderCalls != 2 {
+		t.Fatalf("markSenderCalls = %d, want 2", fakeRepo.markSenderCalls)
+	}
+	if fakeUpdates.batchApplyCalls != 1 {
+		t.Fatalf("batchApplyCalls = %d, want 1", fakeUpdates.batchApplyCalls)
+	}
+	if fakeUpdates.batchApplyLen != 2 {
+		t.Fatalf("batchApplyLen = %d, want 2", fakeUpdates.batchApplyLen)
+	}
+	if _, ok := got.Clazz.(*tg.TLUpdates); !ok {
+		t.Fatalf("updates = %T, want *tg.TLUpdates", got.Clazz)
+	}
+}
+
+func TestMsgGetUserMessageReadsViewerMessageID(t *testing.T) {
+	core, fakeRepo := newMsgReadCoreForTest(t)
+	fakeRepo.userMessages = map[int64]*repository.UserMessageBox{
+		7: {
+			UserID:             100,
+			UserMessageID:      7,
+			CanonicalMessageID: 900,
+			PeerType:           payload.PeerTypeUser,
+			PeerID:             200,
+			PeerSeq:            3,
+			FromUserID:         200,
+			MessageText:        "source",
+			MessageDate:        1_772_000_300,
+		},
+	}
+
+	got, err := core.MsgGetUserMessage(&msgpb.TLMsgGetUserMessage{UserId: 100, Id: 7})
+	if err != nil {
+		t.Fatalf("MsgGetUserMessage() error = %v", err)
+	}
+	if got == nil || got.Message == nil {
+		t.Fatalf("MessageBox = %#v, want message", got)
+	}
+	if got.MessageId != 7 {
+		t.Fatalf("MessageId = %d, want viewer public id 7", got.MessageId)
+	}
+	message, ok := got.Message.(*tg.TLMessage)
+	if !ok || message.Id != 7 || message.Message != "source" {
+		t.Fatalf("Message = %+v ok=%v, want public id text message", got.Message, ok)
+	}
+	if fakeRepo.getUserMessageInput.UserID != 100 || fakeRepo.getUserMessageInput.UserMessageID != 7 {
+		t.Fatalf("GetUserMessage input = %+v", fakeRepo.getUserMessageInput)
+	}
+}
+
+func TestMsgGetUserMessageListRejectsInvalidID(t *testing.T) {
+	core, fakeRepo := newMsgReadCoreForTest(t)
+	fakeRepo.userMessages = map[int64]*repository.UserMessageBox{
+		7: {UserID: 100, UserMessageID: 7, MessageText: "source", MessageDate: 1_772_000_300},
+	}
+
+	_, err := core.MsgGetUserMessageList(&msgpb.TLMsgGetUserMessageList{UserId: 100, IdList: []int32{7, 0}})
+	if !errors.Is(err, msgpb.ErrMsgIdInvalid) {
+		t.Fatalf("MsgGetUserMessageList() error = %v, want ErrMsgIdInvalid", err)
+	}
+	if len(fakeRepo.getUserMessageListInput.IDs) != 2 || fakeRepo.getUserMessageListInput.IDs[1] != 0 {
+		t.Fatalf("GetUserMessageList ids = %+v, want invalid id preserved for repository validation", fakeRepo.getUserMessageListInput.IDs)
+	}
+}
+
+func TestMsgGetUserMessageListRejectsMissingID(t *testing.T) {
+	core, fakeRepo := newMsgReadCoreForTest(t)
+	fakeRepo.userMessages = map[int64]*repository.UserMessageBox{
+		7: {UserID: 100, UserMessageID: 7, MessageText: "source", MessageDate: 1_772_000_300},
+	}
+
+	_, err := core.MsgGetUserMessageList(&msgpb.TLMsgGetUserMessageList{UserId: 100, IdList: []int32{7, 99}})
+	if !errors.Is(err, msgpb.ErrMsgIdInvalid) {
+		t.Fatalf("MsgGetUserMessageList() error = %v, want ErrMsgIdInvalid", err)
+	}
+}
+
+func TestMsgGetUserMessagePreservesV3ViewPayloadShape(t *testing.T) {
+	core, fakeRepo := newMsgReadCoreForTest(t)
+	eventPayload := mustMarshalMsgMessageEventV3(t, payload.MessageEventV3{
+		SchemaVersion:        payload.MessageEventSchemaVersionV3,
+		EventKind:            payload.EventKindNewMessage,
+		CanonicalMessageID:   900,
+		PeerSeq:              3,
+		MessageID:            7,
+		PeerType:             payload.PeerTypeUser,
+		PeerID:               200,
+		FromUserID:           200,
+		ToUserID:             100,
+		Date:                 1_772_000_300,
+		Out:                  false,
+		MessageText:          "caption",
+		ReplyToUserMessageID: 5,
+		MediaRef:             &payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "document", ID: 333},
+		Attrs:                &payload.MessageAttrsV1{SchemaVersion: payload.MessageAttrsSchemaVersionV1, GroupedID: 444, Noforwards: true},
+		ForwardRef:           &payload.ForwardRefV1{SchemaVersion: payload.ForwardRefSchemaVersionV1, FromUserID: 300, Date: 1_772_000_001},
+	})
+	fakeRepo.userMessages = map[int64]*repository.UserMessageBox{
+		7: {
+			UserID:             100,
+			UserMessageID:      7,
+			CanonicalMessageID: 900,
+			PeerType:           payload.PeerTypeUser,
+			PeerID:             200,
+			PeerSeq:            3,
+			FromUserID:         200,
+			MessageText:        "plain fallback must not win",
+			MessageDate:        1_772_000_300,
+			ViewPayload:        eventPayload,
+		},
+	}
+
+	got, err := core.MsgGetUserMessage(&msgpb.TLMsgGetUserMessage{UserId: 100, Id: 7})
+	if err != nil {
+		t.Fatalf("MsgGetUserMessage() error = %v", err)
+	}
+	message, ok := got.Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("Message = %T, want *tg.TLMessage", got.Message)
+	}
+	if message.Message != "caption" || message.Noforwards != true {
+		t.Fatalf("message text/noforwards = %q/%t, want persisted V3 shape", message.Message, message.Noforwards)
+	}
+	if _, ok := message.Media.(*tg.TLMessageMediaDocument); !ok {
+		t.Fatalf("media = %T, want *tg.TLMessageMediaDocument", message.Media)
+	}
+	if message.GroupedId == nil || *message.GroupedId != 444 || message.FwdFrom == nil {
+		t.Fatalf("grouped/forward = grouped:%v fwd:%T", message.GroupedId, message.FwdFrom)
+	}
+	reply, ok := message.ReplyTo.(*tg.TLMessageReplyHeader)
+	if !ok || reply.ReplyToMsgId == nil || *reply.ReplyToMsgId != 5 {
+		t.Fatalf("reply = %#v, want reply_to_msg_id 5", message.ReplyTo)
+	}
+}
+
+func TestForwardRevalidationRejectsInvisibleSource(t *testing.T) {
+	core, fakeRepo, _ := newBatchMsgCoreForTest(t)
+	fakeRepo.forwardVisible = false
+
+	_, err := core.MsgSendMessageV2(buildForwardSendRequestForTest(100, 200, 9001, 11, 7))
+	if !errors.Is(err, msgpb.ErrMsgIdInvalid) {
+		t.Fatalf("error = %v, want ErrMsgIdInvalid", err)
+	}
+	if fakeRepo.batchCreateCalls != 0 {
+		t.Fatal("canonical rows were created before forward revalidation")
+	}
+}
+
+func TestMsgSendMessageV2BatchReceiverAckFailureIsRetryable(t *testing.T) {
+	core, fakeRepo, fakeUpdates := newBatchMsgCoreForTest(t)
+	fakeUpdates.receiverErr = errors.New("broker unavailable")
+
+	_, err := core.MsgSendMessageV2(buildBatchSendRequestForTest(100, 200, 9001, []int64{11, 12}))
+	if !errors.Is(err, msgpb.ErrSenderSyncFailed) {
+		t.Fatalf("error = %v, want retryable msg error", err)
+	}
+	if fakeRepo.markRetryableCalls != 2 {
+		t.Fatalf("MarkRetryableFailure calls = %d, want 2", fakeRepo.markRetryableCalls)
+	}
+}
+
+func TestMsgSendMessageV2BatchRetrySkipsCommittedSenderItems(t *testing.T) {
+	core, fakeRepo, fakeUpdates := newBatchMsgCoreForTest(t)
+	committedPayload := []byte(`{"schema_version":2,"pts":21,"pts_count":1,"event_type":"new_message","user_message_id":51}`)
+	fakeRepo.batchResult.Items[0].SendStateStatus = repository.SendStateStatusSenderCommitted
+	fakeRepo.batchResult.Items[0].SenderOperationID = payload.SenderOperationID(fakeRepo.batchResult.Items[0].CanonicalMessageID, 100)
+	fakeRepo.batchResult.Items[0].SenderPTS = 21
+	fakeRepo.batchResult.Items[0].SenderPTSCount = 1
+	fakeRepo.batchResult.Items[0].SenderUpdatePayload = committedPayload
+	fakeRepo.batchResult.Items[0].SenderUpdatePayloadHash = payload.HashBytes(committedPayload)
+	fakeRepo.batchResult.Items[1].SendStateStatus = repository.SendStateStatusCanonical
+
+	got, err := core.MsgSendMessageV2(buildBatchSendRequestForTest(100, 200, 9001, []int64{11, 12}))
+	if err != nil {
+		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	}
+	if fakeUpdates.batchApplyCalls != 1 {
+		t.Fatalf("batchApplyCalls = %d, want 1", fakeUpdates.batchApplyCalls)
+	}
+	if fakeUpdates.batchApplyLen != 1 {
+		t.Fatalf("batchApplyLen = %d, want 1", fakeUpdates.batchApplyLen)
+	}
+	if len(fakeUpdates.processedOperations) != 1 || fakeUpdates.processedOperations[0].OperationId != payload.SenderOperationID(9002, 100) {
+		t.Fatalf("processed operations = %+v, want only second sender operation", fakeUpdates.processedOperations)
+	}
+	if fakeRepo.markSenderCalls != 1 {
+		t.Fatalf("markSenderCalls = %d, want 1", fakeRepo.markSenderCalls)
+	}
+	if _, ok := got.Clazz.(*tg.TLUpdates); !ok {
+		t.Fatalf("updates = %T, want *tg.TLUpdates", got.Clazz)
+	}
+}
+
+func TestMsgSendMessageV2BatchRetryResumesReceiverAckWithoutSenderDuplicate(t *testing.T) {
+	core, fakeRepo, fakeUpdates := newBatchMsgCoreForTest(t)
+	for i := range fakeRepo.batchResult.Items {
+		item := &fakeRepo.batchResult.Items[i]
+		responsePayload := []byte(`{"schema_version":2,"pts":21,"pts_count":1,"event_type":"new_message","user_message_id":51}`)
+		if i == 1 {
+			responsePayload = []byte(`{"schema_version":2,"pts":22,"pts_count":1,"event_type":"new_message","user_message_id":52}`)
+		}
+		item.SendStateStatus = repository.SendStateStatusFailedRetryable
+		item.SenderOperationID = payload.SenderOperationID(item.CanonicalMessageID, 100)
+		item.SenderPTS = int64(21 + i)
+		item.SenderPTSCount = 1
+		item.SenderUpdatePayload = responsePayload
+		item.SenderUpdatePayloadHash = payload.HashBytes(responsePayload)
+	}
+
+	got, err := core.MsgSendMessageV2(buildBatchSendRequestForTest(100, 200, 9001, []int64{11, 12}))
+	if err != nil {
+		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	}
+	if fakeUpdates.batchApplyCalls != 0 || fakeRepo.markSenderCalls != 0 {
+		t.Fatalf("sender projection duplicated: batchApplyCalls=%d markSenderCalls=%d", fakeUpdates.batchApplyCalls, fakeRepo.markSenderCalls)
+	}
+	if len(fakeUpdates.receiverPublished) != 2 {
+		t.Fatalf("receiver published len = %d, want 2", len(fakeUpdates.receiverPublished))
+	}
+	if fakeRepo.markReceiverAckedCalls != 2 || fakeRepo.markCompletedCalls != 2 {
+		t.Fatalf("unexpected retry completion calls: repo=%+v", fakeRepo)
+	}
+	if _, ok := got.Clazz.(*tg.TLUpdates); !ok {
+		t.Fatalf("updates = %T, want *tg.TLUpdates", got.Clazz)
+	}
+}
+
+func TestMsgSendMessageV2BatchReceiverPayloadIncludesRichFields(t *testing.T) {
+	core, fakeRepo, fakeUpdates := newBatchMsgCoreForTest(t)
+	fakeRepo.resolvedMessageID = &repository.ResolvedMessageID{
+		UserID:             100,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             200,
+		UserMessageID:      77,
+		PeerSeq:            7,
+		CanonicalMessageID: 7001,
+	}
+	req := buildBatchSendRequestForTest(100, 200, 9001, []int64{11, 12})
+	groupedID := int64(7001)
+	forwardDate := int32(1_772_000_010)
+	replyToMsgID := int32(77)
+	req.Message[0] = msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
+		RandomId: 11,
+		Message: tg.MakeTLMessage(&tg.TLMessage{
+			Message: "caption",
+			Media: tg.MakeTLMessageMediaPhoto(&tg.TLMessageMediaPhoto{
+				Photo: tg.MakeTLPhotoEmpty(&tg.TLPhotoEmpty{Id: 333}),
+			}),
+			GroupedId: &groupedID,
+			FwdFrom: tg.MakeTLMessageFwdHeader(&tg.TLMessageFwdHeader{
+				FromId:         tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 300}),
+				Date:           forwardDate,
+				SavedFromPeer:  tg.MakePeerUser(200),
+				SavedFromMsgId: &replyToMsgID,
+			}),
+			Entities: []tg.MessageEntityClazz{
+				tg.MakeTLMessageEntityBold(&tg.TLMessageEntityBold{Offset: 0, Length: 7}),
+			},
+			ReplyTo: tg.MakeTLMessageReplyHeader(&tg.TLMessageReplyHeader{ReplyToMsgId: &replyToMsgID}),
+		}),
+	})
+
+	got, err := core.MsgSendMessageV2(req)
+	if err != nil {
+		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	}
+	if _, ok := got.Clazz.(*tg.TLUpdates); !ok {
+		t.Fatalf("updates = %T, want *tg.TLUpdates", got.Clazz)
+	}
+	if len(fakeUpdates.receiverPublished) != 2 {
+		t.Fatalf("receiver published len = %d, want 2", len(fakeUpdates.receiverPublished))
+	}
+	var receiverOp payload.MessageOperationV3
+	if err := json.Unmarshal(fakeUpdates.receiverPublished[0].Payload, &receiverOp); err != nil {
+		t.Fatalf("decode receiver payload: %v", err)
+	}
+	if receiverOp.Out || receiverOp.PeerID != 100 || receiverOp.ToUserID != 200 || receiverOp.MessageText != "caption" {
+		t.Fatalf("unexpected receiver viewer fields: %+v", receiverOp)
+	}
+	if receiverOp.MediaRef == nil || receiverOp.MediaRef.Kind != "photo" || receiverOp.MediaRef.ID != 333 {
+		t.Fatalf("receiver media ref = %+v, want photo 333", receiverOp.MediaRef)
+	}
+	if receiverOp.Attrs == nil || receiverOp.Attrs.GroupedID != groupedID {
+		t.Fatalf("receiver attrs = %+v, want grouped_id %d", receiverOp.Attrs, groupedID)
+	}
+	if receiverOp.ForwardRef == nil || receiverOp.ForwardRef.FromUserID != 300 {
+		t.Fatalf("receiver forward ref = %+v, want from user 300", receiverOp.ForwardRef)
+	}
+	if len(receiverOp.Entities) != 1 || receiverOp.Entities[0].Kind != "bold" {
+		t.Fatalf("receiver entities = %+v, want bold entity", receiverOp.Entities)
+	}
+	if receiverOp.ReplyToCanonicalMessageID != 7001 {
+		t.Fatalf("reply_to_canonical_message_id = %d, want 7001", receiverOp.ReplyToCanonicalMessageID)
+	}
+}
+
+func TestMsgSendMessageV2MediaReturnsTLUpdates(t *testing.T) {
+	responsePayload := []byte(`{"schema_version":2,"pts":31,"pts_count":1,"event_type":"new_message","user_message_id":61}`)
+	responseHash := mustHashBytes(t, responsePayload)
+	repo := &fakeMsgRepository{
+		sendState: &repository.SendState{SendStateID: 1, Status: repository.SendStateStatusInitialized},
+		canonical: &repository.CanonicalMessageResult{
+			SendStateID:        1,
+			CanonicalMessageID: 9101,
+			PeerSeq:            31,
+			MessageDate:        1_772_000_200,
+			RequestPayloadHash: payload.HashBytes([]byte("request")),
+			CreatedNew:         true,
+		},
+	}
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:              100,
+			OperationId:         payload.SenderOperationID(9101, 100),
+			Status:              1,
+			Pts:                 31,
+			PtsCount:            1,
+			CurrentPts:          31,
+			ResponsePayload:     responsePayload,
+			ResponsePayloadHash: responseHash,
+		}),
+	}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:              repo,
+		UserUpdates:       updatesClient,
+		ReceiverPublisher: &fakeReceiverPublisher{},
+	})
+
+	got, err := core.MsgSendMessageV2(buildMediaSendRequestForTest(100, 200, 9001, 11, "caption"))
+	if err != nil {
+		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	}
+	updates, ok := got.Clazz.(*tg.TLUpdates)
+	if !ok {
+		t.Fatalf("updates = %T, want *tg.TLUpdates", got.Clazz)
+	}
+	if len(updates.Updates) != 1 {
+		t.Fatalf("len(updates) = %d, want 1", len(updates.Updates))
+	}
+	update, ok := updates.Updates[0].(*tg.TLUpdateNewMessage)
+	if !ok {
+		t.Fatalf("update = %T, want *tg.TLUpdateNewMessage", updates.Updates[0])
+	}
+	message, ok := update.Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessage", update.Message)
+	}
+	if message.Media == nil || message.Message != "caption" {
+		t.Fatalf("message = %+v, want media caption", message)
+	}
+}
+
+func TestMsgSendMessageV2GroupedAndForwardReturnTLUpdates(t *testing.T) {
+	t.Run("grouped", func(t *testing.T) {
+		core := newSingleSendMsgCoreForTest(t, 100, 9102, 62)
+		req := sendMessageRequest(100, 200, 9001, "album caption")
+		groupedID := int64(7002)
+		req.Message[0].Message.(*tg.TLMessage).GroupedId = &groupedID
+
+		got, err := core.MsgSendMessageV2(req)
+		if err != nil {
+			t.Fatalf("MsgSendMessageV2() error = %v", err)
+		}
+		message := firstSentUpdateMessage(t, got)
+		if message.GroupedId == nil || *message.GroupedId != groupedID {
+			t.Fatalf("grouped_id = %v, want %d", message.GroupedId, groupedID)
+		}
+	})
+
+	t.Run("forward", func(t *testing.T) {
+		core := newSingleSendMsgCoreForTest(t, 100, 9103, 63)
+		req := sendMessageRequest(100, 200, 9001, "forwarded")
+		sourceID := int32(7)
+		req.Message[0].Message.(*tg.TLMessage).FwdFrom = tg.MakeTLMessageFwdHeader(&tg.TLMessageFwdHeader{
+			FromId:         tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 300}),
+			Date:           1_772_000_011,
+			SavedFromPeer:  tg.MakePeerUser(200),
+			SavedFromMsgId: &sourceID,
+		})
+
+		got, err := core.MsgSendMessageV2(req)
+		if err != nil {
+			t.Fatalf("MsgSendMessageV2() error = %v", err)
+		}
+		message := firstSentUpdateMessage(t, got)
+		if message.FwdFrom == nil {
+			t.Fatalf("fwd_from = nil, want forward header")
+		}
+	})
+}
+
+func TestMsgSendMessageV2BatchTooLargeFailsBeforeRepositoryBatchCreate(t *testing.T) {
+	core, fakeRepo, _ := newBatchMsgCoreForTest(t)
+	_, err := core.MsgSendMessageV2(buildBatchSendRequestForTest(100, 200, 9001, makeSequentialRandomIDsForTest(101)))
+	if !errors.Is(err, msgpb.ErrBatchTooLarge) {
+		t.Fatalf("MsgSendMessageV2() error = %v, want %v", err, msgpb.ErrBatchTooLarge)
+	}
+	if fakeRepo.batchCreateCalls != 0 {
+		t.Fatalf("batchCreateCalls = %d, want 0", fakeRepo.batchCreateCalls)
 	}
 }
 
@@ -451,6 +979,62 @@ func TestMsgSendMessageV2RetrySkipsCanonicalMarkWhenAlreadyCanonical(t *testing.
 	}
 	if repo.markSenderCalls != 1 || publisher.calls != 1 || repo.markCompletedCalls != 1 {
 		t.Fatalf("unexpected retry call counts: repo=%+v publisher_calls=%d", repo, publisher.calls)
+	}
+}
+
+func TestMsgSendMessageV2RetryableWithoutSenderResultReprocessesSender(t *testing.T) {
+	responsePayload := []byte(`{"schema_version":2,"pts":15,"pts_count":1,"event_type":"new_message","user_message_id":50}`)
+	responseHash := mustHashBytes(t, responsePayload)
+	repo := &fakeMsgRepository{
+		sendState: &repository.SendState{
+			SendStateID:        1,
+			Status:             repository.SendStateStatusFailedRetryable,
+			CanonicalMessageID: 6001,
+			PeerSeq:            9,
+		},
+		canonical: &repository.CanonicalMessageResult{
+			SendStateID:        1,
+			CanonicalMessageID: 6001,
+			PeerSeq:            9,
+			MessageDate:        1_772_000_050,
+			RequestPayloadHash: payload.HashBytes([]byte("request")),
+			CreatedNew:         false,
+		},
+	}
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:              1001,
+			OperationId:         payload.SenderOperationID(6001, 1001),
+			Status:              1,
+			Pts:                 15,
+			PtsCount:            1,
+			CurrentPts:          15,
+			ResponsePayload:     responsePayload,
+			ResponsePayloadHash: responseHash,
+		}),
+	}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:              repo,
+		UserUpdates:       updatesClient,
+		ReceiverPublisher: &fakeReceiverPublisher{},
+	})
+
+	got, err := core.MsgSendMessageV2(sendMessageRequest(1001, 1001, 9001, "retryable"))
+	if err != nil {
+		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	}
+	short, ok := got.ToUpdateShortSentMessage()
+	if !ok {
+		t.Fatalf("expected updateShortSentMessage, got %s", got.ClazzName())
+	}
+	if short.Pts != 15 || short.PtsCount != 1 || short.Id != 50 {
+		t.Fatalf("unexpected short sent message: %+v", short)
+	}
+	if updatesClient.processed == nil {
+		t.Fatal("UserupdatesProcessUserOperation was not called")
+	}
+	if repo.markSenderCalls != 1 {
+		t.Fatalf("mark sender calls = %d, want 1", repo.markSenderCalls)
 	}
 }
 
@@ -1933,6 +2517,7 @@ func TestMsgEditMessageV2RejectsNonAuthor(t *testing.T) {
 type fakeMsgRepository struct {
 	sendState           *repository.SendState
 	canonical           *repository.CanonicalMessageResult
+	batchResult         *repository.CanonicalBatchResult
 	canonicalByPeerSeq  *repository.CanonicalMessage
 	editResult          *repository.EditMessageResult
 	editErr             error
@@ -1956,13 +2541,27 @@ type fakeMsgRepository struct {
 	resolveDeleteByUserMessageID map[int64]*repository.ResolvedMessageID
 	resolveInput                 repository.ResolvedMessageID
 	resolveDeleteCalls           int
-	markCanonicalErr             error
-	markSenderErrs               []error
-	markCanonicalCalls           int
-	markSenderCalls              int
-	markReceiverAckedCalls       int
-	markCompletedCalls           int
-	markRetryableCalls           int
+	userMessages                 map[int64]*repository.UserMessageBox
+	getUserMessageInput          struct {
+		UserID        int64
+		UserMessageID int64
+	}
+	getUserMessageListInput struct {
+		UserID int64
+		IDs    []int64
+	}
+	forwardVisible             bool
+	resolveForwardInput        repository.ForwardSourceLookup
+	revalidateForwardSources   []repository.ForwardSourceIdentity
+	revalidateForwardCallCount int
+	markCanonicalErr           error
+	markSenderErrs             []error
+	batchCreateCalls           int
+	markCanonicalCalls         int
+	markSenderCalls            int
+	markReceiverAckedCalls     int
+	markCompletedCalls         int
+	markRetryableCalls         int
 }
 
 type resolveMessageKey struct {
@@ -1978,6 +2577,11 @@ func (f *fakeMsgRepository) CreateOrLoadSendState(context.Context, repository.Cr
 
 func (f *fakeMsgRepository) CreateOrGetByClientRandom(context.Context, repository.CreateCanonicalMessageInput) (*repository.CanonicalMessageResult, error) {
 	return f.canonical, nil
+}
+
+func (f *fakeMsgRepository) CreateOrGetCanonicalBatchByClientRandom(context.Context, repository.CreateCanonicalBatchInput) (*repository.CanonicalBatchResult, error) {
+	f.batchCreateCalls++
+	return f.batchResult, nil
 }
 
 func (f *fakeMsgRepository) GetCanonicalMessageByPeerSeq(context.Context, int64, int32, int64, int64) (*repository.CanonicalMessage, error) {
@@ -2082,6 +2686,57 @@ func (f *fakeMsgRepository) ResolvePeerSeqToUserMessageID(context.Context, int64
 	return 0, nil
 }
 
+func (f *fakeMsgRepository) GetUserMessage(_ context.Context, userID int64, userMessageID int64) (*repository.UserMessageBox, error) {
+	f.getUserMessageInput.UserID = userID
+	f.getUserMessageInput.UserMessageID = userMessageID
+	if f.userMessages == nil {
+		return nil, msgpb.ErrMsgIdInvalid
+	}
+	box := f.userMessages[userMessageID]
+	if box == nil || box.UserID != userID {
+		return nil, msgpb.ErrMsgIdInvalid
+	}
+	return box, nil
+}
+
+func (f *fakeMsgRepository) GetUserMessageList(_ context.Context, userID int64, ids []int64) ([]repository.UserMessageBox, error) {
+	f.getUserMessageListInput.UserID = userID
+	f.getUserMessageListInput.IDs = append([]int64(nil), ids...)
+	out := make([]repository.UserMessageBox, 0, len(ids))
+	for _, id := range ids {
+		if id <= 0 {
+			return nil, msgpb.ErrMsgIdInvalid
+		}
+		box := f.userMessages[id]
+		if box == nil || box.UserID != userID {
+			return nil, msgpb.ErrMsgIdInvalid
+		}
+		out = append(out, *box)
+	}
+	return out, nil
+}
+
+func (f *fakeMsgRepository) ResolveForwardSourceIdentity(_ context.Context, lookup repository.ForwardSourceLookup) (*repository.ForwardSourceIdentity, error) {
+	f.resolveForwardInput = lookup
+	if !f.forwardVisible {
+		return nil, msgpb.ErrMsgIdInvalid
+	}
+	return &repository.ForwardSourceIdentity{
+		UserID:             lookup.UserID,
+		UserMessageID:      lookup.SourceUserMessageID,
+		CanonicalMessageID: 7000 + lookup.SourceUserMessageID,
+	}, nil
+}
+
+func (f *fakeMsgRepository) RevalidateForwardSources(_ context.Context, sources []repository.ForwardSourceIdentity) error {
+	f.revalidateForwardCallCount++
+	f.revalidateForwardSources = append([]repository.ForwardSourceIdentity(nil), sources...)
+	if !f.forwardVisible {
+		return msgpb.ErrMsgIdInvalid
+	}
+	return nil
+}
+
 func (f *fakeMsgRepository) EditCanonicalMessage(_ context.Context, in repository.EditCanonicalMessageInput) (*repository.EditMessageResult, error) {
 	f.editInput = in
 	if f.editErr != nil {
@@ -2128,8 +2783,12 @@ type fakeUserUpdatesClient struct {
 	processResults           []*userupdates.UserOperationResult
 	processWithEffects       *userupdates.TLUserupdatesProcessUserOperationWithEffects
 	processWithEffectsResult *userupdates.UserOperationResult
+	batchApplyCalls          int
+	batchApplyLen            int
 	processErr               error
 	processWithEffectsErr    error
+	receiverErr              error
+	receiverPublished        []repository.ReceiverOperation
 	getResult                *userupdates.UserOperationResult
 	getOperationResultCalls  int
 }
@@ -2153,20 +2812,46 @@ func (f *fakeUserUpdatesClient) UserupdatesProcessUserOperation(_ context.Contex
 	return f.nextProcessResult(), nil
 }
 
+func (f *fakeUserUpdatesClient) UserupdatesProcessUserOperationBatch(_ context.Context, in *userupdates.TLUserupdatesProcessUserOperationBatch) (*userupdates.VectorUserOperationResult, error) {
+	f.batchApplyCalls++
+	f.batchApplyLen = len(in.Operations)
+	f.processedOperations = append(f.processedOperations, in.Operations...)
+	if f.processErr != nil {
+		return nil, f.processErr
+	}
+	out := &userupdates.VectorUserOperationResult{Datas: make([]userupdates.UserOperationResultClazz, 0, len(in.Operations))}
+	for range in.Operations {
+		result := f.nextProcessResult()
+		if result == nil {
+			result = userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{Status: 1})
+		}
+		out.Datas = append(out.Datas, result)
+	}
+	return out, nil
+}
+
 func (f *fakeUserUpdatesClient) UserupdatesGetOperationResult(_ context.Context, _ *userupdates.TLUserupdatesGetOperationResult) (*userupdates.UserOperationResult, error) {
 	f.getOperationResultCalls++
 	return f.getResult, nil
 }
 
 type fakeReceiverPublisher struct {
-	calls      int
-	published  repository.ReceiverOperation
-	publishErr error
+	calls       int
+	published   repository.ReceiverOperation
+	publisheds  []repository.ReceiverOperation
+	publishErr  error
+	publishFunc func(repository.ReceiverOperation) error
 }
 
 func (f *fakeReceiverPublisher) Publish(_ context.Context, op repository.ReceiverOperation) (repository.KafkaAck, error) {
 	f.calls++
 	f.published = op
+	f.publisheds = append(f.publisheds, op)
+	if f.publishFunc != nil {
+		if err := f.publishFunc(op); err != nil {
+			return repository.KafkaAck{}, err
+		}
+	}
 	if f.publishErr != nil {
 		return repository.KafkaAck{}, f.publishErr
 	}
@@ -2186,6 +2871,175 @@ func sendMessageRequest(senderID, peerID, authKeyID int64, text string) *msgpb.T
 			}),
 		},
 	}
+}
+
+func newBatchMsgCoreForTest(t *testing.T) (*MsgCore, *fakeMsgRepository, *fakeUserUpdatesClient) {
+	t.Helper()
+	senderPayload1 := []byte(`{"schema_version":2,"pts":11,"pts_count":1,"event_type":"new_message","user_message_id":41}`)
+	senderPayload2 := []byte(`{"schema_version":2,"pts":12,"pts_count":1,"event_type":"new_message","user_message_id":42}`)
+	fakeRepo := &fakeMsgRepository{
+		forwardVisible: true,
+		batchResult: &repository.CanonicalBatchResult{Items: []repository.CanonicalMessageResult{
+			{SendStateID: 501, CanonicalMessageID: 9001, PeerSeq: 1, MessageDate: 1_772_000_000, RequestPayloadHash: payload.HashBytes([]byte("h1")), CreatedNew: true},
+			{SendStateID: 502, CanonicalMessageID: 9002, PeerSeq: 2, MessageDate: 1_772_000_001, RequestPayloadHash: payload.HashBytes([]byte("h2")), CreatedNew: true},
+		}},
+	}
+	fakeUpdates := &fakeUserUpdatesClient{processResults: []*userupdates.UserOperationResult{
+		userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{Status: 1, Pts: 11, PtsCount: 1, ResponsePayload: senderPayload1, ResponsePayloadHash: payload.HashBytes(senderPayload1)}),
+		userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{Status: 1, Pts: 12, PtsCount: 1, ResponsePayload: senderPayload2, ResponsePayloadHash: payload.HashBytes(senderPayload2)}),
+	}}
+	publisher := &fakeReceiverPublisher{publishFunc: func(op repository.ReceiverOperation) error {
+		fakeUpdates.receiverPublished = append(fakeUpdates.receiverPublished, op)
+		return fakeUpdates.receiverErr
+	}}
+	return New(context.Background(), &svc.ServiceContext{Repo: fakeRepo, UserUpdates: fakeUpdates, ReceiverPublisher: publisher}), fakeRepo, fakeUpdates
+}
+
+func buildBatchSendRequestForTest(senderID, peerID, authKeyID int64, randomIDs []int64) *msgpb.TLMsgSendMessageV2 {
+	out := &msgpb.TLMsgSendMessageV2{
+		UserId:    senderID,
+		AuthKeyId: authKeyID,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    peerID,
+		Message:   make([]msgpb.OutboxMessageClazz, 0, len(randomIDs)),
+	}
+	for i, randomID := range randomIDs {
+		out.Message = append(out.Message, msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
+			RandomId: randomID,
+			Message:  tg.MakeTLMessage(&tg.TLMessage{Message: string(rune('a' + i))}),
+		}))
+	}
+	return out
+}
+
+func buildMediaSendRequestForTest(senderID, peerID, authKeyID, randomID int64, caption string) *msgpb.TLMsgSendMessageV2 {
+	return &msgpb.TLMsgSendMessageV2{
+		UserId:    senderID,
+		AuthKeyId: authKeyID,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    peerID,
+		Message: []msgpb.OutboxMessageClazz{
+			msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
+				RandomId: randomID,
+				Message: tg.MakeTLMessage(&tg.TLMessage{
+					Message: caption,
+					Media: tg.MakeTLMessageMediaPhoto(&tg.TLMessageMediaPhoto{
+						Photo: tg.MakeTLPhotoEmpty(&tg.TLPhotoEmpty{Id: 333}),
+					}),
+				}),
+			}),
+		},
+	}
+}
+
+func buildForwardSendRequestForTest(senderID, peerID, authKeyID, randomID, sourceUserMessageID int64) *msgpb.TLMsgSendMessageV2 {
+	sourceID := int32(sourceUserMessageID)
+	return &msgpb.TLMsgSendMessageV2{
+		UserId:    senderID,
+		AuthKeyId: authKeyID,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    peerID,
+		Message: []msgpb.OutboxMessageClazz{
+			msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
+				RandomId: randomID,
+				Message: tg.MakeTLMessage(&tg.TLMessage{
+					Message: "forwarded",
+					FwdFrom: tg.MakeTLMessageFwdHeader(&tg.TLMessageFwdHeader{
+						Date:           1_772_000_301,
+						SavedFromPeer:  tg.MakePeerUser(peerID),
+						SavedFromMsgId: &sourceID,
+					}),
+				}),
+			}),
+		},
+	}
+}
+
+func newMsgReadCoreForTest(t *testing.T) (*MsgCore, *fakeMsgRepository) {
+	t.Helper()
+	repo := &fakeMsgRepository{forwardVisible: true}
+	return New(context.Background(), &svc.ServiceContext{Repo: repo}), repo
+}
+
+func newSingleSendMsgCoreForTest(t *testing.T, userID int64, canonicalMessageID int64, userMessageID int64) *MsgCore {
+	t.Helper()
+	responsePayload := []byte(`{"schema_version":2,"pts":31,"pts_count":1,"event_type":"new_message","user_message_id":61}`)
+	var response payload.OperationResponseV2
+	if err := json.Unmarshal(responsePayload, &response); err != nil {
+		t.Fatalf("decode test response payload: %v", err)
+	}
+	response.UserMessageID = userMessageID
+	responsePayload, err := json.Marshal(response)
+	if err != nil {
+		t.Fatalf("encode test response payload: %v", err)
+	}
+	responseHash := mustHashBytes(t, responsePayload)
+	repo := &fakeMsgRepository{
+		forwardVisible: true,
+		sendState:      &repository.SendState{SendStateID: 1, Status: repository.SendStateStatusInitialized},
+		canonical: &repository.CanonicalMessageResult{
+			SendStateID:        1,
+			CanonicalMessageID: canonicalMessageID,
+			PeerSeq:            31,
+			MessageDate:        1_772_000_200,
+			RequestPayloadHash: payload.HashBytes([]byte("request")),
+			CreatedNew:         true,
+		},
+	}
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:              userID,
+			OperationId:         payload.SenderOperationID(canonicalMessageID, userID),
+			Status:              1,
+			Pts:                 31,
+			PtsCount:            1,
+			CurrentPts:          31,
+			ResponsePayload:     responsePayload,
+			ResponsePayloadHash: responseHash,
+		}),
+	}
+	return New(context.Background(), &svc.ServiceContext{
+		Repo:              repo,
+		UserUpdates:       updatesClient,
+		ReceiverPublisher: &fakeReceiverPublisher{},
+	})
+}
+
+func firstSentUpdateMessage(t *testing.T, got *tg.Updates) *tg.TLMessage {
+	t.Helper()
+	updates, ok := got.Clazz.(*tg.TLUpdates)
+	if !ok {
+		t.Fatalf("updates = %T, want *tg.TLUpdates", got.Clazz)
+	}
+	if len(updates.Updates) != 1 {
+		t.Fatalf("len(updates) = %d, want 1", len(updates.Updates))
+	}
+	update, ok := updates.Updates[0].(*tg.TLUpdateNewMessage)
+	if !ok {
+		t.Fatalf("update = %T, want *tg.TLUpdateNewMessage", updates.Updates[0])
+	}
+	message, ok := update.Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessage", update.Message)
+	}
+	return message
+}
+
+func mustMarshalMsgMessageEventV3(t *testing.T, event payload.MessageEventV3) []byte {
+	t.Helper()
+	body, err := json.Marshal(event)
+	if err != nil {
+		t.Fatalf("marshal MessageEventV3: %v", err)
+	}
+	return body
+}
+
+func makeSequentialRandomIDsForTest(count int) []int64 {
+	out := make([]int64, 0, count)
+	for i := 0; i < count; i++ {
+		out = append(out, int64(i+1))
+	}
+	return out
 }
 
 func editMessageRequest(userID, peerID, authKeyID int64, peerSeq int32, text string) *msgpb.TLMsgEditMessageV2 {

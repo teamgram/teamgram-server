@@ -8,6 +8,22 @@ ChatClient:
     Hosts:
       - 127.0.0.1:2379
     Key: service.biz_service.chat
+IdgenClient:
+  DestService: service.idgen
+  ServiceName: RPCIdgen
+  # Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.idgen
+MediaClient:
+  DestService: service.media
+  ServiceName: RPCMedia
+  # Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.media
 MsgClient:
   DestService: messenger.msg
   ServiceName: RPCMsg

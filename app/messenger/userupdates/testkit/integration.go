@@ -41,6 +41,10 @@ func (k *Kit) UserupdatesProcessUserOperationWithEffects(ctx context.Context, in
 	return core.New(ctx, &svc.ServiceContext{Repo: k.repo}).UserupdatesProcessUserOperationWithEffects(in)
 }
 
+func (k *Kit) UserupdatesProcessUserOperationBatch(ctx context.Context, in *userupdates.TLUserupdatesProcessUserOperationBatch) (*userupdates.VectorUserOperationResult, error) {
+	return core.New(ctx, &svc.ServiceContext{Repo: k.repo}).UserupdatesProcessUserOperationBatch(in)
+}
+
 func (k *Kit) UserupdatesGetOperationResult(ctx context.Context, in *userupdates.TLUserupdatesGetOperationResult) (*userupdates.UserOperationResult, error) {
 	return core.New(ctx, &svc.ServiceContext{Repo: k.repo}).UserupdatesGetOperationResult(in)
 }
