@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/repository/model"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -22,30 +21,8 @@ func (r *Repository) GetFullUser(ctx context.Context, selfUserID int64, id int64
 	}
 
 	self := selfUserID == id
-	contact := self
-	mutual := self
 	blocked := false
-	var contactDOForUser *model.UserContacts
 	if !self {
-		contactDO, err := r.model.UserContactsModel.SelectContact(ctx, selfUserID, id)
-		if err != nil {
-			if !isNotFound(err) {
-				return nil, fmt.Errorf("%w: get full user contact %d/%d: %w", userpb.ErrUserStorage, selfUserID, id, err)
-			}
-			contactDO = nil
-		}
-		contactDOForUser = contactDO
-		contact = contactDO != nil
-
-		reverseDO, err := r.model.UserContactsModel.SelectContact(ctx, id, selfUserID)
-		if err != nil {
-			if !isNotFound(err) {
-				return nil, fmt.Errorf("%w: get full user reverse contact %d/%d: %w", userpb.ErrUserStorage, id, selfUserID, err)
-			}
-			reverseDO = nil
-		}
-		mutual = reverseDO != nil && contact
-
 		blocked, err = r.IsPeerBlocked(ctx, selfUserID, tg.PEER_USER, id)
 		if err != nil {
 			return nil, err
@@ -70,7 +47,10 @@ func (r *Repository) GetFullUser(ctx context.Context, selfUserID int64, id int64
 		botInfo = info
 	}
 
-	user := userFromModel(targetDO, self, contact, mutual, contactDOForUser)
+	projectedUser, err := r.projectFullUserUser(ctx, selfUserID, id)
+	if err != nil {
+		return nil, err
+	}
 	return tg.MakeTLUsersUserFull(&tg.TLUsersUserFull{
 		FullUser: tg.MakeTLUserFull(&tg.TLUserFull{
 			Blocked:          blocked,
@@ -82,6 +62,42 @@ func (r *Repository) GetFullUser(ctx context.Context, selfUserID int64, id int64
 			CommonChatsCount: 0,
 		}),
 		Chats: []tg.ChatClazz{},
-		Users: []tg.UserClazz{user},
+		Users: []tg.UserClazz{projectedUser},
 	}).ToUsersUserFull(), nil
+}
+
+func (r *Repository) projectFullUserUser(ctx context.Context, selfUserID int64, id int64) (tg.UserClazz, error) {
+	bundle, err := r.GetUserProjectionBundle(ctx, []int64{selfUserID}, []int64{id}, false)
+	if err != nil {
+		return nil, err
+	}
+	return fullUserProjectedUserFromBundle(bundle, selfUserID, id)
+}
+
+func fullUserProjectedUserFromBundle(bundle *UserProjectionBundle, selfUserID int64, id int64) (tg.UserClazz, error) {
+	if bundle == nil {
+		return nil, userpb.ErrUserNotFound
+	}
+	for _, viewerUsers := range bundle.ViewerUsers {
+		if viewerUsers.ViewerUserId != selfUserID {
+			continue
+		}
+		for _, user := range viewerUsers.Users {
+			if userID(user) == id {
+				return user, nil
+			}
+		}
+	}
+	return nil, userpb.ErrUserNotFound
+}
+
+func userID(user tg.UserClazz) int64 {
+	switch u := user.(type) {
+	case *tg.TLUser:
+		return u.Id
+	case *tg.TLUserEmpty:
+		return u.Id
+	default:
+		return 0
+	}
 }
