@@ -15,6 +15,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
+	"time"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/xkv"
@@ -26,6 +28,7 @@ const (
 )
 
 var ErrUploadStateNotFound = errors.New("dfs upload spool state not found")
+var ErrUploadSpoolNotWritable = errors.New("dfs upload spool is not writable")
 
 var nodeIDPattern = regexp.MustCompile(`^[A-Za-z0-9._-]+$`)
 
@@ -33,6 +36,12 @@ type UploadStateModel struct {
 	rootDir         string
 	nodeID          string
 	localShardCount int
+	partTTLSeconds  int64
+	mu              sync.RWMutex
+	writable        bool
+	draining        bool
+	drainReason     string
+	probeWritable   func(ctx context.Context, nodeRoot string) error
 }
 
 type objectCacheRef struct {
@@ -52,8 +61,6 @@ func NewUploadStateModel(conf config.UploadSpoolConf) (*UploadStateModel, error)
 	if shardCount <= 0 {
 		shardCount = defaultLocalShardCount
 	}
-	// SegmentSize and PartTTLSeconds are accepted as Task 5 configuration but
-	// intentionally remain inactive until Task 5d owns segment lifecycle.
 	if err := mkdirAllDurable(rootDir, 0o755); err != nil {
 		return nil, fmt.Errorf("upload_spool.NewUploadStateModel mkdir root: %w", err)
 	}
@@ -72,6 +79,9 @@ func NewUploadStateModel(conf config.UploadSpoolConf) (*UploadStateModel, error)
 		rootDir:         rootDir,
 		nodeID:          nodeID,
 		localShardCount: shardCount,
+		partTTLSeconds:  conf.PartTTLSeconds,
+		writable:        true,
+		probeWritable:   defaultProbeWritable,
 	}, nil
 }
 
@@ -86,6 +96,9 @@ func (m *UploadStateModel) SaveUploadPart(ctx context.Context, creator, fileID i
 	if err := ctx.Err(); err != nil {
 		return err
 	}
+	if err := m.checkWritable(); err != nil {
+		return err
+	}
 	if partIndex < 0 {
 		return fmt.Errorf("upload_spool.SaveUploadPart invalid part index %d", partIndex)
 	}
@@ -94,9 +107,11 @@ func (m *UploadStateModel) SaveUploadPart(ctx context.Context, creator, fileID i
 		return err
 	}
 	if err := mkdirAllDurable(dir, 0o755); err != nil {
+		m.markUnwritable(fmt.Sprintf("save upload part mkdir session failed: %v", err))
 		return fmt.Errorf("upload_spool.SaveUploadPart mkdir session: %w", err)
 	}
 	if err := writeFileAtomically(filepath.Join(dir, partFileName(partIndex)), data, 0o644); err != nil {
+		m.markUnwritable(fmt.Sprintf("save upload part write failed: %v", err))
 		return fmt.Errorf("upload_spool.SaveUploadPart write part: %w", err)
 	}
 	return nil
@@ -104,6 +119,9 @@ func (m *UploadStateModel) SaveUploadPart(ctx context.Context, creator, fileID i
 
 func (m *UploadStateModel) SaveUploadFileInfo(ctx context.Context, info *xkv.DfsFileInfo) error {
 	if err := ctx.Err(); err != nil {
+		return err
+	}
+	if err := m.checkWritable(); err != nil {
 		return err
 	}
 	if info == nil {
@@ -114,6 +132,7 @@ func (m *UploadStateModel) SaveUploadFileInfo(ctx context.Context, info *xkv.Dfs
 		return err
 	}
 	if err := mkdirAllDurable(dir, 0o755); err != nil {
+		m.markUnwritable(fmt.Sprintf("save upload file info mkdir session failed: %v", err))
 		return fmt.Errorf("upload_spool.SaveUploadFileInfo mkdir session: %w", err)
 	}
 	data, err := json.Marshal(info)
@@ -121,6 +140,7 @@ func (m *UploadStateModel) SaveUploadFileInfo(ctx context.Context, info *xkv.Dfs
 		return fmt.Errorf("upload_spool.SaveUploadFileInfo marshal: %w", err)
 	}
 	if err := writeFileAtomically(filepath.Join(dir, metadataFileName), data, 0o644); err != nil {
+		m.markUnwritable(fmt.Sprintf("save upload file info write failed: %v", err))
 		return fmt.Errorf("upload_spool.SaveUploadFileInfo write metadata: %w", err)
 	}
 	return nil
@@ -188,11 +208,15 @@ func (m *UploadStateModel) SaveObjectCacheRef(ctx context.Context, objectID, cre
 	if err := ctx.Err(); err != nil {
 		return err
 	}
+	if err := m.checkWritable(); err != nil {
+		return err
+	}
 	dir, err := m.cacheRefDir(objectID)
 	if err != nil {
 		return err
 	}
 	if err := mkdirAllDurable(dir, 0o755); err != nil {
+		m.markUnwritable(fmt.Sprintf("save object cache ref mkdir failed: %v", err))
 		return fmt.Errorf("upload_spool.SaveObjectCacheRef mkdir cache ref: %w", err)
 	}
 	data, err := json.Marshal(objectCacheRef{Creator: creator, FileID: fileID})
@@ -200,6 +224,7 @@ func (m *UploadStateModel) SaveObjectCacheRef(ctx context.Context, objectID, cre
 		return fmt.Errorf("upload_spool.SaveObjectCacheRef marshal: %w", err)
 	}
 	if err := writeFileAtomically(filepath.Join(dir, strconv.FormatInt(objectID, 10)+".json"), data, 0o644); err != nil {
+		m.markUnwritable(fmt.Sprintf("save object cache ref write failed: %v", err))
 		return fmt.Errorf("upload_spool.SaveObjectCacheRef write cache ref: %w", err)
 	}
 	return nil
@@ -225,6 +250,213 @@ func (m *UploadStateModel) LoadObjectCacheRef(ctx context.Context, objectID int6
 		return nil, fmt.Errorf("upload_spool.LoadObjectCacheRef unmarshal cache ref: %w", err)
 	}
 	return m.LoadUploadFileInfo(ctx, ref.Creator, ref.FileID)
+}
+
+func (m *UploadStateModel) ScanOnStart(ctx context.Context, now time.Time) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	nodeRoot, err := safeJoin(m.rootDir, m.nodeID)
+	if err != nil {
+		return fmt.Errorf("upload_spool.ScanOnStart node root: %w", err)
+	}
+	if err := m.probeWritable(ctx, nodeRoot); err != nil {
+		m.markUnwritable(fmt.Sprintf("startup writable probe failed: %v", err))
+		return fmt.Errorf("upload_spool.ScanOnStart probe writable: %w", err)
+	}
+	m.markWritable()
+	if err := m.cleanupStaleAtomicTemps(ctx); err != nil {
+		return err
+	}
+	return m.CleanupExpiredUploadSessions(ctx, now)
+}
+
+func (m *UploadStateModel) CleanupExpiredUploadSessions(ctx context.Context, now time.Time) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	if m.partTTLSeconds <= 0 {
+		return nil
+	}
+	ttl := time.Duration(m.partTTLSeconds) * time.Second
+	return m.forEachSessionDir(ctx, func(sessionDir string) error {
+		lastActivity, err := m.sessionLastActivity(sessionDir)
+		if err != nil {
+			return err
+		}
+		if !now.After(lastActivity.Add(ttl)) {
+			return nil
+		}
+		if err := os.RemoveAll(sessionDir); err != nil {
+			return fmt.Errorf("upload_spool.CleanupExpiredUploadSessions remove session %s: %w", sessionDir, err)
+		}
+		if err := syncDir(filepath.Dir(sessionDir)); err != nil {
+			return fmt.Errorf("upload_spool.CleanupExpiredUploadSessions sync parent %s: %w", filepath.Dir(sessionDir), err)
+		}
+		return nil
+	})
+}
+
+func (m *UploadStateModel) MarkDraining(reason string) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.draining = true
+	m.writable = false
+	m.drainReason = strings.TrimSpace(reason)
+}
+
+func (m *UploadStateModel) IsWritable() bool {
+	if m == nil {
+		return false
+	}
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	return m.writable && !m.draining
+}
+
+func (m *UploadStateModel) checkWritable() error {
+	if m.IsWritable() {
+		return nil
+	}
+	m.mu.RLock()
+	reason := m.drainReason
+	m.mu.RUnlock()
+	if reason == "" {
+		return ErrUploadSpoolNotWritable
+	}
+	return fmt.Errorf("%w: %s", ErrUploadSpoolNotWritable, reason)
+}
+
+func (m *UploadStateModel) markWritable() {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	if m.draining {
+		return
+	}
+	m.writable = true
+	m.drainReason = ""
+}
+
+func (m *UploadStateModel) markUnwritable(reason string) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.writable = false
+	if m.draining {
+		return
+	}
+	if strings.TrimSpace(reason) != "" {
+		m.drainReason = strings.TrimSpace(reason)
+	}
+}
+
+func (m *UploadStateModel) cleanupStaleAtomicTemps(ctx context.Context) error {
+	return m.forEachSessionDir(ctx, func(sessionDir string) error {
+		return filepath.WalkDir(sessionDir, func(path string, d os.DirEntry, err error) error {
+			if err != nil {
+				return fmt.Errorf("upload_spool.ScanOnStart walk temp %s: %w", path, err)
+			}
+			if err := ctx.Err(); err != nil {
+				return err
+			}
+			if d.IsDir() {
+				return nil
+			}
+			name := d.Name()
+			if !strings.HasPrefix(name, ".") || !strings.Contains(name, ".tmp-") {
+				return nil
+			}
+			if err := os.Remove(path); err != nil && !errors.Is(err, os.ErrNotExist) {
+				return fmt.Errorf("upload_spool.ScanOnStart remove temp %s: %w", path, err)
+			}
+			if err := syncDir(filepath.Dir(path)); err != nil {
+				return fmt.Errorf("upload_spool.ScanOnStart sync temp parent %s: %w", filepath.Dir(path), err)
+			}
+			return nil
+		})
+	})
+}
+
+func (m *UploadStateModel) forEachSessionDir(ctx context.Context, fn func(sessionDir string) error) error {
+	nodeRoot, err := safeJoin(m.rootDir, m.nodeID)
+	if err != nil {
+		return fmt.Errorf("upload_spool.forEachSessionDir node root: %w", err)
+	}
+	shards, err := os.ReadDir(nodeRoot)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return nil
+		}
+		return fmt.Errorf("upload_spool.forEachSessionDir read node root: %w", err)
+	}
+	for _, shard := range shards {
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+		if !shard.IsDir() || shard.Name() == "cache_refs" {
+			continue
+		}
+		shardDir, err := safeJoin(nodeRoot, shard.Name())
+		if err != nil {
+			return fmt.Errorf("upload_spool.forEachSessionDir shard path: %w", err)
+		}
+		sessions, err := os.ReadDir(shardDir)
+		if err != nil {
+			if errors.Is(err, os.ErrNotExist) {
+				continue
+			}
+			return fmt.Errorf("upload_spool.forEachSessionDir read shard %s: %w", shardDir, err)
+		}
+		for _, session := range sessions {
+			if err := ctx.Err(); err != nil {
+				return err
+			}
+			if !session.IsDir() {
+				continue
+			}
+			sessionDir, err := safeJoin(shardDir, session.Name())
+			if err != nil {
+				return fmt.Errorf("upload_spool.forEachSessionDir session path: %w", err)
+			}
+			if err := fn(sessionDir); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func (m *UploadStateModel) sessionLastActivity(sessionDir string) (time.Time, error) {
+	metadataPath := filepath.Join(sessionDir, metadataFileName)
+	if data, err := os.ReadFile(metadataPath); err == nil {
+		var info xkv.DfsFileInfo
+		if err := json.Unmarshal(data, &info); err == nil && info.Mtime > 0 {
+			return time.Unix(info.Mtime, 0), nil
+		}
+	} else if !errors.Is(err, os.ErrNotExist) {
+		return time.Time{}, fmt.Errorf("upload_spool.sessionLastActivity read metadata: %w", err)
+	}
+	return newestModTime(sessionDir)
+}
+
+func newestModTime(root string) (time.Time, error) {
+	var newest time.Time
+	err := filepath.WalkDir(root, func(path string, d os.DirEntry, err error) error {
+		if err != nil {
+			return fmt.Errorf("upload_spool.newestModTime walk %s: %w", path, err)
+		}
+		info, err := d.Info()
+		if err != nil {
+			return fmt.Errorf("upload_spool.newestModTime stat %s: %w", path, err)
+		}
+		if info.ModTime().After(newest) {
+			newest = info.ModTime()
+		}
+		return nil
+	})
+	if err != nil {
+		return time.Time{}, err
+	}
+	return newest, nil
 }
 
 func (m *UploadStateModel) sessionDir(creator, fileID int64) (string, error) {
@@ -370,6 +602,41 @@ func syncDir(dir string) error {
 	}
 	defer f.Close()
 	return f.Sync()
+}
+
+func defaultProbeWritable(ctx context.Context, nodeRoot string) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	tmp, err := os.CreateTemp(nodeRoot, ".writable-probe-*")
+	if err != nil {
+		return err
+	}
+	tmpName := tmp.Name()
+	closed := false
+	defer func() {
+		if !closed {
+			_ = tmp.Close()
+		}
+		_ = os.Remove(tmpName)
+	}()
+	if _, err := tmp.Write([]byte("ok")); err != nil {
+		return err
+	}
+	if err := tmp.Sync(); err != nil {
+		return err
+	}
+	if err := tmp.Close(); err != nil {
+		return err
+	}
+	closed = true
+	if err := os.Remove(tmpName); err != nil {
+		return err
+	}
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	return syncDir(nodeRoot)
 }
 
 func safeJoin(root string, elems ...string) (string, error) {

@@ -17,7 +17,10 @@
 package repository
 
 import (
+	"context"
 	"fmt"
+	"sync"
+	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/kv"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/config"
@@ -45,6 +48,9 @@ type Repository struct {
 	readLeaseSecret     string
 	readLeaseTTLSeconds int64
 	localDCID           int32
+	uploadNodeMu        sync.RWMutex
+	uploadNodeDraining  bool
+	uploadDrainReason   string
 }
 
 // NewRepository creates a new Repository.
@@ -67,6 +73,9 @@ func NewRepository(c config.Config) *Repository {
 		model, err := spool.NewUploadStateModel(c.UploadSpool)
 		if err != nil {
 			panic(fmt.Errorf("new dfs upload spool: %w", err))
+		}
+		if err := model.ScanOnStart(context.Background(), time.Now()); err != nil {
+			panic(fmt.Errorf("scan dfs upload spool on start: %w", err))
 		}
 		uploadState = model
 	}

@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strings"
+	"time"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/spool"
@@ -38,6 +40,13 @@ type uploadStateModel interface {
 	LoadObjectCacheRef(ctx context.Context, objectID int64) (*xkv.DfsFileInfo, error)
 }
 
+type uploadStateLifecycleModel interface {
+	ScanOnStart(ctx context.Context, now time.Time) error
+	CleanupExpiredUploadSessions(ctx context.Context, now time.Time) error
+	MarkDraining(reason string)
+	IsWritable() bool
+}
+
 func (i *DfsFileInfo) FileSize() int64 {
 	if i == nil || i.FileTotalParts <= 0 {
 		return 0
@@ -58,6 +67,9 @@ func (r *Repository) SaveUploadPart(ctx context.Context, ref UploadRef, partInde
 	if r == nil || r.uploadStateModel == nil {
 		return dfs.WrapDfsStorage("save upload part", errUploadStateStoreUnavailable)
 	}
+	if err := r.checkUploadNodeWritable("save upload part"); err != nil {
+		return err
+	}
 	if err := r.uploadStateModel.SaveUploadPart(ctx, ref.Creator, ref.FileID, partIndex, data); err != nil {
 		return dfs.WrapDfsStorage("save upload part", err)
 	}
@@ -67,6 +79,9 @@ func (r *Repository) SaveUploadPart(ctx context.Context, ref UploadRef, partInde
 func (r *Repository) SaveUploadFileInfo(ctx context.Context, info *DfsFileInfo) error {
 	if r == nil || r.uploadStateModel == nil {
 		return dfs.WrapDfsStorage("save upload file info", errUploadStateStoreUnavailable)
+	}
+	if err := r.checkUploadNodeWritable("save upload file info"); err != nil {
+		return err
 	}
 	if err := r.uploadStateModel.SaveUploadFileInfo(ctx, toXKVDfsFileInfo(info)); err != nil {
 		return dfs.WrapDfsStorage("save upload file info", err)
@@ -103,6 +118,9 @@ func (r *Repository) SaveObjectCacheRef(ctx context.Context, objectID int64, inf
 	if info == nil {
 		return dfs.ErrDfsFileNotFound
 	}
+	if err := r.checkUploadNodeWritable("save object cache ref"); err != nil {
+		return err
+	}
 	if err := r.uploadStateModel.SaveObjectCacheRef(ctx, objectID, info.Creator, info.FileID); err != nil {
 		return dfs.WrapDfsStorage("save object cache ref", err)
 	}
@@ -120,7 +138,76 @@ func (r *Repository) LoadObjectCacheRef(ctx context.Context, objectID int64) (*D
 	return fromXKVDfsFileInfo(info), nil
 }
 
+func (r *Repository) ScanSpoolOnStart(ctx context.Context) error {
+	if r == nil {
+		return nil
+	}
+	if lifecycle, ok := r.uploadStateModel.(uploadStateLifecycleModel); ok {
+		if err := lifecycle.ScanOnStart(ctx, time.Now()); err != nil {
+			return dfs.WrapDfsStorage("scan upload spool on start", err)
+		}
+	}
+	return nil
+}
+
+func (r *Repository) CleanupExpiredUploadSessions(ctx context.Context, now time.Time) error {
+	if r == nil {
+		return nil
+	}
+	if lifecycle, ok := r.uploadStateModel.(uploadStateLifecycleModel); ok {
+		if err := lifecycle.CleanupExpiredUploadSessions(ctx, now); err != nil {
+			return dfs.WrapDfsStorage("cleanup expired upload sessions", err)
+		}
+	}
+	return nil
+}
+
+func (r *Repository) MarkUploadNodeDraining(reason string) {
+	if r == nil {
+		return
+	}
+	r.uploadNodeMu.Lock()
+	r.uploadNodeDraining = true
+	r.uploadDrainReason = strings.TrimSpace(reason)
+	r.uploadNodeMu.Unlock()
+	if lifecycle, ok := r.uploadStateModel.(uploadStateLifecycleModel); ok {
+		lifecycle.MarkDraining(reason)
+	}
+}
+
+func (r *Repository) IsUploadNodeWritable() bool {
+	if r == nil {
+		return false
+	}
+	r.uploadNodeMu.RLock()
+	draining := r.uploadNodeDraining
+	r.uploadNodeMu.RUnlock()
+	if draining {
+		return false
+	}
+	if lifecycle, ok := r.uploadStateModel.(uploadStateLifecycleModel); ok {
+		return lifecycle.IsWritable()
+	}
+	return true
+}
+
 var errUploadStateStoreUnavailable = errors.New("upload state store unavailable")
+
+func (r *Repository) checkUploadNodeWritable(op string) error {
+	if r.IsUploadNodeWritable() {
+		return nil
+	}
+	reason := ""
+	if r != nil {
+		r.uploadNodeMu.RLock()
+		reason = r.uploadDrainReason
+		r.uploadNodeMu.RUnlock()
+	}
+	if reason == "" {
+		reason = "upload node is not writable"
+	}
+	return dfs.WrapDfsStorage(op, fmt.Errorf("%w: %s", spool.ErrUploadSpoolNotWritable, reason))
+}
 
 func mapUploadStateError(op string, err error) error {
 	if errors.Is(err, xkv.ErrUploadStateNotFound) || errors.Is(err, spool.ErrUploadStateNotFound) {

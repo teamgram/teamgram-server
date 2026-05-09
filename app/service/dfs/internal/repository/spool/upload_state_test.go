@@ -6,7 +6,9 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
+	"time"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/xkv"
@@ -215,13 +217,324 @@ func TestUploadStateModelPathsRemainUnderRoot(t *testing.T) {
 	}
 }
 
+func TestUploadStateModelScanOnStartKeepsFreshSession(t *testing.T) {
+	ctx := context.Background()
+	model := newTestUploadStateModelWithConf(t, config.UploadSpoolConf{
+		RootDir:         t.TempDir(),
+		NodeIDFile:      "node_id",
+		LocalShardCount: 4,
+		PartTTLSeconds:  3600,
+	})
+	now := time.Unix(1_700_010_000, 0)
+	if err := model.SaveUploadFileInfo(ctx, &xkv.DfsFileInfo{
+		Creator:        1001,
+		FileID:         2002,
+		FileTotalParts: 1,
+		Mtime:          now.Add(-10 * time.Minute).Unix(),
+	}); err != nil {
+		t.Fatalf("SaveUploadFileInfo() error = %v", err)
+	}
+
+	if err := model.ScanOnStart(ctx, now); err != nil {
+		t.Fatalf("ScanOnStart() error = %v", err)
+	}
+	if _, err := model.LoadUploadFileInfo(ctx, 1001, 2002); err != nil {
+		t.Fatalf("LoadUploadFileInfo() after scan error = %v", err)
+	}
+	if !model.IsWritable() {
+		t.Fatal("IsWritable() = false, want true")
+	}
+}
+
+func TestUploadStateModelScanOnStartRemovesExpiredSession(t *testing.T) {
+	ctx := context.Background()
+	model := newTestUploadStateModelWithConf(t, config.UploadSpoolConf{
+		RootDir:         t.TempDir(),
+		NodeIDFile:      "node_id",
+		LocalShardCount: 4,
+		PartTTLSeconds:  3600,
+	})
+	now := time.Unix(1_700_010_000, 0)
+	if err := model.SaveUploadFileInfo(ctx, &xkv.DfsFileInfo{
+		Creator:        1001,
+		FileID:         2002,
+		FileTotalParts: 1,
+		Mtime:          now.Add(-2 * time.Hour).Unix(),
+	}); err != nil {
+		t.Fatalf("SaveUploadFileInfo() error = %v", err)
+	}
+
+	if err := model.ScanOnStart(ctx, now); err != nil {
+		t.Fatalf("ScanOnStart() error = %v", err)
+	}
+	if _, err := model.LoadUploadFileInfo(ctx, 1001, 2002); !errors.Is(err, ErrUploadStateNotFound) {
+		t.Fatalf("LoadUploadFileInfo() after scan error = %v, want ErrUploadStateNotFound", err)
+	}
+}
+
+func TestUploadStateModelScanOnStartUsesFileMtimeForMissingAndCorruptMetadata(t *testing.T) {
+	ctx := context.Background()
+	model := newTestUploadStateModelWithConf(t, config.UploadSpoolConf{
+		RootDir:         t.TempDir(),
+		NodeIDFile:      "node_id",
+		LocalShardCount: 4,
+		PartTTLSeconds:  3600,
+	})
+	now := time.Unix(1_700_010_000, 0)
+
+	missingFreshDir, err := model.sessionDir(1001, 2002)
+	if err != nil {
+		t.Fatalf("sessionDir(missing fresh) error = %v", err)
+	}
+	if err := mkdirAllDurable(missingFreshDir, 0o755); err != nil {
+		t.Fatalf("mkdir missing fresh session error = %v", err)
+	}
+	missingFreshPart := filepath.Join(missingFreshDir, partFileName(0))
+	if err := os.WriteFile(missingFreshPart, []byte("fresh"), 0o644); err != nil {
+		t.Fatalf("WriteFile(missing fresh part) error = %v", err)
+	}
+	freshTime := now.Add(-10 * time.Minute)
+	if err := os.Chtimes(missingFreshPart, freshTime, freshTime); err != nil {
+		t.Fatalf("Chtimes(missing fresh part) error = %v", err)
+	}
+	if err := os.Chtimes(missingFreshDir, freshTime, freshTime); err != nil {
+		t.Fatalf("Chtimes(missing fresh dir) error = %v", err)
+	}
+
+	missingExpiredDir, err := model.sessionDir(5005, 6006)
+	if err != nil {
+		t.Fatalf("sessionDir(missing expired) error = %v", err)
+	}
+	if err := mkdirAllDurable(missingExpiredDir, 0o755); err != nil {
+		t.Fatalf("mkdir missing expired session error = %v", err)
+	}
+	missingExpiredPart := filepath.Join(missingExpiredDir, partFileName(0))
+	if err := os.WriteFile(missingExpiredPart, []byte("expired"), 0o644); err != nil {
+		t.Fatalf("WriteFile(missing expired part) error = %v", err)
+	}
+	expiredTime := now.Add(-2 * time.Hour)
+	if err := os.Chtimes(missingExpiredPart, expiredTime, expiredTime); err != nil {
+		t.Fatalf("Chtimes(missing expired part) error = %v", err)
+	}
+	if err := os.Chtimes(missingExpiredDir, expiredTime, expiredTime); err != nil {
+		t.Fatalf("Chtimes(missing expired dir) error = %v", err)
+	}
+
+	corruptFreshDir, err := model.sessionDir(7007, 8008)
+	if err != nil {
+		t.Fatalf("sessionDir(corrupt fresh) error = %v", err)
+	}
+	if err := mkdirAllDurable(corruptFreshDir, 0o755); err != nil {
+		t.Fatalf("mkdir corrupt fresh session error = %v", err)
+	}
+	corruptFreshMetadata := filepath.Join(corruptFreshDir, metadataFileName)
+	if err := os.WriteFile(corruptFreshMetadata, []byte("{not-json"), 0o644); err != nil {
+		t.Fatalf("WriteFile(corrupt fresh metadata) error = %v", err)
+	}
+	if err := os.Chtimes(corruptFreshMetadata, freshTime, freshTime); err != nil {
+		t.Fatalf("Chtimes(corrupt fresh metadata) error = %v", err)
+	}
+	if err := os.Chtimes(corruptFreshDir, freshTime, freshTime); err != nil {
+		t.Fatalf("Chtimes(corrupt fresh dir) error = %v", err)
+	}
+
+	corruptExpiredDir, err := model.sessionDir(3003, 4004)
+	if err != nil {
+		t.Fatalf("sessionDir(corrupt expired) error = %v", err)
+	}
+	if err := mkdirAllDurable(corruptExpiredDir, 0o755); err != nil {
+		t.Fatalf("mkdir corrupt expired session error = %v", err)
+	}
+	corruptMetadata := filepath.Join(corruptExpiredDir, metadataFileName)
+	if err := os.WriteFile(corruptMetadata, []byte("{not-json"), 0o644); err != nil {
+		t.Fatalf("WriteFile(corrupt metadata) error = %v", err)
+	}
+	if err := os.Chtimes(corruptMetadata, expiredTime, expiredTime); err != nil {
+		t.Fatalf("Chtimes(corrupt metadata) error = %v", err)
+	}
+	if err := os.Chtimes(corruptExpiredDir, expiredTime, expiredTime); err != nil {
+		t.Fatalf("Chtimes(corrupt expired dir) error = %v", err)
+	}
+
+	if err := model.ScanOnStart(ctx, now); err != nil {
+		t.Fatalf("ScanOnStart() error = %v", err)
+	}
+	if _, err := os.Stat(missingFreshDir); err != nil {
+		t.Fatalf("missing metadata fresh session stat error = %v", err)
+	}
+	if _, err := os.Stat(missingExpiredDir); !errors.Is(err, os.ErrNotExist) {
+		t.Fatalf("missing metadata expired session stat error = %v, want not exist", err)
+	}
+	if _, err := os.Stat(corruptFreshDir); err != nil {
+		t.Fatalf("corrupt metadata fresh session stat error = %v", err)
+	}
+	if _, err := os.Stat(corruptExpiredDir); !errors.Is(err, os.ErrNotExist) {
+		t.Fatalf("corrupt metadata expired session stat error = %v, want not exist", err)
+	}
+}
+
+func TestUploadStateModelScanOnStartRemovesStaleAtomicTempFiles(t *testing.T) {
+	ctx := context.Background()
+	model := newTestUploadStateModelWithConf(t, config.UploadSpoolConf{
+		RootDir:         t.TempDir(),
+		NodeIDFile:      "node_id",
+		LocalShardCount: 4,
+		PartTTLSeconds:  0,
+	})
+	dir, err := model.sessionDir(1001, 2002)
+	if err != nil {
+		t.Fatalf("sessionDir() error = %v", err)
+	}
+	if err := mkdirAllDurable(dir, 0o755); err != nil {
+		t.Fatalf("mkdir session error = %v", err)
+	}
+	tmpPath := filepath.Join(dir, "."+partFileName(0)+".tmp-leftover")
+	if err := os.WriteFile(tmpPath, []byte("partial"), 0o644); err != nil {
+		t.Fatalf("WriteFile(temp) error = %v", err)
+	}
+
+	if err := model.ScanOnStart(ctx, time.Unix(1_700_010_000, 0)); err != nil {
+		t.Fatalf("ScanOnStart() error = %v", err)
+	}
+	if _, err := os.Stat(tmpPath); !errors.Is(err, os.ErrNotExist) {
+		t.Fatalf("temp stat error = %v, want not exist", err)
+	}
+}
+
+func TestUploadStateModelScanOnStartDoesNotTreatCacheRefsAsSessions(t *testing.T) {
+	ctx := context.Background()
+	model := newTestUploadStateModelWithConf(t, config.UploadSpoolConf{
+		RootDir:         t.TempDir(),
+		NodeIDFile:      "node_id",
+		LocalShardCount: 4,
+		PartTTLSeconds:  1,
+	})
+	if err := model.SaveObjectCacheRef(ctx, 3003, 1001, 2002); err != nil {
+		t.Fatalf("SaveObjectCacheRef() error = %v", err)
+	}
+	cacheDir, err := model.cacheRefDir(3003)
+	if err != nil {
+		t.Fatalf("cacheRefDir() error = %v", err)
+	}
+
+	if err := model.ScanOnStart(ctx, time.Unix(1_700_010_000, 0)); err != nil {
+		t.Fatalf("ScanOnStart() error = %v", err)
+	}
+	if _, err := os.Stat(cacheDir); err != nil {
+		t.Fatalf("cache_refs stat error = %v", err)
+	}
+}
+
+func TestUploadStateModelProbeFailureMarksUnwritable(t *testing.T) {
+	model := newTestUploadStateModel(t)
+	probeErr := errors.New("probe failed")
+	model.probeWritable = func(context.Context, string) error {
+		return probeErr
+	}
+
+	err := model.ScanOnStart(context.Background(), time.Unix(1_700_010_000, 0))
+	if !errors.Is(err, probeErr) {
+		t.Fatalf("ScanOnStart() error = %v, want probe error", err)
+	}
+	if model.IsWritable() {
+		t.Fatal("IsWritable() = true, want false")
+	}
+	if err := model.SaveUploadPart(context.Background(), 1001, 2002, 0, []byte("data")); err == nil {
+		t.Fatal("SaveUploadPart() error = nil, want unwritable rejection")
+	}
+}
+
+func TestUploadStateModelWriteFailureMarksUnwritable(t *testing.T) {
+	ctx := context.Background()
+	model := newTestUploadStateModel(t)
+	if err := model.SaveUploadPart(ctx, 3003, 4004, 0, []byte("ok")); err != nil {
+		t.Fatalf("SaveUploadPart(preexisting) error = %v", err)
+	}
+	if err := model.SaveUploadFileInfo(ctx, &xkv.DfsFileInfo{
+		Creator:           3003,
+		FileID:            4004,
+		FileTotalParts:    1,
+		FirstFilePartSize: 2,
+	}); err != nil {
+		t.Fatalf("SaveUploadFileInfo(preexisting) error = %v", err)
+	}
+	if err := model.SaveObjectCacheRef(ctx, 5005, 3003, 4004); err != nil {
+		t.Fatalf("SaveObjectCacheRef(preexisting) error = %v", err)
+	}
+	sessionDir, err := model.sessionDir(1001, 2002)
+	if err != nil {
+		t.Fatalf("sessionDir() error = %v", err)
+	}
+	if err := mkdirAllDurable(filepath.Dir(sessionDir), 0o755); err != nil {
+		t.Fatalf("mkdir session parent error = %v", err)
+	}
+	if err := os.WriteFile(sessionDir, []byte("path conflict"), 0o644); err != nil {
+		t.Fatalf("WriteFile(session path conflict) error = %v", err)
+	}
+
+	err = model.SaveUploadPart(ctx, 1001, 2002, 0, []byte("data"))
+	if err == nil {
+		t.Fatal("SaveUploadPart() error = nil, want write failure")
+	}
+	if errors.Is(err, ErrUploadSpoolNotWritable) {
+		t.Fatalf("SaveUploadPart() error = %v, should be original write failure", err)
+	}
+	if model.IsWritable() {
+		t.Fatal("IsWritable() = true after write failure, want false")
+	}
+	if err := model.SaveUploadFileInfo(ctx, &xkv.DfsFileInfo{Creator: 1001, FileID: 2002}); !errors.Is(err, ErrUploadSpoolNotWritable) {
+		t.Fatalf("SaveUploadFileInfo() after write failure error = %v, want ErrUploadSpoolNotWritable", err)
+	}
+
+	info, err := model.LoadUploadFileInfo(ctx, 3003, 4004)
+	if err != nil {
+		t.Fatalf("LoadUploadFileInfo() after write failure error = %v", err)
+	}
+	reader, err := model.OpenUploadFileReader(ctx, info)
+	if err != nil {
+		t.Fatalf("OpenUploadFileReader() after write failure error = %v", err)
+	}
+	got, err := io.ReadAll(reader)
+	if err != nil {
+		t.Fatalf("ReadAll() after write failure error = %v", err)
+	}
+	if string(got) != "ok" {
+		t.Fatalf("OpenUploadFileReader() after write failure bytes = %q, want %q", got, "ok")
+	}
+	if _, err := model.LoadObjectCacheRef(ctx, 5005); err != nil {
+		t.Fatalf("LoadObjectCacheRef() after write failure error = %v", err)
+	}
+}
+
+func TestUploadStateModelDrainReasonSurvivesUnwritableMark(t *testing.T) {
+	model := newTestUploadStateModel(t)
+	model.MarkDraining("planned drain")
+	model.markUnwritable("fsync failed")
+
+	err := model.SaveUploadPart(context.Background(), 1001, 2002, 0, []byte("data"))
+	if !errors.Is(err, ErrUploadSpoolNotWritable) {
+		t.Fatalf("SaveUploadPart() error = %v, want ErrUploadSpoolNotWritable", err)
+	}
+	if !strings.Contains(err.Error(), "planned drain") {
+		t.Fatalf("SaveUploadPart() error = %v, want planned drain reason", err)
+	}
+	if strings.Contains(err.Error(), "fsync failed") {
+		t.Fatalf("SaveUploadPart() error = %v, should keep drain reason", err)
+	}
+}
+
 func newTestUploadStateModel(t *testing.T) *UploadStateModel {
 	t.Helper()
-	model, err := NewUploadStateModel(config.UploadSpoolConf{
+	return newTestUploadStateModelWithConf(t, config.UploadSpoolConf{
 		RootDir:         t.TempDir(),
 		NodeIDFile:      "node_id",
 		LocalShardCount: 4,
 	})
+}
+
+func newTestUploadStateModelWithConf(t *testing.T, conf config.UploadSpoolConf) *UploadStateModel {
+	t.Helper()
+	model, err := NewUploadStateModel(conf)
 	if err != nil {
 		t.Fatalf("NewUploadStateModel() error = %v", err)
 	}

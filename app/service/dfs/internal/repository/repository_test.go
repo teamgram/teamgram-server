@@ -5,6 +5,7 @@ import (
 	"errors"
 	"reflect"
 	"testing"
+	"time"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/config"
@@ -122,6 +123,81 @@ func TestRepositoryMapsSpoolNotFoundToDfsFileNotFound(t *testing.T) {
 	}
 	if errors.Is(err, dfs.ErrDfsStorage) {
 		t.Fatalf("LoadUploadFileInfo() error = %v, should not be ErrDfsStorage", err)
+	}
+}
+
+func TestRepositoryScanSpoolOnStartNoopsForXKVBackend(t *testing.T) {
+	repo := NewRepository(config.Config{Kv: minimalKVConf()})
+	if err := repo.ScanSpoolOnStart(context.Background()); err != nil {
+		t.Fatalf("ScanSpoolOnStart() error = %v", err)
+	}
+	if err := repo.CleanupExpiredUploadSessions(context.Background(), time.Unix(1_700_010_000, 0)); err != nil {
+		t.Fatalf("CleanupExpiredUploadSessions() error = %v", err)
+	}
+	if !repo.IsUploadNodeWritable() {
+		t.Fatal("IsUploadNodeWritable() = false, want true for xkv backend")
+	}
+	repo.MarkUploadNodeDraining("xkv drain")
+	if repo.IsUploadNodeWritable() {
+		t.Fatal("IsUploadNodeWritable() after xkv drain = true, want false")
+	}
+	err := repo.SaveUploadPart(context.Background(), UploadRef{Creator: 1001, FileID: 2002}, 0, []byte("data"))
+	if !errors.Is(err, dfs.ErrDfsStorage) {
+		t.Fatalf("SaveUploadPart() after xkv drain error = %v, want ErrDfsStorage", err)
+	}
+}
+
+func TestRepositoryUploadNodeDrainingRejectsWritesAsStorage(t *testing.T) {
+	repo := NewRepository(config.Config{
+		Kv: minimalKVConf(),
+		UploadSpool: config.UploadSpoolConf{
+			RootDir:    t.TempDir(),
+			NodeIDFile: "node_id",
+		},
+	})
+	if !repo.IsUploadNodeWritable() {
+		t.Fatal("IsUploadNodeWritable() before draining = false, want true")
+	}
+	preDrainInfo := &DfsFileInfo{
+		Creator:        1001,
+		FileID:         2002,
+		FileTotalParts: 1,
+		Mtime:          time.Unix(1_700_010_000, 0).Unix(),
+	}
+	if err := repo.SaveUploadFileInfo(context.Background(), preDrainInfo); err != nil {
+		t.Fatalf("SaveUploadFileInfo() before drain error = %v", err)
+	}
+	if err := repo.SaveObjectCacheRef(context.Background(), 3003, preDrainInfo); err != nil {
+		t.Fatalf("SaveObjectCacheRef() before drain error = %v", err)
+	}
+
+	repo.MarkUploadNodeDraining("test drain")
+	if repo.IsUploadNodeWritable() {
+		t.Fatal("IsUploadNodeWritable() after draining = true, want false")
+	}
+	err := repo.SaveUploadPart(context.Background(), UploadRef{Creator: 1001, FileID: 2002}, 0, []byte("data"))
+	if !errors.Is(err, dfs.ErrDfsStorage) {
+		t.Fatalf("SaveUploadPart() error = %v, want ErrDfsStorage", err)
+	}
+	err = repo.SaveUploadFileInfo(context.Background(), &DfsFileInfo{
+		Creator:        1001,
+		FileID:         2002,
+		FileTotalParts: 1,
+		Mtime:          time.Unix(1_700_010_000, 0).Unix(),
+	})
+	if !errors.Is(err, dfs.ErrDfsStorage) {
+		t.Fatalf("SaveUploadFileInfo() error = %v, want ErrDfsStorage", err)
+	}
+	err = repo.SaveObjectCacheRef(context.Background(), 3004, preDrainInfo)
+	if !errors.Is(err, dfs.ErrDfsStorage) {
+		t.Fatalf("SaveObjectCacheRef() error = %v, want ErrDfsStorage", err)
+	}
+	info, err := repo.LoadObjectCacheRef(context.Background(), 3003)
+	if err != nil {
+		t.Fatalf("LoadObjectCacheRef() after draining error = %v", err)
+	}
+	if info.Creator != preDrainInfo.Creator || info.FileID != preDrainInfo.FileID {
+		t.Fatalf("LoadObjectCacheRef() after draining = %+v, want creator/file from pre-drain ref", info)
 	}
 }
 
