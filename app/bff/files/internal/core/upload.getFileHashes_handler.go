@@ -17,14 +17,38 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // UploadGetFileHashes
 // upload.getFileHashes#9156982a location:InputFileLocation offset:long = Vector<FileHash>;
 func (c *FilesCore) UploadGetFileHashes(in *tg.TLUploadGetFileHashes) (*tg.VectorFileHash, error) {
-	// TODO: not impl
-	c.Logger.Errorf("upload.getFileHashes - error: method UploadGetFileHashes not impl")
+	if in == nil || in.Location == nil {
+		return nil, tg.ErrLocationInvalid
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	switch in.Location.InputFileLocationClazzName() {
+	case tg.ClazzName_inputDocumentFileLocation,
+		tg.ClazzName_inputPhotoFileLocation,
+		tg.ClazzName_inputPeerPhotoFileLocation:
+		resolved, err := c.resolveFileLocation(in.Location)
+		if err != nil {
+			return nil, err
+		}
+		hashes, err := c.svcCtx.Repo.DfsClient.DfsGetFileHashesByReadLease(c.ctx, &dfs.TLDfsGetFileHashesByReadLease{
+			ReadLease: resolved.ReadLease,
+			Offset:    in.Offset,
+			Limit:     0,
+		})
+		if err != nil {
+			return nil, err
+		}
+		if hashes == nil {
+			return nil, tg.ErrInputRequestInvalid
+		}
+		return &tg.VectorFileHash{Datas: hashes.Datas}, nil
+	default:
+		return nil, tg.ErrLocationInvalid
+	}
 }

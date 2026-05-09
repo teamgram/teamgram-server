@@ -62,6 +62,70 @@ func TestUploadGetFileUsesMediaLocatorAndReadLease(t *testing.T) {
 	}
 }
 
+func TestUploadGetFileResolvesPhotoAndPeerPhotoLocations(t *testing.T) {
+	tests := []struct {
+		name     string
+		location tg.InputFileLocationClazz
+	}{
+		{
+			name: "photo",
+			location: tg.MakeTLInputPhotoFileLocation(&tg.TLInputPhotoFileLocation{
+				Id:            1001,
+				AccessHash:    2002,
+				FileReference: []byte("file-reference"),
+				ThumbSize:     "m",
+			}),
+		},
+		{
+			name: "peer photo",
+			location: tg.MakeTLInputPeerPhotoFileLocation(&tg.TLInputPeerPhotoFileLocation{
+				Big:     true,
+				PhotoId: 3003,
+			}),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			dfsClient := &fakeFilesDfsClient{
+				readResp: tg.MakeTLUploadFile(&tg.TLUploadFile{
+					Type:  tg.MakeTLStorageFilePartial(&tg.TLStorageFilePartial{}),
+					Mtime: 1,
+					Bytes: []byte("part"),
+				}).ToUploadFile(),
+			}
+			mediaClient := &fakeFilesMediaClient{
+				resolveResp: mediapb.MakeTLMediaResolvedFileObject(&mediapb.TLMediaResolvedFileObject{
+					ObjectId:        "object-photo",
+					ReadLease:       []byte("read-lease"),
+					Size2:           4,
+					MimeType:        "image/jpeg",
+					DcId:            1,
+					StorageFileType: testStorageFileType(tg.ClazzID_storage_fileJpeg),
+				}).ToMediaResolvedFileObject(),
+			}
+
+			_, err := newUploadGetFileTestCore(dfsClient, mediaClient, false).UploadGetFile(&tg.TLUploadGetFile{
+				Location: tt.location,
+				Offset:   7,
+				Limit:    8,
+			})
+			if err != nil {
+				t.Fatalf("UploadGetFile() error = %v", err)
+			}
+			if mediaClient.resolveReq == nil || mediaClient.resolveReq.Location != tt.location {
+				t.Fatalf("resolve request = %#v", mediaClient.resolveReq)
+			}
+			if dfsClient.readReq == nil || string(dfsClient.readReq.ReadLease) != "read-lease" || dfsClient.readReq.Offset != 7 || dfsClient.readReq.Limit != 8 {
+				t.Fatalf("read request = %#v", dfsClient.readReq)
+			}
+			if dfsClient.downloadReq != nil {
+				t.Fatalf("legacy DfsDownloadFile called: %#v", dfsClient.downloadReq)
+			}
+		})
+	}
+}
+
 func TestUploadGetFileLegacyFallbackIsConfigGated(t *testing.T) {
 	location := tg.MakeTLInputEncryptedFileLocation(&tg.TLInputEncryptedFileLocation{Id: 1001, AccessHash: 2002})
 	dfsClient := &fakeFilesDfsClient{
@@ -131,6 +195,9 @@ type fakeFilesDfsClient struct {
 	readReq      *dfs.TLDfsGetFileByReadLease
 	readResp     *tg.UploadFile
 	readErr      error
+	hashReq      *dfs.TLDfsGetFileHashesByReadLease
+	hashResp     *dfs.VectorFileHash
+	hashErr      error
 	downloadReq  *dfs.TLDfsDownloadFile
 	downloadResp *tg.UploadFile
 	downloadErr  error
@@ -149,8 +216,9 @@ func (f *fakeFilesDfsClient) DfsGetFileByReadLease(_ context.Context, in *dfs.TL
 	return f.readResp, f.readErr
 }
 
-func (f *fakeFilesDfsClient) DfsGetFileHashesByReadLease(context.Context, *dfs.TLDfsGetFileHashesByReadLease) (*dfs.VectorFileHash, error) {
-	return nil, errors.New("unexpected DfsGetFileHashesByReadLease")
+func (f *fakeFilesDfsClient) DfsGetFileHashesByReadLease(_ context.Context, in *dfs.TLDfsGetFileHashesByReadLease) (*dfs.VectorFileHash, error) {
+	f.hashReq = in
+	return f.hashResp, f.hashErr
 }
 
 func (f *fakeFilesDfsClient) DfsWriteFilePartData(context.Context, *dfs.TLDfsWriteFilePartData) (*tg.Bool, error) {

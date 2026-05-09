@@ -61,6 +61,22 @@ func (c *FilesCore) UploadGetFile(in *tg.TLUploadGetFile) (*tg.UploadFile, error
 }
 
 func (c *FilesCore) downloadResolvedFile(location tg.InputFileLocationClazz, offset int64, limit int32) (*tg.UploadFile, error) {
+	resolved, err := c.resolveFileLocation(location)
+	if err != nil {
+		return nil, err
+	}
+	uploadFile, err := c.svcCtx.Repo.DfsClient.DfsGetFileByReadLease(c.ctx, &dfs.TLDfsGetFileByReadLease{
+		ReadLease: resolved.ReadLease,
+		Offset:    offset,
+		Limit:     limit,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return normalizeUploadFile(uploadFile)
+}
+
+func (c *FilesCore) resolveFileLocation(location tg.InputFileLocationClazz) (*mediapb.MediaResolvedFileObject, error) {
 	viewerID := int64(0)
 	if c.MD != nil {
 		viewerID = c.MD.UserId
@@ -75,15 +91,7 @@ func (c *FilesCore) downloadResolvedFile(location tg.InputFileLocationClazz, off
 	if resolved == nil || len(resolved.ReadLease) == 0 {
 		return nil, tg.ErrLocationInvalid
 	}
-	uploadFile, err := c.svcCtx.Repo.DfsClient.DfsGetFileByReadLease(c.ctx, &dfs.TLDfsGetFileByReadLease{
-		ReadLease: resolved.ReadLease,
-		Offset:    offset,
-		Limit:     limit,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return normalizeUploadFile(uploadFile)
+	return resolved, nil
 }
 
 func (c *FilesCore) downloadLegacyFile(location tg.InputFileLocationClazz, offset int64, limit int32) (*tg.UploadFile, error) {
