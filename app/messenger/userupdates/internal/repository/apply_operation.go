@@ -136,7 +136,7 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 		op.ReplyToPeerSeq = row.PeerSeq
 		op.ReplyToUserMessageID = row.UserMessageId
 	}
-	if err := resolvePublicIDsForOperation(txModels, in.UserID, &op.MessageOperationV1); err != nil {
+	if err := resolvePublicIDsForOperation(txModels, in.UserID, &op); err != nil {
 		return nil, err
 	}
 
@@ -177,7 +177,7 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 			return nil, err
 		}
 	case payload.OperationKindEditMessage:
-		if err := applyEditMessage(txModels, in, op.MessageOperationV1, eventPayload, nextPTS); err != nil {
+		if err := applyEditMessage(txModels, in, op, eventPayload, nextPTS); err != nil {
 			return nil, err
 		}
 	case payload.OperationKindUpdatePinnedMessage:
@@ -315,7 +315,7 @@ func messageOperationFromV3(op payload.MessageOperationV3) messageOperation {
 	}
 }
 
-func resolvePublicIDsForOperation(txModels *model.TxModels, userID int64, op *payload.MessageOperationV1) error {
+func resolvePublicIDsForOperation(txModels *model.TxModels, userID int64, op *messageOperation) error {
 	if op == nil {
 		return nil
 	}
@@ -840,7 +840,7 @@ func applyDeleteHistory(txModels *model.TxModels, in ApplyUserOperationInput, op
 	return nil
 }
 
-func applyEditMessage(txModels *model.TxModels, in ApplyUserOperationInput, op payload.MessageOperationV1, viewPayload []byte, nextPTS int64) error {
+func applyEditMessage(txModels *model.TxModels, in ApplyUserOperationInput, op messageOperation, viewPayload []byte, nextPTS int64) error {
 	row, err := txModels.UserMessageViewsModel.SelectByUserCanonical(in.UserID, op.CanonicalMessageID)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
@@ -856,7 +856,7 @@ func applyEditMessage(txModels *model.TxModels, in ApplyUserOperationInput, op p
 		editVersion = row.EditVersion + 1
 	}
 	row.EditVersion = editVersion
-	row.ViewSchemaVersion = int32(payload.MessageEventSchemaVersion)
+	row.ViewSchemaVersion = int32(op.EventSchemaVersion)
 	row.ViewPayload = viewPayload
 	if _, _, err := txModels.UserMessageViewsModel.InsertOrUpdate(row); err != nil {
 		return storageError("update message view after edit", err)
@@ -866,7 +866,7 @@ func applyEditMessage(txModels *model.TxModels, in ApplyUserOperationInput, op p
 			return storageError("update message view edit date", err)
 		}
 	}
-	if err := insertHashTagsTx(txModels, in.UserID, op); err != nil {
+	if err := insertHashTagsTx(txModels, in.UserID, op.MessageOperationV1); err != nil {
 		return err
 	}
 	dialog, err := txModels.UserDialogsModel.SelectByUserPeer(in.UserID, op.PeerType, op.PeerID)

@@ -666,6 +666,53 @@ func TestMessageViewToTLMessageAcceptsEditPayload(t *testing.T) {
 	}
 }
 
+func TestMessageViewToTLMessageSupportsV3MediaAttrsForward(t *testing.T) {
+	eventPayload := mustMarshalMessageEventV3(t, payload.MessageEventV3{
+		SchemaVersion:      payload.MessageEventSchemaVersionV3,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: 2002,
+		PeerSeq:            8,
+		MessageID:          102,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             1002,
+		FromUserID:         1001,
+		ToUserID:           1002,
+		Date:               1_772_000_000,
+		Out:                true,
+		MessageText:        "caption",
+		MediaRef:           &payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "document", ID: 333},
+		Attrs:              &payload.MessageAttrsV1{SchemaVersion: payload.MessageAttrsSchemaVersionV1, GroupedID: 444, Noforwards: true},
+		ForwardRef:         &payload.ForwardRefV1{SchemaVersion: payload.ForwardRefSchemaVersionV1, FromUserID: 3003, Date: 1_772_000_001},
+	})
+	message, err := messageViewToTLMessage(repository.MessageView{
+		UserID:             1001,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             1002,
+		PeerSeq:            8,
+		UserMessageID:      102,
+		CanonicalMessageID: 2002,
+		MessageStatus:      repository.MessageStatusLive,
+		ViewSchemaVersion:  payload.MessageEventSchemaVersionV3,
+		ViewPayload:        eventPayload,
+	})
+	if err != nil {
+		t.Fatalf("messageViewToTLMessage error = %v", err)
+	}
+	tlMessage, ok := message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessage", message)
+	}
+	if tlMessage.Id != 102 || tlMessage.Message != "caption" || !tlMessage.Noforwards {
+		t.Fatalf("unexpected V3 message: %+v", tlMessage)
+	}
+	if _, ok := tlMessage.Media.(*tg.TLMessageMediaDocument); !ok {
+		t.Fatalf("media = %T, want *tg.TLMessageMediaDocument", tlMessage.Media)
+	}
+	if tlMessage.GroupedId == nil || *tlMessage.GroupedId != 444 || tlMessage.FwdFrom == nil {
+		t.Fatalf("grouped/forward = grouped:%v fwd:%T", tlMessage.GroupedId, tlMessage.FwdFrom)
+	}
+}
+
 func TestGetStateReturnsRepositoryState(t *testing.T) {
 	repo := &fakeUserUpdatesRepository{
 		state: &repository.UserState{UserID: 1001, Pts: 55, UnreadCount: 3},
@@ -1127,6 +1174,15 @@ func mustMarshalMessageEventV2(t *testing.T, event payload.MessageEventV2) []byt
 	b, err := json.Marshal(event)
 	if err != nil {
 		t.Fatalf("marshal message event v2: %v", err)
+	}
+	return b
+}
+
+func mustMarshalMessageEventV3(t *testing.T, event payload.MessageEventV3) []byte {
+	t.Helper()
+	b, err := json.Marshal(event)
+	if err != nil {
+		t.Fatalf("marshal message event v3: %v", err)
 	}
 	return b
 }

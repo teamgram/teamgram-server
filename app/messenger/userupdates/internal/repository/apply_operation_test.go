@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 )
@@ -136,6 +137,67 @@ func TestBuildEventAndResponseV3CarriesMediaAttrsForward(t *testing.T) {
 	}
 	if response.UserMessageID != 101 {
 		t.Fatalf("response user_message_id = %d, want 101", response.UserMessageID)
+	}
+}
+
+func TestEnsureExistingMessageViewMatchesOperationSupportsV3(t *testing.T) {
+	event := payload.MessageEventV3{
+		SchemaVersion:      payload.MessageEventSchemaVersionV3,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: 7001,
+		PeerSeq:            9,
+		MessageID:          101,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             2002,
+		FromUserID:         1001,
+		ToUserID:           2002,
+		Date:               1777781234,
+		Out:                true,
+		MessageText:        "caption",
+		MediaRef:           &payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "document", ID: 333},
+		Attrs:              &payload.MessageAttrsV1{SchemaVersion: payload.MessageAttrsSchemaVersionV1, GroupedID: 444},
+		ForwardRef:         &payload.ForwardRefV1{SchemaVersion: payload.ForwardRefSchemaVersionV1, FromUserID: 3003, Date: 1777781000},
+	}
+	body, err := json.Marshal(event)
+	if err != nil {
+		t.Fatalf("marshal V3 event: %v", err)
+	}
+	row := &model.UserMessageViews{
+		PeerType:           event.PeerType,
+		PeerId:             event.PeerID,
+		PeerSeq:            event.PeerSeq,
+		CanonicalMessageId: event.CanonicalMessageID,
+		UserMessageId:      event.MessageID,
+		FromUserId:         event.FromUserID,
+		Outgoing:           event.Out,
+		MessageStatus:      MessageStatusLive,
+		Date:               int64(event.Date),
+		ViewSchemaVersion:  payload.MessageEventSchemaVersionV3,
+		ViewPayload:        body,
+	}
+	op := messageOperationFromV3(payload.MessageOperationV3{
+		SchemaVersion:      payload.MessageOperationSchemaVersionV3,
+		OperationKind:      payload.OperationKindSendMessage,
+		CanonicalMessageID: event.CanonicalMessageID,
+		PeerType:           event.PeerType,
+		PeerID:             event.PeerID,
+		PeerSeq:            event.PeerSeq,
+		UserMessageID:      event.MessageID,
+		FromUserID:         event.FromUserID,
+		ToUserID:           event.ToUserID,
+		Date:               event.Date,
+		Out:                event.Out,
+		MessageText:        event.MessageText,
+		MediaRef:           event.MediaRef,
+		Attrs:              event.Attrs,
+		ForwardRef:         event.ForwardRef,
+	})
+	if err := ensureExistingMessageViewMatchesOperation(row, op); err != nil {
+		t.Fatalf("ensureExistingMessageViewMatchesOperation() error = %v", err)
+	}
+	op.MediaRef = &payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "photo", ID: 999}
+	if err := ensureExistingMessageViewMatchesOperation(row, op); !errors.Is(err, userupdates.ErrOperationPayloadConflict) {
+		t.Fatalf("conflict error = %v, want ErrOperationPayloadConflict", err)
 	}
 }
 

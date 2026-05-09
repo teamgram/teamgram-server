@@ -57,7 +57,7 @@ func existingUserMessageView(txModels *model.TxModels, userID, canonicalMessageI
 	return row, true, nil
 }
 
-func ensureExistingMessageViewMatchesOperation(row *model.UserMessageViews, op payload.MessageOperationV1) error {
+func ensureExistingMessageViewMatchesOperation(row *model.UserMessageViews, op messageOperation) error {
 	if row == nil {
 		return fmt.Errorf("%w: missing existing canonical message view", userupdates.ErrUserupdatesStorage)
 	}
@@ -115,6 +115,35 @@ func ensureExistingMessageViewMatchesOperation(row *model.UserMessageViews, op p
 			event.Out != op.Out ||
 			event.MessageText != op.MessageText ||
 			!reflect.DeepEqual(event.Entities, op.Entities) {
+			return userupdates.ErrOperationPayloadConflict
+		}
+		if op.UserMessageID != 0 && event.MessageID != op.UserMessageID {
+			return userupdates.ErrOperationPayloadConflict
+		}
+		if op.ReplyToUserMessageID != 0 && event.ReplyToUserMessageID != op.ReplyToUserMessageID {
+			return userupdates.ErrOperationPayloadConflict
+		}
+	case payload.MessageEventSchemaVersionV3:
+		var event payload.MessageEventV3
+		if err := json.Unmarshal(row.ViewPayload, &event); err != nil {
+			return fmt.Errorf("%w: decode existing v3 message view: %v", userupdates.ErrUserupdatesStorage, err)
+		}
+		if event.SchemaVersion != payload.MessageEventSchemaVersionV3 ||
+			event.EventKind != payload.EventKindNewMessage ||
+			event.CanonicalMessageID != op.CanonicalMessageID ||
+			event.PeerSeq != op.PeerSeq ||
+			event.MessageID != row.UserMessageId ||
+			event.PeerType != op.PeerType ||
+			event.PeerID != op.PeerID ||
+			event.FromUserID != op.FromUserID ||
+			event.ToUserID != op.ToUserID ||
+			event.Date != op.Date ||
+			event.Out != op.Out ||
+			event.MessageText != op.MessageText ||
+			!reflect.DeepEqual(event.Entities, op.Entities) ||
+			!reflect.DeepEqual(event.MediaRef, op.MediaRef) ||
+			!reflect.DeepEqual(event.Attrs, op.Attrs) ||
+			!reflect.DeepEqual(event.ForwardRef, op.ForwardRef) {
 			return userupdates.ErrOperationPayloadConflict
 		}
 		if op.UserMessageID != 0 && event.MessageID != op.UserMessageID {

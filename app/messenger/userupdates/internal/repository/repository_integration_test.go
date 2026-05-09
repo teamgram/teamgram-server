@@ -1273,6 +1273,40 @@ func TestApplyUserOperationV3PersistsMediaAttrsForwardEvent(t *testing.T) {
 	if view.MessageKind != MessageKindMedia {
 		t.Fatalf("message kind = %d, want MessageKindMedia", view.MessageKind)
 	}
+	edit := op
+	edit.OperationKind = payload.OperationKindEditMessage
+	edit.EditDate = int32(time.Now().Unix())
+	edit.EditVersion = 2
+	edit.MessageText = "edited caption"
+	edit.MediaRef = &payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "document", ID: 444}
+	edit.Attrs = &payload.MessageAttrsV1{SchemaVersion: payload.MessageAttrsSchemaVersionV1, GroupedID: 555, Noforwards: true}
+	edit.ForwardRef = &payload.ForwardRefV1{SchemaVersion: payload.ForwardRefSchemaVersionV1, FromUserID: base + 2604, Date: int64(time.Now().Unix())}
+	editIn := buildOperationApplyInputV3(t, userID, edit, "operation-v3-edit")
+	editResult, err := repo.ApplyUserOperation(ctx, editIn)
+	if err != nil {
+		t.Fatalf("ApplyUserOperation(V3 edit) error = %v", err)
+	}
+	var editResponse payload.OperationResponseV2
+	if err := json.Unmarshal(editResult.ResponsePayload, &editResponse); err != nil {
+		t.Fatalf("unmarshal V3 edit response: %v", err)
+	}
+	if editResponse.UserMessageID != view.UserMessageId {
+		t.Fatalf("edit response user_message_id = %d, want %d", editResponse.UserMessageID, view.UserMessageId)
+	}
+	editView, err := repo.models.UserMessageViewsModel.SelectByUserCanonical(ctx, userID, op.CanonicalMessageID)
+	if err != nil {
+		t.Fatalf("SelectByUserCanonical(edit) error = %v", err)
+	}
+	if editView.ViewSchemaVersion != payload.MessageEventSchemaVersionV3 {
+		t.Fatalf("edit view schema = %d, want V3", editView.ViewSchemaVersion)
+	}
+	var editEvent payload.MessageEventV3
+	if err := json.Unmarshal(editView.ViewPayload, &editEvent); err != nil {
+		t.Fatalf("unmarshal V3 edit view payload: %v", err)
+	}
+	if editEvent.SchemaVersion != payload.MessageEventSchemaVersionV3 || editEvent.MessageID != view.UserMessageId || editEvent.MediaRef == nil || editEvent.Attrs == nil || editEvent.ForwardRef == nil {
+		t.Fatalf("V3 edit event lost schema/media/attrs/forward: %+v", editEvent)
+	}
 }
 
 func TestGetDifferenceLegacyMessageHydrationRequiresExactEventPeerSeq(t *testing.T) {

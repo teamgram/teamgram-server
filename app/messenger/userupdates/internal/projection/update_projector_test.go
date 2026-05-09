@@ -3,6 +3,7 @@ package projection
 import (
 	"encoding/json"
 	"errors"
+	"math"
 	"testing"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
@@ -518,6 +519,124 @@ func TestProjectMessageEventV3MediaGroupedForward(t *testing.T) {
 	}
 	if message.Media == nil || message.GroupedId == nil || *message.GroupedId != 444 || message.FwdFrom == nil {
 		t.Fatalf("message media/grouped/forward = media:%T grouped:%v fwd:%T", message.Media, message.GroupedId, message.FwdFrom)
+	}
+}
+
+func TestProjectMessageEventV3UserPeerFullPushWhenMediaGroupedForward(t *testing.T) {
+	body := mustMarshalMessageEventV3(t, payload.MessageEventV3{
+		SchemaVersion:      payload.MessageEventSchemaVersionV3,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: 102,
+		PeerSeq:            10,
+		MessageID:          78,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             202,
+		FromUserID:         101,
+		ToUserID:           202,
+		Date:               1700000000,
+		Out:                true,
+		MessageText:        "caption",
+		MediaRef:           &payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "photo", ID: 333},
+		Attrs:              &payload.MessageAttrsV1{SchemaVersion: payload.MessageAttrsSchemaVersionV1, GroupedID: 444},
+		ForwardRef:         &payload.ForwardRefV1{SchemaVersion: payload.ForwardRefSchemaVersionV1, FromUserID: 303, Date: 1700000001},
+	})
+	got, err := ProjectPushTask(&payload.PushTaskKafkaMessageV1{
+		Payload:  body,
+		Pts:      20,
+		PeerType: payload.PeerTypeUser,
+		PeerID:   202,
+	})
+	if err != nil {
+		t.Fatalf("ProjectPushTask() error = %v", err)
+	}
+	updates, ok := got.Updates.(*tg.TLUpdates)
+	if !ok || len(updates.Updates) != 1 {
+		t.Fatalf("updates = %#v, want single TLUpdates wrapper", got.Updates)
+	}
+	update, ok := updates.Updates[0].(*tg.TLUpdateNewMessage)
+	if !ok {
+		t.Fatalf("update = %T, want *tg.TLUpdateNewMessage", updates.Updates[0])
+	}
+	message, ok := update.Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessage", update.Message)
+	}
+	if message.Media == nil || message.GroupedId == nil || *message.GroupedId != 444 || message.FwdFrom == nil {
+		t.Fatalf("message media/grouped/forward = media:%T grouped:%v fwd:%T", message.Media, message.GroupedId, message.FwdFrom)
+	}
+}
+
+func TestProjectMessageEventV3DocumentMedia(t *testing.T) {
+	body := mustMarshalMessageEventV3(t, payload.MessageEventV3{
+		SchemaVersion:      payload.MessageEventSchemaVersionV3,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: 103,
+		PeerSeq:            11,
+		MessageID:          79,
+		PeerType:           payload.PeerTypeChat,
+		PeerID:             202,
+		FromUserID:         101,
+		ToUserID:           202,
+		Date:               1700000000,
+		Out:                true,
+		MessageText:        "document",
+		MediaRef:           &payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "document", ID: 555},
+	})
+	got, err := ProjectUserEvent(repository.UserEvent{
+		UserID:             1001,
+		Pts:                21,
+		PtsCount:           1,
+		EventType:          repository.EventTypeNewMessage,
+		EventSchemaVersion: payload.MessageEventSchemaVersionV3,
+		EventCodec:         repository.PayloadCodecJSON,
+		EventPayload:       body,
+		EventPayloadHash:   payload.HashBytes(body),
+	}, ModeDifference)
+	if err != nil {
+		t.Fatalf("ProjectUserEvent() error = %v", err)
+	}
+	message, ok := got.Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessage", got.Message)
+	}
+	media, ok := message.Media.(*tg.TLMessageMediaDocument)
+	if !ok {
+		t.Fatalf("media = %T, want *tg.TLMessageMediaDocument", message.Media)
+	}
+	doc, ok := media.Document.(*tg.TLDocumentEmpty)
+	if !ok || doc.Id != 555 {
+		t.Fatalf("document = %+v ok=%v, want documentEmpty id=555", media.Document, ok)
+	}
+}
+
+func TestProjectMessageEventV3RejectsOutOfRangeForwardDate(t *testing.T) {
+	body := mustMarshalMessageEventV3(t, payload.MessageEventV3{
+		SchemaVersion:      payload.MessageEventSchemaVersionV3,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: 104,
+		PeerSeq:            12,
+		MessageID:          80,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             202,
+		FromUserID:         101,
+		ToUserID:           202,
+		Date:               1700000000,
+		Out:                true,
+		MessageText:        "forward",
+		ForwardRef:         &payload.ForwardRefV1{SchemaVersion: payload.ForwardRefSchemaVersionV1, FromUserID: 303, Date: int64(math.MaxInt32) + 1},
+	})
+	_, err := ProjectUserEvent(repository.UserEvent{
+		UserID:             1001,
+		Pts:                22,
+		PtsCount:           1,
+		EventType:          repository.EventTypeNewMessage,
+		EventSchemaVersion: payload.MessageEventSchemaVersionV3,
+		EventCodec:         repository.PayloadCodecJSON,
+		EventPayload:       body,
+		EventPayloadHash:   payload.HashBytes(body),
+	}, ModeDifference)
+	if !errors.Is(err, userupdates.ErrUserupdatesStorage) {
+		t.Fatalf("error = %v, want ErrUserupdatesStorage", err)
 	}
 }
 

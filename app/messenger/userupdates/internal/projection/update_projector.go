@@ -304,7 +304,7 @@ func projectNewMessage(in messageEventProjectionInput) (Result, error) {
 		if err != nil {
 			return Result{}, err
 		}
-		if in.message.PeerType == payload.PeerTypeUser {
+		if in.message.PeerType == payload.PeerTypeUser && !requiresFullPushMessage(in.message) {
 			return Result{
 				Updates: tg.MakeTLUpdateShortMessage(&tg.TLUpdateShortMessage{
 					Out:      in.message.Out,
@@ -460,6 +460,10 @@ func messageEventToTLMessage(messageEvent decodedMessageEvent) (tg.MessageClazz,
 	if err != nil {
 		return nil, err
 	}
+	fwdFrom, err := messageForwardHeader(messageEvent.ForwardRef)
+	if err != nil {
+		return nil, err
+	}
 	return tg.MakeTLMessage(&tg.TLMessage{
 		Out:         messageEvent.Out,
 		Silent:      messageAttrsSilent(messageEvent.Attrs),
@@ -468,7 +472,7 @@ func messageEventToTLMessage(messageEvent decodedMessageEvent) (tg.MessageClazz,
 		Id:          messageID,
 		FromId:      peerFromUser(messageEvent.FromUserID),
 		PeerId:      peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
-		FwdFrom:     messageForwardHeader(messageEvent.ForwardRef),
+		FwdFrom:     fwdFrom,
 		ReplyTo:     replyTo,
 		Date:        date,
 		Message:     messageEvent.MessageText,
@@ -498,6 +502,10 @@ func editMessageEventToTLMessage(messageEvent decodedMessageEvent) (tg.MessageCl
 	if err != nil {
 		return nil, err
 	}
+	fwdFrom, err := messageForwardHeader(messageEvent.ForwardRef)
+	if err != nil {
+		return nil, err
+	}
 	return tg.MakeTLMessage(&tg.TLMessage{
 		Out:         messageEvent.Out,
 		Silent:      messageAttrsSilent(messageEvent.Attrs),
@@ -506,7 +514,7 @@ func editMessageEventToTLMessage(messageEvent decodedMessageEvent) (tg.MessageCl
 		Id:          messageID,
 		FromId:      peerFromUser(messageEvent.FromUserID),
 		PeerId:      peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
-		FwdFrom:     messageForwardHeader(messageEvent.ForwardRef),
+		FwdFrom:     fwdFrom,
 		Date:        date,
 		Message:     messageEvent.MessageText,
 		Media:       messageMedia(messageEvent.MediaRef),
@@ -525,6 +533,11 @@ func messageMedia(media *payload.MediaRefV1) tg.MessageMediaClazz {
 	case "photo":
 		return tg.MakeTLMessageMediaPhoto(&tg.TLMessageMediaPhoto{
 			Photo:      tg.MakeTLPhotoEmpty(&tg.TLPhotoEmpty{Id: media.ID}),
+			TtlSeconds: ttl,
+		})
+	case "document":
+		return tg.MakeTLMessageMediaDocument(&tg.TLMessageMediaDocument{
+			Document:   tg.MakeTLDocumentEmpty(&tg.TLDocumentEmpty{Id: media.ID}),
 			TtlSeconds: ttl,
 		})
 	default:
@@ -560,20 +573,29 @@ func messageAttrsInvertMedia(attrs *payload.MessageAttrsV1) bool {
 	return attrs != nil && attrs.InvertMedia
 }
 
-func messageForwardHeader(ref *payload.ForwardRefV1) tg.MessageFwdHeaderClazz {
+func messageForwardHeader(ref *payload.ForwardRefV1) (tg.MessageFwdHeaderClazz, error) {
 	if ref == nil {
-		return nil
+		return nil, nil
 	}
-	date := int32(ref.Date)
+	date, err := userupdatesDateInt32FromUnixSeconds(ref.Date, "forward date")
+	if err != nil {
+		return nil, err
+	}
 	fromName := stringPtr(ref.FromName)
 	var sourceMessageID *int32
 	if ref.SourceMessageID > 0 {
-		v := int32(ref.SourceMessageID)
+		v, err := int64ToInt32(ref.SourceMessageID, "forward source message id")
+		if err != nil {
+			return nil, err
+		}
 		sourceMessageID = &v
 	}
 	var savedFromMessageID *int32
 	if ref.SavedFromMessageID > 0 {
-		v := int32(ref.SavedFromMessageID)
+		v, err := int64ToInt32(ref.SavedFromMessageID, "forward saved message id")
+		if err != nil {
+			return nil, err
+		}
 		savedFromMessageID = &v
 	}
 	return tg.MakeTLMessageFwdHeader(&tg.TLMessageFwdHeader{
@@ -583,7 +605,14 @@ func messageForwardHeader(ref *payload.ForwardRefV1) tg.MessageFwdHeaderClazz {
 		ChannelPost:    sourceMessageID,
 		SavedFromPeer:  peerFromOptional(ref.SavedFromPeerType, ref.SavedFromPeerID),
 		SavedFromMsgId: savedFromMessageID,
-	})
+	}), nil
+}
+
+func requiresFullPushMessage(event decodedMessageEvent) bool {
+	if event.MediaRef != nil || event.ForwardRef != nil {
+		return true
+	}
+	return event.Attrs != nil && (event.Attrs.GroupedID != 0 || event.Attrs.Noforwards || event.Attrs.InvertMedia)
 }
 
 func forwardPeer(fromUserID int64, sourcePeerType int32, sourcePeerID int64) tg.PeerClazz {
