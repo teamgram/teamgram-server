@@ -30,7 +30,7 @@ func (c *UserupdatesCore) UserupdatesProcessUserOperation(in *userupdates.TLUser
 	if in == nil || in.Operation == nil {
 		return nil, fmt.Errorf("%w: missing operation", userupdates.ErrOperationTerminal)
 	}
-	applyIn, err := userOperationToRepositoryInput(in.Operation)
+	applyIn, err := operationToApplyInput(in.Operation)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (c *UserupdatesCore) UserupdatesProcessUserOperation(in *userupdates.TLUser
 	return applyResultToTL(result)
 }
 
-func userOperationToRepositoryInput(op *userupdates.TLUserOperation) (repository.ApplyUserOperationInput, error) {
+func operationToApplyInput(op *userupdates.TLUserOperation) (repository.ApplyUserOperationInput, error) {
 	if op == nil {
 		return repository.ApplyUserOperationInput{}, fmt.Errorf("%w: missing operation", userupdates.ErrOperationTerminal)
 	}

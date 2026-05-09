@@ -443,6 +443,138 @@ func TestApplyUserOperationAffectedOutboxIdempotency(t *testing.T) {
 	}
 }
 
+func TestApplyUserOperationBatchIsAtomic(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	userID := base + 43001
+	repo := NewForTest(db, &testIDGenerator{next: base + 43000}, "local-userupdates")
+	first := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion:      payload.MessageOperationSchemaVersion,
+		OperationKind:      payload.OperationKindSendMessage,
+		CanonicalMessageID: base + 9001,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             base + 2002,
+		PeerSeq:            1,
+		FromUserID:         userID,
+		ToUserID:           base + 2002,
+		Date:               int32(time.Now().Unix()),
+		Out:                true,
+		MessageText:        "one",
+	}, "batch-one")
+	second := first
+	second.OperationID = first.OperationID + "-conflict"
+	second.PayloadHash = []byte("bad-hash")
+
+	_, err := repo.ApplyUserOperationBatch(ctx, []ApplyUserOperationInput{first, second})
+	if err == nil {
+		t.Fatal("ApplyUserOperationBatch() error = nil, want atomic failure")
+	}
+	row, findErr := repo.GetOperationResult(ctx, userID, first.OperationID)
+	if !errors.Is(findErr, userupdates.ErrOperationTerminal) {
+		t.Fatalf("GetOperationResult() error = %v, want ErrOperationTerminal", findErr)
+	}
+	if row != nil {
+		t.Fatalf("first operation committed despite batch failure: %+v", row)
+	}
+}
+
+func TestApplyUserOperationBatchRollsBackWhenSecondOperationFailsDuringApply(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	userID := base + 44001
+	repo := NewForTest(db, &testIDGenerator{next: base + 44000}, "local-userupdates")
+	first := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion:      payload.MessageOperationSchemaVersion,
+		OperationKind:      payload.OperationKindSendMessage,
+		CanonicalMessageID: base + 9101,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             base + 2002,
+		PeerSeq:            1,
+		FromUserID:         userID,
+		ToUserID:           base + 2002,
+		Date:               int32(time.Now().Unix()),
+		Out:                true,
+		MessageText:        "one",
+	}, "batch-apply-one")
+	second := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion:       payload.MessageOperationSchemaVersion,
+		OperationKind:       payload.OperationKindSendMessage,
+		CanonicalMessageID:  base + 9102,
+		PeerType:            payload.PeerTypeUser,
+		PeerID:              base + 2002,
+		PeerSeq:             2,
+		FromUserID:          userID,
+		ToUserID:            base + 2002,
+		Date:                int32(time.Now().Unix()) + 1,
+		Out:                 true,
+		MessageText:         "two",
+		ClearDraft:          true,
+		SourcePermAuthKeyID: 0,
+	}, "batch-apply-two")
+
+	_, err := repo.ApplyUserOperationBatch(ctx, []ApplyUserOperationInput{first, second})
+	if err == nil {
+		t.Fatal("ApplyUserOperationBatch() error = nil, want apply failure")
+	}
+	row, findErr := repo.GetOperationResult(ctx, userID, first.OperationID)
+	if !errors.Is(findErr, userupdates.ErrOperationTerminal) {
+		t.Fatalf("GetOperationResult() error = %v, want ErrOperationTerminal", findErr)
+	}
+	if row != nil {
+		t.Fatalf("first operation committed despite second apply failure: %+v", row)
+	}
+}
+
+func TestApplyUserOperationBatchRetryAllowsAlreadyAppliedPrefix(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	userID := base + 45001
+	repo := NewForTest(db, &testIDGenerator{next: base + 45000}, "local-userupdates")
+	first := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion:      payload.MessageOperationSchemaVersion,
+		OperationKind:      payload.OperationKindSendMessage,
+		CanonicalMessageID: base + 9201,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             base + 2002,
+		PeerSeq:            1,
+		FromUserID:         userID,
+		ToUserID:           base + 2002,
+		Date:               int32(time.Now().Unix()),
+		Out:                true,
+		MessageText:        "already applied",
+	}, "batch-retry-one")
+	if _, err := repo.ApplyUserOperation(ctx, first); err != nil {
+		t.Fatalf("pre-apply first operation: %v", err)
+	}
+	second := buildOperationApplyInput(t, userID, payload.MessageOperationV1{
+		SchemaVersion:      payload.MessageOperationSchemaVersion,
+		OperationKind:      payload.OperationKindSendMessage,
+		CanonicalMessageID: base + 9202,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             base + 2002,
+		PeerSeq:            2,
+		FromUserID:         userID,
+		ToUserID:           base + 2002,
+		Date:               int32(time.Now().Unix()) + 1,
+		Out:                true,
+		MessageText:        "new on retry",
+	}, "batch-retry-two")
+
+	results, err := repo.ApplyUserOperationBatch(ctx, []ApplyUserOperationInput{first, second})
+	if err != nil {
+		t.Fatalf("ApplyUserOperationBatch retry error = %v", err)
+	}
+	if len(results) != 2 || !results[0].AlreadyApplied || results[1].AlreadyApplied {
+		t.Fatalf("results = %+v, want first already-applied and second newly applied", results)
+	}
+	if results[1].Pts <= results[0].Pts {
+		t.Fatalf("pts order = %+v, want new operation pts after already-applied prefix", results)
+	}
+}
+
 func TestApplyUserOperationRollsBackWhenAffectedOutboxInsertFails(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)

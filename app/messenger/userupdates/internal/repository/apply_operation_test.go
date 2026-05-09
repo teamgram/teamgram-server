@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"testing"
@@ -9,6 +10,18 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 )
+
+func TestApplyUserOperationBatchEmptyReturnsEmptyResult(t *testing.T) {
+	repo := &Repository{}
+
+	got, err := repo.ApplyUserOperationBatch(context.Background(), nil)
+	if err != nil {
+		t.Fatalf("ApplyUserOperationBatch(nil) error = %v", err)
+	}
+	if len(got) != 0 {
+		t.Fatalf("ApplyUserOperationBatch(nil) len = %d, want 0", len(got))
+	}
+}
 
 func TestBuildEventAndResponseCarriesAuthKeyExclude(t *testing.T) {
 	authKeyIDExclude := int64(9001)

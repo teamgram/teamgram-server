@@ -3,6 +3,7 @@ package core
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"testing"
 
@@ -37,6 +38,63 @@ func TestReceiverProcessorAppliesEnvelope(t *testing.T) {
 	}
 }
 
+func TestReceiverProcessorAcceptsMessageOperationV3Payload(t *testing.T) {
+	repo := &fakeReceiverProcessorRepository{}
+	processor := NewReceiverProcessor(repo)
+	operation := payload.MessageOperationV3{
+		SchemaVersion:      payload.MessageOperationSchemaVersionV3,
+		OperationKind:      payload.OperationKindSendMessage,
+		CanonicalMessageID: 7001,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             1001,
+		PeerSeq:            9,
+		FromUserID:         1001,
+		ToUserID:           1002,
+		Date:               1777781234,
+		Out:                false,
+		MessageText:        "caption",
+		Entities:           []payload.MessageEntityV1{{Offset: 0, Length: 7, Kind: "bold"}},
+		MediaRef:           &payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "photo", ID: 333},
+		Attrs:              &payload.MessageAttrsV1{SchemaVersion: payload.MessageAttrsSchemaVersionV1, GroupedID: 444, Silent: true},
+		ForwardRef:         &payload.ForwardRefV1{SchemaVersion: payload.ForwardRefSchemaVersionV1, FromUserID: 3003, Date: 1777781000},
+	}
+	body, err := json.Marshal(operation)
+	if err != nil {
+		t.Fatalf("marshal V3 operation: %v", err)
+	}
+	envelope := payload.ReceiverOperationEnvelopeV1{
+		UserID:       1002,
+		BucketID:     11,
+		PartitionID:  7,
+		OperationID:  "v3:msg:7001:receiver:1002:in",
+		OpType:       payload.OpTypeSendMessage,
+		PeerType:     payload.PeerTypeUser,
+		PeerID:       1001,
+		PayloadCodec: payload.PayloadCodecJSON,
+		Payload:      body,
+		PayloadHash:  payload.HashBytes(body),
+	}
+
+	if err := processor.Process(context.Background(), envelope); err != nil {
+		t.Fatalf("Process() error = %v", err)
+	}
+	if !bytes.Equal(repo.input.Payload, body) {
+		t.Fatalf("repository payload was rewritten: got %s want %s", repo.input.Payload, body)
+	}
+	var got payload.MessageOperationV3
+	if err := json.Unmarshal(repo.input.Payload, &got); err != nil {
+		t.Fatalf("unmarshal repository payload: %v", err)
+	}
+	if got.SchemaVersion != payload.MessageOperationSchemaVersionV3 ||
+		got.MediaRef == nil ||
+		got.Attrs == nil ||
+		got.ForwardRef == nil ||
+		len(got.Entities) != 1 ||
+		got.MessageText != "caption" {
+		t.Fatalf("V3 payload fields were not preserved: %+v", got)
+	}
+}
+
 func TestReceiverProcessorReturnsRepositoryError(t *testing.T) {
 	repo := &fakeReceiverProcessorRepository{err: errors.New("apply failed")}
 	processor := NewReceiverProcessor(repo)
@@ -58,6 +116,10 @@ type fakeReceiverProcessorRepository struct {
 func (f *fakeReceiverProcessorRepository) ApplyUserOperation(_ context.Context, in repository.ApplyUserOperationInput) (*repository.ApplyUserOperationResult, error) {
 	f.input = in
 	return &repository.ApplyUserOperationResult{UserID: in.UserID, OperationID: in.OperationID, Pts: 1, PtsCount: 1}, f.err
+}
+
+func (f *fakeReceiverProcessorRepository) ApplyUserOperationBatch(context.Context, []repository.ApplyUserOperationInput) ([]repository.ApplyUserOperationResult, error) {
+	return nil, nil
 }
 
 func (f *fakeReceiverProcessorRepository) GetOperationResult(context.Context, int64, string) (*repository.OperationResult, error) {

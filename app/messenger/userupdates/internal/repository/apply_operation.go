@@ -69,6 +69,35 @@ func (r *Repository) ApplyUserOperation(ctx context.Context, in ApplyUserOperati
 	return out, nil
 }
 
+func (r *Repository) ApplyUserOperationBatch(ctx context.Context, inputs []ApplyUserOperationInput) ([]ApplyUserOperationResult, error) {
+	if len(inputs) == 0 {
+		return []ApplyUserOperationResult{}, nil
+	}
+	db, err := r.requireDB()
+	if err != nil {
+		return nil, err
+	}
+
+	out := make([]ApplyUserOperationResult, 0, len(inputs))
+	err = db.Transact(ctx, func(tx *sqlx.Tx) error {
+		for _, in := range inputs {
+			if !bytes.Equal(in.PayloadHash, payload.HashBytes(in.Payload)) {
+				return userupdates.ErrOperationPayloadConflict
+			}
+			result, err := r.applyUserOperationTx(ctx, tx, in)
+			if err != nil {
+				return err
+			}
+			out = append(out, *result)
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in ApplyUserOperationInput) (*ApplyUserOperationResult, error) {
 	txModels := r.models.WithTx(tx)
 	fence, err := r.ensurePartitionOwnedTx(txModels, in.PartitionID)

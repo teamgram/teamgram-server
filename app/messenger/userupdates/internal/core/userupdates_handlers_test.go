@@ -255,6 +255,28 @@ func TestProcessUserOperationWithEffectsRejectsUnsupportedPolicy(t *testing.T) {
 	}
 }
 
+func TestUserupdatesProcessUserOperationBatchRejectsOversizedBeforeRepositoryApply(t *testing.T) {
+	repo := &fakeUserUpdatesRepository{}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+	operations := make([]userupdates.UserOperationClazz, MaxUserOperationBatchSize+1)
+	for i := range operations {
+		operations[i] = userupdates.MakeTLUserOperation(&userupdates.TLUserOperation{
+			UserId:      1001,
+			OperationId: "oversized",
+		})
+	}
+
+	_, err := core.UserupdatesProcessUserOperationBatch(&userupdates.TLUserupdatesProcessUserOperationBatch{
+		Operations: operations,
+	})
+	if !errors.Is(err, userupdates.ErrOperationTerminal) {
+		t.Fatalf("UserupdatesProcessUserOperationBatch() error = %v, want ErrOperationTerminal", err)
+	}
+	if repo.applyBatchCalled {
+		t.Fatal("repository batch apply called for oversized request")
+	}
+}
+
 func TestGetOperationResultRejectsMismatchedPayloadHash(t *testing.T) {
 	goodPayload := []byte(`{"good":true}`)
 	badPayload := []byte(`{"good":false}`)
@@ -1072,6 +1094,9 @@ func (f *fakePushOutboxNotifier) Wake() {
 type fakeUserUpdatesRepository struct {
 	applyInput          repository.ApplyUserOperationInput
 	applyResult         *repository.ApplyUserOperationResult
+	applyBatchInputs    []repository.ApplyUserOperationInput
+	applyBatchResults   []repository.ApplyUserOperationResult
+	applyBatchCalled    bool
 	operationResult     *repository.OperationResult
 	stateUserID         int64
 	statePermAuthKeyID  int64
@@ -1097,6 +1122,12 @@ type fakeUserUpdatesRepository struct {
 func (f *fakeUserUpdatesRepository) ApplyUserOperation(_ context.Context, in repository.ApplyUserOperationInput) (*repository.ApplyUserOperationResult, error) {
 	f.applyInput = in
 	return f.applyResult, nil
+}
+
+func (f *fakeUserUpdatesRepository) ApplyUserOperationBatch(_ context.Context, inputs []repository.ApplyUserOperationInput) ([]repository.ApplyUserOperationResult, error) {
+	f.applyBatchCalled = true
+	f.applyBatchInputs = inputs
+	return f.applyBatchResults, nil
 }
 
 func (f *fakeUserUpdatesRepository) GetOperationResult(_ context.Context, _ int64, _ string) (*repository.OperationResult, error) {
