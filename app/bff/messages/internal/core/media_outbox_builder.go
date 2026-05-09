@@ -71,7 +71,6 @@ func resolveMessageMedia(ctx context.Context, mediaClient resolveMediaClient, ow
 	}
 
 	inputMedia := &tg.InputMedia{Clazz: input}
-	now := int32(time.Now().Unix())
 	switch input.InputMediaClazzName() {
 	case tg.ClazzName_inputMediaUploadedPhoto:
 		uploadedPhoto, ok := inputMedia.ToInputMediaUploadedPhoto()
@@ -103,21 +102,15 @@ func resolveMessageMedia(ctx context.Context, mediaClient resolveMediaClient, ow
 		if !ok || inputPhoto == nil {
 			return nil, tg.ErrMediaEmpty
 		}
-		sizeList, err := mediaClient.MediaGetPhotoSizeList(ctx, &mediapb.TLMediaGetPhotoSizeList{SizeId: inputPhoto.Id})
+		photo, err := mediaClient.MediaGetPhoto(ctx, &mediapb.TLMediaGetPhoto{PhotoId: inputPhoto.Id})
 		if err != nil {
 			return nil, err
 		}
-		if sizeList == nil {
+		if photo == nil || photo.Clazz == nil {
 			return nil, tg.ErrMediaEmpty
 		}
 		return tg.MakeTLMessageMediaPhoto(&tg.TLMessageMediaPhoto{
-			Photo: tg.MakeTLPhoto(&tg.TLPhoto{
-				Id:         inputPhoto.Id,
-				AccessHash: inputPhoto.AccessHash,
-				Date:       now,
-				Sizes:      sizeList.Sizes,
-				DcId:       sizeList.DcId,
-			}),
+			Photo:      photo.Clazz,
 			TtlSeconds: mediaPhoto.TtlSeconds,
 		}), nil
 	case tg.ClazzName_inputMediaUploadedDocument:

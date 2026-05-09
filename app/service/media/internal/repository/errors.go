@@ -58,6 +58,10 @@ func wrapDfsUploadError(op string, err error) error {
 	if errors.Is(err, dfsapi.ErrDfsChecksumInvalid) {
 		return wrapMediaChecksumInvalid(op, err)
 	}
+	var missing *dfsapi.MissingUploadPartError
+	if errors.As(err, &missing) {
+		return wrapMediaInvalidUploadedFile(op, err)
+	}
 	if errors.Is(err, dfsapi.ErrDfsFileNotFound) ||
 		errors.Is(err, dfsapi.ErrDfsInvalidFilePart) ||
 		errors.Is(err, dfsapi.ErrDfsImageProcessFailed) ||

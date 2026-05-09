@@ -41,6 +41,7 @@ type idgenClient interface {
 
 type resolveMediaClient interface {
 	MediaUploadPhotoFile(ctx context.Context, in *mediapb.TLMediaUploadPhotoFile) (*tg.Photo, error)
+	MediaGetPhoto(ctx context.Context, in *mediapb.TLMediaGetPhoto) (*tg.Photo, error)
 	MediaGetPhotoSizeList(ctx context.Context, in *mediapb.TLMediaGetPhotoSizeList) (*mediapb.PhotoSizeList, error)
 	MediaUploadedDocumentMedia(ctx context.Context, in *mediapb.TLMediaUploadedDocumentMedia) (*tg.MessageMedia, error)
 	MediaGetDocument(ctx context.Context, in *mediapb.TLMediaGetDocument) (*tg.Document, error)

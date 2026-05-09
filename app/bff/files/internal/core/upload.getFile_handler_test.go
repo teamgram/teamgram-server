@@ -274,6 +274,9 @@ type fakeFilesMediaClient struct {
 	resolveReq  *mediapb.TLMediaResolveFileLocation
 	resolveResp *mediapb.MediaResolvedFileObject
 	resolveErr  error
+	photoReq    *mediapb.TLMediaGetPhoto
+	photoResp   *tg.Photo
+	photoErr    error
 }
 
 func (f *fakeFilesMediaClient) MediaUploadPhotoFile(context.Context, *mediapb.TLMediaUploadPhotoFile) (*tg.Photo, error) {
@@ -284,8 +287,9 @@ func (f *fakeFilesMediaClient) MediaUploadProfilePhotoFile(context.Context, *med
 	return nil, errors.New("unexpected MediaUploadProfilePhotoFile")
 }
 
-func (f *fakeFilesMediaClient) MediaGetPhoto(context.Context, *mediapb.TLMediaGetPhoto) (*tg.Photo, error) {
-	return nil, errors.New("unexpected MediaGetPhoto")
+func (f *fakeFilesMediaClient) MediaGetPhoto(_ context.Context, in *mediapb.TLMediaGetPhoto) (*tg.Photo, error) {
+	f.photoReq = in
+	return f.photoResp, f.photoErr
 }
 
 func (f *fakeFilesMediaClient) MediaGetPhotoSizeList(context.Context, *mediapb.TLMediaGetPhotoSizeList) (*mediapb.PhotoSizeList, error) {

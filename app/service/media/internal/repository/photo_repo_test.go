@@ -455,28 +455,96 @@ func TestUploadPhotoFileRejectsInvalidProcessorDerivativeWithoutPersisting(t *te
 
 func TestUploadProfilePhotoFileSavesVideoSizes(t *testing.T) {
 	photos := &capturePhotosModel{}
+	photoSizes := &capturePhotoSizesModel{}
 	videos := &captureVideoSizesModel{}
-	dfsClient := &fakeDfsMediaClient{photo: testPhotoWithSizes(202, true)}
+	startTs := 1.25
+	dfsClient := &fakeDfsMediaClient{finalized: testFinalizedObject("profile-video-object", 4096)}
+	processorClient := &fakeMediaProcessorClient{document: testProcessedDocument(t, "profile-video-object", "video/mp4", 4096, []tg.DocumentAttributeClazz{
+		tg.MakeTLDocumentAttributeVideo(&tg.TLDocumentAttributeVideo{Duration: 3, W: 640, H: 360}),
+		tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "profile.mp4"}),
+	}, testDocumentThumbs())}
 	r := &Repository{
-		model:     &model.Models{PhotosModel: photos, PhotoSizesModel: &capturePhotoSizesModel{}, VideoSizesModel: videos},
-		dfsClient: dfsClient,
+		model:                &model.Models{PhotosModel: photos, PhotoSizesModel: photoSizes, VideoSizesModel: videos},
+		dfsClient:            dfsClient,
+		processorClient:      processorClient,
+		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
+		fileReferenceTTL:     time.Hour,
 	}
 
 	_, err := r.UploadProfilePhotoFile(context.Background(), &media.TLMediaUploadProfilePhotoFile{
-		OwnerId: 9,
-		Video:   tg.MakeTLInputFile(&tg.TLInputFile{Id: 12, Parts: 1, Name: "profile.mp4", Md5Checksum: "md5"}),
+		OwnerId:      9,
+		Video:        tg.MakeTLInputFile(&tg.TLInputFile{Id: 12, Parts: 1, Name: "profile.mp4", Md5Checksum: "md5"}),
+		VideoStartTs: &startTs,
 	})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if dfsClient.uploadProfileReq == nil || dfsClient.uploadProfileReq.Creator != 9 {
-		t.Fatalf("expected dfs profile request with creator 9, got %#v", dfsClient.uploadProfileReq)
+	if dfsClient.uploadProfileReq != nil {
+		t.Fatalf("expected default profile path not to call legacy DFS profile upload, got %#v", dfsClient.uploadProfileReq)
+	}
+	if dfsClient.commitReq == nil || dfsClient.commitReq.OwnerId != 9 || dfsClient.commitReq.Purpose != "media_profile_video" {
+		t.Fatalf("expected dfs commit request for profile video, got %#v", dfsClient.commitReq)
+	}
+	if processorClient.mp4Req == nil || processorClient.mp4Req.ObjectId != "profile-video-object" || processorClient.mp4Req.FileName != "profile.mp4" {
+		t.Fatalf("expected mediaprocessor mp4 request, got %#v", processorClient.mp4Req)
 	}
 	if len(photos.inserted) != 1 || !photos.inserted[0].HasVideo {
 		t.Fatalf("expected saved profile photo with video flag, got %#v", photos.inserted)
 	}
-	if len(videos.inserted) != 1 || videos.inserted[0].VideoSizeId != 202 {
-		t.Fatalf("expected saved video size for photo id 202, got %#v", videos.inserted)
+	if len(photoSizes.inserted) != 1 || photoSizes.inserted[0].FilePath != "gif-thumb-object" {
+		t.Fatalf("expected saved profile cover photo size, got %#v", photoSizes.inserted)
+	}
+	if len(videos.inserted) != 1 || videos.inserted[0].VideoSizeId != photos.inserted[0].PhotoId || videos.inserted[0].Width != 640 || videos.inserted[0].Height != 360 || videos.inserted[0].FileSize != 4096 || videos.inserted[0].VideoStartTs != startTs {
+		t.Fatalf("expected saved video size for generated profile photo, got %#v", videos.inserted)
+	}
+}
+
+func TestUploadProfilePhotoFileCommitsAndProcessesImage(t *testing.T) {
+	photos := &capturePhotosModel{}
+	photoSizes := &capturePhotoSizesModel{}
+	dfsClient := &fakeDfsMediaClient{finalized: dfsapi.MakeTLFileFinalizedObject(&dfsapi.TLFileFinalizedObject{
+		ObjectId:        "profile-photo-object",
+		UploadSessionId: "ext:9:12:1",
+		ReadLease:       []byte("read-lease"),
+		DcId:            2,
+	}).ToFileFinalizedObject()}
+	processorClient := &fakeMediaProcessorClient{
+		photo: mediaprocessor.MakeTLProcessedPhoto(&mediaprocessor.TLProcessedPhoto{
+			OriginalObjectId: "profile-photo-object",
+			Sizes: []mediaprocessor.ProcessorDerivativeClazz{
+				mediaprocessor.MakeTLProcessorDerivative(&mediaprocessor.TLProcessorDerivative{Kind: "photo_size", ObjectId: "profile-derivative-m", FileName: "m_profile.jpg", Width: 320, Height: 240, Size2: 1000}),
+			},
+		}).ToProcessedPhoto(),
+	}
+	r := &Repository{
+		model:                &model.Models{PhotosModel: photos, PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
+		dfsClient:            dfsClient,
+		processorClient:      processorClient,
+		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
+		fileReferenceTTL:     time.Hour,
+	}
+
+	_, err := r.UploadProfilePhotoFile(context.Background(), &media.TLMediaUploadProfilePhotoFile{
+		OwnerId: 9,
+		File:    tg.MakeTLInputFile(&tg.TLInputFile{Id: 12, Parts: 1, Name: "profile.jpg", Md5Checksum: "md5"}),
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if dfsClient.uploadProfileReq != nil {
+		t.Fatalf("expected default profile path not to call legacy DFS profile upload, got %#v", dfsClient.uploadProfileReq)
+	}
+	if dfsClient.commitReq == nil || dfsClient.commitReq.OwnerId != 9 || dfsClient.commitReq.Purpose != "media_profile_photo" {
+		t.Fatalf("expected dfs commit request for profile photo, got %#v", dfsClient.commitReq)
+	}
+	if processorClient.photoReq == nil || processorClient.photoReq.ObjectId != "profile-photo-object" || string(processorClient.photoReq.ReadLease) != "read-lease" || processorClient.photoReq.FileName != "profile.jpg" || processorClient.photoReq.Profile != tg.BoolTrueClazz {
+		t.Fatalf("expected mediaprocessor profile photo request, got %#v", processorClient.photoReq)
+	}
+	if len(photos.inserted) != 1 || photos.inserted[0].InputFileName != "profile.jpg" {
+		t.Fatalf("expected saved profile photo row, got %#v", photos.inserted)
+	}
+	if len(photoSizes.inserted) != 1 || photoSizes.inserted[0].FilePath != "profile-derivative-m" {
+		t.Fatalf("expected saved profile derivative object id, got %#v", photoSizes.inserted)
 	}
 }
 

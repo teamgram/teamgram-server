@@ -37,6 +37,7 @@ type DfsFilesClient interface {
 
 type MediaFilesClient interface {
 	MediaUploadPhotoFile(ctx context.Context, in *media.TLMediaUploadPhotoFile) (*tg.Photo, error)
+	MediaGetPhoto(ctx context.Context, in *media.TLMediaGetPhoto) (*tg.Photo, error)
 	MediaGetPhotoSizeList(ctx context.Context, in *media.TLMediaGetPhotoSizeList) (*media.PhotoSizeList, error)
 	MediaUploadedDocumentMedia(ctx context.Context, in *media.TLMediaUploadedDocumentMedia) (*tg.MessageMedia, error)
 	MediaGetDocument(ctx context.Context, in *media.TLMediaGetDocument) (*tg.Document, error)
