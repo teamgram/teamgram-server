@@ -91,6 +91,10 @@ func normalizeOutboxMessage(in normalizeOutboxInput) (normalizedOutboxMessage, e
 	if err != nil {
 		return normalizedOutboxMessage{}, err
 	}
+	entities, err := normalizeEntities(message.Entities)
+	if err != nil {
+		return normalizedOutboxMessage{}, err
+	}
 	attrs := payload.MessageAttrsV1{
 		SchemaVersion: payload.MessageAttrsSchemaVersionV1,
 		Noforwards:    message.Noforwards,
@@ -109,7 +113,7 @@ func normalizeOutboxMessage(in normalizeOutboxInput) (normalizedOutboxMessage, e
 		PeerID:                    in.PeerID,
 		Out:                       true,
 		MessageText:               message.Message,
-		Entities:                  normalizeEntities(message.Entities),
+		Entities:                  entities,
 		ReplyToUserMessageID:      replyTo.UserMessageID,
 		ReplyToCanonicalMessageID: replyTo.CanonicalMessageID,
 		MediaRef:                  mediaRef,
@@ -245,20 +249,22 @@ func peerIdentity(peer tg.PeerClazz) (int32, int64) {
 	}
 }
 
-func normalizeEntities(entities []tg.MessageEntityClazz) []payload.MessageEntityV1 {
+func normalizeEntities(entities []tg.MessageEntityClazz) ([]payload.MessageEntityV1, error) {
 	if len(entities) == 0 {
-		return nil
+		return nil, nil
 	}
 	out := make([]payload.MessageEntityV1, 0, len(entities))
 	for _, entity := range entities {
 		if item, ok := normalizeEntity(entity); ok {
 			out = append(out, item)
+			continue
 		}
+		return nil, fmt.Errorf("%w: unsupported message entity %T", msg.ErrSendStateConflict, entity)
 	}
 	if len(out) == 0 {
-		return nil
+		return nil, nil
 	}
-	return out
+	return out, nil
 }
 
 func normalizeEntity(entity tg.MessageEntityClazz) (payload.MessageEntityV1, bool) {

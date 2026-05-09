@@ -38,6 +38,29 @@ func TestNormalizeOutboxMessageUsesAttrsGroupedID(t *testing.T) {
 	}
 }
 
+func TestNormalizeOutboxMessageRejectsUnsupportedEntity(t *testing.T) {
+	message := tg.MakeTLMessage(&tg.TLMessage{
+		Message: "emoji",
+		Entities: []tg.MessageEntityClazz{
+			tg.MakeTLMessageEntityCustomEmoji(&tg.TLMessageEntityCustomEmoji{
+				Offset:     0,
+				Length:     5,
+				DocumentId: 12345,
+			}),
+		},
+	})
+	outbox := msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{RandomId: 99, Message: message})
+	_, err := normalizeOutboxMessage(normalizeOutboxInput{
+		SenderUserID: 100,
+		PeerType:     payload.PeerTypeUser,
+		PeerID:       200,
+		Outbox:       outbox,
+	})
+	if !errors.Is(err, msgpb.ErrSendStateConflict) {
+		t.Fatalf("normalizeOutboxMessage() error = %v, want ErrSendStateConflict", err)
+	}
+}
+
 func TestMarshalSendRequestV3IncludesMediaAttrsForward(t *testing.T) {
 	msg1 := normalizedOutboxMessage{
 		SchemaVersion: NormalizedOutboxSchemaVersionV1,
