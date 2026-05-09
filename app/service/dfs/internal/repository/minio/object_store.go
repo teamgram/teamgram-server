@@ -12,7 +12,10 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/config"
 )
 
-var ErrInvalidRange = errors.New("invalid minio range")
+var (
+	ErrInvalidRange   = errors.New("invalid minio range")
+	ErrObjectNotFound = errors.New("minio object not found")
+)
 
 type ObjectStore interface {
 	PutPhotoBytes(ctx context.Context, path string, data []byte) (int64, error)
@@ -133,12 +136,41 @@ func (s *Store) get(ctx context.Context, bucket, path string, offset int64, limi
 	}
 	obj, err := s.client.GetObject(ctx, bucket, path, opts)
 	if err != nil {
-		return nil, fmt.Errorf("minio get object %s/%s: %w", bucket, path, err)
+		return nil, normalizeObjectReadError(fmt.Sprintf("minio get object %s/%s", bucket, path), err)
 	}
 	defer obj.Close()
 	b, err := io.ReadAll(obj)
 	if err != nil {
-		return nil, fmt.Errorf("minio read object %s/%s: %w", bucket, path, err)
+		return nil, normalizeObjectReadError(fmt.Sprintf("minio read object %s/%s", bucket, path), err)
 	}
 	return b, nil
+}
+
+func normalizeObjectReadError(op string, err error) error {
+	if err == nil {
+		return nil
+	}
+	if isObjectNotFound(err) {
+		return fmt.Errorf("%w: %s: %w", ErrObjectNotFound, op, err)
+	}
+	return fmt.Errorf("%s: %w", op, err)
+}
+
+func isObjectNotFound(err error) bool {
+	if isObjectNotFoundResponse(minio.ToErrorResponse(err)) {
+		return true
+	}
+	var resp minio.ErrorResponse
+	if errors.As(err, &resp) {
+		return isObjectNotFoundResponse(resp)
+	}
+	return false
+}
+
+func isObjectNotFoundResponse(resp minio.ErrorResponse) bool {
+	switch resp.Code {
+	case "NoSuchKey", "NoSuchObject":
+		return true
+	}
+	return false
 }

@@ -66,7 +66,7 @@ func (r *Repository) GetDocumentObject(ctx context.Context, path string, offset 
 	}
 	data, err := r.objectStore.GetDocumentFile(ctx, path, offset, limit)
 	if err != nil {
-		return nil, dfs.WrapDfsStorage("get document file", err)
+		return nil, mapObjectReadError("get document file", err)
 	}
 	return data, nil
 }
@@ -77,7 +77,7 @@ func (r *Repository) GetEncryptedObject(ctx context.Context, path string, offset
 	}
 	data, err := r.objectStore.GetEncryptedFile(ctx, path, offset, limit)
 	if err != nil {
-		return nil, dfs.WrapDfsStorage("get encrypted file", err)
+		return nil, mapObjectReadError("get encrypted file", err)
 	}
 	return data, nil
 }

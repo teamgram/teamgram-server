@@ -91,7 +91,7 @@ func compatibleBytes(data []byte, err error) ([]byte, error) {
 	if err == nil {
 		return data, nil
 	}
-	if errors.Is(err, dfs.ErrDfsFileNotFound) || errors.Is(err, dfs.ErrDfsStorage) {
+	if errors.Is(err, dfs.ErrDfsFileNotFound) {
 		return []byte{}, nil
 	}
 	return nil, err
@@ -101,7 +101,7 @@ func (c *DfsCore) compatibleDownloadBytes(op string, data []byte, err error) ([]
 	if err == nil {
 		return data, nil
 	}
-	if errors.Is(err, dfs.ErrDfsFileNotFound) || errors.Is(err, dfs.ErrDfsStorage) {
+	if errors.Is(err, dfs.ErrDfsFileNotFound) {
 		c.logNonFatalError(op, err)
 		return []byte{}, nil
 	}

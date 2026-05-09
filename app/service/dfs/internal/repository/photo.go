@@ -79,7 +79,7 @@ func (r *Repository) GetPhotoFile(ctx context.Context, path string) ([]byte, err
 	}
 	data, err := r.objectStore.GetPhotoFile(ctx, path, 0, 0)
 	if err != nil {
-		return nil, dfs.WrapDfsStorage("get photo file", err)
+		return nil, mapObjectReadError("get photo file", err)
 	}
 	return data, nil
 }
@@ -90,7 +90,7 @@ func (r *Repository) GetPhotoObject(ctx context.Context, path string, offset int
 	}
 	data, err := r.objectStore.GetPhotoFile(ctx, path, offset, limit)
 	if err != nil {
-		return nil, dfs.WrapDfsStorage("get photo file", err)
+		return nil, mapObjectReadError("get photo file", err)
 	}
 	return data, nil
 }
@@ -119,7 +119,7 @@ func (r *Repository) GetVideoObject(ctx context.Context, path string, offset int
 	}
 	data, err := r.objectStore.GetVideoFile(ctx, path, offset, limit)
 	if err != nil {
-		return nil, dfs.WrapDfsStorage("get video file", err)
+		return nil, mapObjectReadError("get video file", err)
 	}
 	return data, nil
 }
