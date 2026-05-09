@@ -134,6 +134,22 @@ func TestProjectUserAppliesPhotoPrivacyAllowAndDisallow(t *testing.T) {
 	}
 }
 
+func TestProjectUserProfilePhotoIncludesDcId(t *testing.T) {
+	facts := projectionFacts{
+		Users: map[int64]*projectionUserFact{
+			1001: {User: tg.MakeTLUserData(&tg.TLUserData{Id: 1001, AccessHash: 11, FirstName: "Self"}), PhotoId: 9002},
+		},
+	}
+	user := projectUserForViewer(1001, 1001, facts).(*tg.TLUser)
+	photo, ok := user.Photo.(*tg.TLUserProfilePhoto)
+	if !ok {
+		t.Fatalf("photo = %T, want *tg.TLUserProfilePhoto", user.Photo)
+	}
+	if photo.DcId != 1 {
+		t.Fatalf("photo dc_id = %d, want 1", photo.DcId)
+	}
+}
+
 func TestProjectUserAppliesStatusPrivacyAllowAndDisallow(t *testing.T) {
 	facts := projectionFacts{
 		Users: map[int64]*projectionUserFact{

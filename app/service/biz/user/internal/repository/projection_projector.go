@@ -34,6 +34,8 @@ type projectionPresenceFact struct {
 	Expires    int32
 }
 
+const userProfilePhotoDcID int32 = 1
+
 type contactKey struct {
 	OwnerUserId   int64
 	ContactUserId int64
@@ -142,7 +144,7 @@ func projectionUserProfilePhoto(fact *projectionUserFact) tg.UserProfilePhotoCla
 	if fact == nil || fact.PhotoId == 0 {
 		return nil
 	}
-	return tg.MakeTLUserProfilePhoto(&tg.TLUserProfilePhoto{PhotoId: fact.PhotoId})
+	return tg.MakeTLUserProfilePhoto(&tg.TLUserProfilePhoto{PhotoId: fact.PhotoId, DcId: userProfilePhotoDcID})
 }
 
 func projectionUserStatus(presence *projectionPresenceFact) tg.UserStatusClazz {
