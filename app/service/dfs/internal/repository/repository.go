@@ -24,6 +24,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/ffmpeg2"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/imaging2"
 	minioadapter "github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/minio"
+	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/objectstore"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/rpc"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/spool"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/xkv"
@@ -33,12 +34,17 @@ import (
 
 // Repository is the dependency container for repository instances.
 type Repository struct {
-	kv               kv.ExtStore
-	uploadStateModel uploadStateModel
-	objectStore      minioadapter.ObjectStore
-	idgen            rpc.IDGenerator
-	imaging          imaging2.Processor
-	ffmpeg           ffmpeg2.Processor
+	kv                  kv.ExtStore
+	uploadStateModel    uploadStateModel
+	objectStore         minioadapter.ObjectStore
+	idgen               rpc.IDGenerator
+	imaging             imaging2.Processor
+	ffmpeg              ffmpeg2.Processor
+	documentsBucket     string
+	manifestKeys        objectstore.ManifestKeys
+	readLeaseSecret     string
+	readLeaseTTLSeconds int64
+	localDCID           int32
 }
 
 // NewRepository creates a new Repository.
@@ -66,12 +72,17 @@ func NewRepository(c config.Config) *Repository {
 	}
 
 	return &Repository{
-		kv:               kv2,
-		uploadStateModel: uploadState,
-		objectStore:      objectStore,
-		idgen:            idgen,
-		imaging:          imaging2.NewProcessor(),
-		ffmpeg:           ffmpeg2.NewProcessor(),
+		kv:                  kv2,
+		uploadStateModel:    uploadState,
+		objectStore:         objectStore,
+		idgen:               idgen,
+		imaging:             imaging2.NewProcessor(),
+		ffmpeg:              ffmpeg2.NewProcessor(),
+		documentsBucket:     c.Minio.DocumentsBucket,
+		manifestKeys:        objectstore.ManifestKeys{MetaPrefix: c.FileObject.MetaPrefix},
+		readLeaseSecret:     c.ReadLease.Secret,
+		readLeaseTTLSeconds: c.ReadLease.TTLSeconds,
+		localDCID:           c.FileObject.LocalDCID,
 	}
 }
 

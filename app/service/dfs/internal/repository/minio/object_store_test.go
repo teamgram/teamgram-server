@@ -1,6 +1,7 @@
 package minio
 
 import (
+	"context"
 	"errors"
 	"net/http"
 	"testing"
@@ -19,6 +20,13 @@ func TestAccessHashRoundTripStorageFileType(t *testing.T) {
 func TestObjectPathUsesDatSuffix(t *testing.T) {
 	if got := ObjectPath(12345); got != "12345.dat" {
 		t.Fatalf("ObjectPath() = %q, want %q", got, "12345.dat")
+	}
+}
+
+func TestGetObjectRangeValidatesRangeBeforeClientUse(t *testing.T) {
+	_, err := (&Store{}).GetObjectRange(context.Background(), "documents", "objects/1.dat", -1, 0)
+	if !errors.Is(err, ErrInvalidRange) {
+		t.Fatalf("GetObjectRange() error = %v, want ErrInvalidRange", err)
 	}
 }
 

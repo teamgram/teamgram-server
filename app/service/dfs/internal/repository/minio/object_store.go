@@ -18,6 +18,9 @@ var (
 )
 
 type ObjectStore interface {
+	PutObjectBytes(ctx context.Context, bucket, key string, data []byte) (int64, error)
+	PutObjectReader(ctx context.Context, bucket, key string, r io.Reader) (int64, error)
+	GetObjectRange(ctx context.Context, bucket, key string, offset int64, limit int32) ([]byte, error)
 	PutPhotoBytes(ctx context.Context, path string, data []byte) (int64, error)
 	PutPhotoReader(ctx context.Context, path string, r io.Reader) (int64, error)
 	GetPhotoFile(ctx context.Context, path string, offset int64, limit int32) ([]byte, error)
@@ -64,6 +67,18 @@ func StorageTypeFromAccessHash(accessHash int64) int32 {
 
 func ObjectPath(id int64) string {
 	return fmt.Sprintf("%d.dat", id)
+}
+
+func (s *Store) PutObjectBytes(ctx context.Context, bucket, key string, data []byte) (int64, error) {
+	return s.PutObjectReader(ctx, bucket, key, bytes.NewReader(data))
+}
+
+func (s *Store) PutObjectReader(ctx context.Context, bucket, key string, r io.Reader) (int64, error) {
+	return s.put(ctx, bucket, key, r)
+}
+
+func (s *Store) GetObjectRange(ctx context.Context, bucket, key string, offset int64, limit int32) ([]byte, error) {
+	return s.get(ctx, bucket, key, offset, limit)
 }
 
 func (s *Store) PutPhotoBytes(ctx context.Context, path string, data []byte) (int64, error) {
@@ -118,11 +133,11 @@ func (s *Store) put(ctx context.Context, bucket, path string, r io.Reader) (int6
 }
 
 func (s *Store) get(ctx context.Context, bucket, path string, offset int64, limit int32) ([]byte, error) {
-	if s == nil || s.client == nil {
-		return nil, fmt.Errorf("minio store unavailable")
-	}
 	if offset < 0 || limit < 0 {
 		return nil, ErrInvalidRange
+	}
+	if s == nil || s.client == nil {
+		return nil, fmt.Errorf("minio store unavailable")
 	}
 	opts := minio.GetObjectOptions{}
 	if offset > 0 || limit > 0 {
