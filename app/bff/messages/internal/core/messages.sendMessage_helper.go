@@ -47,9 +47,6 @@ func checkUnsupportedFields(in *tg.TLMessagesSendMessage) error {
 	if in.Noforwards {
 		return tg.ErrInputRequestInvalid
 	}
-	if len(in.Entities) > 0 {
-		return tg.ErrInputRequestInvalid
-	}
 	if in.ReplyMarkup != nil {
 		return tg.ErrInputRequestInvalid
 	}

@@ -972,30 +972,45 @@ func TestMessagesSendMessage_RandomIdZeroRejected(t *testing.T) {
 	}
 }
 
-// --- Unsupported field rejection ---
+// --- Supported semantic fields ---
 
-func TestMessagesSendMessage_EntitiesRejected(t *testing.T) {
-	called := false
+func TestMessagesSendMessage_EntitiesPassedToMsg(t *testing.T) {
+	var got *msg.TLMsgSendMessageV2
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
-			called = true
-			return nil, nil
+		sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+			got = in
+			return testUpdates(), nil
 		},
 	}, 100, 200)
 
+	bold := tg.MakeTLMessageEntityBold(&tg.TLMessageEntityBold{Offset: 14, Length: 12})
+	spoiler := tg.MakeTLMessageEntitySpoiler(&tg.TLMessageEntitySpoiler{Offset: 27, Length: 15})
 	_, err := c.MessagesSendMessage(&tg.TLMessagesSendMessage{
-		Peer:     inputPeerUser(300),
-		Message:  "hello",
-		RandomId: 42,
-		Entities: []tg.MessageEntityClazz{tg.MakeTLMessageEntityBold(&tg.TLMessageEntityBold{})},
+		Peer:       inputPeerUser(300),
+		Message:    "是的方法反反复复房贷首付分\nfrdddccccdde\nrwerwerwerwerwe\nererewrwe",
+		RandomId:   42,
+		ClearDraft: true,
+		Entities:   []tg.MessageEntityClazz{bold, spoiler},
 	})
-	if err != tg.ErrInputRequestInvalid {
-		t.Fatalf("error = %v, want %v", err, tg.ErrInputRequestInvalid)
+	if err != nil {
+		t.Fatalf("error = %v, want nil", err)
 	}
-	if called {
-		t.Fatal("msg service was called but should not have been")
+	if got == nil || len(got.Message) != 1 {
+		t.Fatalf("msg request = %#v, want one outbox", got)
+	}
+	message, ok := got.Message[0].Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("outbox message = %T, want *tg.TLMessage", got.Message[0].Message)
+	}
+	if len(message.Entities) != 2 || message.Entities[0] != bold || message.Entities[1] != spoiler {
+		t.Fatalf("entities = %#v, want original bold and spoiler entities", message.Entities)
+	}
+	if !got.ClearDraft {
+		t.Fatal("ClearDraft = false, want true")
 	}
 }
+
+// --- Unsupported field rejection ---
 
 func TestMessagesSendMessage_SilentTrueRejected(t *testing.T) {
 	called := false

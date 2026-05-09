@@ -60,12 +60,13 @@ func (c *MessagesCore) MessagesSendMessage(in *tg.TLMessagesSendMessage) (*tg.Up
 	}
 
 	outgoingMsg := tg.MakeTLMessage(&tg.TLMessage{
-		Out:     true,
-		FromId:  tg.MakePeerUser(selfUserID),
-		PeerId:  tg.MakePeerUser(peerUserID),
-		ReplyTo: replyHeader,
-		Date:    int32(time.Now().Unix()),
-		Message: in.Message,
+		Out:      true,
+		FromId:   tg.MakePeerUser(selfUserID),
+		PeerId:   tg.MakePeerUser(peerUserID),
+		ReplyTo:  replyHeader,
+		Date:     int32(time.Now().Unix()),
+		Message:  in.Message,
+		Entities: in.Entities,
 	})
 
 	outbox := msg.MakeTLOutboxMessage(&msg.TLOutboxMessage{
