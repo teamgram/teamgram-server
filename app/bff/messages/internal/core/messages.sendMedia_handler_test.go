@@ -8,6 +8,7 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/app/bff/messages/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	mediaclient "github.com/teamgram/teamgram-server/v2/app/service/media/client"
 	mediapb "github.com/teamgram/teamgram-server/v2/app/service/media/media"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -101,6 +102,58 @@ func TestMessagesSendMediaBuildsOutboxAndReturnsFullUpdates(t *testing.T) {
 	}
 	if reply, ok := message.ReplyTo.(*tg.TLMessageReplyHeader); !ok || reply.ReplyToMsgId == nil || *reply.ReplyToMsgId != 7 {
 		t.Fatalf("ReplyTo = %#v, want reply header msg 7", message.ReplyTo)
+	}
+}
+
+func TestMessagesSendMediaProjectsUsersIntoUpdates(t *testing.T) {
+	updates := testUpdates()
+	updates.Clazz.(*tg.TLUpdates).Updates = []tg.UpdateClazz{
+		tg.MakeTLUpdateMessageID(&tg.TLUpdateMessageID{Id: 61, RandomId: 42}),
+		tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
+			Message: tg.MakeTLMessage(&tg.TLMessage{
+				Id:      61,
+				FromId:  tg.MakePeerUser(100),
+				PeerId:  tg.MakePeerUser(300),
+				Message: "caption",
+			}),
+			Pts:      31,
+			PtsCount: 1,
+		}),
+	}
+	c := newMessagesCoreWithRepo(&repository.Repository{
+		MsgClient: &messagesFakeMsgClient{sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+			return updates, nil
+		}},
+		MediaClient: &messagesFakeMediaClient{uploadPhotoFile: func(_ context.Context, _ *mediapb.TLMediaUploadPhotoFile) (*tg.Photo, error) {
+			return tg.MakeTLPhoto(&tg.TLPhoto{Id: 777}).ToPhoto(), nil
+		}},
+		UserClient: &messagesFakeUserClient{
+			projectUsers: func(_ context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+				if len(in.ViewerUserIds) != 1 || in.ViewerUserIds[0] != 100 {
+					t.Fatalf("ViewerUserIds = %v, want [100]", in.ViewerUserIds)
+				}
+				return userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+					ViewerUsers: []userpb.ViewerUsersClazz{
+						userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 100, Users: []tg.UserClazz{
+							tg.MakeTLUser(&tg.TLUser{Id: 100, Self: true}),
+							tg.MakeTLUser(&tg.TLUser{Id: 300, Contact: true}),
+						}}),
+					},
+				}).ToUserProjectionBundle(), nil
+			},
+		},
+	}, 100, 200)
+
+	got, err := c.MessagesSendMedia(validSendMediaRequest())
+	if err != nil {
+		t.Fatalf("MessagesSendMedia() error = %v", err)
+	}
+	full := got.Clazz.(*tg.TLUpdates)
+	if len(full.Updates) != 2 {
+		t.Fatalf("updates len = %d, want 2", len(full.Updates))
+	}
+	if len(full.Users) != 2 {
+		t.Fatalf("users len = %d, want 2", len(full.Users))
 	}
 }
 

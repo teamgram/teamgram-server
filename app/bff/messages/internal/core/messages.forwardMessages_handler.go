@@ -19,6 +19,7 @@ package core
 import (
 	"time"
 
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -119,6 +120,9 @@ func (c *MessagesCore) MessagesForwardMessages(in *tg.TLMessagesForwardMessages)
 		c.Logger.Errorf("messages.forwardMessages - msg error: self_user_id: %d, peer_id: %d, ids: %v, err: %v",
 			selfUserID, peerUserID, in.Id, err)
 		return nil, mapMsgSendError(err)
+	}
+	if err := userprojection.FillUpdatesUsers(c.ctx, c.svcCtx.Repo.UserClient, selfUserID, updates, userprojection.MissingStoredReference); err != nil {
+		return nil, err
 	}
 
 	return updates, nil

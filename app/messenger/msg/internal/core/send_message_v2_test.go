@@ -549,12 +549,19 @@ func TestMsgSendMessageV2MediaReturnsTLUpdates(t *testing.T) {
 	if !ok {
 		t.Fatalf("updates = %T, want *tg.TLUpdates", got.Clazz)
 	}
-	if len(updates.Updates) != 1 {
-		t.Fatalf("len(updates) = %d, want 1", len(updates.Updates))
+	if len(updates.Updates) != 2 {
+		t.Fatalf("len(updates) = %d, want 2", len(updates.Updates))
 	}
-	update, ok := updates.Updates[0].(*tg.TLUpdateNewMessage)
+	idUpdate, ok := updates.Updates[0].(*tg.TLUpdateMessageID)
 	if !ok {
-		t.Fatalf("update = %T, want *tg.TLUpdateNewMessage", updates.Updates[0])
+		t.Fatalf("first update = %T, want *tg.TLUpdateMessageID", updates.Updates[0])
+	}
+	if idUpdate.Id != 61 || idUpdate.RandomId != 11 {
+		t.Fatalf("updateMessageID = %+v, want id 61 random_id 11", idUpdate)
+	}
+	update, ok := updates.Updates[1].(*tg.TLUpdateNewMessage)
+	if !ok {
+		t.Fatalf("second update = %T, want *tg.TLUpdateNewMessage", updates.Updates[1])
 	}
 	message, ok := update.Message.(*tg.TLMessage)
 	if !ok {
@@ -3031,12 +3038,15 @@ func firstSentUpdateMessage(t *testing.T, got *tg.Updates) *tg.TLMessage {
 	if !ok {
 		t.Fatalf("updates = %T, want *tg.TLUpdates", got.Clazz)
 	}
-	if len(updates.Updates) != 1 {
-		t.Fatalf("len(updates) = %d, want 1", len(updates.Updates))
+	var update *tg.TLUpdateNewMessage
+	for _, item := range updates.Updates {
+		if u, ok := item.(*tg.TLUpdateNewMessage); ok {
+			update = u
+			break
+		}
 	}
-	update, ok := updates.Updates[0].(*tg.TLUpdateNewMessage)
-	if !ok {
-		t.Fatalf("update = %T, want *tg.TLUpdateNewMessage", updates.Updates[0])
+	if update == nil {
+		t.Fatalf("updates = %#v, want updateNewMessage", updates.Updates)
 	}
 	message, ok := update.Message.(*tg.TLMessage)
 	if !ok {

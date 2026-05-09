@@ -17,6 +17,7 @@
 package core
 
 import (
+	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -83,6 +84,9 @@ func (c *MessagesCore) MessagesSendMedia(in *tg.TLMessagesSendMedia) (*tg.Update
 		c.Logger.Errorf("messages.sendMedia - msg error: self_user_id: %d, peer_id: %d, random_id: %d, err: %v",
 			selfUserID, peerUserID, in.RandomId, err)
 		return nil, mapMsgSendError(err)
+	}
+	if err := userprojection.FillUpdatesUsers(c.ctx, c.svcCtx.Repo.UserClient, selfUserID, updates, userprojection.MissingStoredReference); err != nil {
+		return nil, err
 	}
 
 	return updates, nil

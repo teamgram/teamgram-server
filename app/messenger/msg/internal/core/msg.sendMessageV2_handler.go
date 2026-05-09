@@ -605,27 +605,33 @@ func fullSentMessageUpdates(senderUserID int64, peerID int64, canonicals []repos
 			return nil, err
 		}
 		updatesDate = date
-		updates = append(updates, tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
-			Message: tg.MakeTLMessage(&tg.TLMessage{
-				Out:         true,
-				Silent:      normalized[i].Attrs.Silent,
-				Noforwards:  normalized[i].Attrs.Noforwards,
-				InvertMedia: normalized[i].Attrs.InvertMedia,
-				Id:          userMessageID,
-				FromId:      tg.MakePeerUser(senderUserID),
-				PeerId:      tg.MakePeerUser(peerID),
-				FwdFrom:     sentMessageForwardHeader(normalized[i].ForwardRef),
-				ReplyTo:     sentMessageReplyHeader(normalized[i].ReplyToUserMessageID),
-				Date:        date,
-				Message:     normalized[i].MessageText,
-				Media:       sentMessageMedia(normalized[i].MediaRef),
-				Entities:    sentMessageEntities(normalized[i].Entities),
-				GroupedId:   sentMessageGroupedID(normalized[i].attrsPtr()),
-				TtlPeriod:   sentMessageTTLPeriod(normalized[i].MediaRef),
+		updates = append(updates,
+			tg.MakeTLUpdateMessageID(&tg.TLUpdateMessageID{
+				Id:       userMessageID,
+				RandomId: normalized[i].RandomID,
 			}),
-			Pts:      pts,
-			PtsCount: response.PtsCount,
-		}))
+			tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
+				Message: tg.MakeTLMessage(&tg.TLMessage{
+					Out:         true,
+					Silent:      normalized[i].Attrs.Silent,
+					Noforwards:  normalized[i].Attrs.Noforwards,
+					InvertMedia: normalized[i].Attrs.InvertMedia,
+					Id:          userMessageID,
+					FromId:      tg.MakePeerUser(senderUserID),
+					PeerId:      tg.MakePeerUser(peerID),
+					FwdFrom:     sentMessageForwardHeader(normalized[i].ForwardRef),
+					ReplyTo:     sentMessageReplyHeader(normalized[i].ReplyToUserMessageID),
+					Date:        date,
+					Message:     normalized[i].MessageText,
+					Media:       sentMessageMedia(normalized[i].MediaRef),
+					Entities:    sentMessageEntities(normalized[i].Entities),
+					GroupedId:   sentMessageGroupedID(normalized[i].attrsPtr()),
+					TtlPeriod:   sentMessageTTLPeriod(normalized[i].MediaRef),
+				}),
+				Pts:      pts,
+				PtsCount: response.PtsCount,
+			}),
+		)
 	}
 	return tg.MakeTLUpdates(&tg.TLUpdates{
 		Updates: updates,
