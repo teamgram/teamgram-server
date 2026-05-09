@@ -69,7 +69,11 @@ func (s *Service) MessagesUploadEncryptedFile(ctx context.Context, request *tg.T
 // upload.saveFilePart#b304a621 file_id:long file_part:int bytes:bytes = Bool;
 func (s *Service) UploadSaveFilePart(ctx context.Context, request *tg.TLUploadSaveFilePart) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("upload.saveFilePart - metadata: %s, request: %s", c.MD, request)
+	c.Logger.Debugf("upload.saveFilePart - metadata: %s, request: {file_id: %d, file_part: %d, bytes_len: %d}",
+		c.MD,
+		request.FileId,
+		request.FilePart,
+		len(request.Bytes))
 
 	r, err := c.UploadSaveFilePart(request)
 	if err != nil {
@@ -93,7 +97,16 @@ func (s *Service) UploadGetFile(ctx context.Context, request *tg.TLUploadGetFile
 		return nil, err
 	}
 
-	c.Logger.Debugf("upload.getFile - reply: %s", r)
+	switch r2 := r.Clazz.(type) {
+	case *tg.TLUploadFile:
+		c.Logger.Debugf("upload.getFile - reply: {type: %v, mime: %d, len_bytes: %d}",
+			r2.Type,
+			r2.Mtime,
+			len(r2.Bytes))
+	default:
+		c.Logger.Debugf("upload.getFile - reply: %s", r)
+	}
+
 	return r, err
 }
 

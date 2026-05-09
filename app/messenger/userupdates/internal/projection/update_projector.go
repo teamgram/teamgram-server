@@ -533,17 +533,108 @@ func messageMedia(media *payload.MediaRefV1) tg.MessageMediaClazz {
 	switch media.Kind {
 	case "photo":
 		return tg.MakeTLMessageMediaPhoto(&tg.TLMessageMediaPhoto{
-			Photo:      tg.MakeTLPhotoEmpty(&tg.TLPhotoEmpty{Id: media.ID}),
+			Photo:      messagePhoto(media),
 			TtlSeconds: ttl,
 		})
 	case "document":
 		return tg.MakeTLMessageMediaDocument(&tg.TLMessageMediaDocument{
-			Document:   tg.MakeTLDocumentEmpty(&tg.TLDocumentEmpty{Id: media.ID}),
+			Document:   messageDocument(media),
 			TtlSeconds: ttl,
 		})
 	default:
 		return tg.MakeTLMessageMediaEmpty(&tg.TLMessageMediaEmpty{})
 	}
+}
+
+func messagePhoto(media *payload.MediaRefV1) tg.PhotoClazz {
+	if media.Date == 0 && media.DcID == 0 && len(media.PhotoSizes) == 0 {
+		return tg.MakeTLPhotoEmpty(&tg.TLPhotoEmpty{Id: media.ID})
+	}
+	return tg.MakeTLPhoto(&tg.TLPhoto{
+		Id:            media.ID,
+		AccessHash:    media.AccessHash,
+		FileReference: append([]byte(nil), media.FileReference...),
+		Date:          media.Date,
+		Sizes:         messagePhotoSizes(media.PhotoSizes),
+		DcId:          media.DcID,
+	})
+}
+
+func messageDocument(media *payload.MediaRefV1) tg.DocumentClazz {
+	if media.Date == 0 && media.DcID == 0 && media.Size == 0 && len(media.DocumentAttributes) == 0 {
+		return tg.MakeTLDocumentEmpty(&tg.TLDocumentEmpty{Id: media.ID})
+	}
+	return tg.MakeTLDocument(&tg.TLDocument{
+		Id:            media.ID,
+		AccessHash:    media.AccessHash,
+		FileReference: append([]byte(nil), media.FileReference...),
+		Date:          media.Date,
+		MimeType:      media.MimeType,
+		Size2:         media.Size,
+		Thumbs:        messagePhotoSizes(media.DocumentThumbs),
+		DcId:          media.DcID,
+		Attributes:    messageDocumentAttributes(media.DocumentAttributes),
+	})
+}
+
+func messagePhotoSizes(sizes []payload.PhotoSizeRefV1) []tg.PhotoSizeClazz {
+	if len(sizes) == 0 {
+		return nil
+	}
+	out := make([]tg.PhotoSizeClazz, 0, len(sizes))
+	for _, size := range sizes {
+		switch size.Kind {
+		case "empty":
+			out = append(out, tg.MakeTLPhotoSizeEmpty(&tg.TLPhotoSizeEmpty{Type: size.Type}))
+		case "size":
+			out = append(out, tg.MakeTLPhotoSize(&tg.TLPhotoSize{Type: size.Type, W: size.W, H: size.H, Size2: size.Size}))
+		case "cached":
+			out = append(out, tg.MakeTLPhotoCachedSize(&tg.TLPhotoCachedSize{Type: size.Type, W: size.W, H: size.H, Bytes: append([]byte(nil), size.Bytes...)}))
+		case "stripped":
+			out = append(out, tg.MakeTLPhotoStrippedSize(&tg.TLPhotoStrippedSize{Type: size.Type, Bytes: append([]byte(nil), size.Bytes...)}))
+		case "progressive":
+			out = append(out, tg.MakeTLPhotoSizeProgressive(&tg.TLPhotoSizeProgressive{Type: size.Type, W: size.W, H: size.H, Sizes: append([]int32(nil), size.Sizes...)}))
+		}
+	}
+	return out
+}
+
+func messageDocumentAttributes(attrs []payload.DocumentAttributeRefV1) []tg.DocumentAttributeClazz {
+	if len(attrs) == 0 {
+		return nil
+	}
+	out := make([]tg.DocumentAttributeClazz, 0, len(attrs))
+	for _, attr := range attrs {
+		switch attr.Kind {
+		case "filename":
+			out = append(out, tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: attr.FileName}))
+		case "image_size":
+			out = append(out, tg.MakeTLDocumentAttributeImageSize(&tg.TLDocumentAttributeImageSize{W: attr.W, H: attr.H}))
+		case "animated":
+			out = append(out, tg.MakeTLDocumentAttributeAnimated(&tg.TLDocumentAttributeAnimated{}))
+		case "video":
+			out = append(out, tg.MakeTLDocumentAttributeVideo(&tg.TLDocumentAttributeVideo{
+				RoundMessage:      attr.RoundMessage,
+				SupportsStreaming: attr.SupportsStreaming,
+				Nosound:           attr.NoSound,
+				Duration:          attr.DurationFloat,
+				W:                 attr.W,
+				H:                 attr.H,
+				PreloadPrefixSize: attr.PreloadPrefixSize,
+				VideoStartTs:      attr.VideoStartTs,
+				VideoCodec:        attr.VideoCodec,
+			}))
+		case "audio":
+			out = append(out, tg.MakeTLDocumentAttributeAudio(&tg.TLDocumentAttributeAudio{
+				Voice:     attr.Voice,
+				Duration:  attr.Duration,
+				Title:     attr.Title,
+				Performer: attr.Performer,
+				Waveform:  append([]byte(nil), attr.Waveform...),
+			}))
+		}
+	}
+	return out
 }
 
 func messageGroupedID(attrs *payload.MessageAttrsV1) *int64 {

@@ -55,13 +55,48 @@ type MessageEntityV1 struct {
 }
 
 type MediaRefV1 struct {
-	SchemaVersion int    `json:"schema_version"`
-	Kind          string `json:"kind"`
-	ID            int64  `json:"id"`
-	AccessHash    int64  `json:"access_hash,omitempty"`
-	FileReference []byte `json:"file_reference,omitempty"`
-	TTLSeconds    int32  `json:"ttl_seconds,omitempty"`
-	MimeType      string `json:"mime_type,omitempty"`
+	SchemaVersion      int                      `json:"schema_version"`
+	Kind               string                   `json:"kind"`
+	ID                 int64                    `json:"id"`
+	AccessHash         int64                    `json:"access_hash,omitempty"`
+	FileReference      []byte                   `json:"file_reference,omitempty"`
+	Date               int32                    `json:"date,omitempty"`
+	DcID               int32                    `json:"dc_id,omitempty"`
+	TTLSeconds         int32                    `json:"ttl_seconds,omitempty"`
+	MimeType           string                   `json:"mime_type,omitempty"`
+	Size               int64                    `json:"size,omitempty"`
+	PhotoSizes         []PhotoSizeRefV1         `json:"photo_sizes,omitempty"`
+	DocumentThumbs     []PhotoSizeRefV1         `json:"document_thumbs,omitempty"`
+	DocumentAttributes []DocumentAttributeRefV1 `json:"document_attributes,omitempty"`
+}
+
+type PhotoSizeRefV1 struct {
+	Kind  string  `json:"kind"`
+	Type  string  `json:"type,omitempty"`
+	W     int32   `json:"w,omitempty"`
+	H     int32   `json:"h,omitempty"`
+	Size  int32   `json:"size,omitempty"`
+	Bytes []byte  `json:"bytes,omitempty"`
+	Sizes []int32 `json:"sizes,omitempty"`
+}
+
+type DocumentAttributeRefV1 struct {
+	Kind              string   `json:"kind"`
+	W                 int32    `json:"w,omitempty"`
+	H                 int32    `json:"h,omitempty"`
+	FileName          string   `json:"file_name,omitempty"`
+	Duration          int32    `json:"duration,omitempty"`
+	DurationFloat     float64  `json:"duration_float,omitempty"`
+	Title             *string  `json:"title,omitempty"`
+	Performer         *string  `json:"performer,omitempty"`
+	Waveform          []byte   `json:"waveform,omitempty"`
+	Voice             bool     `json:"voice,omitempty"`
+	RoundMessage      bool     `json:"round_message,omitempty"`
+	SupportsStreaming bool     `json:"supports_streaming,omitempty"`
+	NoSound           bool     `json:"nosound,omitempty"`
+	PreloadPrefixSize *int32   `json:"preload_prefix_size,omitempty"`
+	VideoStartTs      *float64 `json:"video_start_ts,omitempty"`
+	VideoCodec        *string  `json:"video_codec,omitempty"`
 }
 
 type MessageAttrsV1 struct {

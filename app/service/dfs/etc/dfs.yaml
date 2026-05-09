@@ -21,14 +21,14 @@ Kv:
     Pass: ""
 
 Minio:
-  Endpoint: 127.0.0.1:9000
-  AccessKeyID: minioadmin
-  SecretAccessKey: minioadmin
+  Endpoint: 127.0.0.1:9100
+  AccessKeyID: minio
+  SecretAccessKey: miniostorage
   UseSSL: false
-  PhotosBucket: teamgram-photos
-  VideosBucket: teamgram-videos
-  DocumentsBucket: teamgram-documents
-  EncryptedBucket: teamgram-encrypted
+  PhotosBucket: photos
+  VideosBucket: videos
+  DocumentsBucket: documents
+  EncryptedBucket: encryptedfiles
 
 Idgen:
   DestService: service.idgen

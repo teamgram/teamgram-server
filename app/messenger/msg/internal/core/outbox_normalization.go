@@ -157,7 +157,14 @@ func normalizeMediaRef(media tg.MessageMediaClazz) (*payload.MediaRefV1, error) 
 		return nil, nil
 	case *tg.TLMessageMediaPhoto:
 		ref := &payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "photo"}
-		if m.Photo != nil {
+		if p, ok := m.Photo.(*tg.TLPhoto); ok && p != nil {
+			ref.ID = p.Id
+			ref.AccessHash = p.AccessHash
+			ref.FileReference = append([]byte(nil), p.FileReference...)
+			ref.Date = p.Date
+			ref.DcID = p.DcId
+			ref.PhotoSizes = normalizePhotoSizes(p.Sizes)
+		} else if m.Photo != nil {
 			ref.ID, ref.AccessHash, ref.FileReference = photoIdentity(m.Photo)
 		}
 		if m.TtlSeconds != nil {
@@ -166,7 +173,17 @@ func normalizeMediaRef(media tg.MessageMediaClazz) (*payload.MediaRefV1, error) 
 		return ref, nil
 	case *tg.TLMessageMediaDocument:
 		ref := &payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "document"}
-		if m.Document != nil {
+		if d, ok := m.Document.(*tg.TLDocument); ok && d != nil {
+			ref.ID = d.Id
+			ref.AccessHash = d.AccessHash
+			ref.FileReference = append([]byte(nil), d.FileReference...)
+			ref.Date = d.Date
+			ref.MimeType = d.MimeType
+			ref.Size = d.Size2
+			ref.DcID = d.DcId
+			ref.DocumentThumbs = normalizePhotoSizes(d.Thumbs)
+			ref.DocumentAttributes = normalizeDocumentAttributes(d.Attributes)
+		} else if m.Document != nil {
 			ref.ID, ref.AccessHash, ref.FileReference, ref.MimeType = documentIdentity(m.Document)
 		}
 		if m.TtlSeconds != nil {
@@ -198,6 +215,68 @@ func documentIdentity(document tg.DocumentClazz) (int64, int64, []byte, string) 
 	default:
 		return 0, 0, nil, ""
 	}
+}
+
+func normalizePhotoSizes(sizes []tg.PhotoSizeClazz) []payload.PhotoSizeRefV1 {
+	if len(sizes) == 0 {
+		return nil
+	}
+	out := make([]payload.PhotoSizeRefV1, 0, len(sizes))
+	for _, size := range sizes {
+		switch s := size.(type) {
+		case *tg.TLPhotoSizeEmpty:
+			out = append(out, payload.PhotoSizeRefV1{Kind: "empty", Type: s.Type})
+		case *tg.TLPhotoSize:
+			out = append(out, payload.PhotoSizeRefV1{Kind: "size", Type: s.Type, W: s.W, H: s.H, Size: s.Size2})
+		case *tg.TLPhotoCachedSize:
+			out = append(out, payload.PhotoSizeRefV1{Kind: "cached", Type: s.Type, W: s.W, H: s.H, Bytes: append([]byte(nil), s.Bytes...)})
+		case *tg.TLPhotoStrippedSize:
+			out = append(out, payload.PhotoSizeRefV1{Kind: "stripped", Type: s.Type, Bytes: append([]byte(nil), s.Bytes...)})
+		case *tg.TLPhotoSizeProgressive:
+			out = append(out, payload.PhotoSizeRefV1{Kind: "progressive", Type: s.Type, W: s.W, H: s.H, Sizes: append([]int32(nil), s.Sizes...)})
+		}
+	}
+	return out
+}
+
+func normalizeDocumentAttributes(attrs []tg.DocumentAttributeClazz) []payload.DocumentAttributeRefV1 {
+	if len(attrs) == 0 {
+		return nil
+	}
+	out := make([]payload.DocumentAttributeRefV1, 0, len(attrs))
+	for _, attr := range attrs {
+		switch a := attr.(type) {
+		case *tg.TLDocumentAttributeFilename:
+			out = append(out, payload.DocumentAttributeRefV1{Kind: "filename", FileName: a.FileName})
+		case *tg.TLDocumentAttributeImageSize:
+			out = append(out, payload.DocumentAttributeRefV1{Kind: "image_size", W: a.W, H: a.H})
+		case *tg.TLDocumentAttributeAnimated:
+			out = append(out, payload.DocumentAttributeRefV1{Kind: "animated"})
+		case *tg.TLDocumentAttributeVideo:
+			out = append(out, payload.DocumentAttributeRefV1{
+				Kind:              "video",
+				DurationFloat:     a.Duration,
+				W:                 a.W,
+				H:                 a.H,
+				RoundMessage:      a.RoundMessage,
+				SupportsStreaming: a.SupportsStreaming,
+				NoSound:           a.Nosound,
+				PreloadPrefixSize: a.PreloadPrefixSize,
+				VideoStartTs:      a.VideoStartTs,
+				VideoCodec:        a.VideoCodec,
+			})
+		case *tg.TLDocumentAttributeAudio:
+			out = append(out, payload.DocumentAttributeRefV1{
+				Kind:      "audio",
+				Duration:  a.Duration,
+				Title:     a.Title,
+				Performer: a.Performer,
+				Waveform:  append([]byte(nil), a.Waveform...),
+				Voice:     a.Voice,
+			})
+		}
+	}
+	return out
 }
 
 func normalizeForwardRef(in normalizeOutboxInput, message *tg.TLMessage) (*payload.ForwardRefV1, repository.ForwardSourceIdentity, error) {

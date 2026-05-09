@@ -563,6 +563,17 @@ func TestMsgSendMessageV2MediaReturnsTLUpdates(t *testing.T) {
 	if message.Media == nil || message.Message != "caption" {
 		t.Fatalf("message = %+v, want media caption", message)
 	}
+	media, ok := message.Media.(*tg.TLMessageMediaPhoto)
+	if !ok {
+		t.Fatalf("media = %T, want *tg.TLMessageMediaPhoto", message.Media)
+	}
+	photo, ok := media.Photo.(*tg.TLPhoto)
+	if !ok {
+		t.Fatalf("photo = %T, want *tg.TLPhoto", media.Photo)
+	}
+	if photo.Id != 333 || photo.AccessHash != 444 || len(photo.FileReference) == 0 || photo.DcId != 2 || len(photo.Sizes) != 1 {
+		t.Fatalf("photo = %+v, want displayable photo metadata", photo)
+	}
 }
 
 func TestMsgSendMessageV2GroupedAndForwardReturnTLUpdates(t *testing.T) {
@@ -2924,7 +2935,16 @@ func buildMediaSendRequestForTest(senderID, peerID, authKeyID, randomID int64, c
 				Message: tg.MakeTLMessage(&tg.TLMessage{
 					Message: caption,
 					Media: tg.MakeTLMessageMediaPhoto(&tg.TLMessageMediaPhoto{
-						Photo: tg.MakeTLPhotoEmpty(&tg.TLPhotoEmpty{Id: 333}),
+						Photo: tg.MakeTLPhoto(&tg.TLPhoto{
+							Id:            333,
+							AccessHash:    444,
+							FileReference: []byte("photo-ref"),
+							Date:          1_772_000_100,
+							Sizes: []tg.PhotoSizeClazz{
+								tg.MakeTLPhotoSize(&tg.TLPhotoSize{Type: "m", W: 320, H: 240, Size2: 12345}),
+							},
+							DcId: 2,
+						}),
 					}),
 				}),
 			}),

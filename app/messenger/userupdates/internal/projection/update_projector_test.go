@@ -613,7 +613,20 @@ func TestProjectMessageEventV3DocumentMedia(t *testing.T) {
 		Date:               1700000000,
 		Out:                true,
 		MessageText:        "document",
-		MediaRef:           &payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "document", ID: 555},
+		MediaRef: &payload.MediaRefV1{
+			SchemaVersion: payload.MediaRefSchemaVersionV1,
+			Kind:          "document",
+			ID:            555,
+			AccessHash:    666,
+			FileReference: []byte("doc-ref"),
+			Date:          1700000000,
+			DcID:          4,
+			Size:          98765,
+			MimeType:      "application/pdf",
+			DocumentAttributes: []payload.DocumentAttributeRefV1{
+				{Kind: "filename", FileName: "report.pdf"},
+			},
+		},
 	})
 	got, err := ProjectUserEvent(repository.UserEvent{
 		UserID:             1001,
@@ -636,9 +649,16 @@ func TestProjectMessageEventV3DocumentMedia(t *testing.T) {
 	if !ok {
 		t.Fatalf("media = %T, want *tg.TLMessageMediaDocument", message.Media)
 	}
-	doc, ok := media.Document.(*tg.TLDocumentEmpty)
-	if !ok || doc.Id != 555 {
-		t.Fatalf("document = %+v ok=%v, want documentEmpty id=555", media.Document, ok)
+	doc, ok := media.Document.(*tg.TLDocument)
+	if !ok || doc.Id != 555 || doc.AccessHash != 666 || doc.MimeType != "application/pdf" || doc.Size2 != 98765 || doc.DcId != 4 {
+		t.Fatalf("document = %+v ok=%v, want displayable document", media.Document, ok)
+	}
+	if len(doc.Attributes) != 1 {
+		t.Fatalf("document attrs = %+v, want filename attr", doc.Attributes)
+	}
+	filename, ok := doc.Attributes[0].(*tg.TLDocumentAttributeFilename)
+	if !ok || filename.FileName != "report.pdf" {
+		t.Fatalf("document filename attr = %+v ok=%v, want report.pdf", doc.Attributes[0], ok)
 	}
 }
 

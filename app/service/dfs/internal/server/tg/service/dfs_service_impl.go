@@ -24,7 +24,11 @@ var _ *tg.Bool
 // dfs.writeFilePartData flags:# creator:long file_id:long file_part:int bytes:bytes big:flags.0?true file_total_parts:flags.1?int = Bool;
 func (s *Service) DfsWriteFilePartData(ctx context.Context, request *dfs.TLDfsWriteFilePartData) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dfs.writeFilePartData - request: %s", request)
+	c.Logger.Debugf("dfs.writeFilePartData - request: {creator: %d, file_id: %d, file_part: %d, bytes_len: %d}",
+		request.Creator,
+		request.FileId,
+		request.FilePart,
+		len(request.Bytes))
 
 	r, err := c.DfsWriteFilePartData(request)
 	if err != nil {
@@ -96,7 +100,16 @@ func (s *Service) DfsDownloadFile(ctx context.Context, request *dfs.TLDfsDownloa
 		return nil, err
 	}
 
-	c.Logger.Debugf("dfs.downloadFile - reply: %s", r)
+	switch r2 := r.Clazz.(type) {
+	case *tg.TLUploadFile:
+		c.Logger.Debugf("upload.getFile - reply: {type: %v, mime: %d, len_bytes: %d}",
+			r2.Type,
+			r2.Mtime,
+			len(r2.Bytes))
+	default:
+		c.Logger.Debugf("upload.getFile - reply: %s", r)
+	}
+
 	return r, err
 }
 
