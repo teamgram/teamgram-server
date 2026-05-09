@@ -19,8 +19,9 @@ import (
 
 func init() {
 	// Constructor
-	iface.RegisterClazzID(0x67139b3, func() iface.TLObject { return &TLPhotoSizeList{ClazzID: 0x67139b3} })   // 0x67139b3
-	iface.RegisterClazzID(0x38d19bf2, func() iface.TLObject { return &TLVideoSizeList{ClazzID: 0x38d19bf2} }) // 0x38d19bf2
+	iface.RegisterClazzID(0x986d9e66, func() iface.TLObject { return &TLMediaResolvedFileObject{ClazzID: 0x986d9e66} }) // 0x986d9e66
+	iface.RegisterClazzID(0x67139b3, func() iface.TLObject { return &TLPhotoSizeList{ClazzID: 0x67139b3} })             // 0x67139b3
+	iface.RegisterClazzID(0x38d19bf2, func() iface.TLObject { return &TLVideoSizeList{ClazzID: 0x38d19bf2} })           // 0x38d19bf2
 
 	// Method
 	iface.RegisterClazzID(0x3c2b0b17, func() iface.TLObject { return &TLMediaUploadPhotoFile{ClazzID: 0x3c2b0b17} })        // 0x3c2b0b17
@@ -39,4 +40,5 @@ func init() {
 	iface.RegisterClazzID(0xacb624ed, func() iface.TLObject { return &TLMediaUploadStickerFile{ClazzID: 0xacb624ed} })      // 0xacb624ed
 	iface.RegisterClazzID(0x3dbab209, func() iface.TLObject { return &TLMediaUploadRingtoneFile{ClazzID: 0x3dbab209} })     // 0x3dbab209
 	iface.RegisterClazzID(0x89d159d2, func() iface.TLObject { return &TLMediaUploadedProfilePhoto{ClazzID: 0x89d159d2} })   // 0x89d159d2
+	iface.RegisterClazzID(0x474fecf3, func() iface.TLObject { return &TLMediaResolveFileLocation{ClazzID: 0x474fecf3} })    // 0x474fecf3
 }

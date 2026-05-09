@@ -17,6 +17,7 @@ import (
 const (
 	ClazzName_photoSizeList                = "photoSizeList"
 	ClazzName_videoSizeList                = "videoSizeList"
+	ClazzName_mediaResolvedFileObject      = "mediaResolvedFileObject"
 	ClazzName_media_uploadPhotoFile        = "media_uploadPhotoFile"
 	ClazzName_media_uploadProfilePhotoFile = "media_uploadProfilePhotoFile"
 	ClazzName_media_getPhoto               = "media_getPhoto"
@@ -33,12 +34,14 @@ const (
 	ClazzName_media_uploadStickerFile      = "media_uploadStickerFile"
 	ClazzName_media_uploadRingtoneFile     = "media_uploadRingtoneFile"
 	ClazzName_media_uploadedProfilePhoto   = "media_uploadedProfilePhoto"
+	ClazzName_media_resolveFileLocation    = "media_resolveFileLocation"
 )
 
 func init() {
 	// RegisterClazzNameList
 	iface.RegisterClazzName(ClazzName_photoSizeList, 0, 0x67139b3)                 // 67139b3
 	iface.RegisterClazzName(ClazzName_videoSizeList, 0, 0x38d19bf2)                // 38d19bf2
+	iface.RegisterClazzName(ClazzName_mediaResolvedFileObject, 0, 0x986d9e66)      // 986d9e66
 	iface.RegisterClazzName(ClazzName_media_uploadPhotoFile, 0, 0x3c2b0b17)        // 3c2b0b17
 	iface.RegisterClazzName(ClazzName_media_uploadProfilePhotoFile, 0, 0xb6a04cc4) // b6a04cc4
 	iface.RegisterClazzName(ClazzName_media_getPhoto, 0, 0x657eb86b)               // 657eb86b
@@ -55,10 +58,12 @@ func init() {
 	iface.RegisterClazzName(ClazzName_media_uploadStickerFile, 0, 0xacb624ed)      // acb624ed
 	iface.RegisterClazzName(ClazzName_media_uploadRingtoneFile, 0, 0x3dbab209)     // 3dbab209
 	iface.RegisterClazzName(ClazzName_media_uploadedProfilePhoto, 0, 0x89d159d2)   // 89d159d2
+	iface.RegisterClazzName(ClazzName_media_resolveFileLocation, 0, 0x474fecf3)    // 474fecf3
 
 	//RegisterClazzIDNameList
 	iface.RegisterClazzIDName(ClazzName_photoSizeList, 0x67139b3)                 // 67139b3
 	iface.RegisterClazzIDName(ClazzName_videoSizeList, 0x38d19bf2)                // 38d19bf2
+	iface.RegisterClazzIDName(ClazzName_mediaResolvedFileObject, 0x986d9e66)      // 986d9e66
 	iface.RegisterClazzIDName(ClazzName_media_uploadPhotoFile, 0x3c2b0b17)        // 3c2b0b17
 	iface.RegisterClazzIDName(ClazzName_media_uploadProfilePhotoFile, 0xb6a04cc4) // b6a04cc4
 	iface.RegisterClazzIDName(ClazzName_media_getPhoto, 0x657eb86b)               // 657eb86b
@@ -75,4 +80,5 @@ func init() {
 	iface.RegisterClazzIDName(ClazzName_media_uploadStickerFile, 0xacb624ed)      // acb624ed
 	iface.RegisterClazzIDName(ClazzName_media_uploadRingtoneFile, 0x3dbab209)     // 3dbab209
 	iface.RegisterClazzIDName(ClazzName_media_uploadedProfilePhoto, 0x89d159d2)   // 89d159d2
+	iface.RegisterClazzIDName(ClazzName_media_resolveFileLocation, 0x474fecf3)    // 474fecf3
 }

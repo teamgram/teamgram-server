@@ -39,6 +39,7 @@ type MediaClient interface {
 	MediaUploadStickerFile(ctx context.Context, in *media.TLMediaUploadStickerFile) (*tg.Document, error)
 	MediaUploadRingtoneFile(ctx context.Context, in *media.TLMediaUploadRingtoneFile) (*tg.Document, error)
 	MediaUploadedProfilePhoto(ctx context.Context, in *media.TLMediaUploadedProfilePhoto) (*tg.Photo, error)
+	MediaResolveFileLocation(ctx context.Context, in *media.TLMediaResolveFileLocation) (*media.MediaResolvedFileObject, error)
 }
 
 type defaultMediaClient struct {
@@ -147,4 +148,10 @@ func (m *defaultMediaClient) MediaUploadRingtoneFile(ctx context.Context, in *me
 // media.uploadedProfilePhoto owner_id:long photo_id:long = Photo;
 func (m *defaultMediaClient) MediaUploadedProfilePhoto(ctx context.Context, in *media.TLMediaUploadedProfilePhoto) (*tg.Photo, error) {
 	return m.rpc.MediaUploadedProfilePhoto(ctx, in)
+}
+
+// MediaResolveFileLocation
+// media.resolveFileLocation location:InputFileLocation viewer_id:long = MediaResolvedFileObject;
+func (m *defaultMediaClient) MediaResolveFileLocation(ctx context.Context, in *media.TLMediaResolveFileLocation) (*media.MediaResolvedFileObject, error) {
+	return m.rpc.MediaResolveFileLocation(ctx, in)
 }

@@ -71,6 +71,10 @@ func isServiceError(err error) bool {
 	return errors.Is(err, media.ErrMediaStorage) ||
 		errors.Is(err, media.ErrPhotoNotFound) ||
 		errors.Is(err, media.ErrDocumentNotFound) ||
+		errors.Is(err, media.ErrFileLocationInvalid) ||
+		errors.Is(err, media.ErrFileReferenceEmpty) ||
+		errors.Is(err, media.ErrFileReferenceExpired) ||
+		errors.Is(err, media.ErrFileReferenceInvalid) ||
 		errors.Is(err, media.ErrMediaInvalidArgument) ||
 		errors.Is(err, media.ErrMediaInvalidUploadedFile) ||
 		errors.Is(err, media.ErrMediaChecksumInvalid) ||
