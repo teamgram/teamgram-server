@@ -239,6 +239,29 @@ func TestMessagesForwardMessagesMapsMissingOrInvalidSourceToMessageIdInvalid(t *
 	}
 }
 
+func TestMessagesForwardMessagesRejectsUnsupportedSourceMediaBeforeMsgSend(t *testing.T) {
+	called := false
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		getUserMessageList: func(context.Context, *msg.TLMsgGetUserMessageList) (*msg.VectorMessageBox, error) {
+			return &msg.VectorMessageBox{Datas: []tg.MessageBoxClazz{
+				tg.MakeTLMessageBox(&tg.TLMessageBox{MessageId: 1, PeerType: payload.PeerTypeUser, PeerId: 300, Message: tg.MakeTLMessage(&tg.TLMessage{Id: 1, FromId: tg.MakePeerUser(300), PeerId: tg.MakePeerUser(100), Date: 1, Message: "contact", Media: tg.MakeTLMessageMediaContact(&tg.TLMessageMediaContact{PhoneNumber: "1", FirstName: "a"})})}),
+				messageBox(2, "plain"),
+			}}, nil
+		},
+		sendMessageV2: func(context.Context, *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+			called = true
+			return nil, nil
+		},
+	}, 100, 200)
+	_, err := c.MessagesForwardMessages(validForwardMessagesRequest())
+	if !errors.Is(err, tg.ErrMessageIdInvalid) {
+		t.Fatalf("error = %v, want MESSAGE_ID_INVALID", err)
+	}
+	if called {
+		t.Fatal("msg send was called for unsupported source media")
+	}
+}
+
 func TestMessagesForwardMessagesAssignsNewGroupedIDForGroupedMedia(t *testing.T) {
 	groupedID := int64(99)
 	var got *msg.TLMsgSendMessageV2

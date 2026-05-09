@@ -3,7 +3,6 @@ package core
 import (
 	"context"
 	"errors"
-	"math/rand"
 	"time"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
@@ -153,58 +152,6 @@ func resolveMessageMedia(ctx context.Context, mediaClient resolveMediaClient, ow
 			Document:   document.Clazz,
 			TtlSeconds: mediaDocument.TtlSeconds,
 		}), nil
-	case tg.ClazzName_inputMediaGeoPoint:
-		geoPoint, ok := inputMedia.ToInputMediaGeoPoint()
-		if !ok || geoPoint == nil {
-			return nil, tg.ErrMediaEmpty
-		}
-		return tg.MakeTLMessageMediaGeo(&tg.TLMessageMediaGeo{Geo: makeSendMediaGeoPoint(geoPoint.GeoPoint)}), nil
-	case tg.ClazzName_inputMediaContact:
-		contact, ok := inputMedia.ToInputMediaContact()
-		if !ok || contact == nil {
-			return nil, tg.ErrMediaEmpty
-		}
-		return tg.MakeTLMessageMediaContact(&tg.TLMessageMediaContact{
-			PhoneNumber: contact.PhoneNumber,
-			FirstName:   contact.FirstName,
-			LastName:    contact.LastName,
-			Vcard:       contact.Vcard,
-			UserId:      0,
-		}), nil
-	case tg.ClazzName_inputMediaVenue:
-		venue, ok := inputMedia.ToInputMediaVenue()
-		if !ok || venue == nil {
-			return nil, tg.ErrMediaEmpty
-		}
-		return tg.MakeTLMessageMediaVenue(&tg.TLMessageMediaVenue{
-			Geo:       makeSendMediaGeoPoint(venue.GeoPoint),
-			Title:     venue.Title,
-			Address:   venue.Address,
-			Provider:  venue.Provider,
-			VenueId:   venue.VenueId,
-			VenueType: venue.VenueType,
-		}), nil
-	case tg.ClazzName_inputMediaGeoLive:
-		geoLive, ok := inputMedia.ToInputMediaGeoLive()
-		if !ok || geoLive == nil {
-			return nil, tg.ErrMediaEmpty
-		}
-		return tg.MakeTLMessageMediaGeoLive(&tg.TLMessageMediaGeoLive{
-			Geo:    makeSendMediaGeoPoint(geoLive.GeoPoint),
-			Period: valueOrZeroInt32(geoLive.Period),
-		}), nil
-	case tg.ClazzName_inputMediaPoll:
-		poll, ok := inputMedia.ToInputMediaPoll()
-		if !ok || poll == nil {
-			return nil, tg.ErrMediaEmpty
-		}
-		return tg.MakeTLMessageMediaPoll(&tg.TLMessageMediaPoll{Poll: poll.Poll}), nil
-	case tg.ClazzName_inputMediaDice:
-		dice, ok := inputMedia.ToInputMediaDice()
-		if !ok || dice == nil {
-			return nil, tg.ErrMediaEmpty
-		}
-		return makeSendMediaDice(dice.Emoticon), nil
 	default:
 		return nil, tg.ErrMediaEmpty
 	}
@@ -226,33 +173,4 @@ func mapMediaResolveError(err error) error {
 	default:
 		return tg.ErrInternalServerError
 	}
-}
-
-func makeSendMediaGeoPoint(input tg.InputGeoPointClazz) tg.GeoPointClazz {
-	if inputPoint, ok := (&tg.InputGeoPoint{Clazz: input}).ToInputGeoPoint(); ok && inputPoint != nil {
-		return tg.MakeTLGeoPoint(&tg.TLGeoPoint{
-			Long:           inputPoint.Long,
-			Lat:            inputPoint.Lat,
-			AccuracyRadius: inputPoint.AccuracyRadius,
-		})
-	}
-	return tg.MakeTLGeoPointEmpty(&tg.TLGeoPointEmpty{})
-}
-
-func makeSendMediaDice(emoticon string) tg.MessageMediaClazz {
-	maxValue := int32(6)
-	if emoticon == "🏀" {
-		maxValue = 5
-	}
-	return tg.MakeTLMessageMediaDice(&tg.TLMessageMediaDice{
-		Value:    rand.Int31()%maxValue + 1,
-		Emoticon: emoticon,
-	})
-}
-
-func valueOrZeroInt32(v *int32) int32 {
-	if v == nil {
-		return 0
-	}
-	return *v
 }

@@ -77,6 +77,9 @@ func (c *MessagesCore) MessagesForwardMessages(in *tg.TLMessagesForwardMessages)
 	forwardedGroupedIDs := make(map[int64]int64)
 	outboxes := make([]msg.OutboxMessageClazz, 0, len(sources))
 	for i, source := range sources {
+		if !isForwardableMessageMedia(source.Media) {
+			return nil, tg.ErrMessageIdInvalid
+		}
 		var groupedID *int64
 		if source.GroupedId != nil {
 			v, ok := forwardedGroupedIDs[*source.GroupedId]
@@ -221,6 +224,15 @@ func orderForwardSources(list *msg.VectorMessageBox, ids []int32) ([]*tg.TLMessa
 		ordered = append(ordered, source)
 	}
 	return ordered, nil
+}
+
+func isForwardableMessageMedia(media tg.MessageMediaClazz) bool {
+	switch media.(type) {
+	case nil, *tg.TLMessageMediaEmpty, *tg.TLMessageMediaPhoto, *tg.TLMessageMediaDocument:
+		return true
+	default:
+		return false
+	}
 }
 
 type forwardOutboxInput struct {

@@ -275,6 +275,25 @@ func TestMessagesSendMultiMediaMapsInvalidMediaToMediaEmpty(t *testing.T) {
 	}
 }
 
+func TestMessagesSendMultiMediaRejectsUnsupportedMediaBeforeMsgSend(t *testing.T) {
+	called := false
+	c := newMessagesCoreWithRepo(&repository.Repository{
+		MsgClient: &messagesFakeMsgClient{sendMessageV2: func(context.Context, *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+			called = true
+			return nil, nil
+		}},
+	}, 100, 200)
+	in := validSendMultiMediaRequest()
+	in.MultiMedia[0].Media = tg.MakeTLInputMediaContact(&tg.TLInputMediaContact{PhoneNumber: "1", FirstName: "a"})
+	_, err := c.MessagesSendMultiMedia(in)
+	if !errors.Is(err, tg.ErrMediaEmpty) {
+		t.Fatalf("error = %v, want MEDIA_EMPTY", err)
+	}
+	if called {
+		t.Fatal("msg send was called for unsupported media")
+	}
+}
+
 func TestMessagesSendMultiMediaTypedNilMediaRejected(t *testing.T) {
 	called := false
 	c := newMessagesCoreWithRepo(&repository.Repository{
