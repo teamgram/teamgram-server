@@ -24,10 +24,14 @@ import (
 
 type Config struct {
 	kitex.RpcServerConf
-	MiniHttp rest.RestConf
-	Kv       kv.KvConf
-	Minio    MinioConf
-	Idgen    kitex.RpcClientConf
+	MiniHttp    rest.RestConf
+	Kv          kv.KvConf
+	Minio       MinioConf
+	UploadSpool UploadSpoolConf
+	FileObject  FileObjectConf
+	ReadLease   ReadLeaseConf
+	InternalAPI InternalAPIConf
+	Idgen       kitex.RpcClientConf
 }
 
 type MinioConf struct {
@@ -39,4 +43,27 @@ type MinioConf struct {
 	VideosBucket    string
 	DocumentsBucket string
 	EncryptedBucket string
+}
+
+type UploadSpoolConf struct {
+	RootDir         string
+	NodeIDFile      string
+	SegmentSize     int64
+	LocalShardCount int
+	PartTTLSeconds  int64
+}
+
+type FileObjectConf struct {
+	MetaPrefix string
+	LocalDCID  int32
+}
+
+type ReadLeaseConf struct {
+	Secret     string
+	TTLSeconds int64
+}
+
+type InternalAPIConf struct {
+	Secret     string
+	TTLSeconds int64
 }
