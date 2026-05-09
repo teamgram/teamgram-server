@@ -33,25 +33,36 @@ import (
 // MsgSendMessageV2
 // msg.sendMessageV2 user_id:long auth_key_id:long peer_type:int peer_id:long message:Vector<OutboxMessage> = Updates;
 func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
-	if in == nil || len(in.Message) != 1 || in.Message[0] == nil {
-		return nil, fmt.Errorf("%w: first slice requires exactly one message", msg.ErrSendStateConflict)
+	if in == nil || len(in.Message) == 0 {
+		return nil, fmt.Errorf("%w: first slice requires at least one message", msg.ErrSendStateConflict)
 	}
 	if in.PeerType != payload.PeerTypeUser {
 		return nil, fmt.Errorf("%w: first slice only supports user peer", msg.ErrSendStateConflict)
 	}
-	outbox := in.Message[0]
-	normalized, err := normalizeOutboxMessage(normalizeOutboxInput{
-		Ctx:          c.ctx,
-		SenderUserID: in.UserId,
-		PeerType:     in.PeerType,
-		PeerID:       in.PeerId,
-		Outbox:       outbox,
-		Repo:         c.svcCtx.Repo,
-	})
-	if err != nil {
-		return nil, err
+	normalizedBatch := make([]normalizedOutboxMessage, 0, len(in.Message))
+	for _, outbox := range in.Message {
+		if outbox == nil {
+			return nil, fmt.Errorf("%w: missing outbox message", msg.ErrSendStateConflict)
+		}
+		normalized, err := normalizeOutboxMessage(normalizeOutboxInput{
+			Ctx:          c.ctx,
+			SenderUserID: in.UserId,
+			PeerType:     in.PeerType,
+			PeerID:       in.PeerId,
+			Outbox:       outbox,
+			Repo:         c.svcCtx.Repo,
+		})
+		if err != nil {
+			return nil, err
+		}
+		normalizedBatch = append(normalizedBatch, normalized)
 	}
 	sideEffects := batchSideEffectsFromRequest(in)
+	if len(normalizedBatch) > 1 {
+		return c.sendMessageV2Batch(in, normalizedBatch, sideEffects)
+	}
+
+	normalized := normalizedBatch[0]
 	_, requestHash, err := marshalSendRequestV3(normalized, sideEffects)
 	if err != nil {
 		return nil, err
@@ -159,6 +170,72 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 	return shortSentMessage(canonical, senderResult)
 }
 
+func (c *MsgCore) sendMessageV2Batch(in *msg.TLMsgSendMessageV2, normalizedBatch []normalizedOutboxMessage, sideEffects batchSideEffects) (*tg.Updates, error) {
+	batchInput := repository.CreateCanonicalBatchInput{
+		SenderUserID: in.UserId,
+		PeerType:     in.PeerType,
+		PeerID:       in.PeerId,
+		Items:        make([]repository.CreateCanonicalBatchItem, 0, len(normalizedBatch)),
+	}
+	for _, normalized := range normalizedBatch {
+		_, requestHash, err := marshalSendRequestV3(normalized, sideEffects)
+		if err != nil {
+			return nil, err
+		}
+		canonicalPayloads, err := normalizedCanonicalPayloads(normalized)
+		if err != nil {
+			return nil, err
+		}
+		batchInput.Items = append(batchInput.Items, repository.CreateCanonicalBatchItem{
+			ClientRandomID:               normalized.RandomID,
+			RequestPayloadSchemaVersion:  payload.MessageOperationSchemaVersionV3,
+			RequestPayloadHash:           requestHash,
+			MessageText:                  normalized.MessageText,
+			MessageDate:                  time.Now().UTC().Unix(),
+			EntitiesPayloadSchemaVersion: canonicalPayloads.EntitiesPayloadSchemaVersion,
+			EntitiesPayload:              canonicalPayloads.EntitiesPayload,
+			MediaRefSchemaVersion:        canonicalPayloads.MediaRefSchemaVersion,
+			MediaRefPayload:              canonicalPayloads.MediaRefPayload,
+			MessageAttrsSchemaVersion:    canonicalPayloads.MessageAttrsSchemaVersion,
+			MessageAttrsPayload:          canonicalPayloads.MessageAttrsPayload,
+			ForwardRefSchemaVersion:      canonicalPayloads.ForwardRefSchemaVersion,
+			ForwardRefPayload:            canonicalPayloads.ForwardRefPayload,
+		})
+	}
+
+	canonicalBatch, err := c.svcCtx.Repo.CreateOrGetCanonicalBatchByClientRandom(c.ctx, batchInput)
+	if err != nil {
+		return nil, err
+	}
+	if canonicalBatch == nil || len(canonicalBatch.Items) != len(normalizedBatch) {
+		return nil, msg.ErrMsgStorage
+	}
+
+	envelopes := make([]OperationEnvelope, 0, len(normalizedBatch))
+	for i := range normalizedBatch {
+		canonical := &canonicalBatch.Items[i]
+		operationID := payload.SenderOperationID(canonical.CanonicalMessageID, in.UserId)
+		envelope, _, err := c.buildSenderOperationEnvelope(in, canonical, operationID, normalizedBatch[i], sideEffects)
+		if err != nil {
+			return nil, err
+		}
+		envelopes = append(envelopes, envelope)
+	}
+	results, err := c.dispatchRequesterBatchSync(envelopes)
+	if err != nil {
+		return nil, err
+	}
+	for i, result := range results {
+		canonical := &canonicalBatch.Items[i]
+		operationID := payload.SenderOperationID(canonical.CanonicalMessageID, in.UserId)
+		if err := c.markSenderCommitted(canonical, operationID, result); err != nil {
+			_ = c.svcCtx.Repo.MarkRetryableFailure(c.ctx, repository.MarkRetryableFailureInput{SendStateID: canonical.SendStateID, LastErrorCode: "sender_batch_commit_failed", LastErrorMessage: "sender batch commit failed"})
+			return nil, fmt.Errorf("%w: %v", msg.ErrSenderSyncFailed, err)
+		}
+	}
+	return fullSentMessageUpdates(in.UserId, in.PeerId, canonicalBatch.Items, results, normalizedBatch)
+}
+
 func senderResultFromSendState(sendState *repository.SendState) *userupdates.UserOperationResult {
 	if sendState == nil {
 		return nil
@@ -241,12 +318,24 @@ type resolvedReplyToMessage struct {
 }
 
 func (c *MsgCore) processSenderOperation(in *msg.TLMsgSendMessageV2, canonical *repository.CanonicalMessageResult, operationID string, normalized normalizedOutboxMessage, sideEffects batchSideEffects) (*userupdates.UserOperationResult, []byte, error) {
-	body, _, hashBytes, err := buildNormalizedMessageOperationPayload(normalized, in.PeerId, in.PeerId, true, canonical, sideEffects)
+	envelope, hashBytes, err := c.buildSenderOperationEnvelope(in, canonical, operationID, normalized, sideEffects)
 	if err != nil {
 		return nil, nil, err
 	}
+	result, err := c.dispatchRequesterSync(envelope, nil)
+	if err != nil {
+		return nil, nil, err
+	}
+	return result, hashBytes, nil
+}
+
+func (c *MsgCore) buildSenderOperationEnvelope(in *msg.TLMsgSendMessageV2, canonical *repository.CanonicalMessageResult, operationID string, normalized normalizedOutboxMessage, sideEffects batchSideEffects) (OperationEnvelope, []byte, error) {
+	body, _, hashBytes, err := buildNormalizedMessageOperationPayload(normalized, in.PeerId, in.PeerId, true, canonical, sideEffects)
+	if err != nil {
+		return OperationEnvelope{}, nil, err
+	}
 	authKeyID := in.AuthKeyId
-	result, err := c.dispatchRequesterSync(OperationEnvelope{
+	return OperationEnvelope{
 		UserID:               in.UserId,
 		OperationID:          operationID,
 		OpType:               payload.OpTypeSendMessage,
@@ -264,11 +353,7 @@ func (c *MsgCore) processSenderOperation(in *msg.TLMsgSendMessageV2, canonical *
 		PayloadHash:          hashBytes,
 		Payload:              body,
 		DeliveryPolicy:       DeliveryPolicyRequesterSync,
-	}, nil)
-	if err != nil {
-		return nil, nil, err
-	}
-	return result, hashBytes, nil
+	}, hashBytes, nil
 }
 
 func (c *MsgCore) recoverSenderOperation(userID int64, operationID string, payloadHash []byte) (*userupdates.UserOperationResult, error) {
@@ -348,6 +433,52 @@ func shortSentMessage(canonical *repository.CanonicalMessageResult, result *user
 		Pts:      pts,
 		PtsCount: response.PtsCount,
 		Date:     date,
+	}).ToUpdates(), nil
+}
+
+func fullSentMessageUpdates(senderUserID int64, peerID int64, canonicals []repository.CanonicalMessageResult, results []*userupdates.UserOperationResult, normalized []normalizedOutboxMessage) (*tg.Updates, error) {
+	if len(canonicals) != len(results) || len(canonicals) != len(normalized) {
+		return nil, msg.ErrSenderSyncFailed
+	}
+	updates := make([]tg.UpdateClazz, 0, len(canonicals))
+	var updatesDate int32
+	for i := range canonicals {
+		response, err := operationResponseV2(results[i], "sender batch")
+		if err != nil {
+			return nil, err
+		}
+		userMessageID, err := operationResponseUserMessageID(response, "sender batch")
+		if err != nil {
+			return nil, err
+		}
+		pts, err := int64ToInt32(response.Pts, "pts")
+		if err != nil {
+			return nil, err
+		}
+		date, err := msgDateInt32FromUnixSeconds(canonicals[i].MessageDate, "batch message date")
+		if err != nil {
+			return nil, err
+		}
+		updatesDate = date
+		updates = append(updates, tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
+			Message: tg.MakeTLMessage(&tg.TLMessage{
+				Out:     true,
+				Id:      userMessageID,
+				FromId:  tg.MakePeerUser(senderUserID),
+				PeerId:  tg.MakePeerUser(peerID),
+				Date:    date,
+				Message: normalized[i].MessageText,
+			}),
+			Pts:      pts,
+			PtsCount: response.PtsCount,
+		}))
+	}
+	return tg.MakeTLUpdates(&tg.TLUpdates{
+		Updates: updates,
+		Users:   []tg.UserClazz{},
+		Chats:   []tg.ChatClazz{},
+		Date:    updatesDate,
+		Seq:     0,
 	}).ToUpdates(), nil
 }
 

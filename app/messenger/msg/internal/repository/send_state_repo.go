@@ -177,12 +177,58 @@ func (r *Repository) selectSendStateByID(ctx context.Context, sendStateID int64)
 	return sendStateFromModel(row), nil
 }
 
+func selectSendStateByRandomTx(txModels *model.TxModels, senderUserID int64, peerType int32, peerID int64, clientRandomID int64) (*SendState, bool, error) {
+	row, err := txModels.MessageSendStatesModel.SelectByRandom(senderUserID, peerType, peerID, clientRandomID)
+	if err != nil {
+		if errors.Is(err, model.ErrNotFound) {
+			return nil, false, nil
+		}
+		return nil, false, storageError("select send state by random", err)
+	}
+	return sendStateFromModel(row), true, nil
+}
+
 func selectSendStateByIDTx(txModels *model.TxModels, sendStateID int64) (*SendState, error) {
 	row, err := txModels.MessageSendStatesModel.SelectBySendStateId(sendStateID)
 	if err != nil {
 		return nil, storageError("select send state by id for update", err)
 	}
 	return sendStateFromModel(row), nil
+}
+
+func (r *Repository) insertSendStateTx(ctx context.Context, txModels *model.TxModels, in CreateSendStateInput) (*SendState, error) {
+	sendStateID, err := r.nextID(ctx, "next send state id")
+	if err != nil {
+		return nil, err
+	}
+	_, _, err = txModels.MessageSendStatesModel.Insert(&model.MessageSendStates{
+		SendStateId:                 sendStateID,
+		SenderUserId:                in.SenderUserID,
+		PeerType:                    in.PeerType,
+		PeerId:                      in.PeerID,
+		ClientRandomId:              in.ClientRandomID,
+		CanonicalMessageId:          0,
+		PeerSeq:                     0,
+		Status:                      SendStateStatusInitialized,
+		RequestPayloadSchemaVersion: in.RequestPayloadSchemaVersion,
+		RequestPayloadHash:          in.RequestPayloadHash,
+		SenderOperationId:           "",
+		SenderPts:                   0,
+		SenderPtsCount:              0,
+		SenderUpdateSchemaVersion:   0,
+		SenderUpdatePayload:         nil,
+		SenderUpdatePayloadHash:     nil,
+		ReceiverManifestId:          0,
+		LastErrorCategory:           0,
+		LastErrorCode:               "",
+		LastErrorMessage:            "",
+		RetryCount:                  0,
+		CompletedAt:                 0,
+	})
+	if err != nil {
+		return nil, storageError("insert send state", err)
+	}
+	return selectSendStateByIDTx(txModels, sendStateID)
 }
 
 func requireAffectedRows(affected int64, _ string) error {

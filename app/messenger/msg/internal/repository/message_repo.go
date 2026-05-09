@@ -124,6 +124,155 @@ func (r *Repository) CreateOrGetByClientRandom(ctx context.Context, in CreateCan
 	return out, nil
 }
 
+func (r *Repository) CreateOrGetCanonicalBatchByClientRandom(ctx context.Context, in CreateCanonicalBatchInput) (*CanonicalBatchResult, error) {
+	db, err := r.requireDB()
+	if err != nil {
+		return nil, err
+	}
+	if len(in.Items) == 0 {
+		return &CanonicalBatchResult{}, nil
+	}
+
+	var out *CanonicalBatchResult
+	err = db.Transact(ctx, func(tx *sqlx.Tx) error {
+		txModels := r.models.WithTx(tx)
+		results := make([]CanonicalMessageResult, len(in.Items))
+		pending := make([]int, 0, len(in.Items))
+		seenRandoms := make(map[int64]struct{}, len(in.Items))
+
+		for i, item := range in.Items {
+			if _, ok := seenRandoms[item.ClientRandomID]; ok {
+				return msg.ErrRandomIdConflict
+			}
+			seenRandoms[item.ClientRandomID] = struct{}{}
+
+			canonicalInput := batchItemToCanonicalInput(in, item, 0)
+			existing, found, err := selectCanonicalByRandomTx(txModels, in.SenderUserID, in.PeerType, in.PeerID, item.ClientRandomID)
+			if err != nil {
+				return err
+			}
+			if found {
+				if !bytes.Equal(existing.RequestPayloadHash, item.RequestPayloadHash) {
+					return msg.ErrRandomIdConflict
+				}
+				matches, err := existingCanonicalMatchesRetryTx(txModels, existing.CanonicalMessageID, canonicalInput)
+				if err != nil {
+					return err
+				}
+				if !matches {
+					return msg.ErrRandomIdConflict
+				}
+				results[i] = *existing
+				continue
+			}
+
+			state, found, err := selectSendStateByRandomTx(txModels, in.SenderUserID, in.PeerType, in.PeerID, item.ClientRandomID)
+			if err != nil {
+				return err
+			}
+			if !found {
+				state, err = r.insertSendStateTx(ctx, txModels, CreateSendStateInput{
+					SenderUserID:                in.SenderUserID,
+					PeerType:                    in.PeerType,
+					PeerID:                      in.PeerID,
+					ClientRandomID:              item.ClientRandomID,
+					RequestPayloadSchemaVersion: item.RequestPayloadSchemaVersion,
+					RequestPayloadHash:          item.RequestPayloadHash,
+					MessageText:                 item.MessageText,
+				})
+				if err != nil {
+					return err
+				}
+			} else if state.SenderUserID != in.SenderUserID ||
+				state.PeerType != in.PeerType ||
+				state.PeerID != in.PeerID ||
+				state.ClientRandomID != item.ClientRandomID ||
+				!bytes.Equal(state.RequestPayloadHash, item.RequestPayloadHash) {
+				return msg.ErrRandomIdConflict
+			}
+
+			canonicalInput.SendStateID = state.SendStateID
+			if state.CanonicalMessageID != 0 {
+				existing, err := selectCanonicalByIDTx(txModels, state.CanonicalMessageID, item.RequestPayloadHash, state.SendStateID)
+				if err != nil {
+					return err
+				}
+				matches, err := existingCanonicalMatchesRetryTx(txModels, existing.CanonicalMessageID, canonicalInput)
+				if err != nil {
+					return err
+				}
+				if !matches {
+					return msg.ErrRandomIdConflict
+				}
+				results[i] = *existing
+				continue
+			}
+
+			results[i] = CanonicalMessageResult{SendStateID: state.SendStateID, RequestPayloadHash: item.RequestPayloadHash}
+			pending = append(pending, i)
+		}
+
+		if len(pending) > 0 {
+			sequencePeerID, sequenceScoped := messageSequencePeerID(in.PeerType, in.SenderUserID, in.PeerID)
+			var minNextPeerSeq int64
+			if sequenceScoped {
+				minNextPeerSeq, err = nextConversationViewPeerSeqFloorTx(txModels, in.PeerType, in.SenderUserID, in.PeerID)
+				if err != nil {
+					return err
+				}
+			}
+			firstPeerSeq, err := nextPeerSeqBlockTx(txModels, in.PeerType, sequencePeerID, minNextPeerSeq, int64(len(pending)))
+			if err != nil {
+				return err
+			}
+			for offset, index := range pending {
+				item := in.Items[index]
+				messageDate := unixOrNow(item.MessageDate)
+				peerSeq := firstPeerSeq + int64(offset)
+				canonicalID, err := r.nextID(ctx, "next canonical message id")
+				if err != nil {
+					return err
+				}
+				canonicalInput := batchItemToCanonicalInput(in, item, results[index].SendStateID)
+				if err := insertCanonicalMessageTx(txModels, canonicalID, sequencePeerID, peerSeq, messageDate, canonicalInput); err != nil {
+					return err
+				}
+				if err := insertClientRandomTx(txModels, canonicalID, peerSeq, messageDate, canonicalInput); err != nil {
+					return err
+				}
+				if affected, err := txModels.MessageSendStatesModel.MarkCanonicalCreated(canonicalID, peerSeq, SendStateStatusCanonical, results[index].SendStateID); err != nil {
+					return storageError("mark batch canonical created", err)
+				} else if affected == 0 {
+					return msg.ErrSendStateConflict
+				}
+				results[index] = CanonicalMessageResult{
+					SendStateID:                  results[index].SendStateID,
+					CanonicalMessageID:           canonicalID,
+					PeerSeq:                      peerSeq,
+					MessageDate:                  messageDate,
+					RequestPayloadHash:           item.RequestPayloadHash,
+					EntitiesPayloadSchemaVersion: canonicalEntitiesSchemaVersion(item.EntitiesPayloadSchemaVersion),
+					EntitiesPayload:              item.EntitiesPayload,
+					MediaRefSchemaVersion:        canonicalMediaSchemaVersion(item.MediaRefSchemaVersion),
+					MediaRefPayload:              item.MediaRefPayload,
+					MessageAttrsSchemaVersion:    item.MessageAttrsSchemaVersion,
+					MessageAttrsPayload:          item.MessageAttrsPayload,
+					ForwardRefSchemaVersion:      item.ForwardRefSchemaVersion,
+					ForwardRefPayload:            item.ForwardRefPayload,
+					CreatedNew:                   true,
+				}
+			}
+		}
+
+		out = &CanonicalBatchResult{Items: results}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (r *Repository) ListHistoryMessages(ctx context.Context, in ListHistoryMessagesInput) ([]HistoryMessage, error) {
 	if _, err := r.requireDB(); err != nil {
 		return nil, err
@@ -529,6 +678,13 @@ func payloadBytesEqual(a []byte, b []byte) bool {
 }
 
 func nextPeerSeqTx(txModels *model.TxModels, peerType int32, peerID int64, minNextPeerSeq int64) (int64, error) {
+	return nextPeerSeqBlockTx(txModels, peerType, peerID, minNextPeerSeq, 1)
+}
+
+func nextPeerSeqBlockTx(txModels *model.TxModels, peerType int32, peerID int64, minNextPeerSeq int64, count int64) (int64, error) {
+	if count <= 0 {
+		return 0, msg.ErrSendStateConflict
+	}
 	if minNextPeerSeq < 1 {
 		minNextPeerSeq = 1
 	}
@@ -547,12 +703,33 @@ func nextPeerSeqTx(txModels *model.TxModels, peerType int32, peerID int64, minNe
 	if peerSeq < minNextPeerSeq {
 		peerSeq = minNextPeerSeq
 	}
-	if affected, err := txModels.MessagePeerSequencesModel.UpdateNextPeerSeq(peerSeq+1, peerType, peerID); err != nil {
+	if affected, err := txModels.MessagePeerSequencesModel.UpdateNextPeerSeq(peerSeq+count, peerType, peerID); err != nil {
 		return 0, storageError("advance peer sequence", err)
 	} else if affected == 0 {
 		return 0, msg.ErrSendStateConflict
 	}
 	return peerSeq, nil
+}
+
+func batchItemToCanonicalInput(batch CreateCanonicalBatchInput, item CreateCanonicalBatchItem, sendStateID int64) CreateCanonicalMessageInput {
+	return CreateCanonicalMessageInput{
+		SendStateID:                  sendStateID,
+		SenderUserID:                 batch.SenderUserID,
+		PeerType:                     batch.PeerType,
+		PeerID:                       batch.PeerID,
+		ClientRandomID:               item.ClientRandomID,
+		RequestPayloadHash:           item.RequestPayloadHash,
+		MessageText:                  item.MessageText,
+		MessageDate:                  item.MessageDate,
+		EntitiesPayloadSchemaVersion: item.EntitiesPayloadSchemaVersion,
+		EntitiesPayload:              item.EntitiesPayload,
+		MediaRefSchemaVersion:        item.MediaRefSchemaVersion,
+		MediaRefPayload:              item.MediaRefPayload,
+		MessageAttrsSchemaVersion:    item.MessageAttrsSchemaVersion,
+		MessageAttrsPayload:          item.MessageAttrsPayload,
+		ForwardRefSchemaVersion:      item.ForwardRefSchemaVersion,
+		ForwardRefPayload:            item.ForwardRefPayload,
+	}
 }
 
 func insertCanonicalMessageTx(txModels *model.TxModels, canonicalID int64, canonicalPeerID int64, peerSeq int64, messageDate int64, in CreateCanonicalMessageInput) error {

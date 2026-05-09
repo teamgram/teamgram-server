@@ -88,6 +88,29 @@ type CreateCanonicalMessageInput struct {
 	ForwardRefPayload            []byte
 }
 
+type CreateCanonicalBatchInput struct {
+	SenderUserID int64
+	PeerType     int32
+	PeerID       int64
+	Items        []CreateCanonicalBatchItem
+}
+
+type CreateCanonicalBatchItem struct {
+	ClientRandomID               int64
+	RequestPayloadSchemaVersion  int32
+	RequestPayloadHash           []byte
+	MessageText                  string
+	MessageDate                  int64
+	MediaRefSchemaVersion        int32
+	MediaRefPayload              []byte
+	EntitiesPayloadSchemaVersion int32
+	EntitiesPayload              []byte
+	MessageAttrsSchemaVersion    int32
+	MessageAttrsPayload          []byte
+	ForwardRefSchemaVersion      int32
+	ForwardRefPayload            []byte
+}
+
 type CanonicalMessageResult struct {
 	SendStateID                  int64
 	CanonicalMessageID           int64
@@ -103,6 +126,10 @@ type CanonicalMessageResult struct {
 	ForwardRefSchemaVersion      int32
 	ForwardRefPayload            []byte
 	CreatedNew                   bool
+}
+
+type CanonicalBatchResult struct {
+	Items []CanonicalMessageResult
 }
 
 type ListHistoryMessagesInput struct {
@@ -202,6 +229,7 @@ type MarkRetryableFailureInput struct {
 
 type MessageRepository interface {
 	CreateOrGetByClientRandom(ctx context.Context, in CreateCanonicalMessageInput) (*CanonicalMessageResult, error)
+	CreateOrGetCanonicalBatchByClientRandom(ctx context.Context, in CreateCanonicalBatchInput) (*CanonicalBatchResult, error)
 	GetCanonicalMessageByPeerSeq(ctx context.Context, userID int64, peerType int32, peerID int64, peerSeq int64) (*CanonicalMessage, error)
 	EditCanonicalMessage(ctx context.Context, in EditCanonicalMessageInput) (*EditMessageResult, error)
 	ListHistoryMessages(ctx context.Context, in ListHistoryMessagesInput) ([]HistoryMessage, error)

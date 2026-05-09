@@ -381,6 +381,174 @@ func TestCreateOrGetByClientRandomRejectsPayloadChangedHashRetry(t *testing.T) {
 	}
 }
 
+func TestCreateOrGetCanonicalBatchAllocatesOrderedPeerSeqs(t *testing.T) {
+	repo, ctx := newIntegrationRepository(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	in := CreateCanonicalBatchInput{
+		SenderUserID: base + 120,
+		PeerType:     payload.PeerTypeUser,
+		PeerID:       base + 220,
+		Items: []CreateCanonicalBatchItem{
+			{ClientRandomID: base + 7201, RequestPayloadHash: payload.HashBytes([]byte("batch-h1")), MessageText: "one", MessageDate: 1700000000},
+			{ClientRandomID: base + 7202, RequestPayloadHash: payload.HashBytes([]byte("batch-h2")), MessageText: "two", MessageDate: 1700000001},
+		},
+	}
+
+	got, err := repo.CreateOrGetCanonicalBatchByClientRandom(ctx, in)
+	if err != nil {
+		t.Fatalf("CreateOrGetCanonicalBatchByClientRandom() error = %v", err)
+	}
+	if len(got.Items) != 2 {
+		t.Fatalf("items len = %d, want 2: %+v", len(got.Items), got.Items)
+	}
+	if got.Items[1].PeerSeq != got.Items[0].PeerSeq+1 {
+		t.Fatalf("peer seqs = %+v, want ordered consecutive", got.Items)
+	}
+	if !got.Items[0].CreatedNew || !got.Items[1].CreatedNew {
+		t.Fatalf("created flags = %+v, want both new", got.Items)
+	}
+}
+
+func TestCreateOrGetCanonicalBatchExactRetryReturnsExistingRows(t *testing.T) {
+	repo, ctx := newIntegrationRepository(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	in := CreateCanonicalBatchInput{
+		SenderUserID: base + 130,
+		PeerType:     payload.PeerTypeUser,
+		PeerID:       base + 230,
+		Items: []CreateCanonicalBatchItem{
+			{ClientRandomID: base + 7301, RequestPayloadHash: payload.HashBytes([]byte("batch-retry-h1")), MessageText: "one", MessageDate: 1700000100},
+			{ClientRandomID: base + 7302, RequestPayloadHash: payload.HashBytes([]byte("batch-retry-h2")), MessageText: "two", MessageDate: 1700000101},
+		},
+	}
+	first, err := repo.CreateOrGetCanonicalBatchByClientRandom(ctx, in)
+	if err != nil {
+		t.Fatalf("first CreateOrGetCanonicalBatchByClientRandom() error = %v", err)
+	}
+
+	again, err := repo.CreateOrGetCanonicalBatchByClientRandom(ctx, in)
+	if err != nil {
+		t.Fatalf("retry CreateOrGetCanonicalBatchByClientRandom() error = %v", err)
+	}
+	if len(again.Items) != 2 {
+		t.Fatalf("retry items len = %d, want 2: %+v", len(again.Items), again.Items)
+	}
+	for i := range first.Items {
+		if again.Items[i].CanonicalMessageID != first.Items[i].CanonicalMessageID ||
+			again.Items[i].PeerSeq != first.Items[i].PeerSeq ||
+			again.Items[i].CreatedNew {
+			t.Fatalf("retry item %d = %+v, want existing %+v", i, again.Items[i], first.Items[i])
+		}
+	}
+}
+
+func TestCreateOrGetCanonicalBatchCompletesMissingRowsOnRetry(t *testing.T) {
+	repo, ctx := newIntegrationRepository(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	first := CreateCanonicalBatchInput{
+		SenderUserID: base + 140,
+		PeerType:     payload.PeerTypeUser,
+		PeerID:       base + 240,
+		Items: []CreateCanonicalBatchItem{
+			{ClientRandomID: base + 7401, RequestPayloadHash: payload.HashBytes([]byte("batch-mixed-h1")), MessageText: "one", MessageDate: 1700000200},
+		},
+	}
+	if _, err := repo.CreateOrGetCanonicalBatchByClientRandom(ctx, first); err != nil {
+		t.Fatalf("pre-create first item: %v", err)
+	}
+	retry := CreateCanonicalBatchInput{
+		SenderUserID: first.SenderUserID,
+		PeerType:     first.PeerType,
+		PeerID:       first.PeerID,
+		Items: []CreateCanonicalBatchItem{
+			first.Items[0],
+			{ClientRandomID: base + 7402, RequestPayloadHash: payload.HashBytes([]byte("batch-mixed-h2")), MessageText: "two", MessageDate: 1700000201},
+		},
+	}
+	got, err := repo.CreateOrGetCanonicalBatchByClientRandom(ctx, retry)
+	if err != nil {
+		t.Fatalf("completion retry error = %v", err)
+	}
+	if len(got.Items) != 2 || got.Items[1].PeerSeq != got.Items[0].PeerSeq+1 {
+		t.Fatalf("completed peer seqs = %+v, want consecutive full batch", got.Items)
+	}
+	if got.Items[0].CreatedNew || !got.Items[1].CreatedNew {
+		t.Fatalf("created flags = %+v, want existing first and new second", got.Items)
+	}
+}
+
+func TestCreateOrGetCanonicalBatchRejectsExistingHashConflict(t *testing.T) {
+	repo, ctx := newIntegrationRepository(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	original := CreateCanonicalBatchInput{
+		SenderUserID: base + 150,
+		PeerType:     payload.PeerTypeUser,
+		PeerID:       base + 250,
+		Items: []CreateCanonicalBatchItem{
+			{ClientRandomID: base + 7501, RequestPayloadHash: payload.HashBytes([]byte("batch-conflict-h1")), MessageText: "one", MessageDate: 1700000300},
+		},
+	}
+	if _, err := repo.CreateOrGetCanonicalBatchByClientRandom(ctx, original); err != nil {
+		t.Fatalf("pre-create original item: %v", err)
+	}
+
+	_, err := repo.CreateOrGetCanonicalBatchByClientRandom(ctx, CreateCanonicalBatchInput{
+		SenderUserID: original.SenderUserID,
+		PeerType:     original.PeerType,
+		PeerID:       original.PeerID,
+		Items: []CreateCanonicalBatchItem{
+			{ClientRandomID: original.Items[0].ClientRandomID, RequestPayloadHash: payload.HashBytes([]byte("batch-conflict-changed")), MessageText: "changed", MessageDate: 1700000300},
+			{ClientRandomID: base + 7502, RequestPayloadHash: payload.HashBytes([]byte("batch-conflict-h2")), MessageText: "two", MessageDate: 1700000301},
+		},
+	})
+	if !errors.Is(err, msg.ErrRandomIdConflict) {
+		t.Fatalf("conflict batch error = %v, want ErrRandomIdConflict", err)
+	}
+}
+
+func TestCreateOrGetCanonicalBatchConflictRollsBackNewRows(t *testing.T) {
+	repo, ctx := newIntegrationRepository(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	original := CreateCanonicalBatchInput{
+		SenderUserID: base + 160,
+		PeerType:     payload.PeerTypeUser,
+		PeerID:       base + 260,
+		Items: []CreateCanonicalBatchItem{
+			{ClientRandomID: base + 7601, RequestPayloadHash: payload.HashBytes([]byte("batch-rollback-h1")), MessageText: "one", MessageDate: 1700000400},
+		},
+	}
+	first, err := repo.CreateOrGetCanonicalBatchByClientRandom(ctx, original)
+	if err != nil {
+		t.Fatalf("pre-create original item: %v", err)
+	}
+	conflictedNew := CreateCanonicalBatchItem{ClientRandomID: base + 7602, RequestPayloadHash: payload.HashBytes([]byte("batch-rollback-h2")), MessageText: "two", MessageDate: 1700000401}
+	_, err = repo.CreateOrGetCanonicalBatchByClientRandom(ctx, CreateCanonicalBatchInput{
+		SenderUserID: original.SenderUserID,
+		PeerType:     original.PeerType,
+		PeerID:       original.PeerID,
+		Items: []CreateCanonicalBatchItem{
+			conflictedNew,
+			{ClientRandomID: original.Items[0].ClientRandomID, RequestPayloadHash: payload.HashBytes([]byte("batch-rollback-changed")), MessageText: "changed", MessageDate: 1700000400},
+		},
+	})
+	if !errors.Is(err, msg.ErrRandomIdConflict) {
+		t.Fatalf("conflict batch error = %v, want ErrRandomIdConflict", err)
+	}
+
+	retry, err := repo.CreateOrGetCanonicalBatchByClientRandom(ctx, CreateCanonicalBatchInput{
+		SenderUserID: original.SenderUserID,
+		PeerType:     original.PeerType,
+		PeerID:       original.PeerID,
+		Items:        []CreateCanonicalBatchItem{original.Items[0], conflictedNew},
+	})
+	if err != nil {
+		t.Fatalf("retry after rollback error = %v", err)
+	}
+	if len(retry.Items) != 2 || retry.Items[0].CanonicalMessageID != first.Items[0].CanonicalMessageID || retry.Items[1].PeerSeq != retry.Items[0].PeerSeq+1 {
+		t.Fatalf("retry after rollback = %+v, first=%+v", retry.Items, first.Items)
+	}
+}
+
 func TestMessageRepositoryListHistoryMessages(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)

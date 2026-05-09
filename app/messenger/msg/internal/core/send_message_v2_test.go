@@ -203,6 +203,31 @@ func TestMsgSendMessageV2SingleUserPublishesReceiverOperation(t *testing.T) {
 	}
 }
 
+func TestMsgSendMessageV2BatchReturnsFullUpdates(t *testing.T) {
+	core, fakeRepo, fakeUpdates := newBatchMsgCoreForTest(t)
+	in := buildBatchSendRequestForTest(100, 200, 9001, []int64{11, 12})
+
+	got, err := core.MsgSendMessageV2(in)
+	if err != nil {
+		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	}
+	if fakeRepo.batchCreateCalls != 1 {
+		t.Fatalf("batchCreateCalls = %d, want 1", fakeRepo.batchCreateCalls)
+	}
+	if fakeRepo.markSenderCalls != 2 {
+		t.Fatalf("markSenderCalls = %d, want 2", fakeRepo.markSenderCalls)
+	}
+	if fakeUpdates.batchApplyCalls != 1 {
+		t.Fatalf("batchApplyCalls = %d, want 1", fakeUpdates.batchApplyCalls)
+	}
+	if fakeUpdates.batchApplyLen != 2 {
+		t.Fatalf("batchApplyLen = %d, want 2", fakeUpdates.batchApplyLen)
+	}
+	if _, ok := got.Clazz.(*tg.TLUpdates); !ok {
+		t.Fatalf("updates = %T, want *tg.TLUpdates", got.Clazz)
+	}
+}
+
 func TestMsgSendMessageV2ClearDraftWritesSenderOperationPayload(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":2,"pts":15,"pts_count":1,"event_type":"new_message","user_message_id":45}`)
 	responseHash := mustHashBytes(t, responsePayload)
@@ -2049,6 +2074,7 @@ func TestMsgEditMessageV2RejectsNonAuthor(t *testing.T) {
 type fakeMsgRepository struct {
 	sendState           *repository.SendState
 	canonical           *repository.CanonicalMessageResult
+	batchResult         *repository.CanonicalBatchResult
 	canonicalByPeerSeq  *repository.CanonicalMessage
 	editResult          *repository.EditMessageResult
 	editErr             error
@@ -2074,6 +2100,7 @@ type fakeMsgRepository struct {
 	resolveDeleteCalls           int
 	markCanonicalErr             error
 	markSenderErrs               []error
+	batchCreateCalls             int
 	markCanonicalCalls           int
 	markSenderCalls              int
 	markReceiverAckedCalls       int
@@ -2094,6 +2121,11 @@ func (f *fakeMsgRepository) CreateOrLoadSendState(context.Context, repository.Cr
 
 func (f *fakeMsgRepository) CreateOrGetByClientRandom(context.Context, repository.CreateCanonicalMessageInput) (*repository.CanonicalMessageResult, error) {
 	return f.canonical, nil
+}
+
+func (f *fakeMsgRepository) CreateOrGetCanonicalBatchByClientRandom(context.Context, repository.CreateCanonicalBatchInput) (*repository.CanonicalBatchResult, error) {
+	f.batchCreateCalls++
+	return f.batchResult, nil
 }
 
 func (f *fakeMsgRepository) GetCanonicalMessageByPeerSeq(context.Context, int64, int32, int64, int64) (*repository.CanonicalMessage, error) {
@@ -2244,6 +2276,8 @@ type fakeUserUpdatesClient struct {
 	processResults           []*userupdates.UserOperationResult
 	processWithEffects       *userupdates.TLUserupdatesProcessUserOperationWithEffects
 	processWithEffectsResult *userupdates.UserOperationResult
+	batchApplyCalls          int
+	batchApplyLen            int
 	processErr               error
 	processWithEffectsErr    error
 	getResult                *userupdates.UserOperationResult
@@ -2267,6 +2301,24 @@ func (f *fakeUserUpdatesClient) UserupdatesProcessUserOperation(_ context.Contex
 		return nil, f.processErr
 	}
 	return f.nextProcessResult(), nil
+}
+
+func (f *fakeUserUpdatesClient) UserupdatesProcessUserOperationBatch(_ context.Context, in *userupdates.TLUserupdatesProcessUserOperationBatch) (*userupdates.VectorUserOperationResult, error) {
+	f.batchApplyCalls++
+	f.batchApplyLen = len(in.Operations)
+	f.processedOperations = append(f.processedOperations, in.Operations...)
+	if f.processErr != nil {
+		return nil, f.processErr
+	}
+	out := &userupdates.VectorUserOperationResult{Datas: make([]userupdates.UserOperationResultClazz, 0, len(in.Operations))}
+	for range in.Operations {
+		result := f.nextProcessResult()
+		if result == nil {
+			result = userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{Status: 1})
+		}
+		out.Datas = append(out.Datas, result)
+	}
+	return out, nil
 }
 
 func (f *fakeUserUpdatesClient) UserupdatesGetOperationResult(_ context.Context, _ *userupdates.TLUserupdatesGetOperationResult) (*userupdates.UserOperationResult, error) {
@@ -2302,6 +2354,40 @@ func sendMessageRequest(senderID, peerID, authKeyID int64, text string) *msgpb.T
 			}),
 		},
 	}
+}
+
+func newBatchMsgCoreForTest(t *testing.T) (*MsgCore, *fakeMsgRepository, *fakeUserUpdatesClient) {
+	t.Helper()
+	senderPayload1 := []byte(`{"schema_version":2,"pts":11,"pts_count":1,"event_type":"new_message","user_message_id":41}`)
+	senderPayload2 := []byte(`{"schema_version":2,"pts":12,"pts_count":1,"event_type":"new_message","user_message_id":42}`)
+	fakeRepo := &fakeMsgRepository{
+		batchResult: &repository.CanonicalBatchResult{Items: []repository.CanonicalMessageResult{
+			{SendStateID: 501, CanonicalMessageID: 9001, PeerSeq: 1, MessageDate: 1_772_000_000, RequestPayloadHash: payload.HashBytes([]byte("h1")), CreatedNew: true},
+			{SendStateID: 502, CanonicalMessageID: 9002, PeerSeq: 2, MessageDate: 1_772_000_001, RequestPayloadHash: payload.HashBytes([]byte("h2")), CreatedNew: true},
+		}},
+	}
+	fakeUpdates := &fakeUserUpdatesClient{processResults: []*userupdates.UserOperationResult{
+		userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{Status: 1, Pts: 11, PtsCount: 1, ResponsePayload: senderPayload1, ResponsePayloadHash: payload.HashBytes(senderPayload1)}),
+		userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{Status: 1, Pts: 12, PtsCount: 1, ResponsePayload: senderPayload2, ResponsePayloadHash: payload.HashBytes(senderPayload2)}),
+	}}
+	return New(context.Background(), &svc.ServiceContext{Repo: fakeRepo, UserUpdates: fakeUpdates, ReceiverPublisher: &fakeReceiverPublisher{}}), fakeRepo, fakeUpdates
+}
+
+func buildBatchSendRequestForTest(senderID, peerID, authKeyID int64, randomIDs []int64) *msgpb.TLMsgSendMessageV2 {
+	out := &msgpb.TLMsgSendMessageV2{
+		UserId:    senderID,
+		AuthKeyId: authKeyID,
+		PeerType:  payload.PeerTypeUser,
+		PeerId:    peerID,
+		Message:   make([]msgpb.OutboxMessageClazz, 0, len(randomIDs)),
+	}
+	for i, randomID := range randomIDs {
+		out.Message = append(out.Message, msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
+			RandomId: randomID,
+			Message:  tg.MakeTLMessage(&tg.TLMessage{Message: string(rune('a' + i))}),
+		}))
+	}
+	return out
 }
 
 func editMessageRequest(userID, peerID, authKeyID int64, peerSeq int32, text string) *msgpb.TLMsgEditMessageV2 {

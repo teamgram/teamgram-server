@@ -169,8 +169,10 @@ func (f *fakeUserUpdatesClient) UserupdatesProcessUserOperationWithEffects(_ con
 type operationDispatcherUserUpdatesClient struct {
 	processCalls            int
 	processWithEffectsCalls int
+	processBatchCalls       int
 	lastProcess             *userupdates.TLUserupdatesProcessUserOperation
 	lastProcessWithEffects  *userupdates.TLUserupdatesProcessUserOperationWithEffects
+	lastProcessBatch        *userupdates.TLUserupdatesProcessUserOperationBatch
 	result                  *userupdates.UserOperationResult
 	err                     error
 }
@@ -191,6 +193,19 @@ func (f *operationDispatcherUserUpdatesClient) UserupdatesProcessUserOperationWi
 		return nil, f.err
 	}
 	return f.result, nil
+}
+
+func (f *operationDispatcherUserUpdatesClient) UserupdatesProcessUserOperationBatch(_ context.Context, in *userupdates.TLUserupdatesProcessUserOperationBatch) (*userupdates.VectorUserOperationResult, error) {
+	f.processBatchCalls++
+	f.lastProcessBatch = in
+	if f.err != nil {
+		return nil, f.err
+	}
+	out := &userupdates.VectorUserOperationResult{Datas: make([]userupdates.UserOperationResultClazz, 0, len(in.Operations))}
+	for range in.Operations {
+		out.Datas = append(out.Datas, f.result)
+	}
+	return out, nil
 }
 
 func (f *operationDispatcherUserUpdatesClient) UserupdatesGetOperationResult(context.Context, *userupdates.TLUserupdatesGetOperationResult) (*userupdates.UserOperationResult, error) {

@@ -166,6 +166,10 @@ func (u acceptanceUserUpdates) UserupdatesProcessUserOperationWithEffects(ctx co
 	return u.kit.UserupdatesProcessUserOperationWithEffects(ctx, in)
 }
 
+func (u acceptanceUserUpdates) UserupdatesProcessUserOperationBatch(ctx context.Context, in *userupdates.TLUserupdatesProcessUserOperationBatch) (*userupdates.VectorUserOperationResult, error) {
+	return u.kit.UserupdatesProcessUserOperationBatch(ctx, in)
+}
+
 func (u acceptanceUserUpdates) UserupdatesGetOperationResult(ctx context.Context, in *userupdates.TLUserupdatesGetOperationResult) (*userupdates.UserOperationResult, error) {
 	return u.kit.UserupdatesGetOperationResult(ctx, in)
 }
