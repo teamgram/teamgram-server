@@ -20,7 +20,6 @@ import (
 	"context"
 	"fmt"
 	"sync"
-	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/kv"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/config"
@@ -74,13 +73,10 @@ func NewRepository(c config.Config) *Repository {
 		if err != nil {
 			panic(fmt.Errorf("new dfs upload spool: %w", err))
 		}
-		if err := model.ScanOnStart(context.Background(), time.Now()); err != nil {
-			panic(fmt.Errorf("scan dfs upload spool on start: %w", err))
-		}
 		uploadState = model
 	}
 
-	return &Repository{
+	repo := &Repository{
 		kv:                  kv2,
 		uploadStateModel:    uploadState,
 		objectStore:         objectStore,
@@ -93,6 +89,12 @@ func NewRepository(c config.Config) *Repository {
 		readLeaseTTLSeconds: c.ReadLease.TTLSeconds,
 		localDCID:           c.FileObject.LocalDCID,
 	}
+	if c.UploadSpool.RootDir != "" {
+		if err := repo.ScanSpoolOnStart(context.Background()); err != nil {
+			panic(fmt.Errorf("scan dfs upload spool on start: %w", err))
+		}
+	}
+	return repo
 }
 
 func hasRPCClientConfig(c kitex.RpcClientConf) bool {

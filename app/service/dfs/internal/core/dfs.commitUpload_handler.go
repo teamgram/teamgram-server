@@ -18,7 +18,10 @@
 package core
 
 import (
+	"errors"
+
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // DfsCommitUpload
@@ -27,5 +30,13 @@ func (c *DfsCore) DfsCommitUpload(in *dfs.TLDfsCommitUpload) (*dfs.FileFinalized
 	if in == nil || in.UploadSessionId == "" || in.OwnerId == 0 || in.File == nil || in.Purpose == "" {
 		return nil, dfs.ErrDfsInvalidArgument
 	}
-	return c.fileObjects().CommitUpload(c.ctx, in.UploadSessionId, in.OwnerId, in.File, in.Purpose)
+	out, err := c.fileObjects().CommitUpload(c.ctx, in.UploadSessionId, in.OwnerId, in.File, in.Purpose)
+	if err != nil {
+		var missing *dfs.MissingUploadPartError
+		if errors.As(err, &missing) {
+			return nil, tg.NewFilePartXMissing(missing.Part)
+		}
+		return nil, err
+	}
+	return out, nil
 }

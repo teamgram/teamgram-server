@@ -58,6 +58,13 @@ func (k ManifestKeys) Upload(uploadSessionID string) (string, error) {
 	return k.prefix() + "/uploads/" + uploadSessionID + ".json", nil
 }
 
+func (k ManifestKeys) UploadFinalizing(uploadSessionID string) (string, error) {
+	if err := validateManifestID(uploadSessionID); err != nil {
+		return "", err
+	}
+	return k.prefix() + "/uploads/" + uploadSessionID + ".finalizing.json", nil
+}
+
 func (k ManifestKeys) Hashes(objectID string) (string, error) {
 	if err := validateManifestID(objectID); err != nil {
 		return "", err

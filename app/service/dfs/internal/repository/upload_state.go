@@ -47,6 +47,18 @@ type uploadStateLifecycleModel interface {
 	IsWritable() bool
 }
 
+type uploadStateMultipartCleanupModel interface {
+	CleanupExpiredUploadSessionsWithAbort(ctx context.Context, now time.Time, abort func(ctx context.Context, objectKey, uploadID string) error) error
+}
+
+type uploadStateMultipartReconcileModel interface {
+	ReconcileUploadingMultipartSegments(ctx context.Context, list func(ctx context.Context, objectKey, uploadID string) ([]spool.MultipartPart, error)) error
+}
+
+type uploadStateStartupScanModel interface {
+	ScanOnStartWithoutCleanup(ctx context.Context, now time.Time) error
+}
+
 func (i *DfsFileInfo) FileSize() int64 {
 	if i == nil || i.FileTotalParts <= 0 {
 		return 0
@@ -142,16 +154,70 @@ func (r *Repository) ScanSpoolOnStart(ctx context.Context) error {
 	if r == nil {
 		return nil
 	}
+	now := time.Now()
+	if startup, ok := r.uploadStateModel.(uploadStateStartupScanModel); ok {
+		if err := startup.ScanOnStartWithoutCleanup(ctx, now); err != nil {
+			return dfs.WrapDfsStorage("scan upload spool on start", err)
+		}
+		if err := r.ReconcileUploadingMultipartSegments(ctx); err != nil {
+			return err
+		}
+		return r.CleanupExpiredUploadSessions(ctx, now)
+	}
 	if lifecycle, ok := r.uploadStateModel.(uploadStateLifecycleModel); ok {
-		if err := lifecycle.ScanOnStart(ctx, time.Now()); err != nil {
+		if err := lifecycle.ScanOnStart(ctx, now); err != nil {
 			return dfs.WrapDfsStorage("scan upload spool on start", err)
 		}
 	}
 	return nil
 }
 
+func (r *Repository) ReconcileUploadingMultipartSegments(ctx context.Context) error {
+	if r == nil {
+		return nil
+	}
+	reconcile, ok := r.uploadStateModel.(uploadStateMultipartReconcileModel)
+	if !ok {
+		return nil
+	}
+	list := func(ctx context.Context, objectKey, uploadID string) ([]spool.MultipartPart, error) {
+		if r.objectStore == nil {
+			return nil, errUploadStateStoreUnavailable
+		}
+		parts, err := r.objectStore.ListMultipartParts(ctx, r.documentsBucket, objectKey, uploadID)
+		if err != nil {
+			return nil, err
+		}
+		out := make([]spool.MultipartPart, 0, len(parts))
+		for _, part := range parts {
+			out = append(out, spool.MultipartPart{
+				PartNumber: part.PartNumber,
+				ETag:       part.ETag,
+				Size:       part.Size,
+			})
+		}
+		return out, nil
+	}
+	if err := reconcile.ReconcileUploadingMultipartSegments(ctx, list); err != nil {
+		return dfs.WrapDfsStorage("reconcile uploading multipart segments", err)
+	}
+	return nil
+}
+
 func (r *Repository) CleanupExpiredUploadSessions(ctx context.Context, now time.Time) error {
 	if r == nil {
+		return nil
+	}
+	if cleanup, ok := r.uploadStateModel.(uploadStateMultipartCleanupModel); ok {
+		abort := func(ctx context.Context, objectKey, uploadID string) error {
+			if r.objectStore == nil {
+				return errUploadStateStoreUnavailable
+			}
+			return r.objectStore.AbortMultipartUpload(ctx, r.documentsBucket, objectKey, uploadID)
+		}
+		if err := cleanup.CleanupExpiredUploadSessionsWithAbort(ctx, now, abort); err != nil {
+			return dfs.WrapDfsStorage("cleanup expired upload sessions", err)
+		}
 		return nil
 	}
 	if lifecycle, ok := r.uploadStateModel.(uploadStateLifecycleModel); ok {

@@ -401,6 +401,55 @@ func TestUploadStateModelScanOnStartRemovesStaleAtomicTempFiles(t *testing.T) {
 	}
 }
 
+func TestUploadStateModelScanOnStartRemovesUploadedSegmentBytes(t *testing.T) {
+	ctx := context.Background()
+	model := newTestUploadStateModelWithConf(t, config.UploadSpoolConf{
+		RootDir:         t.TempDir(),
+		NodeIDFile:      "node_id",
+		LocalShardCount: 4,
+		PartTTLSeconds:  0,
+	})
+	info := &xkv.DfsFileInfo{Creator: 1001, FileID: 2002, FileTotalParts: 1, Mtime: 1_700_000_000}
+	if err := model.SaveUploadFileInfo(ctx, info); err != nil {
+		t.Fatalf("SaveUploadFileInfo() error = %v", err)
+	}
+	segmentPath, err := model.SegmentPath(info, 0)
+	if err != nil {
+		t.Fatalf("SegmentPath() error = %v", err)
+	}
+	if err := mkdirAllDurable(filepath.Dir(segmentPath), 0o755); err != nil {
+		t.Fatalf("mkdir segment dir error = %v", err)
+	}
+	if err := os.WriteFile(segmentPath, []byte("uploaded bytes"), 0o644); err != nil {
+		t.Fatalf("WriteFile(segment) error = %v", err)
+	}
+	if err := model.WriteSegmentState(ctx, info, SegmentState{
+		SegmentNo:           0,
+		Status:              SegmentStatusUploaded,
+		MultipartUploadID:   "mp-1",
+		MultipartPartNumber: 1,
+		ETag:                "etag-1",
+		Checksum:            "sha256",
+		Size:                int64(len("uploaded bytes")),
+	}); err != nil {
+		t.Fatalf("WriteSegmentState() error = %v", err)
+	}
+
+	if err := model.ScanOnStart(ctx, time.Unix(1_700_010_000, 0)); err != nil {
+		t.Fatalf("ScanOnStart() error = %v", err)
+	}
+	if _, err := os.Stat(segmentPath); !errors.Is(err, os.ErrNotExist) {
+		t.Fatalf("segment stat error = %v, want not exist", err)
+	}
+	states, err := model.LoadSegmentStates(ctx, info)
+	if err != nil {
+		t.Fatalf("LoadSegmentStates() error = %v", err)
+	}
+	if len(states) != 1 || states[0].Status != SegmentStatusUploaded {
+		t.Fatalf("segment states = %#v, want uploaded state retained", states)
+	}
+}
+
 func TestUploadStateModelScanOnStartDoesNotTreatCacheRefsAsSessions(t *testing.T) {
 	ctx := context.Background()
 	model := newTestUploadStateModelWithConf(t, config.UploadSpoolConf{

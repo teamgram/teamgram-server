@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
@@ -122,6 +123,21 @@ func TestDfsCommitUploadDelegatesAndReturnsFinalizedObject(t *testing.T) {
 	}
 	if !repo.commitCalled || repo.commitUpload != "upload-1" || repo.commitOwner != 1001 || repo.commitFile != file || repo.commitPurpose != "media_original" {
 		t.Fatalf("CommitUpload call = %#v", repo)
+	}
+}
+
+func TestDfsCommitUploadMapsMissingUploadPartToFilePartXMissing(t *testing.T) {
+	file := tg.MakeTLInputFileBig(&tg.TLInputFileBig{Id: 10, Parts: 2, Name: "a.bin"})
+	core := newFileObjectTestCore(&fakeFileObjectRepository{err: &dfs.MissingUploadPartError{Part: 1}})
+
+	_, err := core.DfsCommitUpload(&dfs.TLDfsCommitUpload{
+		UploadSessionId: "upload-1",
+		OwnerId:         1001,
+		File:            file,
+		Purpose:         "media_original",
+	})
+	if err == nil || !strings.Contains(err.Error(), "FILE_PART_1_MISSING") {
+		t.Fatalf("DfsCommitUpload() error = %v, want FILE_PART_1_MISSING", err)
 	}
 }
 

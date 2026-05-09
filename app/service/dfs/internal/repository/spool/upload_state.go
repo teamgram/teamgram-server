@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -13,6 +14,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -24,6 +26,7 @@ import (
 
 const (
 	defaultLocalShardCount = 256
+	defaultSegmentSize     = 16 * 1024 * 1024
 	metadataFileName       = "metadata.json"
 )
 
@@ -32,9 +35,49 @@ var ErrUploadSpoolNotWritable = errors.New("dfs upload spool is not writable")
 
 var nodeIDPattern = regexp.MustCompile(`^[A-Za-z0-9._-]+$`)
 
+const (
+	SegmentStatusUploading = "uploading"
+	SegmentStatusUploaded  = "uploaded"
+)
+
+type SegmentState struct {
+	SegmentNo           int64  `json:"segment_no"`
+	Status              string `json:"status"`
+	MultipartUploadID   string `json:"multipart_upload_id"`
+	MultipartPartNumber int    `json:"multipart_part_number"`
+	ObjectKey           string `json:"object_key,omitempty"`
+	ETag                string `json:"etag,omitempty"`
+	Checksum            string `json:"checksum"`
+	Size                int64  `json:"size"`
+}
+
+type MultipartPart struct {
+	PartNumber int
+	ETag       string
+	Size       int64
+}
+
+type BuiltSegment struct {
+	State         SegmentState
+	Path          string
+	FirstBytes    []byte
+	AlreadyDone   bool
+	MissingPart   bool
+	MissingPartNo int32
+}
+
+type ReplayedSegment struct {
+	FirstBytes    []byte
+	Size          int64
+	Checksum      string
+	MissingPart   bool
+	MissingPartNo int32
+}
+
 type UploadStateModel struct {
 	rootDir         string
 	nodeID          string
+	segmentSize     int64
 	localShardCount int
 	partTTLSeconds  int64
 	mu              sync.RWMutex
@@ -61,6 +104,10 @@ func NewUploadStateModel(conf config.UploadSpoolConf) (*UploadStateModel, error)
 	if shardCount <= 0 {
 		shardCount = defaultLocalShardCount
 	}
+	segmentSize := conf.SegmentSize
+	if segmentSize <= 0 {
+		segmentSize = defaultSegmentSize
+	}
 	if err := mkdirAllDurable(rootDir, 0o755); err != nil {
 		return nil, fmt.Errorf("upload_spool.NewUploadStateModel mkdir root: %w", err)
 	}
@@ -78,6 +125,7 @@ func NewUploadStateModel(conf config.UploadSpoolConf) (*UploadStateModel, error)
 	return &UploadStateModel{
 		rootDir:         rootDir,
 		nodeID:          nodeID,
+		segmentSize:     segmentSize,
 		localShardCount: shardCount,
 		partTTLSeconds:  conf.PartTTLSeconds,
 		writable:        true,
@@ -90,6 +138,13 @@ func (m *UploadStateModel) NodeID() string {
 		return ""
 	}
 	return m.nodeID
+}
+
+func (m *UploadStateModel) SegmentSize() int64 {
+	if m == nil || m.segmentSize <= 0 {
+		return defaultSegmentSize
+	}
+	return m.segmentSize
 }
 
 func (m *UploadStateModel) SaveUploadPart(ctx context.Context, creator, fileID int64, partIndex int32, data []byte) error {
@@ -204,6 +259,268 @@ func (m *UploadStateModel) OpenUploadFileReader(ctx context.Context, info *xkv.D
 	return bytes.NewReader(buf.Bytes()), nil
 }
 
+func (m *UploadStateModel) SegmentCount(info *xkv.DfsFileInfo) (int64, error) {
+	partsPerSegment, err := m.partsPerSegment(info)
+	if err != nil {
+		return 0, err
+	}
+	if info.FileTotalParts <= 0 {
+		return 0, ErrUploadStateNotFound
+	}
+	return int64((info.FileTotalParts + partsPerSegment - 1) / partsPerSegment), nil
+}
+
+func (m *UploadStateModel) BuildSegment(ctx context.Context, info *xkv.DfsFileInfo, segmentNo int64, uploadID string, partNumber int) (BuiltSegment, error) {
+	return m.buildSegment(ctx, info, segmentNo, uploadID, partNumber, false)
+}
+
+func (m *UploadStateModel) RebuildSegment(ctx context.Context, info *xkv.DfsFileInfo, segmentNo int64, uploadID string, partNumber int) (BuiltSegment, error) {
+	return m.buildSegment(ctx, info, segmentNo, uploadID, partNumber, true)
+}
+
+func (m *UploadStateModel) buildSegment(ctx context.Context, info *xkv.DfsFileInfo, segmentNo int64, uploadID string, partNumber int, force bool) (BuiltSegment, error) {
+	if err := ctx.Err(); err != nil {
+		return BuiltSegment{}, err
+	}
+	if info == nil || info.FileTotalParts <= 0 || segmentNo < 0 || uploadID == "" || partNumber <= 0 {
+		return BuiltSegment{}, ErrUploadStateNotFound
+	}
+	existing, err := m.LoadSegmentState(ctx, info, segmentNo)
+	if !force && err == nil && existing.Status == SegmentStatusUploaded && existing.MultipartUploadID == uploadID {
+		return BuiltSegment{State: existing, AlreadyDone: true}, nil
+	} else if err != nil && !errors.Is(err, ErrUploadStateNotFound) {
+		return BuiltSegment{}, err
+	}
+	partsPerSegment, err := m.partsPerSegment(info)
+	if err != nil {
+		return BuiltSegment{}, err
+	}
+	startPart := int(segmentNo) * partsPerSegment
+	if startPart >= info.FileTotalParts {
+		return BuiltSegment{}, ErrUploadStateNotFound
+	}
+	endPart := startPart + partsPerSegment
+	if endPart > info.FileTotalParts {
+		endPart = info.FileTotalParts
+	}
+	path, err := m.SegmentPath(info, segmentNo)
+	if err != nil {
+		return BuiltSegment{}, err
+	}
+	if err := mkdirAllDurable(filepath.Dir(path), 0o755); err != nil {
+		return BuiltSegment{}, fmt.Errorf("upload_spool.BuildSegment mkdir segment: %w", err)
+	}
+	tmp, err := os.CreateTemp(filepath.Dir(path), "."+filepath.Base(path)+".tmp-*")
+	if err != nil {
+		return BuiltSegment{}, fmt.Errorf("upload_spool.BuildSegment create temp: %w", err)
+	}
+	tmpName := tmp.Name()
+	closed := false
+	defer func() {
+		if !closed {
+			_ = tmp.Close()
+		}
+		_ = os.Remove(tmpName)
+	}()
+	sum := sha256.New()
+	var size int64
+	var firstBytes []byte
+	dir, err := m.sessionDir(info.Creator, info.FileID)
+	if err != nil {
+		return BuiltSegment{}, err
+	}
+	for partIndex := startPart; partIndex < endPart; partIndex++ {
+		if err := ctx.Err(); err != nil {
+			return BuiltSegment{}, err
+		}
+		partPath := filepath.Join(dir, partFileName(int32(partIndex)))
+		part, err := os.Open(partPath)
+		if err != nil {
+			if errors.Is(err, os.ErrNotExist) {
+				return BuiltSegment{MissingPart: true, MissingPartNo: int32(partIndex)}, ErrUploadStateNotFound
+			}
+			return BuiltSegment{}, fmt.Errorf("upload_spool.BuildSegment open part %d: %w", partIndex, err)
+		}
+		n, copyErr := copyToWriters(tmp, sum, part, &firstBytes)
+		closeErr := part.Close()
+		if copyErr != nil {
+			return BuiltSegment{}, fmt.Errorf("upload_spool.BuildSegment copy part %d: %w", partIndex, copyErr)
+		}
+		if closeErr != nil {
+			return BuiltSegment{}, fmt.Errorf("upload_spool.BuildSegment close part %d: %w", partIndex, closeErr)
+		}
+		size += n
+	}
+	if size <= 0 {
+		return BuiltSegment{}, ErrUploadStateNotFound
+	}
+	if err := tmp.Sync(); err != nil {
+		return BuiltSegment{}, fmt.Errorf("upload_spool.BuildSegment sync segment: %w", err)
+	}
+	if err := tmp.Close(); err != nil {
+		return BuiltSegment{}, fmt.Errorf("upload_spool.BuildSegment close segment: %w", err)
+	}
+	closed = true
+	if err := os.Rename(tmpName, path); err != nil {
+		return BuiltSegment{}, fmt.Errorf("upload_spool.BuildSegment rename segment: %w", err)
+	}
+	if err := syncDir(filepath.Dir(path)); err != nil {
+		return BuiltSegment{}, fmt.Errorf("upload_spool.BuildSegment sync segment dir: %w", err)
+	}
+	state := SegmentState{
+		SegmentNo:           segmentNo,
+		Status:              SegmentStatusUploading,
+		MultipartUploadID:   uploadID,
+		MultipartPartNumber: partNumber,
+		Checksum:            hex.EncodeToString(sum.Sum(nil)),
+		Size:                size,
+	}
+	return BuiltSegment{State: state, Path: path, FirstBytes: firstBytes}, nil
+}
+
+func (m *UploadStateModel) ReplaySegment(ctx context.Context, info *xkv.DfsFileInfo, segmentNo int64, dst io.Writer) (ReplayedSegment, error) {
+	if err := ctx.Err(); err != nil {
+		return ReplayedSegment{}, err
+	}
+	if info == nil || info.FileTotalParts <= 0 || segmentNo < 0 || dst == nil {
+		return ReplayedSegment{}, ErrUploadStateNotFound
+	}
+	partsPerSegment, err := m.partsPerSegment(info)
+	if err != nil {
+		return ReplayedSegment{}, err
+	}
+	startPart := int(segmentNo) * partsPerSegment
+	if startPart >= info.FileTotalParts {
+		return ReplayedSegment{}, ErrUploadStateNotFound
+	}
+	endPart := startPart + partsPerSegment
+	if endPart > info.FileTotalParts {
+		endPart = info.FileTotalParts
+	}
+	dir, err := m.sessionDir(info.Creator, info.FileID)
+	if err != nil {
+		return ReplayedSegment{}, err
+	}
+	sum := sha256.New()
+	var size int64
+	var firstBytes []byte
+	for partIndex := startPart; partIndex < endPart; partIndex++ {
+		if err := ctx.Err(); err != nil {
+			return ReplayedSegment{}, err
+		}
+		partPath := filepath.Join(dir, partFileName(int32(partIndex)))
+		part, err := os.Open(partPath)
+		if err != nil {
+			if errors.Is(err, os.ErrNotExist) {
+				return ReplayedSegment{MissingPart: true, MissingPartNo: int32(partIndex)}, ErrUploadStateNotFound
+			}
+			return ReplayedSegment{}, fmt.Errorf("upload_spool.ReplaySegment open part %d: %w", partIndex, err)
+		}
+		n, copyErr := copyToWriters(dst, sum, part, &firstBytes)
+		closeErr := part.Close()
+		if copyErr != nil {
+			return ReplayedSegment{}, fmt.Errorf("upload_spool.ReplaySegment copy part %d: %w", partIndex, copyErr)
+		}
+		if closeErr != nil {
+			return ReplayedSegment{}, fmt.Errorf("upload_spool.ReplaySegment close part %d: %w", partIndex, closeErr)
+		}
+		size += n
+	}
+	if size <= 0 {
+		return ReplayedSegment{}, ErrUploadStateNotFound
+	}
+	return ReplayedSegment{
+		FirstBytes: firstBytes,
+		Size:       size,
+		Checksum:   hex.EncodeToString(sum.Sum(nil)),
+	}, nil
+}
+
+func (m *UploadStateModel) WriteSegmentState(ctx context.Context, info *xkv.DfsFileInfo, state SegmentState) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	if info == nil {
+		return ErrUploadStateNotFound
+	}
+	data, err := json.Marshal(state)
+	if err != nil {
+		return fmt.Errorf("upload_spool.WriteSegmentState marshal: %w", err)
+	}
+	path, err := m.segmentStatePath(info, state.SegmentNo)
+	if err != nil {
+		return err
+	}
+	if err := writeFileAtomically(path, data, 0o644); err != nil {
+		return fmt.Errorf("upload_spool.WriteSegmentState write: %w", err)
+	}
+	return nil
+}
+
+func (m *UploadStateModel) LoadSegmentState(ctx context.Context, info *xkv.DfsFileInfo, segmentNo int64) (SegmentState, error) {
+	if err := ctx.Err(); err != nil {
+		return SegmentState{}, err
+	}
+	path, err := m.segmentStatePath(info, segmentNo)
+	if err != nil {
+		return SegmentState{}, err
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return SegmentState{}, ErrUploadStateNotFound
+		}
+		return SegmentState{}, fmt.Errorf("upload_spool.LoadSegmentState read: %w", err)
+	}
+	var state SegmentState
+	if err := json.Unmarshal(data, &state); err != nil {
+		return SegmentState{}, fmt.Errorf("upload_spool.LoadSegmentState unmarshal: %w", err)
+	}
+	return state, nil
+}
+
+func (m *UploadStateModel) LoadSegmentStates(ctx context.Context, info *xkv.DfsFileInfo) ([]SegmentState, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+	if info == nil {
+		return nil, ErrUploadStateNotFound
+	}
+	dir, err := m.sessionDir(info.Creator, info.FileID)
+	if err != nil {
+		return nil, err
+	}
+	return loadSegmentStatesFromDir(dir)
+}
+
+func (m *UploadStateModel) SegmentPath(info *xkv.DfsFileInfo, segmentNo int64) (string, error) {
+	if info == nil {
+		return "", ErrUploadStateNotFound
+	}
+	dir, err := m.sessionDir(info.Creator, info.FileID)
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(dir, segmentFileName(segmentNo)), nil
+}
+
+func (m *UploadStateModel) DeleteSegmentBytes(ctx context.Context, info *xkv.DfsFileInfo, segmentNo int64) error {
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	path, err := m.SegmentPath(info, segmentNo)
+	if err != nil {
+		return err
+	}
+	if err := os.Remove(path); err != nil && !errors.Is(err, os.ErrNotExist) {
+		return fmt.Errorf("upload_spool.DeleteSegmentBytes remove: %w", err)
+	}
+	if err := syncDir(filepath.Dir(path)); err != nil {
+		return fmt.Errorf("upload_spool.DeleteSegmentBytes sync dir: %w", err)
+	}
+	return nil
+}
+
 func (m *UploadStateModel) SaveObjectCacheRef(ctx context.Context, objectID, creator, fileID int64) error {
 	if err := ctx.Err(); err != nil {
 		return err
@@ -253,6 +570,13 @@ func (m *UploadStateModel) LoadObjectCacheRef(ctx context.Context, objectID int6
 }
 
 func (m *UploadStateModel) ScanOnStart(ctx context.Context, now time.Time) error {
+	if err := m.ScanOnStartWithoutCleanup(ctx, now); err != nil {
+		return err
+	}
+	return m.CleanupExpiredUploadSessions(ctx, now)
+}
+
+func (m *UploadStateModel) ScanOnStartWithoutCleanup(ctx context.Context, _ time.Time) error {
 	if err := ctx.Err(); err != nil {
 		return err
 	}
@@ -268,10 +592,17 @@ func (m *UploadStateModel) ScanOnStart(ctx context.Context, now time.Time) error
 	if err := m.cleanupStaleAtomicTemps(ctx); err != nil {
 		return err
 	}
-	return m.CleanupExpiredUploadSessions(ctx, now)
+	if err := m.cleanupUploadedSegmentBytes(ctx); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (m *UploadStateModel) CleanupExpiredUploadSessions(ctx context.Context, now time.Time) error {
+	return m.CleanupExpiredUploadSessionsWithAbort(ctx, now, nil)
+}
+
+func (m *UploadStateModel) CleanupExpiredUploadSessionsWithAbort(ctx context.Context, now time.Time, abort func(ctx context.Context, objectKey, uploadID string) error) error {
 	if err := ctx.Err(); err != nil {
 		return err
 	}
@@ -287,6 +618,11 @@ func (m *UploadStateModel) CleanupExpiredUploadSessions(ctx context.Context, now
 		if !now.After(lastActivity.Add(ttl)) {
 			return nil
 		}
+		if abort != nil {
+			if err := m.abortSessionMultipartUploads(ctx, sessionDir, abort); err != nil {
+				return err
+			}
+		}
 		if err := os.RemoveAll(sessionDir); err != nil {
 			return fmt.Errorf("upload_spool.CleanupExpiredUploadSessions remove session %s: %w", sessionDir, err)
 		}
@@ -295,6 +631,124 @@ func (m *UploadStateModel) CleanupExpiredUploadSessions(ctx context.Context, now
 		}
 		return nil
 	})
+}
+
+func (m *UploadStateModel) abortSessionMultipartUploads(ctx context.Context, sessionDir string, abort func(ctx context.Context, objectKey, uploadID string) error) error {
+	states, err := loadSegmentStatesFromDir(sessionDir)
+	if err != nil {
+		if errors.Is(err, ErrUploadStateNotFound) {
+			return nil
+		}
+		return err
+	}
+	seen := make(map[string]struct{})
+	for _, state := range states {
+		if state.MultipartUploadID == "" {
+			continue
+		}
+		objectKey := state.ObjectKey
+		if objectKey == "" {
+			objectKey = "objects/" + state.MultipartUploadID + ".dat"
+		}
+		seenKey := objectKey + "\x00" + state.MultipartUploadID
+		if _, ok := seen[seenKey]; ok {
+			continue
+		}
+		seen[seenKey] = struct{}{}
+		if err := abort(ctx, objectKey, state.MultipartUploadID); err != nil {
+			return fmt.Errorf("upload_spool.CleanupExpiredUploadSessions abort multipart upload_id=%s: %w", state.MultipartUploadID, err)
+		}
+	}
+	return nil
+}
+
+func (m *UploadStateModel) ReconcileUploadingMultipartSegments(ctx context.Context, list func(ctx context.Context, objectKey, uploadID string) ([]MultipartPart, error)) error {
+	if list == nil {
+		return nil
+	}
+	listed := make(map[string][]MultipartPart)
+	return m.forEachSessionDir(ctx, func(sessionDir string) error {
+		states, err := loadSegmentStatesFromDir(sessionDir)
+		if err != nil {
+			if errors.Is(err, ErrUploadStateNotFound) {
+				return nil
+			}
+			return err
+		}
+		for _, state := range states {
+			if err := ctx.Err(); err != nil {
+				return err
+			}
+			if state.Status != SegmentStatusUploading || state.MultipartUploadID == "" || state.ObjectKey == "" || state.MultipartPartNumber <= 0 {
+				continue
+			}
+			cacheKey := state.ObjectKey + "\x00" + state.MultipartUploadID
+			parts, ok := listed[cacheKey]
+			if !ok {
+				parts, err = list(ctx, state.ObjectKey, state.MultipartUploadID)
+				if err != nil {
+					return fmt.Errorf("upload_spool.ReconcileUploadingMultipartSegments list upload_id=%s: %w", state.MultipartUploadID, err)
+				}
+				listed[cacheKey] = parts
+			}
+			part, ok := matchingMultipartPart(parts, state)
+			if !ok {
+				continue
+			}
+			info, err := loadUploadFileInfoFromDir(sessionDir)
+			if err != nil {
+				if errors.Is(err, ErrUploadStateNotFound) {
+					continue
+				}
+				return err
+			}
+			replayed, err := m.ReplaySegment(ctx, info, state.SegmentNo, io.Discard)
+			if err != nil {
+				if errors.Is(err, ErrUploadStateNotFound) {
+					continue
+				}
+				return fmt.Errorf("upload_spool.ReconcileUploadingMultipartSegments replay segment %d: %w", state.SegmentNo, err)
+			}
+			if state.Checksum == "" || replayed.Checksum != state.Checksum {
+				continue
+			}
+			state.Status = SegmentStatusUploaded
+			state.ETag = part.ETag
+			state.Size = part.Size
+			statePath := filepath.Join(sessionDir, segmentStateFileName(state.SegmentNo))
+			data, err := json.Marshal(state)
+			if err != nil {
+				return fmt.Errorf("upload_spool.ReconcileUploadingMultipartSegments marshal state: %w", err)
+			}
+			if err := writeFileAtomically(statePath, data, 0o644); err != nil {
+				return fmt.Errorf("upload_spool.ReconcileUploadingMultipartSegments write state: %w", err)
+			}
+			segmentPath := filepath.Join(sessionDir, segmentFileName(state.SegmentNo))
+			if err := os.Remove(segmentPath); err != nil && !errors.Is(err, os.ErrNotExist) {
+				return fmt.Errorf("upload_spool.ReconcileUploadingMultipartSegments remove segment %s: %w", segmentPath, err)
+			}
+			if err := syncDir(sessionDir); err != nil {
+				return fmt.Errorf("upload_spool.ReconcileUploadingMultipartSegments sync session %s: %w", sessionDir, err)
+			}
+		}
+		return nil
+	})
+}
+
+func matchingMultipartPart(parts []MultipartPart, state SegmentState) (MultipartPart, bool) {
+	for _, part := range parts {
+		if part.PartNumber != state.MultipartPartNumber {
+			continue
+		}
+		if state.Size > 0 && part.Size != state.Size {
+			continue
+		}
+		if state.ETag != "" && part.ETag != state.ETag {
+			continue
+		}
+		return part, true
+	}
+	return MultipartPart{}, false
 }
 
 func (m *UploadStateModel) MarkDraining(reason string) {
@@ -376,6 +830,34 @@ func (m *UploadStateModel) cleanupStaleAtomicTemps(ctx context.Context) error {
 	})
 }
 
+func (m *UploadStateModel) cleanupUploadedSegmentBytes(ctx context.Context) error {
+	return m.forEachSessionDir(ctx, func(sessionDir string) error {
+		states, err := loadSegmentStatesFromDir(sessionDir)
+		if err != nil {
+			if errors.Is(err, ErrUploadStateNotFound) {
+				return nil
+			}
+			return err
+		}
+		for _, state := range states {
+			if err := ctx.Err(); err != nil {
+				return err
+			}
+			if state.Status != SegmentStatusUploaded {
+				continue
+			}
+			path := filepath.Join(sessionDir, segmentFileName(state.SegmentNo))
+			if err := os.Remove(path); err != nil && !errors.Is(err, os.ErrNotExist) {
+				return fmt.Errorf("upload_spool.ScanOnStart remove uploaded segment %s: %w", path, err)
+			}
+			if err := syncDir(sessionDir); err != nil {
+				return fmt.Errorf("upload_spool.ScanOnStart sync uploaded segment dir %s: %w", sessionDir, err)
+			}
+		}
+		return nil
+	})
+}
+
 func (m *UploadStateModel) forEachSessionDir(ctx context.Context, fn func(sessionDir string) error) error {
 	nodeRoot, err := safeJoin(m.rootDir, m.nodeID)
 	if err != nil {
@@ -423,6 +905,111 @@ func (m *UploadStateModel) forEachSessionDir(ctx context.Context, fn func(sessio
 		}
 	}
 	return nil
+}
+
+func (m *UploadStateModel) partsPerSegment(info *xkv.DfsFileInfo) (int, error) {
+	if info == nil {
+		return 0, ErrUploadStateNotFound
+	}
+	partSize := info.FilePartSize
+	if partSize <= 0 {
+		partSize = info.FirstFilePartSize
+	}
+	if partSize <= 0 {
+		partSize = info.LastFilePartSize
+	}
+	if partSize <= 0 {
+		return 0, ErrUploadStateNotFound
+	}
+	parts := int(m.SegmentSize() / int64(partSize))
+	if parts <= 0 {
+		parts = 1
+	}
+	return parts, nil
+}
+
+func (m *UploadStateModel) segmentStatePath(info *xkv.DfsFileInfo, segmentNo int64) (string, error) {
+	if info == nil {
+		return "", ErrUploadStateNotFound
+	}
+	dir, err := m.sessionDir(info.Creator, info.FileID)
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(dir, segmentStateFileName(segmentNo)), nil
+}
+
+func loadSegmentStatesFromDir(dir string) ([]SegmentState, error) {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return nil, ErrUploadStateNotFound
+		}
+		return nil, fmt.Errorf("upload_spool.loadSegmentStatesFromDir read dir: %w", err)
+	}
+	var states []SegmentState
+	for _, entry := range entries {
+		if entry.IsDir() || !strings.HasPrefix(entry.Name(), "segment-") || !strings.HasSuffix(entry.Name(), ".state.json") {
+			continue
+		}
+		data, err := os.ReadFile(filepath.Join(dir, entry.Name()))
+		if err != nil {
+			return nil, fmt.Errorf("upload_spool.loadSegmentStatesFromDir read %s: %w", entry.Name(), err)
+		}
+		var state SegmentState
+		if err := json.Unmarshal(data, &state); err != nil {
+			return nil, fmt.Errorf("upload_spool.loadSegmentStatesFromDir unmarshal %s: %w", entry.Name(), err)
+		}
+		states = append(states, state)
+	}
+	sort.Slice(states, func(i, j int) bool { return states[i].SegmentNo < states[j].SegmentNo })
+	return states, nil
+}
+
+func loadUploadFileInfoFromDir(dir string) (*xkv.DfsFileInfo, error) {
+	data, err := os.ReadFile(filepath.Join(dir, metadataFileName))
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return nil, ErrUploadStateNotFound
+		}
+		return nil, fmt.Errorf("upload_spool.loadUploadFileInfoFromDir read metadata: %w", err)
+	}
+	var info xkv.DfsFileInfo
+	if err := json.Unmarshal(data, &info); err != nil {
+		return nil, fmt.Errorf("upload_spool.loadUploadFileInfoFromDir unmarshal metadata: %w", err)
+	}
+	return &info, nil
+}
+
+func copyToWriters(dst io.Writer, checksum io.Writer, src io.Reader, firstBytes *[]byte) (int64, error) {
+	buf := make([]byte, 32*1024)
+	var total int64
+	for {
+		n, readErr := src.Read(buf)
+		if n > 0 {
+			chunk := buf[:n]
+			if len(*firstBytes) < 512 {
+				need := 512 - len(*firstBytes)
+				if need > n {
+					need = n
+				}
+				*firstBytes = append(*firstBytes, chunk[:need]...)
+			}
+			if _, err := dst.Write(chunk); err != nil {
+				return total, err
+			}
+			if _, err := checksum.Write(chunk); err != nil {
+				return total, err
+			}
+			total += int64(n)
+		}
+		if readErr == io.EOF {
+			return total, nil
+		}
+		if readErr != nil {
+			return total, readErr
+		}
+	}
 }
 
 func (m *UploadStateModel) sessionLastActivity(sessionDir string) (time.Time, error) {
@@ -663,4 +1250,12 @@ func uploadShard(creator, fileID int64) uint64 {
 
 func partFileName(partIndex int32) string {
 	return fmt.Sprintf("part_%09d.bin", partIndex)
+}
+
+func segmentFileName(segmentNo int64) string {
+	return fmt.Sprintf("segment-%06d.tmp", segmentNo)
+}
+
+func segmentStateFileName(segmentNo int64) string {
+	return fmt.Sprintf("segment-%06d.state.json", segmentNo)
 }

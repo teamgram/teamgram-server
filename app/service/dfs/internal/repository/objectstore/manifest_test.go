@@ -30,6 +30,14 @@ func TestManifestKeys(t *testing.T) {
 	if got != "_meta/hashes/obj-1/v1.json" {
 		t.Fatalf("Hashes() = %q", got)
 	}
+
+	got, err = keys.UploadFinalizing("upload-1")
+	if err != nil {
+		t.Fatalf("UploadFinalizing() error = %v", err)
+	}
+	if got != "_meta/uploads/upload-1.finalizing.json" {
+		t.Fatalf("UploadFinalizing() = %q", got)
+	}
 }
 
 func TestManifestKeysDefaultAndSlashedPrefix(t *testing.T) {
@@ -71,6 +79,9 @@ func TestManifestKeysRejectInvalidIDs(t *testing.T) {
 			}
 			if _, err := keys.Hashes(tc.id); !errors.Is(err, ErrInvalidManifestKey) {
 				t.Fatalf("Hashes() error = %v, want ErrInvalidManifestKey", err)
+			}
+			if _, err := keys.UploadFinalizing(tc.id); !errors.Is(err, ErrInvalidManifestKey) {
+				t.Fatalf("UploadFinalizing() error = %v, want ErrInvalidManifestKey", err)
 			}
 		})
 	}
