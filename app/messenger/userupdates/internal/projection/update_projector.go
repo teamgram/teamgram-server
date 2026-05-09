@@ -314,6 +314,7 @@ func projectNewMessage(in messageEventProjectionInput) (Result, error) {
 					Pts:      pts,
 					PtsCount: in.ptsCount,
 					Date:     date,
+					Silent:   messageAttrsSilent(in.message.Attrs),
 					ReplyTo:  replyTo,
 				}),
 				AuthKeyIDExclude: in.message.AuthKeyIdExclude,

@@ -566,6 +566,39 @@ func TestProjectMessageEventV3UserPeerFullPushWhenMediaGroupedForward(t *testing
 	}
 }
 
+func TestProjectMessageEventV3ShortPushPreservesSilent(t *testing.T) {
+	body := mustMarshalMessageEventV3(t, payload.MessageEventV3{
+		SchemaVersion:      payload.MessageEventSchemaVersionV3,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: 103,
+		PeerSeq:            11,
+		MessageID:          79,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             202,
+		FromUserID:         101,
+		ToUserID:           202,
+		Date:               1700000000,
+		MessageText:        "silent",
+		Attrs:              &payload.MessageAttrsV1{SchemaVersion: payload.MessageAttrsSchemaVersionV1, Silent: true},
+	})
+	got, err := ProjectPushTask(&payload.PushTaskKafkaMessageV1{
+		Payload:  body,
+		Pts:      21,
+		PeerType: payload.PeerTypeUser,
+		PeerID:   202,
+	})
+	if err != nil {
+		t.Fatalf("ProjectPushTask() error = %v", err)
+	}
+	update, ok := got.Updates.(*tg.TLUpdateShortMessage)
+	if !ok {
+		t.Fatalf("updates = %T, want *tg.TLUpdateShortMessage", got.Updates)
+	}
+	if !update.Silent {
+		t.Fatalf("silent = false, want true")
+	}
+}
+
 func TestProjectMessageEventV3DocumentMedia(t *testing.T) {
 	body := mustMarshalMessageEventV3(t, payload.MessageEventV3{
 		SchemaVersion:      payload.MessageEventSchemaVersionV3,
