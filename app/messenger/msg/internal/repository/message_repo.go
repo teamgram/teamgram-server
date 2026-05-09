@@ -101,12 +101,20 @@ func (r *Repository) CreateOrGetByClientRandom(ctx context.Context, in CreateCan
 			return err
 		}
 		out = &CanonicalMessageResult{
-			SendStateID:        in.SendStateID,
-			CanonicalMessageID: canonicalID,
-			PeerSeq:            peerSeq,
-			MessageDate:        messageDate,
-			RequestPayloadHash: in.RequestPayloadHash,
-			CreatedNew:         true,
+			SendStateID:                  in.SendStateID,
+			CanonicalMessageID:           canonicalID,
+			PeerSeq:                      peerSeq,
+			MessageDate:                  messageDate,
+			RequestPayloadHash:           in.RequestPayloadHash,
+			EntitiesPayloadSchemaVersion: canonicalEntitiesSchemaVersion(in.EntitiesPayloadSchemaVersion),
+			EntitiesPayload:              in.EntitiesPayload,
+			MediaRefSchemaVersion:        canonicalMediaSchemaVersion(in.MediaRefSchemaVersion),
+			MediaRefPayload:              in.MediaRefPayload,
+			MessageAttrsSchemaVersion:    in.MessageAttrsSchemaVersion,
+			MessageAttrsPayload:          in.MessageAttrsPayload,
+			ForwardRefSchemaVersion:      in.ForwardRefSchemaVersion,
+			ForwardRefPayload:            in.ForwardRefPayload,
+			CreatedNew:                   true,
 		}
 		return nil
 	})
@@ -227,16 +235,7 @@ func (r *Repository) GetCanonicalMessageByPeerSeq(ctx context.Context, userID in
 		}
 		return nil, storageError("select canonical by peer seq", err)
 	}
-	return &CanonicalMessage{
-		CanonicalMessageID: row.CanonicalMessageId,
-		PeerSeq:            row.PeerSeq,
-		FromUserID:         row.FromUserId,
-		PeerType:           row.PeerType,
-		PeerID:             row.PeerId,
-		MessageKind:        row.MessageKind,
-		MessageText:        row.MessageText,
-		MessageDate:        row.Date,
-	}, nil
+	return canonicalMessageModelToDTO(row), nil
 }
 
 func (r *Repository) EditCanonicalMessage(ctx context.Context, in EditCanonicalMessageInput) (*EditMessageResult, error) {
@@ -465,11 +464,19 @@ func selectCanonicalByIDOnlyTx(txModels *model.TxModels, canonicalMessageID int6
 		return nil, storageError("select canonical by id", err)
 	}
 	return &CanonicalMessageResult{
-		SendStateID:        sendStateID,
-		CanonicalMessageID: row.CanonicalMessageId,
-		PeerSeq:            row.PeerSeq,
-		MessageDate:        row.Date,
-		CreatedNew:         false,
+		SendStateID:                  sendStateID,
+		CanonicalMessageID:           row.CanonicalMessageId,
+		PeerSeq:                      row.PeerSeq,
+		MessageDate:                  row.Date,
+		EntitiesPayloadSchemaVersion: row.EntitiesPayloadSchemaVersion,
+		EntitiesPayload:              row.EntitiesPayload,
+		MediaRefSchemaVersion:        row.MediaRefSchemaVersion,
+		MediaRefPayload:              row.MediaRefPayload,
+		MessageAttrsSchemaVersion:    row.MessageAttrsSchemaVersion,
+		MessageAttrsPayload:          row.MessageAttrsPayload,
+		ForwardRefSchemaVersion:      row.ForwardRefSchemaVersion,
+		ForwardRefPayload:            row.ForwardRefPayload,
+		CreatedNew:                   false,
 	}, nil
 }
 
@@ -525,10 +532,14 @@ func insertCanonicalMessageTx(txModels *model.TxModels, canonicalID int64, canon
 		FromUserId:                   in.SenderUserID,
 		MessageKind:                  MessageKindText,
 		MessageText:                  in.MessageText,
-		EntitiesPayloadSchemaVersion: 1,
-		EntitiesPayload:              nil,
-		MediaRefSchemaVersion:        1,
-		MediaRefPayload:              nil,
+		EntitiesPayloadSchemaVersion: canonicalEntitiesSchemaVersion(in.EntitiesPayloadSchemaVersion),
+		EntitiesPayload:              in.EntitiesPayload,
+		MediaRefSchemaVersion:        canonicalMediaSchemaVersion(in.MediaRefSchemaVersion),
+		MediaRefPayload:              in.MediaRefPayload,
+		MessageAttrsSchemaVersion:    in.MessageAttrsSchemaVersion,
+		MessageAttrsPayload:          in.MessageAttrsPayload,
+		ForwardRefSchemaVersion:      in.ForwardRefSchemaVersion,
+		ForwardRefPayload:            in.ForwardRefPayload,
 		ServiceActionSchemaVersion:   1,
 		ServiceActionPayload:         nil,
 		MessageStatus:                MessageStatusLive,
@@ -566,6 +577,20 @@ func messageSequencePeerID(peerType int32, userID int64, peerID int64) (int64, b
 	return int64((uint64(lo) << 32) | uint64(hi)), true
 }
 
+func canonicalEntitiesSchemaVersion(version int32) int32 {
+	if version > 0 {
+		return version
+	}
+	return 1
+}
+
+func canonicalMediaSchemaVersion(version int32) int32 {
+	if version > 0 {
+		return version
+	}
+	return 1
+}
+
 func insertClientRandomTx(txModels *model.TxModels, canonicalID int64, _ int64, _ int64, in CreateCanonicalMessageInput) error {
 	_, _, err := txModels.MessageClientRandomsModel.Insert(&model.MessageClientRandoms{
 		SenderUserId:       in.SenderUserID,
@@ -587,11 +612,43 @@ func canonicalMessageRowToResult(r *model.CanonicalMessageRow, created bool) *Ca
 		return nil
 	}
 	return &CanonicalMessageResult{
-		SendStateID:        r.SendStateID,
-		CanonicalMessageID: r.CanonicalMessageID,
-		PeerSeq:            r.PeerSeq,
-		MessageDate:        r.MessageDate,
-		RequestPayloadHash: r.RequestPayloadHash,
-		CreatedNew:         created,
+		SendStateID:                  r.SendStateID,
+		CanonicalMessageID:           r.CanonicalMessageID,
+		PeerSeq:                      r.PeerSeq,
+		MessageDate:                  r.MessageDate,
+		RequestPayloadHash:           r.RequestPayloadHash,
+		EntitiesPayloadSchemaVersion: r.EntitiesPayloadSchemaVersion,
+		EntitiesPayload:              r.EntitiesPayload,
+		MediaRefSchemaVersion:        r.MediaRefSchemaVersion,
+		MediaRefPayload:              r.MediaRefPayload,
+		MessageAttrsSchemaVersion:    r.MessageAttrsSchemaVersion,
+		MessageAttrsPayload:          r.MessageAttrsPayload,
+		ForwardRefSchemaVersion:      r.ForwardRefSchemaVersion,
+		ForwardRefPayload:            r.ForwardRefPayload,
+		CreatedNew:                   created,
+	}
+}
+
+func canonicalMessageModelToDTO(row *model.CanonicalMessages) *CanonicalMessage {
+	if row == nil {
+		return nil
+	}
+	return &CanonicalMessage{
+		CanonicalMessageID:           row.CanonicalMessageId,
+		PeerSeq:                      row.PeerSeq,
+		FromUserID:                   row.FromUserId,
+		PeerType:                     row.PeerType,
+		PeerID:                       row.PeerId,
+		MessageKind:                  row.MessageKind,
+		MessageText:                  row.MessageText,
+		MessageDate:                  row.Date,
+		EntitiesPayloadSchemaVersion: row.EntitiesPayloadSchemaVersion,
+		EntitiesPayload:              row.EntitiesPayload,
+		MediaRefSchemaVersion:        row.MediaRefSchemaVersion,
+		MediaRefPayload:              row.MediaRefPayload,
+		MessageAttrsSchemaVersion:    row.MessageAttrsSchemaVersion,
+		MessageAttrsPayload:          row.MessageAttrsPayload,
+		ForwardRefSchemaVersion:      row.ForwardRefSchemaVersion,
+		ForwardRefPayload:            row.ForwardRefPayload,
 	}
 }

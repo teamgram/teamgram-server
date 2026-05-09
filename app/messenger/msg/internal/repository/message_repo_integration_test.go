@@ -263,6 +263,66 @@ func TestMessageRepositoryRetryRecoversLegacyRequestHashAfterCanonicalCreated(t 
 	}
 }
 
+func TestCreateOrGetCanonicalPersistsAttrsAndForwardRef(t *testing.T) {
+	repo, ctx := newIntegrationRepository(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	senderID := base + 100
+	peerID := base + 200
+	randomID := base + 7001
+	requestHash := payload.HashBytes([]byte("hash-media"))
+	state := createSendStateForTest(t, ctx, repo, senderID, payload.PeerTypeUser, peerID, randomID, requestHash)
+
+	mediaPayload := mustJSON(t, payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "photo", ID: 333})
+	attrsPayload := mustJSON(t, payload.MessageAttrsV1{SchemaVersion: payload.MessageAttrsSchemaVersionV1, GroupedID: 444})
+	forwardPayload := mustJSON(t, payload.ForwardRefV1{SchemaVersion: payload.ForwardRefSchemaVersionV1, FromUserID: 300, Date: 1700000001})
+
+	got, err := repo.CreateOrGetByClientRandom(ctx, CreateCanonicalMessageInput{
+		SendStateID:               state.SendStateID,
+		SenderUserID:              senderID,
+		PeerType:                  payload.PeerTypeUser,
+		PeerID:                    peerID,
+		ClientRandomID:            randomID,
+		RequestPayloadHash:        requestHash,
+		MessageText:               "caption",
+		MessageDate:               1700000000,
+		MediaRefSchemaVersion:     payload.MediaRefSchemaVersionV1,
+		MediaRefPayload:           mediaPayload,
+		MessageAttrsSchemaVersion: payload.MessageAttrsSchemaVersionV1,
+		MessageAttrsPayload:       attrsPayload,
+		ForwardRefSchemaVersion:   payload.ForwardRefSchemaVersionV1,
+		ForwardRefPayload:         forwardPayload,
+	})
+	if err != nil {
+		t.Fatalf("CreateOrGetByClientRandom() error = %v", err)
+	}
+
+	again, err := repo.CreateOrGetByClientRandom(ctx, CreateCanonicalMessageInput{
+		SendStateID:        state.SendStateID,
+		SenderUserID:       senderID,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             peerID,
+		ClientRandomID:     randomID,
+		RequestPayloadHash: requestHash,
+		MessageText:        "caption",
+		MessageDate:        1700000000,
+	})
+	if err != nil {
+		t.Fatalf("retry CreateOrGetByClientRandom() error = %v", err)
+	}
+	if got.CanonicalMessageID != again.CanonicalMessageID {
+		t.Fatalf("canonical id changed: first=%d retry=%d", got.CanonicalMessageID, again.CanonicalMessageID)
+	}
+	if got.MediaRefSchemaVersion != payload.MediaRefSchemaVersionV1 || !bytes.Equal(got.MediaRefPayload, mediaPayload) || !bytes.Equal(again.MediaRefPayload, mediaPayload) {
+		t.Fatalf("media payload not hydrated: first=%+v retry=%+v", got, again)
+	}
+	if got.MessageAttrsSchemaVersion != payload.MessageAttrsSchemaVersionV1 || !bytes.Equal(got.MessageAttrsPayload, attrsPayload) || !bytes.Equal(again.MessageAttrsPayload, attrsPayload) {
+		t.Fatalf("attrs payload not hydrated: first=%+v retry=%+v", got, again)
+	}
+	if got.ForwardRefSchemaVersion != payload.ForwardRefSchemaVersionV1 || !bytes.Equal(got.ForwardRefPayload, forwardPayload) || !bytes.Equal(again.ForwardRefPayload, forwardPayload) {
+		t.Fatalf("forward payload not hydrated: first=%+v retry=%+v", got, again)
+	}
+}
+
 func TestMessageRepositoryListHistoryMessages(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)
@@ -761,6 +821,48 @@ func createCanonicalMessageForTest(
 	}
 	insertUserMessageViewForTest(t, ctx, repo.db, senderID, payload.PeerTypeUser, receiverID, canonical, senderID, true)
 	return canonical
+}
+
+func newIntegrationRepository(t *testing.T) (*Repository, context.Context) {
+	t.Helper()
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	return NewForTest(db, &testIDGenerator{next: base + 90_000}), ctx
+}
+
+func createSendStateForTest(
+	t *testing.T,
+	ctx context.Context,
+	repo *Repository,
+	senderID int64,
+	peerType int32,
+	peerID int64,
+	randomID int64,
+	requestHash []byte,
+) *SendState {
+	t.Helper()
+	state, err := repo.CreateOrLoadSendState(ctx, CreateSendStateInput{
+		SenderUserID:                senderID,
+		PeerType:                    peerType,
+		PeerID:                      peerID,
+		ClientRandomID:              randomID,
+		RequestPayloadSchemaVersion: 1,
+		RequestPayloadHash:          requestHash,
+	})
+	if err != nil {
+		t.Fatalf("CreateOrLoadSendState() error = %v", err)
+	}
+	return state
+}
+
+func mustJSON(t *testing.T, v any) []byte {
+	t.Helper()
+	data, err := json.Marshal(v)
+	if err != nil {
+		t.Fatalf("marshal JSON: %v", err)
+	}
+	return data
 }
 
 func insertUserMessageViewForTest(

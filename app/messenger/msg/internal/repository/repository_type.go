@@ -70,23 +70,39 @@ type SendState struct {
 }
 
 type CreateCanonicalMessageInput struct {
-	SendStateID        int64
-	SenderUserID       int64
-	PeerType           int32
-	PeerID             int64
-	ClientRandomID     int64
-	RequestPayloadHash []byte
-	MessageText        string
-	MessageDate        int64
+	SendStateID                  int64
+	SenderUserID                 int64
+	PeerType                     int32
+	PeerID                       int64
+	ClientRandomID               int64
+	RequestPayloadHash           []byte
+	MessageText                  string
+	MessageDate                  int64
+	EntitiesPayloadSchemaVersion int32
+	EntitiesPayload              []byte
+	MediaRefSchemaVersion        int32
+	MediaRefPayload              []byte
+	MessageAttrsSchemaVersion    int32
+	MessageAttrsPayload          []byte
+	ForwardRefSchemaVersion      int32
+	ForwardRefPayload            []byte
 }
 
 type CanonicalMessageResult struct {
-	SendStateID        int64
-	CanonicalMessageID int64
-	PeerSeq            int64
-	MessageDate        int64
-	RequestPayloadHash []byte
-	CreatedNew         bool
+	SendStateID                  int64
+	CanonicalMessageID           int64
+	PeerSeq                      int64
+	MessageDate                  int64
+	RequestPayloadHash           []byte
+	EntitiesPayloadSchemaVersion int32
+	EntitiesPayload              []byte
+	MediaRefSchemaVersion        int32
+	MediaRefPayload              []byte
+	MessageAttrsSchemaVersion    int32
+	MessageAttrsPayload          []byte
+	ForwardRefSchemaVersion      int32
+	ForwardRefPayload            []byte
+	CreatedNew                   bool
 }
 
 type ListHistoryMessagesInput struct {
@@ -127,14 +143,22 @@ type HistoryMessage struct {
 }
 
 type CanonicalMessage struct {
-	CanonicalMessageID int64
-	PeerSeq            int64
-	FromUserID         int64
-	PeerType           int32
-	PeerID             int64
-	MessageKind        int32
-	MessageText        string
-	MessageDate        int64
+	CanonicalMessageID           int64
+	PeerSeq                      int64
+	FromUserID                   int64
+	PeerType                     int32
+	PeerID                       int64
+	MessageKind                  int32
+	MessageText                  string
+	MessageDate                  int64
+	EntitiesPayloadSchemaVersion int32
+	EntitiesPayload              []byte
+	MediaRefSchemaVersion        int32
+	MediaRefPayload              []byte
+	MessageAttrsSchemaVersion    int32
+	MessageAttrsPayload          []byte
+	ForwardRefSchemaVersion      int32
+	ForwardRefPayload            []byte
 }
 
 type EditCanonicalMessageInput struct {

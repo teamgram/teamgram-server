@@ -50,10 +50,10 @@ func NewCanonicalMessagesTxModel(tx *sqlx.Tx) CanonicalMessagesTxModel {
 }
 
 // Insert
-// insert into canonical_messages(canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version) values (:canonical_message_id, :peer_type, :peer_id, :peer_seq, :from_user_id, :message_kind, :message_text, :entities_payload_schema_version, :entities_payload, :media_ref_schema_version, :media_ref_payload, :service_action_schema_version, :service_action_payload, :message_status, :edit_version, :date, :storage_schema_version)
+// insert into canonical_messages(canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, message_attrs_schema_version, message_attrs_payload, forward_ref_schema_version, forward_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version) values (:canonical_message_id, :peer_type, :peer_id, :peer_seq, :from_user_id, :message_kind, :message_text, :entities_payload_schema_version, :entities_payload, :media_ref_schema_version, :media_ref_payload, :message_attrs_schema_version, :message_attrs_payload, :forward_ref_schema_version, :forward_ref_payload, :service_action_schema_version, :service_action_payload, :message_status, :edit_version, :date, :storage_schema_version)
 func (m *defaultCanonicalMessagesModel) Insert(ctx context.Context, data *CanonicalMessages) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into canonical_messages(canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version) values (:canonical_message_id, :peer_type, :peer_id, :peer_seq, :from_user_id, :message_kind, :message_text, :entities_payload_schema_version, :entities_payload, :media_ref_schema_version, :media_ref_payload, :service_action_schema_version, :service_action_payload, :message_status, :edit_version, :date, :storage_schema_version)"
+		query = "insert into canonical_messages(canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, message_attrs_schema_version, message_attrs_payload, forward_ref_schema_version, forward_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version) values (:canonical_message_id, :peer_type, :peer_id, :peer_seq, :from_user_id, :message_kind, :message_text, :entities_payload_schema_version, :entities_payload, :media_ref_schema_version, :media_ref_payload, :message_attrs_schema_version, :message_attrs_payload, :forward_ref_schema_version, :forward_ref_payload, :service_action_schema_version, :service_action_payload, :message_status, :edit_version, :date, :storage_schema_version)"
 		r     sql.Result
 	)
 
@@ -78,10 +78,10 @@ func (m *defaultCanonicalMessagesModel) Insert(ctx context.Context, data *Canoni
 }
 
 // Insert
-// insert into canonical_messages(canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version) values (:canonical_message_id, :peer_type, :peer_id, :peer_seq, :from_user_id, :message_kind, :message_text, :entities_payload_schema_version, :entities_payload, :media_ref_schema_version, :media_ref_payload, :service_action_schema_version, :service_action_payload, :message_status, :edit_version, :date, :storage_schema_version)
+// insert into canonical_messages(canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, message_attrs_schema_version, message_attrs_payload, forward_ref_schema_version, forward_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version) values (:canonical_message_id, :peer_type, :peer_id, :peer_seq, :from_user_id, :message_kind, :message_text, :entities_payload_schema_version, :entities_payload, :media_ref_schema_version, :media_ref_payload, :message_attrs_schema_version, :message_attrs_payload, :forward_ref_schema_version, :forward_ref_payload, :service_action_schema_version, :service_action_payload, :message_status, :edit_version, :date, :storage_schema_version)
 func (m *defaultCanonicalMessagesTxModel) Insert(data *CanonicalMessages) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into canonical_messages(canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version) values (:canonical_message_id, :peer_type, :peer_id, :peer_seq, :from_user_id, :message_kind, :message_text, :entities_payload_schema_version, :entities_payload, :media_ref_schema_version, :media_ref_payload, :service_action_schema_version, :service_action_payload, :message_status, :edit_version, :date, :storage_schema_version)"
+		query = "insert into canonical_messages(canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, message_attrs_schema_version, message_attrs_payload, forward_ref_schema_version, forward_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version) values (:canonical_message_id, :peer_type, :peer_id, :peer_seq, :from_user_id, :message_kind, :message_text, :entities_payload_schema_version, :entities_payload, :media_ref_schema_version, :media_ref_payload, :message_attrs_schema_version, :message_attrs_payload, :forward_ref_schema_version, :forward_ref_payload, :service_action_schema_version, :service_action_payload, :message_status, :edit_version, :date, :storage_schema_version)"
 		r     sql.Result
 	)
 
@@ -105,11 +105,11 @@ func (m *defaultCanonicalMessagesTxModel) Insert(data *CanonicalMessages) (lastI
 }
 
 // SelectByCanonicalMessageId
-// select canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version from canonical_messages where canonical_message_id = :canonical_message_id limit 1
+// select canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, message_attrs_schema_version, message_attrs_payload, forward_ref_schema_version, forward_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version from canonical_messages where canonical_message_id = :canonical_message_id limit 1
 func (m *defaultCanonicalMessagesModel) SelectByCanonicalMessageId(ctx context.Context, canonicalMessageId int64) (rValue *CanonicalMessages, err error) {
 
 	var (
-		query = "select canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version from canonical_messages where canonical_message_id = ? limit 1"
+		query = "select canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, message_attrs_schema_version, message_attrs_payload, forward_ref_schema_version, forward_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version from canonical_messages where canonical_message_id = ? limit 1"
 		do    = &CanonicalMessages{}
 	)
 	err = m.db.QueryRowPartial(ctx, do, query, canonicalMessageId)
@@ -132,10 +132,10 @@ func (m *defaultCanonicalMessagesModel) SelectByCanonicalMessageId(ctx context.C
 }
 
 // SelectByCanonicalMessageId
-// select canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version from canonical_messages where canonical_message_id = :canonical_message_id limit 1
+// select canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, message_attrs_schema_version, message_attrs_payload, forward_ref_schema_version, forward_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version from canonical_messages where canonical_message_id = :canonical_message_id limit 1
 func (m *defaultCanonicalMessagesTxModel) SelectByCanonicalMessageId(canonicalMessageId int64) (rValue *CanonicalMessages, err error) {
 	var (
-		query = "select canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version from canonical_messages where canonical_message_id = ? limit 1"
+		query = "select canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, message_attrs_schema_version, message_attrs_payload, forward_ref_schema_version, forward_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version from canonical_messages where canonical_message_id = ? limit 1"
 		do    = &CanonicalMessages{}
 	)
 	err = m.tx.QueryRowPartial(do, query, canonicalMessageId)
@@ -157,11 +157,11 @@ func (m *defaultCanonicalMessagesTxModel) SelectByCanonicalMessageId(canonicalMe
 }
 
 // SelectByPeerSeq
-// select canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version from canonical_messages where peer_type = :peer_type and peer_id = :peer_id and peer_seq = :peer_seq limit 1
+// select canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, message_attrs_schema_version, message_attrs_payload, forward_ref_schema_version, forward_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version from canonical_messages where peer_type = :peer_type and peer_id = :peer_id and peer_seq = :peer_seq limit 1
 func (m *defaultCanonicalMessagesModel) SelectByPeerSeq(ctx context.Context, peerType int32, peerId int64, peerSeq int64) (rValue *CanonicalMessages, err error) {
 
 	var (
-		query = "select canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version from canonical_messages where peer_type = ? and peer_id = ? and peer_seq = ? limit 1"
+		query = "select canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, message_attrs_schema_version, message_attrs_payload, forward_ref_schema_version, forward_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version from canonical_messages where peer_type = ? and peer_id = ? and peer_seq = ? limit 1"
 		do    = &CanonicalMessages{}
 	)
 	err = m.db.QueryRowPartial(ctx, do, query, peerType, peerId, peerSeq)
@@ -184,10 +184,10 @@ func (m *defaultCanonicalMessagesModel) SelectByPeerSeq(ctx context.Context, pee
 }
 
 // SelectByPeerSeq
-// select canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version from canonical_messages where peer_type = :peer_type and peer_id = :peer_id and peer_seq = :peer_seq limit 1
+// select canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, message_attrs_schema_version, message_attrs_payload, forward_ref_schema_version, forward_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version from canonical_messages where peer_type = :peer_type and peer_id = :peer_id and peer_seq = :peer_seq limit 1
 func (m *defaultCanonicalMessagesTxModel) SelectByPeerSeq(peerType int32, peerId int64, peerSeq int64) (rValue *CanonicalMessages, err error) {
 	var (
-		query = "select canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version from canonical_messages where peer_type = ? and peer_id = ? and peer_seq = ? limit 1"
+		query = "select canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, message_attrs_schema_version, message_attrs_payload, forward_ref_schema_version, forward_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version from canonical_messages where peer_type = ? and peer_id = ? and peer_seq = ? limit 1"
 		do    = &CanonicalMessages{}
 	)
 	err = m.tx.QueryRowPartial(do, query, peerType, peerId, peerSeq)

@@ -5,6 +5,14 @@
         <field name="PeerSeq" type="int64" db="peer_seq"/>
         <field name="MessageDate" type="int64" db="message_date"/>
         <field name="RequestPayloadHash" type="[]byte" db="request_payload_hash"/>
+        <field name="EntitiesPayloadSchemaVersion" type="int32" db="entities_payload_schema_version"/>
+        <field name="EntitiesPayload" type="[]byte" db="entities_payload"/>
+        <field name="MediaRefSchemaVersion" type="int32" db="media_ref_schema_version"/>
+        <field name="MediaRefPayload" type="[]byte" db="media_ref_payload"/>
+        <field name="MessageAttrsSchemaVersion" type="int32" db="message_attrs_schema_version"/>
+        <field name="MessageAttrsPayload" type="[]byte" db="message_attrs_payload"/>
+        <field name="ForwardRefSchemaVersion" type="int32" db="forward_ref_schema_version"/>
+        <field name="ForwardRefPayload" type="[]byte" db="forward_ref_payload"/>
     </result>
 
     <result name="HistoryMessageRow">
@@ -63,7 +71,15 @@
                 r.canonical_message_id,
                 c.peer_seq,
                 c.date AS message_date,
-                r.request_payload_hash
+                r.request_payload_hash,
+                c.entities_payload_schema_version,
+                c.entities_payload,
+                c.media_ref_schema_version,
+                c.media_ref_payload,
+                c.message_attrs_schema_version,
+                c.message_attrs_payload,
+                c.forward_ref_schema_version,
+                c.forward_ref_payload
             FROM
                 message_client_randoms r
             JOIN
@@ -89,7 +105,15 @@
                 canonical_message_id,
                 peer_seq,
                 date AS message_date,
-                :request_payload_hash AS request_payload_hash
+                :request_payload_hash AS request_payload_hash,
+                entities_payload_schema_version,
+                entities_payload,
+                media_ref_schema_version,
+                media_ref_payload,
+                message_attrs_schema_version,
+                message_attrs_payload,
+                forward_ref_schema_version,
+                forward_ref_payload
             FROM
                 canonical_messages
             WHERE
