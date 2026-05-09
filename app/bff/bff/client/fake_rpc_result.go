@@ -457,6 +457,17 @@ func (c *BFFProxyClient2) TryReturnFakeRpcResult(object iface.TLObject) (iface.T
 			Users:          []tg.UserClazz{},
 		}).ToAccountWebAuthorizations(), nil
 
+	case "TLAccountGetDefaultProfilePhotoEmojis":
+		return tg.MakeTLEmojiList(&tg.TLEmojiList{
+			Hash:       0,
+			DocumentId: []int64{},
+		}).ToEmojiList(), nil
+	case "TLAccountGetDefaultGroupPhotoEmojis":
+		return tg.MakeTLEmojiList(&tg.TLEmojiList{
+			Hash:       0,
+			DocumentId: []int64{},
+		}).ToEmojiList(), nil
+
 	default:
 		logx.Errorf("%s blocked, License key from https://teamgram.net required to unlock enterprise features.", rt.Name())
 		return nil, tg.ErrEnterpriseIsBlocked
