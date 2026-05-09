@@ -501,11 +501,69 @@ func TestMsgSendMessageV2BatchReceiverPayloadIncludesRichFields(t *testing.T) {
 	if receiverOp.ForwardRef == nil || receiverOp.ForwardRef.FromUserID != 300 {
 		t.Fatalf("receiver forward ref = %+v, want from user 300", receiverOp.ForwardRef)
 	}
+	if receiverOp.ForwardRef.SavedFromPeerType != 0 || receiverOp.ForwardRef.SavedFromPeerID != 0 || receiverOp.ForwardRef.SavedFromMessageID != 0 {
+		t.Fatalf("receiver saved forward fields = %+v, want empty for non-saved forward", receiverOp.ForwardRef)
+	}
 	if len(receiverOp.Entities) != 1 || receiverOp.Entities[0].Kind != "bold" {
 		t.Fatalf("receiver entities = %+v, want bold entity", receiverOp.Entities)
 	}
 	if receiverOp.ReplyToCanonicalMessageID != 7001 {
 		t.Fatalf("reply_to_canonical_message_id = %d, want 7001", receiverOp.ReplyToCanonicalMessageID)
+	}
+	tlUpdates, ok := got.Clazz.(*tg.TLUpdates)
+	if !ok {
+		t.Fatalf("updates = %T, want *tg.TLUpdates", got.Clazz)
+	}
+	var sentMessage *tg.TLMessage
+	for _, update := range tlUpdates.Updates {
+		if updateNewMessage, ok := update.(*tg.TLUpdateNewMessage); ok {
+			sentMessage, _ = updateNewMessage.Message.(*tg.TLMessage)
+			break
+		}
+	}
+	if sentMessage == nil || sentMessage.FwdFrom == nil {
+		t.Fatalf("sent forward message missing: %+v", got)
+	}
+	if sentMessage.FwdFrom.SavedFromPeer != nil || sentMessage.FwdFrom.SavedFromMsgId != nil {
+		t.Fatalf("sent fwd_from saved fields = %+v, want nil for non-saved forward", sentMessage.FwdFrom)
+	}
+}
+
+func TestNormalizeOutboxMessageKeepsSavedForwardFieldsOnlyForSavedMessages(t *testing.T) {
+	sourceID := int32(77)
+	repo := &fakeMsgRepository{forwardVisible: true}
+	got, err := normalizeOutboxMessage(normalizeOutboxInput{
+		Ctx:          context.Background(),
+		SenderUserID: 100,
+		PeerType:     payload.PeerTypeUser,
+		PeerID:       100,
+		Repo:         repo,
+		Outbox: msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
+			RandomId: 11,
+			Message: tg.MakeTLMessage(&tg.TLMessage{
+				Message:     "saved forward",
+				SavedPeerId: tg.MakePeerUser(200),
+				FwdFrom: tg.MakeTLMessageFwdHeader(&tg.TLMessageFwdHeader{
+					FromId:         tg.MakePeerUser(300),
+					Date:           1_772_000_010,
+					SavedFromPeer:  tg.MakePeerUser(200),
+					SavedFromMsgId: &sourceID,
+				}),
+			}),
+		}),
+	})
+	if err != nil {
+		t.Fatalf("normalizeOutboxMessage() error = %v", err)
+	}
+	if repo.resolveForwardInput.SourcePeerID != 200 || repo.resolveForwardInput.SourceUserMessageID != 77 {
+		t.Fatalf("forward resolve input = %+v, want source peer 200 message 77", repo.resolveForwardInput)
+	}
+	if got.ForwardRef == nil ||
+		got.ForwardRef.SourcePeerID != 200 ||
+		got.ForwardRef.SourceMessageID != 77 ||
+		got.ForwardRef.SavedFromPeerID != 200 ||
+		got.ForwardRef.SavedFromMessageID != 77 {
+		t.Fatalf("forward ref = %+v, want saved and source fields", got.ForwardRef)
 	}
 }
 

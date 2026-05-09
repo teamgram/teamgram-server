@@ -295,31 +295,35 @@ func normalizeForwardRef(in normalizeOutboxInput, message *tg.TLMessage) (*paylo
 	if fwd.ChannelPost != nil {
 		ref.SourceMessageID = int64(*fwd.ChannelPost)
 	}
-	savedPeerType, savedPeerID := peerIdentity(fwd.SavedFromPeer)
-	ref.SavedFromPeerType = savedPeerType
-	ref.SavedFromPeerID = savedPeerID
+	sourcePeerType, sourcePeerID := peerIdentity(fwd.SavedFromPeer)
+	var sourceMessageID int64
 	if fwd.SavedFromMsgId != nil {
-		ref.SavedFromMessageID = int64(*fwd.SavedFromMsgId)
-		if ref.SourcePeerType == 0 && savedPeerType != 0 {
-			ref.SourcePeerType = savedPeerType
-			ref.SourcePeerID = savedPeerID
-			ref.SourceMessageID = int64(*fwd.SavedFromMsgId)
+		sourceMessageID = int64(*fwd.SavedFromMsgId)
+		if ref.SourcePeerType == 0 && sourcePeerType != 0 {
+			ref.SourcePeerType = sourcePeerType
+			ref.SourcePeerID = sourcePeerID
+			ref.SourceMessageID = sourceMessageID
 		}
 	}
-	if savedPeerType == 0 || savedPeerID <= 0 || ref.SavedFromMessageID <= 0 {
+	if sourcePeerType == 0 || sourcePeerID <= 0 || sourceMessageID <= 0 {
 		return nil, repository.ForwardSourceIdentity{}, msg.ErrMsgIdInvalid
 	}
 	if in.Repo == nil {
 		return nil, repository.ForwardSourceIdentity{}, fmt.Errorf("%w: forward resolver is required", msg.ErrSendStateConflict)
 	}
-	ref.SourcePeerType = savedPeerType
-	ref.SourcePeerID = savedPeerID
-	ref.SourceMessageID = ref.SavedFromMessageID
+	ref.SourcePeerType = sourcePeerType
+	ref.SourcePeerID = sourcePeerID
+	ref.SourceMessageID = sourceMessageID
+	if message.SavedPeerId != nil {
+		ref.SavedFromPeerType = sourcePeerType
+		ref.SavedFromPeerID = sourcePeerID
+		ref.SavedFromMessageID = sourceMessageID
+	}
 	source, err := in.Repo.ResolveForwardSourceIdentity(in.Ctx, repository.ForwardSourceLookup{
 		UserID:              in.SenderUserID,
-		SourcePeerType:      savedPeerType,
-		SourcePeerID:        savedPeerID,
-		SourceUserMessageID: ref.SavedFromMessageID,
+		SourcePeerType:      sourcePeerType,
+		SourcePeerID:        sourcePeerID,
+		SourceUserMessageID: sourceMessageID,
 	})
 	if err != nil {
 		return nil, repository.ForwardSourceIdentity{}, err
