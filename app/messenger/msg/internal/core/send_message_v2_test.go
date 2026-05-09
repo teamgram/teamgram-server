@@ -647,6 +647,30 @@ func TestMsgSendMessageV2MediaReturnsTLUpdates(t *testing.T) {
 	}
 }
 
+func TestMsgSendMessageV2ContactMediaReturnsTLUpdates(t *testing.T) {
+	core := newSingleSendMsgCoreForTest(t, 100, 9101, 61)
+	req := sendMessageRequest(100, 200, 9001, "")
+	req.Message[0].Message.(*tg.TLMessage).Media = tg.MakeTLMessageMediaContact(&tg.TLMessageMediaContact{
+		PhoneNumber: "8613000000001",
+		FirstName:   "13000000001",
+		LastName:    "t2",
+		UserId:      1571266964,
+	})
+
+	got, err := core.MsgSendMessageV2(req)
+	if err != nil {
+		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	}
+	message := firstSentUpdateMessage(t, got)
+	media, ok := message.Media.(*tg.TLMessageMediaContact)
+	if !ok {
+		t.Fatalf("media = %T, want *tg.TLMessageMediaContact", message.Media)
+	}
+	if media.PhoneNumber != "8613000000001" || media.FirstName != "13000000001" || media.LastName != "t2" || media.UserId != 1571266964 {
+		t.Fatalf("contact media = %+v, want shared contact fields", media)
+	}
+}
+
 func TestMsgSendMessageV2GroupedAndForwardReturnTLUpdates(t *testing.T) {
 	t.Run("grouped", func(t *testing.T) {
 		core := newSingleSendMsgCoreForTest(t, 100, 9102, 62)

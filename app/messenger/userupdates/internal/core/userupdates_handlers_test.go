@@ -735,6 +735,54 @@ func TestMessageViewToTLMessageSupportsV3MediaAttrsForward(t *testing.T) {
 	}
 }
 
+func TestMessageViewToTLMessageSupportsV3ContactMedia(t *testing.T) {
+	eventPayload := mustMarshalMessageEventV3(t, payload.MessageEventV3{
+		SchemaVersion:      payload.MessageEventSchemaVersionV3,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: 2003,
+		PeerSeq:            9,
+		MessageID:          103,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             1002,
+		FromUserID:         1001,
+		ToUserID:           1002,
+		Date:               1_772_000_000,
+		MediaRef: &payload.MediaRefV1{
+			SchemaVersion: payload.MediaRefSchemaVersionV1,
+			Kind:          "contact",
+			PhoneNumber:   "8613000000001",
+			FirstName:     "13000000001",
+			LastName:      "t2",
+			UserID:        1571266964,
+		},
+	})
+	message, err := messageViewToTLMessage(repository.MessageView{
+		UserID:             1001,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             1002,
+		PeerSeq:            9,
+		UserMessageID:      103,
+		CanonicalMessageID: 2003,
+		MessageStatus:      repository.MessageStatusLive,
+		ViewSchemaVersion:  payload.MessageEventSchemaVersionV3,
+		ViewPayload:        eventPayload,
+	})
+	if err != nil {
+		t.Fatalf("messageViewToTLMessage error = %v", err)
+	}
+	tlMessage, ok := message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessage", message)
+	}
+	media, ok := tlMessage.Media.(*tg.TLMessageMediaContact)
+	if !ok {
+		t.Fatalf("media = %T, want *tg.TLMessageMediaContact", tlMessage.Media)
+	}
+	if media.PhoneNumber != "8613000000001" || media.FirstName != "13000000001" || media.LastName != "t2" || media.UserId != 1571266964 {
+		t.Fatalf("contact media = %+v, want shared contact fields", media)
+	}
+}
+
 func TestGetStateReturnsRepositoryState(t *testing.T) {
 	repo := &fakeUserUpdatesRepository{
 		state: &repository.UserState{UserID: 1001, Pts: 55, UnreadCount: 3},

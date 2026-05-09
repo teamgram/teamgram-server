@@ -80,6 +80,38 @@ func TestFillUpdatesUsersReplacesLegacyUsers(t *testing.T) {
 	}
 }
 
+func TestFillUpdatesUsersIncludesContactMediaUser(t *testing.T) {
+	client := &fakeUserClient{out: userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+		ViewerUsers: []userpb.ViewerUsersClazz{
+			userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 1001, Users: []tg.UserClazz{
+				tg.MakeTLUser(&tg.TLUser{Id: 1001}),
+				tg.MakeTLUser(&tg.TLUser{Id: 1002}),
+				tg.MakeTLUser(&tg.TLUser{Id: 1003}),
+			}}),
+		},
+	}).ToUserProjectionBundle()}
+	updates := tg.MakeTLUpdates(&tg.TLUpdates{
+		Updates: []tg.UpdateClazz{tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
+			Message: tg.MakeTLMessage(&tg.TLMessage{
+				FromId: tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 1001}),
+				PeerId: tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 1002}),
+				Media:  tg.MakeTLMessageMediaContact(&tg.TLMessageMediaContact{UserId: 1003}),
+			}),
+		})},
+	})
+
+	err := FillUpdatesUsers(context.Background(), client, 1001, updates.ToUpdates(), MissingStoredReference)
+	if err != nil {
+		t.Fatalf("FillUpdatesUsers() error = %v", err)
+	}
+	if len(client.in.TargetUserIds) != 3 || client.in.TargetUserIds[2] != 1003 {
+		t.Fatalf("target user ids = %v, want contact media user included", client.in.TargetUserIds)
+	}
+	if len(updates.Users) != 3 {
+		t.Fatalf("users = %#v, want 3 projected users", updates.Users)
+	}
+}
+
 func TestFillMessagesMessagesUsersReplacesLegacyUsers(t *testing.T) {
 	client := &fakeUserClient{out: userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
 		ViewerUsers: []userpb.ViewerUsersClazz{

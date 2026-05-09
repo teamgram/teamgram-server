@@ -65,6 +65,11 @@ type MediaRefV1 struct {
 	TTLSeconds         int32                    `json:"ttl_seconds,omitempty"`
 	MimeType           string                   `json:"mime_type,omitempty"`
 	Size               int64                    `json:"size,omitempty"`
+	PhoneNumber        string                   `json:"phone_number,omitempty"`
+	FirstName          string                   `json:"first_name,omitempty"`
+	LastName           string                   `json:"last_name,omitempty"`
+	Vcard              string                   `json:"vcard,omitempty"`
+	UserID             int64                    `json:"user_id,omitempty"`
 	PhotoSizes         []PhotoSizeRefV1         `json:"photo_sizes,omitempty"`
 	DocumentThumbs     []PhotoSizeRefV1         `json:"document_thumbs,omitempty"`
 	DocumentAttributes []DocumentAttributeRefV1 `json:"document_attributes,omitempty"`

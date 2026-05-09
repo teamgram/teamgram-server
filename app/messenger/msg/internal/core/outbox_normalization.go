@@ -171,6 +171,16 @@ func normalizeMediaRef(media tg.MessageMediaClazz) (*payload.MediaRefV1, error) 
 			ref.TTLSeconds = *m.TtlSeconds
 		}
 		return ref, nil
+	case *tg.TLMessageMediaContact:
+		return &payload.MediaRefV1{
+			SchemaVersion: payload.MediaRefSchemaVersionV1,
+			Kind:          "contact",
+			PhoneNumber:   m.PhoneNumber,
+			FirstName:     m.FirstName,
+			LastName:      m.LastName,
+			Vcard:         m.Vcard,
+			UserID:        m.UserId,
+		}, nil
 	case *tg.TLMessageMediaDocument:
 		ref := &payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "document"}
 		if d, ok := m.Document.(*tg.TLDocument); ok && d != nil {

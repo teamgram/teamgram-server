@@ -104,6 +104,7 @@ func (c *UserIDCollector) collectMessage(message MessageClazz) {
 		c.collectPeer(m.PeerId)
 		c.collectPeer(m.SavedPeerId)
 		c.collectMessageFwdHeader(m.FwdFrom)
+		c.collectMessageMedia(m.Media)
 		c.collectInt64Ptr(m.ViaBotId)
 		c.collectInt64Ptr(m.ViaBusinessBotId)
 		c.collectMessageReplyHeader(m.ReplyTo)
@@ -114,6 +115,12 @@ func (c *UserIDCollector) collectMessage(message MessageClazz) {
 		c.collectPeer(m.PeerId)
 		c.collectPeer(m.SavedPeerId)
 		c.collectMessageReplyHeader(m.ReplyTo)
+	}
+}
+
+func (c *UserIDCollector) collectMessageMedia(media MessageMediaClazz) {
+	if m, ok := media.(*TLMessageMediaContact); ok {
+		c.add(m.UserId)
 	}
 }
 

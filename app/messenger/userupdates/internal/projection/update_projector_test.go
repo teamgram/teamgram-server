@@ -662,6 +662,54 @@ func TestProjectMessageEventV3DocumentMedia(t *testing.T) {
 	}
 }
 
+func TestProjectMessageEventV3ContactMedia(t *testing.T) {
+	body := mustMarshalMessageEventV3(t, payload.MessageEventV3{
+		SchemaVersion:      payload.MessageEventSchemaVersionV3,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: 104,
+		PeerSeq:            12,
+		MessageID:          80,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             202,
+		FromUserID:         101,
+		ToUserID:           202,
+		Date:               1700000000,
+		Out:                true,
+		MediaRef: &payload.MediaRefV1{
+			SchemaVersion: payload.MediaRefSchemaVersionV1,
+			Kind:          "contact",
+			PhoneNumber:   "8613000000001",
+			FirstName:     "13000000001",
+			LastName:      "t2",
+			UserID:        1571266964,
+		},
+	})
+	got, err := ProjectUserEvent(repository.UserEvent{
+		UserID:             1001,
+		Pts:                21,
+		PtsCount:           1,
+		EventType:          repository.EventTypeNewMessage,
+		EventSchemaVersion: payload.MessageEventSchemaVersionV3,
+		EventCodec:         repository.PayloadCodecJSON,
+		EventPayload:       body,
+		EventPayloadHash:   payload.HashBytes(body),
+	}, ModeDifference)
+	if err != nil {
+		t.Fatalf("ProjectUserEvent() error = %v", err)
+	}
+	message, ok := got.Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessage", got.Message)
+	}
+	media, ok := message.Media.(*tg.TLMessageMediaContact)
+	if !ok {
+		t.Fatalf("media = %T, want *tg.TLMessageMediaContact", message.Media)
+	}
+	if media.PhoneNumber != "8613000000001" || media.FirstName != "13000000001" || media.LastName != "t2" || media.UserId != 1571266964 {
+		t.Fatalf("contact media = %+v, want shared contact fields", media)
+	}
+}
+
 func TestProjectMessageEventV3RejectsOutOfRangeForwardDate(t *testing.T) {
 	body := mustMarshalMessageEventV3(t, payload.MessageEventV3{
 		SchemaVersion:      payload.MessageEventSchemaVersionV3,

@@ -426,9 +426,21 @@ func messageMedia(media *payload.MediaRefV1) tg.MessageMediaClazz {
 			Document:   viewMessageDocument(media),
 			TtlSeconds: ttl,
 		})
+	case "contact":
+		return viewMessageContact(media)
 	default:
 		return tg.MakeTLMessageMediaEmpty(&tg.TLMessageMediaEmpty{})
 	}
+}
+
+func viewMessageContact(media *payload.MediaRefV1) tg.MessageMediaClazz {
+	return tg.MakeTLMessageMediaContact(&tg.TLMessageMediaContact{
+		PhoneNumber: media.PhoneNumber,
+		FirstName:   media.FirstName,
+		LastName:    media.LastName,
+		Vcard:       media.Vcard,
+		UserId:      media.UserID,
+	})
 }
 
 func viewMessagePhoto(media *payload.MediaRefV1) tg.PhotoClazz {
