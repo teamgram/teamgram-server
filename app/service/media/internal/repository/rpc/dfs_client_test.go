@@ -120,18 +120,18 @@ func TestDfsClientForwardsPutFile(t *testing.T) {
 	}
 }
 
-func TestDfsClientForwardsUploadPhoto(t *testing.T) {
+func TestDfsClientForwardsLegacyUploadPhoto(t *testing.T) {
 	photo := tg.MakeTLPhoto(&tg.TLPhoto{Id: 10}).ToPhoto()
 	fake := &fakeDfsClient{photo: photo}
 	client := NewDFSClient(fake)
 	req := &dfs.TLDfsUploadPhotoFileV2{Creator: 1001}
 
-	got, err := client.UploadPhotoFileV2(context.Background(), req)
+	got, err := client.UploadPhotoFileV2ViaLegacyDFS(context.Background(), req)
 	if err != nil {
-		t.Fatalf("UploadPhotoFileV2() error = %v", err)
+		t.Fatalf("UploadPhotoFileV2ViaLegacyDFS() error = %v", err)
 	}
 	if got != photo {
-		t.Fatalf("UploadPhotoFileV2() result = %#v, want forwarded photo", got)
+		t.Fatalf("UploadPhotoFileV2ViaLegacyDFS() result = %#v, want forwarded photo", got)
 	}
 	if fake.photoReq != req {
 		t.Fatalf("forwarded request = %#v, want original", fake.photoReq)

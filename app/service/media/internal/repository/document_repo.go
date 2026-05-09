@@ -110,6 +110,50 @@ func (r *Repository) UploadedDocumentMedia(ctx context.Context, in *media.TLMedi
 	}).ToMessageMedia(), nil
 }
 
+func (r *Repository) UploadedDocumentMediaViaLegacyDFS(ctx context.Context, in *media.TLMediaUploadedDocumentMedia) (*tg.MessageMedia, error) {
+	if in == nil || in.Media == nil {
+		return nil, media.ErrMediaInvalidArgument
+	}
+	uploaded, ok := in.Media.(*tg.TLInputMediaUploadedDocument)
+	if !ok || uploaded.File == nil {
+		return nil, media.ErrMediaInvalidArgument
+	}
+	if r.dfsClient == nil {
+		return nil, wrapMediaDownstream("dfs legacy upload document", media.ErrMediaDownstream)
+	}
+
+	var (
+		doc *tg.Document
+		err error
+	)
+	switch {
+	case isAnimatedGif(uploaded):
+		doc, err = r.dfsClient.UploadGifDocumentMediaViaLegacyDFS(ctx, &dfsapi.TLDfsUploadGifDocumentMedia{Creator: in.OwnerId, Media: in.Media})
+	case uploaded.MimeType == "video/mp4":
+		doc, err = r.dfsClient.UploadMp4DocumentMediaViaLegacyDFS(ctx, &dfsapi.TLDfsUploadMp4DocumentMedia{Creator: in.OwnerId, Media: in.Media})
+	default:
+		doc, err = r.dfsClient.UploadDocumentFileV2ViaLegacyDFS(ctx, &dfsapi.TLDfsUploadDocumentFileV2{Creator: in.OwnerId, Media: in.Media})
+	}
+	if err != nil {
+		return nil, wrapDfsUploadError("dfs legacy upload document", err)
+	}
+	if doc == nil {
+		return nil, wrapMediaInvalidUploadedFile("dfs legacy upload document", errors.New("missing legacy document"))
+	}
+	if err := r.saveDocumentAggregate(ctx, uploadedFileName(uploaded), doc); err != nil {
+		return nil, err
+	}
+	docClazz, ok := doc.ToDocument()
+	if !ok {
+		return nil, media.ErrMediaInvalidArgument
+	}
+	return tg.MakeTLMessageMediaDocument(&tg.TLMessageMediaDocument{
+		Spoiler:    uploaded.Spoiler,
+		Document:   docClazz,
+		TtlSeconds: uploaded.TtlSeconds,
+	}).ToMessageMedia(), nil
+}
+
 func (r *Repository) processUploadedGifDocument(ctx context.Context, ownerID int64, finalized *dfsapi.FileFinalizedObject, uploaded *tg.TLInputMediaUploadedDocument) (*tg.Document, string, map[string]string, error) {
 	if r.processorClient == nil {
 		return nil, "", nil, wrapMediaDownstream("mediaprocessor process gif", media.ErrMediaDownstream)

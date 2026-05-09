@@ -332,6 +332,97 @@ func TestUploadedDocumentMediaCommitsAndProcessesByMime(t *testing.T) {
 	}
 }
 
+func TestUploadedDocumentMediaViaLegacyDFSCallsLegacyWrappers(t *testing.T) {
+	tests := []struct {
+		name         string
+		mimeType     string
+		attrs        []tg.DocumentAttributeClazz
+		wantDocument bool
+		wantGif      bool
+		wantMp4      bool
+	}{
+		{
+			name:         "regular",
+			mimeType:     "application/pdf",
+			attrs:        []tg.DocumentAttributeClazz{tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "report.pdf"})},
+			wantDocument: true,
+		},
+		{
+			name:     "gif",
+			mimeType: "image/gif",
+			attrs: []tg.DocumentAttributeClazz{
+				tg.MakeTLDocumentAttributeAnimated(&tg.TLDocumentAttributeAnimated{}),
+				tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "loop.gif"}),
+			},
+			wantGif: true,
+		},
+		{
+			name:     "mp4",
+			mimeType: "video/mp4",
+			attrs:    []tg.DocumentAttributeClazz{tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "clip.mp4"})},
+			wantMp4:  true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			documents := &captureDocumentsModel{}
+			photoSizes := &capturePhotoSizesModel{}
+			dfsClient := &fakeDfsMediaClient{document: testDocumentWithThumbs(808)}
+			r := &Repository{
+				model:     &model.Models{DocumentsModel: documents, PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
+				dfsClient: dfsClient,
+			}
+
+			got, err := r.UploadedDocumentMediaViaLegacyDFS(context.Background(), &media.TLMediaUploadedDocumentMedia{
+				OwnerId: 77,
+				Media: tg.MakeTLInputMediaUploadedDocument(&tg.TLInputMediaUploadedDocument{
+					File:       tg.MakeTLInputFile(&tg.TLInputFile{Id: 8, Parts: 1, Name: "upload.bin"}),
+					MimeType:   tt.mimeType,
+					Attributes: tt.attrs,
+				}),
+			})
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if got == nil {
+				t.Fatal("expected message media document")
+			}
+			if (dfsClient.uploadDocumentReq != nil) != tt.wantDocument || (dfsClient.uploadGifReq != nil) != tt.wantGif || (dfsClient.uploadMp4Req != nil) != tt.wantMp4 {
+				t.Fatalf("legacy request mismatch: document=%#v gif=%#v mp4=%#v", dfsClient.uploadDocumentReq, dfsClient.uploadGifReq, dfsClient.uploadMp4Req)
+			}
+			if dfsClient.commitReq != nil {
+				t.Fatalf("expected legacy path not to commit upload, got %#v", dfsClient.commitReq)
+			}
+			if len(documents.inserted) != 1 || documents.inserted[0].DocumentId != 808 {
+				t.Fatalf("expected saved legacy document row, got %#v", documents.inserted)
+			}
+			if len(photoSizes.inserted) != 1 || photoSizes.inserted[0].PhotoSizeId != 808 {
+				t.Fatalf("expected saved legacy document thumb, got %#v", photoSizes.inserted)
+			}
+		})
+	}
+}
+
+func TestUploadedDocumentMediaViaLegacyDFSRejectsNilLegacyDocument(t *testing.T) {
+	r := &Repository{
+		model:     &model.Models{DocumentsModel: &captureDocumentsModel{}, PhotoSizesModel: &capturePhotoSizesModel{}, VideoSizesModel: &captureVideoSizesModel{}},
+		dfsClient: &fakeDfsMediaClient{},
+	}
+
+	_, err := r.UploadedDocumentMediaViaLegacyDFS(context.Background(), &media.TLMediaUploadedDocumentMedia{
+		OwnerId: 77,
+		Media: tg.MakeTLInputMediaUploadedDocument(&tg.TLInputMediaUploadedDocument{
+			File:       tg.MakeTLInputFile(&tg.TLInputFile{Id: 8, Parts: 1, Name: "upload.bin"}),
+			MimeType:   "application/pdf",
+			Attributes: []tg.DocumentAttributeClazz{tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "report.pdf"})},
+		}),
+	})
+	if !errors.Is(err, media.ErrMediaInvalidUploadedFile) {
+		t.Fatalf("expected ErrMediaInvalidUploadedFile, got %v", err)
+	}
+}
+
 func TestUploadedDocumentMediaRejectsZeroSizePlainDocument(t *testing.T) {
 	documents := &captureDocumentsModel{}
 	photoSizes := &capturePhotoSizesModel{}

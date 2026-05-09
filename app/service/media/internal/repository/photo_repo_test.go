@@ -101,27 +101,27 @@ func (c *fakeDfsMediaClient) PutFile(_ context.Context, in *dfsapi.TLDfsPutFile)
 	return c.finalized, nil
 }
 
-func (c *fakeDfsMediaClient) UploadPhotoFileV2(_ context.Context, in *dfsapi.TLDfsUploadPhotoFileV2) (*tg.Photo, error) {
+func (c *fakeDfsMediaClient) UploadPhotoFileV2ViaLegacyDFS(_ context.Context, in *dfsapi.TLDfsUploadPhotoFileV2) (*tg.Photo, error) {
 	c.uploadPhotoRequest = in
 	return c.photo, nil
 }
 
-func (c *fakeDfsMediaClient) UploadProfilePhotoFileV2(_ context.Context, in *dfsapi.TLDfsUploadProfilePhotoFileV2) (*tg.Photo, error) {
+func (c *fakeDfsMediaClient) UploadProfilePhotoFileV2ViaLegacyDFS(_ context.Context, in *dfsapi.TLDfsUploadProfilePhotoFileV2) (*tg.Photo, error) {
 	c.uploadProfileReq = in
 	return c.photo, nil
 }
 
-func (c *fakeDfsMediaClient) UploadDocumentFileV2(_ context.Context, in *dfsapi.TLDfsUploadDocumentFileV2) (*tg.Document, error) {
+func (c *fakeDfsMediaClient) UploadDocumentFileV2ViaLegacyDFS(_ context.Context, in *dfsapi.TLDfsUploadDocumentFileV2) (*tg.Document, error) {
 	c.uploadDocumentReq = in
 	return c.document, nil
 }
 
-func (c *fakeDfsMediaClient) UploadGifDocumentMedia(_ context.Context, in *dfsapi.TLDfsUploadGifDocumentMedia) (*tg.Document, error) {
+func (c *fakeDfsMediaClient) UploadGifDocumentMediaViaLegacyDFS(_ context.Context, in *dfsapi.TLDfsUploadGifDocumentMedia) (*tg.Document, error) {
 	c.uploadGifReq = in
 	return c.document, nil
 }
 
-func (c *fakeDfsMediaClient) UploadMp4DocumentMedia(_ context.Context, in *dfsapi.TLDfsUploadMp4DocumentMedia) (*tg.Document, error) {
+func (c *fakeDfsMediaClient) UploadMp4DocumentMediaViaLegacyDFS(_ context.Context, in *dfsapi.TLDfsUploadMp4DocumentMedia) (*tg.Document, error) {
 	c.uploadMp4Req = in
 	return c.document, nil
 }
@@ -363,6 +363,54 @@ func TestUploadPhotoFileCallsDfsAndSavesPhotoSizes(t *testing.T) {
 	}
 	if photoSizes.inserted[0].FilePath != "derivative-object-legacy-test" {
 		t.Fatalf("expected saved derivative object id, got %#v", photoSizes.inserted[0])
+	}
+}
+
+func TestUploadPhotoFileViaLegacyDFSCallsLegacyWrapper(t *testing.T) {
+	photos := &capturePhotosModel{}
+	photoSizes := &capturePhotoSizesModel{}
+	dfsClient := &fakeDfsMediaClient{photo: testPhotoWithSizes(707, false)}
+	r := &Repository{
+		model:     &model.Models{PhotosModel: photos, PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
+		dfsClient: dfsClient,
+	}
+
+	got, err := r.UploadPhotoFileViaLegacyDFS(context.Background(), &media.TLMediaUploadPhotoFile{
+		OwnerId: 7,
+		File:    tg.MakeTLInputFile(&tg.TLInputFile{Id: 11, Parts: 1, Name: "avatar.jpg", Md5Checksum: "md5"}),
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if got == nil {
+		t.Fatal("expected uploaded photo")
+	}
+	if dfsClient.uploadPhotoRequest == nil || dfsClient.uploadPhotoRequest.Creator != 7 {
+		t.Fatalf("expected legacy dfs photo upload request, got %#v", dfsClient.uploadPhotoRequest)
+	}
+	if dfsClient.commitReq != nil {
+		t.Fatalf("expected legacy path not to commit upload, got %#v", dfsClient.commitReq)
+	}
+	if len(photos.inserted) != 1 || photos.inserted[0].PhotoId != 707 || photos.inserted[0].InputFileName != "avatar.jpg" {
+		t.Fatalf("expected saved legacy photo row, got %#v", photos.inserted)
+	}
+	if len(photoSizes.inserted) != 1 || photoSizes.inserted[0].PhotoSizeId != 707 {
+		t.Fatalf("expected saved legacy photo size, got %#v", photoSizes.inserted)
+	}
+}
+
+func TestUploadPhotoFileViaLegacyDFSRejectsNilLegacyPhoto(t *testing.T) {
+	r := &Repository{
+		model:     &model.Models{PhotosModel: &capturePhotosModel{}, PhotoSizesModel: &capturePhotoSizesModel{}, VideoSizesModel: &captureVideoSizesModel{}},
+		dfsClient: &fakeDfsMediaClient{},
+	}
+
+	_, err := r.UploadPhotoFileViaLegacyDFS(context.Background(), &media.TLMediaUploadPhotoFile{
+		OwnerId: 7,
+		File:    tg.MakeTLInputFile(&tg.TLInputFile{Id: 11, Parts: 1, Name: "avatar.jpg", Md5Checksum: "md5"}),
+	})
+	if !errors.Is(err, media.ErrMediaInvalidUploadedFile) {
+		t.Fatalf("expected ErrMediaInvalidUploadedFile, got %v", err)
 	}
 }
 

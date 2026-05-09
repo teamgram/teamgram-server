@@ -111,6 +111,29 @@ func (r *Repository) UploadPhotoFile(ctx context.Context, in *media.TLMediaUploa
 	return photo, nil
 }
 
+func (r *Repository) UploadPhotoFileViaLegacyDFS(ctx context.Context, in *media.TLMediaUploadPhotoFile) (*tg.Photo, error) {
+	if in == nil || in.File == nil {
+		return nil, media.ErrMediaInvalidArgument
+	}
+	if r.dfsClient == nil {
+		return nil, wrapMediaDownstream("dfs legacy upload photo", media.ErrMediaDownstream)
+	}
+	photo, err := r.dfsClient.UploadPhotoFileV2ViaLegacyDFS(ctx, &dfsapi.TLDfsUploadPhotoFileV2{
+		Creator: in.OwnerId,
+		File:    in.File,
+	})
+	if err != nil {
+		return nil, wrapDfsUploadError("dfs legacy upload photo", err)
+	}
+	if photo == nil {
+		return nil, wrapMediaInvalidUploadedFile("dfs legacy upload photo", errors.New("missing legacy photo"))
+	}
+	if err := r.savePhotoAggregate(ctx, inputFileName(in.File), photo); err != nil {
+		return nil, err
+	}
+	return photo, nil
+}
+
 func externalUploadSessionID(ownerID int64, file tg.InputFileClazz) string {
 	switch f := file.(type) {
 	case *tg.TLInputFile:
@@ -259,7 +282,7 @@ func (r *Repository) UploadProfilePhotoFile(ctx context.Context, in *media.TLMed
 	if r.dfsClient == nil {
 		return nil, wrapMediaDownstream("dfs upload profile photo", media.ErrMediaDownstream)
 	}
-	photo, err := r.dfsClient.UploadProfilePhotoFileV2(ctx, &dfsapi.TLDfsUploadProfilePhotoFileV2{
+	photo, err := r.dfsClient.UploadProfilePhotoFileV2ViaLegacyDFS(ctx, &dfsapi.TLDfsUploadProfilePhotoFileV2{
 		Creator:          in.OwnerId,
 		File:             in.File,
 		Video:            in.Video,
@@ -268,6 +291,9 @@ func (r *Repository) UploadProfilePhotoFile(ctx context.Context, in *media.TLMed
 	})
 	if err != nil {
 		return nil, wrapDfsUploadError("dfs upload profile photo", err)
+	}
+	if photo == nil {
+		return nil, wrapMediaInvalidUploadedFile("dfs upload profile photo", errors.New("missing profile photo"))
 	}
 	if err := r.savePhotoAggregate(ctx, "", photo); err != nil {
 		return nil, err
@@ -288,6 +314,9 @@ func (r *Repository) UploadedProfilePhoto(ctx context.Context, in *media.TLMedia
 	})
 	if err != nil {
 		return nil, wrapDfsUploadError("dfs uploaded profile photo", err)
+	}
+	if photo == nil {
+		return nil, wrapMediaInvalidUploadedFile("dfs uploaded profile photo", errors.New("missing uploaded profile photo"))
 	}
 	if err := r.savePhotoAggregate(ctx, "", photo); err != nil {
 		return nil, err
