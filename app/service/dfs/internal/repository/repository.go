@@ -25,6 +25,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/imaging2"
 	minioadapter "github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/minio"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/rpc"
+	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/spool"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/xkv"
 	idgenclient "github.com/teamgram/teamgram-server/v2/app/service/idgen/client"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
@@ -33,7 +34,7 @@ import (
 // Repository is the dependency container for repository instances.
 type Repository struct {
 	kv               kv.ExtStore
-	uploadStateModel xkv.UploadStateModel
+	uploadStateModel uploadStateModel
 	objectStore      minioadapter.ObjectStore
 	idgen            rpc.IDGenerator
 	imaging          imaging2.Processor
@@ -55,10 +56,18 @@ func NewRepository(c config.Config) *Repository {
 	if hasRPCClientConfig(c.Idgen) {
 		idgen = rpc.NewIDGenClient(idgenclient.NewIdgenClient(idgenclient.MustNewKitexClient(c.Idgen)))
 	}
+	uploadState := uploadStateModel(xkv.NewUploadStateModel(kv2))
+	if c.UploadSpool.RootDir != "" {
+		model, err := spool.NewUploadStateModel(c.UploadSpool)
+		if err != nil {
+			panic(fmt.Errorf("new dfs upload spool: %w", err))
+		}
+		uploadState = model
+	}
 
 	return &Repository{
 		kv:               kv2,
-		uploadStateModel: xkv.NewUploadStateModel(kv2),
+		uploadStateModel: uploadState,
 		objectStore:      objectStore,
 		idgen:            idgen,
 		imaging:          imaging2.NewProcessor(),

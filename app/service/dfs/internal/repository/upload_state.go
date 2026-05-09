@@ -7,6 +7,7 @@ import (
 	"io"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
+	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/spool"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/xkv"
 )
 
@@ -26,6 +27,15 @@ type DfsFileInfo struct {
 	LastFilePartSize  int
 	MimeType          string
 	Mtime             int64
+}
+
+type uploadStateModel interface {
+	SaveUploadPart(ctx context.Context, creator, fileID int64, partIndex int32, data []byte) error
+	SaveUploadFileInfo(ctx context.Context, info *xkv.DfsFileInfo) error
+	LoadUploadFileInfo(ctx context.Context, creator, fileID int64) (*xkv.DfsFileInfo, error)
+	OpenUploadFileReader(ctx context.Context, info *xkv.DfsFileInfo) (io.ReadSeeker, error)
+	SaveObjectCacheRef(ctx context.Context, objectID, creator, fileID int64) error
+	LoadObjectCacheRef(ctx context.Context, objectID int64) (*xkv.DfsFileInfo, error)
 }
 
 func (i *DfsFileInfo) FileSize() int64 {
@@ -113,7 +123,7 @@ func (r *Repository) LoadObjectCacheRef(ctx context.Context, objectID int64) (*D
 var errUploadStateStoreUnavailable = errors.New("upload state store unavailable")
 
 func mapUploadStateError(op string, err error) error {
-	if errors.Is(err, xkv.ErrUploadStateNotFound) {
+	if errors.Is(err, xkv.ErrUploadStateNotFound) || errors.Is(err, spool.ErrUploadStateNotFound) {
 		return dfs.ErrDfsFileNotFound
 	}
 	return dfs.WrapDfsStorage(op, err)
