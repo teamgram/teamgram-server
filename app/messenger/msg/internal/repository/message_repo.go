@@ -491,9 +491,41 @@ func existingCanonicalMatchesRetryTx(txModels *model.TxModels, canonicalMessageI
 		}
 		return false, storageError("select canonical for random retry", err)
 	}
-	return row.MessageText == in.MessageText &&
-		row.FromUserId == in.SenderUserID &&
-		row.MessageKind == MessageKindText, nil
+	return canonicalMessageMatchesRetryInput(row, in), nil
+}
+
+func canonicalMessageMatchesRetryInput(row *model.CanonicalMessages, in CreateCanonicalMessageInput) bool {
+	if row.MessageText != in.MessageText ||
+		row.FromUserId != in.SenderUserID ||
+		row.MessageKind != MessageKindText {
+		return false
+	}
+	if canonicalRetryHasNoRichPayload(row, in) {
+		return true
+	}
+	return row.EntitiesPayloadSchemaVersion == canonicalEntitiesSchemaVersion(in.EntitiesPayloadSchemaVersion) &&
+		payloadBytesEqual(row.EntitiesPayload, in.EntitiesPayload) &&
+		row.MediaRefSchemaVersion == canonicalMediaSchemaVersion(in.MediaRefSchemaVersion) &&
+		payloadBytesEqual(row.MediaRefPayload, in.MediaRefPayload) &&
+		row.MessageAttrsSchemaVersion == in.MessageAttrsSchemaVersion &&
+		payloadBytesEqual(row.MessageAttrsPayload, in.MessageAttrsPayload) &&
+		row.ForwardRefSchemaVersion == in.ForwardRefSchemaVersion &&
+		payloadBytesEqual(row.ForwardRefPayload, in.ForwardRefPayload)
+}
+
+func canonicalRetryHasNoRichPayload(row *model.CanonicalMessages, in CreateCanonicalMessageInput) bool {
+	return len(row.EntitiesPayload) == 0 &&
+		len(in.EntitiesPayload) == 0 &&
+		len(row.MediaRefPayload) == 0 &&
+		len(in.MediaRefPayload) == 0 &&
+		len(row.MessageAttrsPayload) == 0 &&
+		len(in.MessageAttrsPayload) == 0 &&
+		len(row.ForwardRefPayload) == 0 &&
+		len(in.ForwardRefPayload) == 0
+}
+
+func payloadBytesEqual(a []byte, b []byte) bool {
+	return bytes.Equal(a, b) || len(a) == 0 && len(b) == 0
 }
 
 func nextPeerSeqTx(txModels *model.TxModels, peerType int32, peerID int64, minNextPeerSeq int64) (int64, error) {

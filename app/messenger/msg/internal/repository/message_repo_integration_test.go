@@ -323,6 +323,64 @@ func TestCreateOrGetCanonicalPersistsAttrsAndForwardRef(t *testing.T) {
 	}
 }
 
+func TestCreateOrGetByClientRandomRejectsPayloadChangedHashRetry(t *testing.T) {
+	repo, ctx := newIntegrationRepository(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	senderID := base + 110
+	peerID := base + 210
+	randomID := base + 7101
+	requestHash := payload.HashBytes([]byte("hash-original-payload"))
+	state := createSendStateForTest(t, ctx, repo, senderID, payload.PeerTypeUser, peerID, randomID, requestHash)
+
+	entitiesPayload := []byte(`[{"type":"bold","offset":0,"length":4}]`)
+	mediaPayload := mustJSON(t, payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "photo", ID: 333})
+	attrsPayload := mustJSON(t, payload.MessageAttrsV1{SchemaVersion: payload.MessageAttrsSchemaVersionV1, GroupedID: 444})
+	forwardPayload := mustJSON(t, payload.ForwardRefV1{SchemaVersion: payload.ForwardRefSchemaVersionV1, FromUserID: 300, Date: 1700000001})
+
+	if _, err := repo.CreateOrGetByClientRandom(ctx, CreateCanonicalMessageInput{
+		SendStateID:                  state.SendStateID,
+		SenderUserID:                 senderID,
+		PeerType:                     payload.PeerTypeUser,
+		PeerID:                       peerID,
+		ClientRandomID:               randomID,
+		RequestPayloadHash:           requestHash,
+		MessageText:                  "caption",
+		MessageDate:                  1700000000,
+		EntitiesPayloadSchemaVersion: 1,
+		EntitiesPayload:              entitiesPayload,
+		MediaRefSchemaVersion:        payload.MediaRefSchemaVersionV1,
+		MediaRefPayload:              mediaPayload,
+		MessageAttrsSchemaVersion:    payload.MessageAttrsSchemaVersionV1,
+		MessageAttrsPayload:          attrsPayload,
+		ForwardRefSchemaVersion:      payload.ForwardRefSchemaVersionV1,
+		ForwardRefPayload:            forwardPayload,
+	}); err != nil {
+		t.Fatalf("CreateOrGetByClientRandom(original) error = %v", err)
+	}
+
+	_, err := repo.CreateOrGetByClientRandom(ctx, CreateCanonicalMessageInput{
+		SendStateID:                  state.SendStateID,
+		SenderUserID:                 senderID,
+		PeerType:                     payload.PeerTypeUser,
+		PeerID:                       peerID,
+		ClientRandomID:               randomID,
+		RequestPayloadHash:           payload.HashBytes([]byte("hash-changed-payload")),
+		MessageText:                  "caption",
+		MessageDate:                  1700000000,
+		EntitiesPayloadSchemaVersion: 1,
+		EntitiesPayload:              []byte(`[{"type":"italic","offset":0,"length":4}]`),
+		MediaRefSchemaVersion:        payload.MediaRefSchemaVersionV1,
+		MediaRefPayload:              mustJSON(t, payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "document", ID: 333}),
+		MessageAttrsSchemaVersion:    payload.MessageAttrsSchemaVersionV1,
+		MessageAttrsPayload:          mustJSON(t, payload.MessageAttrsV1{SchemaVersion: payload.MessageAttrsSchemaVersionV1, GroupedID: 555}),
+		ForwardRefSchemaVersion:      payload.ForwardRefSchemaVersionV1,
+		ForwardRefPayload:            mustJSON(t, payload.ForwardRefV1{SchemaVersion: payload.ForwardRefSchemaVersionV1, FromUserID: 301, Date: 1700000001}),
+	})
+	if !errors.Is(err, msg.ErrRandomIdConflict) {
+		t.Fatalf("CreateOrGetByClientRandom(changed payload retry) error = %v, want ErrRandomIdConflict", err)
+	}
+}
+
 func TestMessageRepositoryListHistoryMessages(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)
