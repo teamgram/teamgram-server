@@ -20,6 +20,10 @@ echo "run dfs ..."
 nohup ./dfs -f=../../app/service/dfs/etc/dfs.yaml >> ../logs/dfs.log  2>&1 &
 sleep 1
 
+echo "run mediaprocessor ..."
+nohup ./mediaprocessor -f=../../app/service/mediaprocessor/etc/mediaprocessor.yaml >> ../logs/mediaprocessor.log  2>&1 &
+sleep 1
+
 echo "run media ..."
 nohup ./media -f=../../app/service/media/etc/media.yaml >> ../logs/media.log  2>&1 &
 sleep 1
