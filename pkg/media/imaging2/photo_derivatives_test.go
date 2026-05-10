@@ -90,6 +90,20 @@ func TestBuildPhotoDerivativesUsesProgressiveBytesForDimensions(t *testing.T) {
 	})
 }
 
+func TestBuildPhotoDerivativesAddsStrippedForProfilePhoto(t *testing.T) {
+	processor := NewProcessorWithProgressiveEncoder(fakeProgressiveJPEGEncoder{})
+	derivatives, err := processor.BuildPhotoDerivatives(context.Background(), testSizedJPEG(t, 640, 480), "jpg", true)
+	if err != nil {
+		t.Fatalf("BuildPhotoDerivatives(profile) error = %v", err)
+	}
+	assertPhotoDerivatives(t, derivatives, []wantPhotoDerivative{
+		{typ: "i", w: 40, h: 40, stripped: true},
+		{typ: "a", w: 160, h: 160},
+		{typ: "b", w: 320, h: 320},
+		{typ: "c", w: 640, h: 640},
+	})
+}
+
 type wantPhotoDerivative struct {
 	typ         string
 	w           int32

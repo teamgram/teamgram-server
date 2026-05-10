@@ -689,6 +689,7 @@ func TestUploadProfilePhotoFileCommitsAndProcessesImage(t *testing.T) {
 		photo: mediaprocessor.MakeTLProcessedPhoto(&mediaprocessor.TLProcessedPhoto{
 			OriginalObjectId: "profile-photo-object",
 			Sizes: []mediaprocessor.ProcessorDerivativeClazz{
+				mediaprocessor.MakeTLProcessorDerivative(&mediaprocessor.TLProcessorDerivative{Kind: "photo_stripped", FileName: "i_profile.jpg", Width: 40, Height: 40, Size2: 4, Bytes: []byte{0x01, 0x28, 0x28, 0xff}}),
 				mediaprocessor.MakeTLProcessorDerivative(&mediaprocessor.TLProcessorDerivative{Kind: "photo_size", ObjectId: "profile-derivative-m", FileName: "m_profile.jpg", Width: 320, Height: 240, Size2: 1000}),
 			},
 		}).ToProcessedPhoto(),
@@ -720,8 +721,14 @@ func TestUploadProfilePhotoFileCommitsAndProcessesImage(t *testing.T) {
 	if len(photos.inserted) != 1 || photos.inserted[0].InputFileName != "profile.jpg" {
 		t.Fatalf("expected saved profile photo row, got %#v", photos.inserted)
 	}
-	if len(photoSizes.inserted) != 1 || photoSizes.inserted[0].FilePath != "profile-derivative-m" {
-		t.Fatalf("expected saved profile derivative object id, got %#v", photoSizes.inserted)
+	if len(photoSizes.inserted) != 2 {
+		t.Fatalf("expected saved profile stripped and derivative sizes, got %#v", photoSizes.inserted)
+	}
+	if !photoSizes.inserted[0].HasStripped || !bytes.Equal(photoSizes.inserted[0].StrippedBytes, []byte{0x01, 0x28, 0x28, 0xff}) {
+		t.Fatalf("expected saved profile stripped size, got %#v", photoSizes.inserted[0])
+	}
+	if photoSizes.inserted[1].FilePath != "profile-derivative-m" {
+		t.Fatalf("expected saved profile derivative object id, got %#v", photoSizes.inserted[1])
 	}
 }
 

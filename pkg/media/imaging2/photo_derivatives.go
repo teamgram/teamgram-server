@@ -13,11 +13,21 @@ func (p *ImagingProcessor) BuildPhotoDerivatives(ctx context.Context, original [
 		return nil, err
 	}
 	if isABC {
+		img, err := decodeImage(original, ext)
+		if err != nil {
+			return nil, fmt.Errorf("decode profile photo derivatives image: %w", err)
+		}
+		img = normalizeProfileImage(img)
+		resizeByWidth, originalMaxSide := resizeAxis(img)
+
 		sizes, err := p.ResizePhoto(ctx, original, ext, true)
 		if err != nil {
 			return nil, fmt.Errorf("resize profile photo derivatives: %w", err)
 		}
-		out := make([]PhotoDerivativeBytes, 0, len(sizes))
+		out := make([]PhotoDerivativeBytes, 0, 1+len(sizes))
+		if stripped, err := p.buildStrippedDerivative(img, resizeByWidth, min(originalMaxSide, PhotoSZStrippedSize)); err == nil {
+			out = append(out, stripped)
+		}
 		for _, size := range sizes {
 			out = append(out, PhotoDerivativeBytes{
 				Type:  size.Type,
