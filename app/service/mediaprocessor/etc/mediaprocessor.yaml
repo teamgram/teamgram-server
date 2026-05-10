@@ -15,3 +15,7 @@ Dfs:
     Hosts:
       - 127.0.0.1:2379
     Key: service.dfs
+ImageMagick:
+  Binary: magick
+  TimeoutSeconds: 30
+  Quality: 85

@@ -19,11 +19,15 @@ package svc
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	dfsclient "github.com/teamgram/teamgram-server/v2/app/service/dfs/client"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
 	"github.com/teamgram/teamgram-server/v2/app/service/mediaprocessor/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/mediaprocessor/internal/processor"
+	"github.com/teamgram/teamgram-server/v2/pkg/media/ffmpeg2"
+	"github.com/teamgram/teamgram-server/v2/pkg/media/imaging2"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -40,10 +44,19 @@ type ServiceContext struct {
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	dfsKitexClient := dfsclient.MustNewKitexClient(c.Dfs)
+	imageMagickBinary, err := imaging2.ResolveImageMagickBinary(c.ImageMagick.Binary)
+	if err != nil {
+		panic(fmt.Errorf("resolve ImageMagick binary: %w", err))
+	}
+	imagingProcessor := imaging2.NewProcessorWithProgressiveEncoder(imaging2.ImageMagickProgressiveEncoder{
+		Binary:  imageMagickBinary,
+		Timeout: time.Duration(c.ImageMagick.TimeoutSeconds) * time.Second,
+		Quality: c.ImageMagick.Quality,
+	})
 	return &ServiceContext{
 		Config:    c,
 		DfsClient: dfsclient.NewDfsClient(dfsKitexClient),
-		Processor: processor.New(),
+		Processor: processor.NewWithDeps(imagingProcessor, ffmpeg2.NewProcessor()),
 	}
 }
 

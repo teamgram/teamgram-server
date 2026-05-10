@@ -14,12 +14,14 @@ import (
 
 const (
 	DerivativePhotoSize     = "photo_size"
+	DerivativePhotoStripped = "photo_stripped"
 	DerivativeDocumentThumb = "document_thumb"
 	DocumentAttributeLayer  = 224
 )
 
 type MediaProcessor interface {
 	ResizePhoto(ctx context.Context, input []byte, ext string, profile bool) ([]imaging2.PhotoSizeBytes, error)
+	BuildPhotoDerivatives(ctx context.Context, input []byte, ext string, profile bool) ([]imaging2.PhotoDerivativeBytes, error)
 	ConvertGIFToMP4(ctx context.Context, input []byte) ([]byte, error)
 	ExtractMP4Cover(ctx context.Context, input []byte) ([]byte, error)
 	ProbeMP4(ctx context.Context, input []byte) (*ffmpeg2.VideoMetadata, error)
@@ -43,6 +45,10 @@ func NewWithDeps(imaging imaging2.Processor, ffmpeg ffmpeg2.Processor) *Processo
 
 func (p *Processor) ResizePhoto(ctx context.Context, input []byte, ext string, profile bool) ([]imaging2.PhotoSizeBytes, error) {
 	return p.imaging.ResizePhoto(ctx, input, ext, profile)
+}
+
+func (p *Processor) BuildPhotoDerivatives(ctx context.Context, input []byte, ext string, profile bool) ([]imaging2.PhotoDerivativeBytes, error) {
+	return p.imaging.BuildPhotoDerivatives(ctx, input, ext, profile)
 }
 
 func (p *Processor) ConvertGIFToMP4(ctx context.Context, input []byte) ([]byte, error) {

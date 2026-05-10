@@ -89,6 +89,13 @@ func TestResolveImageMagickBinaryRejectsUnsupportedConfiguredExecutable(t *testi
 	}
 }
 
+func TestResolveImageMagickBinaryRejectsMissingConfiguredExecutable(t *testing.T) {
+	_, err := ResolveImageMagickBinary("definitely-missing-binary")
+	if err == nil {
+		t.Fatal("ResolveImageMagickBinary(missing binary) error = nil, want error")
+	}
+}
+
 func TestImageMagickProgressiveEncoderProducesDecodeableProgressiveJPEG(t *testing.T) {
 	binary, err := ResolveImageMagickBinary("")
 	if err != nil {

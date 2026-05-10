@@ -23,5 +23,12 @@ import (
 
 type Config struct {
 	kitex.RpcServerConf
-	Dfs kitex.RpcClientConf
+	Dfs         kitex.RpcClientConf
+	ImageMagick ImageMagickConf
+}
+
+type ImageMagickConf struct {
+	Binary         string
+	TimeoutSeconds int
+	Quality        int
 }

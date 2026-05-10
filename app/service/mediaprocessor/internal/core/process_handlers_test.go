@@ -92,10 +92,10 @@ func TestProcessHandlersRejectInvalidArgument(t *testing.T) {
 	}
 }
 
-func TestProcessPhotoReadsResizesAndWritesDerivatives(t *testing.T) {
+func TestProcessPhotoReadsBuildsAndWritesDerivatives(t *testing.T) {
 	dfsFake := &fakeDFS{readBytes: []byte("original")}
 	procFake := &fakeProcessor{
-		resized: []imaging2.PhotoSizeBytes{
+		derivatives: []imaging2.PhotoDerivativeBytes{
 			{Type: "s", W: 90, H: 60, Bytes: []byte("small")},
 			{Type: "m", W: 320, H: 240, Bytes: []byte("medium")},
 		},
@@ -116,8 +116,8 @@ func TestProcessPhotoReadsResizesAndWritesDerivatives(t *testing.T) {
 	if got, want := string(dfsFake.readLease), "lease"; got != want {
 		t.Fatalf("read lease = %q, want %q", got, want)
 	}
-	if string(procFake.resizeInput) != "original" || procFake.resizeExt != ".jpg" || !procFake.resizeProfile {
-		t.Fatalf("resize call input=%q ext=%q profile=%t", procFake.resizeInput, procFake.resizeExt, procFake.resizeProfile)
+	if string(procFake.buildInput) != "original" || procFake.buildExt != ".jpg" || !procFake.buildProfile {
+		t.Fatalf("build call input=%q ext=%q profile=%t", procFake.buildInput, procFake.buildExt, procFake.buildProfile)
 	}
 	if len(dfsFake.puts) != 2 {
 		t.Fatalf("puts len = %d, want 2", len(dfsFake.puts))
@@ -129,6 +129,41 @@ func TestProcessPhotoReadsResizesAndWritesDerivatives(t *testing.T) {
 	}
 	assertDerivative(t, out.Sizes[0], processor.DerivativePhotoSize, "put-1", "s_image.jpg", "image/jpeg", 1005, 90, 60, []byte("small"))
 	assertDerivative(t, out.Sizes[1], processor.DerivativePhotoSize, "put-2", "m_image.jpg", "image/jpeg", 1006, 320, 240, []byte("medium"))
+}
+
+func TestProcessPhotoReturnsStrippedAndProgressiveLargestDerivative(t *testing.T) {
+	dfsFake := &fakeDFS{readBytes: []byte("original")}
+	procFake := &fakeProcessor{
+		derivatives: []imaging2.PhotoDerivativeBytes{
+			{Type: "i", W: 40, H: 27, Bytes: []byte("stripped"), Stripped: true},
+			{Type: "m", W: 320, H: 215, Bytes: []byte("medium")},
+			{Type: "x", W: 800, H: 538, Bytes: []byte("progressive"), ProgressiveSizes: []int32{3, 7, 11}},
+		},
+	}
+	c := New(context.Background(), &svc.ServiceContext{DfsClient: dfsFake, Processor: procFake})
+
+	out, err := c.MediaProcessorProcessPhoto(&mediaprocessor.TLMediaProcessorProcessPhoto{
+		OwnerId:   1001,
+		ObjectId:  "original-photo",
+		ReadLease: []byte("lease"),
+		FileName:  "image.jpg",
+		Profile:   tg.BoolFalseClazz,
+	})
+	if err != nil {
+		t.Fatalf("MediaProcessorProcessPhoto() error = %v", err)
+	}
+
+	if len(dfsFake.puts) != 2 {
+		t.Fatalf("puts len = %d, want 2", len(dfsFake.puts))
+	}
+	assertPut(t, dfsFake.puts[0], "media_derivative", "m_image.jpg", "image/jpeg", []byte("medium"))
+	assertPut(t, dfsFake.puts[1], "media_derivative", "x_image.jpg", "image/jpeg", []byte("progressive"))
+	if out.OriginalObjectId != "original-photo" || len(out.Sizes) != 3 {
+		t.Fatalf("out = %+v", out)
+	}
+	assertDerivative(t, out.Sizes[0], processor.DerivativePhotoStripped, "", "i_image.jpg", "image/jpeg", int64(len("stripped")), 40, 27, []byte("stripped"))
+	assertDerivative(t, out.Sizes[1], processor.DerivativePhotoSize, "put-1", "m_image.jpg", "image/jpeg", 1006, 320, 215, []byte("medium"))
+	assertDerivativeWithProgressive(t, out.Sizes[2], processor.DerivativePhotoSize, "put-2", "x_image.jpg", "image/jpeg", 1011, 800, 538, []byte("progressive"), []int32{3, 7, 11})
 }
 
 func TestProcessGifRejectsShortInputBeforeConvert(t *testing.T) {
@@ -242,7 +277,7 @@ func TestProcessHandlersPropagateDFSReadAndPutErrors(t *testing.T) {
 		c := New(context.Background(), &svc.ServiceContext{
 			DfsClient: &fakeDFS{readErr: errRead},
 			Processor: &fakeProcessor{
-				resized: []imaging2.PhotoSizeBytes{{Type: "s", W: 1, H: 1, Bytes: []byte("x")}},
+				derivatives: []imaging2.PhotoDerivativeBytes{{Type: "s", W: 1, H: 1, Bytes: []byte("x")}},
 			},
 		})
 		_, err := c.MediaProcessorProcessPhoto(validPhotoRequest())
@@ -255,7 +290,7 @@ func TestProcessHandlersPropagateDFSReadAndPutErrors(t *testing.T) {
 		c := New(context.Background(), &svc.ServiceContext{
 			DfsClient: &fakeDFS{readBytes: []byte("original"), putErr: errPut},
 			Processor: &fakeProcessor{
-				resized: []imaging2.PhotoSizeBytes{{Type: "s", W: 1, H: 1, Bytes: []byte("x")}},
+				derivatives: []imaging2.PhotoDerivativeBytes{{Type: "s", W: 1, H: 1, Bytes: []byte("x")}},
 			},
 		})
 		_, err := c.MediaProcessorProcessPhoto(validPhotoRequest())
@@ -350,7 +385,7 @@ func TestProcessHandlersRejectMalformedDerivativeStores(t *testing.T) {
 				c := New(context.Background(), &svc.ServiceContext{
 					DfsClient: dfsFake,
 					Processor: &fakeProcessor{
-						resized: []imaging2.PhotoSizeBytes{{Type: "s", W: 1, H: 1, Bytes: []byte("x")}},
+						derivatives: []imaging2.PhotoDerivativeBytes{{Type: "s", W: 1, H: 1, Bytes: []byte("x")}},
 					},
 				})
 				_, err := c.MediaProcessorProcessPhoto(validPhotoRequest())
@@ -367,7 +402,7 @@ func TestProcessHandlersRejectMalformedDerivativeStores(t *testing.T) {
 				c := New(context.Background(), &svc.ServiceContext{
 					DfsClient: dfsFake,
 					Processor: &fakeProcessor{
-						resized: []imaging2.PhotoSizeBytes{{Type: "s", W: 1, H: 1, Bytes: []byte("x")}},
+						derivatives: []imaging2.PhotoDerivativeBytes{{Type: "s", W: 1, H: 1, Bytes: []byte("x")}},
 					},
 				})
 				_, err := c.MediaProcessorProcessPhoto(validPhotoRequest())
@@ -543,6 +578,12 @@ type fakeProcessor struct {
 	resizeProfile bool
 	resizeErr     error
 
+	derivatives  []imaging2.PhotoDerivativeBytes
+	buildInput   []byte
+	buildExt     string
+	buildProfile bool
+	buildErr     error
+
 	mp4           []byte
 	convertErr    error
 	convertCalled bool
@@ -563,6 +604,16 @@ func (f *fakeProcessor) ResizePhoto(ctx context.Context, input []byte, ext strin
 		return nil, f.resizeErr
 	}
 	return f.resized, nil
+}
+
+func (f *fakeProcessor) BuildPhotoDerivatives(ctx context.Context, input []byte, ext string, profile bool) ([]imaging2.PhotoDerivativeBytes, error) {
+	f.buildInput = append([]byte(nil), input...)
+	f.buildExt = ext
+	f.buildProfile = profile
+	if f.buildErr != nil {
+		return nil, f.buildErr
+	}
+	return f.derivatives, nil
 }
 
 func (f *fakeProcessor) ConvertGIFToMP4(ctx context.Context, input []byte) ([]byte, error) {
@@ -597,9 +648,17 @@ func assertPut(t *testing.T, put *dfs.TLDfsPutFile, purpose, fileName, mimeType 
 
 func assertDerivative(t *testing.T, got mediaprocessor.ProcessorDerivativeClazz, kind, objectID, fileName, mimeType string, size int64, width, height int32, bytes []byte) {
 	t.Helper()
+	assertDerivativeWithProgressive(t, got, kind, objectID, fileName, mimeType, size, width, height, bytes, nil)
+}
+
+func assertDerivativeWithProgressive(t *testing.T, got mediaprocessor.ProcessorDerivativeClazz, kind, objectID, fileName, mimeType string, size int64, width, height int32, bytes []byte, progressiveSizes []int32) {
+	t.Helper()
 	if got.Kind != kind || got.ObjectId != objectID || got.FileName != fileName || got.MimeType != mimeType ||
 		got.Size2 != size || got.Width != width || got.Height != height || string(got.Bytes) != string(bytes) {
 		t.Fatalf("derivative = %+v", got)
+	}
+	if fmt.Sprint(got.ProgressiveSizes) != fmt.Sprint(progressiveSizes) {
+		t.Fatalf("progressive sizes = %v, want %v", got.ProgressiveSizes, progressiveSizes)
 	}
 }
 

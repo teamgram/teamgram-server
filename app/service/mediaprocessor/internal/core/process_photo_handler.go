@@ -18,8 +18,10 @@
 package core
 
 import (
+	"fmt"
 	"path"
 
+	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
 	"github.com/teamgram/teamgram-server/v2/app/service/mediaprocessor/internal/processor"
 	"github.com/teamgram/teamgram-server/v2/app/service/mediaprocessor/mediaprocessor"
 )
@@ -32,31 +34,38 @@ func (c *MediaProcessorCore) MediaProcessorProcessPhoto(in *mediaprocessor.TLMed
 	}
 	original, err := c.readOriginalBytes(in.ReadLease)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("read original photo bytes: %w", err)
 	}
-	sizes, err := c.svcCtx.Processor.ResizePhoto(c.ctx, original, path.Ext(in.FileName), profileBool(in.Profile))
+	derivatives, err := c.svcCtx.Processor.BuildPhotoDerivatives(c.ctx, original, path.Ext(in.FileName), profileBool(in.Profile))
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("build photo derivatives: %w", err)
 	}
 
 	out := mediaprocessor.MakeTLProcessedPhoto(&mediaprocessor.TLProcessedPhoto{
 		OriginalObjectId: in.ObjectId,
 	})
-	for _, size := range sizes {
-		fileName := size.Type + "_" + in.FileName
-		stored, err := putDerivative(c, in.OwnerId, fileName, jpegMimeType, size.Bytes)
-		if err != nil {
-			return nil, err
+	for _, derivative := range derivatives {
+		fileName := derivative.Type + "_" + in.FileName
+		kind := processor.DerivativePhotoSize
+		var stored *dfs.FileFinalizedObject
+		if derivative.Stripped {
+			kind = processor.DerivativePhotoStripped
+		} else {
+			stored, err = putDerivative(c, in.OwnerId, fileName, jpegMimeType, derivative.Bytes)
+			if err != nil {
+				return nil, fmt.Errorf("put photo derivative %s: %w", derivative.Type, err)
+			}
 		}
 		out.Sizes = append(out.Sizes, makeDerivative(
-			processor.DerivativePhotoSize,
+			kind,
 			stored,
 			fileName,
 			jpegMimeType,
-			int64(len(size.Bytes)),
-			size.W,
-			size.H,
-			size.Bytes,
+			int64(len(derivative.Bytes)),
+			derivative.W,
+			derivative.H,
+			derivative.Bytes,
+			derivative.ProgressiveSizes,
 		))
 	}
 	return out.ToProcessedPhoto(), nil
