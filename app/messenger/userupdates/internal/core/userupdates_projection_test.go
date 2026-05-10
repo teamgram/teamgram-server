@@ -39,8 +39,8 @@ func TestMessageEventV3ToTLMessageProjectsFullUploadedDocumentContract(t *testin
 			DocumentAttributes: []payload.DocumentAttributeRefV1{
 				{Kind: "filename", FileName: "clip.mp4"},
 				{Kind: "video", W: 1280, H: 720, DurationFloat: 3.5, SupportsStreaming: true, VideoStartTs: &videoStartTs},
-				{Kind: "sticker", Alt: ":)", StickerSetID: 1001, StickerSetAccessHash: 2002, MaskCoords: &payload.MaskCoordsRefV1{N: 1, X: 0.5, Y: 0.25, Zoom: 1.5}},
-				{Kind: "custom_emoji", Alt: ":)", StickerSetID: 3003, StickerSetAccessHash: 4004, Free: true, TextColor: true},
+				{Kind: "sticker", Alt: ":)", StickerSetKind: "id", StickerSetID: 1001, StickerSetAccessHash: 2002, Mask: true, MaskCoords: &payload.MaskCoordsRefV1{N: 1, X: 0.5, Y: 0.25, Zoom: 1.5}},
+				{Kind: "custom_emoji", Alt: ":)", StickerSetKind: "id", StickerSetID: 3003, StickerSetAccessHash: 4004, Free: true, TextColor: true},
 				{Kind: "has_stickers"},
 			},
 			DocumentMediaFlags: payload.DocumentMediaFlagsV1{Video: true, Spoiler: true},
@@ -81,11 +81,7 @@ func TestMessageEventV3ToTLMessageProjectsFullUploadedDocumentContract(t *testin
 	if _, ok := doc.VideoThumbs[0].(*tg.TLVideoSize); !ok {
 		t.Fatalf("VideoThumbs[0] = %T, want *tg.TLVideoSize", doc.VideoThumbs[0])
 	}
-	if !hasCoreProjectionDocumentAttribute[*tg.TLDocumentAttributeSticker](doc.Attributes) ||
-		!hasCoreProjectionDocumentAttribute[*tg.TLDocumentAttributeCustomEmoji](doc.Attributes) ||
-		!hasCoreProjectionDocumentAttribute[*tg.TLDocumentAttributeHasStickers](doc.Attributes) {
-		t.Fatalf("document attrs = %#v, want sticker/custom_emoji/has_stickers", doc.Attributes)
-	}
+	assertCoreProjectedDocumentAttributes(t, doc.Attributes, videoStartTs)
 	if media.VideoTimestamp == nil || *media.VideoTimestamp != videoTimestamp {
 		t.Fatalf("VideoTimestamp = %v, want %d", media.VideoTimestamp, videoTimestamp)
 	}
@@ -94,11 +90,51 @@ func TestMessageEventV3ToTLMessageProjectsFullUploadedDocumentContract(t *testin
 	}
 }
 
-func hasCoreProjectionDocumentAttribute[T tg.DocumentAttributeClazz](attrs []tg.DocumentAttributeClazz) bool {
+func assertCoreProjectedDocumentAttributes(t *testing.T, attrs []tg.DocumentAttributeClazz, videoStartTs float64) {
+	t.Helper()
+	filename, hasFilename := findCoreProjectionDocumentAttribute[*tg.TLDocumentAttributeFilename](attrs)
+	video, hasVideo := findCoreProjectionDocumentAttribute[*tg.TLDocumentAttributeVideo](attrs)
+	sticker, hasSticker := findCoreProjectionDocumentAttribute[*tg.TLDocumentAttributeSticker](attrs)
+	customEmoji, hasCustomEmoji := findCoreProjectionDocumentAttribute[*tg.TLDocumentAttributeCustomEmoji](attrs)
+	_, hasStickers := findCoreProjectionDocumentAttribute[*tg.TLDocumentAttributeHasStickers](attrs)
+	if !hasFilename || !hasVideo || !hasSticker || !hasCustomEmoji || !hasStickers {
+		t.Fatalf("document attrs = %#v, want filename/video/sticker/custom_emoji/has_stickers", attrs)
+	}
+	if filename.FileName != "clip.mp4" {
+		t.Fatalf("filename attr FileName = %q, want clip.mp4", filename.FileName)
+	}
+	if video.Duration != 3.5 || video.W != 1280 || video.H != 720 || !video.SupportsStreaming {
+		t.Fatalf("video attr = %#v, want duration/w/h/supports_streaming preserved", video)
+	}
+	if video.VideoStartTs == nil || *video.VideoStartTs != videoStartTs {
+		t.Fatalf("video attr VideoStartTs = %v, want %v", video.VideoStartTs, videoStartTs)
+	}
+	stickerSet, ok := sticker.Stickerset.(*tg.TLInputStickerSetID)
+	if !ok || stickerSet.Id != 1001 || stickerSet.AccessHash != 2002 {
+		t.Fatalf("sticker stickerset = %#v, want inputStickerSetID 1001/2002", sticker.Stickerset)
+	}
+	maskCoords := sticker.MaskCoords
+	if maskCoords == nil || maskCoords.N != 1 || maskCoords.X != 0.5 || maskCoords.Y != 0.25 || maskCoords.Zoom != 1.5 {
+		t.Fatalf("sticker mask coords = %#v, want exact TLMaskCoords", sticker.MaskCoords)
+	}
+	if sticker.Alt != ":)" || !sticker.Mask {
+		t.Fatalf("sticker attr = %#v, want alt and mask preserved", sticker)
+	}
+	customStickerSet, ok := customEmoji.Stickerset.(*tg.TLInputStickerSetID)
+	if !ok || customStickerSet.Id != 3003 || customStickerSet.AccessHash != 4004 {
+		t.Fatalf("custom emoji stickerset = %#v, want inputStickerSetID 3003/4004", customEmoji.Stickerset)
+	}
+	if customEmoji.Alt != ":)" || !customEmoji.Free || !customEmoji.TextColor {
+		t.Fatalf("custom emoji attr = %#v, want alt/free/text_color preserved", customEmoji)
+	}
+}
+
+func findCoreProjectionDocumentAttribute[T tg.DocumentAttributeClazz](attrs []tg.DocumentAttributeClazz) (T, bool) {
 	for _, attr := range attrs {
-		if _, ok := attr.(T); ok {
-			return true
+		if got, ok := attr.(T); ok {
+			return got, true
 		}
 	}
-	return false
+	var zero T
+	return zero, false
 }
