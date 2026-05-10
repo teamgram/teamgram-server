@@ -40,11 +40,22 @@ func (s *Service) DfsCommitUpload(ctx context.Context, request *dfs.TLDfsCommitU
 // dfs.putFile owner_id:long purpose:string file_name:string mime_type:string bytes:bytes = FileFinalizedObject;
 func (s *Service) DfsPutFile(ctx context.Context, request *dfs.TLDfsPutFile) (*dfs.FileFinalizedObject, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dfs.putFile - request: %s", request)
+	c.Logger.Debugf("dfs.putFile - request: {owner_id: %d, purpose: %s, file_name: %s, mime_type: %s, bytes: %d}",
+		request.OwnerId,
+		request.Purpose,
+		request.FileName,
+		request.MimeType,
+		len(request.Bytes))
 
 	r, err := c.DfsPutFile(request)
 	if err != nil {
-		c.Logger.Errorf("dfs.putFile - error: request: %s, err: %v", request, err)
+		c.Logger.Errorf("dfs.putFile - error: request: {owner_id: %d, purpose: %s, file_name: %s, mime_type: %s, bytes: %d}, err: %v",
+			request.OwnerId,
+			request.Purpose,
+			request.FileName,
+			request.MimeType,
+			len(request.Bytes),
+			err)
 		return nil, err
 	}
 
@@ -64,7 +75,16 @@ func (s *Service) DfsGetFileByReadLease(ctx context.Context, request *dfs.TLDfsG
 		return nil, err
 	}
 
-	c.Logger.Debugf("dfs.getFileByReadLease - reply: %s", r)
+	switch r2 := r.Clazz.(type) {
+	case *tg.TLUploadFile:
+		c.Logger.Debugf("dfs.getFileByReadLease - reply: {type: %v, mime: %d, len_bytes: %d}",
+			r2.Type,
+			r2.Mtime,
+			len(r2.Bytes))
+	default:
+		c.Logger.Debugf("dfs.getFileByReadLease - reply: %s", r)
+	}
+
 	return r, err
 }
 
@@ -166,12 +186,12 @@ func (s *Service) DfsDownloadFile(ctx context.Context, request *dfs.TLDfsDownloa
 
 	switch r2 := r.Clazz.(type) {
 	case *tg.TLUploadFile:
-		c.Logger.Debugf("upload.getFile - reply: {type: %v, mime: %d, len_bytes: %d}",
+		c.Logger.Debugf("dfs.downloadFile - reply: {type: %v, mime: %d, len_bytes: %d}",
 			r2.Type,
 			r2.Mtime,
 			len(r2.Bytes))
 	default:
-		c.Logger.Debugf("upload.getFile - reply: %s", r)
+		c.Logger.Debugf("dfs.downloadFile - reply: %s", r)
 	}
 
 	return r, err

@@ -77,7 +77,11 @@ func (s *Service) UploadSaveFilePart(ctx context.Context, request *tg.TLUploadSa
 
 	r, err := c.UploadSaveFilePart(request)
 	if err != nil {
-		c.Logger.Errorf("upload.saveFilePart - error: request: %s, err: %v", request, err)
+		c.Logger.Errorf("upload.saveFilePart - error: request: {file_id: %d, file_part: %d, bytes_len: %d}, err: %v",
+			request.FileId,
+			request.FilePart,
+			len(request.Bytes),
+			err)
 		return nil, err
 	}
 
@@ -114,11 +118,21 @@ func (s *Service) UploadGetFile(ctx context.Context, request *tg.TLUploadGetFile
 // upload.saveBigFilePart#de7b673d file_id:long file_part:int file_total_parts:int bytes:bytes = Bool;
 func (s *Service) UploadSaveBigFilePart(ctx context.Context, request *tg.TLUploadSaveBigFilePart) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("upload.saveBigFilePart - metadata: %s, request: %s", c.MD, request)
+	c.Logger.Debugf("upload.saveBigFilePart - metadata: %s, request: {file_id: %d, file_part: %d, file_total_parts: %d, bytes_len: %d}",
+		c.MD,
+		request.FileId,
+		request.FilePart,
+		request.FileTotalParts,
+		len(request.Bytes))
 
 	r, err := c.UploadSaveBigFilePart(request)
 	if err != nil {
-		c.Logger.Errorf("upload.saveBigFilePart - error: request: %s, err: %v", request, err)
+		c.Logger.Errorf("upload.saveBigFilePart - error: request: {file_id: %d, file_part: %d, file_total_parts: %d, bytes_len: %d}, err: %v",
+			request.FileId,
+			request.FilePart,
+			request.FileTotalParts,
+			len(request.Bytes),
+			err)
 		return nil, err
 	}
 
