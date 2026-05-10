@@ -413,6 +413,8 @@ func normalizeEntity(entity tg.MessageEntityClazz) (payload.MessageEntityV1, boo
 		return entityV1(e.Offset, e.Length, "pre", e.Language), true
 	case *tg.TLMessageEntityTextUrl:
 		return entityV1(e.Offset, e.Length, "text_url", e.Url), true
+	case *tg.TLMessageEntityMentionName:
+		return entityV1WithUserID(e.Offset, e.Length, "mention_name", e.UserId), true
 	case *tg.TLMessageEntityPhone:
 		return entityV1(e.Offset, e.Length, "phone", ""), true
 	case *tg.TLMessageEntityCashtag:
@@ -434,4 +436,8 @@ func normalizeEntity(entity tg.MessageEntityClazz) (payload.MessageEntityV1, boo
 
 func entityV1(offset int32, length int32, kind string, url string) payload.MessageEntityV1 {
 	return payload.MessageEntityV1{Offset: offset, Length: length, Kind: kind, URL: url}
+}
+
+func entityV1WithUserID(offset int32, length int32, kind string, userID int64) payload.MessageEntityV1 {
+	return payload.MessageEntityV1{Offset: offset, Length: length, Kind: kind, UserID: userID}
 }

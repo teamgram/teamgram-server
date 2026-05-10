@@ -884,6 +884,8 @@ func sentMessageEntities(entities []payload.MessageEntityV1) []tg.MessageEntityC
 			out = append(out, tg.MakeTLMessageEntityPre(&tg.TLMessageEntityPre{Offset: entity.Offset, Length: entity.Length, Language: entity.URL}))
 		case "text_url":
 			out = append(out, tg.MakeTLMessageEntityTextUrl(&tg.TLMessageEntityTextUrl{Offset: entity.Offset, Length: entity.Length, Url: entity.URL}))
+		case "mention_name":
+			out = append(out, tg.MakeTLMessageEntityMentionName(&tg.TLMessageEntityMentionName{Offset: entity.Offset, Length: entity.Length, UserId: entity.UserID}))
 		case "phone":
 			out = append(out, tg.MakeTLMessageEntityPhone(&tg.TLMessageEntityPhone{Offset: entity.Offset, Length: entity.Length}))
 		case "cashtag":

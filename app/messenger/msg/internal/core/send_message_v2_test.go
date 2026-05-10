@@ -61,6 +61,43 @@ func TestNormalizeOutboxMessageRejectsUnsupportedEntity(t *testing.T) {
 	}
 }
 
+func TestNormalizeOutboxMessageSupportsMentionNameEntity(t *testing.T) {
+	message := tg.MakeTLMessage(&tg.TLMessage{
+		Message: "user",
+		Entities: []tg.MessageEntityClazz{
+			tg.MakeTLMessageEntityMentionName(&tg.TLMessageEntityMentionName{
+				Offset: 0,
+				Length: 4,
+				UserId: 300,
+			}),
+		},
+	})
+	outbox := msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{RandomId: 99, Message: message})
+	normalized, err := normalizeOutboxMessage(normalizeOutboxInput{
+		SenderUserID: 100,
+		PeerType:     payload.PeerTypeUser,
+		PeerID:       200,
+		Outbox:       outbox,
+	})
+	if err != nil {
+		t.Fatalf("normalizeOutboxMessage() error = %v", err)
+	}
+	if len(normalized.Entities) != 1 {
+		t.Fatalf("entities len = %d, want 1", len(normalized.Entities))
+	}
+	if normalized.Entities[0].Kind != "mention_name" || normalized.Entities[0].UserID != 300 {
+		t.Fatalf("entity = %+v, want mention_name user 300", normalized.Entities[0])
+	}
+	roundTrip := sentMessageEntities(normalized.Entities)
+	mentionName, ok := roundTrip[0].(*tg.TLMessageEntityMentionName)
+	if !ok {
+		t.Fatalf("roundTrip[0] = %T, want *tg.TLMessageEntityMentionName", roundTrip[0])
+	}
+	if mentionName.UserId != 300 || mentionName.Offset != 0 || mentionName.Length != 4 {
+		t.Fatalf("mentionName = %#v, want user 300 range 0:4", mentionName)
+	}
+}
+
 func TestMarshalSendRequestV3IncludesMediaAttrsForward(t *testing.T) {
 	msg1 := normalizedOutboxMessage{
 		SchemaVersion: NormalizedOutboxSchemaVersionV1,

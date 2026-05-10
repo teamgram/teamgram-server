@@ -25,6 +25,7 @@ require (
 	golang.org/x/crypto v0.47.0
 	golang.org/x/image v0.36.0
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c
+	mvdan.cc/xurls/v2 v2.6.0
 )
 
 require (

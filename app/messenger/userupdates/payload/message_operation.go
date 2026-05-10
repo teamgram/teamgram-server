@@ -52,6 +52,7 @@ type MessageEntityV1 struct {
 	Length int32  `json:"length"`
 	Kind   string `json:"kind"`
 	URL    string `json:"url,omitempty"`
+	UserID int64  `json:"user_id,omitempty"`
 }
 
 type MediaRefV1 struct {

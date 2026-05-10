@@ -66,7 +66,7 @@ func (c *MessagesCore) MessagesSendMessage(in *tg.TLMessagesSendMessage) (*tg.Up
 		ReplyTo:  replyHeader,
 		Date:     int32(time.Now().Unix()),
 		Message:  in.Message,
-		Entities: in.Entities,
+		Entities: remakeMessageTextEntities(in.Message, in.Entities, selfUserID, false),
 	})
 
 	outbox := msg.MakeTLOutboxMessage(&msg.TLOutboxMessage{

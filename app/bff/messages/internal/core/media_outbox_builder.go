@@ -62,7 +62,7 @@ func buildMessageMediaOutbox(in mediaOutboxInput) *msg.TLOutboxMessage {
 			Date:        in.Date,
 			Message:     in.Message,
 			Media:       in.Media,
-			Entities:    in.Entities,
+			Entities:    remakeMessageTextEntities(in.Message, in.Entities, in.FromId, false),
 			GroupedId:   in.GroupedId,
 		}),
 	})
