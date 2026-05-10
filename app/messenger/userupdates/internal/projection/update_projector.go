@@ -316,6 +316,7 @@ func projectNewMessage(in messageEventProjectionInput) (Result, error) {
 					Date:     date,
 					Silent:   messageAttrsSilent(in.message.Attrs),
 					ReplyTo:  replyTo,
+					Entities: messageEntities(in.message.Entities),
 				}),
 				AuthKeyIDExclude: in.message.AuthKeyIdExclude,
 			}, nil
@@ -471,13 +472,14 @@ func messageEventToTLMessage(messageEvent decodedMessageEvent) (tg.MessageClazz,
 		Noforwards:  messageAttrsNoforwards(messageEvent.Attrs),
 		InvertMedia: messageAttrsInvertMedia(messageEvent.Attrs),
 		Id:          messageID,
-		FromId:      peerFromUser(messageEvent.FromUserID),
+		FromId:      messageFromPeer(messageEvent.Out, messageEvent.PeerType, messageEvent.FromUserID),
 		PeerId:      peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
 		FwdFrom:     fwdFrom,
 		ReplyTo:     replyTo,
 		Date:        date,
 		Message:     messageEvent.MessageText,
 		Media:       messageMedia(messageEvent.MediaRef),
+		Entities:    messageEntities(messageEvent.Entities),
 		GroupedId:   messageGroupedID(messageEvent.Attrs),
 		TtlPeriod:   messageTTLPeriod(messageEvent.MediaRef),
 	}), nil
@@ -513,16 +515,68 @@ func editMessageEventToTLMessage(messageEvent decodedMessageEvent) (tg.MessageCl
 		Noforwards:  messageAttrsNoforwards(messageEvent.Attrs),
 		InvertMedia: messageAttrsInvertMedia(messageEvent.Attrs),
 		Id:          messageID,
-		FromId:      peerFromUser(messageEvent.FromUserID),
+		FromId:      messageFromPeer(messageEvent.Out, messageEvent.PeerType, messageEvent.FromUserID),
 		PeerId:      peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
 		FwdFrom:     fwdFrom,
 		Date:        date,
 		Message:     messageEvent.MessageText,
 		Media:       messageMedia(messageEvent.MediaRef),
+		Entities:    messageEntities(messageEvent.Entities),
 		GroupedId:   messageGroupedID(messageEvent.Attrs),
 		TtlPeriod:   messageTTLPeriod(messageEvent.MediaRef),
 		EditDate:    &editDate32,
 	}), nil
+}
+
+func messageEntities(entities []payload.MessageEntityV1) []tg.MessageEntityClazz {
+	if len(entities) == 0 {
+		return nil
+	}
+	out := make([]tg.MessageEntityClazz, 0, len(entities))
+	for _, entity := range entities {
+		switch entity.Kind {
+		case "mention":
+			out = append(out, tg.MakeTLMessageEntityMention(&tg.TLMessageEntityMention{Offset: entity.Offset, Length: entity.Length}))
+		case "hashtag":
+			out = append(out, tg.MakeTLMessageEntityHashtag(&tg.TLMessageEntityHashtag{Offset: entity.Offset, Length: entity.Length}))
+		case "bot_command":
+			out = append(out, tg.MakeTLMessageEntityBotCommand(&tg.TLMessageEntityBotCommand{Offset: entity.Offset, Length: entity.Length}))
+		case "url":
+			out = append(out, tg.MakeTLMessageEntityUrl(&tg.TLMessageEntityUrl{Offset: entity.Offset, Length: entity.Length}))
+		case "email":
+			out = append(out, tg.MakeTLMessageEntityEmail(&tg.TLMessageEntityEmail{Offset: entity.Offset, Length: entity.Length}))
+		case "bold":
+			out = append(out, tg.MakeTLMessageEntityBold(&tg.TLMessageEntityBold{Offset: entity.Offset, Length: entity.Length}))
+		case "italic":
+			out = append(out, tg.MakeTLMessageEntityItalic(&tg.TLMessageEntityItalic{Offset: entity.Offset, Length: entity.Length}))
+		case "code":
+			out = append(out, tg.MakeTLMessageEntityCode(&tg.TLMessageEntityCode{Offset: entity.Offset, Length: entity.Length}))
+		case "pre":
+			out = append(out, tg.MakeTLMessageEntityPre(&tg.TLMessageEntityPre{Offset: entity.Offset, Length: entity.Length, Language: entity.URL}))
+		case "text_url":
+			out = append(out, tg.MakeTLMessageEntityTextUrl(&tg.TLMessageEntityTextUrl{Offset: entity.Offset, Length: entity.Length, Url: entity.URL}))
+		case "mention_name":
+			out = append(out, tg.MakeTLMessageEntityMentionName(&tg.TLMessageEntityMentionName{Offset: entity.Offset, Length: entity.Length, UserId: entity.UserID}))
+		case "phone":
+			out = append(out, tg.MakeTLMessageEntityPhone(&tg.TLMessageEntityPhone{Offset: entity.Offset, Length: entity.Length}))
+		case "cashtag":
+			out = append(out, tg.MakeTLMessageEntityCashtag(&tg.TLMessageEntityCashtag{Offset: entity.Offset, Length: entity.Length}))
+		case "underline":
+			out = append(out, tg.MakeTLMessageEntityUnderline(&tg.TLMessageEntityUnderline{Offset: entity.Offset, Length: entity.Length}))
+		case "strike":
+			out = append(out, tg.MakeTLMessageEntityStrike(&tg.TLMessageEntityStrike{Offset: entity.Offset, Length: entity.Length}))
+		case "bank_card":
+			out = append(out, tg.MakeTLMessageEntityBankCard(&tg.TLMessageEntityBankCard{Offset: entity.Offset, Length: entity.Length}))
+		case "spoiler":
+			out = append(out, tg.MakeTLMessageEntitySpoiler(&tg.TLMessageEntitySpoiler{Offset: entity.Offset, Length: entity.Length}))
+		case "blockquote":
+			out = append(out, tg.MakeTLMessageEntityBlockquote(&tg.TLMessageEntityBlockquote{Offset: entity.Offset, Length: entity.Length}))
+		}
+	}
+	if len(out) == 0 {
+		return nil
+	}
+	return out
 }
 
 func messageMedia(media *payload.MediaRefV1) tg.MessageMediaClazz {
@@ -785,6 +839,13 @@ func peerFromUser(userID int64) tg.PeerClazz {
 		return nil
 	}
 	return tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: userID})
+}
+
+func messageFromPeer(out bool, peerType int32, fromUserID int64) tg.PeerClazz {
+	if !out && peerType == payload.PeerTypeUser {
+		return nil
+	}
+	return peerFromUser(fromUserID)
 }
 
 func peerFromEvent(peerType int32, peerID int64) tg.PeerClazz {

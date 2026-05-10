@@ -17,11 +17,24 @@
 package core
 
 import (
+	"errors"
+
+	"github.com/teamgram/teamgram-server/v2/app/bff/usernames/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // ContactsResolveUsername
 // contacts.resolveUsername#725afbbc flags:# username:string referer:flags.0?string = contacts.ResolvedPeer;
 func (c *UsernamesCore) ContactsResolveUsername(in *tg.TLContactsResolveUsername) (*tg.ContactsResolvedPeer, error) {
-	return c.svcCtx.Repo.ResolveUsername(c.ctx, c.MD.UserId, in.Username)
+	r, err := c.svcCtx.Repo.ResolveUsername(c.ctx, c.MD.UserId, in.Username)
+	if err != nil {
+		if errors.Is(err, repository.ErrUsernameNotOccupied) {
+			return nil, tg.ErrUsernameNotOccupied
+		}
+		if errors.Is(err, repository.ErrUsernameInvalid) {
+			return nil, tg.ErrUsernameInvalid
+		}
+		return nil, err
+	}
+	return r, nil
 }

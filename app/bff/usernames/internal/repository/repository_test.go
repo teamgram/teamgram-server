@@ -189,6 +189,38 @@ func TestResolveUsernameProjectsUser(t *testing.T) {
 	}
 }
 
+func TestResolveUsernameMapsUserNotFoundToNotOccupied(t *testing.T) {
+	tests := []struct {
+		name string
+		err  error
+	}{
+		{
+			name: "direct sentinel",
+			err:  userpb.ErrUsernameNotFound,
+		},
+		{
+			name: "kitex remote biz error string",
+			err:  errors.New("remote or network error: biz error: user: username not found"),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			repo := &Repository{
+				UserClient: &stubUserClient{
+					resolveUsernameFn: func(_ context.Context, _ *userpb.TLUserResolveUsername) (*tg.Peer, error) {
+						return nil, tt.err
+					},
+				},
+			}
+
+			_, err := repo.ResolveUsername(context.Background(), 1001, "missing")
+			if !errors.Is(err, ErrUsernameNotOccupied) {
+				t.Fatalf("ResolveUsername error = %v, want ErrUsernameNotOccupied", err)
+			}
+		})
+	}
+}
+
 func TestUpdateAccountUsername_NoChange(t *testing.T) {
 	var gotProjection *userpb.TLUserGetUserProjectionBundle
 	repo := &Repository{

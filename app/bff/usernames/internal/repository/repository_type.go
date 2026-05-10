@@ -23,8 +23,9 @@ import (
 )
 
 var (
-	ErrUsernameInvalid  = errors.New("usernames repository: username invalid")
-	ErrUsernameOccupied = errors.New("usernames repository: username occupied")
+	ErrUsernameInvalid     = errors.New("usernames repository: username invalid")
+	ErrUsernameOccupied    = errors.New("usernames repository: username occupied")
+	ErrUsernameNotOccupied = errors.New("usernames repository: username not occupied")
 )
 
 // Type aliases for convenience in the Logic layer.

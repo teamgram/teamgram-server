@@ -117,6 +117,35 @@ func TestProcessUserOperationWakesPushOutboxNotifier(t *testing.T) {
 	}
 }
 
+func TestMessageEventV3ToTLMessagePreservesEntities(t *testing.T) {
+	message, err := messageEventV3ToTLMessage(payload.MessageEventV3{
+		SchemaVersion: payload.MessageEventSchemaVersionV3,
+		EventKind:     payload.EventKindNewMessage,
+		MessageID:     11,
+		PeerType:      payload.PeerTypeUser,
+		PeerID:        1002,
+		FromUserID:    1001,
+		Date:          1700000000,
+		MessageText:   "@alice",
+		Entities: []payload.MessageEntityV1{
+			{Offset: 0, Length: 6, Kind: "mention"},
+		},
+	})
+	if err != nil {
+		t.Fatalf("messageEventV3ToTLMessage() error = %v", err)
+	}
+	tlMessage, ok := message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessage", message)
+	}
+	if len(tlMessage.Entities) != 1 {
+		t.Fatalf("entities len = %d, want 1", len(tlMessage.Entities))
+	}
+	if _, ok := tlMessage.Entities[0].(*tg.TLMessageEntityMention); !ok {
+		t.Fatalf("entity = %T, want mention", tlMessage.Entities[0])
+	}
+}
+
 func TestProcessUserOperationWithEffectsMapsAffectedOutboxes(t *testing.T) {
 	requestPayload := []byte(`{"schema_version":1,"operation_kind":"read_history","out":false}`)
 	requestHash := payload.HashBytes(requestPayload)

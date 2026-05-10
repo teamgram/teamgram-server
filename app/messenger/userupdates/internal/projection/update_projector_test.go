@@ -47,6 +47,16 @@ func TestProjectMessageEventNewMessageForDifference(t *testing.T) {
 	if message.Id != 101 || message.Message != "hello" {
 		t.Fatalf("message = %+v", message)
 	}
+	if message.Out {
+		t.Fatalf("message.Out = true, want false for receiver projection")
+	}
+	if message.FromId != nil {
+		t.Fatalf("message.FromId = %#v, want nil for receiver projection", message.FromId)
+	}
+	peer, ok := message.PeerId.(*tg.TLPeerUser)
+	if !ok || peer.UserId != 1002 {
+		t.Fatalf("message.PeerId = %#v, want peerUser(1002)", message.PeerId)
+	}
 	update, ok := got.Update.(*tg.TLUpdateNewMessage)
 	if !ok {
 		t.Fatalf("update = %T, want *tg.TLUpdateNewMessage", got.Update)
@@ -596,6 +606,94 @@ func TestProjectMessageEventV3ShortPushPreservesSilent(t *testing.T) {
 	}
 	if !update.Silent {
 		t.Fatalf("silent = false, want true")
+	}
+}
+
+func TestProjectMessageEventV3ShortPushPreservesEntities(t *testing.T) {
+	body := mustMarshalMessageEventV3(t, payload.MessageEventV3{
+		SchemaVersion:      payload.MessageEventSchemaVersionV3,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: 104,
+		PeerSeq:            12,
+		MessageID:          80,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             202,
+		FromUserID:         101,
+		ToUserID:           202,
+		Date:               1700000000,
+		MessageText:        "@alice see https://teamgram.io",
+		Entities: []payload.MessageEntityV1{
+			{Offset: 0, Length: 6, Kind: "mention"},
+			{Offset: 11, Length: 19, Kind: "url"},
+		},
+	})
+	got, err := ProjectPushTask(&payload.PushTaskKafkaMessageV1{
+		Payload:  body,
+		Pts:      22,
+		PeerType: payload.PeerTypeUser,
+		PeerID:   202,
+	})
+	if err != nil {
+		t.Fatalf("ProjectPushTask() error = %v", err)
+	}
+	update, ok := got.Updates.(*tg.TLUpdateShortMessage)
+	if !ok {
+		t.Fatalf("updates = %T, want *tg.TLUpdateShortMessage", got.Updates)
+	}
+	if len(update.Entities) != 2 {
+		t.Fatalf("entities len = %d, want 2", len(update.Entities))
+	}
+	if _, ok := update.Entities[0].(*tg.TLMessageEntityMention); !ok {
+		t.Fatalf("entities[0] = %T, want mention", update.Entities[0])
+	}
+	if _, ok := update.Entities[1].(*tg.TLMessageEntityUrl); !ok {
+		t.Fatalf("entities[1] = %T, want url", update.Entities[1])
+	}
+}
+
+func TestProjectMessageEventV3FullMessagePreservesEntities(t *testing.T) {
+	body := mustMarshalMessageEventV3(t, payload.MessageEventV3{
+		SchemaVersion:      payload.MessageEventSchemaVersionV3,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: 105,
+		PeerSeq:            13,
+		MessageID:          81,
+		PeerType:           payload.PeerTypeChat,
+		PeerID:             202,
+		FromUserID:         101,
+		ToUserID:           202,
+		Date:               1700000000,
+		MessageText:        "hello user",
+		Entities: []payload.MessageEntityV1{
+			{Offset: 6, Length: 4, Kind: "mention_name", UserID: 303},
+		},
+	})
+	got, err := ProjectUserEvent(repository.UserEvent{
+		UserID:             202,
+		Pts:                23,
+		PtsCount:           1,
+		EventType:          repository.EventTypeNewMessage,
+		EventSchemaVersion: payload.MessageEventSchemaVersionV3,
+		EventCodec:         repository.PayloadCodecJSON,
+		EventPayload:       body,
+		EventPayloadHash:   payload.HashBytes(body),
+	}, ModeDifference)
+	if err != nil {
+		t.Fatalf("ProjectUserEvent() error = %v", err)
+	}
+	message, ok := got.Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessage", got.Message)
+	}
+	if len(message.Entities) != 1 {
+		t.Fatalf("entities len = %d, want 1", len(message.Entities))
+	}
+	mentionName, ok := message.Entities[0].(*tg.TLMessageEntityMentionName)
+	if !ok {
+		t.Fatalf("entity = %T, want mention name", message.Entities[0])
+	}
+	if mentionName.UserId != 303 || mentionName.Offset != 6 || mentionName.Length != 4 {
+		t.Fatalf("mention name = %#v, want user 303 range 6:4", mentionName)
 	}
 }
 

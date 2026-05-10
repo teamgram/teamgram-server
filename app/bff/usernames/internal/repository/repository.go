@@ -18,7 +18,9 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/teamgram/marmota/pkg/strings2"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -182,7 +184,16 @@ func (r *Repository) ResolveUsername(ctx context.Context, selfId int64, username
 		Username: username,
 	})
 	if err != nil {
+		if isUserServiceError(err, userpb.ErrUsernameNotFound) {
+			return nil, ErrUsernameNotOccupied
+		}
+		if isUserServiceError(err, userpb.ErrUsernameInvalid) {
+			return nil, ErrUsernameInvalid
+		}
 		return nil, fmt.Errorf("usernames repository: resolve username: %w", err)
+	}
+	if rName == nil || rName.Clazz == nil {
+		return nil, ErrUsernameNotOccupied
 	}
 
 	resolvedPeer := tg.MakeTLContactsResolvedPeer(&tg.TLContactsResolvedPeer{
@@ -226,6 +237,10 @@ func (r *Repository) ResolveUsername(ctx context.Context, selfId int64, username
 
 func hasRPCClientConfig(c kitex.RpcClientConf) bool {
 	return len(c.Endpoints) > 0 || len(c.Target) > 0 || c.HasEtcd()
+}
+
+func isUserServiceError(err error, target error) bool {
+	return errors.Is(err, target) || strings.Contains(err.Error(), target.Error())
 }
 
 func isFirstCharNumber(s string) bool {

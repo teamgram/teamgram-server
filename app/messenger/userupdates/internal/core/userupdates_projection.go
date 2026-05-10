@@ -231,13 +231,14 @@ func legacyMessageEventToTLMessage(messageEvent payload.MessageEventV1) (tg.Mess
 		return nil, err
 	}
 	return tg.MakeTLMessage(&tg.TLMessage{
-		Out:     messageEvent.Out,
-		Id:      messageID,
-		FromId:  peerFromUser(messageEvent.FromUserID),
-		PeerId:  peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
-		ReplyTo: replyTo,
-		Date:    date,
-		Message: messageEvent.MessageText,
+		Out:      messageEvent.Out,
+		Id:       messageID,
+		FromId:   peerFromUser(messageEvent.FromUserID),
+		PeerId:   peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
+		ReplyTo:  replyTo,
+		Date:     date,
+		Message:  messageEvent.MessageText,
+		Entities: projectionMessageEntities(messageEvent.Entities),
 	}), nil
 }
 
@@ -268,6 +269,7 @@ func legacyEditMessageEventToTLMessage(messageEvent payload.MessageEventV1) (tg.
 		PeerId:   peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
 		Date:     date,
 		Message:  messageEvent.MessageText,
+		Entities: projectionMessageEntities(messageEvent.Entities),
 		EditDate: &editDate32,
 	}), nil
 }
@@ -289,13 +291,14 @@ func currentMessageEventToTLMessage(messageEvent payload.MessageEventV2) (tg.Mes
 		return nil, err
 	}
 	return tg.MakeTLMessage(&tg.TLMessage{
-		Out:     messageEvent.Out,
-		Id:      messageID,
-		FromId:  peerFromUser(messageEvent.FromUserID),
-		PeerId:  peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
-		ReplyTo: replyTo,
-		Date:    date,
-		Message: messageEvent.MessageText,
+		Out:      messageEvent.Out,
+		Id:       messageID,
+		FromId:   peerFromUser(messageEvent.FromUserID),
+		PeerId:   peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
+		ReplyTo:  replyTo,
+		Date:     date,
+		Message:  messageEvent.MessageText,
+		Entities: projectionMessageEntities(messageEvent.Entities),
 	}), nil
 }
 
@@ -326,6 +329,7 @@ func currentEditMessageEventToTLMessage(messageEvent payload.MessageEventV2) (tg
 		PeerId:   peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
 		Date:     date,
 		Message:  messageEvent.MessageText,
+		Entities: projectionMessageEntities(messageEvent.Entities),
 		EditDate: &editDate32,
 	}), nil
 }
@@ -363,6 +367,7 @@ func messageEventV3ToTLMessage(messageEvent payload.MessageEventV3) (tg.MessageC
 		Date:        date,
 		Message:     messageEvent.MessageText,
 		Media:       messageMedia(messageEvent.MediaRef),
+		Entities:    projectionMessageEntities(messageEvent.Entities),
 		GroupedId:   messageGroupedID(messageEvent.Attrs),
 		TtlPeriod:   messageTTLPeriod(messageEvent.MediaRef),
 	}), nil
@@ -404,10 +409,62 @@ func messageEventV3EditToTLMessage(messageEvent payload.MessageEventV3) (tg.Mess
 		Date:        date,
 		Message:     messageEvent.MessageText,
 		Media:       messageMedia(messageEvent.MediaRef),
+		Entities:    projectionMessageEntities(messageEvent.Entities),
 		GroupedId:   messageGroupedID(messageEvent.Attrs),
 		TtlPeriod:   messageTTLPeriod(messageEvent.MediaRef),
 		EditDate:    &editDate32,
 	}), nil
+}
+
+func projectionMessageEntities(entities []payload.MessageEntityV1) []tg.MessageEntityClazz {
+	if len(entities) == 0 {
+		return nil
+	}
+	out := make([]tg.MessageEntityClazz, 0, len(entities))
+	for _, entity := range entities {
+		switch entity.Kind {
+		case "mention":
+			out = append(out, tg.MakeTLMessageEntityMention(&tg.TLMessageEntityMention{Offset: entity.Offset, Length: entity.Length}))
+		case "hashtag":
+			out = append(out, tg.MakeTLMessageEntityHashtag(&tg.TLMessageEntityHashtag{Offset: entity.Offset, Length: entity.Length}))
+		case "bot_command":
+			out = append(out, tg.MakeTLMessageEntityBotCommand(&tg.TLMessageEntityBotCommand{Offset: entity.Offset, Length: entity.Length}))
+		case "url":
+			out = append(out, tg.MakeTLMessageEntityUrl(&tg.TLMessageEntityUrl{Offset: entity.Offset, Length: entity.Length}))
+		case "email":
+			out = append(out, tg.MakeTLMessageEntityEmail(&tg.TLMessageEntityEmail{Offset: entity.Offset, Length: entity.Length}))
+		case "bold":
+			out = append(out, tg.MakeTLMessageEntityBold(&tg.TLMessageEntityBold{Offset: entity.Offset, Length: entity.Length}))
+		case "italic":
+			out = append(out, tg.MakeTLMessageEntityItalic(&tg.TLMessageEntityItalic{Offset: entity.Offset, Length: entity.Length}))
+		case "code":
+			out = append(out, tg.MakeTLMessageEntityCode(&tg.TLMessageEntityCode{Offset: entity.Offset, Length: entity.Length}))
+		case "pre":
+			out = append(out, tg.MakeTLMessageEntityPre(&tg.TLMessageEntityPre{Offset: entity.Offset, Length: entity.Length, Language: entity.URL}))
+		case "text_url":
+			out = append(out, tg.MakeTLMessageEntityTextUrl(&tg.TLMessageEntityTextUrl{Offset: entity.Offset, Length: entity.Length, Url: entity.URL}))
+		case "mention_name":
+			out = append(out, tg.MakeTLMessageEntityMentionName(&tg.TLMessageEntityMentionName{Offset: entity.Offset, Length: entity.Length, UserId: entity.UserID}))
+		case "phone":
+			out = append(out, tg.MakeTLMessageEntityPhone(&tg.TLMessageEntityPhone{Offset: entity.Offset, Length: entity.Length}))
+		case "cashtag":
+			out = append(out, tg.MakeTLMessageEntityCashtag(&tg.TLMessageEntityCashtag{Offset: entity.Offset, Length: entity.Length}))
+		case "underline":
+			out = append(out, tg.MakeTLMessageEntityUnderline(&tg.TLMessageEntityUnderline{Offset: entity.Offset, Length: entity.Length}))
+		case "strike":
+			out = append(out, tg.MakeTLMessageEntityStrike(&tg.TLMessageEntityStrike{Offset: entity.Offset, Length: entity.Length}))
+		case "bank_card":
+			out = append(out, tg.MakeTLMessageEntityBankCard(&tg.TLMessageEntityBankCard{Offset: entity.Offset, Length: entity.Length}))
+		case "spoiler":
+			out = append(out, tg.MakeTLMessageEntitySpoiler(&tg.TLMessageEntitySpoiler{Offset: entity.Offset, Length: entity.Length}))
+		case "blockquote":
+			out = append(out, tg.MakeTLMessageEntityBlockquote(&tg.TLMessageEntityBlockquote{Offset: entity.Offset, Length: entity.Length}))
+		}
+	}
+	if len(out) == 0 {
+		return nil
+	}
+	return out
 }
 
 func messageMedia(media *payload.MediaRefV1) tg.MessageMediaClazz {
