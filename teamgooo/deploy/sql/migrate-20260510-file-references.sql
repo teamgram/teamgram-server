@@ -1,5 +1,8 @@
 -- Media-owned opaque file_reference handles.
 
+ALTER TABLE `photo_sizes`
+  MODIFY COLUMN `stripped_bytes` varbinary(4096) NOT NULL DEFAULT '';
+
 CREATE TABLE IF NOT EXISTS `file_references` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `ref_hash` varbinary(25) NOT NULL,
@@ -17,4 +20,3 @@ CREATE TABLE IF NOT EXISTS `file_references` (
   KEY `media_lookup` (`domain`,`media_id`,`access_hash`),
   KEY `expire_at` (`expire_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-

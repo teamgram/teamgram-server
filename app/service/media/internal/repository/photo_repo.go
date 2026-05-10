@@ -640,7 +640,7 @@ func (r *Repository) savePhotoSizeWithPath(ctx context.Context, id int64, size t
 			return wrapStorage("save photo size", err)
 		}
 	case *tg.TLPhotoStrippedSize:
-		_, _, err := r.model.PhotoSizesModel.Insert(ctx, &model.PhotoSizes{PhotoSizeId: id, SizeType: s.Type, HasStripped: true, StrippedBytes: string(s.Bytes)})
+		_, _, err := r.model.PhotoSizesModel.Insert(ctx, &model.PhotoSizes{PhotoSizeId: id, SizeType: s.Type, HasStripped: true, StrippedBytes: s.Bytes})
 		if err != nil {
 			return wrapStorage("save stripped photo size", err)
 		}

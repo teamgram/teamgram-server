@@ -827,7 +827,7 @@ CREATE TABLE IF NOT EXISTS `photo_sizes` (
   `file_size` int NOT NULL,
   `file_path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `has_stripped` tinyint(1) NOT NULL DEFAULT '0',
-  `stripped_bytes` varchar(4096) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
+  `stripped_bytes` varbinary(4096) NOT NULL DEFAULT '',
   `cached_type` int NOT NULL DEFAULT '0',
   `cached_bytes` varchar(4096) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

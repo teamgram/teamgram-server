@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"bytes"
 	"context"
 	"database/sql"
 	"encoding/json"
@@ -371,6 +372,7 @@ func TestUploadPhotoFileCallsDfsAndSavesPhotoSizes(t *testing.T) {
 }
 
 func TestUploadPhotoFileMapsStrippedAndProgressiveSizes(t *testing.T) {
+	strippedBytes := []byte{0x01, 0x28, 0x28, 0xff, 0xd8, 0x00, 0x80, 0xfe, 0x3f}
 	photos := &capturePhotosModel{}
 	photoSizes := &capturePhotoSizesModel{}
 	dfsClient := &fakeDfsMediaClient{finalized: dfsapi.MakeTLFileFinalizedObject(&dfsapi.TLFileFinalizedObject{
@@ -382,7 +384,7 @@ func TestUploadPhotoFileMapsStrippedAndProgressiveSizes(t *testing.T) {
 	processorClient := &fakeMediaProcessorClient{photo: mediaprocessor.MakeTLProcessedPhoto(&mediaprocessor.TLProcessedPhoto{
 		OriginalObjectId: "original-object-photo-variants",
 		Sizes: []mediaprocessor.ProcessorDerivativeClazz{
-			mediaprocessor.MakeTLProcessorDerivative(&mediaprocessor.TLProcessorDerivative{Kind: "photo_stripped", FileName: "i_avatar.jpg", Width: 40, Height: 30, Size2: 10, Bytes: []byte("stripped-bytes")}),
+			mediaprocessor.MakeTLProcessorDerivative(&mediaprocessor.TLProcessorDerivative{Kind: "photo_stripped", FileName: "i_avatar.jpg", Width: 40, Height: 30, Size2: int64(len(strippedBytes)), Bytes: strippedBytes}),
 			mediaprocessor.MakeTLProcessorDerivative(&mediaprocessor.TLProcessorDerivative{Kind: "photo_size", ObjectId: "derivative-object-s", FileName: "s_avatar.jpg", Width: 160, Height: 120, Size2: 600}),
 			mediaprocessor.MakeTLProcessorDerivative(&mediaprocessor.TLProcessorDerivative{Kind: "photo_size", ObjectId: "derivative-object-x", FileName: "x_avatar.jpg", Width: 800, Height: 600, Size2: 1200, ProgressiveSizes: []int32{400, 900, 1200}}),
 		},
@@ -409,7 +411,7 @@ func TestUploadPhotoFileMapsStrippedAndProgressiveSizes(t *testing.T) {
 	if len(gotPhoto.Sizes) != 3 {
 		t.Fatalf("expected stripped, normal, and progressive sizes, got %#v", gotPhoto.Sizes)
 	}
-	if stripped, ok := gotPhoto.Sizes[0].(*tg.TLPhotoStrippedSize); !ok || stripped.Type != "i" || string(stripped.Bytes) != "stripped-bytes" {
+	if stripped, ok := gotPhoto.Sizes[0].(*tg.TLPhotoStrippedSize); !ok || stripped.Type != "i" || !bytes.Equal(stripped.Bytes, strippedBytes) {
 		t.Fatalf("expected stripped size with inline bytes, got %#v", gotPhoto.Sizes[0])
 	}
 	if normal, ok := gotPhoto.Sizes[1].(*tg.TLPhotoSize); !ok || normal.Type != "s" || normal.Size2 != 600 {
@@ -426,7 +428,7 @@ func TestUploadPhotoFileMapsStrippedAndProgressiveSizes(t *testing.T) {
 	for _, size := range photoSizes.inserted {
 		sizesByType[size.SizeType] = size
 	}
-	if sizesByType["i"] == nil || !sizesByType["i"].HasStripped || sizesByType["i"].StrippedBytes != "stripped-bytes" || sizesByType["i"].FilePath != "" {
+	if sizesByType["i"] == nil || !sizesByType["i"].HasStripped || !bytes.Equal(sizesByType["i"].StrippedBytes, strippedBytes) || sizesByType["i"].FilePath != "" {
 		t.Fatalf("expected stripped row without object id path, got %#v", sizesByType["i"])
 	}
 	if sizesByType["s"] == nil || sizesByType["s"].FilePath != "derivative-object-s" || sizesByType["s"].FileSize != 600 {
@@ -459,7 +461,7 @@ func TestUploadPhotoFileMapsStrippedAndProgressiveSizes(t *testing.T) {
 	if len(reloadedPhoto.Sizes) != 3 {
 		t.Fatalf("expected three reloaded sizes, got %#v", reloadedPhoto.Sizes)
 	}
-	if stripped, ok := reloadedPhoto.Sizes[0].(*tg.TLPhotoStrippedSize); !ok || stripped.Type != "i" || string(stripped.Bytes) != "stripped-bytes" {
+	if stripped, ok := reloadedPhoto.Sizes[0].(*tg.TLPhotoStrippedSize); !ok || stripped.Type != "i" || !bytes.Equal(stripped.Bytes, strippedBytes) {
 		t.Fatalf("expected reloaded stripped size, got %#v", reloadedPhoto.Sizes[0])
 	}
 	if progressive, ok := reloadedPhoto.Sizes[2].(*tg.TLPhotoSizeProgressive); !ok || progressive.Type != "x" || len(progressive.Sizes) != 3 || progressive.Sizes[2] != 1200 {

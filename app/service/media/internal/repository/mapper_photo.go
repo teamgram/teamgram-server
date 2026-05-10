@@ -38,7 +38,7 @@ func mapPhotoSizes(sizes []model.PhotoSizes) ([]tg.PhotoSizeClazz, error) {
 		if size.HasStripped || size.SizeType == "i" {
 			out = append(out, tg.MakeTLPhotoStrippedSize(&tg.TLPhotoStrippedSize{
 				Type:  size.SizeType,
-				Bytes: []byte(size.StrippedBytes),
+				Bytes: size.StrippedBytes,
 			}))
 			continue
 		}
