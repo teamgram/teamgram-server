@@ -479,9 +479,16 @@ func messageMedia(media *payload.MediaRefV1) tg.MessageMediaClazz {
 			TtlSeconds: ttl,
 		})
 	case "document":
+		flags := viewDocumentMediaFlags(media)
 		return tg.MakeTLMessageMediaDocument(&tg.TLMessageMediaDocument{
-			Document:   viewMessageDocument(media),
-			TtlSeconds: ttl,
+			Spoiler:        flags.Spoiler,
+			Video:          flags.Video,
+			Round:          flags.Round,
+			Voice:          flags.Voice,
+			Document:       viewMessageDocument(media),
+			VideoCover:     viewPhotoRef(media.VideoCover),
+			VideoTimestamp: cloneInt32Ptr(media.VideoTimestamp),
+			TtlSeconds:     ttl,
 		})
 	case "contact":
 		return viewMessageContact(media)
@@ -526,8 +533,27 @@ func viewMessageDocument(media *payload.MediaRefV1) tg.DocumentClazz {
 		MimeType:      media.MimeType,
 		Size2:         media.Size,
 		Thumbs:        viewPhotoSizes(media.DocumentThumbs),
+		VideoThumbs:   viewVideoSizes(media.DocumentVideoThumbs),
 		DcId:          media.DcID,
 		Attributes:    viewDocumentAttributes(media.DocumentAttributes),
+	})
+}
+
+func viewPhotoRef(photo *payload.PhotoRefV1) tg.PhotoClazz {
+	if photo == nil {
+		return nil
+	}
+	if photo.Date == 0 && photo.DcID == 0 && len(photo.Sizes) == 0 && len(photo.VideoSizes) == 0 {
+		return tg.MakeTLPhotoEmpty(&tg.TLPhotoEmpty{Id: photo.ID})
+	}
+	return tg.MakeTLPhoto(&tg.TLPhoto{
+		Id:            photo.ID,
+		AccessHash:    photo.AccessHash,
+		FileReference: append([]byte(nil), photo.FileReference...),
+		Date:          photo.Date,
+		Sizes:         viewPhotoSizes(photo.Sizes),
+		VideoSizes:    viewVideoSizes(photo.VideoSizes),
+		DcId:          photo.DcID,
 	})
 }
 
@@ -548,6 +574,39 @@ func viewPhotoSizes(sizes []payload.PhotoSizeRefV1) []tg.PhotoSizeClazz {
 			out = append(out, tg.MakeTLPhotoStrippedSize(&tg.TLPhotoStrippedSize{Type: size.Type, Bytes: append([]byte(nil), size.Bytes...)}))
 		case "progressive":
 			out = append(out, tg.MakeTLPhotoSizeProgressive(&tg.TLPhotoSizeProgressive{Type: size.Type, W: size.W, H: size.H, Sizes: append([]int32(nil), size.Sizes...)}))
+		case "path":
+			out = append(out, tg.MakeTLPhotoPathSize(&tg.TLPhotoPathSize{Type: size.Type, Bytes: append([]byte(nil), size.Bytes...)}))
+		}
+	}
+	return out
+}
+
+func viewVideoSizes(sizes []payload.VideoSizeRefV1) []tg.VideoSizeClazz {
+	if len(sizes) == 0 {
+		return nil
+	}
+	out := make([]tg.VideoSizeClazz, 0, len(sizes))
+	for _, size := range sizes {
+		switch size.Kind {
+		case "size":
+			out = append(out, tg.MakeTLVideoSize(&tg.TLVideoSize{
+				Type:         size.Type,
+				W:            size.W,
+				H:            size.H,
+				Size2:        size.Size,
+				VideoStartTs: cloneFloat64Ptr(size.VideoStartTs),
+			}))
+		case "emoji_markup":
+			out = append(out, tg.MakeTLVideoSizeEmojiMarkup(&tg.TLVideoSizeEmojiMarkup{
+				EmojiId:          size.EmojiID,
+				BackgroundColors: append([]int32(nil), size.BackgroundColors...),
+			}))
+		case "sticker_markup":
+			out = append(out, tg.MakeTLVideoSizeStickerMarkup(&tg.TLVideoSizeStickerMarkup{
+				Stickerset:       viewStickerSetRef(size.StickerSet),
+				StickerId:        size.StickerID,
+				BackgroundColors: append([]int32(nil), size.BackgroundColors...),
+			}))
 		}
 	}
 	return out
@@ -586,9 +645,116 @@ func viewDocumentAttributes(attrs []payload.DocumentAttributeRefV1) []tg.Documen
 				Performer: attr.Performer,
 				Waveform:  append([]byte(nil), attr.Waveform...),
 			}))
+		case "sticker":
+			out = append(out, tg.MakeTLDocumentAttributeSticker(&tg.TLDocumentAttributeSticker{
+				Mask:       attr.Mask,
+				Alt:        attr.Alt,
+				Stickerset: viewStickerSetRef(attr.StickerSet),
+				MaskCoords: viewMaskCoordsRef(attr.MaskCoords),
+			}))
+		case "custom_emoji":
+			out = append(out, tg.MakeTLDocumentAttributeCustomEmoji(&tg.TLDocumentAttributeCustomEmoji{
+				Free:       attr.Free,
+				TextColor:  attr.TextColor,
+				Alt:        attr.Alt,
+				Stickerset: viewStickerSetRef(attr.StickerSet),
+			}))
+		case "has_stickers":
+			out = append(out, tg.MakeTLDocumentAttributeHasStickers(&tg.TLDocumentAttributeHasStickers{}))
 		}
 	}
 	return out
+}
+
+func viewDocumentMediaFlags(media *payload.MediaRefV1) payload.DocumentMediaFlagsV1 {
+	if media == nil {
+		return payload.DocumentMediaFlagsV1{}
+	}
+	if media.DocumentMediaFlags != nil {
+		return *media.DocumentMediaFlags
+	}
+	var flags payload.DocumentMediaFlagsV1
+	for _, attr := range media.DocumentAttributes {
+		switch attr.Kind {
+		case "audio":
+			flags.Voice = flags.Voice || attr.Voice
+		case "video":
+			flags.Round = flags.Round || attr.RoundMessage
+			if !viewIsWebMStickerOrCustomEmoji(media) {
+				flags.Video = true
+			}
+		}
+	}
+	return flags
+}
+
+func viewIsWebMStickerOrCustomEmoji(media *payload.MediaRefV1) bool {
+	if media == nil || media.MimeType != "video/webm" {
+		return false
+	}
+	for _, attr := range media.DocumentAttributes {
+		if attr.Kind == "sticker" || attr.Kind == "custom_emoji" {
+			return true
+		}
+	}
+	return false
+}
+
+func viewStickerSetRef(ref *payload.StickerSetRefV1) tg.InputStickerSetClazz {
+	if ref == nil {
+		return tg.MakeTLInputStickerSetEmpty(&tg.TLInputStickerSetEmpty{})
+	}
+	switch ref.Kind {
+	case "", "empty":
+		return tg.MakeTLInputStickerSetEmpty(&tg.TLInputStickerSetEmpty{})
+	case "id":
+		return tg.MakeTLInputStickerSetID(&tg.TLInputStickerSetID{Id: ref.ID, AccessHash: ref.AccessHash})
+	case "short_name":
+		return tg.MakeTLInputStickerSetShortName(&tg.TLInputStickerSetShortName{ShortName: ref.ShortName})
+	case "animated_emoji":
+		return tg.MakeTLInputStickerSetAnimatedEmoji(&tg.TLInputStickerSetAnimatedEmoji{})
+	case "dice":
+		return tg.MakeTLInputStickerSetDice(&tg.TLInputStickerSetDice{Emoticon: ref.Emoticon})
+	case "animated_emoji_animations":
+		return tg.MakeTLInputStickerSetAnimatedEmojiAnimations(&tg.TLInputStickerSetAnimatedEmojiAnimations{})
+	case "premium_gifts":
+		return tg.MakeTLInputStickerSetPremiumGifts(&tg.TLInputStickerSetPremiumGifts{})
+	case "emoji_generic_animations":
+		return tg.MakeTLInputStickerSetEmojiGenericAnimations(&tg.TLInputStickerSetEmojiGenericAnimations{})
+	case "emoji_default_statuses":
+		return tg.MakeTLInputStickerSetEmojiDefaultStatuses(&tg.TLInputStickerSetEmojiDefaultStatuses{})
+	case "emoji_default_topic_icons":
+		return tg.MakeTLInputStickerSetEmojiDefaultTopicIcons(&tg.TLInputStickerSetEmojiDefaultTopicIcons{})
+	case "emoji_channel_default_statuses":
+		return tg.MakeTLInputStickerSetEmojiChannelDefaultStatuses(&tg.TLInputStickerSetEmojiChannelDefaultStatuses{})
+	case "ton_gifts":
+		return tg.MakeTLInputStickerSetTonGifts(&tg.TLInputStickerSetTonGifts{})
+	default:
+		return nil
+	}
+}
+
+func viewMaskCoordsRef(ref *payload.MaskCoordsRefV1) tg.MaskCoordsClazz {
+	if ref == nil {
+		return nil
+	}
+	return tg.MakeTLMaskCoords(&tg.TLMaskCoords{N: ref.N, X: ref.X, Y: ref.Y, Zoom: ref.Zoom})
+}
+
+func cloneInt32Ptr(v *int32) *int32 {
+	if v == nil {
+		return nil
+	}
+	out := *v
+	return &out
+}
+
+func cloneFloat64Ptr(v *float64) *float64 {
+	if v == nil {
+		return nil
+	}
+	out := *v
+	return &out
 }
 
 func messageGroupedID(attrs *payload.MessageAttrsV1) *int64 {

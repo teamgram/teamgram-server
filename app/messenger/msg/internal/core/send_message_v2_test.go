@@ -565,6 +565,52 @@ func TestSentMessageDocumentMediaProjectsFullUploadedDocumentContract(t *testing
 	assertSentVideoCover(t, videoCover)
 }
 
+func TestSentMessageDocumentMediaInfersLegacyFlagsFromAttributes(t *testing.T) {
+	media := sentMessageMedia(&payload.MediaRefV1{
+		Kind:     "document",
+		MimeType: "video/mp4",
+		DocumentAttributes: []payload.DocumentAttributeRefV1{
+			{Kind: "video", RoundMessage: true},
+			{Kind: "audio", Voice: true},
+		},
+	})
+	documentMedia, ok := media.(*tg.TLMessageMediaDocument)
+	if !ok {
+		t.Fatalf("media = %T, want *tg.TLMessageMediaDocument", media)
+	}
+	if !documentMedia.Video || !documentMedia.Round || !documentMedia.Voice {
+		t.Fatalf("document media flags = video:%v round:%v voice:%v, want all inferred", documentMedia.Video, documentMedia.Round, documentMedia.Voice)
+	}
+}
+
+func TestSentMessageDocumentMediaDoesNotInferVideoForWebMStickerOrCustomEmoji(t *testing.T) {
+	for _, tt := range []struct {
+		name string
+		attr payload.DocumentAttributeRefV1
+	}{
+		{name: "sticker", attr: payload.DocumentAttributeRefV1{Kind: "sticker"}},
+		{name: "custom_emoji", attr: payload.DocumentAttributeRefV1{Kind: "custom_emoji"}},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			media := sentMessageMedia(&payload.MediaRefV1{
+				Kind:     "document",
+				MimeType: "video/webm",
+				DocumentAttributes: []payload.DocumentAttributeRefV1{
+					{Kind: "video"},
+					tt.attr,
+				},
+			})
+			documentMedia, ok := media.(*tg.TLMessageMediaDocument)
+			if !ok {
+				t.Fatalf("media = %T, want *tg.TLMessageMediaDocument", media)
+			}
+			if documentMedia.Video {
+				t.Fatalf("document media Video = true, want false for video/webm %s", tt.name)
+			}
+		})
+	}
+}
+
 func assertSentDocumentIdentity(t *testing.T, document *tg.TLDocument) {
 	t.Helper()
 	if document.Id != 555 ||
