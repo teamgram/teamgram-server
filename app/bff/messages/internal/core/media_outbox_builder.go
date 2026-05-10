@@ -178,10 +178,35 @@ func resolveMessageMedia(ctx context.Context, mediaClient resolveMediaClient, us
 		if document == nil || document.Clazz == nil {
 			return nil, tg.ErrMediaEmpty
 		}
+		videoCover, err := resolveInputPhotoForMessageMedia(ctx, mediaClient, mediaDocument.VideoCover)
+		if err != nil {
+			return nil, err
+		}
 		return tg.MakeTLMessageMediaDocument(&tg.TLMessageMediaDocument{
-			Document:   document.Clazz,
-			TtlSeconds: mediaDocument.TtlSeconds,
+			Document:       document.Clazz,
+			VideoCover:     videoCover,
+			VideoTimestamp: mediaDocument.VideoTimestamp,
+			TtlSeconds:     mediaDocument.TtlSeconds,
 		}), nil
+	default:
+		return nil, tg.ErrMediaEmpty
+	}
+}
+
+func resolveInputPhotoForMessageMedia(ctx context.Context, mediaClient resolveMediaClient, photo tg.InputPhotoClazz) (tg.PhotoClazz, error) {
+	switch p := photo.(type) {
+	case nil, *tg.TLInputPhotoEmpty:
+		return nil, nil
+	case *tg.TLInputPhoto:
+		full, err := mediaClient.MediaGetPhoto(ctx, &mediapb.TLMediaGetPhoto{PhotoId: p.Id})
+		if err != nil {
+			return nil, err
+		}
+		fullPhoto, ok := full.ToPhoto()
+		if !ok || fullPhoto.AccessHash != p.AccessHash {
+			return nil, tg.ErrMediaEmpty
+		}
+		return fullPhoto, nil
 	default:
 		return nil, tg.ErrMediaEmpty
 	}

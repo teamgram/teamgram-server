@@ -346,6 +346,65 @@ func TestUploadedDocumentMediaReturnsVideoFlagsForMp4(t *testing.T) {
 	}
 }
 
+func TestUploadedDocumentMediaReturnsVideoCover(t *testing.T) {
+	videoTimestamp := int32(17)
+	attrs := []tg.DocumentAttributeClazz{
+		tg.MakeTLDocumentAttributeVideo(&tg.TLDocumentAttributeVideo{SupportsStreaming: true, Duration: 3, W: 640, H: 360}),
+		tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "clip.mp4"}),
+	}
+	documents := &captureDocumentsModel{}
+	photos := &capturePhotosModel{found: &model.Photos{PhotoId: 303, AccessHash: 404, SizeId: 303, DcId: 2, Date2: 5}}
+	photoSizes := &capturePhotoSizesModel{byID: []model.PhotoSizes{
+		{PhotoSizeId: 303, SizeType: "m", Width: 320, Height: 240, FileSize: 1000},
+	}}
+	dfsClient := &fakeDfsMediaClient{finalized: testFinalizedObject("original-mp4-object", 333)}
+	processorClient := &fakeMediaProcessorClient{document: testProcessedDocument(t, "processed-mp4-object", "video/mp4", 444, attrs, nil)}
+	r := &Repository{
+		model: &model.Models{
+			DocumentsModel:      documents,
+			PhotosModel:         photos,
+			FileReferencesModel: newCaptureFileReferencesModel(),
+			PhotoSizesModel:     photoSizes,
+			VideoSizesModel:     &captureVideoSizesModel{},
+		},
+		dfsClient:            dfsClient,
+		processorClient:      processorClient,
+		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
+		fileReferenceTTL:     time.Hour,
+	}
+
+	got, err := r.UploadedDocumentMedia(context.Background(), &media.TLMediaUploadedDocumentMedia{
+		OwnerId: 77,
+		Media: tg.MakeTLInputMediaUploadedDocument(&tg.TLInputMediaUploadedDocument{
+			File:           tg.MakeTLInputFile(&tg.TLInputFile{Id: 8, Parts: 1, Name: "clip.mp4"}),
+			MimeType:       "video/mp4",
+			Attributes:     attrs,
+			VideoCover:     tg.MakeTLInputPhoto(&tg.TLInputPhoto{Id: 303, AccessHash: 404, FileReference: []byte("input-reference")}),
+			VideoTimestamp: &videoTimestamp,
+		}),
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	mediaDoc, ok := got.ToMessageMediaDocument()
+	if !ok || mediaDoc.Document == nil {
+		t.Fatalf("expected messageMediaDocument, got %#v", got)
+	}
+	cover, ok := mediaDoc.VideoCover.(*tg.TLPhoto)
+	if !ok {
+		t.Fatalf("expected full TLPhoto video cover, got %#v", mediaDoc.VideoCover)
+	}
+	if cover.Id != 303 || cover.AccessHash != 404 || len(cover.Sizes) != 1 || len(cover.FileReference) != 25 {
+		t.Fatalf("unexpected video cover: %#v", cover)
+	}
+	if mediaDoc.VideoTimestamp == nil || *mediaDoc.VideoTimestamp != videoTimestamp {
+		t.Fatalf("VideoTimestamp = %#v, want %d", mediaDoc.VideoTimestamp, videoTimestamp)
+	}
+	if len(documents.inserted) != 1 {
+		t.Fatalf("expected one saved document, got %#v", documents.inserted)
+	}
+}
+
 func TestUploadedDocumentMediaReturnsNoVideoFlagForForceFileMp4(t *testing.T) {
 	got := uploadTestDocumentMedia(t, true)
 	mediaDoc, ok := got.ToMessageMediaDocument()

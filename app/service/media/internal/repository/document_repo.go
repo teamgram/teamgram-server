@@ -101,7 +101,30 @@ func (r *Repository) UploadedDocumentMedia(ctx context.Context, in *media.TLMedi
 	if !ok {
 		return nil, media.ErrMediaInvalidArgument
 	}
-	return uploadedDocumentMessageMedia(uploaded, docClazz, classification, nil), nil
+	videoCover, err := r.resolveInputPhotoForMessage(ctx, uploaded.VideoCover)
+	if err != nil {
+		return nil, err
+	}
+	return uploadedDocumentMessageMedia(uploaded, docClazz, classification, videoCover), nil
+}
+
+func (r *Repository) resolveInputPhotoForMessage(ctx context.Context, photo tg.InputPhotoClazz) (tg.PhotoClazz, error) {
+	switch p := photo.(type) {
+	case nil, *tg.TLInputPhotoEmpty:
+		return nil, nil
+	case *tg.TLInputPhoto:
+		full, err := r.GetPhoto(ctx, p.Id)
+		if err != nil {
+			return nil, err
+		}
+		fullPhoto, ok := full.ToPhoto()
+		if !ok || fullPhoto.AccessHash != p.AccessHash {
+			return nil, media.ErrMediaInvalidArgument
+		}
+		return fullPhoto, nil
+	default:
+		return nil, media.ErrMediaInvalidArgument
+	}
 }
 
 func uploadedDocumentMessageMedia(uploaded *tg.TLInputMediaUploadedDocument, doc tg.DocumentClazz, classification documentClassification, videoCover tg.PhotoClazz) *tg.MessageMedia {
