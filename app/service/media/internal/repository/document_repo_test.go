@@ -477,6 +477,201 @@ func TestUploadedDocumentMediaRejectsZeroSizePlainDocument(t *testing.T) {
 	}
 }
 
+func TestUploadedDocumentMediaStoresSuppliedThumbForPlainDocument(t *testing.T) {
+	documents := &captureDocumentsModel{}
+	photoSizes := &capturePhotoSizesModel{}
+	dfsClient := &fakeDocumentThumbDfsClient{finalizedByPurpose: map[string]*dfsapi.FileFinalizedObject{
+		"media_original":  testFinalizedObject("original-pdf-object", 555),
+		"media_thumbnail": testFinalizedObjectWithLease("uploaded-thumb-object", 123, []byte("thumb-lease")),
+	}}
+	processorClient := &fakeMediaProcessorClient{photo: testProcessedPhotoThumb(
+		mediaprocessor.MakeTLProcessorDerivative(&mediaprocessor.TLProcessorDerivative{Kind: "photo_size", ObjectId: "thumb-s-object", FileName: "s_thumb.jpg", Width: 160, Height: 120, Size2: 600}),
+		mediaprocessor.MakeTLProcessorDerivative(&mediaprocessor.TLProcessorDerivative{Kind: "photo_size", ObjectId: "thumb-x-object", FileName: "x_thumb.jpg", Width: 640, Height: 480, Size2: 2000}),
+	)}
+	r := testDocumentRepository(documents, photoSizes, dfsClient, processorClient)
+
+	got, err := r.UploadedDocumentMedia(context.Background(), &media.TLMediaUploadedDocumentMedia{
+		OwnerId: 77,
+		Media: tg.MakeTLInputMediaUploadedDocument(&tg.TLInputMediaUploadedDocument{
+			File:       tg.MakeTLInputFile(&tg.TLInputFile{Id: 8, Parts: 1, Name: "report.pdf"}),
+			Thumb:      tg.MakeTLInputFile(&tg.TLInputFile{Id: 9, Parts: 1, Name: "thumb.jpg"}),
+			MimeType:   "application/pdf",
+			Attributes: []tg.DocumentAttributeClazz{tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "report.pdf"})},
+		}),
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(dfsClient.commits) != 2 {
+		t.Fatalf("expected original and thumb commits, got %#v", dfsClient.commits)
+	}
+	if dfsClient.commits[1].Purpose != "media_thumbnail" || dfsClient.commits[1].UploadSessionId != "ext:77:9:1" {
+		t.Fatalf("unexpected thumb commit request: %#v", dfsClient.commits[1])
+	}
+	if processorClient.photoReq == nil || processorClient.photoReq.OwnerId != 77 || processorClient.photoReq.ObjectId != "uploaded-thumb-object" || string(processorClient.photoReq.ReadLease) != "thumb-lease" || processorClient.photoReq.FileName != "thumb.jpg" {
+		t.Fatalf("unexpected ProcessPhoto request: %#v", processorClient.photoReq)
+	}
+	mediaDoc, ok := got.ToMessageMediaDocument()
+	if !ok || mediaDoc.Document == nil {
+		t.Fatalf("expected messageMediaDocument, got %#v", got)
+	}
+	doc, ok := mediaDoc.Document.(*tg.TLDocument)
+	if !ok {
+		t.Fatalf("expected TLDocument, got %#v", mediaDoc.Document)
+	}
+	if len(doc.Thumbs) != 1 {
+		t.Fatalf("expected one document thumb, got %#v", doc.Thumbs)
+	}
+	thumb, ok := doc.Thumbs[0].(*tg.TLPhotoSize)
+	if !ok {
+		t.Fatalf("expected TLPhotoSize thumb, got %#v", doc.Thumbs[0])
+	}
+	if thumb.Type != "m" || thumb.W != 640 || thumb.H != 480 || thumb.Size2 != 2000 {
+		t.Fatalf("unexpected returned document thumb: %#v", thumb)
+	}
+	if len(documents.inserted) != 1 || documents.inserted[0].ThumbId != doc.Id {
+		t.Fatalf("expected saved document thumb id, got %#v", documents.inserted)
+	}
+	if len(photoSizes.inserted) != 1 || photoSizes.inserted[0].SizeType != "m" || photoSizes.inserted[0].Width != 640 || photoSizes.inserted[0].Height != 480 || photoSizes.inserted[0].FileSize != 2000 || photoSizes.inserted[0].FilePath != "thumb-x-object" {
+		t.Fatalf("expected saved thumb path from selected derivative, got %#v", photoSizes.inserted)
+	}
+}
+
+func TestUploadedDocumentMediaRejectsSuppliedThumbWithoutNormalDimensions(t *testing.T) {
+	tests := []struct {
+		name      string
+		processed *mediaprocessor.ProcessedPhoto
+	}{
+		{
+			name: "stripped only",
+			processed: testProcessedPhotoThumb(
+				mediaprocessor.MakeTLProcessorDerivative(&mediaprocessor.TLProcessorDerivative{Kind: "photo_stripped", FileName: "i_thumb.jpg", Width: 40, Height: 30, Size2: 4, Bytes: []byte{1, 2, 3, 4}}),
+			),
+		},
+		{
+			name: "zero dimensions",
+			processed: testProcessedPhotoThumb(
+				mediaprocessor.MakeTLProcessorDerivative(&mediaprocessor.TLProcessorDerivative{Kind: "photo_size", ObjectId: "thumb-object", FileName: "m_thumb.jpg", Width: 0, Height: 120, Size2: 600}),
+			),
+		},
+		{
+			name: "missing object id",
+			processed: testProcessedPhotoThumb(
+				mediaprocessor.MakeTLProcessorDerivative(&mediaprocessor.TLProcessorDerivative{Kind: "photo_size", FileName: "m_thumb.jpg", Width: 160, Height: 120, Size2: 600}),
+			),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			documents := &captureDocumentsModel{}
+			photoSizes := &capturePhotoSizesModel{}
+			dfsClient := &fakeDocumentThumbDfsClient{finalizedByPurpose: map[string]*dfsapi.FileFinalizedObject{
+				"media_original":  testFinalizedObject("original-pdf-object", 555),
+				"media_thumbnail": testFinalizedObjectWithLease("uploaded-thumb-object", 123, []byte("thumb-lease")),
+			}}
+			r := testDocumentRepository(documents, photoSizes, dfsClient, &fakeMediaProcessorClient{photo: tt.processed})
+
+			_, err := r.UploadedDocumentMedia(context.Background(), &media.TLMediaUploadedDocumentMedia{
+				OwnerId: 77,
+				Media: tg.MakeTLInputMediaUploadedDocument(&tg.TLInputMediaUploadedDocument{
+					File:       tg.MakeTLInputFile(&tg.TLInputFile{Id: 8, Parts: 1, Name: "report.pdf"}),
+					Thumb:      tg.MakeTLInputFile(&tg.TLInputFile{Id: 9, Parts: 1, Name: "thumb.jpg"}),
+					MimeType:   "application/pdf",
+					Attributes: []tg.DocumentAttributeClazz{tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "report.pdf"})},
+				}),
+			})
+			if !errors.Is(err, media.ErrMediaInvalidUploadedFile) {
+				t.Fatalf("expected ErrMediaInvalidUploadedFile, got %v", err)
+			}
+			if len(documents.inserted) != 0 || len(photoSizes.inserted) != 0 {
+				t.Fatalf("expected no persisted rows, got documents=%#v photo_sizes=%#v", documents.inserted, photoSizes.inserted)
+			}
+		})
+	}
+}
+
+func TestUploadedDocumentMediaKeepsProcessedThumbForMp4(t *testing.T) {
+	documents := &captureDocumentsModel{}
+	photoSizes := &capturePhotoSizesModel{}
+	dfsClient := &fakeDocumentThumbDfsClient{finalizedByPurpose: map[string]*dfsapi.FileFinalizedObject{
+		"media_original": testFinalizedObject("original-mp4-object", 333),
+	}}
+	attrs := []tg.DocumentAttributeClazz{
+		tg.MakeTLDocumentAttributeVideo(&tg.TLDocumentAttributeVideo{SupportsStreaming: true, Duration: 3, W: 640, H: 360}),
+		tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "clip.mp4"}),
+	}
+	processorClient := &fakeMediaProcessorClient{
+		document: testProcessedDocument(t, "processed-mp4-object", "video/mp4", 444, attrs, testDocumentThumbs()),
+		photo: testProcessedPhotoThumb(
+			mediaprocessor.MakeTLProcessorDerivative(&mediaprocessor.TLProcessorDerivative{Kind: "photo_size", ObjectId: "user-thumb-object", FileName: "x_thumb.jpg", Width: 640, Height: 480, Size2: 2000}),
+		),
+	}
+	r := testDocumentRepository(documents, photoSizes, dfsClient, processorClient)
+
+	got, err := r.UploadedDocumentMedia(context.Background(), &media.TLMediaUploadedDocumentMedia{
+		OwnerId: 77,
+		Media: tg.MakeTLInputMediaUploadedDocument(&tg.TLInputMediaUploadedDocument{
+			File:       tg.MakeTLInputFile(&tg.TLInputFile{Id: 8, Parts: 1, Name: "clip.mp4"}),
+			Thumb:      tg.MakeTLInputFile(&tg.TLInputFile{Id: 9, Parts: 1, Name: "thumb.jpg"}),
+			MimeType:   "video/mp4",
+			Attributes: attrs,
+		}),
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if processorClient.photoReq != nil {
+		t.Fatalf("expected mp4 path not to process uploaded user thumb, got %#v", processorClient.photoReq)
+	}
+	mediaDoc, ok := got.ToMessageMediaDocument()
+	if !ok || mediaDoc.Document == nil {
+		t.Fatalf("expected messageMediaDocument, got %#v", got)
+	}
+	doc, ok := mediaDoc.Document.(*tg.TLDocument)
+	if !ok {
+		t.Fatalf("expected TLDocument, got %#v", mediaDoc.Document)
+	}
+	if len(doc.Thumbs) != 1 {
+		t.Fatalf("expected processed mp4 thumb, got %#v", doc.Thumbs)
+	}
+	thumb, ok := doc.Thumbs[0].(*tg.TLPhotoSize)
+	if !ok || thumb.Type != "m" || thumb.W != 320 || thumb.H != 180 || thumb.Size2 != 1234 {
+		t.Fatalf("unexpected mp4 document thumb: %#v", doc.Thumbs[0])
+	}
+	if len(photoSizes.inserted) != 1 || photoSizes.inserted[0].FilePath != "gif-thumb-object" {
+		t.Fatalf("expected saved processed thumb path, got %#v", photoSizes.inserted)
+	}
+}
+
+func TestUploadedDocumentMediaDoesNotReturnOnlyStrippedThumb(t *testing.T) {
+	documents := &captureDocumentsModel{}
+	photoSizes := &capturePhotoSizesModel{}
+	dfsClient := &fakeDocumentThumbDfsClient{finalizedByPurpose: map[string]*dfsapi.FileFinalizedObject{
+		"media_original":  testFinalizedObject("original-pdf-object", 555),
+		"media_thumbnail": testFinalizedObjectWithLease("uploaded-thumb-object", 123, []byte("thumb-lease")),
+	}}
+	r := testDocumentRepository(documents, photoSizes, dfsClient, &fakeMediaProcessorClient{photo: testProcessedPhotoThumb(
+		mediaprocessor.MakeTLProcessorDerivative(&mediaprocessor.TLProcessorDerivative{Kind: "photo_stripped", FileName: "i_thumb.jpg", Width: 40, Height: 30, Size2: 4, Bytes: []byte{1, 2, 3, 4}}),
+	)})
+
+	_, err := r.UploadedDocumentMedia(context.Background(), &media.TLMediaUploadedDocumentMedia{
+		OwnerId: 77,
+		Media: tg.MakeTLInputMediaUploadedDocument(&tg.TLInputMediaUploadedDocument{
+			File:       tg.MakeTLInputFile(&tg.TLInputFile{Id: 8, Parts: 1, Name: "report.pdf"}),
+			Thumb:      tg.MakeTLInputFile(&tg.TLInputFile{Id: 9, Parts: 1, Name: "thumb.jpg"}),
+			MimeType:   "application/pdf",
+			Attributes: []tg.DocumentAttributeClazz{tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "report.pdf"})},
+		}),
+	})
+	if !errors.Is(err, media.ErrMediaInvalidUploadedFile) {
+		t.Fatalf("expected ErrMediaInvalidUploadedFile, got %v", err)
+	}
+	if len(documents.inserted) != 0 || len(photoSizes.inserted) != 0 {
+		t.Fatalf("expected no persisted rows for stripped-only thumb, got documents=%#v photo_sizes=%#v", documents.inserted, photoSizes.inserted)
+	}
+}
+
 func TestGetDocumentLoadsThumbsAndAttributes(t *testing.T) {
 	documents := &captureDocumentsModel{byID: map[int64]*model.Documents{
 		700: {
@@ -578,6 +773,48 @@ func testProcessedDocument(t *testing.T, objectID, mimeType string, size int64, 
 		Attributes: testDocumentAttributeVectorBytes(t, attrs),
 		Thumbs:     thumbs,
 	}).ToProcessedDocument()
+}
+
+type fakeDocumentThumbDfsClient struct {
+	fakeDfsMediaClient
+	commits            []*dfsapi.TLDfsCommitUpload
+	finalizedByPurpose map[string]*dfsapi.FileFinalizedObject
+}
+
+func (c *fakeDocumentThumbDfsClient) CommitUpload(_ context.Context, in *dfsapi.TLDfsCommitUpload) (*dfsapi.FileFinalizedObject, error) {
+	c.commits = append(c.commits, in)
+	c.commitReq = in
+	if c.finalizedByPurpose != nil {
+		return c.finalizedByPurpose[in.Purpose], nil
+	}
+	return c.finalized, nil
+}
+
+func testDocumentRepository(documents *captureDocumentsModel, photoSizes *capturePhotoSizesModel, dfsClient *fakeDocumentThumbDfsClient, processorClient *fakeMediaProcessorClient) *Repository {
+	return &Repository{
+		model:                &model.Models{DocumentsModel: documents, FileReferencesModel: newCaptureFileReferencesModel(), PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
+		dfsClient:            dfsClient,
+		processorClient:      processorClient,
+		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
+		fileReferenceTTL:     time.Hour,
+	}
+}
+
+func testFinalizedObjectWithLease(objectID string, size int64, readLease []byte) *dfsapi.FileFinalizedObject {
+	return dfsapi.MakeTLFileFinalizedObject(&dfsapi.TLFileFinalizedObject{
+		ObjectId:        objectID,
+		UploadSessionId: "ext:77:9:1",
+		ReadLease:       readLease,
+		Size2:           size,
+		DcId:            2,
+	}).ToFileFinalizedObject()
+}
+
+func testProcessedPhotoThumb(derivatives ...mediaprocessor.ProcessorDerivativeClazz) *mediaprocessor.ProcessedPhoto {
+	return mediaprocessor.MakeTLProcessedPhoto(&mediaprocessor.TLProcessedPhoto{
+		OriginalObjectId: "processed-thumb-photo",
+		Sizes:            derivatives,
+	}).ToProcessedPhoto()
 }
 
 func uploadTestDocumentMedia(t *testing.T, forceFile bool) *tg.MessageMedia {
