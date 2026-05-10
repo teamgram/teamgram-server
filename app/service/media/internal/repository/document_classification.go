@@ -60,66 +60,89 @@ func classifyUploadedDocument(uploaded *tg.TLInputMediaUploadedDocument) (docume
 		if !isCustomEmojiMime(mimeType) || attrs.sticker || attrs.audio || attrs.video || attrs.animated {
 			return documentClassification{}, media.ErrMediaInvalidUploadedFile
 		}
-		return documentClassification{Kind: documentKindCustomEmoji, RenderKind: messageRenderKindFile}, nil
+		return newDocumentClassification(documentKindCustomEmoji, messageRenderKindFile, requiredDocumentTransformNone), nil
 	}
 	if attrs.sticker {
 		if !isStickerMime(mimeType) || attrs.audio || attrs.video || attrs.animated {
 			return documentClassification{}, media.ErrMediaInvalidUploadedFile
 		}
-		return documentClassification{Kind: documentKindSticker, RenderKind: messageRenderKindFile}, nil
+		return newDocumentClassification(documentKindSticker, messageRenderKindFile, requiredDocumentTransformNone), nil
 	}
 	if attrs.voice {
 		if !isAudioMime(mimeType) || attrs.video || attrs.animated {
 			return documentClassification{}, media.ErrMediaInvalidUploadedFile
 		}
 		if uploaded.ForceFile {
-			return documentClassification{Kind: documentKindVoice, RenderKind: messageRenderKindFile}, nil
+			return newDocumentClassification(documentKindVoice, messageRenderKindFile, requiredDocumentTransformNone), nil
 		}
-		return documentClassification{Kind: documentKindVoice, RenderKind: messageRenderKindVoice, Voice: true}, nil
+		return newDocumentClassification(documentKindVoice, messageRenderKindVoice, requiredDocumentTransformNone), nil
 	}
 	if attrs.audio {
 		if !isAudioMime(mimeType) || attrs.video || attrs.animated {
 			return documentClassification{}, media.ErrMediaInvalidUploadedFile
 		}
-		return documentClassification{Kind: documentKindAudio, RenderKind: messageRenderKindAudio}, nil
+		return newDocumentClassification(documentKindAudio, messageRenderKindAudio, requiredDocumentTransformNone), nil
 	}
 	if mimeType == "image/gif" && attrs.animated {
 		if attrs.video {
 			return documentClassification{}, media.ErrMediaInvalidUploadedFile
 		}
 		if uploaded.ForceFile {
-			return documentClassification{Kind: documentKindGifv, RenderKind: messageRenderKindFile, RequiredTransform: requiredDocumentTransformGifv}, nil
+			return newDocumentClassification(documentKindGifv, messageRenderKindFile, requiredDocumentTransformGifv), nil
 		}
-		return documentClassification{Kind: documentKindGifv, RenderKind: messageRenderKindVideo, RequiredTransform: requiredDocumentTransformGifv, Video: true}, nil
+		return newDocumentClassification(documentKindGifv, messageRenderKindVideo, requiredDocumentTransformGifv), nil
 	}
 	if attrs.round {
 		if mimeType != "video/mp4" || attrs.animated {
 			return documentClassification{}, media.ErrMediaInvalidUploadedFile
 		}
 		if uploaded.ForceFile {
-			return documentClassification{Kind: documentKindRound, RenderKind: messageRenderKindFile, RequiredTransform: requiredDocumentTransformMp4}, nil
+			return newDocumentClassification(documentKindRound, messageRenderKindFile, requiredDocumentTransformMp4), nil
 		}
-		return documentClassification{Kind: documentKindRound, RenderKind: messageRenderKindRound, RequiredTransform: requiredDocumentTransformMp4, Video: true, Round: true}, nil
+		return newDocumentClassification(documentKindRound, messageRenderKindRound, requiredDocumentTransformMp4), nil
 	}
 	if attrs.video || mimeType == "video/mp4" {
 		if mimeType != "video/mp4" || attrs.animated {
 			return documentClassification{}, media.ErrMediaInvalidUploadedFile
 		}
 		if uploaded.ForceFile {
-			return documentClassification{Kind: documentKindVideo, RenderKind: messageRenderKindFile, RequiredTransform: requiredDocumentTransformMp4}, nil
+			return newDocumentClassification(documentKindVideo, messageRenderKindFile, requiredDocumentTransformMp4), nil
 		}
-		return documentClassification{Kind: documentKindVideo, RenderKind: messageRenderKindVideo, RequiredTransform: requiredDocumentTransformMp4, Video: true}, nil
+		return newDocumentClassification(documentKindVideo, messageRenderKindVideo, requiredDocumentTransformMp4), nil
 	}
 	if isImageDocumentMime(mimeType) && attrs.imageSize {
 		if attrs.animated {
 			return documentClassification{}, media.ErrMediaInvalidUploadedFile
 		}
-		return documentClassification{Kind: documentKindImage, RenderKind: messageRenderKindImage}, nil
+		return newDocumentClassification(documentKindImage, messageRenderKindImage, requiredDocumentTransformNone), nil
 	}
 	if attrs.animated {
 		return documentClassification{}, media.ErrMediaInvalidUploadedFile
 	}
-	return documentClassification{Kind: documentKindPlain, RenderKind: messageRenderKindFile}, nil
+	return newDocumentClassification(documentKindPlain, messageRenderKindFile, requiredDocumentTransformNone), nil
+}
+
+func newDocumentClassification(kind documentKind, renderKind messageRenderKind, transform requiredDocumentTransform) documentClassification {
+	classification := documentClassification{
+		Kind:              kind,
+		RenderKind:        renderKind,
+		RequiredTransform: transform,
+	}
+	classification.Video, classification.Round, classification.Voice = documentMessageFlagsFromRenderKind(classification)
+	return classification
+}
+
+func documentMessageFlagsFromRenderKind(classification documentClassification) (video, round, voice bool) {
+	switch classification.RenderKind {
+	case messageRenderKindVideo:
+		return true, false, false
+	case messageRenderKindRound:
+		return true, true, false
+	case messageRenderKindVoice:
+		return false, false, true
+	default:
+		return false, false, false
+	}
 }
 
 type documentAttributes struct {
@@ -158,38 +181,6 @@ func documentAttributePresence(attrs []tg.DocumentAttributeClazz) documentAttrib
 		}
 	}
 	return out
-}
-
-func hasDocumentAttributeCustomEmoji(attrs []tg.DocumentAttributeClazz) bool {
-	return documentAttributePresence(attrs).customEmoji
-}
-
-func hasDocumentAttributeSticker(attrs []tg.DocumentAttributeClazz) bool {
-	return documentAttributePresence(attrs).sticker
-}
-
-func hasDocumentAttributeAudio(attrs []tg.DocumentAttributeClazz) bool {
-	return documentAttributePresence(attrs).audio
-}
-
-func hasDocumentAttributeVoice(attrs []tg.DocumentAttributeClazz) bool {
-	return documentAttributePresence(attrs).voice
-}
-
-func hasDocumentAttributeVideo(attrs []tg.DocumentAttributeClazz) bool {
-	return documentAttributePresence(attrs).video
-}
-
-func hasDocumentAttributeRoundMessage(attrs []tg.DocumentAttributeClazz) bool {
-	return documentAttributePresence(attrs).round
-}
-
-func hasDocumentAttributeImageSize(attrs []tg.DocumentAttributeClazz) bool {
-	return documentAttributePresence(attrs).imageSize
-}
-
-func hasDocumentAttributeAnimated(attrs []tg.DocumentAttributeClazz) bool {
-	return documentAttributePresence(attrs).animated
 }
 
 func isCustomEmojiMime(mimeType string) bool {

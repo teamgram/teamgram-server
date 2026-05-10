@@ -104,11 +104,12 @@ func (r *Repository) UploadedDocumentMedia(ctx context.Context, in *media.TLMedi
 }
 
 func uploadedDocumentMessageMedia(uploaded *tg.TLInputMediaUploadedDocument, doc tg.DocumentClazz, classification documentClassification, videoCover tg.PhotoClazz) *tg.MessageMedia {
+	video, round, voice := documentMessageFlagsFromRenderKind(classification)
 	return tg.MakeTLMessageMediaDocument(&tg.TLMessageMediaDocument{
 		Spoiler:        uploaded.Spoiler,
-		Video:          classification.Video,
-		Round:          classification.Round,
-		Voice:          classification.Voice,
+		Video:          video,
+		Round:          round,
+		Voice:          voice,
 		Document:       doc,
 		VideoCover:     videoCover,
 		VideoTimestamp: uploaded.VideoTimestamp,
