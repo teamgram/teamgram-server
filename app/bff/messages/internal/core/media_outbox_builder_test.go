@@ -256,6 +256,85 @@ func TestResolveMessageMediaInputDocumentPreservesVideoCover(t *testing.T) {
 	}
 }
 
+func TestResolveMessageMediaInputDocumentInfersVideoFlagFromLoadedDocument(t *testing.T) {
+	mediaDoc := resolveInputDocumentForTest(t, tg.MakeTLDocument(&tg.TLDocument{
+		Id:         42,
+		AccessHash: 99,
+		MimeType:   "video/mp4",
+		Size2:      1000,
+		DcId:       2,
+		Attributes: []tg.DocumentAttributeClazz{
+			tg.MakeTLDocumentAttributeVideo(&tg.TLDocumentAttributeVideo{Duration: 3, W: 640, H: 360}),
+		},
+	}))
+
+	if !mediaDoc.Video {
+		t.Fatal("Video = false, want true")
+	}
+}
+
+func TestResolveMessageMediaInputDocumentInfersRoundFlagFromLoadedDocument(t *testing.T) {
+	mediaDoc := resolveInputDocumentForTest(t, tg.MakeTLDocument(&tg.TLDocument{
+		Id:         42,
+		AccessHash: 99,
+		MimeType:   "video/mp4",
+		Size2:      1000,
+		DcId:       2,
+		Attributes: []tg.DocumentAttributeClazz{
+			tg.MakeTLDocumentAttributeVideo(&tg.TLDocumentAttributeVideo{RoundMessage: true, Duration: 3, W: 640, H: 640}),
+		},
+	}))
+
+	if !mediaDoc.Video || !mediaDoc.Round {
+		t.Fatalf("Video/Round = %t/%t, want true/true", mediaDoc.Video, mediaDoc.Round)
+	}
+}
+
+func TestResolveMessageMediaInputDocumentInfersVoiceFlagFromLoadedDocument(t *testing.T) {
+	mediaDoc := resolveInputDocumentForTest(t, tg.MakeTLDocument(&tg.TLDocument{
+		Id:         42,
+		AccessHash: 99,
+		MimeType:   "audio/ogg",
+		Size2:      1000,
+		DcId:       2,
+		Attributes: []tg.DocumentAttributeClazz{
+			tg.MakeTLDocumentAttributeAudio(&tg.TLDocumentAttributeAudio{Voice: true, Duration: 3}),
+		},
+	}))
+
+	if !mediaDoc.Voice {
+		t.Fatal("Voice = false, want true")
+	}
+}
+
+func TestResolveMessageMediaInputDocumentDoesNotInferVideoForWebMStickerOrCustomEmoji(t *testing.T) {
+	for _, tt := range []struct {
+		name string
+		attr tg.DocumentAttributeClazz
+	}{
+		{name: "sticker", attr: tg.MakeTLDocumentAttributeSticker(&tg.TLDocumentAttributeSticker{Alt: ":)", Stickerset: tg.MakeTLInputStickerSetEmpty(&tg.TLInputStickerSetEmpty{})})},
+		{name: "custom_emoji", attr: tg.MakeTLDocumentAttributeCustomEmoji(&tg.TLDocumentAttributeCustomEmoji{Alt: ":)", Stickerset: tg.MakeTLInputStickerSetEmpty(&tg.TLInputStickerSetEmpty{})})},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			mediaDoc := resolveInputDocumentForTest(t, tg.MakeTLDocument(&tg.TLDocument{
+				Id:         42,
+				AccessHash: 99,
+				MimeType:   "video/webm",
+				Size2:      1000,
+				DcId:       2,
+				Attributes: []tg.DocumentAttributeClazz{
+					tg.MakeTLDocumentAttributeVideo(&tg.TLDocumentAttributeVideo{Duration: 3, W: 640, H: 360}),
+					tt.attr,
+				},
+			}))
+
+			if mediaDoc.Video {
+				t.Fatal("Video = true, want false")
+			}
+		})
+	}
+}
+
 func TestResolveMessageMediaUploadedDocumentPropagatesMediaTransformError(t *testing.T) {
 	mediaClient := &fakeResolveMediaClient{uploadedDocumentErr: mediapb.ErrMediaInvalidUploadedFile}
 
@@ -294,6 +373,23 @@ func TestMapMediaResolveError(t *testing.T) {
 			}
 		})
 	}
+}
+
+func resolveInputDocumentForTest(t *testing.T, document *tg.TLDocument) *tg.TLMessageMediaDocument {
+	t.Helper()
+
+	mediaClient := &fakeResolveMediaClient{documentResp: document.ToDocument()}
+	got, err := resolveMessageMedia(context.Background(), mediaClient, nil, 1001, tg.MakeTLInputMediaDocument(&tg.TLInputMediaDocument{
+		Id: tg.MakeTLInputDocument(&tg.TLInputDocument{Id: document.Id, AccessHash: document.AccessHash}),
+	}))
+	if err != nil {
+		t.Fatalf("resolveMessageMedia() error = %v", err)
+	}
+	mediaDoc, ok := got.(*tg.TLMessageMediaDocument)
+	if !ok {
+		t.Fatalf("message media = %#v, want TLMessageMediaDocument", got)
+	}
+	return mediaDoc
 }
 
 type fakeResolveMediaClient struct {

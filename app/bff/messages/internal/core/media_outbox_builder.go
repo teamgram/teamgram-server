@@ -3,6 +3,7 @@ package core
 import (
 	"context"
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
@@ -182,7 +183,11 @@ func resolveMessageMedia(ctx context.Context, mediaClient resolveMediaClient, us
 		if err != nil {
 			return nil, err
 		}
+		video, round, voice := inferMessageMediaDocumentFlags(document.Clazz)
 		return tg.MakeTLMessageMediaDocument(&tg.TLMessageMediaDocument{
+			Video:          video,
+			Round:          round,
+			Voice:          voice,
 			Document:       document.Clazz,
 			VideoCover:     videoCover,
 			VideoTimestamp: mediaDocument.VideoTimestamp,
@@ -191,6 +196,34 @@ func resolveMessageMedia(ctx context.Context, mediaClient resolveMediaClient, us
 	default:
 		return nil, tg.ErrMediaEmpty
 	}
+}
+
+func inferMessageMediaDocumentFlags(document tg.DocumentClazz) (video, round, voice bool) {
+	doc, ok := document.(*tg.TLDocument)
+	if !ok || doc == nil {
+		return false, false, false
+	}
+	webmStickerOrCustomEmoji := false
+	if strings.EqualFold(doc.MimeType, "video/webm") {
+		for _, attr := range doc.Attributes {
+			switch attr.(type) {
+			case *tg.TLDocumentAttributeSticker, *tg.TLDocumentAttributeCustomEmoji:
+				webmStickerOrCustomEmoji = true
+			}
+		}
+	}
+	for _, attr := range doc.Attributes {
+		switch a := attr.(type) {
+		case *tg.TLDocumentAttributeVideo:
+			if !webmStickerOrCustomEmoji {
+				video = true
+			}
+			round = round || a.RoundMessage
+		case *tg.TLDocumentAttributeAudio:
+			voice = voice || a.Voice
+		}
+	}
+	return video, round, voice
 }
 
 func resolveInputPhotoForMessageMedia(ctx context.Context, mediaClient resolveMediaClient, photo tg.InputPhotoClazz) (tg.PhotoClazz, error) {
