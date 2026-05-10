@@ -612,8 +612,24 @@ func (r *Repository) savePhotoAggregateWithSizePaths(ctx context.Context, inputF
 		photoRow.HasVideo = true
 		photoRow.VideoSizeId = do.Id
 	}
-	if _, err := r.model.PhotosModel.Insert2(ctx, photoRow); err != nil {
-		return wrapStorage("save photo", err)
+	existing, err := r.model.PhotosModel.FindOneByPhotoId(ctx, do.Id)
+	switch {
+	case err == nil:
+		photoRow.Id = existing.Id
+		if err := r.model.PhotosModel.Update2(ctx, photoRow); err != nil {
+			return wrapStorage("update photo", err)
+		}
+		if existing.SizeId != 0 {
+			if err := r.model.PhotoSizesModel.DeleteByPhotoSizeId(ctx, existing.SizeId); err != nil {
+				return wrapStorage("delete stale photo sizes", err)
+			}
+		}
+	case isNotFound(err):
+		if _, err := r.model.PhotosModel.Insert2(ctx, photoRow); err != nil {
+			return wrapStorage("save photo", err)
+		}
+	default:
+		return wrapStorage("load existing photo for save", err)
 	}
 	for _, size := range do.Sizes {
 		if err := r.savePhotoSizeWithPath(ctx, do.Id, size, sizeObjectIDs); err != nil {

@@ -16,7 +16,21 @@
 
 package model
 
+import (
+	"context"
+	"fmt"
+)
+
 type (
 	extendPhotoSizesModel interface {
+		DeleteByPhotoSizeId(ctx context.Context, photoSizeId int64) error
 	}
 )
+
+func (m *customPhotoSizesModel) DeleteByPhotoSizeId(ctx context.Context, photoSizeId int64) error {
+	_, err := m.db.Exec(ctx, "delete from photo_sizes where photo_size_id = ?", photoSizeId)
+	if err != nil {
+		return fmt.Errorf("photo_sizes.DeleteByPhotoSizeId exec: %w", err)
+	}
+	return nil
+}

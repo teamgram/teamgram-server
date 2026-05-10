@@ -29,6 +29,7 @@ func (photoModelNotFound) FindOneByPhotoId(context.Context, int64) (*model.Photo
 type capturePhotosModel struct {
 	model.PhotosModel
 	inserted []*model.Photos
+	updated  []*model.Photos
 	found    *model.Photos
 }
 
@@ -42,6 +43,11 @@ func (m *capturePhotosModel) Insert2(_ context.Context, data *model.Photos) (sql
 	return nil, nil
 }
 
+func (m *capturePhotosModel) Update2(_ context.Context, data *model.Photos) error {
+	m.updated = append(m.updated, data)
+	return nil
+}
+
 func (m *capturePhotosModel) FindOneByPhotoId(_ context.Context, _ int64) (*model.Photos, error) {
 	if m.found == nil {
 		return nil, &model.NotFoundError{Resource: "photos", Key: "photo_id"}
@@ -51,8 +57,9 @@ func (m *capturePhotosModel) FindOneByPhotoId(_ context.Context, _ int64) (*mode
 
 type capturePhotoSizesModel struct {
 	model.PhotoSizesModel
-	inserted []*model.PhotoSizes
-	byID     []model.PhotoSizes
+	inserted  []*model.PhotoSizes
+	deletedID []int64
+	byID      []model.PhotoSizes
 }
 
 func (m *capturePhotoSizesModel) Insert(_ context.Context, data *model.PhotoSizes) (int64, int64, error) {
@@ -62,6 +69,11 @@ func (m *capturePhotoSizesModel) Insert(_ context.Context, data *model.PhotoSize
 
 func (m *capturePhotoSizesModel) SelectListByPhotoSizeId(_ context.Context, _ int64) ([]model.PhotoSizes, error) {
 	return m.byID, nil
+}
+
+func (m *capturePhotoSizesModel) DeleteByPhotoSizeId(_ context.Context, photoSizeID int64) error {
+	m.deletedID = append(m.deletedID, photoSizeID)
+	return nil
 }
 
 type captureVideoSizesModel struct {
@@ -466,6 +478,63 @@ func TestUploadPhotoFileMapsStrippedAndProgressiveSizes(t *testing.T) {
 	}
 	if progressive, ok := reloadedPhoto.Sizes[2].(*tg.TLPhotoSizeProgressive); !ok || progressive.Type != "x" || len(progressive.Sizes) != 3 || progressive.Sizes[2] != 1200 {
 		t.Fatalf("expected reloaded progressive size, got %#v", reloadedPhoto.Sizes[2])
+	}
+}
+
+func TestSavePhotoAggregateRepairsExistingPartialPhotoOnRetry(t *testing.T) {
+	photos := &capturePhotosModel{
+		found: &model.Photos{
+			Id:            77,
+			PhotoId:       9015925392929747035,
+			AccessHash:    11,
+			DcId:          1,
+			Date2:         100,
+			SizeId:        9015925392929747035,
+			InputFileName: "image_2026-05-10_16-22-43.jpg",
+		},
+	}
+	photoSizes := &capturePhotoSizesModel{
+		byID: []model.PhotoSizes{
+			{PhotoSizeId: 9015925392929747035, SizeType: "i", HasStripped: true, StrippedBytes: []byte{0x01, 0x28}},
+		},
+	}
+	r := &Repository{
+		model: &model.Models{
+			PhotosModel:     photos,
+			PhotoSizesModel: photoSizes,
+			VideoSizesModel: &captureVideoSizesModel{},
+		},
+	}
+
+	photo := tg.MakeTLPhoto(&tg.TLPhoto{
+		Id:         9015925392929747035,
+		AccessHash: 22,
+		Date:       200,
+		DcId:       2,
+		Sizes: []tg.PhotoSizeClazz{
+			tg.MakeTLPhotoStrippedSize(&tg.TLPhotoStrippedSize{Type: "i", Bytes: []byte{0x01, 0x28, 0xff}}),
+			tg.MakeTLPhotoSize(&tg.TLPhotoSize{Type: "m", W: 320, H: 240, Size2: 1234}),
+		},
+	}).ToPhoto()
+
+	err := r.savePhotoAggregateWithSizePaths(context.Background(), "image_2026-05-10_16-22-43.jpg", photo, map[string]string{"m": "derivative-object-m"})
+	if err != nil {
+		t.Fatalf("savePhotoAggregateWithSizePaths() error = %v", err)
+	}
+	if len(photos.inserted) != 0 {
+		t.Fatalf("expected retry to update existing photo instead of inserting duplicate, inserted=%#v", photos.inserted)
+	}
+	if len(photos.updated) != 1 || photos.updated[0].Id != 77 || photos.updated[0].PhotoId != 9015925392929747035 || photos.updated[0].AccessHash != 22 || photos.updated[0].SizeId != 9015925392929747035 {
+		t.Fatalf("expected existing photo row to be refreshed, updated=%#v", photos.updated)
+	}
+	if len(photoSizes.deletedID) != 1 || photoSizes.deletedID[0] != 9015925392929747035 {
+		t.Fatalf("expected stale partial sizes to be deleted, deleted=%#v", photoSizes.deletedID)
+	}
+	if len(photoSizes.inserted) != 2 {
+		t.Fatalf("expected replacement stripped and normal sizes, got %#v", photoSizes.inserted)
+	}
+	if photoSizes.inserted[1].FilePath != "derivative-object-m" {
+		t.Fatalf("expected replacement normal size path, got %#v", photoSizes.inserted[1])
 	}
 }
 
