@@ -18,24 +18,9 @@
 package idgenhelper
 
 import (
-	"fmt"
-
-	"github.com/teamgram/teamgram-server/v2/app/service/idgen/internal/config"
-	"github.com/teamgram/teamgram-server/v2/app/service/idgen/internal/server/tg/service"
-	"github.com/teamgram/teamgram-server/v2/app/service/idgen/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/service/idgen/internal/server"
 )
 
-type (
-	Config = config.Config
+var (
+	NewServer = server.New
 )
-
-// New builds an in-process idgen service for embedding in another binary.
-// It surfaces any repository construction failure so the host process can
-// fail loudly at startup instead of running half-initialized.
-func New(c Config) (*service.Service, error) {
-	ctx, err := svc.NewServiceContext(c)
-	if err != nil {
-		return nil, fmt.Errorf("idgenhelper: build service context: %w", err)
-	}
-	return service.New(ctx), nil
-}

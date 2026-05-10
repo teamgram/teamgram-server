@@ -17,15 +17,9 @@
 package geoiphelper
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/internal/config"
-	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/internal/server/tg/service"
-	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/infra/geoip/internal/server"
 )
 
-type (
-	Config = config.Config
+var (
+	NewServer = server.New
 )
-
-func New(c Config) *service.Service {
-	return service.New(svc.NewServiceContext(c))
-}

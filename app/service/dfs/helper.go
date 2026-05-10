@@ -17,15 +17,9 @@
 package dfshelper
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/config"
-	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/server/tg/service"
-	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/server"
 )
 
-type (
-	Config = config.Config
+var (
+	NewServer = server.New
 )
-
-func New(c Config) *service.Service {
-	return service.New(svc.NewServiceContext(c))
-}

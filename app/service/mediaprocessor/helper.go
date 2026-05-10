@@ -18,15 +18,9 @@
 package mediaprocessorhelper
 
 import (
-	"github.com/teamgram/teamgram-server/v2/app/service/mediaprocessor/internal/config"
-	"github.com/teamgram/teamgram-server/v2/app/service/mediaprocessor/internal/server/tg/service"
-	"github.com/teamgram/teamgram-server/v2/app/service/mediaprocessor/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/app/service/mediaprocessor/internal/server"
 )
 
-type (
-	Config = config.Config
+var (
+	NewServer = server.New
 )
-
-func New(c Config) *service.Service {
-	return service.New(svc.NewServiceContext(c))
-}
