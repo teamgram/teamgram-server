@@ -679,8 +679,22 @@ func TestMsgSendMessageV2MediaReturnsTLUpdates(t *testing.T) {
 	if !ok {
 		t.Fatalf("photo = %T, want *tg.TLPhoto", media.Photo)
 	}
-	if photo.Id != 333 || photo.AccessHash != 444 || len(photo.FileReference) == 0 || photo.DcId != 2 || len(photo.Sizes) != 1 {
+	if photo.Id != 333 || photo.AccessHash != 444 || len(photo.FileReference) != 25 || photo.DcId != 2 || len(photo.Sizes) != 2 {
 		t.Fatalf("photo = %+v, want displayable photo metadata", photo)
+	}
+	stripped, ok := photo.Sizes[0].(*tg.TLPhotoStrippedSize)
+	if !ok {
+		t.Fatalf("projected size = %T, want TLPhotoStrippedSize", photo.Sizes[0])
+	}
+	if !bytes.Equal(stripped.Bytes, []byte{0x01, 0x16, 0x28, 0xaa}) {
+		t.Fatalf("stripped bytes = %x, want telegram stripped payload", stripped.Bytes)
+	}
+	progressive, ok := photo.Sizes[1].(*tg.TLPhotoSizeProgressive)
+	if !ok {
+		t.Fatalf("projected size = %T, want TLPhotoSizeProgressive", photo.Sizes[1])
+	}
+	if progressive.Sizes[2] != 300 {
+		t.Fatalf("progressive sizes = %#v, want final offset 300", progressive.Sizes)
 	}
 }
 
@@ -1339,11 +1353,12 @@ func TestMsgGetHistoryReturnsMediaFromViewPayload(t *testing.T) {
 			Kind:          "photo",
 			ID:            7001,
 			AccessHash:    8001,
-			FileReference: []byte("photo-ref"),
+			FileReference: []byte("1234567890123456789012345"),
 			Date:          1_772_000_030,
 			DcID:          2,
 			PhotoSizes: []payload.PhotoSizeRefV1{
-				{Kind: "size", Type: "m", W: 320, H: 240, Size: 12345},
+				{Kind: "stripped", Type: "i", Bytes: []byte{0x01, 0x16, 0x28, 0xaa}},
+				{Kind: "progressive", Type: "y", W: 1280, H: 394, Sizes: []int32{100, 200, 300}},
 			},
 		},
 	})
@@ -1400,8 +1415,22 @@ func TestMsgGetHistoryReturnsMediaFromViewPayload(t *testing.T) {
 	if !ok {
 		t.Fatalf("media photo = %T, want *tg.TLPhoto", media.Photo)
 	}
-	if photo.Id != 7001 || photo.AccessHash != 8001 || photo.DcId != 2 || len(photo.Sizes) != 1 {
+	if photo.Id != 7001 || photo.AccessHash != 8001 || photo.DcId != 2 || len(photo.Sizes) != 2 {
 		t.Fatalf("unexpected photo projection: %+v", photo)
+	}
+	stripped, ok := photo.Sizes[0].(*tg.TLPhotoStrippedSize)
+	if !ok {
+		t.Fatalf("projected size = %T, want TLPhotoStrippedSize", photo.Sizes[0])
+	}
+	if !bytes.Equal(stripped.Bytes, []byte{0x01, 0x16, 0x28, 0xaa}) {
+		t.Fatalf("stripped bytes = %#v, want telegram stripped preview bytes", stripped.Bytes)
+	}
+	progressive, ok := photo.Sizes[1].(*tg.TLPhotoSizeProgressive)
+	if !ok {
+		t.Fatalf("projected size = %T, want TLPhotoSizeProgressive", photo.Sizes[1])
+	}
+	if progressive.Sizes[2] != 300 {
+		t.Fatalf("progressive sizes = %#v, want final offset 300", progressive.Sizes)
 	}
 }
 
@@ -3162,10 +3191,11 @@ func buildMediaSendRequestForTest(senderID, peerID, authKeyID, randomID int64, c
 						Photo: tg.MakeTLPhoto(&tg.TLPhoto{
 							Id:            333,
 							AccessHash:    444,
-							FileReference: []byte("photo-ref"),
+							FileReference: []byte("1234567890123456789012345"),
 							Date:          1_772_000_100,
 							Sizes: []tg.PhotoSizeClazz{
-								tg.MakeTLPhotoSize(&tg.TLPhotoSize{Type: "m", W: 320, H: 240, Size2: 12345}),
+								tg.MakeTLPhotoStrippedSize(&tg.TLPhotoStrippedSize{Type: "i", Bytes: []byte{0x01, 0x16, 0x28, 0xaa}}),
+								tg.MakeTLPhotoSizeProgressive(&tg.TLPhotoSizeProgressive{Type: "y", W: 1280, H: 394, Sizes: []int32{100, 200, 300}}),
 							},
 							DcId: 2,
 						}),

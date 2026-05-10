@@ -53,7 +53,8 @@ func (c *MediaProcessorCore) readOriginalBytes(readLease []byte) ([]byte, error)
 	return out.Bytes(), nil
 }
 
-func makeDerivative(kind string, stored *dfs.FileFinalizedObject, fileName, mimeType string, size int64, width, height int32, bytes []byte) *mediaprocessor.ProcessorDerivative {
+func makeDerivative(kind string, stored *dfs.FileFinalizedObject, fileName, mimeType string, size int64, width, height int32, bytes []byte, progressiveSizes []int32) *mediaprocessor.ProcessorDerivative {
+	progressiveSizes = append([]int32{}, progressiveSizes...)
 	if stored != nil {
 		if stored.ObjectId != "" {
 			objectID := stored.ObjectId
@@ -61,14 +62,15 @@ func makeDerivative(kind string, stored *dfs.FileFinalizedObject, fileName, mime
 				size = stored.Size2
 			}
 			return mediaprocessor.MakeTLProcessorDerivative(&mediaprocessor.TLProcessorDerivative{
-				Kind:     kind,
-				ObjectId: objectID,
-				FileName: fileName,
-				MimeType: mimeType,
-				Size2:    size,
-				Width:    width,
-				Height:   height,
-				Bytes:    bytes,
+				Kind:             kind,
+				ObjectId:         objectID,
+				FileName:         fileName,
+				MimeType:         mimeType,
+				Size2:            size,
+				Width:            width,
+				Height:           height,
+				Bytes:            bytes,
+				ProgressiveSizes: progressiveSizes,
 			}).ToProcessorDerivative()
 		}
 		if stored.Size2 > 0 {
@@ -76,13 +78,14 @@ func makeDerivative(kind string, stored *dfs.FileFinalizedObject, fileName, mime
 		}
 	}
 	return mediaprocessor.MakeTLProcessorDerivative(&mediaprocessor.TLProcessorDerivative{
-		Kind:     kind,
-		FileName: fileName,
-		MimeType: mimeType,
-		Size2:    size,
-		Width:    width,
-		Height:   height,
-		Bytes:    bytes,
+		Kind:             kind,
+		FileName:         fileName,
+		MimeType:         mimeType,
+		Size2:            size,
+		Width:            width,
+		Height:           height,
+		Bytes:            bytes,
+		ProgressiveSizes: progressiveSizes,
 	}).ToProcessorDerivative()
 }
 
@@ -129,7 +132,7 @@ func makeThumbDerivative(stored *dfs.FileFinalizedObject, fileName string, metad
 		width = metadata.Width
 		height = metadata.Height
 	}
-	return makeDerivative(processor.DerivativeDocumentThumb, stored, fileName, jpegMimeType, int64(len(cover)), width, height, cover)
+	return makeDerivative(processor.DerivativeDocumentThumb, stored, fileName, jpegMimeType, int64(len(cover)), width, height, cover, nil)
 }
 
 func profileBool(v tg.BoolClazz) bool {

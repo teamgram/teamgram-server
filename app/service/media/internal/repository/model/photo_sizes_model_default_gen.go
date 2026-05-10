@@ -57,7 +57,7 @@ type (
 		FileSize      int32  `db:"file_size" json:"file_size"`
 		FilePath      string `db:"file_path" json:"file_path"`
 		HasStripped   bool   `db:"has_stripped" json:"has_stripped"`
-		StrippedBytes string `db:"stripped_bytes" json:"stripped_bytes"`
+		StrippedBytes []byte `db:"stripped_bytes" json:"stripped_bytes"`
 		CachedType    int32  `db:"cached_type" json:"cached_type"`
 		CachedBytes   string `db:"cached_bytes" json:"cached_bytes"`
 	}

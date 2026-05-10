@@ -3,9 +3,9 @@
     <operation name="Insert">
         <sql>
             INSERT INTO photo_sizes
-                (photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes)
+                (photo_size_id, size_type, width, height, file_size, file_path, has_stripped, stripped_bytes, cached_type, cached_bytes)
             VALUES
-                (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :cached_type, :cached_bytes)
+                (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :has_stripped, :stripped_bytes, :cached_type, :cached_bytes)
         </sql>
     </operation>
 
@@ -13,7 +13,7 @@
         <sql>
             <![CDATA[
             SELECT
-                id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes
+                id, photo_size_id, size_type, width, height, file_size, file_path, has_stripped, stripped_bytes, cached_type, cached_bytes
             FROM
                 photo_sizes
             WHERE
@@ -29,7 +29,7 @@
         <sql>
             <![CDATA[
             SELECT
-                id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes
+                id, photo_size_id, size_type, width, height, file_size, file_path, has_stripped, stripped_bytes, cached_type, cached_bytes
             FROM
                 photo_sizes
             WHERE

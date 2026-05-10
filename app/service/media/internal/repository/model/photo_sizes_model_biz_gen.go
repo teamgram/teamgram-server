@@ -50,10 +50,10 @@ func NewPhotoSizesTxModel(tx *sqlx.Tx) PhotoSizesTxModel {
 }
 
 // Insert
-// insert into photo_sizes(photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes) values (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :cached_type, :cached_bytes)
+// insert into photo_sizes(photo_size_id, size_type, width, height, file_size, file_path, has_stripped, stripped_bytes, cached_type, cached_bytes) values (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :has_stripped, :stripped_bytes, :cached_type, :cached_bytes)
 func (m *defaultPhotoSizesModel) Insert(ctx context.Context, data *PhotoSizes) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into photo_sizes(photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes) values (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :cached_type, :cached_bytes)"
+		query = "insert into photo_sizes(photo_size_id, size_type, width, height, file_size, file_path, has_stripped, stripped_bytes, cached_type, cached_bytes) values (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :has_stripped, :stripped_bytes, :cached_type, :cached_bytes)"
 		r     sql.Result
 	)
 
@@ -78,10 +78,10 @@ func (m *defaultPhotoSizesModel) Insert(ctx context.Context, data *PhotoSizes) (
 }
 
 // Insert
-// insert into photo_sizes(photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes) values (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :cached_type, :cached_bytes)
+// insert into photo_sizes(photo_size_id, size_type, width, height, file_size, file_path, has_stripped, stripped_bytes, cached_type, cached_bytes) values (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :has_stripped, :stripped_bytes, :cached_type, :cached_bytes)
 func (m *defaultPhotoSizesTxModel) Insert(data *PhotoSizes) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert into photo_sizes(photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes) values (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :cached_type, :cached_bytes)"
+		query = "insert into photo_sizes(photo_size_id, size_type, width, height, file_size, file_path, has_stripped, stripped_bytes, cached_type, cached_bytes) values (:photo_size_id, :size_type, :width, :height, :file_size, :file_path, :has_stripped, :stripped_bytes, :cached_type, :cached_bytes)"
 		r     sql.Result
 	)
 
@@ -105,10 +105,10 @@ func (m *defaultPhotoSizesTxModel) Insert(data *PhotoSizes) (lastInsertId, rowsA
 }
 
 // SelectListByPhotoSizeId
-// select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id = :photo_size_id order by id asc
+// select id, photo_size_id, size_type, width, height, file_size, file_path, has_stripped, stripped_bytes, cached_type, cached_bytes from photo_sizes where photo_size_id = :photo_size_id order by id asc
 func (m *defaultPhotoSizesModel) SelectListByPhotoSizeId(ctx context.Context, photoSizeId int64) (rList []PhotoSizes, err error) {
 	var (
-		query  = "select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id = ? order by id asc"
+		query  = "select id, photo_size_id, size_type, width, height, file_size, file_path, has_stripped, stripped_bytes, cached_type, cached_bytes from photo_sizes where photo_size_id = ? order by id asc"
 		values []PhotoSizes
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, photoSizeId)
@@ -129,10 +129,10 @@ func (m *defaultPhotoSizesModel) SelectListByPhotoSizeId(ctx context.Context, ph
 }
 
 // SelectListByPhotoSizeId
-// select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id = :photo_size_id order by id asc
+// select id, photo_size_id, size_type, width, height, file_size, file_path, has_stripped, stripped_bytes, cached_type, cached_bytes from photo_sizes where photo_size_id = :photo_size_id order by id asc
 func (m *defaultPhotoSizesTxModel) SelectListByPhotoSizeId(photoSizeId int64) (rList []PhotoSizes, err error) {
 	var (
-		query  = "select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id = ? order by id asc"
+		query  = "select id, photo_size_id, size_type, width, height, file_size, file_path, has_stripped, stripped_bytes, cached_type, cached_bytes from photo_sizes where photo_size_id = ? order by id asc"
 		values []PhotoSizes
 	)
 	err = m.tx.QueryRowsPartial(&values, query, photoSizeId)
@@ -153,10 +153,10 @@ func (m *defaultPhotoSizesTxModel) SelectListByPhotoSizeId(photoSizeId int64) (r
 }
 
 // SelectListByPhotoSizeIdWithCB
-// select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id = :photo_size_id order by id asc
+// select id, photo_size_id, size_type, width, height, file_size, file_path, has_stripped, stripped_bytes, cached_type, cached_bytes from photo_sizes where photo_size_id = :photo_size_id order by id asc
 func (m *defaultPhotoSizesModel) SelectListByPhotoSizeIdWithCB(ctx context.Context, photoSizeId int64, cb func(sz, i int, v *PhotoSizes)) (rList []PhotoSizes, err error) {
 	var (
-		query  = "select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id = ? order by id asc"
+		query  = "select id, photo_size_id, size_type, width, height, file_size, file_path, has_stripped, stripped_bytes, cached_type, cached_bytes from photo_sizes where photo_size_id = ? order by id asc"
 		values []PhotoSizes
 	)
 	err = m.db.QueryRowsPartial(ctx, &values, query, photoSizeId)
@@ -184,10 +184,10 @@ func (m *defaultPhotoSizesModel) SelectListByPhotoSizeIdWithCB(ctx context.Conte
 }
 
 // SelectListByPhotoSizeIdList
-// select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id in (:idList) order by id asc
+// select id, photo_size_id, size_type, width, height, file_size, file_path, has_stripped, stripped_bytes, cached_type, cached_bytes from photo_sizes where photo_size_id in (:idList) order by id asc
 func (m *defaultPhotoSizesModel) SelectListByPhotoSizeIdList(ctx context.Context, idList []int64) (rList []PhotoSizes, err error) {
 	var (
-		query  = fmt.Sprintf("select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id in (%s) order by id asc", sqlx.InInt64List(idList))
+		query  = fmt.Sprintf("select id, photo_size_id, size_type, width, height, file_size, file_path, has_stripped, stripped_bytes, cached_type, cached_bytes from photo_sizes where photo_size_id in (%s) order by id asc", sqlx.InInt64List(idList))
 		values []PhotoSizes
 	)
 	if len(idList) == 0 {
@@ -213,10 +213,10 @@ func (m *defaultPhotoSizesModel) SelectListByPhotoSizeIdList(ctx context.Context
 }
 
 // SelectListByPhotoSizeIdList
-// select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id in (:idList) order by id asc
+// select id, photo_size_id, size_type, width, height, file_size, file_path, has_stripped, stripped_bytes, cached_type, cached_bytes from photo_sizes where photo_size_id in (:idList) order by id asc
 func (m *defaultPhotoSizesTxModel) SelectListByPhotoSizeIdList(idList []int64) (rList []PhotoSizes, err error) {
 	var (
-		query  = fmt.Sprintf("select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id in (%s) order by id asc", sqlx.InInt64List(idList))
+		query  = fmt.Sprintf("select id, photo_size_id, size_type, width, height, file_size, file_path, has_stripped, stripped_bytes, cached_type, cached_bytes from photo_sizes where photo_size_id in (%s) order by id asc", sqlx.InInt64List(idList))
 		values []PhotoSizes
 	)
 	if len(idList) == 0 {
@@ -242,10 +242,10 @@ func (m *defaultPhotoSizesTxModel) SelectListByPhotoSizeIdList(idList []int64) (
 }
 
 // SelectListByPhotoSizeIdListWithCB
-// select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id in (:idList) order by id asc
+// select id, photo_size_id, size_type, width, height, file_size, file_path, has_stripped, stripped_bytes, cached_type, cached_bytes from photo_sizes where photo_size_id in (:idList) order by id asc
 func (m *defaultPhotoSizesModel) SelectListByPhotoSizeIdListWithCB(ctx context.Context, idList []int64, cb func(sz, i int, v *PhotoSizes)) (rList []PhotoSizes, err error) {
 	var (
-		query  = fmt.Sprintf("select id, photo_size_id, size_type, width, height, file_size, file_path, cached_type, cached_bytes from photo_sizes where photo_size_id in (%s) order by id asc", sqlx.InInt64List(idList))
+		query  = fmt.Sprintf("select id, photo_size_id, size_type, width, height, file_size, file_path, has_stripped, stripped_bytes, cached_type, cached_bytes from photo_sizes where photo_size_id in (%s) order by id asc", sqlx.InInt64List(idList))
 		values []PhotoSizes
 	)
 	if len(idList) == 0 {

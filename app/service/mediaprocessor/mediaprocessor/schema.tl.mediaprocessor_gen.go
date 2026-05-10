@@ -384,7 +384,7 @@ func DecodeProcessorDerivativeClazz(d *bin.Decoder) (ProcessorDerivativeClazz, e
 	}
 
 	switch id {
-	case 0x2af751de:
+	case 0x9ef0eecd:
 		x := &TLProcessorDerivative{ClazzID: id, ClazzName2: ClazzName_processorDerivative}
 		if err := x.Decode(d); err != nil {
 			return nil, err
@@ -398,16 +398,17 @@ func DecodeProcessorDerivativeClazz(d *bin.Decoder) (ProcessorDerivativeClazz, e
 
 // TLProcessorDerivative <--
 type TLProcessorDerivative struct {
-	ClazzID    uint32 `json:"_id"`
-	ClazzName2 string `json:"_name"`
-	Kind       string `json:"kind"`
-	ObjectId   string `json:"object_id"`
-	FileName   string `json:"file_name"`
-	MimeType   string `json:"mime_type"`
-	Size2      int64  `json:"size2"`
-	Width      int32  `json:"width"`
-	Height     int32  `json:"height"`
-	Bytes      []byte `json:"bytes"`
+	ClazzID          uint32  `json:"_id"`
+	ClazzName2       string  `json:"_name"`
+	Kind             string  `json:"kind"`
+	ObjectId         string  `json:"object_id"`
+	FileName         string  `json:"file_name"`
+	MimeType         string  `json:"mime_type"`
+	Size2            int64   `json:"size2"`
+	Width            int32   `json:"width"`
+	Height           int32   `json:"height"`
+	Bytes            []byte  `json:"bytes"`
+	ProgressiveSizes []int32 `json:"progressive_sizes"`
 }
 
 func MakeTLProcessorDerivative(m *TLProcessorDerivative) *TLProcessorDerivative {
@@ -452,7 +453,7 @@ func (m *TLProcessorDerivative) ToProcessorDerivative() *ProcessorDerivative {
 
 func (m *TLProcessorDerivative) CalcSize(layer int32) int {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_processorDerivative, int(layer)); clazzId {
-	case 0x2af751de:
+	case 0x9ef0eecd:
 		size := 4
 		size += iface.CalcStringSize(m.Kind)
 		size += iface.CalcStringSize(m.ObjectId)
@@ -462,6 +463,7 @@ func (m *TLProcessorDerivative) CalcSize(layer int32) int {
 		size += 4
 		size += 4
 		size += iface.CalcBytesSize(m.Bytes)
+		size += iface.CalcInt32ListSize(m.ProgressiveSizes)
 
 		return size
 	default:
@@ -471,7 +473,7 @@ func (m *TLProcessorDerivative) CalcSize(layer int32) int {
 
 func (m *TLProcessorDerivative) Validate(layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_processorDerivative, int(layer)); clazzId {
-	case 0x2af751de:
+	case 0x9ef0eecd:
 		if err := iface.ValidateRequiredString("kind", m.Kind); err != nil {
 			return err
 		}
@@ -492,6 +494,10 @@ func (m *TLProcessorDerivative) Validate(layer int32) error {
 			return err
 		}
 
+		if err := iface.ValidateRequiredSlice("progressive_sizes", m.ProgressiveSizes); err != nil {
+			return err
+		}
+
 		return nil
 	default:
 		return fmt.Errorf("unable to encode processorDerivative: unsupported layer %d", layer)
@@ -501,8 +507,8 @@ func (m *TLProcessorDerivative) Validate(layer int32) error {
 // Encode <--
 func (m *TLProcessorDerivative) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_processorDerivative, int(layer)); clazzId {
-	case 0x2af751de:
-		x.PutClazzID(0x2af751de)
+	case 0x9ef0eecd:
+		x.PutClazzID(0x9ef0eecd)
 
 		x.PutString(m.Kind)
 		x.PutString(m.ObjectId)
@@ -513,6 +519,8 @@ func (m *TLProcessorDerivative) Encode(x *bin.Encoder, layer int32) error {
 		x.PutInt32(m.Height)
 		x.PutBytes(m.Bytes)
 
+		iface.EncodeInt32List(x, m.ProgressiveSizes)
+
 		return nil
 	default:
 		return fmt.Errorf("unable to encode processorDerivative: unsupported layer %d", layer)
@@ -522,38 +530,43 @@ func (m *TLProcessorDerivative) Encode(x *bin.Encoder, layer int32) error {
 // Decode <--
 func (m *TLProcessorDerivative) Decode(d *bin.Decoder) (err error) {
 	switch m.ClazzID {
-	case 0x2af751de:
+	case 0x9ef0eecd:
 		m.Kind, err = d.String()
 		if err != nil {
-			return fmt.Errorf("unable to decode processorDerivative#0x2af751de: field kind: %w", err)
+			return fmt.Errorf("unable to decode processorDerivative#0x9ef0eecd: field kind: %w", err)
 		}
 		m.ObjectId, err = d.String()
 		if err != nil {
-			return fmt.Errorf("unable to decode processorDerivative#0x2af751de: field object_id: %w", err)
+			return fmt.Errorf("unable to decode processorDerivative#0x9ef0eecd: field object_id: %w", err)
 		}
 		m.FileName, err = d.String()
 		if err != nil {
-			return fmt.Errorf("unable to decode processorDerivative#0x2af751de: field file_name: %w", err)
+			return fmt.Errorf("unable to decode processorDerivative#0x9ef0eecd: field file_name: %w", err)
 		}
 		m.MimeType, err = d.String()
 		if err != nil {
-			return fmt.Errorf("unable to decode processorDerivative#0x2af751de: field mime_type: %w", err)
+			return fmt.Errorf("unable to decode processorDerivative#0x9ef0eecd: field mime_type: %w", err)
 		}
 		m.Size2, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode processorDerivative#0x2af751de: field size2: %w", err)
+			return fmt.Errorf("unable to decode processorDerivative#0x9ef0eecd: field size2: %w", err)
 		}
 		m.Width, err = d.Int32()
 		if err != nil {
-			return fmt.Errorf("unable to decode processorDerivative#0x2af751de: field width: %w", err)
+			return fmt.Errorf("unable to decode processorDerivative#0x9ef0eecd: field width: %w", err)
 		}
 		m.Height, err = d.Int32()
 		if err != nil {
-			return fmt.Errorf("unable to decode processorDerivative#0x2af751de: field height: %w", err)
+			return fmt.Errorf("unable to decode processorDerivative#0x9ef0eecd: field height: %w", err)
 		}
 		m.Bytes, err = d.Bytes()
 		if err != nil {
-			return fmt.Errorf("unable to decode processorDerivative#0x2af751de: field bytes: %w", err)
+			return fmt.Errorf("unable to decode processorDerivative#0x9ef0eecd: field bytes: %w", err)
+		}
+
+		m.ProgressiveSizes, err = iface.DecodeInt32List(d)
+		if err != nil {
+			return fmt.Errorf("unable to decode processorDerivative#0x9ef0eecd: field progressive_sizes: %w", err)
 		}
 
 		return nil

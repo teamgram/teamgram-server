@@ -234,6 +234,32 @@ func TestLocatorFileReferenceErrorsRemainSemantic(t *testing.T) {
 	if !errors.Is(err, media.ErrFileReferenceExpired) {
 		t.Fatalf("expired file_reference error = %v, want ErrFileReferenceExpired", err)
 	}
+
+	invalid := make([]byte, fileReferenceOpaqueLength)
+	invalid[0] = fileReferenceOpaqueVersion
+	invalid[1] = 1
+	_, err = repo.ResolveFileLocation(context.Background(), &media.TLMediaResolveFileLocation{
+		Location: tg.MakeTLInputDocumentFileLocation(&tg.TLInputDocumentFileLocation{Id: 100, AccessHash: 200, FileReference: invalid}),
+		ViewerId: 7,
+	})
+	if !errors.Is(err, media.ErrFileReferenceInvalid) {
+		t.Fatalf("invalid file_reference error = %v, want ErrFileReferenceInvalid", err)
+	}
+
+	mismatch := testFileReference(t, repo, FileReferenceClaims{
+		MediaID:      100,
+		ObjectID:     "doc-original-object",
+		OriginDomain: "document",
+		AccessHash:   201,
+		ExpireAt:     now.Add(time.Hour).Unix(),
+	})
+	_, err = repo.ResolveFileLocation(context.Background(), &media.TLMediaResolveFileLocation{
+		Location: tg.MakeTLInputDocumentFileLocation(&tg.TLInputDocumentFileLocation{Id: 100, AccessHash: 200, FileReference: mismatch}),
+		ViewerId: 7,
+	})
+	if !errors.Is(err, media.ErrFileReferenceInvalid) {
+		t.Fatalf("mismatched file_reference error = %v, want ErrFileReferenceInvalid", err)
+	}
 }
 
 func testLocatorRepository(now time.Time) *Repository {
@@ -247,7 +273,10 @@ func testLocatorRepository(now time.Time) *Repository {
 
 func testFileReference(t *testing.T, r *Repository, claims FileReferenceClaims) []byte {
 	t.Helper()
-	token, err := r.fileReferenceService.Generate(claims)
+	if r.model.FileReferencesModel == nil {
+		r.model.FileReferencesModel = newCaptureFileReferencesModel()
+	}
+	token, err := r.fileReferenceService.Generate(context.Background(), claims, r)
 	if err != nil {
 		t.Fatalf("Generate() error = %v", err)
 	}

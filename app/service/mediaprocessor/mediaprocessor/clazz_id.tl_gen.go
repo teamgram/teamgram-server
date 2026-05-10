@@ -11,7 +11,7 @@
 package mediaprocessor
 
 const (
-	ClazzID_processorDerivative         = 0x2af751de // 2af751de
+	ClazzID_processorDerivative         = 0x9ef0eecd // 9ef0eecd
 	ClazzID_processedPhoto              = 0x606d445  // 606d445
 	ClazzID_processedDocument           = 0xfb5d44f8 // fb5d44f8
 	ClazzID_mediaProcessor_processPhoto = 0x23289b04 // 23289b04

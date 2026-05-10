@@ -15,20 +15,9 @@
 //
 // Author: teamgramio (teamgram.io@gmail.com)
 
-package config
+package model
 
-import (
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
+type (
+	extendFileReferencesModel interface {
+	}
 )
-
-type Config struct {
-	kitex.RpcServerConf
-	Dfs         kitex.RpcClientConf
-	ImageMagick ImageMagickConf
-}
-
-type ImageMagickConf struct {
-	Binary         string
-	TimeoutSeconds int
-	Quality        int
-}

@@ -44,7 +44,7 @@ func (r *Repository) resolveDocumentLocation(ctx context.Context, loc *tg.TLInpu
 	if loc == nil {
 		return nil, media.ErrFileLocationInvalid
 	}
-	if _, err := r.validateFileReference(loc.FileReference, fileReferenceDocument, loc.Id, loc.AccessHash); err != nil {
+	if _, err := r.validateFileReference(ctx, loc.FileReference, fileReferenceDocument, loc.Id, loc.AccessHash); err != nil {
 		return nil, err
 	}
 	doc, err := r.findDocument(ctx, loc.Id)
@@ -68,7 +68,7 @@ func (r *Repository) resolvePhotoLocation(ctx context.Context, loc *tg.TLInputPh
 	if loc == nil || loc.ThumbSize == "" {
 		return nil, media.ErrFileLocationInvalid
 	}
-	if _, err := r.validateFileReference(loc.FileReference, fileReferencePhoto, loc.Id, loc.AccessHash); err != nil {
+	if _, err := r.validateFileReference(ctx, loc.FileReference, fileReferencePhoto, loc.Id, loc.AccessHash); err != nil {
 		return nil, err
 	}
 	photo, err := r.findPhoto(ctx, loc.Id)
@@ -104,11 +104,11 @@ func (r *Repository) resolvePeerPhotoLocation(ctx context.Context, loc *tg.TLInp
 	return r.makeResolvedObject(size.FilePath, int64(size.FileSize), locatorThumbMimeType, photo.DcId, storageFileType(tg.ClazzID_storage_fileJpeg))
 }
 
-func (r *Repository) validateFileReference(token []byte, domain string, mediaID, accessHash int64) (FileReferenceClaims, error) {
+func (r *Repository) validateFileReference(ctx context.Context, token []byte, domain string, mediaID, accessHash int64) (FileReferenceClaims, error) {
 	if r == nil || r.fileReferenceService == nil {
 		return FileReferenceClaims{}, media.ErrFileReferenceInvalid
 	}
-	claims, err := r.fileReferenceService.Validate(token)
+	claims, err := r.fileReferenceService.Validate(ctx, token, r)
 	if err != nil {
 		return FileReferenceClaims{}, err
 	}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="file_references">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO file_references
+                (ref_hash, domain, media_id, access_hash, object_id, origin_domain, origin_id, expire_at, revoked_at)
+            VALUES
+                (:ref_hash, :domain, :media_id, :access_hash, :object_id, :origin_domain, :origin_id, :expire_at, :revoked_at)
+        </sql>
+    </operation>
+
+    <operation name="SelectByRefHash">
+        <sql>
+            <![CDATA[
+            SELECT
+                id, ref_hash, domain, media_id, access_hash, object_id, origin_domain, origin_id, expire_at, revoked_at, created_at
+            FROM
+                file_references
+            WHERE
+                ref_hash = :ref_hash LIMIT 1
+            ]]>
+        </sql>
+    </operation>
+</table>

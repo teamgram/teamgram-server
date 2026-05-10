@@ -271,16 +271,20 @@ func (f *fakeFilesDfsClient) DfsUploadedProfilePhoto(context.Context, *dfs.TLDfs
 }
 
 type fakeFilesMediaClient struct {
-	resolveReq  *mediapb.TLMediaResolveFileLocation
-	resolveResp *mediapb.MediaResolvedFileObject
-	resolveErr  error
-	photoReq    *mediapb.TLMediaGetPhoto
-	photoResp   *tg.Photo
-	photoErr    error
+	resolveReq      *mediapb.TLMediaResolveFileLocation
+	resolveResp     *mediapb.MediaResolvedFileObject
+	resolveErr      error
+	photoReq        *mediapb.TLMediaGetPhoto
+	photoResp       *tg.Photo
+	photoErr        error
+	uploadPhotoReq  *mediapb.TLMediaUploadPhotoFile
+	uploadPhotoResp *tg.Photo
+	uploadPhotoErr  error
 }
 
-func (f *fakeFilesMediaClient) MediaUploadPhotoFile(context.Context, *mediapb.TLMediaUploadPhotoFile) (*tg.Photo, error) {
-	return nil, errors.New("unexpected MediaUploadPhotoFile")
+func (f *fakeFilesMediaClient) MediaUploadPhotoFile(_ context.Context, in *mediapb.TLMediaUploadPhotoFile) (*tg.Photo, error) {
+	f.uploadPhotoReq = in
+	return f.uploadPhotoResp, f.uploadPhotoErr
 }
 
 func (f *fakeFilesMediaClient) MediaUploadProfilePhotoFile(context.Context, *mediapb.TLMediaUploadProfilePhotoFile) (*tg.Photo, error) {

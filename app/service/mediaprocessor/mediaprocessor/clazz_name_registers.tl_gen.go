@@ -25,7 +25,7 @@ const (
 
 func init() {
 	// RegisterClazzNameList
-	iface.RegisterClazzName(ClazzName_processorDerivative, 0, 0x2af751de)         // 2af751de
+	iface.RegisterClazzName(ClazzName_processorDerivative, 0, 0x9ef0eecd)         // 9ef0eecd
 	iface.RegisterClazzName(ClazzName_processedPhoto, 0, 0x606d445)               // 606d445
 	iface.RegisterClazzName(ClazzName_processedDocument, 0, 0xfb5d44f8)           // fb5d44f8
 	iface.RegisterClazzName(ClazzName_mediaProcessor_processPhoto, 0, 0x23289b04) // 23289b04
@@ -33,7 +33,7 @@ func init() {
 	iface.RegisterClazzName(ClazzName_mediaProcessor_processMp4, 0, 0xac180ca1)   // ac180ca1
 
 	//RegisterClazzIDNameList
-	iface.RegisterClazzIDName(ClazzName_processorDerivative, 0x2af751de)         // 2af751de
+	iface.RegisterClazzIDName(ClazzName_processorDerivative, 0x9ef0eecd)         // 9ef0eecd
 	iface.RegisterClazzIDName(ClazzName_processedPhoto, 0x606d445)               // 606d445
 	iface.RegisterClazzIDName(ClazzName_processedDocument, 0xfb5d44f8)           // fb5d44f8
 	iface.RegisterClazzIDName(ClazzName_mediaProcessor_processPhoto, 0x23289b04) // 23289b04
