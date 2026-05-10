@@ -68,16 +68,7 @@ func (e ImageMagickProgressiveEncoder) EncodeProgressiveJPEG(ctx context.Context
 	runCtx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 
-	resizeArg := strconv.Itoa(maxSide) + "x" + strconv.Itoa(maxSide)
-	cmd := exec.CommandContext(runCtx, binary,
-		"-",
-		"-auto-orient",
-		"-resize", resizeArg,
-		"-strip",
-		"-interlace", "Plane",
-		"-quality", strconv.Itoa(quality),
-		"jpg:-",
-	)
+	cmd := exec.CommandContext(runCtx, binary, imageMagickArgs(maxSide, quality)...)
 	cmd.Stdin = bytes.NewReader(input)
 	var stdout bytes.Buffer
 	var stderr bytes.Buffer
@@ -98,6 +89,19 @@ func (e ImageMagickProgressiveEncoder) EncodeProgressiveJPEG(ctx context.Context
 		return nil, nil, fmt.Errorf("parse progressive jpeg scan sizes: %w", err)
 	}
 	return data, scanSizes, nil
+}
+
+func imageMagickArgs(maxSide int, quality int) []string {
+	resizeArg := strconv.Itoa(maxSide) + "x" + strconv.Itoa(maxSide) + ">"
+	return []string{
+		"-",
+		"-auto-orient",
+		"-resize", resizeArg,
+		"-strip",
+		"-interlace", "Plane",
+		"-quality", strconv.Itoa(quality),
+		"jpg:-",
+	}
 }
 
 func ProgressiveScanSizes(data []byte) ([]int32, error) {
@@ -122,7 +126,10 @@ func ProgressiveScanSizes(data []byte) ([]int32, error) {
 				}
 				return nil, fmt.Errorf("missing progressive SOF marker")
 			}
-			if len(scanSizes) == 0 || scanSizes[len(scanSizes)-1] != int32(len(data)) {
+			if len(scanSizes) == 0 {
+				return nil, fmt.Errorf("progressive jpeg has no scans")
+			}
+			if scanSizes[len(scanSizes)-1] != int32(len(data)) {
 				scanSizes = appendIncreasingScanSize(scanSizes, len(data))
 			}
 			return scanSizes, nil

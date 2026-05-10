@@ -5,6 +5,7 @@ import (
 	"context"
 	"image/jpeg"
 	"os"
+	"reflect"
 	"testing"
 )
 
@@ -12,6 +13,36 @@ func TestProgressiveScanSizesRejectsBaselineJPEG(t *testing.T) {
 	_, err := ProgressiveScanSizes(testSizedJPEG(t, 640, 480))
 	if err == nil {
 		t.Fatal("ProgressiveScanSizes(baseline) error = nil, want error")
+	}
+}
+
+func TestProgressiveScanSizesRejectsProgressiveJPEGWithoutScans(t *testing.T) {
+	data := []byte{
+		0xff, 0xd8,
+		0xff, 0xc2, 0x00, 0x02,
+		0xff, 0xd9,
+	}
+	_, err := ProgressiveScanSizes(data)
+	if err == nil {
+		t.Fatal("ProgressiveScanSizes(SOF2 without SOS) error = nil, want error")
+	}
+}
+
+func TestProgressiveScanSizesSkipsStuffedAndFillBytesInScanData(t *testing.T) {
+	data := []byte{
+		0xff, 0xd8,
+		0xff, 0xc2, 0x00, 0x02,
+		0xff, 0xda, 0x00, 0x02,
+		0x11, 0xff, 0x00, 0x22, 0xff,
+		0xff, 0xd9,
+	}
+	sizes, err := ProgressiveScanSizes(data)
+	if err != nil {
+		t.Fatalf("ProgressiveScanSizes() error = %v", err)
+	}
+	want := []int32{15, int32(len(data))}
+	if !reflect.DeepEqual(sizes, want) {
+		t.Fatalf("ProgressiveScanSizes() = %v, want %v", sizes, want)
 	}
 }
 
@@ -32,6 +63,19 @@ func TestProgressiveScanSizesRejectsInvalidInput(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestImageMagickArgsPreventsUpscaling(t *testing.T) {
+	args := imageMagickArgs(1280, 85)
+	for i := 0; i < len(args)-1; i++ {
+		if args[i] == "-resize" {
+			if args[i+1] != "1280x1280>" {
+				t.Fatalf("resize arg = %q, want 1280x1280>", args[i+1])
+			}
+			return
+		}
+	}
+	t.Fatalf("imageMagickArgs() = %v, want -resize argument", args)
 }
 
 func TestResolveImageMagickBinaryRejectsUnsupportedConfiguredExecutable(t *testing.T) {
