@@ -274,7 +274,7 @@ func mapProcessedPhotoSizes(derivatives []mediaprocessor.ProcessorDerivativeClaz
 const (
 	processorDerivativePhotoSize     = "photo_size"
 	processorDerivativePhotoStripped = "photo_stripped"
-	photoSizeCachedTypeProgressive   = 1
+	photoSizeCachedTypeProgressive   = 4
 )
 
 func validateProgressiveSizes(sizes []int32, total int64) error {

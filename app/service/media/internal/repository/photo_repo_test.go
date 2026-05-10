@@ -432,7 +432,7 @@ func TestUploadPhotoFileMapsStrippedAndProgressiveSizes(t *testing.T) {
 	if sizesByType["s"] == nil || sizesByType["s"].FilePath != "derivative-object-s" || sizesByType["s"].FileSize != 600 {
 		t.Fatalf("expected normal row with object id path, got %#v", sizesByType["s"])
 	}
-	if sizesByType["x"] == nil || sizesByType["x"].FilePath != "derivative-object-x" || sizesByType["x"].CachedType == 0 || sizesByType["x"].CachedBytes == "" {
+	if sizesByType["x"] == nil || sizesByType["x"].FilePath != "derivative-object-x" || sizesByType["x"].CachedType != 4 || sizesByType["x"].CachedBytes == "" {
 		t.Fatalf("expected progressive row with cached scan sizes, got %#v", sizesByType["x"])
 	}
 	var cachedSizes []int32
@@ -648,7 +648,10 @@ func TestUploadProfilePhotoFileCommitsAndProcessesImage(t *testing.T) {
 
 func TestGetPhotoLoadsSizes(t *testing.T) {
 	photos := &capturePhotosModel{found: &model.Photos{PhotoId: 303, AccessHash: 404, SizeId: 303, VideoSizeId: 303, DcId: 2, Date2: 5}}
-	photoSizes := &capturePhotoSizesModel{byID: []model.PhotoSizes{{PhotoSizeId: 303, SizeType: "m", Width: 320, Height: 240, FileSize: 1000}}}
+	photoSizes := &capturePhotoSizesModel{byID: []model.PhotoSizes{
+		{PhotoSizeId: 303, SizeType: "m", Width: 320, Height: 240, FileSize: 1000},
+		{PhotoSizeId: 303, SizeType: "x", Width: 800, Height: 600, FileSize: 1200, CachedType: 4, CachedBytes: "[400,900,1200]"},
+	}}
 	videoSizes := &captureVideoSizesModel{byID: []model.VideoSizes{{VideoSizeId: 303, SizeType: "v", Width: 320, Height: 240, FileSize: 2000, VideoStartTs: 1.5}}}
 	r := &Repository{
 		model:                &model.Models{PhotosModel: photos, PhotoSizesModel: photoSizes, VideoSizesModel: videoSizes},
@@ -664,8 +667,11 @@ func TestGetPhotoLoadsSizes(t *testing.T) {
 	if !ok {
 		t.Fatalf("expected photo, got %#v", got)
 	}
-	if len(do.Sizes) != 1 || len(do.VideoSizes) != 1 {
+	if len(do.Sizes) != 2 || len(do.VideoSizes) != 1 {
 		t.Fatalf("expected one photo size and one video size, got %#v %#v", do.Sizes, do.VideoSizes)
+	}
+	if progressive, ok := do.Sizes[1].(*tg.TLPhotoSizeProgressive); !ok || progressive.Type != "x" || progressive.W != 800 || progressive.H != 600 || len(progressive.Sizes) != 3 || progressive.Sizes[2] != 1200 {
+		t.Fatalf("expected cached_type=4 to reload as progressive photo size, got %#v", do.Sizes[1])
 	}
 	claims, err := r.fileReferenceService.Validate(do.FileReference)
 	if err != nil {
