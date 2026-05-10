@@ -21,7 +21,7 @@ func TestResolveMessageMediaInputMediaPhotoUsesMediaGetPhotoReference(t *testing
 		}).ToPhoto(),
 	}
 
-	got, err := resolveMessageMedia(context.Background(), mediaClient, 1001, tg.MakeTLInputMediaPhoto(&tg.TLInputMediaPhoto{
+	got, err := resolveMessageMedia(context.Background(), mediaClient, nil, 1001, tg.MakeTLInputMediaPhoto(&tg.TLInputMediaPhoto{
 		Id: tg.MakeTLInputPhoto(&tg.TLInputPhoto{Id: 42, AccessHash: 99, FileReference: []byte("input-reference")}),
 	}))
 	if err != nil {
