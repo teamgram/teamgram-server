@@ -668,7 +668,7 @@ func TestGetPhotoLoadsSizes(t *testing.T) {
 		t.Fatalf("expected photo, got %#v", got)
 	}
 	if len(do.Sizes) != 2 || len(do.VideoSizes) != 1 {
-		t.Fatalf("expected one photo size and one video size, got %#v %#v", do.Sizes, do.VideoSizes)
+		t.Fatalf("expected two photo sizes and one video size, got %#v %#v", do.Sizes, do.VideoSizes)
 	}
 	if progressive, ok := do.Sizes[1].(*tg.TLPhotoSizeProgressive); !ok || progressive.Type != "x" || progressive.W != 800 || progressive.H != 600 || len(progressive.Sizes) != 3 || progressive.Sizes[2] != 1200 {
 		t.Fatalf("expected cached_type=4 to reload as progressive photo size, got %#v", do.Sizes[1])
