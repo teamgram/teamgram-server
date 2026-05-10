@@ -405,6 +405,46 @@ func TestUploadedDocumentMediaReturnsVideoCover(t *testing.T) {
 	}
 }
 
+func TestUploadedDocumentMediaRejectsInvalidVideoCoverWithoutSaving(t *testing.T) {
+	attrs := []tg.DocumentAttributeClazz{
+		tg.MakeTLDocumentAttributeVideo(&tg.TLDocumentAttributeVideo{SupportsStreaming: true, Duration: 3, W: 640, H: 360}),
+		tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "clip.mp4"}),
+	}
+	documents := &captureDocumentsModel{}
+	photos := &capturePhotosModel{found: &model.Photos{PhotoId: 303, AccessHash: 404, SizeId: 303, DcId: 2, Date2: 5}}
+	dfsClient := &fakeDfsMediaClient{finalized: testFinalizedObject("original-mp4-object", 333)}
+	processorClient := &fakeMediaProcessorClient{document: testProcessedDocument(t, "processed-mp4-object", "video/mp4", 444, attrs, nil)}
+	r := &Repository{
+		model: &model.Models{
+			DocumentsModel:      documents,
+			PhotosModel:         photos,
+			FileReferencesModel: newCaptureFileReferencesModel(),
+			PhotoSizesModel:     &capturePhotoSizesModel{},
+			VideoSizesModel:     &captureVideoSizesModel{},
+		},
+		dfsClient:            dfsClient,
+		processorClient:      processorClient,
+		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
+		fileReferenceTTL:     time.Hour,
+	}
+
+	_, err := r.UploadedDocumentMedia(context.Background(), &media.TLMediaUploadedDocumentMedia{
+		OwnerId: 77,
+		Media: tg.MakeTLInputMediaUploadedDocument(&tg.TLInputMediaUploadedDocument{
+			File:       tg.MakeTLInputFile(&tg.TLInputFile{Id: 8, Parts: 1, Name: "clip.mp4"}),
+			MimeType:   "video/mp4",
+			Attributes: attrs,
+			VideoCover: tg.MakeTLInputPhoto(&tg.TLInputPhoto{Id: 303, AccessHash: 405, FileReference: []byte("stale-reference")}),
+		}),
+	})
+	if !errors.Is(err, media.ErrMediaInvalidArgument) {
+		t.Fatalf("expected ErrMediaInvalidArgument, got %v", err)
+	}
+	if len(documents.inserted) != 0 {
+		t.Fatalf("expected no saved document for invalid video cover, got %#v", documents.inserted)
+	}
+}
+
 func TestUploadedDocumentMediaReturnsNoVideoFlagForForceFileMp4(t *testing.T) {
 	got := uploadTestDocumentMedia(t, true)
 	mediaDoc, ok := got.ToMessageMediaDocument()

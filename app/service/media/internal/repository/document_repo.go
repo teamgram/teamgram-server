@@ -65,6 +65,10 @@ func (r *Repository) UploadedDocumentMedia(ctx context.Context, in *media.TLMedi
 	if err != nil {
 		return nil, err
 	}
+	videoCover, err := r.resolveInputPhotoForMessage(ctx, uploaded.VideoCover)
+	if err != nil {
+		return nil, err
+	}
 
 	finalized, err := r.dfsClient.CommitUpload(ctx, &dfsapi.TLDfsCommitUpload{
 		UploadSessionId: externalUploadSessionID(in.OwnerId, uploaded.File),
@@ -100,10 +104,6 @@ func (r *Repository) UploadedDocumentMedia(ctx context.Context, in *media.TLMedi
 	docClazz, ok := doc.ToDocument()
 	if !ok {
 		return nil, media.ErrMediaInvalidArgument
-	}
-	videoCover, err := r.resolveInputPhotoForMessage(ctx, uploaded.VideoCover)
-	if err != nil {
-		return nil, err
 	}
 	return uploadedDocumentMessageMedia(uploaded, docClazz, classification, videoCover), nil
 }
