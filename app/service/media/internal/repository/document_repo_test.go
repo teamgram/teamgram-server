@@ -456,11 +456,14 @@ func TestUploadedDocumentMediaReturnsNoVideoFlagForForceFileMp4(t *testing.T) {
 	}
 }
 
-func TestUploadedDocumentMediaForceFileMp4WithoutVideoAttributeDoesNotUseProcessor(t *testing.T) {
+func TestUploadedDocumentMediaForceFileMp4WithoutVideoAttributeKeepsFileSemanticsAndUsesThumbs(t *testing.T) {
 	documents := &captureDocumentsModel{}
 	photoSizes := &capturePhotoSizesModel{}
-	dfsClient := &fakeDfsMediaClient{finalized: testFinalizedObject("original-mp4-file-object", 333)}
-	processorClient := &fakeMediaProcessorClient{}
+	dfsClient := &fakeDfsMediaClient{finalized: testFinalizedObjectWithLease("original-mp4-file-object", 333, []byte("mp4-file-lease"))}
+	processorClient := &fakeMediaProcessorClient{document: testProcessedDocument(t, "original-mp4-file-object", "video/mp4", 333, []tg.DocumentAttributeClazz{
+		tg.MakeTLDocumentAttributeVideo(&tg.TLDocumentAttributeVideo{Duration: 3, W: 320, H: 180}),
+		tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "1.mp4"}),
+	}, testDocumentThumbs())}
 	r := &Repository{
 		model:                &model.Models{DocumentsModel: documents, FileReferencesModel: newCaptureFileReferencesModel(), PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
 		dfsClient:            dfsClient,
@@ -483,8 +486,11 @@ func TestUploadedDocumentMediaForceFileMp4WithoutVideoAttributeDoesNotUseProcess
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if processorClient.mp4Req != nil || processorClient.gifReq != nil || processorClient.photoReq != nil {
-		t.Fatalf("expected force-file mp4 without video attribute not to use processor, got mp4=%#v gif=%#v photo=%#v", processorClient.mp4Req, processorClient.gifReq, processorClient.photoReq)
+	if processorClient.mp4Req == nil || processorClient.mp4Req.OwnerId != 77 || processorClient.mp4Req.ObjectId != "original-mp4-file-object" || string(processorClient.mp4Req.ReadLease) != "mp4-file-lease" || processorClient.mp4Req.FileName != "1.mp4" || len(processorClient.mp4Req.Attributes) == 0 {
+		t.Fatalf("unexpected force-file mp4 thumb processor request: %#v", processorClient.mp4Req)
+	}
+	if processorClient.gifReq != nil || processorClient.photoReq != nil {
+		t.Fatalf("expected only mp4 processor for force-file mp4 thumbs, got gif=%#v photo=%#v", processorClient.gifReq, processorClient.photoReq)
 	}
 	mediaDoc, ok := got.ToMessageMediaDocument()
 	if !ok || mediaDoc.Document == nil {
@@ -497,14 +503,57 @@ func TestUploadedDocumentMediaForceFileMp4WithoutVideoAttributeDoesNotUseProcess
 	if !ok {
 		t.Fatalf("expected TLDocument, got %#v", mediaDoc.Document)
 	}
-	if doc.MimeType != "video/mp4" || doc.Size2 != 333 || len(doc.Thumbs) != 0 {
+	if doc.MimeType != "video/mp4" || doc.Size2 != 333 || len(doc.Thumbs) != 1 {
 		t.Fatalf("unexpected force-file mp4 document: %#v", doc)
 	}
-	if len(documents.inserted) != 1 || documents.inserted[0].FilePath != "original-mp4-file-object" || documents.inserted[0].MimeType != "video/mp4" || documents.inserted[0].ThumbId != 0 {
+	if _, hasVideo := findRepositoryDocumentAttribute[*tg.TLDocumentAttributeVideo](doc.Attributes); hasVideo {
+		t.Fatalf("expected force-file mp4 response to preserve original filename-only attributes, got %#v", doc.Attributes)
+	}
+	if len(documents.inserted) != 1 || documents.inserted[0].FilePath != "original-mp4-file-object" || documents.inserted[0].MimeType != "video/mp4" || documents.inserted[0].ThumbId != doc.Id {
 		t.Fatalf("expected saved original mp4 file document, got %#v", documents.inserted)
 	}
-	if len(photoSizes.inserted) != 0 {
-		t.Fatalf("expected no saved thumbs for mp4 file, got %#v", photoSizes.inserted)
+	if len(photoSizes.inserted) != 1 || photoSizes.inserted[0].SizeType != "m" || photoSizes.inserted[0].Width != 320 || photoSizes.inserted[0].Height != 180 || photoSizes.inserted[0].FilePath != "gif-thumb-object" {
+		t.Fatalf("expected saved force-file mp4 thumb, got %#v", photoSizes.inserted)
+	}
+}
+
+func TestUploadedDocumentMediaForceFileMp4WithoutVideoAttributeIgnoresThumbFailure(t *testing.T) {
+	documents := &captureDocumentsModel{}
+	photoSizes := &capturePhotoSizesModel{}
+	dfsClient := &fakeDfsMediaClient{finalized: testFinalizedObjectWithLease("original-mp4-file-object", 333, []byte("mp4-file-lease"))}
+	processorClient := &fakeMediaProcessorClient{mp4Err: errors.New("ffprobe unavailable")}
+	r := &Repository{
+		model:                &model.Models{DocumentsModel: documents, FileReferencesModel: newCaptureFileReferencesModel(), PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
+		dfsClient:            dfsClient,
+		processorClient:      processorClient,
+		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
+		fileReferenceTTL:     time.Hour,
+	}
+
+	got, err := r.UploadedDocumentMedia(context.Background(), &media.TLMediaUploadedDocumentMedia{
+		OwnerId: 77,
+		Media: tg.MakeTLInputMediaUploadedDocument(&tg.TLInputMediaUploadedDocument{
+			ForceFile: true,
+			File:      tg.MakeTLInputFile(&tg.TLInputFile{Id: 8, Parts: 1, Name: "1.mp4"}),
+			MimeType:  "video/mp4",
+			Attributes: []tg.DocumentAttributeClazz{
+				tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "1.mp4"}),
+			},
+		}),
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	mediaDoc, ok := got.ToMessageMediaDocument()
+	if !ok || mediaDoc.Document == nil {
+		t.Fatalf("expected messageMediaDocument, got %#v", got)
+	}
+	doc, ok := mediaDoc.Document.(*tg.TLDocument)
+	if !ok {
+		t.Fatalf("expected TLDocument, got %#v", mediaDoc.Document)
+	}
+	if len(doc.Thumbs) != 0 || len(photoSizes.inserted) != 0 || len(documents.inserted) != 1 || documents.inserted[0].ThumbId != 0 {
+		t.Fatalf("expected force-file mp4 send to continue without optional thumbs, doc=%#v documents=%#v photo_sizes=%#v", doc, documents.inserted, photoSizes.inserted)
 	}
 }
 

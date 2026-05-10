@@ -276,10 +276,14 @@ func (r *Repository) documentThumbsFromOriginalUpload(ctx context.Context, owner
 	if uploaded.Thumb != nil {
 		return r.documentThumbsFromUploadedThumb(ctx, uploaded.Thumb, ownerID)
 	}
-	if classification.Kind != documentKindImage {
+	switch {
+	case classification.Kind == documentKindImage:
+		return r.documentThumbsFromOriginalImage(ctx, ownerID, finalized, uploaded)
+	case classification.Kind == documentKindPlain && strings.EqualFold(strings.TrimSpace(uploaded.MimeType), "video/mp4"):
+		return r.documentThumbsFromOriginalMp4File(ctx, ownerID, finalized, uploaded)
+	default:
 		return nil, nil, nil
 	}
-	return r.documentThumbsFromOriginalImage(ctx, ownerID, finalized, uploaded)
 }
 
 func (r *Repository) documentThumbsFromOriginalImage(ctx context.Context, ownerID int64, finalized *dfsapi.FileFinalizedObject, uploaded *tg.TLInputMediaUploadedDocument) ([]tg.PhotoSizeClazz, map[string]string, error) {
@@ -300,6 +304,31 @@ func (r *Repository) documentThumbsFromOriginalImage(ctx context.Context, ownerI
 		return nil, nil, wrapMediaDownstream("mediaprocessor process document image thumb", err)
 	}
 	return documentThumbsFromProcessedPhoto(processed, "mediaprocessor process document image thumb")
+}
+
+func (r *Repository) documentThumbsFromOriginalMp4File(ctx context.Context, ownerID int64, finalized *dfsapi.FileFinalizedObject, uploaded *tg.TLInputMediaUploadedDocument) ([]tg.PhotoSizeClazz, map[string]string, error) {
+	if r.processorClient == nil || finalized == nil || finalized.ObjectId == "" || len(finalized.ReadLease) == 0 {
+		return nil, nil, nil
+	}
+	attrs, err := encodeDocumentAttributeVector(uploaded.Attributes)
+	if err != nil {
+		return nil, nil, err
+	}
+	processed, err := r.processorClient.ProcessMp4(ctx, &mediaprocessor.TLMediaProcessorProcessMp4{
+		OwnerId:    ownerID,
+		ObjectId:   finalized.ObjectId,
+		ReadLease:  finalized.ReadLease,
+		FileName:   uploadedFileName(uploaded),
+		Attributes: attrs,
+	})
+	if err != nil || processed == nil {
+		return nil, nil, nil
+	}
+	thumbs, thumbObjectIDs, err := mapProcessedDocumentThumbs(processed.Thumbs)
+	if err != nil {
+		return nil, nil, nil
+	}
+	return thumbs, thumbObjectIDs, nil
 }
 
 func (r *Repository) documentThumbsFromUploadedThumb(ctx context.Context, thumb tg.InputFileClazz, ownerID int64) ([]tg.PhotoSizeClazz, map[string]string, error) {

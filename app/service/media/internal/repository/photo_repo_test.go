@@ -151,6 +151,7 @@ type fakeMediaProcessorClient struct {
 	mp4Req   *mediaprocessor.TLMediaProcessorProcessMp4
 	photo    *mediaprocessor.ProcessedPhoto
 	document *mediaprocessor.ProcessedDocument
+	mp4Err   error
 }
 
 func (c *fakeMediaProcessorClient) ProcessPhoto(_ context.Context, in *mediaprocessor.TLMediaProcessorProcessPhoto) (*mediaprocessor.ProcessedPhoto, error) {
@@ -165,6 +166,9 @@ func (c *fakeMediaProcessorClient) ProcessGif(_ context.Context, in *mediaproces
 
 func (c *fakeMediaProcessorClient) ProcessMp4(_ context.Context, in *mediaprocessor.TLMediaProcessorProcessMp4) (*mediaprocessor.ProcessedDocument, error) {
 	c.mp4Req = in
+	if c.mp4Err != nil {
+		return nil, c.mp4Err
+	}
 	return c.document, nil
 }
 
