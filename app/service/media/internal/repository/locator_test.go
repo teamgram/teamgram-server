@@ -239,6 +239,90 @@ func TestResolveDocumentLocationRejectsThumbRoleCollision(t *testing.T) {
 	}
 }
 
+func TestResolveDocumentLocationReturnsVideoStorageErrorBeforePhotoThumb(t *testing.T) {
+	now := time.Unix(1700000000, 0)
+	repo := testLocatorRepository(now)
+	repo.model.DocumentsModel = &captureDocumentsModel{byID: map[int64]*model.Documents{
+		105: {
+			DocumentId:   105,
+			AccessHash:   205,
+			DcId:         5,
+			FilePath:     "doc-photo-storage-object",
+			FileSize:     2000,
+			MimeType:     "video/mp4",
+			ThumbId:      907,
+			VideoThumbId: 908,
+		},
+	}}
+	repo.model.PhotoSizesModel = &capturePhotoSizesModel{byID: []model.PhotoSizes{
+		{PhotoSizeId: 907, SizeType: "m", Width: 320, Height: 240, FileSize: 111, FilePath: "doc-photo-storage-thumb-object"},
+	}}
+	repo.model.VideoSizesModel = errVideoSizesModel{err: errors.New("video sizes db down")}
+	ref := testFileReference(t, repo, FileReferenceClaims{
+		MediaID:      105,
+		ObjectID:     "doc-photo-storage-object",
+		OriginDomain: "document",
+		OriginID:     7,
+		AccessHash:   205,
+		ExpireAt:     now.Add(time.Hour).Unix(),
+	})
+
+	_, err := repo.ResolveFileLocation(context.Background(), &media.TLMediaResolveFileLocation{
+		Location: tg.MakeTLInputDocumentFileLocation(&tg.TLInputDocumentFileLocation{
+			Id:            105,
+			AccessHash:    205,
+			FileReference: ref,
+			ThumbSize:     "m",
+		}),
+		ViewerId: 7,
+	})
+	if !errors.Is(err, media.ErrMediaStorage) {
+		t.Fatalf("ResolveFileLocation() error = %v, want ErrMediaStorage", err)
+	}
+}
+
+func TestResolveDocumentLocationReturnsPhotoStorageErrorBeforeVideoThumb(t *testing.T) {
+	now := time.Unix(1700000000, 0)
+	repo := testLocatorRepository(now)
+	repo.model.DocumentsModel = &captureDocumentsModel{byID: map[int64]*model.Documents{
+		106: {
+			DocumentId:   106,
+			AccessHash:   206,
+			DcId:         5,
+			FilePath:     "doc-video-storage-object",
+			FileSize:     2000,
+			MimeType:     "video/mp4",
+			ThumbId:      909,
+			VideoThumbId: 910,
+		},
+	}}
+	repo.model.PhotoSizesModel = errPhotoSizesModel{err: errors.New("photo sizes db down")}
+	repo.model.VideoSizesModel = &captureVideoSizesModel{byID: []model.VideoSizes{
+		{VideoSizeId: 910, SizeType: "v", Width: 320, Height: 240, FileSize: 222, FilePath: "doc-video-storage-thumb-object"},
+	}}
+	ref := testFileReference(t, repo, FileReferenceClaims{
+		MediaID:      106,
+		ObjectID:     "doc-video-storage-object",
+		OriginDomain: "document",
+		OriginID:     7,
+		AccessHash:   206,
+		ExpireAt:     now.Add(time.Hour).Unix(),
+	})
+
+	_, err := repo.ResolveFileLocation(context.Background(), &media.TLMediaResolveFileLocation{
+		Location: tg.MakeTLInputDocumentFileLocation(&tg.TLInputDocumentFileLocation{
+			Id:            106,
+			AccessHash:    206,
+			FileReference: ref,
+			ThumbSize:     "v",
+		}),
+		ViewerId: 7,
+	})
+	if !errors.Is(err, media.ErrMediaStorage) {
+		t.Fatalf("ResolveFileLocation() error = %v, want ErrMediaStorage", err)
+	}
+}
+
 func TestResolveDocumentLocationKeepsStaticThumbResolution(t *testing.T) {
 	now := time.Unix(1700000000, 0)
 	repo := testLocatorRepository(now)
@@ -422,4 +506,22 @@ func testFileReference(t *testing.T, r *Repository, claims FileReferenceClaims) 
 		t.Fatalf("Generate() error = %v", err)
 	}
 	return token
+}
+
+type errPhotoSizesModel struct {
+	model.PhotoSizesModel
+	err error
+}
+
+func (m errPhotoSizesModel) SelectListByPhotoSizeId(context.Context, int64) ([]model.PhotoSizes, error) {
+	return nil, m.err
+}
+
+type errVideoSizesModel struct {
+	model.VideoSizesModel
+	err error
+}
+
+func (m errVideoSizesModel) SelectListByVideoSizeId(context.Context, int64) ([]model.VideoSizes, error) {
+	return nil, m.err
 }

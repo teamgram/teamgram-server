@@ -63,6 +63,12 @@ func (r *Repository) resolveDocumentLocation(ctx context.Context, loc *tg.TLInpu
 		if photoFound && videoFound {
 			return nil, media.ErrFileLocationInvalid
 		}
+		if photoFound && doc.VideoThumbId != 0 && errors.Is(videoErr, media.ErrMediaStorage) {
+			return nil, videoErr
+		}
+		if videoFound && doc.ThumbId != 0 && errors.Is(photoErr, media.ErrMediaStorage) {
+			return nil, photoErr
+		}
 		if photoFound {
 			return r.makeResolvedObject(photoSize.FilePath, int64(photoSize.FileSize), locatorThumbMimeType, doc.DcId, storageFileType(tg.ClazzID_storage_fileJpeg))
 		}
