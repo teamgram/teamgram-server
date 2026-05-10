@@ -5,7 +5,7 @@
 ///////////////////////////////
 
 ---types---
-processorDerivative kind:string object_id:string file_name:string mime_type:string size:long width:int height:int bytes:bytes = ProcessorDerivative;
+processorDerivative kind:string object_id:string file_name:string mime_type:string size:long width:int height:int bytes:bytes progressive_sizes:Vector<int> = ProcessorDerivative;
 processedPhoto original_object_id:string sizes:Vector<ProcessorDerivative> = ProcessedPhoto;
 processedDocument object_id:string mime_type:string size:long attributes:bytes thumbs:Vector<ProcessorDerivative> = ProcessedDocument;
 

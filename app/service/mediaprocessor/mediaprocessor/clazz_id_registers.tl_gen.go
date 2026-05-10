@@ -21,7 +21,7 @@ func init() {
 	// Constructor
 	iface.RegisterClazzID(0xfb5d44f8, func() iface.TLObject { return &TLProcessedDocument{ClazzID: 0xfb5d44f8} })   // 0xfb5d44f8
 	iface.RegisterClazzID(0x606d445, func() iface.TLObject { return &TLProcessedPhoto{ClazzID: 0x606d445} })        // 0x606d445
-	iface.RegisterClazzID(0x2af751de, func() iface.TLObject { return &TLProcessorDerivative{ClazzID: 0x2af751de} }) // 0x2af751de
+	iface.RegisterClazzID(0x9ef0eecd, func() iface.TLObject { return &TLProcessorDerivative{ClazzID: 0x9ef0eecd} }) // 0x9ef0eecd
 
 	// Method
 	iface.RegisterClazzID(0x23289b04, func() iface.TLObject { return &TLMediaProcessorProcessPhoto{ClazzID: 0x23289b04} }) // 0x23289b04
