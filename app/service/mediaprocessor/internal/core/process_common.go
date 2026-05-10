@@ -54,6 +54,7 @@ func (c *MediaProcessorCore) readOriginalBytes(readLease []byte) ([]byte, error)
 }
 
 func makeDerivative(kind string, stored *dfs.FileFinalizedObject, fileName, mimeType string, size int64, width, height int32, bytes []byte, progressiveSizes []int32) *mediaprocessor.ProcessorDerivative {
+	progressiveSizes = append([]int32{}, progressiveSizes...)
 	if stored != nil {
 		if stored.ObjectId != "" {
 			objectID := stored.ObjectId
@@ -69,7 +70,7 @@ func makeDerivative(kind string, stored *dfs.FileFinalizedObject, fileName, mime
 				Width:            width,
 				Height:           height,
 				Bytes:            bytes,
-				ProgressiveSizes: append([]int32(nil), progressiveSizes...),
+				ProgressiveSizes: progressiveSizes,
 			}).ToProcessorDerivative()
 		}
 		if stored.Size2 > 0 {
@@ -84,7 +85,7 @@ func makeDerivative(kind string, stored *dfs.FileFinalizedObject, fileName, mime
 		Width:            width,
 		Height:           height,
 		Bytes:            bytes,
-		ProgressiveSizes: append([]int32(nil), progressiveSizes...),
+		ProgressiveSizes: progressiveSizes,
 	}).ToProcessorDerivative()
 }
 

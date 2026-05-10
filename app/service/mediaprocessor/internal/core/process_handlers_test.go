@@ -167,6 +167,24 @@ func TestProcessPhotoReturnsStrippedAndProgressiveLargestDerivative(t *testing.T
 	assertDerivativeWithProgressive(t, out.Sizes[2], processor.DerivativePhotoSize, "put-2", "x_image.jpg", "image/jpeg", 1011, 800, 538, []byte("progressive"), []int32{3, 7, 11})
 }
 
+func TestMakeDerivativeNormalizesEmptyProgressiveSizes(t *testing.T) {
+	stored := dfs.MakeTLFileFinalizedObject(&dfs.TLFileFinalizedObject{
+		ObjectId: "photo-size",
+		Size2:    5,
+	}).ToFileFinalizedObject()
+
+	got := makeDerivative(processor.DerivativePhotoSize, stored, "s_image.jpg", "image/jpeg", 4, 90, 60, []byte("small"), nil)
+	if got.ProgressiveSizes == nil {
+		t.Fatalf("ProgressiveSizes is nil, want non-nil empty slice")
+	}
+	if len(got.ProgressiveSizes) != 0 {
+		t.Fatalf("ProgressiveSizes len = %d, want 0", len(got.ProgressiveSizes))
+	}
+	if err := got.Validate(0); err != nil {
+		t.Fatalf("Validate() error = %v", err)
+	}
+}
+
 func TestProcessGifRejectsShortInputBeforeConvert(t *testing.T) {
 	dfsFake := &fakeDFS{readBytes: make([]byte, 10239)}
 	procFake := &fakeProcessor{}
