@@ -39,11 +39,11 @@ func TestMessageEventV3ToTLMessageProjectsFullUploadedDocumentContract(t *testin
 			DocumentAttributes: []payload.DocumentAttributeRefV1{
 				{Kind: "filename", FileName: "clip.mp4"},
 				{Kind: "video", W: 1280, H: 720, DurationFloat: 3.5, SupportsStreaming: true, VideoStartTs: &videoStartTs},
-				{Kind: "sticker", Alt: ":)", StickerSetKind: "id", StickerSetID: 1001, StickerSetAccessHash: 2002, Mask: true, MaskCoords: &payload.MaskCoordsRefV1{N: 1, X: 0.5, Y: 0.25, Zoom: 1.5}},
-				{Kind: "custom_emoji", Alt: ":)", StickerSetKind: "id", StickerSetID: 3003, StickerSetAccessHash: 4004, Free: true, TextColor: true},
+				{Kind: "sticker", Alt: ":)", StickerSet: &payload.StickerSetRefV1{Kind: "id", ID: 1001, AccessHash: 2002}, Mask: true, MaskCoords: &payload.MaskCoordsRefV1{N: 1, X: 0.5, Y: 0.25, Zoom: 1.5}},
+				{Kind: "custom_emoji", Alt: ":)", StickerSet: &payload.StickerSetRefV1{Kind: "id", ID: 3003, AccessHash: 4004}, Free: true, TextColor: true},
 				{Kind: "has_stickers"},
 			},
-			DocumentMediaFlags: payload.DocumentMediaFlagsV1{Video: true, Spoiler: true},
+			DocumentMediaFlags: &payload.DocumentMediaFlagsV1{Video: true, Spoiler: true},
 			VideoCover: &payload.PhotoRefV1{
 				ID:            777,
 				AccessHash:    888,
