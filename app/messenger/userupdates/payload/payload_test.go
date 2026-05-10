@@ -178,9 +178,9 @@ func TestMediaRefV2CarriesFullDocumentProjection(t *testing.T) {
 		DocumentAttributes: []DocumentAttributeRefV1{
 			{Kind: "filename", FileName: "clip.mp4"},
 			{Kind: "video", W: 1280, H: 720, DurationFloat: 3.5, SupportsStreaming: true, VideoStartTs: &videoStartTs},
-			{Kind: "audio", Duration: 3, Title: stringPtrForTest("title"), Performer: stringPtrForTest("performer")},
-			{Kind: "sticker", Alt: ":)", StickerSetID: 1001, StickerSetAccessHash: 2002, Mask: true, MaskCoords: &MaskCoordsRefV1{N: 1, X: 0.5, Y: 0.25, Zoom: 1.5}},
-			{Kind: "custom_emoji", Alt: ":)", StickerSetID: 3003, StickerSetAccessHash: 4004, Free: true, TextColor: true},
+			{Kind: "audio", Duration: 3, Title: stringPtrForTest("title"), Performer: stringPtrForTest("performer"), Waveform: []byte{1, 2, 3}, Voice: true},
+			{Kind: "sticker", Alt: ":)", StickerSetKind: "id", StickerSetID: 1001, StickerSetAccessHash: 2002, Mask: true, MaskCoords: &MaskCoordsRefV1{N: 1, X: 0.5, Y: 0.25, Zoom: 1.5}},
+			{Kind: "custom_emoji", Alt: ":)", StickerSetKind: "id", StickerSetID: 3003, StickerSetAccessHash: 4004, Free: true, TextColor: true},
 			{Kind: "has_stickers"},
 		},
 		DocumentMediaFlags: DocumentMediaFlagsV1{Video: true, Spoiler: true},
@@ -204,6 +204,43 @@ func TestMediaRefV2CarriesFullDocumentProjection(t *testing.T) {
 	var got MediaRefV1
 	if err := json.Unmarshal(body, &got); err != nil {
 		t.Fatalf("Unmarshal() error = %v", err)
+	}
+	if len(got.DocumentAttributes) != 6 {
+		t.Fatalf("DocumentAttributes len = %d, want 6", len(got.DocumentAttributes))
+	}
+	for i, want := range []string{"filename", "video", "audio", "sticker", "custom_emoji", "has_stickers"} {
+		if got.DocumentAttributes[i].Kind != want {
+			t.Fatalf("DocumentAttributes[%d].Kind = %q, want %q", i, got.DocumentAttributes[i].Kind, want)
+		}
+	}
+	filename := got.DocumentAttributes[0]
+	if filename.FileName != "clip.mp4" {
+		t.Fatalf("filename attr FileName = %q, want clip.mp4", filename.FileName)
+	}
+	video := got.DocumentAttributes[1]
+	if video.DurationFloat != 3.5 || video.W != 1280 || video.H != 720 || !video.SupportsStreaming {
+		t.Fatalf("video attr = %+v, want duration/w/h/supports_streaming preserved", video)
+	}
+	if video.VideoStartTs == nil || *video.VideoStartTs != videoStartTs {
+		t.Fatalf("video attr VideoStartTs = %v, want %v", video.VideoStartTs, videoStartTs)
+	}
+	audio := got.DocumentAttributes[2]
+	if audio.Duration != 3 || audio.Title == nil || *audio.Title != "title" || audio.Performer == nil || *audio.Performer != "performer" || !audio.Voice {
+		t.Fatalf("audio attr = %+v, want duration/title/performer/voice preserved", audio)
+	}
+	if string(audio.Waveform) != string([]byte{1, 2, 3}) {
+		t.Fatalf("audio attr Waveform = %v, want [1 2 3]", audio.Waveform)
+	}
+	sticker := got.DocumentAttributes[3]
+	if sticker.Alt != ":)" || sticker.StickerSetKind != "id" || sticker.StickerSetID != 1001 || sticker.StickerSetAccessHash != 2002 || !sticker.Mask {
+		t.Fatalf("sticker attr = %+v, want alt/stickerset/mask preserved", sticker)
+	}
+	if sticker.MaskCoords == nil || sticker.MaskCoords.N != 1 || sticker.MaskCoords.X != 0.5 || sticker.MaskCoords.Y != 0.25 || sticker.MaskCoords.Zoom != 1.5 {
+		t.Fatalf("sticker attr MaskCoords = %+v, want exact mask coords", sticker.MaskCoords)
+	}
+	customEmoji := got.DocumentAttributes[4]
+	if customEmoji.Alt != ":)" || customEmoji.StickerSetKind != "id" || customEmoji.StickerSetID != 3003 || customEmoji.StickerSetAccessHash != 4004 || !customEmoji.Free || !customEmoji.TextColor {
+		t.Fatalf("custom emoji attr = %+v, want alt/stickerset/free/text_color preserved", customEmoji)
 	}
 	if len(got.DocumentVideoThumbs) != 1 {
 		t.Fatalf("DocumentVideoThumbs len = %d, want 1", len(got.DocumentVideoThumbs))

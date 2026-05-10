@@ -97,19 +97,42 @@ func TestDocumentAttributePersistencePreservesStickerCustomEmojiAndHasStickers(t
 	if err != nil {
 		t.Fatalf("decodeLegacyDocumentAttributes() error = %v", err)
 	}
-	if !hasRepositoryDocumentAttribute[*tg.TLDocumentAttributeFilename](decodedLegacy) ||
-		!hasRepositoryDocumentAttribute[*tg.TLDocumentAttributeSticker](decodedLegacy) ||
-		!hasRepositoryDocumentAttribute[*tg.TLDocumentAttributeCustomEmoji](decodedLegacy) ||
-		!hasRepositoryDocumentAttribute[*tg.TLDocumentAttributeHasStickers](decodedLegacy) {
+	filename, hasFilename := findRepositoryDocumentAttribute[*tg.TLDocumentAttributeFilename](decodedLegacy)
+	sticker, hasSticker := findRepositoryDocumentAttribute[*tg.TLDocumentAttributeSticker](decodedLegacy)
+	customEmoji, hasCustomEmoji := findRepositoryDocumentAttribute[*tg.TLDocumentAttributeCustomEmoji](decodedLegacy)
+	_, hasStickers := findRepositoryDocumentAttribute[*tg.TLDocumentAttributeHasStickers](decodedLegacy)
+	if !hasFilename || !hasSticker || !hasCustomEmoji || !hasStickers {
 		t.Fatalf("decoded legacy attrs = %#v, want filename/sticker/custom_emoji/has_stickers", decodedLegacy)
+	}
+	if filename.FileName != "sticker.webp" {
+		t.Fatalf("filename attr FileName = %q, want sticker.webp", filename.FileName)
+	}
+	stickerSet, ok := sticker.Stickerset.(*tg.TLInputStickerSetID)
+	if !ok || stickerSet.Id != 1001 || stickerSet.AccessHash != 2002 {
+		t.Fatalf("sticker stickerset = %#v, want inputStickerSetID 1001/2002", sticker.Stickerset)
+	}
+	maskCoords := sticker.MaskCoords
+	if maskCoords == nil || maskCoords.N != 1 || maskCoords.X != 0.5 || maskCoords.Y != 0.25 || maskCoords.Zoom != 1.5 {
+		t.Fatalf("sticker mask coords = %#v, want exact TLMaskCoords", sticker.MaskCoords)
+	}
+	if sticker.Alt != ":)" || !sticker.Mask {
+		t.Fatalf("sticker attr = %#v, want alt and mask preserved", sticker)
+	}
+	customStickerSet, ok := customEmoji.Stickerset.(*tg.TLInputStickerSetID)
+	if !ok || customStickerSet.Id != 3003 || customStickerSet.AccessHash != 4004 {
+		t.Fatalf("custom emoji stickerset = %#v, want inputStickerSetID 3003/4004", customEmoji.Stickerset)
+	}
+	if customEmoji.Alt != ":)" || !customEmoji.Free || !customEmoji.TextColor {
+		t.Fatalf("custom emoji attr = %#v, want alt/free/text_color preserved", customEmoji)
 	}
 }
 
-func hasRepositoryDocumentAttribute[T tg.DocumentAttributeClazz](attrs []tg.DocumentAttributeClazz) bool {
+func findRepositoryDocumentAttribute[T tg.DocumentAttributeClazz](attrs []tg.DocumentAttributeClazz) (T, bool) {
 	for _, attr := range attrs {
-		if _, ok := attr.(T); ok {
-			return true
+		if got, ok := attr.(T); ok {
+			return got, true
 		}
 	}
-	return false
+	var zero T
+	return zero, false
 }
