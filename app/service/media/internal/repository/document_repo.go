@@ -92,7 +92,7 @@ func (r *Repository) UploadedDocumentMedia(ctx context.Context, in *media.TLMedi
 	case requiredDocumentTransformMp4:
 		doc, documentObjectID, thumbObjectIDs, err = r.processUploadedMp4Document(ctx, in.OwnerId, finalized, uploaded)
 	default:
-		doc, thumbObjectIDs, err = r.documentFromOriginalUpload(ctx, in.OwnerId, finalized, uploaded)
+		doc, thumbObjectIDs, err = r.documentFromOriginalUpload(ctx, in.OwnerId, finalized, uploaded, classification)
 		documentObjectID = finalized.ObjectId
 	}
 	if err != nil {
@@ -240,7 +240,7 @@ func (r *Repository) processUploadedMp4Document(ctx context.Context, ownerID int
 	return doc, processed.ObjectId, thumbObjectIDs, nil
 }
 
-func (r *Repository) documentFromOriginalUpload(ctx context.Context, ownerID int64, finalized *dfsapi.FileFinalizedObject, uploaded *tg.TLInputMediaUploadedDocument) (*tg.Document, map[string]string, error) {
+func (r *Repository) documentFromOriginalUpload(ctx context.Context, ownerID int64, finalized *dfsapi.FileFinalizedObject, uploaded *tg.TLInputMediaUploadedDocument, classification documentClassification) (*tg.Document, map[string]string, error) {
 	if finalized == nil || finalized.ObjectId == "" || uploaded == nil {
 		return nil, nil, wrapMediaInvalidUploadedFile("dfs commit document upload", errors.New("missing finalized object"))
 	}
@@ -254,7 +254,7 @@ func (r *Repository) documentFromOriginalUpload(ctx context.Context, ownerID int
 	if err != nil {
 		return nil, nil, err
 	}
-	thumbs, thumbObjectIDs, err := r.documentThumbsFromUploadedThumb(ctx, uploaded.Thumb, ownerID)
+	thumbs, thumbObjectIDs, err := r.documentThumbsFromOriginalUpload(ctx, ownerID, finalized, uploaded, classification)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -270,6 +270,36 @@ func (r *Repository) documentFromOriginalUpload(ctx context.Context, ownerID int
 		DcId:          finalized.DcId,
 		Attributes:    uploaded.Attributes,
 	}).ToDocument(), thumbObjectIDs, nil
+}
+
+func (r *Repository) documentThumbsFromOriginalUpload(ctx context.Context, ownerID int64, finalized *dfsapi.FileFinalizedObject, uploaded *tg.TLInputMediaUploadedDocument, classification documentClassification) ([]tg.PhotoSizeClazz, map[string]string, error) {
+	if uploaded.Thumb != nil {
+		return r.documentThumbsFromUploadedThumb(ctx, uploaded.Thumb, ownerID)
+	}
+	if classification.Kind != documentKindImage {
+		return nil, nil, nil
+	}
+	return r.documentThumbsFromOriginalImage(ctx, ownerID, finalized, uploaded)
+}
+
+func (r *Repository) documentThumbsFromOriginalImage(ctx context.Context, ownerID int64, finalized *dfsapi.FileFinalizedObject, uploaded *tg.TLInputMediaUploadedDocument) ([]tg.PhotoSizeClazz, map[string]string, error) {
+	if r.processorClient == nil {
+		return nil, nil, wrapMediaDownstream("mediaprocessor process document image thumb", media.ErrMediaDownstream)
+	}
+	if finalized == nil || finalized.ObjectId == "" || len(finalized.ReadLease) == 0 {
+		return nil, nil, wrapMediaInvalidUploadedFile("dfs commit document upload", errors.New("missing finalized image object"))
+	}
+	processed, err := r.processorClient.ProcessPhoto(ctx, &mediaprocessor.TLMediaProcessorProcessPhoto{
+		OwnerId:   ownerID,
+		ObjectId:  finalized.ObjectId,
+		ReadLease: finalized.ReadLease,
+		FileName:  uploadedFileName(uploaded),
+		Profile:   tg.BoolFalseClazz,
+	})
+	if err != nil {
+		return nil, nil, wrapMediaDownstream("mediaprocessor process document image thumb", err)
+	}
+	return documentThumbsFromProcessedPhoto(processed, "mediaprocessor process document image thumb")
 }
 
 func (r *Repository) documentThumbsFromUploadedThumb(ctx context.Context, thumb tg.InputFileClazz, ownerID int64) ([]tg.PhotoSizeClazz, map[string]string, error) {
@@ -299,16 +329,21 @@ func (r *Repository) documentThumbsFromUploadedThumb(ctx context.Context, thumb 
 		ObjectId:  finalized.ObjectId,
 		ReadLease: finalized.ReadLease,
 		FileName:  inputFileName(thumb),
+		Profile:   tg.BoolFalseClazz,
 	})
 	if err != nil {
 		return nil, nil, wrapMediaDownstream("mediaprocessor process document thumb", err)
 	}
+	return documentThumbsFromProcessedPhoto(processed, "mediaprocessor process document thumb")
+}
+
+func documentThumbsFromProcessedPhoto(processed *mediaprocessor.ProcessedPhoto, operation string) ([]tg.PhotoSizeClazz, map[string]string, error) {
 	if processed == nil {
-		return nil, nil, wrapMediaInvalidUploadedFile("mediaprocessor process document thumb", errors.New("missing processed thumb"))
+		return nil, nil, wrapMediaInvalidUploadedFile(operation, errors.New("missing processed thumb"))
 	}
 	sizes, objectIDs, err := mapProcessedPhotoSizes(processed.Sizes)
 	if err != nil {
-		return nil, nil, wrapMediaInvalidUploadedFile("mediaprocessor process document thumb", err)
+		return nil, nil, wrapMediaInvalidUploadedFile(operation, err)
 	}
 	var selected *tg.TLPhotoSize
 	var selectedObjectID string
@@ -327,7 +362,7 @@ func (r *Repository) documentThumbsFromUploadedThumb(ctx context.Context, thumb 
 		}
 	}
 	if selected == nil {
-		return nil, nil, wrapMediaInvalidUploadedFile("mediaprocessor process document thumb", errors.New("missing normal document thumb"))
+		return nil, nil, wrapMediaInvalidUploadedFile(operation, errors.New("missing normal document thumb"))
 	}
 	return []tg.PhotoSizeClazz{
 		tg.MakeTLPhotoSize(&tg.TLPhotoSize{

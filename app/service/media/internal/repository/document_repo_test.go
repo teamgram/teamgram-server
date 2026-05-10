@@ -607,7 +607,7 @@ func TestUploadedDocumentMediaStoresSuppliedThumbForPlainDocument(t *testing.T) 
 	if dfsClient.commits[1].Purpose != "media_thumbnail" || dfsClient.commits[1].UploadSessionId != "ext:77:9:1" {
 		t.Fatalf("unexpected thumb commit request: %#v", dfsClient.commits[1])
 	}
-	if processorClient.photoReq == nil || processorClient.photoReq.OwnerId != 77 || processorClient.photoReq.ObjectId != "uploaded-thumb-object" || string(processorClient.photoReq.ReadLease) != "thumb-lease" || processorClient.photoReq.FileName != "thumb.jpg" {
+	if processorClient.photoReq == nil || processorClient.photoReq.OwnerId != 77 || processorClient.photoReq.ObjectId != "uploaded-thumb-object" || string(processorClient.photoReq.ReadLease) != "thumb-lease" || processorClient.photoReq.FileName != "thumb.jpg" || processorClient.photoReq.Profile != tg.BoolFalseClazz {
 		t.Fatalf("unexpected ProcessPhoto request: %#v", processorClient.photoReq)
 	}
 	mediaDoc, ok := got.ToMessageMediaDocument()
@@ -633,6 +633,65 @@ func TestUploadedDocumentMediaStoresSuppliedThumbForPlainDocument(t *testing.T) 
 	}
 	if len(photoSizes.inserted) != 1 || photoSizes.inserted[0].SizeType != "m" || photoSizes.inserted[0].Width != 640 || photoSizes.inserted[0].Height != 480 || photoSizes.inserted[0].FileSize != 2000 || photoSizes.inserted[0].FilePath != "thumb-x-object" {
 		t.Fatalf("expected saved thumb path from selected derivative, got %#v", photoSizes.inserted)
+	}
+}
+
+func TestUploadedDocumentMediaGeneratesThumbForImageDocumentWithoutSuppliedThumb(t *testing.T) {
+	documents := &captureDocumentsModel{}
+	photoSizes := &capturePhotoSizesModel{}
+	dfsClient := &fakeDocumentThumbDfsClient{finalizedByPurpose: map[string]*dfsapi.FileFinalizedObject{
+		"media_original": testFinalizedObjectWithLease("original-image-object", 555, []byte("image-lease")),
+	}}
+	processorClient := &fakeMediaProcessorClient{photo: testProcessedPhotoThumb(
+		mediaprocessor.MakeTLProcessorDerivative(&mediaprocessor.TLProcessorDerivative{Kind: "photo_size", ObjectId: "image-thumb-s-object", FileName: "s_thumb.jpg", Width: 160, Height: 120, Size2: 600}),
+		mediaprocessor.MakeTLProcessorDerivative(&mediaprocessor.TLProcessorDerivative{Kind: "photo_size", ObjectId: "image-thumb-x-object", FileName: "x_thumb.jpg", Width: 640, Height: 480, Size2: 2000}),
+	)}
+	r := testDocumentRepository(documents, photoSizes, dfsClient, processorClient)
+
+	got, err := r.UploadedDocumentMedia(context.Background(), &media.TLMediaUploadedDocumentMedia{
+		OwnerId: 77,
+		Media: tg.MakeTLInputMediaUploadedDocument(&tg.TLInputMediaUploadedDocument{
+			ForceFile: true,
+			File:      tg.MakeTLInputFile(&tg.TLInputFile{Id: 8, Parts: 1, Name: "photo.jpg"}),
+			MimeType:  "image/jpeg",
+			Attributes: []tg.DocumentAttributeClazz{
+				tg.MakeTLDocumentAttributeImageSize(&tg.TLDocumentAttributeImageSize{W: 1024, H: 768}),
+				tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "photo.jpg"}),
+			},
+		}),
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(dfsClient.commits) != 1 || dfsClient.commits[0].Purpose != "media_original" {
+		t.Fatalf("expected only original image commit, got %#v", dfsClient.commits)
+	}
+	if processorClient.photoReq == nil || processorClient.photoReq.OwnerId != 77 || processorClient.photoReq.ObjectId != "original-image-object" || string(processorClient.photoReq.ReadLease) != "image-lease" || processorClient.photoReq.FileName != "photo.jpg" || processorClient.photoReq.Profile != tg.BoolFalseClazz {
+		t.Fatalf("unexpected image thumb ProcessPhoto request: %#v", processorClient.photoReq)
+	}
+	mediaDoc, ok := got.ToMessageMediaDocument()
+	if !ok || mediaDoc.Document == nil {
+		t.Fatalf("expected messageMediaDocument, got %#v", got)
+	}
+	if mediaDoc.Video || mediaDoc.Round || mediaDoc.Voice {
+		t.Fatalf("unexpected force-file image messageMediaDocument flags: %#v", mediaDoc)
+	}
+	doc, ok := mediaDoc.Document.(*tg.TLDocument)
+	if !ok {
+		t.Fatalf("expected TLDocument, got %#v", mediaDoc.Document)
+	}
+	if len(doc.Thumbs) != 1 {
+		t.Fatalf("expected generated image document thumb, got %#v", doc.Thumbs)
+	}
+	thumb, ok := doc.Thumbs[0].(*tg.TLPhotoSize)
+	if !ok || thumb.Type != "m" || thumb.W != 640 || thumb.H != 480 || thumb.Size2 != 2000 {
+		t.Fatalf("unexpected generated image document thumb: %#v", doc.Thumbs[0])
+	}
+	if len(documents.inserted) != 1 || documents.inserted[0].ThumbId != doc.Id {
+		t.Fatalf("expected saved generated image thumb id, got %#v", documents.inserted)
+	}
+	if len(photoSizes.inserted) != 1 || photoSizes.inserted[0].SizeType != "m" || photoSizes.inserted[0].Width != 640 || photoSizes.inserted[0].Height != 480 || photoSizes.inserted[0].FileSize != 2000 || photoSizes.inserted[0].FilePath != "image-thumb-x-object" {
+		t.Fatalf("expected saved generated image thumb path, got %#v", photoSizes.inserted)
 	}
 }
 
@@ -897,7 +956,7 @@ func TestUploadedDocumentMediaAudioPreservesSuppliedThumbOnly(t *testing.T) {
 	if len(dfsClient.commits) != 2 || dfsClient.commits[0].Purpose != "media_original" || dfsClient.commits[1].Purpose != "media_thumbnail" {
 		t.Fatalf("expected original and supplied thumb commits, got %#v", dfsClient.commits)
 	}
-	if processorClient.photoReq == nil || processorClient.photoReq.ObjectId != "uploaded-audio-thumb-object" || string(processorClient.photoReq.ReadLease) != "audio-thumb-lease" || processorClient.photoReq.FileName != "cover.jpg" {
+	if processorClient.photoReq == nil || processorClient.photoReq.ObjectId != "uploaded-audio-thumb-object" || string(processorClient.photoReq.ReadLease) != "audio-thumb-lease" || processorClient.photoReq.FileName != "cover.jpg" || processorClient.photoReq.Profile != tg.BoolFalseClazz {
 		t.Fatalf("unexpected supplied thumb processor request: %#v", processorClient.photoReq)
 	}
 	if processorClient.gifReq != nil || processorClient.mp4Req != nil {
