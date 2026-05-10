@@ -55,7 +55,7 @@ func (r *Repository) loadPhoto(ctx context.Context, id int64) (*tg.Photo, error)
 			return nil, wrapStorage("load video sizes", err)
 		}
 	}
-	fileReference, err := r.generateLoadedFileReference("photo", do.PhotoId, do.AccessHash, fmt.Sprintf("photo:%d", do.PhotoId))
+	fileReference, err := r.generateLoadedFileReference(ctx, "photo", do.PhotoId, do.AccessHash, fmt.Sprintf("photo:%d", do.PhotoId))
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +98,7 @@ func (r *Repository) UploadPhotoFile(ctx context.Context, in *media.TLMediaUploa
 	if err != nil {
 		return nil, wrapMediaDownstream("mediaprocessor process photo", err)
 	}
-	photo, sizeObjectIDs, err := r.photoFromProcessedUpload(in.OwnerId, finalized, processed)
+	photo, sizeObjectIDs, err := r.photoFromProcessedUpload(ctx, in.OwnerId, finalized, processed)
 	if err != nil {
 		return nil, err
 	}
@@ -124,6 +124,9 @@ func (r *Repository) UploadPhotoFileViaLegacyDFS(ctx context.Context, in *media.
 	}
 	if photo == nil {
 		return nil, wrapMediaInvalidUploadedFile("dfs legacy upload photo", errors.New("missing legacy photo"))
+	}
+	if err := r.refreshPhotoFileReference(ctx, in.OwnerId, photo); err != nil {
+		return nil, err
 	}
 	if err := r.savePhotoAggregate(ctx, inputFileName(in.File), photo); err != nil {
 		return nil, err
@@ -153,7 +156,7 @@ func inputFileName(file tg.InputFileClazz) string {
 	}
 }
 
-func (r *Repository) photoFromProcessedUpload(ownerID int64, finalized *dfsapi.FileFinalizedObject, processed *mediaprocessor.ProcessedPhoto) (*tg.Photo, map[string]string, error) {
+func (r *Repository) photoFromProcessedUpload(ctx context.Context, ownerID int64, finalized *dfsapi.FileFinalizedObject, processed *mediaprocessor.ProcessedPhoto) (*tg.Photo, map[string]string, error) {
 	if r == nil || r.fileReferenceService == nil {
 		return nil, nil, media.ErrFileReferenceInvalid
 	}
@@ -170,23 +173,23 @@ func (r *Repository) photoFromProcessedUpload(ownerID int64, finalized *dfsapi.F
 	if ttl <= 0 {
 		ttl = 24 * time.Hour
 	}
-	fileReference, err := r.fileReferenceService.Generate(FileReferenceClaims{
-		MediaID:      photoID,
-		ObjectID:     firstNonEmpty(processed.OriginalObjectId, finalized.ObjectId),
-		OriginDomain: "photo",
-		OriginID:     ownerID,
-		ExpireAt:     now.Add(ttl).Unix(),
-		AccessHash:   accessHash,
-	})
-	if err != nil {
-		return nil, nil, err
-	}
 	sizes, sizeObjectIDs, err := mapProcessedPhotoSizes(processed.Sizes)
 	if err != nil {
 		return nil, nil, wrapMediaInvalidUploadedFile("mediaprocessor process photo", err)
 	}
 	if len(sizes) == 0 {
 		return nil, nil, wrapMediaInvalidUploadedFile("mediaprocessor process photo", errors.New("missing photo sizes"))
+	}
+	fileReference, err := r.fileReferenceService.Generate(ctx, FileReferenceClaims{
+		MediaID:      photoID,
+		ObjectID:     firstNonEmpty(processed.OriginalObjectId, finalized.ObjectId),
+		OriginDomain: "photo",
+		OriginID:     ownerID,
+		ExpireAt:     now.Add(ttl).Unix(),
+		AccessHash:   accessHash,
+	}, r)
+	if err != nil {
+		return nil, nil, err
 	}
 	return tg.MakeTLPhoto(&tg.TLPhoto{
 		HasStickers:   false,
@@ -198,6 +201,34 @@ func (r *Repository) photoFromProcessedUpload(ownerID int64, finalized *dfsapi.F
 		VideoSizes:    nil,
 		DcId:          finalized.DcId,
 	}).ToPhoto(), sizeObjectIDs, nil
+}
+
+func (r *Repository) refreshPhotoFileReference(ctx context.Context, ownerID int64, photo *tg.Photo) error {
+	if r == nil || r.fileReferenceService == nil {
+		return media.ErrFileReferenceInvalid
+	}
+	do, ok := photo.ToPhoto()
+	if !ok {
+		return media.ErrMediaInvalidArgument
+	}
+	now := r.repositoryNow()
+	ttl := r.fileReferenceTTL
+	if ttl <= 0 {
+		ttl = 24 * time.Hour
+	}
+	fileReference, err := r.fileReferenceService.Generate(ctx, FileReferenceClaims{
+		MediaID:      do.Id,
+		ObjectID:     fmt.Sprintf("photo:%d", do.Id),
+		OriginDomain: "photo",
+		OriginID:     ownerID,
+		ExpireAt:     now.Add(ttl).Unix(),
+		AccessHash:   do.AccessHash,
+	}, r)
+	if err != nil {
+		return err
+	}
+	do.FileReference = fileReference
+	return nil
 }
 
 func mapProcessedPhotoSizes(derivatives []mediaprocessor.ProcessorDerivativeClazz) ([]tg.PhotoSizeClazz, map[string]string, error) {
@@ -369,7 +400,7 @@ func (r *Repository) UploadProfilePhotoFile(ctx context.Context, in *media.TLMed
 		if err != nil {
 			return nil, wrapMediaDownstream("mediaprocessor process profile photo", err)
 		}
-		photo, sizeObjectIDs, err = r.photoFromProcessedUpload(in.OwnerId, finalized, processed)
+		photo, sizeObjectIDs, err = r.photoFromProcessedUpload(ctx, in.OwnerId, finalized, processed)
 		if err != nil {
 			return nil, err
 		}
@@ -403,7 +434,7 @@ func (r *Repository) UploadProfilePhotoFile(ctx context.Context, in *media.TLMed
 			return nil, wrapMediaInvalidUploadedFile("mediaprocessor process profile video", err)
 		}
 		if photo == nil {
-			photo, sizeObjectIDs, err = r.photoFromProfileVideoUpload(in.OwnerId, finalized, processed)
+			photo, sizeObjectIDs, err = r.photoFromProfileVideoUpload(ctx, in.OwnerId, finalized, processed)
 			if err != nil {
 				return nil, err
 			}
@@ -424,7 +455,7 @@ func (r *Repository) UploadProfilePhotoFile(ctx context.Context, in *media.TLMed
 	return photo, nil
 }
 
-func (r *Repository) photoFromProfileVideoUpload(ownerID int64, finalized *dfsapi.FileFinalizedObject, processed *mediaprocessor.ProcessedDocument) (*tg.Photo, map[string]string, error) {
+func (r *Repository) photoFromProfileVideoUpload(ctx context.Context, ownerID int64, finalized *dfsapi.FileFinalizedObject, processed *mediaprocessor.ProcessedDocument) (*tg.Photo, map[string]string, error) {
 	if r == nil || r.fileReferenceService == nil {
 		return nil, nil, media.ErrFileReferenceInvalid
 	}
@@ -445,14 +476,14 @@ func (r *Repository) photoFromProfileVideoUpload(ownerID int64, finalized *dfsap
 	if ttl <= 0 {
 		ttl = 24 * time.Hour
 	}
-	fileReference, err := r.fileReferenceService.Generate(FileReferenceClaims{
+	fileReference, err := r.fileReferenceService.Generate(ctx, FileReferenceClaims{
 		MediaID:      photoID,
 		ObjectID:     processed.ObjectId,
 		OriginDomain: "photo",
 		OriginID:     ownerID,
 		ExpireAt:     now.Add(ttl).Unix(),
 		AccessHash:   accessHash,
-	})
+	}, r)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -506,6 +537,9 @@ func (r *Repository) UploadedProfilePhoto(ctx context.Context, in *media.TLMedia
 	}
 	if photo == nil {
 		return nil, wrapMediaInvalidUploadedFile("dfs uploaded profile photo", errors.New("missing uploaded profile photo"))
+	}
+	if err := r.refreshPhotoFileReference(ctx, in.OwnerId, photo); err != nil {
+		return nil, err
 	}
 	if err := r.savePhotoAggregate(ctx, "", photo); err != nil {
 		return nil, err

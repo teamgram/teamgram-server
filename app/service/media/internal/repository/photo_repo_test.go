@@ -263,7 +263,7 @@ func TestUploadPhotoFileCommitsAndProcessesPhoto(t *testing.T) {
 		}).ToProcessedPhoto(),
 	}
 	r := &Repository{
-		model:                &model.Models{PhotosModel: photos, PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
+		model:                &model.Models{PhotosModel: photos, FileReferencesModel: newCaptureFileReferencesModel(), PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
 		dfsClient:            dfsClient,
 		processorClient:      processorClient,
 		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
@@ -336,7 +336,7 @@ func TestUploadPhotoFileCallsDfsAndSavesPhotoSizes(t *testing.T) {
 		},
 	}).ToProcessedPhoto()}
 	r := &Repository{
-		model:                &model.Models{PhotosModel: photos, PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
+		model:                &model.Models{PhotosModel: photos, FileReferencesModel: newCaptureFileReferencesModel(), PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
 		dfsClient:            dfsClient,
 		processorClient:      processorClient,
 		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
@@ -388,7 +388,7 @@ func TestUploadPhotoFileMapsStrippedAndProgressiveSizes(t *testing.T) {
 		},
 	}).ToProcessedPhoto()}
 	r := &Repository{
-		model:                &model.Models{PhotosModel: photos, PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
+		model:                &model.Models{PhotosModel: photos, FileReferencesModel: newCaptureFileReferencesModel(), PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
 		dfsClient:            dfsClient,
 		processorClient:      processorClient,
 		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
@@ -472,8 +472,10 @@ func TestUploadPhotoFileViaLegacyDFSCallsLegacyWrapper(t *testing.T) {
 	photoSizes := &capturePhotoSizesModel{}
 	dfsClient := &fakeDfsMediaClient{photo: testPhotoWithSizes(707, false)}
 	r := &Repository{
-		model:     &model.Models{PhotosModel: photos, PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
-		dfsClient: dfsClient,
+		model:                &model.Models{PhotosModel: photos, FileReferencesModel: newCaptureFileReferencesModel(), PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
+		dfsClient:            dfsClient,
+		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
+		fileReferenceTTL:     time.Hour,
 	}
 
 	got, err := r.UploadPhotoFileViaLegacyDFS(context.Background(), &media.TLMediaUploadPhotoFile{
@@ -532,7 +534,7 @@ func TestUploadPhotoFileRejectsInvalidProcessorDerivativeWithoutPersisting(t *te
 		},
 	}).ToProcessedPhoto()}
 	r := &Repository{
-		model:                &model.Models{PhotosModel: photos, PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
+		model:                &model.Models{PhotosModel: photos, FileReferencesModel: newCaptureFileReferencesModel(), PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
 		dfsClient:            dfsClient,
 		processorClient:      processorClient,
 		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
@@ -562,7 +564,7 @@ func TestUploadProfilePhotoFileSavesVideoSizes(t *testing.T) {
 		tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "profile.mp4"}),
 	}, testDocumentThumbs())}
 	r := &Repository{
-		model:                &model.Models{PhotosModel: photos, PhotoSizesModel: photoSizes, VideoSizesModel: videos},
+		model:                &model.Models{PhotosModel: photos, FileReferencesModel: newCaptureFileReferencesModel(), PhotoSizesModel: photoSizes, VideoSizesModel: videos},
 		dfsClient:            dfsClient,
 		processorClient:      processorClient,
 		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
@@ -615,7 +617,7 @@ func TestUploadProfilePhotoFileCommitsAndProcessesImage(t *testing.T) {
 		}).ToProcessedPhoto(),
 	}
 	r := &Repository{
-		model:                &model.Models{PhotosModel: photos, PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
+		model:                &model.Models{PhotosModel: photos, FileReferencesModel: newCaptureFileReferencesModel(), PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
 		dfsClient:            dfsClient,
 		processorClient:      processorClient,
 		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
@@ -654,7 +656,7 @@ func TestGetPhotoLoadsSizes(t *testing.T) {
 	}}
 	videoSizes := &captureVideoSizesModel{byID: []model.VideoSizes{{VideoSizeId: 303, SizeType: "v", Width: 320, Height: 240, FileSize: 2000, VideoStartTs: 1.5}}}
 	r := &Repository{
-		model:                &model.Models{PhotosModel: photos, PhotoSizesModel: photoSizes, VideoSizesModel: videoSizes},
+		model:                &model.Models{PhotosModel: photos, FileReferencesModel: newCaptureFileReferencesModel(), PhotoSizesModel: photoSizes, VideoSizesModel: videoSizes},
 		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
 		fileReferenceTTL:     time.Hour,
 	}
@@ -673,7 +675,7 @@ func TestGetPhotoLoadsSizes(t *testing.T) {
 	if progressive, ok := do.Sizes[1].(*tg.TLPhotoSizeProgressive); !ok || progressive.Type != "x" || progressive.W != 800 || progressive.H != 600 || len(progressive.Sizes) != 3 || progressive.Sizes[2] != 1200 {
 		t.Fatalf("expected cached_type=4 to reload as progressive photo size, got %#v", do.Sizes[1])
 	}
-	claims, err := r.fileReferenceService.Validate(do.FileReference)
+	claims, err := r.fileReferenceService.Validate(context.Background(), do.FileReference, r)
 	if err != nil {
 		t.Fatalf("expected valid loaded photo file_reference: %v", err)
 	}
@@ -686,8 +688,10 @@ func TestUploadedProfilePhotoCallsDfsAndSavesNewPhoto(t *testing.T) {
 	photos := &capturePhotosModel{}
 	dfsClient := &fakeDfsMediaClient{photo: testPhotoWithSizes(404, false)}
 	r := &Repository{
-		model:     &model.Models{PhotosModel: photos, PhotoSizesModel: &capturePhotoSizesModel{}, VideoSizesModel: &captureVideoSizesModel{}},
-		dfsClient: dfsClient,
+		model:                &model.Models{PhotosModel: photos, FileReferencesModel: newCaptureFileReferencesModel(), PhotoSizesModel: &capturePhotoSizesModel{}, VideoSizesModel: &captureVideoSizesModel{}},
+		dfsClient:            dfsClient,
+		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
+		fileReferenceTTL:     time.Hour,
 	}
 
 	_, err := r.UploadedProfilePhoto(context.Background(), &media.TLMediaUploadedProfilePhoto{OwnerId: 5, PhotoId: 44})

@@ -15,33 +15,37 @@ import (
 )
 
 type Models struct {
-	DocumentsModel  DocumentsModel
-	PhotoSizesModel PhotoSizesModel
-	PhotosModel     PhotosModel
-	VideoSizesModel VideoSizesModel
+	DocumentsModel      DocumentsModel
+	FileReferencesModel FileReferencesModel
+	PhotoSizesModel     PhotoSizesModel
+	PhotosModel         PhotosModel
+	VideoSizesModel     VideoSizesModel
 }
 
 type TxModels struct {
-	DocumentsModel  DocumentsTxModel
-	PhotoSizesModel PhotoSizesTxModel
-	PhotosModel     PhotosTxModel
-	VideoSizesModel VideoSizesTxModel
+	DocumentsModel      DocumentsTxModel
+	FileReferencesModel FileReferencesTxModel
+	PhotoSizesModel     PhotoSizesTxModel
+	PhotosModel         PhotosTxModel
+	VideoSizesModel     VideoSizesTxModel
 }
 
 func NewModels(db *sqlx.DB) *Models {
 	return &Models{
-		DocumentsModel:  NewDocumentsModel(db),
-		PhotoSizesModel: NewPhotoSizesModel(db),
-		PhotosModel:     NewPhotosModel(db),
-		VideoSizesModel: NewVideoSizesModel(db),
+		DocumentsModel:      NewDocumentsModel(db),
+		FileReferencesModel: NewFileReferencesModel(db),
+		PhotoSizesModel:     NewPhotoSizesModel(db),
+		PhotosModel:         NewPhotosModel(db),
+		VideoSizesModel:     NewVideoSizesModel(db),
 	}
 }
 
 func (m *Models) WithTx(tx *sqlx.Tx) *TxModels {
 	return &TxModels{
-		DocumentsModel:  NewDocumentsTxModel(tx),
-		PhotoSizesModel: NewPhotoSizesTxModel(tx),
-		PhotosModel:     NewPhotosTxModel(tx),
-		VideoSizesModel: NewVideoSizesTxModel(tx),
+		DocumentsModel:      NewDocumentsTxModel(tx),
+		FileReferencesModel: NewFileReferencesTxModel(tx),
+		PhotoSizesModel:     NewPhotoSizesTxModel(tx),
+		PhotosModel:         NewPhotosTxModel(tx),
+		VideoSizesModel:     NewVideoSizesTxModel(tx),
 	}
 }

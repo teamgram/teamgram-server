@@ -2,7 +2,9 @@ package repository
 
 import (
 	"bytes"
+	"context"
 	"crypto/hmac"
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
@@ -10,6 +12,11 @@ import (
 	"time"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/media/media"
+)
+
+const (
+	fileReferenceOpaqueVersion = byte(0x03)
+	fileReferenceOpaqueLength  = 25
 )
 
 type FileReferenceClaims struct {
@@ -21,45 +28,76 @@ type FileReferenceClaims struct {
 	AccessHash   int64  `json:"access_hash"`
 }
 
-type FileReferenceService struct {
-	secret []byte
-	now    func() time.Time
+type FileReferenceStore interface {
+	SaveFileReference(ctx context.Context, token []byte, claims FileReferenceClaims) error
+	LoadFileReference(ctx context.Context, token []byte) (FileReferenceClaims, error)
 }
 
-func NewFileReferenceService(secret []byte, now func() time.Time) *FileReferenceService {
+type FileReferenceService struct {
+	legacySecret []byte
+	now          func() time.Time
+}
+
+func NewFileReferenceService(legacySecret []byte, now func() time.Time) *FileReferenceService {
 	if now == nil {
 		now = time.Now
 	}
 	return &FileReferenceService{
-		secret: append([]byte(nil), secret...),
-		now:    now,
+		legacySecret: append([]byte(nil), legacySecret...),
+		now:          now,
 	}
 }
 
-func (s *FileReferenceService) Generate(claims FileReferenceClaims) ([]byte, error) {
-	if s == nil || len(s.secret) == 0 {
+func (s *FileReferenceService) Generate(ctx context.Context, claims FileReferenceClaims, store FileReferenceStore) ([]byte, error) {
+	if s == nil || store == nil {
 		return nil, media.ErrFileReferenceInvalid
 	}
-	payload, err := json.Marshal(claims)
-	if err != nil {
-		return nil, fmt.Errorf("%w: marshal claims: %v", media.ErrFileReferenceInvalid, err)
+	token := make([]byte, fileReferenceOpaqueLength)
+	token[0] = fileReferenceOpaqueVersion
+	if _, err := rand.Read(token[1:]); err != nil {
+		return nil, fmt.Errorf("%w: random handle: %v", media.ErrFileReferenceInvalid, err)
 	}
-	signature := s.sign(payload)
-	token := make([]byte, 0, base64.RawURLEncoding.EncodedLen(len(payload))+1+base64.RawURLEncoding.EncodedLen(len(signature)))
-	token = base64.RawURLEncoding.AppendEncode(token, payload)
-	token = append(token, '.')
-	token = base64.RawURLEncoding.AppendEncode(token, signature)
+	if err := store.SaveFileReference(ctx, token, claims); err != nil {
+		return nil, err
+	}
 	return token, nil
 }
 
-func (s *FileReferenceService) Validate(token []byte) (FileReferenceClaims, error) {
-	if s == nil || len(s.secret) == 0 {
+func (s *FileReferenceService) Validate(ctx context.Context, token []byte, store FileReferenceStore) (FileReferenceClaims, error) {
+	if s == nil || store == nil {
 		return FileReferenceClaims{}, media.ErrFileReferenceInvalid
 	}
 	if len(token) == 0 {
 		return FileReferenceClaims{}, media.ErrFileReferenceEmpty
 	}
+	if len(token) != fileReferenceOpaqueLength || token[0] != fileReferenceOpaqueVersion {
+		return s.validateLegacy(token)
+	}
+	claims, err := store.LoadFileReference(ctx, token)
+	if err != nil {
+		return FileReferenceClaims{}, err
+	}
+	if claims.ExpireAt <= s.now().Unix() {
+		return FileReferenceClaims{}, media.ErrFileReferenceExpired
+	}
+	return claims, nil
+}
 
+func (s *FileReferenceService) validateLegacy(token []byte) (FileReferenceClaims, error) {
+	if len(s.legacySecret) == 0 {
+		return FileReferenceClaims{}, media.ErrFileReferenceInvalid
+	}
+	claims, err := validateLegacyHMACFileReference(token, s.legacySecret)
+	if err != nil {
+		return FileReferenceClaims{}, err
+	}
+	if claims.ExpireAt <= s.now().Unix() {
+		return FileReferenceClaims{}, media.ErrFileReferenceExpired
+	}
+	return claims, nil
+}
+
+func validateLegacyHMACFileReference(token []byte, secret []byte) (FileReferenceClaims, error) {
 	parts := bytes.Split(token, []byte{'.'})
 	if len(parts) != 2 || len(parts[0]) == 0 || len(parts[1]) == 0 {
 		return FileReferenceClaims{}, media.ErrFileReferenceInvalid
@@ -72,22 +110,14 @@ func (s *FileReferenceService) Validate(token []byte) (FileReferenceClaims, erro
 	if err != nil {
 		return FileReferenceClaims{}, media.ErrFileReferenceInvalid
 	}
-	if !hmac.Equal(signature, s.sign(payload)) {
+	mac := hmac.New(sha256.New, secret)
+	_, _ = mac.Write(payload)
+	if !hmac.Equal(signature, mac.Sum(nil)) {
 		return FileReferenceClaims{}, media.ErrFileReferenceInvalid
 	}
-
 	var claims FileReferenceClaims
 	if err := json.Unmarshal(payload, &claims); err != nil {
 		return FileReferenceClaims{}, media.ErrFileReferenceInvalid
 	}
-	if claims.ExpireAt <= s.now().Unix() {
-		return FileReferenceClaims{}, media.ErrFileReferenceExpired
-	}
 	return claims, nil
-}
-
-func (s *FileReferenceService) sign(payload []byte) []byte {
-	mac := hmac.New(sha256.New, s.secret)
-	_, _ = mac.Write(payload)
-	return mac.Sum(nil)
 }

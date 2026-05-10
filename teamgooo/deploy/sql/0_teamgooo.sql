@@ -604,6 +604,26 @@ CREATE TABLE IF NOT EXISTS `documents` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE IF NOT EXISTS `file_references` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `ref_hash` varbinary(25) NOT NULL,
+  `domain` varchar(32) NOT NULL DEFAULT '',
+  `media_id` bigint NOT NULL DEFAULT '0',
+  `access_hash` bigint NOT NULL DEFAULT '0',
+  `object_id` varchar(255) NOT NULL DEFAULT '',
+  `origin_domain` varchar(64) NOT NULL DEFAULT '',
+  `origin_id` bigint NOT NULL DEFAULT '0',
+  `expire_at` bigint NOT NULL DEFAULT '0',
+  `revoked_at` bigint NOT NULL DEFAULT '0',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `ref_hash` (`ref_hash`),
+  KEY `media_lookup` (`domain`,`media_id`,`access_hash`),
+  KEY `expire_at` (`expire_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE IF NOT EXISTS `drafts` (
   `id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,

@@ -147,7 +147,7 @@ func TestUploadedDocumentMediaDispatchesGifMp4Document(t *testing.T) {
 			}).ToFileFinalizedObject()}
 			processorClient := &fakeMediaProcessorClient{document: testProcessedDocument(t, "processed-object-"+tt.name, tt.mimeType, 4096, tt.attrs, nil)}
 			r := &Repository{
-				model:                &model.Models{DocumentsModel: documents, PhotoSizesModel: &capturePhotoSizesModel{}, VideoSizesModel: &captureVideoSizesModel{}},
+				model:                &model.Models{DocumentsModel: documents, FileReferencesModel: newCaptureFileReferencesModel(), PhotoSizesModel: &capturePhotoSizesModel{}, VideoSizesModel: &captureVideoSizesModel{}},
 				dfsClient:            dfsClient,
 				processorClient:      processorClient,
 				fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
@@ -253,7 +253,7 @@ func TestUploadedDocumentMediaCommitsAndProcessesByMime(t *testing.T) {
 			dfsClient := &fakeDfsMediaClient{finalized: tt.finalized}
 			processorClient := &fakeMediaProcessorClient{document: tt.processed}
 			r := &Repository{
-				model:                &model.Models{DocumentsModel: documents, PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
+				model:                &model.Models{DocumentsModel: documents, FileReferencesModel: newCaptureFileReferencesModel(), PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
 				dfsClient:            dfsClient,
 				processorClient:      processorClient,
 				fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
@@ -373,8 +373,10 @@ func TestUploadedDocumentMediaViaLegacyDFSCallsLegacyWrappers(t *testing.T) {
 			photoSizes := &capturePhotoSizesModel{}
 			dfsClient := &fakeDfsMediaClient{document: testDocumentWithThumbs(808)}
 			r := &Repository{
-				model:     &model.Models{DocumentsModel: documents, PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
-				dfsClient: dfsClient,
+				model:                &model.Models{DocumentsModel: documents, FileReferencesModel: newCaptureFileReferencesModel(), PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
+				dfsClient:            dfsClient,
+				fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
+				fileReferenceTTL:     time.Hour,
 			}
 
 			got, err := r.UploadedDocumentMediaViaLegacyDFS(context.Background(), &media.TLMediaUploadedDocumentMedia{
@@ -431,7 +433,7 @@ func TestUploadedDocumentMediaRejectsZeroSizePlainDocument(t *testing.T) {
 	photoSizes := &capturePhotoSizesModel{}
 	dfsClient := &fakeDfsMediaClient{finalized: testFinalizedObject("zero-size-pdf-object", 0)}
 	r := &Repository{
-		model:                &model.Models{DocumentsModel: documents, PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
+		model:                &model.Models{DocumentsModel: documents, FileReferencesModel: newCaptureFileReferencesModel(), PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
 		dfsClient:            dfsClient,
 		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
 		fileReferenceTTL:     time.Hour,
@@ -468,7 +470,7 @@ func TestGetDocumentLoadsThumbsAndAttributes(t *testing.T) {
 	}}
 	photoSizes := &capturePhotoSizesModel{byID: []model.PhotoSizes{{PhotoSizeId: 700, SizeType: "m", Width: 320, Height: 240, FileSize: 1000}}}
 	r := &Repository{
-		model:                &model.Models{DocumentsModel: documents, PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
+		model:                &model.Models{DocumentsModel: documents, FileReferencesModel: newCaptureFileReferencesModel(), PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
 		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
 		fileReferenceTTL:     time.Hour,
 	}
@@ -484,7 +486,7 @@ func TestGetDocumentLoadsThumbsAndAttributes(t *testing.T) {
 	if len(doc.Thumbs) != 1 || len(doc.Attributes) != 1 {
 		t.Fatalf("expected thumbs and attributes, got %#v %#v", doc.Thumbs, doc.Attributes)
 	}
-	claims, err := r.fileReferenceService.Validate(doc.FileReference)
+	claims, err := r.fileReferenceService.Validate(context.Background(), doc.FileReference, r)
 	if err != nil {
 		t.Fatalf("expected valid loaded document file_reference: %v", err)
 	}
@@ -499,7 +501,7 @@ func TestGetDocumentListPreservesRequestedOrder(t *testing.T) {
 		2: {DocumentId: 2, AccessHash: 20, DcId: 1},
 	}}
 	r := &Repository{
-		model:                &model.Models{DocumentsModel: documents, PhotoSizesModel: &capturePhotoSizesModel{}, VideoSizesModel: &captureVideoSizesModel{}},
+		model:                &model.Models{DocumentsModel: documents, FileReferencesModel: newCaptureFileReferencesModel(), PhotoSizesModel: &capturePhotoSizesModel{}, VideoSizesModel: &captureVideoSizesModel{}},
 		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
 		fileReferenceTTL:     time.Hour,
 	}

@@ -83,7 +83,7 @@ func (r *Repository) UploadedDocumentMedia(ctx context.Context, in *media.TLMedi
 	case uploaded.MimeType == "video/mp4":
 		doc, documentObjectID, thumbObjectIDs, err = r.processUploadedMp4Document(ctx, in.OwnerId, finalized, uploaded)
 	default:
-		doc, err = r.documentFromOriginalUpload(in.OwnerId, finalized, uploaded)
+		doc, err = r.documentFromOriginalUpload(ctx, in.OwnerId, finalized, uploaded)
 	}
 	if err != nil {
 		return nil, err
@@ -132,6 +132,9 @@ func (r *Repository) UploadedDocumentMediaViaLegacyDFS(ctx context.Context, in *
 	if doc == nil {
 		return nil, wrapMediaInvalidUploadedFile("dfs legacy upload document", errors.New("missing legacy document"))
 	}
+	if err := r.refreshDocumentFileReference(ctx, in.OwnerId, doc); err != nil {
+		return nil, err
+	}
 	if err := r.saveDocumentAggregate(ctx, uploadedFileName(uploaded), doc); err != nil {
 		return nil, err
 	}
@@ -179,7 +182,7 @@ func (r *Repository) processUploadedGifDocument(ctx context.Context, ownerID int
 	if err != nil {
 		return nil, "", nil, wrapMediaDownstream("mediaprocessor process gif", err)
 	}
-	doc, thumbObjectIDs, err := r.documentFromProcessedUpload(ownerID, finalized, processed)
+	doc, thumbObjectIDs, err := r.documentFromProcessedUpload(ctx, ownerID, finalized, processed)
 	if err != nil {
 		return nil, "", nil, err
 	}
@@ -207,14 +210,14 @@ func (r *Repository) processUploadedMp4Document(ctx context.Context, ownerID int
 	if err != nil {
 		return nil, "", nil, wrapMediaDownstream("mediaprocessor process mp4", err)
 	}
-	doc, thumbObjectIDs, err := r.documentFromProcessedUpload(ownerID, finalized, processed)
+	doc, thumbObjectIDs, err := r.documentFromProcessedUpload(ctx, ownerID, finalized, processed)
 	if err != nil {
 		return nil, "", nil, err
 	}
 	return doc, processed.ObjectId, thumbObjectIDs, nil
 }
 
-func (r *Repository) documentFromOriginalUpload(ownerID int64, finalized *dfsapi.FileFinalizedObject, uploaded *tg.TLInputMediaUploadedDocument) (*tg.Document, error) {
+func (r *Repository) documentFromOriginalUpload(ctx context.Context, ownerID int64, finalized *dfsapi.FileFinalizedObject, uploaded *tg.TLInputMediaUploadedDocument) (*tg.Document, error) {
 	if finalized == nil || finalized.ObjectId == "" || uploaded == nil {
 		return nil, wrapMediaInvalidUploadedFile("dfs commit document upload", errors.New("missing finalized object"))
 	}
@@ -224,7 +227,7 @@ func (r *Repository) documentFromOriginalUpload(ownerID int64, finalized *dfsapi
 	now := r.repositoryNow()
 	docID := stablePositiveID("document:" + finalized.ObjectId)
 	accessHash := stablePositiveID("document-access:" + finalized.ObjectId)
-	fileReference, err := r.generateDocumentFileReference(ownerID, docID, accessHash, finalized.ObjectId, now)
+	fileReference, err := r.generateDocumentFileReference(ctx, ownerID, docID, accessHash, finalized.ObjectId, now)
 	if err != nil {
 		return nil, err
 	}
@@ -242,7 +245,7 @@ func (r *Repository) documentFromOriginalUpload(ownerID int64, finalized *dfsapi
 	}).ToDocument(), nil
 }
 
-func (r *Repository) documentFromProcessedUpload(ownerID int64, finalized *dfsapi.FileFinalizedObject, processed *mediaprocessor.ProcessedDocument) (*tg.Document, map[string]string, error) {
+func (r *Repository) documentFromProcessedUpload(ctx context.Context, ownerID int64, finalized *dfsapi.FileFinalizedObject, processed *mediaprocessor.ProcessedDocument) (*tg.Document, map[string]string, error) {
 	if finalized == nil || processed == nil || processed.ObjectId == "" || processed.MimeType == "" || processed.Size2 <= 0 {
 		return nil, nil, wrapMediaInvalidUploadedFile("mediaprocessor process document", errors.New("missing processed document object"))
 	}
@@ -260,7 +263,7 @@ func (r *Repository) documentFromProcessedUpload(ownerID int64, finalized *dfsap
 	now := r.repositoryNow()
 	docID := stablePositiveID("document:" + processed.ObjectId)
 	accessHash := stablePositiveID("document-access:" + processed.ObjectId)
-	fileReference, err := r.generateDocumentFileReference(ownerID, docID, accessHash, processed.ObjectId, now)
+	fileReference, err := r.generateDocumentFileReference(ctx, ownerID, docID, accessHash, processed.ObjectId, now)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -278,7 +281,7 @@ func (r *Repository) documentFromProcessedUpload(ownerID int64, finalized *dfsap
 	}).ToDocument(), thumbObjectIDs, nil
 }
 
-func (r *Repository) generateDocumentFileReference(ownerID, docID, accessHash int64, objectID string, now time.Time) ([]byte, error) {
+func (r *Repository) generateDocumentFileReference(ctx context.Context, ownerID, docID, accessHash int64, objectID string, now time.Time) ([]byte, error) {
 	if r == nil || r.fileReferenceService == nil {
 		return nil, media.ErrFileReferenceInvalid
 	}
@@ -286,18 +289,35 @@ func (r *Repository) generateDocumentFileReference(ownerID, docID, accessHash in
 	if ttl <= 0 {
 		ttl = 24 * time.Hour
 	}
-	fileReference, err := r.fileReferenceService.Generate(FileReferenceClaims{
+	fileReference, err := r.fileReferenceService.Generate(ctx, FileReferenceClaims{
 		MediaID:      docID,
 		ObjectID:     objectID,
 		OriginDomain: "document",
 		OriginID:     ownerID,
 		ExpireAt:     now.Add(ttl).Unix(),
 		AccessHash:   accessHash,
-	})
+	}, r)
 	if err != nil {
 		return nil, err
 	}
 	return fileReference, nil
+}
+
+func (r *Repository) refreshDocumentFileReference(ctx context.Context, ownerID int64, doc *tg.Document) error {
+	if r == nil || r.fileReferenceService == nil {
+		return media.ErrFileReferenceInvalid
+	}
+	do, ok := doc.ToDocument()
+	if !ok {
+		return media.ErrMediaInvalidArgument
+	}
+	now := r.repositoryNow()
+	fileReference, err := r.generateDocumentFileReference(ctx, ownerID, do.Id, do.AccessHash, documentObjectPath(do.Id), now)
+	if err != nil {
+		return err
+	}
+	do.FileReference = fileReference
+	return nil
 }
 
 func (r *Repository) repositoryNow() time.Time {
@@ -384,7 +404,7 @@ func (r *Repository) mapDocumentWithThumbs(ctx context.Context, doc *model.Docum
 			return nil, wrapStorage("load document video thumbs", err)
 		}
 	}
-	fileReference, err := r.generateLoadedFileReference("document", doc.DocumentId, doc.AccessHash, firstNonEmpty(doc.FilePath, fmt.Sprintf("document:%d", doc.DocumentId)))
+	fileReference, err := r.generateLoadedFileReference(ctx, "document", doc.DocumentId, doc.AccessHash, firstNonEmpty(doc.FilePath, fmt.Sprintf("document:%d", doc.DocumentId)))
 	if err != nil {
 		return nil, err
 	}
