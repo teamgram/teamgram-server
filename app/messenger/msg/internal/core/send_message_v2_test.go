@@ -679,19 +679,19 @@ func TestMsgSendMessageV2MediaReturnsTLUpdates(t *testing.T) {
 	if !ok {
 		t.Fatalf("photo = %T, want *tg.TLPhoto", media.Photo)
 	}
-		if photo.Id != 333 || photo.AccessHash != 444 || len(photo.FileReference) != 25 || photo.DcId != 2 || len(photo.Sizes) != 2 {
-			t.Fatalf("photo = %+v, want displayable photo metadata", photo)
-		}
-		stripped, ok := photo.Sizes[0].(*tg.TLPhotoStrippedSize)
-		if !ok {
-			t.Fatalf("projected size = %T, want TLPhotoStrippedSize", photo.Sizes[0])
-		}
-		if !bytes.Equal(stripped.Bytes, []byte{0x01, 0x16, 0x28, 0xaa}) {
-			t.Fatalf("stripped bytes = %x, want telegram stripped payload", stripped.Bytes)
-		}
-		progressive, ok := photo.Sizes[1].(*tg.TLPhotoSizeProgressive)
-		if !ok {
-			t.Fatalf("projected size = %T, want TLPhotoSizeProgressive", photo.Sizes[1])
+	if photo.Id != 333 || photo.AccessHash != 444 || len(photo.FileReference) != 25 || photo.DcId != 2 || len(photo.Sizes) != 2 {
+		t.Fatalf("photo = %+v, want displayable photo metadata", photo)
+	}
+	stripped, ok := photo.Sizes[0].(*tg.TLPhotoStrippedSize)
+	if !ok {
+		t.Fatalf("projected size = %T, want TLPhotoStrippedSize", photo.Sizes[0])
+	}
+	if !bytes.Equal(stripped.Bytes, []byte{0x01, 0x16, 0x28, 0xaa}) {
+		t.Fatalf("stripped bytes = %x, want telegram stripped payload", stripped.Bytes)
+	}
+	progressive, ok := photo.Sizes[1].(*tg.TLPhotoSizeProgressive)
+	if !ok {
+		t.Fatalf("projected size = %T, want TLPhotoSizeProgressive", photo.Sizes[1])
 	}
 	if progressive.Sizes[2] != 300 {
 		t.Fatalf("progressive sizes = %#v, want final offset 300", progressive.Sizes)
