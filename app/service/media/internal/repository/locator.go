@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"path/filepath"
 	"strings"
@@ -55,11 +56,26 @@ func (r *Repository) resolveDocumentLocation(ctx context.Context, loc *tg.TLInpu
 		return nil, media.ErrFileLocationInvalid
 	}
 	if loc.ThumbSize != "" {
-		size, err := r.findPhotoSize(ctx, doc.ThumbId, loc.ThumbSize)
-		if err != nil {
-			return nil, err
+		photoSize, photoErr := r.findPhotoSize(ctx, doc.ThumbId, loc.ThumbSize)
+		videoSize, videoErr := r.findVideoSize(ctx, doc.VideoThumbId, loc.ThumbSize)
+		photoFound := photoErr == nil
+		videoFound := videoErr == nil
+		if photoFound && videoFound {
+			return nil, media.ErrFileLocationInvalid
 		}
-		return r.makeResolvedObject(size.FilePath, int64(size.FileSize), locatorThumbMimeType, doc.DcId, storageFileType(tg.ClazzID_storage_fileJpeg))
+		if photoFound {
+			return r.makeResolvedObject(photoSize.FilePath, int64(photoSize.FileSize), locatorThumbMimeType, doc.DcId, storageFileType(tg.ClazzID_storage_fileJpeg))
+		}
+		if videoFound {
+			return r.makeResolvedObject(videoSize.FilePath, int64(videoSize.FileSize), doc.MimeType, doc.DcId, storageFileType(tg.ClazzID_storage_fileMp4))
+		}
+		if errors.Is(photoErr, media.ErrMediaStorage) {
+			return nil, photoErr
+		}
+		if errors.Is(videoErr, media.ErrMediaStorage) {
+			return nil, videoErr
+		}
+		return nil, media.ErrFileLocationInvalid
 	}
 	return r.makeResolvedObject(doc.FilePath, doc.FileSize, doc.MimeType, doc.DcId, storageTypeForFile(doc.UploadedFileName, doc.MimeType))
 }
@@ -163,6 +179,31 @@ func (r *Repository) findPhotoSize(ctx context.Context, sizeID int64, sizeType s
 		}
 	}
 	return model.PhotoSizes{}, media.ErrFileLocationInvalid
+}
+
+func (r *Repository) findVideoSize(ctx context.Context, sizeID int64, sizeType string) (model.VideoSizes, error) {
+	if sizeID == 0 || sizeType == "" {
+		return model.VideoSizes{}, media.ErrFileLocationInvalid
+	}
+	if r == nil || r.model == nil || r.model.VideoSizesModel == nil {
+		return model.VideoSizes{}, media.ErrMediaStorage
+	}
+	sizes, err := r.model.VideoSizesModel.SelectListByVideoSizeId(ctx, sizeID)
+	if err != nil {
+		if isNotFound(err) {
+			return model.VideoSizes{}, media.ErrFileLocationInvalid
+		}
+		return model.VideoSizes{}, wrapStorage("list video sizes for file location", err)
+	}
+	for _, size := range sizes {
+		if size.SizeType == sizeType {
+			if size.FilePath == "" {
+				return model.VideoSizes{}, media.ErrFileLocationInvalid
+			}
+			return size, nil
+		}
+	}
+	return model.VideoSizes{}, media.ErrFileLocationInvalid
 }
 
 func (r *Repository) findFirstPhotoSize(ctx context.Context, sizeID int64, preferred []string) (model.PhotoSizes, error) {

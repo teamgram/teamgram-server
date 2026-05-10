@@ -148,6 +148,147 @@ func TestLocatorDocumentThumbResolvesPhotoSizeObject(t *testing.T) {
 	}
 }
 
+func TestResolveDocumentLocationResolvesVideoThumb(t *testing.T) {
+	now := time.Unix(1700000000, 0)
+	repo := testLocatorRepository(now)
+	repo.model.DocumentsModel = &captureDocumentsModel{byID: map[int64]*model.Documents{
+		102: {
+			DocumentId:   102,
+			AccessHash:   202,
+			DcId:         4,
+			FilePath:     "doc-video-object",
+			FileSize:     2000,
+			MimeType:     "video/mp4",
+			VideoThumbId: 902,
+		},
+	}}
+	repo.model.PhotoSizesModel = &capturePhotoSizesModel{}
+	repo.model.VideoSizesModel = &captureVideoSizesModel{byID: []model.VideoSizes{
+		{VideoSizeId: 902, SizeType: "v", Width: 320, Height: 240, FileSize: 222, FilePath: "doc-video-thumb-object"},
+	}}
+	ref := testFileReference(t, repo, FileReferenceClaims{
+		MediaID:      102,
+		ObjectID:     "doc-video-object",
+		OriginDomain: "document",
+		OriginID:     7,
+		AccessHash:   202,
+		ExpireAt:     now.Add(time.Hour).Unix(),
+	})
+
+	resolved, err := repo.ResolveFileLocation(context.Background(), &media.TLMediaResolveFileLocation{
+		Location: tg.MakeTLInputDocumentFileLocation(&tg.TLInputDocumentFileLocation{
+			Id:            102,
+			AccessHash:    202,
+			FileReference: ref,
+			ThumbSize:     "v",
+		}),
+		ViewerId: 7,
+	})
+	if err != nil {
+		t.Fatalf("ResolveFileLocation() error = %v", err)
+	}
+	if resolved.ObjectId != "doc-video-thumb-object" || resolved.Size2 != 222 || resolved.MimeType != "video/mp4" || resolved.DcId != 4 {
+		t.Fatalf("resolved video thumb = %#v", resolved)
+	}
+	if uint32(resolved.StorageFileType) != tg.ClazzID_storage_fileMp4 {
+		t.Fatalf("StorageFileType = %#x, want mp4", uint32(resolved.StorageFileType))
+	}
+}
+
+func TestResolveDocumentLocationRejectsThumbRoleCollision(t *testing.T) {
+	now := time.Unix(1700000000, 0)
+	repo := testLocatorRepository(now)
+	repo.model.DocumentsModel = &captureDocumentsModel{byID: map[int64]*model.Documents{
+		103: {
+			DocumentId:   103,
+			AccessHash:   203,
+			DcId:         4,
+			FilePath:     "doc-collision-object",
+			FileSize:     2000,
+			MimeType:     "video/mp4",
+			ThumbId:      903,
+			VideoThumbId: 904,
+		},
+	}}
+	repo.model.PhotoSizesModel = &capturePhotoSizesModel{byID: []model.PhotoSizes{
+		{PhotoSizeId: 903, SizeType: "v", Width: 320, Height: 240, FileSize: 111, FilePath: "doc-photo-v-object"},
+	}}
+	repo.model.VideoSizesModel = &captureVideoSizesModel{byID: []model.VideoSizes{
+		{VideoSizeId: 904, SizeType: "v", Width: 320, Height: 240, FileSize: 222, FilePath: "doc-video-v-object"},
+	}}
+	ref := testFileReference(t, repo, FileReferenceClaims{
+		MediaID:      103,
+		ObjectID:     "doc-collision-object",
+		OriginDomain: "document",
+		OriginID:     7,
+		AccessHash:   203,
+		ExpireAt:     now.Add(time.Hour).Unix(),
+	})
+
+	_, err := repo.ResolveFileLocation(context.Background(), &media.TLMediaResolveFileLocation{
+		Location: tg.MakeTLInputDocumentFileLocation(&tg.TLInputDocumentFileLocation{
+			Id:            103,
+			AccessHash:    203,
+			FileReference: ref,
+			ThumbSize:     "v",
+		}),
+		ViewerId: 7,
+	})
+	if !errors.Is(err, media.ErrFileLocationInvalid) {
+		t.Fatalf("ResolveFileLocation() error = %v, want ErrFileLocationInvalid", err)
+	}
+}
+
+func TestResolveDocumentLocationKeepsStaticThumbResolution(t *testing.T) {
+	now := time.Unix(1700000000, 0)
+	repo := testLocatorRepository(now)
+	repo.model.DocumentsModel = &captureDocumentsModel{byID: map[int64]*model.Documents{
+		104: {
+			DocumentId:   104,
+			AccessHash:   204,
+			DcId:         5,
+			FilePath:     "doc-static-object",
+			FileSize:     2000,
+			MimeType:     "video/mp4",
+			ThumbId:      905,
+			VideoThumbId: 906,
+		},
+	}}
+	repo.model.PhotoSizesModel = &capturePhotoSizesModel{byID: []model.PhotoSizes{
+		{PhotoSizeId: 905, SizeType: "m", Width: 320, Height: 240, FileSize: 111, FilePath: "doc-static-thumb-object"},
+	}}
+	repo.model.VideoSizesModel = &captureVideoSizesModel{byID: []model.VideoSizes{
+		{VideoSizeId: 906, SizeType: "v", Width: 320, Height: 240, FileSize: 222, FilePath: "doc-video-thumb-object"},
+	}}
+	ref := testFileReference(t, repo, FileReferenceClaims{
+		MediaID:      104,
+		ObjectID:     "doc-static-object",
+		OriginDomain: "document",
+		OriginID:     7,
+		AccessHash:   204,
+		ExpireAt:     now.Add(time.Hour).Unix(),
+	})
+
+	resolved, err := repo.ResolveFileLocation(context.Background(), &media.TLMediaResolveFileLocation{
+		Location: tg.MakeTLInputDocumentFileLocation(&tg.TLInputDocumentFileLocation{
+			Id:            104,
+			AccessHash:    204,
+			FileReference: ref,
+			ThumbSize:     "m",
+		}),
+		ViewerId: 7,
+	})
+	if err != nil {
+		t.Fatalf("ResolveFileLocation() error = %v", err)
+	}
+	if resolved.ObjectId != "doc-static-thumb-object" || resolved.Size2 != 111 || resolved.MimeType != "image/jpeg" {
+		t.Fatalf("resolved static thumb = %#v", resolved)
+	}
+	if uint32(resolved.StorageFileType) != tg.ClazzID_storage_fileJpeg {
+		t.Fatalf("StorageFileType = %#x, want jpeg", uint32(resolved.StorageFileType))
+	}
+}
+
 func TestLocatorPhotoThumbResolvesPhotoSizeObjectAndValidatesReference(t *testing.T) {
 	now := time.Unix(1700000000, 0)
 	repo := testLocatorRepository(now)
