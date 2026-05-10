@@ -156,6 +156,24 @@ func TestMessageOperationV3CarriesV2AndMediaFields(t *testing.T) {
 	}
 }
 
+func TestStickerSetRefV1CarriesDiceEmoticon(t *testing.T) {
+	ref := StickerSetRefV1{Kind: "dice", Emoticon: "🎲"}
+	body, err := json.Marshal(ref)
+	if err != nil {
+		t.Fatalf("Marshal() error = %v", err)
+	}
+	if !strings.Contains(string(body), `"emoticon":"🎲"`) {
+		t.Fatalf("payload missing emoticon: %s", body)
+	}
+	var got StickerSetRefV1
+	if err := json.Unmarshal(body, &got); err != nil {
+		t.Fatalf("Unmarshal() error = %v", err)
+	}
+	if got.Kind != "dice" || got.Emoticon != "🎲" {
+		t.Fatalf("decoded sticker set = %+v, want dice emoticon", got)
+	}
+}
+
 func TestMediaRefV2CarriesFullDocumentProjection(t *testing.T) {
 	videoStartTs := 1.25
 	videoTimestamp := int32(7)

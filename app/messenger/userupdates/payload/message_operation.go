@@ -125,6 +125,7 @@ type StickerSetRefV1 struct {
 	ID         int64  `json:"id,omitempty"`
 	AccessHash int64  `json:"access_hash,omitempty"`
 	ShortName  string `json:"short_name,omitempty"`
+	Emoticon   string `json:"emoticon,omitempty"`
 }
 
 type MaskCoordsRefV1 struct {

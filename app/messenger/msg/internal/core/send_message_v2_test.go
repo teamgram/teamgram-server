@@ -68,11 +68,12 @@ func TestNormalizeMediaRefDocumentPreservesV2DocumentPayload(t *testing.T) {
 			Size2:         98765,
 			Thumbs: []tg.PhotoSizeClazz{
 				tg.MakeTLPhotoSize(&tg.TLPhotoSize{Type: "m", W: 320, H: 200, Size2: 1234}),
+				tg.MakeTLPhotoPathSize(&tg.TLPhotoPathSize{Type: "j", Bytes: []byte{9, 8, 7}}),
 			},
 			VideoThumbs: []tg.VideoSizeClazz{
 				tg.MakeTLVideoSize(&tg.TLVideoSize{Type: "v", W: 320, H: 200, Size2: 4567, VideoStartTs: &videoStartTs}),
 				tg.MakeTLVideoSizeStickerMarkup(&tg.TLVideoSizeStickerMarkup{
-					Stickerset:       tg.MakeTLInputStickerSetShortName(&tg.TLInputStickerSetShortName{ShortName: "stickers"}),
+					Stickerset:       tg.MakeTLInputStickerSetDice(&tg.TLInputStickerSetDice{Emoticon: "🎲"}),
 					StickerId:        8080,
 					BackgroundColors: []int32{3, 4},
 				}),
@@ -88,7 +89,7 @@ func TestNormalizeMediaRefDocumentPreservesV2DocumentPayload(t *testing.T) {
 					Alt:        ":)",
 					Free:       true,
 					TextColor:  true,
-					Stickerset: tg.MakeTLInputStickerSetID(&tg.TLInputStickerSetID{Id: 3003, AccessHash: 4004}),
+					Stickerset: tg.MakeTLInputStickerSetDice(&tg.TLInputStickerSetDice{Emoticon: "🎯"}),
 				}),
 				tg.MakeTLDocumentAttributeHasStickers(&tg.TLDocumentAttributeHasStickers{}),
 			},
@@ -111,13 +112,17 @@ func TestNormalizeMediaRefDocumentPreservesV2DocumentPayload(t *testing.T) {
 	if got.VideoCover == nil || got.VideoCover.ID != 777 || len(got.VideoCover.VideoSizes) != 1 || got.VideoCover.VideoSizes[0].EmojiID != 9009 {
 		t.Fatalf("VideoCover = %+v, want full photo ref with video sizes", got.VideoCover)
 	}
-	if len(got.DocumentThumbs) != 1 || got.DocumentThumbs[0].Type != "m" {
-		t.Fatalf("DocumentThumbs = %+v, want photo thumb m", got.DocumentThumbs)
+	if len(got.DocumentThumbs) != 2 || got.DocumentThumbs[0].Type != "m" {
+		t.Fatalf("DocumentThumbs = %+v, want photo thumb m plus path", got.DocumentThumbs)
+	}
+	if got.DocumentThumbs[1].Kind != "path" || got.DocumentThumbs[1].Type != "j" || string(got.DocumentThumbs[1].Bytes) != string([]byte{9, 8, 7}) {
+		t.Fatalf("DocumentThumbs[1] = %+v, want path j bytes", got.DocumentThumbs[1])
 	}
 	if len(got.DocumentVideoThumbs) != 2 || got.DocumentVideoThumbs[0].VideoStartTs == nil || *got.DocumentVideoThumbs[0].VideoStartTs != videoStartTs {
 		t.Fatalf("DocumentVideoThumbs = %+v, want video thumb with start ts", got.DocumentVideoThumbs)
 	}
-	if got.DocumentVideoThumbs[1].StickerSet == nil || got.DocumentVideoThumbs[1].StickerSet.ShortName != "stickers" || got.DocumentVideoThumbs[1].StickerID != 8080 {
+	if got.DocumentVideoThumbs[1].StickerSet == nil || got.DocumentVideoThumbs[1].StickerSet.Kind != "dice" ||
+		got.DocumentVideoThumbs[1].StickerSet.Emoticon != "🎲" || got.DocumentVideoThumbs[1].StickerID != 8080 {
 		t.Fatalf("DocumentVideoThumbs[1] = %+v, want sticker markup", got.DocumentVideoThumbs[1])
 	}
 	if len(got.DocumentAttributes) != 3 {
@@ -128,7 +133,8 @@ func TestNormalizeMediaRefDocumentPreservesV2DocumentPayload(t *testing.T) {
 		t.Fatalf("sticker attr = %+v, want full sticker metadata", sticker)
 	}
 	customEmoji := got.DocumentAttributes[1]
-	if customEmoji.Kind != "custom_emoji" || customEmoji.StickerSet == nil || customEmoji.StickerSet.ID != 3003 || !customEmoji.Free || !customEmoji.TextColor {
+	if customEmoji.Kind != "custom_emoji" || customEmoji.StickerSet == nil ||
+		customEmoji.StickerSet.Kind != "dice" || customEmoji.StickerSet.Emoticon != "🎯" || !customEmoji.Free || !customEmoji.TextColor {
 		t.Fatalf("custom emoji attr = %+v, want full custom emoji metadata", customEmoji)
 	}
 	if got.DocumentAttributes[2].Kind != "has_stickers" {

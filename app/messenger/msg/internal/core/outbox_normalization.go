@@ -251,6 +251,8 @@ func normalizePhotoSizes(sizes []tg.PhotoSizeClazz) []payload.PhotoSizeRefV1 {
 			out = append(out, payload.PhotoSizeRefV1{Kind: "stripped", Type: s.Type, Bytes: append([]byte(nil), s.Bytes...)})
 		case *tg.TLPhotoSizeProgressive:
 			out = append(out, payload.PhotoSizeRefV1{Kind: "progressive", Type: s.Type, W: s.W, H: s.H, Sizes: append([]int32(nil), s.Sizes...)})
+		case *tg.TLPhotoPathSize:
+			out = append(out, payload.PhotoSizeRefV1{Kind: "path", Type: s.Type, Bytes: append([]byte(nil), s.Bytes...)})
 		}
 	}
 	return out
@@ -380,6 +382,9 @@ func normalizeDocumentAttributes(attrs []tg.DocumentAttributeClazz) []payload.Do
 }
 
 func normalizeStickerSet(stickerSet tg.InputStickerSetClazz) *payload.StickerSetRefV1 {
+	if stickerSet == nil {
+		return nil
+	}
 	switch s := stickerSet.(type) {
 	case *tg.TLInputStickerSetID:
 		return &payload.StickerSetRefV1{Kind: "id", ID: s.Id, AccessHash: s.AccessHash}
@@ -387,8 +392,26 @@ func normalizeStickerSet(stickerSet tg.InputStickerSetClazz) *payload.StickerSet
 		return &payload.StickerSetRefV1{Kind: "short_name", ShortName: s.ShortName}
 	case *tg.TLInputStickerSetEmpty:
 		return &payload.StickerSetRefV1{Kind: "empty"}
+	case *tg.TLInputStickerSetAnimatedEmoji:
+		return &payload.StickerSetRefV1{Kind: "animated_emoji"}
+	case *tg.TLInputStickerSetDice:
+		return &payload.StickerSetRefV1{Kind: "dice", Emoticon: s.Emoticon}
+	case *tg.TLInputStickerSetAnimatedEmojiAnimations:
+		return &payload.StickerSetRefV1{Kind: "animated_emoji_animations"}
+	case *tg.TLInputStickerSetPremiumGifts:
+		return &payload.StickerSetRefV1{Kind: "premium_gifts"}
+	case *tg.TLInputStickerSetEmojiGenericAnimations:
+		return &payload.StickerSetRefV1{Kind: "emoji_generic_animations"}
+	case *tg.TLInputStickerSetEmojiDefaultStatuses:
+		return &payload.StickerSetRefV1{Kind: "emoji_default_statuses"}
+	case *tg.TLInputStickerSetEmojiDefaultTopicIcons:
+		return &payload.StickerSetRefV1{Kind: "emoji_default_topic_icons"}
+	case *tg.TLInputStickerSetEmojiChannelDefaultStatuses:
+		return &payload.StickerSetRefV1{Kind: "emoji_channel_default_statuses"}
+	case *tg.TLInputStickerSetTonGifts:
+		return &payload.StickerSetRefV1{Kind: "ton_gifts"}
 	default:
-		return nil
+		return &payload.StickerSetRefV1{Kind: fmt.Sprintf("unsupported:%T", stickerSet)}
 	}
 }
 
