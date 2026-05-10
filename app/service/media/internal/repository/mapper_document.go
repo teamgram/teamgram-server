@@ -21,6 +21,10 @@ func mapDocumentAggregate(doc *model.Documents, thumbs []model.PhotoSizes, video
 	if err != nil {
 		return nil, err
 	}
+	thumbs2, err := mapOptionalPhotoSizes(thumbs)
+	if err != nil {
+		return nil, err
+	}
 	return tg.MakeTLDocument(&tg.TLDocument{
 		Id:            doc.DocumentId,
 		AccessHash:    doc.AccessHash,
@@ -28,16 +32,16 @@ func mapDocumentAggregate(doc *model.Documents, thumbs []model.PhotoSizes, video
 		Date:          int32(doc.Date2),
 		MimeType:      doc.MimeType,
 		Size2:         doc.FileSize,
-		Thumbs:        mapOptionalPhotoSizes(thumbs),
+		Thumbs:        thumbs2,
 		VideoThumbs:   mapVideoSizes(videoThumbs),
 		DcId:          doc.DcId,
 		Attributes:    attrs,
 	}).ToDocument(), nil
 }
 
-func mapOptionalPhotoSizes(sizes []model.PhotoSizes) []tg.PhotoSizeClazz {
+func mapOptionalPhotoSizes(sizes []model.PhotoSizes) ([]tg.PhotoSizeClazz, error) {
 	if len(sizes) == 0 {
-		return nil
+		return nil, nil
 	}
 	return mapPhotoSizes(sizes)
 }

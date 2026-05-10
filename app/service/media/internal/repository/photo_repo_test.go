@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"testing"
 	"time"
@@ -366,6 +367,103 @@ func TestUploadPhotoFileCallsDfsAndSavesPhotoSizes(t *testing.T) {
 	}
 	if photoSizes.inserted[0].FilePath != "derivative-object-legacy-test" {
 		t.Fatalf("expected saved derivative object id, got %#v", photoSizes.inserted[0])
+	}
+}
+
+func TestUploadPhotoFileMapsStrippedAndProgressiveSizes(t *testing.T) {
+	photos := &capturePhotosModel{}
+	photoSizes := &capturePhotoSizesModel{}
+	dfsClient := &fakeDfsMediaClient{finalized: dfsapi.MakeTLFileFinalizedObject(&dfsapi.TLFileFinalizedObject{
+		ObjectId:        "original-object-photo-variants",
+		UploadSessionId: "ext:7:11:1",
+		ReadLease:       []byte("read-lease"),
+		DcId:            2,
+	}).ToFileFinalizedObject()}
+	processorClient := &fakeMediaProcessorClient{photo: mediaprocessor.MakeTLProcessedPhoto(&mediaprocessor.TLProcessedPhoto{
+		OriginalObjectId: "original-object-photo-variants",
+		Sizes: []mediaprocessor.ProcessorDerivativeClazz{
+			mediaprocessor.MakeTLProcessorDerivative(&mediaprocessor.TLProcessorDerivative{Kind: "photo_stripped", FileName: "i_avatar.jpg", Width: 40, Height: 30, Size2: 10, Bytes: []byte("stripped-bytes")}),
+			mediaprocessor.MakeTLProcessorDerivative(&mediaprocessor.TLProcessorDerivative{Kind: "photo_size", ObjectId: "derivative-object-s", FileName: "s_avatar.jpg", Width: 160, Height: 120, Size2: 600}),
+			mediaprocessor.MakeTLProcessorDerivative(&mediaprocessor.TLProcessorDerivative{Kind: "photo_size", ObjectId: "derivative-object-x", FileName: "x_avatar.jpg", Width: 800, Height: 600, Size2: 1200, ProgressiveSizes: []int32{400, 900, 1200}}),
+		},
+	}).ToProcessedPhoto()}
+	r := &Repository{
+		model:                &model.Models{PhotosModel: photos, PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
+		dfsClient:            dfsClient,
+		processorClient:      processorClient,
+		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
+		fileReferenceTTL:     time.Hour,
+	}
+
+	got, err := r.UploadPhotoFile(context.Background(), &media.TLMediaUploadPhotoFile{
+		OwnerId: 7,
+		File:    tg.MakeTLInputFile(&tg.TLInputFile{Id: 11, Parts: 1, Name: "avatar.jpg", Md5Checksum: "md5"}),
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	gotPhoto, ok := got.ToPhoto()
+	if !ok {
+		t.Fatalf("expected photo, got %#v", got)
+	}
+	if len(gotPhoto.Sizes) != 3 {
+		t.Fatalf("expected stripped, normal, and progressive sizes, got %#v", gotPhoto.Sizes)
+	}
+	if stripped, ok := gotPhoto.Sizes[0].(*tg.TLPhotoStrippedSize); !ok || stripped.Type != "i" || string(stripped.Bytes) != "stripped-bytes" {
+		t.Fatalf("expected stripped size with inline bytes, got %#v", gotPhoto.Sizes[0])
+	}
+	if normal, ok := gotPhoto.Sizes[1].(*tg.TLPhotoSize); !ok || normal.Type != "s" || normal.Size2 != 600 {
+		t.Fatalf("expected normal s size, got %#v", gotPhoto.Sizes[1])
+	}
+	if progressive, ok := gotPhoto.Sizes[2].(*tg.TLPhotoSizeProgressive); !ok || progressive.Type != "x" || progressive.W != 800 || progressive.H != 600 || len(progressive.Sizes) != 3 || progressive.Sizes[2] != 1200 {
+		t.Fatalf("expected progressive x size, got %#v", gotPhoto.Sizes[2])
+	}
+
+	if len(photoSizes.inserted) != 3 {
+		t.Fatalf("expected three saved photo sizes, got %#v", photoSizes.inserted)
+	}
+	sizesByType := map[string]*model.PhotoSizes{}
+	for _, size := range photoSizes.inserted {
+		sizesByType[size.SizeType] = size
+	}
+	if sizesByType["i"] == nil || !sizesByType["i"].HasStripped || sizesByType["i"].StrippedBytes != "stripped-bytes" || sizesByType["i"].FilePath != "" {
+		t.Fatalf("expected stripped row without object id path, got %#v", sizesByType["i"])
+	}
+	if sizesByType["s"] == nil || sizesByType["s"].FilePath != "derivative-object-s" || sizesByType["s"].FileSize != 600 {
+		t.Fatalf("expected normal row with object id path, got %#v", sizesByType["s"])
+	}
+	if sizesByType["x"] == nil || sizesByType["x"].FilePath != "derivative-object-x" || sizesByType["x"].CachedType == 0 || sizesByType["x"].CachedBytes == "" {
+		t.Fatalf("expected progressive row with cached scan sizes, got %#v", sizesByType["x"])
+	}
+	var cachedSizes []int32
+	if err := json.Unmarshal([]byte(sizesByType["x"].CachedBytes), &cachedSizes); err != nil {
+		t.Fatalf("expected cached progressive sizes JSON: %v", err)
+	}
+	if len(cachedSizes) != 3 || cachedSizes[0] != 400 || cachedSizes[1] != 900 || cachedSizes[2] != 1200 {
+		t.Fatalf("unexpected cached progressive sizes: %v", cachedSizes)
+	}
+
+	photos.found = photos.inserted[0]
+	photoSizes.byID = make([]model.PhotoSizes, 0, len(photoSizes.inserted))
+	for _, inserted := range photoSizes.inserted {
+		photoSizes.byID = append(photoSizes.byID, *inserted)
+	}
+	reloaded, err := r.GetPhoto(context.Background(), photos.inserted[0].PhotoId)
+	if err != nil {
+		t.Fatalf("unexpected reload error: %v", err)
+	}
+	reloadedPhoto, ok := reloaded.ToPhoto()
+	if !ok {
+		t.Fatalf("expected reloaded photo, got %#v", reloaded)
+	}
+	if len(reloadedPhoto.Sizes) != 3 {
+		t.Fatalf("expected three reloaded sizes, got %#v", reloadedPhoto.Sizes)
+	}
+	if stripped, ok := reloadedPhoto.Sizes[0].(*tg.TLPhotoStrippedSize); !ok || stripped.Type != "i" || string(stripped.Bytes) != "stripped-bytes" {
+		t.Fatalf("expected reloaded stripped size, got %#v", reloadedPhoto.Sizes[0])
+	}
+	if progressive, ok := reloadedPhoto.Sizes[2].(*tg.TLPhotoSizeProgressive); !ok || progressive.Type != "x" || len(progressive.Sizes) != 3 || progressive.Sizes[2] != 1200 {
+		t.Fatalf("expected reloaded progressive size, got %#v", reloadedPhoto.Sizes[2])
 	}
 }
 

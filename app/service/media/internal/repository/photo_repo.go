@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"hash/fnv"
@@ -201,42 +202,99 @@ func (r *Repository) photoFromProcessedUpload(ownerID int64, finalized *dfsapi.F
 
 func mapProcessedPhotoSizes(derivatives []mediaprocessor.ProcessorDerivativeClazz) ([]tg.PhotoSizeClazz, map[string]string, error) {
 	const maxInt32 = int64(^uint32(0) >> 1)
-	const processorDerivativePhotoSize = "photo_size"
 
 	sizes := make([]tg.PhotoSizeClazz, 0, len(derivatives))
 	objectIDs := make(map[string]string, len(derivatives))
+	seenTypes := make(map[string]struct{}, len(derivatives))
 	for i, derivative := range derivatives {
 		if derivative == nil {
 			return nil, nil, fmt.Errorf("photo derivative %d is nil", i)
 		}
-		if derivative.Kind != processorDerivativePhotoSize {
+		switch derivative.Kind {
+		case processorDerivativePhotoStripped:
+			const strippedSizeType = "i"
+			if derivative.Width <= 0 || derivative.Height <= 0 {
+				return nil, nil, fmt.Errorf("photo derivative %d has invalid dimensions", i)
+			}
+			if len(derivative.Bytes) == 0 {
+				return nil, nil, fmt.Errorf("photo derivative %d has empty stripped bytes", i)
+			}
+			if _, exists := seenTypes[strippedSizeType]; exists {
+				return nil, nil, fmt.Errorf("photo derivative %d duplicates size type %q", i, strippedSizeType)
+			}
+			sizes = append(sizes, tg.MakeTLPhotoStrippedSize(&tg.TLPhotoStrippedSize{
+				Type:  strippedSizeType,
+				Bytes: append([]byte(nil), derivative.Bytes...),
+			}))
+			seenTypes[strippedSizeType] = struct{}{}
+		case processorDerivativePhotoSize:
+			sizeType, ok := photoSizeTypeFromDerivativeFileName(derivative.FileName)
+			if !ok {
+				return nil, nil, fmt.Errorf("photo derivative %d missing size type", i)
+			}
+			if derivative.ObjectId == "" {
+				return nil, nil, fmt.Errorf("photo derivative %d missing object id", i)
+			}
+			if derivative.Width <= 0 || derivative.Height <= 0 {
+				return nil, nil, fmt.Errorf("photo derivative %d has invalid dimensions", i)
+			}
+			if derivative.Size2 <= 0 || derivative.Size2 > maxInt32 {
+				return nil, nil, fmt.Errorf("photo derivative %d has invalid size", i)
+			}
+			if _, exists := seenTypes[sizeType]; exists {
+				return nil, nil, fmt.Errorf("photo derivative %d duplicates size type %q", i, sizeType)
+			}
+			if len(derivative.ProgressiveSizes) > 0 {
+				if err := validateProgressiveSizes(derivative.ProgressiveSizes, derivative.Size2); err != nil {
+					return nil, nil, fmt.Errorf("photo derivative %d has invalid progressive sizes: %w", i, err)
+				}
+				sizes = append(sizes, tg.MakeTLPhotoSizeProgressive(&tg.TLPhotoSizeProgressive{
+					Type:  sizeType,
+					W:     derivative.Width,
+					H:     derivative.Height,
+					Sizes: append([]int32(nil), derivative.ProgressiveSizes...),
+				}))
+			} else {
+				sizes = append(sizes, tg.MakeTLPhotoSize(&tg.TLPhotoSize{
+					Type:  sizeType,
+					W:     derivative.Width,
+					H:     derivative.Height,
+					Size2: int32(derivative.Size2),
+				}))
+			}
+			seenTypes[sizeType] = struct{}{}
+			objectIDs[sizeType] = derivative.ObjectId
+		default:
 			return nil, nil, fmt.Errorf("photo derivative %d has unknown kind %q", i, derivative.Kind)
 		}
-		sizeType, ok := photoSizeTypeFromDerivativeFileName(derivative.FileName)
-		if !ok {
-			return nil, nil, fmt.Errorf("photo derivative %d missing size type", i)
-		}
-		if derivative.ObjectId == "" {
-			return nil, nil, fmt.Errorf("photo derivative %d missing object id", i)
-		}
-		if derivative.Width <= 0 || derivative.Height <= 0 {
-			return nil, nil, fmt.Errorf("photo derivative %d has invalid dimensions", i)
-		}
-		if derivative.Size2 <= 0 || derivative.Size2 > maxInt32 {
-			return nil, nil, fmt.Errorf("photo derivative %d has invalid size", i)
-		}
-		if _, exists := objectIDs[sizeType]; exists {
-			return nil, nil, fmt.Errorf("photo derivative %d duplicates size type %q", i, sizeType)
-		}
-		sizes = append(sizes, tg.MakeTLPhotoSize(&tg.TLPhotoSize{
-			Type:  sizeType,
-			W:     derivative.Width,
-			H:     derivative.Height,
-			Size2: int32(derivative.Size2),
-		}))
-		objectIDs[sizeType] = derivative.ObjectId
 	}
 	return sizes, objectIDs, nil
+}
+
+const (
+	processorDerivativePhotoSize     = "photo_size"
+	processorDerivativePhotoStripped = "photo_stripped"
+	photoSizeCachedTypeProgressive   = 1
+)
+
+func validateProgressiveSizes(sizes []int32, total int64) error {
+	var previous int32
+	for i, size := range sizes {
+		if size <= 0 {
+			return fmt.Errorf("scan %d is not positive", i)
+		}
+		if i > 0 && size <= previous {
+			return fmt.Errorf("scan %d is not increasing", i)
+		}
+		if int64(size) > total {
+			return fmt.Errorf("scan %d exceeds total size", i)
+		}
+		previous = size
+	}
+	if int64(sizes[len(sizes)-1]) != total {
+		return fmt.Errorf("last scan size %d does not equal total size %d", sizes[len(sizes)-1], total)
+	}
+	return nil
 }
 
 func photoSizeTypeFromDerivativeFileName(fileName string) (string, bool) {
@@ -463,7 +521,11 @@ func (r *Repository) GetPhotoSizeList(ctx context.Context, sizeID int64) (*media
 	if err != nil {
 		return nil, wrapStorage("load photo size list", err)
 	}
-	return media.MakeTLPhotoSizeList(&media.TLPhotoSizeList{SizeId: sizeID, Sizes: mapPhotoSizes(sizes), DcId: 1}).ToPhotoSizeList(), nil
+	photoSizes, err := mapPhotoSizes(sizes)
+	if err != nil {
+		return nil, err
+	}
+	return media.MakeTLPhotoSizeList(&media.TLPhotoSizeList{SizeId: sizeID, Sizes: photoSizes, DcId: 1}).ToPhotoSizeList(), nil
 }
 
 func (r *Repository) GetPhotoSizeListList(ctx context.Context, ids []int64) (*media.VectorPhotoSizeList, error) {
@@ -547,6 +609,19 @@ func (r *Repository) savePhotoSizeWithPath(ctx context.Context, id int64, size t
 		_, _, err := r.model.PhotoSizesModel.Insert(ctx, &model.PhotoSizes{PhotoSizeId: id, SizeType: s.Type, HasStripped: true, StrippedBytes: string(s.Bytes)})
 		if err != nil {
 			return wrapStorage("save stripped photo size", err)
+		}
+	case *tg.TLPhotoSizeProgressive:
+		cachedBytes, err := json.Marshal(s.Sizes)
+		if err != nil {
+			return wrapMediaInvalidUploadedFile("save progressive photo size", err)
+		}
+		fileSize := int32(0)
+		if len(s.Sizes) > 0 {
+			fileSize = s.Sizes[len(s.Sizes)-1]
+		}
+		_, _, err = r.model.PhotoSizesModel.Insert(ctx, &model.PhotoSizes{PhotoSizeId: id, SizeType: s.Type, Width: s.W, Height: s.H, FileSize: fileSize, FilePath: sizeObjectIDs[s.Type], CachedType: photoSizeCachedTypeProgressive, CachedBytes: string(cachedBytes)})
+		if err != nil {
+			return wrapStorage("save progressive photo size", err)
 		}
 	}
 	return nil
