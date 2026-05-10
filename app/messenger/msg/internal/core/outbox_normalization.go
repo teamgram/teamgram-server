@@ -182,7 +182,13 @@ func normalizeMediaRef(media tg.MessageMediaClazz) (*payload.MediaRefV1, error) 
 			UserID:        m.UserId,
 		}, nil
 	case *tg.TLMessageMediaDocument:
-		ref := &payload.MediaRefV1{SchemaVersion: payload.MediaRefSchemaVersionV1, Kind: "document"}
+		ref := &payload.MediaRefV1{
+			SchemaVersion:      payload.MediaRefSchemaVersionV2,
+			Kind:               "document",
+			DocumentMediaFlags: normalizeDocumentMediaFlags(m),
+			VideoCover:         normalizePhotoRef(m.VideoCover),
+			VideoTimestamp:     cloneInt32Ptr(m.VideoTimestamp),
+		}
 		if d, ok := m.Document.(*tg.TLDocument); ok && d != nil {
 			ref.ID = d.Id
 			ref.AccessHash = d.AccessHash
@@ -192,6 +198,7 @@ func normalizeMediaRef(media tg.MessageMediaClazz) (*payload.MediaRefV1, error) 
 			ref.Size = d.Size2
 			ref.DcID = d.DcId
 			ref.DocumentThumbs = normalizePhotoSizes(d.Thumbs)
+			ref.DocumentVideoThumbs = normalizeVideoSizes(d.VideoThumbs)
 			ref.DocumentAttributes = normalizeDocumentAttributes(d.Attributes)
 		} else if m.Document != nil {
 			ref.ID, ref.AccessHash, ref.FileReference, ref.MimeType = documentIdentity(m.Document)
@@ -249,6 +256,71 @@ func normalizePhotoSizes(sizes []tg.PhotoSizeClazz) []payload.PhotoSizeRefV1 {
 	return out
 }
 
+func normalizeVideoSizes(sizes []tg.VideoSizeClazz) []payload.VideoSizeRefV1 {
+	if len(sizes) == 0 {
+		return nil
+	}
+	out := make([]payload.VideoSizeRefV1, 0, len(sizes))
+	for _, size := range sizes {
+		switch s := size.(type) {
+		case *tg.TLVideoSize:
+			out = append(out, payload.VideoSizeRefV1{
+				Kind:         "size",
+				Type:         s.Type,
+				W:            s.W,
+				H:            s.H,
+				Size:         s.Size2,
+				VideoStartTs: cloneFloat64Ptr(s.VideoStartTs),
+			})
+		case *tg.TLVideoSizeEmojiMarkup:
+			out = append(out, payload.VideoSizeRefV1{
+				Kind:             "emoji_markup",
+				EmojiID:          s.EmojiId,
+				BackgroundColors: append([]int32(nil), s.BackgroundColors...),
+			})
+		case *tg.TLVideoSizeStickerMarkup:
+			out = append(out, payload.VideoSizeRefV1{
+				Kind:             "sticker_markup",
+				StickerSet:       normalizeStickerSet(s.Stickerset),
+				StickerID:        s.StickerId,
+				BackgroundColors: append([]int32(nil), s.BackgroundColors...),
+			})
+		}
+	}
+	return out
+}
+
+func normalizeDocumentMediaFlags(m *tg.TLMessageMediaDocument) *payload.DocumentMediaFlagsV1 {
+	if m == nil {
+		return nil
+	}
+	return &payload.DocumentMediaFlagsV1{
+		Video:   m.Video,
+		Round:   m.Round,
+		Voice:   m.Voice,
+		Spoiler: m.Spoiler,
+	}
+}
+
+func normalizePhotoRef(photo tg.PhotoClazz) *payload.PhotoRefV1 {
+	switch p := photo.(type) {
+	case *tg.TLPhoto:
+		return &payload.PhotoRefV1{
+			ID:            p.Id,
+			AccessHash:    p.AccessHash,
+			FileReference: append([]byte(nil), p.FileReference...),
+			Date:          p.Date,
+			DcID:          p.DcId,
+			Sizes:         normalizePhotoSizes(p.Sizes),
+			VideoSizes:    normalizeVideoSizes(p.VideoSizes),
+		}
+	case *tg.TLPhotoEmpty:
+		return &payload.PhotoRefV1{ID: p.Id}
+	default:
+		return nil
+	}
+}
+
 func normalizeDocumentAttributes(attrs []tg.DocumentAttributeClazz) []payload.DocumentAttributeRefV1 {
 	if len(attrs) == 0 {
 		return nil
@@ -284,9 +356,68 @@ func normalizeDocumentAttributes(attrs []tg.DocumentAttributeClazz) []payload.Do
 				Waveform:  append([]byte(nil), a.Waveform...),
 				Voice:     a.Voice,
 			})
+		case *tg.TLDocumentAttributeSticker:
+			out = append(out, payload.DocumentAttributeRefV1{
+				Kind:       "sticker",
+				Alt:        a.Alt,
+				StickerSet: normalizeStickerSet(a.Stickerset),
+				Mask:       a.Mask,
+				MaskCoords: normalizeMaskCoords(a.MaskCoords),
+			})
+		case *tg.TLDocumentAttributeCustomEmoji:
+			out = append(out, payload.DocumentAttributeRefV1{
+				Kind:       "custom_emoji",
+				Alt:        a.Alt,
+				StickerSet: normalizeStickerSet(a.Stickerset),
+				Free:       a.Free,
+				TextColor:  a.TextColor,
+			})
+		case *tg.TLDocumentAttributeHasStickers:
+			out = append(out, payload.DocumentAttributeRefV1{Kind: "has_stickers"})
 		}
 	}
 	return out
+}
+
+func normalizeStickerSet(stickerSet tg.InputStickerSetClazz) *payload.StickerSetRefV1 {
+	switch s := stickerSet.(type) {
+	case *tg.TLInputStickerSetID:
+		return &payload.StickerSetRefV1{Kind: "id", ID: s.Id, AccessHash: s.AccessHash}
+	case *tg.TLInputStickerSetShortName:
+		return &payload.StickerSetRefV1{Kind: "short_name", ShortName: s.ShortName}
+	case *tg.TLInputStickerSetEmpty:
+		return &payload.StickerSetRefV1{Kind: "empty"}
+	default:
+		return nil
+	}
+}
+
+func normalizeMaskCoords(maskCoords tg.MaskCoordsClazz) *payload.MaskCoordsRefV1 {
+	if maskCoords == nil {
+		return nil
+	}
+	return &payload.MaskCoordsRefV1{
+		N:    maskCoords.N,
+		X:    maskCoords.X,
+		Y:    maskCoords.Y,
+		Zoom: maskCoords.Zoom,
+	}
+}
+
+func cloneInt32Ptr(v *int32) *int32 {
+	if v == nil {
+		return nil
+	}
+	out := *v
+	return &out
+}
+
+func cloneFloat64Ptr(v *float64) *float64 {
+	if v == nil {
+		return nil
+	}
+	out := *v
+	return &out
 }
 
 func normalizeForwardRef(in normalizeOutboxInput, message *tg.TLMessage) (*payload.ForwardRefV1, repository.ForwardSourceIdentity, error) {

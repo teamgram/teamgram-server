@@ -38,6 +38,104 @@ func TestNormalizeOutboxMessageUsesAttrsGroupedID(t *testing.T) {
 	}
 }
 
+func TestNormalizeMediaRefDocumentPreservesV2DocumentPayload(t *testing.T) {
+	videoStartTs := 1.25
+	videoTimestamp := int32(7)
+	media := tg.MakeTLMessageMediaDocument(&tg.TLMessageMediaDocument{
+		Round:          true,
+		Spoiler:        true,
+		VideoTimestamp: &videoTimestamp,
+		VideoCover: tg.MakeTLPhoto(&tg.TLPhoto{
+			Id:            777,
+			AccessHash:    888,
+			FileReference: []byte("cover-ref"),
+			Date:          1_700_000_001,
+			DcId:          5,
+			Sizes: []tg.PhotoSizeClazz{
+				tg.MakeTLPhotoSize(&tg.TLPhotoSize{Type: "x", W: 640, H: 360, Size2: 4321}),
+			},
+			VideoSizes: []tg.VideoSizeClazz{
+				tg.MakeTLVideoSizeEmojiMarkup(&tg.TLVideoSizeEmojiMarkup{EmojiId: 9009, BackgroundColors: []int32{1, 2}}),
+			},
+		}),
+		Document: tg.MakeTLDocument(&tg.TLDocument{
+			Id:            555,
+			AccessHash:    666,
+			FileReference: []byte("doc-ref"),
+			Date:          1_700_000_000,
+			DcId:          4,
+			MimeType:      "video/mp4",
+			Size2:         98765,
+			Thumbs: []tg.PhotoSizeClazz{
+				tg.MakeTLPhotoSize(&tg.TLPhotoSize{Type: "m", W: 320, H: 200, Size2: 1234}),
+			},
+			VideoThumbs: []tg.VideoSizeClazz{
+				tg.MakeTLVideoSize(&tg.TLVideoSize{Type: "v", W: 320, H: 200, Size2: 4567, VideoStartTs: &videoStartTs}),
+				tg.MakeTLVideoSizeStickerMarkup(&tg.TLVideoSizeStickerMarkup{
+					Stickerset:       tg.MakeTLInputStickerSetShortName(&tg.TLInputStickerSetShortName{ShortName: "stickers"}),
+					StickerId:        8080,
+					BackgroundColors: []int32{3, 4},
+				}),
+			},
+			Attributes: []tg.DocumentAttributeClazz{
+				tg.MakeTLDocumentAttributeSticker(&tg.TLDocumentAttributeSticker{
+					Alt:        ":)",
+					Mask:       true,
+					Stickerset: tg.MakeTLInputStickerSetID(&tg.TLInputStickerSetID{Id: 1001, AccessHash: 2002}),
+					MaskCoords: tg.MakeTLMaskCoords(&tg.TLMaskCoords{N: 1, X: 0.5, Y: 0.25, Zoom: 1.5}),
+				}),
+				tg.MakeTLDocumentAttributeCustomEmoji(&tg.TLDocumentAttributeCustomEmoji{
+					Alt:        ":)",
+					Free:       true,
+					TextColor:  true,
+					Stickerset: tg.MakeTLInputStickerSetID(&tg.TLInputStickerSetID{Id: 3003, AccessHash: 4004}),
+				}),
+				tg.MakeTLDocumentAttributeHasStickers(&tg.TLDocumentAttributeHasStickers{}),
+			},
+		}),
+	})
+	got, err := normalizeMediaRef(media)
+	if err != nil {
+		t.Fatalf("normalizeMediaRef() error = %v", err)
+	}
+	if got.SchemaVersion != payload.MediaRefSchemaVersionV2 || got.Kind != "document" || got.ID != 555 ||
+		got.AccessHash != 666 || string(got.FileReference) != "doc-ref" || got.MimeType != "video/mp4" || got.Size != 98765 {
+		t.Fatalf("media ref identity = %+v, want full V2 document identity", got)
+	}
+	if got.DocumentMediaFlags == nil || got.DocumentMediaFlags.Video || !got.DocumentMediaFlags.Round || got.DocumentMediaFlags.Voice || !got.DocumentMediaFlags.Spoiler {
+		t.Fatalf("DocumentMediaFlags = %+v, want explicit false/true values", got.DocumentMediaFlags)
+	}
+	if got.VideoTimestamp == nil || *got.VideoTimestamp != videoTimestamp {
+		t.Fatalf("VideoTimestamp = %v, want %d", got.VideoTimestamp, videoTimestamp)
+	}
+	if got.VideoCover == nil || got.VideoCover.ID != 777 || len(got.VideoCover.VideoSizes) != 1 || got.VideoCover.VideoSizes[0].EmojiID != 9009 {
+		t.Fatalf("VideoCover = %+v, want full photo ref with video sizes", got.VideoCover)
+	}
+	if len(got.DocumentThumbs) != 1 || got.DocumentThumbs[0].Type != "m" {
+		t.Fatalf("DocumentThumbs = %+v, want photo thumb m", got.DocumentThumbs)
+	}
+	if len(got.DocumentVideoThumbs) != 2 || got.DocumentVideoThumbs[0].VideoStartTs == nil || *got.DocumentVideoThumbs[0].VideoStartTs != videoStartTs {
+		t.Fatalf("DocumentVideoThumbs = %+v, want video thumb with start ts", got.DocumentVideoThumbs)
+	}
+	if got.DocumentVideoThumbs[1].StickerSet == nil || got.DocumentVideoThumbs[1].StickerSet.ShortName != "stickers" || got.DocumentVideoThumbs[1].StickerID != 8080 {
+		t.Fatalf("DocumentVideoThumbs[1] = %+v, want sticker markup", got.DocumentVideoThumbs[1])
+	}
+	if len(got.DocumentAttributes) != 3 {
+		t.Fatalf("DocumentAttributes len = %d, want 3", len(got.DocumentAttributes))
+	}
+	sticker := got.DocumentAttributes[0]
+	if sticker.Kind != "sticker" || sticker.Alt != ":)" || sticker.StickerSet == nil || sticker.StickerSet.ID != 1001 || !sticker.Mask || sticker.MaskCoords == nil {
+		t.Fatalf("sticker attr = %+v, want full sticker metadata", sticker)
+	}
+	customEmoji := got.DocumentAttributes[1]
+	if customEmoji.Kind != "custom_emoji" || customEmoji.StickerSet == nil || customEmoji.StickerSet.ID != 3003 || !customEmoji.Free || !customEmoji.TextColor {
+		t.Fatalf("custom emoji attr = %+v, want full custom emoji metadata", customEmoji)
+	}
+	if got.DocumentAttributes[2].Kind != "has_stickers" {
+		t.Fatalf("DocumentAttributes[2] = %+v, want has_stickers", got.DocumentAttributes[2])
+	}
+}
+
 func TestNormalizeOutboxMessageRejectsUnsupportedEntity(t *testing.T) {
 	message := tg.MakeTLMessage(&tg.TLMessage{
 		Message: "emoji",
@@ -407,11 +505,11 @@ func TestSentMessageDocumentMediaProjectsFullUploadedDocumentContract(t *testing
 		DocumentAttributes: []payload.DocumentAttributeRefV1{
 			{Kind: "filename", FileName: "clip.mp4"},
 			{Kind: "video", W: 1280, H: 720, DurationFloat: 3.5, SupportsStreaming: true, VideoStartTs: &videoStartTs},
-			{Kind: "sticker", Alt: ":)", StickerSetKind: "id", StickerSetID: 1001, StickerSetAccessHash: 2002, Mask: true, MaskCoords: &payload.MaskCoordsRefV1{N: 1, X: 0.5, Y: 0.25, Zoom: 1.5}},
-			{Kind: "custom_emoji", Alt: ":)", StickerSetKind: "id", StickerSetID: 3003, StickerSetAccessHash: 4004, Free: true, TextColor: true},
+			{Kind: "sticker", Alt: ":)", StickerSet: &payload.StickerSetRefV1{Kind: "id", ID: 1001, AccessHash: 2002}, Mask: true, MaskCoords: &payload.MaskCoordsRefV1{N: 1, X: 0.5, Y: 0.25, Zoom: 1.5}},
+			{Kind: "custom_emoji", Alt: ":)", StickerSet: &payload.StickerSetRefV1{Kind: "id", ID: 3003, AccessHash: 4004}, Free: true, TextColor: true},
 			{Kind: "has_stickers"},
 		},
-		DocumentMediaFlags: payload.DocumentMediaFlagsV1{Video: true, Spoiler: true},
+		DocumentMediaFlags: &payload.DocumentMediaFlagsV1{Video: true, Spoiler: true},
 		VideoCover: &payload.PhotoRefV1{
 			ID:            777,
 			AccessHash:    888,

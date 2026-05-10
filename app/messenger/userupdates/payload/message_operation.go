@@ -56,24 +56,28 @@ type MessageEntityV1 struct {
 }
 
 type MediaRefV1 struct {
-	SchemaVersion      int                      `json:"schema_version"`
-	Kind               string                   `json:"kind"`
-	ID                 int64                    `json:"id"`
-	AccessHash         int64                    `json:"access_hash,omitempty"`
-	FileReference      []byte                   `json:"file_reference,omitempty"`
-	Date               int32                    `json:"date,omitempty"`
-	DcID               int32                    `json:"dc_id,omitempty"`
-	TTLSeconds         int32                    `json:"ttl_seconds,omitempty"`
-	MimeType           string                   `json:"mime_type,omitempty"`
-	Size               int64                    `json:"size,omitempty"`
-	PhoneNumber        string                   `json:"phone_number,omitempty"`
-	FirstName          string                   `json:"first_name,omitempty"`
-	LastName           string                   `json:"last_name,omitempty"`
-	Vcard              string                   `json:"vcard,omitempty"`
-	UserID             int64                    `json:"user_id,omitempty"`
-	PhotoSizes         []PhotoSizeRefV1         `json:"photo_sizes,omitempty"`
-	DocumentThumbs     []PhotoSizeRefV1         `json:"document_thumbs,omitempty"`
-	DocumentAttributes []DocumentAttributeRefV1 `json:"document_attributes,omitempty"`
+	SchemaVersion       int                      `json:"schema_version"`
+	Kind                string                   `json:"kind"`
+	ID                  int64                    `json:"id"`
+	AccessHash          int64                    `json:"access_hash,omitempty"`
+	FileReference       []byte                   `json:"file_reference,omitempty"`
+	Date                int32                    `json:"date,omitempty"`
+	DcID                int32                    `json:"dc_id,omitempty"`
+	TTLSeconds          int32                    `json:"ttl_seconds,omitempty"`
+	MimeType            string                   `json:"mime_type,omitempty"`
+	Size                int64                    `json:"size,omitempty"`
+	PhoneNumber         string                   `json:"phone_number,omitempty"`
+	FirstName           string                   `json:"first_name,omitempty"`
+	LastName            string                   `json:"last_name,omitempty"`
+	Vcard               string                   `json:"vcard,omitempty"`
+	UserID              int64                    `json:"user_id,omitempty"`
+	PhotoSizes          []PhotoSizeRefV1         `json:"photo_sizes,omitempty"`
+	DocumentThumbs      []PhotoSizeRefV1         `json:"document_thumbs,omitempty"`
+	DocumentVideoThumbs []VideoSizeRefV1         `json:"document_video_thumbs,omitempty"`
+	DocumentAttributes  []DocumentAttributeRefV1 `json:"document_attributes,omitempty"`
+	DocumentMediaFlags  *DocumentMediaFlagsV1    `json:"document_media_flags,omitempty"`
+	VideoCover          *PhotoRefV1              `json:"video_cover,omitempty"`
+	VideoTimestamp      *int32                   `json:"video_timestamp,omitempty"`
 }
 
 type PhotoSizeRefV1 struct {
@@ -86,23 +90,73 @@ type PhotoSizeRefV1 struct {
 	Sizes []int32 `json:"sizes,omitempty"`
 }
 
+type VideoSizeRefV1 struct {
+	Kind             string           `json:"kind"`
+	Type             string           `json:"type,omitempty"`
+	W                int32            `json:"w,omitempty"`
+	H                int32            `json:"h,omitempty"`
+	Size             int32            `json:"size,omitempty"`
+	VideoStartTs     *float64         `json:"video_start_ts,omitempty"`
+	EmojiID          int64            `json:"emoji_id,omitempty"`
+	StickerSet       *StickerSetRefV1 `json:"sticker_set,omitempty"`
+	StickerID        int64            `json:"sticker_id,omitempty"`
+	BackgroundColors []int32          `json:"background_colors,omitempty"`
+}
+
+type DocumentMediaFlagsV1 struct {
+	Video   bool `json:"video"`
+	Round   bool `json:"round"`
+	Voice   bool `json:"voice"`
+	Spoiler bool `json:"spoiler"`
+}
+
+type PhotoRefV1 struct {
+	ID            int64            `json:"id"`
+	AccessHash    int64            `json:"access_hash,omitempty"`
+	FileReference []byte           `json:"file_reference,omitempty"`
+	Date          int32            `json:"date,omitempty"`
+	DcID          int32            `json:"dc_id,omitempty"`
+	Sizes         []PhotoSizeRefV1 `json:"sizes,omitempty"`
+	VideoSizes    []VideoSizeRefV1 `json:"video_sizes,omitempty"`
+}
+
+type StickerSetRefV1 struct {
+	Kind       string `json:"kind"`
+	ID         int64  `json:"id,omitempty"`
+	AccessHash int64  `json:"access_hash,omitempty"`
+	ShortName  string `json:"short_name,omitempty"`
+}
+
+type MaskCoordsRefV1 struct {
+	N    int32   `json:"n"`
+	X    float64 `json:"x"`
+	Y    float64 `json:"y"`
+	Zoom float64 `json:"zoom"`
+}
+
 type DocumentAttributeRefV1 struct {
-	Kind              string   `json:"kind"`
-	W                 int32    `json:"w,omitempty"`
-	H                 int32    `json:"h,omitempty"`
-	FileName          string   `json:"file_name,omitempty"`
-	Duration          int32    `json:"duration,omitempty"`
-	DurationFloat     float64  `json:"duration_float,omitempty"`
-	Title             *string  `json:"title,omitempty"`
-	Performer         *string  `json:"performer,omitempty"`
-	Waveform          []byte   `json:"waveform,omitempty"`
-	Voice             bool     `json:"voice,omitempty"`
-	RoundMessage      bool     `json:"round_message,omitempty"`
-	SupportsStreaming bool     `json:"supports_streaming,omitempty"`
-	NoSound           bool     `json:"nosound,omitempty"`
-	PreloadPrefixSize *int32   `json:"preload_prefix_size,omitempty"`
-	VideoStartTs      *float64 `json:"video_start_ts,omitempty"`
-	VideoCodec        *string  `json:"video_codec,omitempty"`
+	Kind              string           `json:"kind"`
+	W                 int32            `json:"w,omitempty"`
+	H                 int32            `json:"h,omitempty"`
+	FileName          string           `json:"file_name,omitempty"`
+	Duration          int32            `json:"duration,omitempty"`
+	DurationFloat     float64          `json:"duration_float,omitempty"`
+	Title             *string          `json:"title,omitempty"`
+	Performer         *string          `json:"performer,omitempty"`
+	Waveform          []byte           `json:"waveform,omitempty"`
+	Voice             bool             `json:"voice,omitempty"`
+	RoundMessage      bool             `json:"round_message,omitempty"`
+	SupportsStreaming bool             `json:"supports_streaming,omitempty"`
+	NoSound           bool             `json:"nosound,omitempty"`
+	PreloadPrefixSize *int32           `json:"preload_prefix_size,omitempty"`
+	VideoStartTs      *float64         `json:"video_start_ts,omitempty"`
+	VideoCodec        *string          `json:"video_codec,omitempty"`
+	Alt               string           `json:"alt,omitempty"`
+	StickerSet        *StickerSetRefV1 `json:"sticker_set,omitempty"`
+	Mask              bool             `json:"mask,omitempty"`
+	MaskCoords        *MaskCoordsRefV1 `json:"mask_coords,omitempty"`
+	Free              bool             `json:"free,omitempty"`
+	TextColor         bool             `json:"text_color,omitempty"`
 }
 
 type MessageAttrsV1 struct {

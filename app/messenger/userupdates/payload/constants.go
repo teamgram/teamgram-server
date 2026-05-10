@@ -19,6 +19,7 @@ const (
 	MessageEventSchemaVersion      = 2
 
 	MediaRefSchemaVersionV1         = 1
+	MediaRefSchemaVersionV2         = 2
 	MessageAttrsSchemaVersionV1     = 1
 	ForwardRefSchemaVersionV1       = 1
 	MessageOperationSchemaVersionV3 = 3
