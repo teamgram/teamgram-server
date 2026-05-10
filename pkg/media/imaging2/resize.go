@@ -19,7 +19,12 @@ import (
 
 type Processor interface {
 	ResizePhoto(ctx context.Context, original []byte, ext string, isABC bool) ([]PhotoSizeBytes, error)
+	BuildPhotoDerivatives(ctx context.Context, original []byte, ext string, isABC bool) ([]PhotoDerivativeBytes, error)
 	EncodeStripped(ctx context.Context, image []byte) ([]byte, error)
+}
+
+type ProgressiveJPEGEncoder interface {
+	EncodeProgressiveJPEG(ctx context.Context, input []byte, ext string, maxSide int) ([]byte, []int32, error)
 }
 
 type PhotoSizeBytes struct {
@@ -27,6 +32,15 @@ type PhotoSizeBytes struct {
 	W     int32
 	H     int32
 	Bytes []byte
+}
+
+type PhotoDerivativeBytes struct {
+	Type             string
+	W                int32
+	H                int32
+	Bytes            []byte
+	Stripped         bool
+	ProgressiveSizes []int32
 }
 
 type ResizeInfo struct {
@@ -68,10 +82,25 @@ var (
 	}
 )
 
-type ImagingProcessor struct{}
+type ImagingProcessor struct {
+	progressive ProgressiveJPEGEncoder
+}
 
 func NewProcessor() *ImagingProcessor {
-	return &ImagingProcessor{}
+	return NewProcessorWithProgressiveEncoder(noopProgressiveJPEGEncoder{})
+}
+
+func NewProcessorWithProgressiveEncoder(encoder ProgressiveJPEGEncoder) *ImagingProcessor {
+	if encoder == nil {
+		encoder = noopProgressiveJPEGEncoder{}
+	}
+	return &ImagingProcessor{progressive: encoder}
+}
+
+type noopProgressiveJPEGEncoder struct{}
+
+func (noopProgressiveJPEGEncoder) EncodeProgressiveJPEG(context.Context, []byte, string, int) ([]byte, []int32, error) {
+	return nil, nil, errors.New("progressive jpeg encoder unavailable")
 }
 
 func (p *ImagingProcessor) ResizePhoto(ctx context.Context, original []byte, ext string, isABC bool) ([]PhotoSizeBytes, error) {
