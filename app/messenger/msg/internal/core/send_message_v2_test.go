@@ -1412,7 +1412,7 @@ func TestMsgGetHistoryUsesViewerScopedOutgoingFlag(t *testing.T) {
 				CanonicalMessageID: 9201,
 				PeerSeq:            3,
 				UserMessageID:      103,
-				FromUserID:         1002,
+				FromUserID:         1001,
 				Outgoing:           false,
 				PeerType:           payload.PeerTypeUser,
 				PeerID:             1001,
@@ -1446,6 +1446,13 @@ func TestMsgGetHistoryUsesViewerScopedOutgoingFlag(t *testing.T) {
 	}
 	if message.Out {
 		t.Fatalf("message.Out = true, want false from viewer-scoped projection: %+v", message)
+	}
+	if message.FromId != nil {
+		t.Fatalf("message.FromId = %#v, want nil for incoming private chat projection", message.FromId)
+	}
+	peer, ok := message.PeerId.(*tg.TLPeerUser)
+	if !ok || peer.UserId != 1001 {
+		t.Fatalf("message.PeerId = %#v, want peerUser(1001)", message.PeerId)
 	}
 }
 

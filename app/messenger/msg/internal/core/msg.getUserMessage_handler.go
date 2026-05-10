@@ -56,7 +56,7 @@ func userMessageBoxTLMessage(box *repository.UserMessageBox, messageID int32, da
 		return tg.MakeTLMessage(&tg.TLMessage{
 			Out:     box.Outgoing,
 			Id:      messageID,
-			FromId:  tg.MakePeerUser(box.FromUserID),
+			FromId:  userMessageFromPeer(box.Outgoing, box.PeerType, box.FromUserID),
 			PeerId:  sentMessagePeerFromOptional(box.PeerType, box.PeerID),
 			Date:    date,
 			Message: box.MessageText,
@@ -115,7 +115,7 @@ func userMessageEventV1ToTLMessage(box *repository.UserMessageBox, event payload
 	return tg.MakeTLMessage(&tg.TLMessage{
 		Out:      event.Out,
 		Id:       messageID,
-		FromId:   tg.MakePeerUser(event.FromUserID),
+		FromId:   userMessageFromPeer(event.Out, event.PeerType, event.FromUserID),
 		PeerId:   sentMessagePeerFromOptional(event.PeerType, event.PeerID),
 		ReplyTo:  replyTo,
 		Date:     date,
@@ -149,7 +149,7 @@ func userMessageEventV2ToTLMessage(box *repository.UserMessageBox, event payload
 	return tg.MakeTLMessage(&tg.TLMessage{
 		Out:      event.Out,
 		Id:       messageID,
-		FromId:   tg.MakePeerUser(event.FromUserID),
+		FromId:   userMessageFromPeer(event.Out, event.PeerType, event.FromUserID),
 		PeerId:   sentMessagePeerFromOptional(event.PeerType, event.PeerID),
 		ReplyTo:  sentMessageReplyHeader(event.ReplyToUserMessageID),
 		Date:     date,
@@ -190,7 +190,7 @@ func userMessageEventV3ToTLMessage(box *repository.UserMessageBox, event payload
 		Noforwards:  event.Attrs != nil && event.Attrs.Noforwards,
 		InvertMedia: event.Attrs != nil && event.Attrs.InvertMedia,
 		Id:          messageID,
-		FromId:      tg.MakePeerUser(event.FromUserID),
+		FromId:      userMessageFromPeer(event.Out, event.PeerType, event.FromUserID),
 		PeerId:      sentMessagePeerFromOptional(event.PeerType, event.PeerID),
 		FwdFrom:     fwdFrom,
 		ReplyTo:     sentMessageReplyHeader(event.ReplyToUserMessageID),
@@ -202,6 +202,16 @@ func userMessageEventV3ToTLMessage(box *repository.UserMessageBox, event payload
 		TtlPeriod:   sentMessageTTLPeriod(event.MediaRef),
 		EditDate:    editDatePtr,
 	}), nil
+}
+
+func userMessageFromPeer(out bool, peerType int32, fromUserID int64) tg.PeerClazz {
+	if !out && peerType == payload.PeerTypeUser {
+		return nil
+	}
+	if fromUserID == 0 {
+		return nil
+	}
+	return tg.MakePeerUser(fromUserID)
 }
 
 func userMessageEditDate(eventKind string, date int32, editDate int32) (*int32, error) {

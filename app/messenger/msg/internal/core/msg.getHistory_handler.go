@@ -110,7 +110,7 @@ func messageFromHistoryItem(item repository.HistoryMessage) (tg.MessageClazz, er
 	return tg.MakeTLMessage(&tg.TLMessage{
 		Out:     item.Outgoing,
 		Id:      messageID,
-		FromId:  tg.MakePeerUser(item.FromUserID),
+		FromId:  userMessageFromPeer(item.Outgoing, item.PeerType, item.FromUserID),
 		PeerId:  tg.MakePeerUser(item.PeerID),
 		ReplyTo: replyTo,
 		Date:    date,
