@@ -1,6 +1,7 @@
 package projection
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"math"
@@ -529,6 +530,79 @@ func TestProjectMessageEventV3MediaGroupedForward(t *testing.T) {
 	}
 	if message.Media == nil || message.GroupedId == nil || *message.GroupedId != 444 || message.FwdFrom == nil {
 		t.Fatalf("message media/grouped/forward = media:%T grouped:%v fwd:%T", message.Media, message.GroupedId, message.FwdFrom)
+	}
+}
+
+func TestProjectMessageEventV3PhotoSizesSurviveJSONProjection(t *testing.T) {
+	body := mustMarshalMessageEventV3(t, payload.MessageEventV3{
+		SchemaVersion:      payload.MessageEventSchemaVersionV3,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: 105,
+		PeerSeq:            13,
+		MessageID:          81,
+		PeerType:           payload.PeerTypeChat,
+		PeerID:             202,
+		FromUserID:         101,
+		ToUserID:           202,
+		Date:               1700000000,
+		Out:                true,
+		MessageText:        "photo",
+		MediaRef: &payload.MediaRefV1{
+			SchemaVersion: payload.MediaRefSchemaVersionV1,
+			Kind:          "photo",
+			ID:            777,
+			AccessHash:    888,
+			FileReference: []byte("1234567890123456789012345"),
+			Date:          1700000000,
+			DcID:          2,
+			PhotoSizes: []payload.PhotoSizeRefV1{
+				{Kind: "stripped", Type: "i", Bytes: []byte{0x01, 0x16, 0x28, 0xaa}},
+				{Kind: "progressive", Type: "y", W: 1280, H: 394, Sizes: []int32{100, 200, 300}},
+			},
+		},
+	})
+
+	got, err := ProjectUserEvent(repository.UserEvent{
+		UserID:             202,
+		Pts:                24,
+		PtsCount:           1,
+		EventType:          repository.EventTypeNewMessage,
+		EventSchemaVersion: payload.MessageEventSchemaVersionV3,
+		EventCodec:         repository.PayloadCodecJSON,
+		EventPayload:       body,
+		EventPayloadHash:   payload.HashBytes(body),
+	}, ModeDifference)
+	if err != nil {
+		t.Fatalf("ProjectUserEvent() error = %v", err)
+	}
+	message, ok := got.Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessage", got.Message)
+	}
+	media, ok := message.Media.(*tg.TLMessageMediaPhoto)
+	if !ok {
+		t.Fatalf("media = %T, want *tg.TLMessageMediaPhoto", message.Media)
+	}
+	photo, ok := media.Photo.(*tg.TLPhoto)
+	if !ok {
+		t.Fatalf("photo = %T, want *tg.TLPhoto", media.Photo)
+	}
+	if len(photo.Sizes) != 2 {
+		t.Fatalf("photo sizes len = %d, want 2", len(photo.Sizes))
+	}
+	stripped, ok := photo.Sizes[0].(*tg.TLPhotoStrippedSize)
+	if !ok {
+		t.Fatalf("projected size = %T, want TLPhotoStrippedSize", photo.Sizes[0])
+	}
+	if !bytes.Equal(stripped.Bytes, []byte{0x01, 0x16, 0x28, 0xaa}) {
+		t.Fatalf("stripped bytes = %#v, want telegram stripped preview bytes", stripped.Bytes)
+	}
+	progressive, ok := photo.Sizes[1].(*tg.TLPhotoSizeProgressive)
+	if !ok {
+		t.Fatalf("projected size = %T, want TLPhotoSizeProgressive", photo.Sizes[1])
+	}
+	if progressive.Sizes[2] != 300 {
+		t.Fatalf("progressive sizes = %#v, want final offset 300", progressive.Sizes)
 	}
 }
 

@@ -296,8 +296,8 @@ func TestUploadPhotoFileCommitsAndProcessesPhoto(t *testing.T) {
 	if !ok {
 		t.Fatalf("expected photo, got %#v", got)
 	}
-	if len(gotPhoto.FileReference) == 0 {
-		t.Fatal("expected non-empty file_reference")
+	if len(gotPhoto.FileReference) != 25 {
+		t.Fatalf("len(file_reference) = %d, want 25", len(gotPhoto.FileReference))
 	}
 	if len(photos.inserted) != 1 || photos.inserted[0].InputFileName != "avatar.jpg" {
 		t.Fatalf("expected saved photo with input file name, got %#v", photos.inserted)

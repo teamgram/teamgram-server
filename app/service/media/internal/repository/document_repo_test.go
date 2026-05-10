@@ -305,8 +305,8 @@ func TestUploadedDocumentMediaCommitsAndProcessesByMime(t *testing.T) {
 			if !ok {
 				t.Fatalf("expected TLDocument, got %#v", mediaDoc.Document)
 			}
-			if len(doc.FileReference) == 0 {
-				t.Fatal("expected non-empty file_reference")
+			if len(doc.FileReference) != 25 {
+				t.Fatalf("len(file_reference) = %d, want 25", len(doc.FileReference))
 			}
 			if doc.MimeType != tt.wantMime || doc.Size2 != tt.wantSize {
 				t.Fatalf("unexpected returned document mime/size: %#v", doc)
