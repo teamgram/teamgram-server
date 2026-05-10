@@ -70,6 +70,6 @@ v2
 /pkg/proto/rpc/server/server
 
 .cache/
-/codegen/
+/codegen
 .worktrees/
 /teamgooo/data/
