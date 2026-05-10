@@ -811,6 +811,171 @@ func TestUploadedDocumentMediaKeepsProcessedThumbForGif(t *testing.T) {
 	}
 }
 
+func TestUploadedDocumentMediaTgsStickerPreservesAttributeWithoutGeneratedThumb(t *testing.T) {
+	documents := &captureDocumentsModel{}
+	photoSizes := &capturePhotoSizesModel{}
+	dfsClient := &fakeDocumentThumbDfsClient{finalizedByPurpose: map[string]*dfsapi.FileFinalizedObject{
+		"media_original": testFinalizedObject("original-tgs-object", 333),
+	}}
+	processorClient := &fakeMediaProcessorClient{}
+	r := testDocumentRepository(documents, photoSizes, dfsClient, processorClient)
+	attrs := []tg.DocumentAttributeClazz{
+		tg.MakeTLDocumentAttributeSticker(&tg.TLDocumentAttributeSticker{
+			Alt:        "x",
+			Stickerset: tg.MakeTLInputStickerSetEmpty(&tg.TLInputStickerSetEmpty{}),
+		}),
+		tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "sticker.tgs"}),
+	}
+
+	got, err := r.UploadedDocumentMedia(context.Background(), &media.TLMediaUploadedDocumentMedia{
+		OwnerId: 77,
+		Media: tg.MakeTLInputMediaUploadedDocument(&tg.TLInputMediaUploadedDocument{
+			File:       tg.MakeTLInputFile(&tg.TLInputFile{Id: 8, Parts: 1, Name: "sticker.tgs"}),
+			MimeType:   "application/x-tgsticker",
+			Attributes: attrs,
+		}),
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(dfsClient.commits) != 1 || dfsClient.commits[0].Purpose != "media_original" {
+		t.Fatalf("expected only original tgs commit, got %#v", dfsClient.commits)
+	}
+	if processorClient.gifReq != nil || processorClient.mp4Req != nil || processorClient.photoReq != nil {
+		t.Fatalf("expected no processor for tgs sticker, got gif=%#v mp4=%#v photo=%#v", processorClient.gifReq, processorClient.mp4Req, processorClient.photoReq)
+	}
+	mediaDoc, ok := got.ToMessageMediaDocument()
+	if !ok || mediaDoc.Document == nil {
+		t.Fatalf("expected messageMediaDocument, got %#v", got)
+	}
+	if mediaDoc.Video || mediaDoc.Round || mediaDoc.Voice {
+		t.Fatalf("unexpected tgs messageMediaDocument flags: %#v", mediaDoc)
+	}
+	doc, ok := mediaDoc.Document.(*tg.TLDocument)
+	if !ok {
+		t.Fatalf("expected TLDocument, got %#v", mediaDoc.Document)
+	}
+	sticker, hasSticker := findRepositoryDocumentAttribute[*tg.TLDocumentAttributeSticker](doc.Attributes)
+	if !hasSticker || sticker.Alt != "x" {
+		t.Fatalf("expected preserved sticker attribute, got %#v", doc.Attributes)
+	}
+	if len(doc.Thumbs) != 0 || len(photoSizes.inserted) != 0 || len(documents.inserted) != 1 || documents.inserted[0].ThumbId != 0 {
+		t.Fatalf("expected no generated tgs thumbs, doc=%#v documents=%#v photo_sizes=%#v", doc, documents.inserted, photoSizes.inserted)
+	}
+}
+
+func TestUploadedDocumentMediaAudioPreservesSuppliedThumbOnly(t *testing.T) {
+	documents := &captureDocumentsModel{}
+	photoSizes := &capturePhotoSizesModel{}
+	dfsClient := &fakeDocumentThumbDfsClient{finalizedByPurpose: map[string]*dfsapi.FileFinalizedObject{
+		"media_original":  testFinalizedObject("original-audio-object", 555),
+		"media_thumbnail": testFinalizedObjectWithLease("uploaded-audio-thumb-object", 123, []byte("audio-thumb-lease")),
+	}}
+	processorClient := &fakeMediaProcessorClient{photo: testProcessedPhotoThumb(
+		mediaprocessor.MakeTLProcessorDerivative(&mediaprocessor.TLProcessorDerivative{Kind: "photo_size", ObjectId: "audio-thumb-object", FileName: "m_thumb.jpg", Width: 300, Height: 300, Size2: 1200}),
+	)}
+	r := testDocumentRepository(documents, photoSizes, dfsClient, processorClient)
+	title := "song"
+	performer := "artist"
+	attrs := []tg.DocumentAttributeClazz{
+		tg.MakeTLDocumentAttributeAudio(&tg.TLDocumentAttributeAudio{Duration: 10, Title: &title, Performer: &performer}),
+		tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "song.mp3"}),
+	}
+
+	got, err := r.UploadedDocumentMedia(context.Background(), &media.TLMediaUploadedDocumentMedia{
+		OwnerId: 77,
+		Media: tg.MakeTLInputMediaUploadedDocument(&tg.TLInputMediaUploadedDocument{
+			File:       tg.MakeTLInputFile(&tg.TLInputFile{Id: 8, Parts: 1, Name: "song.mp3"}),
+			Thumb:      tg.MakeTLInputFile(&tg.TLInputFile{Id: 9, Parts: 1, Name: "cover.jpg"}),
+			MimeType:   "audio/mpeg",
+			Attributes: attrs,
+		}),
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(dfsClient.commits) != 2 || dfsClient.commits[0].Purpose != "media_original" || dfsClient.commits[1].Purpose != "media_thumbnail" {
+		t.Fatalf("expected original and supplied thumb commits, got %#v", dfsClient.commits)
+	}
+	if processorClient.photoReq == nil || processorClient.photoReq.ObjectId != "uploaded-audio-thumb-object" || string(processorClient.photoReq.ReadLease) != "audio-thumb-lease" || processorClient.photoReq.FileName != "cover.jpg" {
+		t.Fatalf("unexpected supplied thumb processor request: %#v", processorClient.photoReq)
+	}
+	if processorClient.gifReq != nil || processorClient.mp4Req != nil {
+		t.Fatalf("expected no audio document processor, got gif=%#v mp4=%#v", processorClient.gifReq, processorClient.mp4Req)
+	}
+	mediaDoc, ok := got.ToMessageMediaDocument()
+	if !ok || mediaDoc.Document == nil {
+		t.Fatalf("expected messageMediaDocument, got %#v", got)
+	}
+	if mediaDoc.Video || mediaDoc.Round || mediaDoc.Voice {
+		t.Fatalf("unexpected audio messageMediaDocument flags: %#v", mediaDoc)
+	}
+	doc, ok := mediaDoc.Document.(*tg.TLDocument)
+	if !ok {
+		t.Fatalf("expected TLDocument, got %#v", mediaDoc.Document)
+	}
+	audio, hasAudio := findRepositoryDocumentAttribute[*tg.TLDocumentAttributeAudio](doc.Attributes)
+	if !hasAudio || audio.Duration != 10 || audio.Title == nil || *audio.Title != title || audio.Performer == nil || *audio.Performer != performer {
+		t.Fatalf("expected preserved audio attribute, got %#v", doc.Attributes)
+	}
+	if len(doc.Thumbs) != 1 || len(photoSizes.inserted) != 1 || photoSizes.inserted[0].FilePath != "audio-thumb-object" {
+		t.Fatalf("expected only supplied audio thumb, doc=%#v photo_sizes=%#v", doc, photoSizes.inserted)
+	}
+}
+
+func TestUploadedDocumentMediaWebMStickerDoesNotUseMp4Processor(t *testing.T) {
+	documents := &captureDocumentsModel{}
+	photoSizes := &capturePhotoSizesModel{}
+	dfsClient := &fakeDocumentThumbDfsClient{finalizedByPurpose: map[string]*dfsapi.FileFinalizedObject{
+		"media_original": testFinalizedObject("original-webm-sticker-object", 555),
+	}}
+	processorClient := &fakeMediaProcessorClient{}
+	r := testDocumentRepository(documents, photoSizes, dfsClient, processorClient)
+	attrs := []tg.DocumentAttributeClazz{
+		tg.MakeTLDocumentAttributeSticker(&tg.TLDocumentAttributeSticker{
+			Alt:        "v",
+			Stickerset: tg.MakeTLInputStickerSetEmpty(&tg.TLInputStickerSetEmpty{}),
+		}),
+		tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "sticker.webm"}),
+	}
+
+	got, err := r.UploadedDocumentMedia(context.Background(), &media.TLMediaUploadedDocumentMedia{
+		OwnerId: 77,
+		Media: tg.MakeTLInputMediaUploadedDocument(&tg.TLInputMediaUploadedDocument{
+			File:       tg.MakeTLInputFile(&tg.TLInputFile{Id: 8, Parts: 1, Name: "sticker.webm"}),
+			MimeType:   "video/webm",
+			Attributes: attrs,
+		}),
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(dfsClient.commits) != 1 || dfsClient.commits[0].Purpose != "media_original" {
+		t.Fatalf("expected only original webm sticker commit, got %#v", dfsClient.commits)
+	}
+	if processorClient.mp4Req != nil || processorClient.gifReq != nil || processorClient.photoReq != nil {
+		t.Fatalf("expected no processor for webm sticker, got gif=%#v mp4=%#v photo=%#v", processorClient.gifReq, processorClient.mp4Req, processorClient.photoReq)
+	}
+	mediaDoc, ok := got.ToMessageMediaDocument()
+	if !ok || mediaDoc.Document == nil {
+		t.Fatalf("expected messageMediaDocument, got %#v", got)
+	}
+	if mediaDoc.Video || mediaDoc.Round || mediaDoc.Voice {
+		t.Fatalf("unexpected webm sticker messageMediaDocument flags: %#v", mediaDoc)
+	}
+	doc, ok := mediaDoc.Document.(*tg.TLDocument)
+	if !ok {
+		t.Fatalf("expected TLDocument, got %#v", mediaDoc.Document)
+	}
+	sticker, hasSticker := findRepositoryDocumentAttribute[*tg.TLDocumentAttributeSticker](doc.Attributes)
+	if !hasSticker || sticker.Alt != "v" {
+		t.Fatalf("expected preserved sticker attribute, got %#v", doc.Attributes)
+	}
+	if len(doc.Thumbs) != 0 || len(photoSizes.inserted) != 0 || len(documents.inserted) != 1 || documents.inserted[0].MimeType != "video/webm" {
+		t.Fatalf("expected stored webm sticker without generated thumbs, doc=%#v documents=%#v photo_sizes=%#v", doc, documents.inserted, photoSizes.inserted)
+	}
+}
+
 func TestUploadedDocumentMediaDoesNotReturnOnlyStrippedThumb(t *testing.T) {
 	documents := &captureDocumentsModel{}
 	photoSizes := &capturePhotoSizesModel{}
