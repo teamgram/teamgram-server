@@ -1,6 +1,7 @@
 package core
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"testing"
@@ -44,6 +45,9 @@ func TestResolveMessageMediaInputMediaPhotoUsesMediaGetPhotoReference(t *testing
 	}
 	if len(photo.FileReference) != 25 {
 		t.Fatalf("len(photo.FileReference) = %d, want 25", len(photo.FileReference))
+	}
+	if !bytes.Equal(photo.FileReference, fileReference) {
+		t.Fatalf("FileReference = %x, want media reference %x", photo.FileReference, fileReference)
 	}
 }
 
