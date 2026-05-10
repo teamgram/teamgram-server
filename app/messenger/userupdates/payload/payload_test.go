@@ -156,6 +156,69 @@ func TestMessageOperationV3CarriesV2AndMediaFields(t *testing.T) {
 	}
 }
 
+func TestMediaRefV2CarriesFullDocumentProjection(t *testing.T) {
+	videoStartTs := 1.25
+	videoTimestamp := int32(7)
+	ref := MediaRefV1{
+		SchemaVersion: MediaRefSchemaVersionV2,
+		Kind:          "document",
+		ID:            555,
+		AccessHash:    666,
+		FileReference: []byte("doc-ref"),
+		Date:          1_700_000_000,
+		DcID:          4,
+		MimeType:      "video/mp4",
+		Size:          98765,
+		DocumentThumbs: []PhotoSizeRefV1{
+			{Kind: "size", Type: "m", W: 320, H: 200, Size: 1234},
+		},
+		DocumentVideoThumbs: []VideoSizeRefV1{
+			{Type: "v", W: 320, H: 200, Size: 4567, VideoStartTs: &videoStartTs},
+		},
+		DocumentAttributes: []DocumentAttributeRefV1{
+			{Kind: "filename", FileName: "clip.mp4"},
+			{Kind: "video", W: 1280, H: 720, DurationFloat: 3.5, SupportsStreaming: true, VideoStartTs: &videoStartTs},
+			{Kind: "audio", Duration: 3, Title: stringPtrForTest("title"), Performer: stringPtrForTest("performer")},
+			{Kind: "sticker", Alt: ":)", StickerSetID: 1001, StickerSetAccessHash: 2002, Mask: true, MaskCoords: &MaskCoordsRefV1{N: 1, X: 0.5, Y: 0.25, Zoom: 1.5}},
+			{Kind: "custom_emoji", Alt: ":)", StickerSetID: 3003, StickerSetAccessHash: 4004, Free: true, TextColor: true},
+			{Kind: "has_stickers"},
+		},
+		DocumentMediaFlags: DocumentMediaFlagsV1{Video: true, Spoiler: true},
+		VideoCover: &PhotoRefV1{
+			ID:            777,
+			AccessHash:    888,
+			FileReference: []byte("cover-ref"),
+			Date:          1_700_000_001,
+			DcID:          5,
+			Sizes: []PhotoSizeRefV1{
+				{Kind: "size", Type: "x", W: 640, H: 360, Size: 4321},
+			},
+		},
+		VideoTimestamp: &videoTimestamp,
+	}
+
+	body, err := json.Marshal(ref)
+	if err != nil {
+		t.Fatalf("Marshal() error = %v", err)
+	}
+	var got MediaRefV1
+	if err := json.Unmarshal(body, &got); err != nil {
+		t.Fatalf("Unmarshal() error = %v", err)
+	}
+	if len(got.DocumentVideoThumbs) != 1 {
+		t.Fatalf("DocumentVideoThumbs len = %d, want 1", len(got.DocumentVideoThumbs))
+	}
+	if !got.DocumentMediaFlags.Video || !got.DocumentMediaFlags.Spoiler {
+		t.Fatalf("DocumentMediaFlags = %+v, want video spoiler", got.DocumentMediaFlags)
+	}
+	if got.VideoCover == nil || got.VideoCover.ID != 777 {
+		t.Fatalf("VideoCover = %+v, want photo 777", got.VideoCover)
+	}
+	if got.VideoTimestamp == nil || *got.VideoTimestamp != videoTimestamp {
+		t.Fatalf("VideoTimestamp = %v, want %d", got.VideoTimestamp, videoTimestamp)
+	}
+}
+
 func TestMessageOperationV1SideEffectFieldsAffectPayloadHash(t *testing.T) {
 	base := MessageOperationV1{
 		SchemaVersion:      MessageOperationSchemaVersion,
@@ -198,6 +261,10 @@ func TestMessageOperationV1SideEffectFieldsAffectPayloadHash(t *testing.T) {
 	if hex.EncodeToString(HashBytes(baseBody)) == hex.EncodeToString(HashBytes(sideEffectBody)) {
 		t.Fatalf("side-effect fields did not affect payload hash")
 	}
+}
+
+func stringPtrForTest(s string) *string {
+	return &s
 }
 
 func TestOperationResponseAndEventCarrySchemaVersion(t *testing.T) {

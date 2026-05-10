@@ -385,6 +385,76 @@ func TestMsgGetUserMessagePreservesV3ViewPayloadShape(t *testing.T) {
 	}
 }
 
+func TestSentMessageDocumentMediaProjectsFullUploadedDocumentContract(t *testing.T) {
+	videoStartTs := 1.25
+	videoTimestamp := int32(7)
+	media := sentMessageMedia(&payload.MediaRefV1{
+		SchemaVersion: payload.MediaRefSchemaVersionV2,
+		Kind:          "document",
+		ID:            555,
+		AccessHash:    666,
+		FileReference: []byte("doc-ref"),
+		Date:          1_700_000_000,
+		DcID:          4,
+		MimeType:      "video/mp4",
+		Size:          98765,
+		DocumentThumbs: []payload.PhotoSizeRefV1{
+			{Kind: "size", Type: "m", W: 320, H: 200, Size: 1234},
+		},
+		DocumentVideoThumbs: []payload.VideoSizeRefV1{
+			{Type: "v", W: 320, H: 200, Size: 4567, VideoStartTs: &videoStartTs},
+		},
+		DocumentAttributes: []payload.DocumentAttributeRefV1{
+			{Kind: "filename", FileName: "clip.mp4"},
+			{Kind: "video", W: 1280, H: 720, DurationFloat: 3.5, SupportsStreaming: true, VideoStartTs: &videoStartTs},
+			{Kind: "sticker", Alt: ":)", StickerSetID: 1001, StickerSetAccessHash: 2002, MaskCoords: &payload.MaskCoordsRefV1{N: 1, X: 0.5, Y: 0.25, Zoom: 1.5}},
+			{Kind: "custom_emoji", Alt: ":)", StickerSetID: 3003, StickerSetAccessHash: 4004, Free: true, TextColor: true},
+			{Kind: "has_stickers"},
+		},
+		DocumentMediaFlags: payload.DocumentMediaFlagsV1{Video: true, Spoiler: true},
+		VideoCover: &payload.PhotoRefV1{
+			ID:            777,
+			AccessHash:    888,
+			FileReference: []byte("cover-ref"),
+			Date:          1_700_000_001,
+			DcID:          5,
+			Sizes: []payload.PhotoSizeRefV1{
+				{Kind: "size", Type: "x", W: 640, H: 360, Size: 4321},
+			},
+		},
+		VideoTimestamp: &videoTimestamp,
+	})
+
+	documentMedia, ok := media.(*tg.TLMessageMediaDocument)
+	if !ok {
+		t.Fatalf("media = %T, want *tg.TLMessageMediaDocument", media)
+	}
+	if !documentMedia.Video || !documentMedia.Spoiler {
+		t.Fatalf("messageMediaDocument flags video=%v spoiler=%v, want true/true", documentMedia.Video, documentMedia.Spoiler)
+	}
+	document, ok := documentMedia.Document.(*tg.TLDocument)
+	if !ok {
+		t.Fatalf("document = %T, want *tg.TLDocument", documentMedia.Document)
+	}
+	if len(document.VideoThumbs) != 1 {
+		t.Fatalf("VideoThumbs len = %d, want 1", len(document.VideoThumbs))
+	}
+	if _, ok := document.VideoThumbs[0].(*tg.TLVideoSize); !ok {
+		t.Fatalf("VideoThumbs[0] = %T, want *tg.TLVideoSize", document.VideoThumbs[0])
+	}
+	if !hasDocumentAttribute[*tg.TLDocumentAttributeSticker](document.Attributes) ||
+		!hasDocumentAttribute[*tg.TLDocumentAttributeCustomEmoji](document.Attributes) ||
+		!hasDocumentAttribute[*tg.TLDocumentAttributeHasStickers](document.Attributes) {
+		t.Fatalf("document attrs = %#v, want sticker/custom_emoji/has_stickers", document.Attributes)
+	}
+	if documentMedia.VideoTimestamp == nil || *documentMedia.VideoTimestamp != videoTimestamp {
+		t.Fatalf("VideoTimestamp = %v, want %d", documentMedia.VideoTimestamp, videoTimestamp)
+	}
+	if _, ok := documentMedia.VideoCover.(*tg.TLPhoto); !ok {
+		t.Fatalf("VideoCover = %T, want *tg.TLPhoto", documentMedia.VideoCover)
+	}
+}
+
 func TestForwardRevalidationRejectsInvisibleSource(t *testing.T) {
 	core, fakeRepo, _ := newBatchMsgCoreForTest(t)
 	fakeRepo.forwardVisible = false
@@ -396,6 +466,15 @@ func TestForwardRevalidationRejectsInvisibleSource(t *testing.T) {
 	if fakeRepo.batchCreateCalls != 0 {
 		t.Fatal("canonical rows were created before forward revalidation")
 	}
+}
+
+func hasDocumentAttribute[T tg.DocumentAttributeClazz](attrs []tg.DocumentAttributeClazz) bool {
+	for _, attr := range attrs {
+		if _, ok := attr.(T); ok {
+			return true
+		}
+	}
+	return false
 }
 
 func TestMsgSendMessageV2BatchReceiverAckFailureIsRetryable(t *testing.T) {

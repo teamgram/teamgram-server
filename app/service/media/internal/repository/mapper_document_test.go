@@ -52,3 +52,64 @@ func TestMapDocumentReturnsDecodeErrorForInvalidLegacyAttributes(t *testing.T) {
 		t.Fatal("mapDocumentAggregate() error = nil, want decode error")
 	}
 }
+
+func TestDocumentAttributePersistencePreservesStickerCustomEmojiAndHasStickers(t *testing.T) {
+	attrs := []tg.DocumentAttributeClazz{
+		tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "sticker.webp"}),
+		tg.MakeTLDocumentAttributeSticker(&tg.TLDocumentAttributeSticker{
+			Mask: true,
+			Alt:  ":)",
+			Stickerset: tg.MakeTLInputStickerSetID(&tg.TLInputStickerSetID{
+				Id:         1001,
+				AccessHash: 2002,
+			}),
+			MaskCoords: tg.MakeTLMaskCoords(&tg.TLMaskCoords{N: 1, X: 0.5, Y: 0.25, Zoom: 1.5}),
+		}),
+		tg.MakeTLDocumentAttributeCustomEmoji(&tg.TLDocumentAttributeCustomEmoji{
+			Free:      true,
+			TextColor: true,
+			Alt:       ":)",
+			Stickerset: tg.MakeTLInputStickerSetID(&tg.TLInputStickerSetID{
+				Id:         3003,
+				AccessHash: 4004,
+			}),
+		}),
+		tg.MakeTLDocumentAttributeHasStickers(&tg.TLDocumentAttributeHasStickers{}),
+	}
+
+	vector, err := encodeDocumentAttributeVector(attrs)
+	if err != nil {
+		t.Fatalf("encodeDocumentAttributeVector() error = %v", err)
+	}
+	decodedVector, err := decodeDocumentAttributeVector(vector)
+	if err != nil {
+		t.Fatalf("decodeDocumentAttributeVector() error = %v", err)
+	}
+	if len(decodedVector) != len(attrs) {
+		t.Fatalf("decoded vector attrs len = %d, want %d", len(decodedVector), len(attrs))
+	}
+
+	legacy, err := encodeLegacyDocumentAttributes(decodedVector)
+	if err != nil {
+		t.Fatalf("encodeLegacyDocumentAttributes() error = %v", err)
+	}
+	decodedLegacy, err := decodeLegacyDocumentAttributes(legacy)
+	if err != nil {
+		t.Fatalf("decodeLegacyDocumentAttributes() error = %v", err)
+	}
+	if !hasRepositoryDocumentAttribute[*tg.TLDocumentAttributeFilename](decodedLegacy) ||
+		!hasRepositoryDocumentAttribute[*tg.TLDocumentAttributeSticker](decodedLegacy) ||
+		!hasRepositoryDocumentAttribute[*tg.TLDocumentAttributeCustomEmoji](decodedLegacy) ||
+		!hasRepositoryDocumentAttribute[*tg.TLDocumentAttributeHasStickers](decodedLegacy) {
+		t.Fatalf("decoded legacy attrs = %#v, want filename/sticker/custom_emoji/has_stickers", decodedLegacy)
+	}
+}
+
+func hasRepositoryDocumentAttribute[T tg.DocumentAttributeClazz](attrs []tg.DocumentAttributeClazz) bool {
+	for _, attr := range attrs {
+		if _, ok := attr.(T); ok {
+			return true
+		}
+	}
+	return false
+}
