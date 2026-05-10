@@ -17,7 +17,7 @@ func mapDocumentAggregate(doc *model.Documents, thumbs []model.PhotoSizes, video
 	if doc == nil {
 		return nil, media.ErrDocumentNotFound
 	}
-	attrs, err := decodeLegacyDocumentAttributes(doc.Attributes)
+	attrs, err := decodeDocumentAttributesFromStorage(doc.Attributes)
 	if err != nil {
 		return nil, err
 	}

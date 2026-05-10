@@ -423,7 +423,7 @@ func (r *Repository) saveDocumentAggregateWithPaths(ctx context.Context, uploade
 	if !ok {
 		return media.ErrMediaInvalidArgument
 	}
-	attrs, err := encodeLegacyDocumentAttributes(do.Attributes)
+	attrs, err := encodeDocumentAttributesForStorage(do.Attributes)
 	if err != nil {
 		return err
 	}

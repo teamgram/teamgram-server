@@ -1,9 +1,14 @@
 package repository
 
 import (
+	"context"
+	"encoding/base64"
+	"encoding/json"
+	"errors"
 	"testing"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/media/internal/repository/model"
+	"github.com/teamgram/teamgram-server/v2/app/service/media/media"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -53,8 +58,145 @@ func TestMapDocumentReturnsDecodeErrorForInvalidLegacyAttributes(t *testing.T) {
 	}
 }
 
+func TestEncodeDocumentAttributesForStorageRoundTripsStickerAndCustomEmoji(t *testing.T) {
+	attrs := repositoryDocumentAttributesWithStickerCustomEmoji()
+	raw, err := encodeDocumentAttributesForStorage(attrs)
+	if err != nil {
+		t.Fatalf("encodeDocumentAttributesForStorage() error = %v", err)
+	}
+	var envelope documentAttributeStorageEnvelope
+	if err := json.Unmarshal([]byte(raw), &envelope); err != nil {
+		t.Fatalf("json.Unmarshal() error = %v", err)
+	}
+	if envelope.SchemaVersion != documentAttributeStorageVersionV2 {
+		t.Fatalf("SchemaVersion = %d, want %d", envelope.SchemaVersion, documentAttributeStorageVersionV2)
+	}
+	if envelope.Encoding != documentAttributeStorageTLVector {
+		t.Fatalf("Encoding = %q, want %q", envelope.Encoding, documentAttributeStorageTLVector)
+	}
+	if envelope.Layer != documentAttributeVectorLayer {
+		t.Fatalf("Layer = %d, want %d", envelope.Layer, documentAttributeVectorLayer)
+	}
+	if _, err := base64.StdEncoding.DecodeString(envelope.Bytes); err != nil {
+		t.Fatalf("base64.DecodeString() error = %v", err)
+	}
+	decodedVector, err := decodeDocumentAttributesFromStorage(raw)
+	if err != nil {
+		t.Fatalf("decodeDocumentAttributesFromStorage() error = %v", err)
+	}
+	assertRepositoryDocumentAttributesLossless(t, decodedVector)
+}
+
 func TestDocumentAttributePersistencePreservesStickerCustomEmojiAndHasStickers(t *testing.T) {
-	attrs := []tg.DocumentAttributeClazz{
+	raw, err := encodeDocumentAttributesForStorage(repositoryDocumentAttributesWithStickerCustomEmoji())
+	if err != nil {
+		t.Fatalf("encodeDocumentAttributesForStorage() error = %v", err)
+	}
+	got, err := mapDocumentAggregate(
+		&model.Documents{
+			DocumentId: 20,
+			AccessHash: 30,
+			DcId:       1,
+			Date2:      40,
+			MimeType:   "image/webp",
+			FileSize:   50,
+			Attributes: raw,
+		},
+		nil,
+		nil,
+		[]byte("file-reference"),
+	)
+	if err != nil {
+		t.Fatalf("mapDocumentAggregate() error = %v", err)
+	}
+	doc, ok := got.ToDocument()
+	if !ok {
+		t.Fatalf("Document clazz = %s, want document", got.ClazzName())
+	}
+	assertRepositoryDocumentAttributesLossless(t, doc.Attributes)
+}
+
+func TestDecodeDocumentAttributesFromStorageAcceptsLegacyJSON(t *testing.T) {
+	decodedLegacy, err := decodeDocumentAttributesFromStorage(`[{"_name":"documentAttributeFilename","_object":{"file_name":"report.pdf"}}]`)
+	if err != nil {
+		t.Fatalf("decodeDocumentAttributesFromStorage() error = %v", err)
+	}
+	filename, hasFilename := findRepositoryDocumentAttribute[*tg.TLDocumentAttributeFilename](decodedLegacy)
+	if !hasFilename {
+		t.Fatalf("decoded legacy attrs = %#v, want filename", decodedLegacy)
+	}
+	if filename.FileName != "report.pdf" {
+		t.Fatalf("filename attr FileName = %q, want report.pdf", filename.FileName)
+	}
+}
+
+func TestDecodeDocumentAttributesFromStorageRejectsMalformedEnvelope(t *testing.T) {
+	tests := []struct {
+		name string
+		raw  string
+	}{
+		{
+			name: "invalid JSON",
+			raw:  `{`,
+		},
+		{
+			name: "unsupported schema",
+			raw:  `{"schema_version":1,"encoding":"tl_object_vector","layer":224,"bytes":""}`,
+		},
+		{
+			name: "unsupported encoding",
+			raw:  `{"schema_version":2,"encoding":"json","layer":224,"bytes":""}`,
+		},
+		{
+			name: "invalid base64",
+			raw:  `{"schema_version":2,"encoding":"tl_object_vector","layer":224,"bytes":"%%%"}`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := decodeDocumentAttributesFromStorage(tt.raw)
+			if !errors.Is(err, media.ErrMediaStorage) {
+				t.Fatalf("decodeDocumentAttributesFromStorage() error = %v, want ErrMediaStorage", err)
+			}
+		})
+	}
+}
+
+func TestSaveDocumentAggregateStoresAttributeEnvelope(t *testing.T) {
+	documents := &captureDocumentsModel{}
+	repo := &Repository{model: &model.Models{DocumentsModel: documents}}
+	doc := tg.MakeTLDocument(&tg.TLDocument{
+		Id:         20,
+		AccessHash: 30,
+		DcId:       1,
+		Date:       40,
+		MimeType:   "image/webp",
+		Size2:      50,
+		Attributes: repositoryDocumentAttributesWithStickerCustomEmoji(),
+	}).ToDocument()
+	if err := repo.saveDocumentAggregateWithPaths(context.Background(), "sticker.webp", doc, "document-object", nil); err != nil {
+		t.Fatalf("saveDocumentAggregateWithPaths() error = %v", err)
+	}
+	if len(documents.inserted) != 1 {
+		t.Fatalf("Insert2() rows = %d, want 1", len(documents.inserted))
+	}
+	row := documents.inserted[0]
+	var envelope documentAttributeStorageEnvelope
+	if err := json.Unmarshal([]byte(row.Attributes), &envelope); err != nil {
+		t.Fatalf("json.Unmarshal(row.Attributes) error = %v", err)
+	}
+	if envelope.SchemaVersion != documentAttributeStorageVersionV2 || envelope.Encoding != documentAttributeStorageTLVector || envelope.Layer != documentAttributeVectorLayer {
+		t.Fatalf("envelope = %#v, want v2 tl vector layer", envelope)
+	}
+	decoded, err := decodeDocumentAttributesFromStorage(row.Attributes)
+	if err != nil {
+		t.Fatalf("decodeDocumentAttributesFromStorage() error = %v", err)
+	}
+	assertRepositoryDocumentAttributesLossless(t, decoded)
+}
+
+func repositoryDocumentAttributesWithStickerCustomEmoji() []tg.DocumentAttributeClazz {
+	return []tg.DocumentAttributeClazz{
 		tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "sticker.webp"}),
 		tg.MakeTLDocumentAttributeSticker(&tg.TLDocumentAttributeSticker{
 			Mask: true,
@@ -76,33 +218,16 @@ func TestDocumentAttributePersistencePreservesStickerCustomEmojiAndHasStickers(t
 		}),
 		tg.MakeTLDocumentAttributeHasStickers(&tg.TLDocumentAttributeHasStickers{}),
 	}
+}
 
-	vector, err := encodeDocumentAttributeVector(attrs)
-	if err != nil {
-		t.Fatalf("encodeDocumentAttributeVector() error = %v", err)
-	}
-	decodedVector, err := decodeDocumentAttributeVector(vector)
-	if err != nil {
-		t.Fatalf("decodeDocumentAttributeVector() error = %v", err)
-	}
-	if len(decodedVector) != len(attrs) {
-		t.Fatalf("decoded vector attrs len = %d, want %d", len(decodedVector), len(attrs))
-	}
-
-	legacy, err := encodeLegacyDocumentAttributes(decodedVector)
-	if err != nil {
-		t.Fatalf("encodeLegacyDocumentAttributes() error = %v", err)
-	}
-	decodedLegacy, err := decodeLegacyDocumentAttributes(legacy)
-	if err != nil {
-		t.Fatalf("decodeLegacyDocumentAttributes() error = %v", err)
-	}
-	filename, hasFilename := findRepositoryDocumentAttribute[*tg.TLDocumentAttributeFilename](decodedLegacy)
-	sticker, hasSticker := findRepositoryDocumentAttribute[*tg.TLDocumentAttributeSticker](decodedLegacy)
-	customEmoji, hasCustomEmoji := findRepositoryDocumentAttribute[*tg.TLDocumentAttributeCustomEmoji](decodedLegacy)
-	_, hasStickers := findRepositoryDocumentAttribute[*tg.TLDocumentAttributeHasStickers](decodedLegacy)
+func assertRepositoryDocumentAttributesLossless(t *testing.T, attrs []tg.DocumentAttributeClazz) {
+	t.Helper()
+	filename, hasFilename := findRepositoryDocumentAttribute[*tg.TLDocumentAttributeFilename](attrs)
+	sticker, hasSticker := findRepositoryDocumentAttribute[*tg.TLDocumentAttributeSticker](attrs)
+	customEmoji, hasCustomEmoji := findRepositoryDocumentAttribute[*tg.TLDocumentAttributeCustomEmoji](attrs)
+	_, hasStickers := findRepositoryDocumentAttribute[*tg.TLDocumentAttributeHasStickers](attrs)
 	if !hasFilename || !hasSticker || !hasCustomEmoji || !hasStickers {
-		t.Fatalf("decoded legacy attrs = %#v, want filename/sticker/custom_emoji/has_stickers", decodedLegacy)
+		t.Fatalf("attrs = %#v, want filename/sticker/custom_emoji/has_stickers", attrs)
 	}
 	if filename.FileName != "sticker.webp" {
 		t.Fatalf("filename attr FileName = %q, want sticker.webp", filename.FileName)
