@@ -105,6 +105,9 @@ func classifyUploadedDocument(uploaded *tg.TLInputMediaUploadedDocument) (docume
 		if mimeType != "video/mp4" || attrs.animated {
 			return documentClassification{}, media.ErrMediaInvalidUploadedFile
 		}
+		if uploaded.ForceFile && !attrs.video {
+			return newDocumentClassification(documentKindPlain, messageRenderKindFile, requiredDocumentTransformNone), nil
+		}
 		if uploaded.ForceFile {
 			return newDocumentClassification(documentKindVideo, messageRenderKindFile, requiredDocumentTransformMp4), nil
 		}

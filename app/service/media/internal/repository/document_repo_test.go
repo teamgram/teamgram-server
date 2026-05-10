@@ -456,6 +456,58 @@ func TestUploadedDocumentMediaReturnsNoVideoFlagForForceFileMp4(t *testing.T) {
 	}
 }
 
+func TestUploadedDocumentMediaForceFileMp4WithoutVideoAttributeDoesNotUseProcessor(t *testing.T) {
+	documents := &captureDocumentsModel{}
+	photoSizes := &capturePhotoSizesModel{}
+	dfsClient := &fakeDfsMediaClient{finalized: testFinalizedObject("original-mp4-file-object", 333)}
+	processorClient := &fakeMediaProcessorClient{}
+	r := &Repository{
+		model:                &model.Models{DocumentsModel: documents, FileReferencesModel: newCaptureFileReferencesModel(), PhotoSizesModel: photoSizes, VideoSizesModel: &captureVideoSizesModel{}},
+		dfsClient:            dfsClient,
+		processorClient:      processorClient,
+		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
+		fileReferenceTTL:     time.Hour,
+	}
+
+	got, err := r.UploadedDocumentMedia(context.Background(), &media.TLMediaUploadedDocumentMedia{
+		OwnerId: 77,
+		Media: tg.MakeTLInputMediaUploadedDocument(&tg.TLInputMediaUploadedDocument{
+			ForceFile: true,
+			File:      tg.MakeTLInputFile(&tg.TLInputFile{Id: 8, Parts: 1, Name: "1.mp4"}),
+			MimeType:  "video/mp4",
+			Attributes: []tg.DocumentAttributeClazz{
+				tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "1.mp4"}),
+			},
+		}),
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if processorClient.mp4Req != nil || processorClient.gifReq != nil || processorClient.photoReq != nil {
+		t.Fatalf("expected force-file mp4 without video attribute not to use processor, got mp4=%#v gif=%#v photo=%#v", processorClient.mp4Req, processorClient.gifReq, processorClient.photoReq)
+	}
+	mediaDoc, ok := got.ToMessageMediaDocument()
+	if !ok || mediaDoc.Document == nil {
+		t.Fatalf("expected messageMediaDocument, got %#v", got)
+	}
+	if mediaDoc.Video || mediaDoc.Round || mediaDoc.Voice {
+		t.Fatalf("unexpected force-file mp4 messageMediaDocument flags: %#v", mediaDoc)
+	}
+	doc, ok := mediaDoc.Document.(*tg.TLDocument)
+	if !ok {
+		t.Fatalf("expected TLDocument, got %#v", mediaDoc.Document)
+	}
+	if doc.MimeType != "video/mp4" || doc.Size2 != 333 || len(doc.Thumbs) != 0 {
+		t.Fatalf("unexpected force-file mp4 document: %#v", doc)
+	}
+	if len(documents.inserted) != 1 || documents.inserted[0].FilePath != "original-mp4-file-object" || documents.inserted[0].MimeType != "video/mp4" || documents.inserted[0].ThumbId != 0 {
+		t.Fatalf("expected saved original mp4 file document, got %#v", documents.inserted)
+	}
+	if len(photoSizes.inserted) != 0 {
+		t.Fatalf("expected no saved thumbs for mp4 file, got %#v", photoSizes.inserted)
+	}
+}
+
 func TestUploadedDocumentMediaViaLegacyDFSCallsLegacyWrappers(t *testing.T) {
 	tests := []struct {
 		name         string
