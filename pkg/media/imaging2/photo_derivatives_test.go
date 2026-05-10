@@ -77,6 +77,19 @@ func TestBuildPhotoDerivativesOmitsStrippedWhenStrippedEncodingFails(t *testing.
 	})
 }
 
+func TestBuildPhotoDerivativesUsesProgressiveBytesForDimensions(t *testing.T) {
+	processor := NewProcessorWithProgressiveEncoder(geometryChangingProgressiveJPEGEncoder{width: 123, height: 45})
+	derivatives, err := processor.BuildPhotoDerivatives(context.Background(), testSizedJPEG(t, 606, 429), "jpg", false)
+	if err != nil {
+		t.Fatalf("BuildPhotoDerivatives() error = %v", err)
+	}
+	assertPhotoDerivatives(t, derivatives, []wantPhotoDerivative{
+		{typ: "i", w: 40, h: 28, stripped: true},
+		{typ: "m", w: 320, h: 227},
+		{typ: "x", w: 123, h: 45, progressive: true},
+	})
+}
+
 type wantPhotoDerivative struct {
 	typ         string
 	w           int32
@@ -138,8 +151,37 @@ func (failingStrippedJPEGEncoder) EncodeStrippedJPEG(io.Writer, image.Image) err
 	return errors.New("stripped encode failed")
 }
 
+type geometryChangingProgressiveJPEGEncoder struct {
+	width  int
+	height int
+}
+
+func (e geometryChangingProgressiveJPEGEncoder) EncodeProgressiveJPEG(ctx context.Context, _ []byte, _ string, _ int) ([]byte, []int32, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, nil, err
+	}
+	data := testJPEGBytes(e.width, e.height)
+	return data, []int32{int32(len(data) / 2), int32(len(data))}, nil
+}
+
 func testSizedJPEG(t *testing.T, width, height int) []byte {
 	t.Helper()
+	data, err := encodeTestJPEG(width, height)
+	if err != nil {
+		t.Fatalf("encode jpeg fixture: %v", err)
+	}
+	return data
+}
+
+func testJPEGBytes(width, height int) []byte {
+	data, err := encodeTestJPEG(width, height)
+	if err != nil {
+		panic(err)
+	}
+	return data
+}
+
+func encodeTestJPEG(width, height int) ([]byte, error) {
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
 	for y := 0; y < height; y++ {
 		for x := 0; x < width; x++ {
@@ -148,7 +190,7 @@ func testSizedJPEG(t *testing.T, width, height int) []byte {
 	}
 	var buf bytes.Buffer
 	if err := jpeg.Encode(&buf, img, nil); err != nil {
-		t.Fatalf("encode jpeg fixture: %v", err)
+		return nil, err
 	}
-	return buf.Bytes()
+	return buf.Bytes(), nil
 }

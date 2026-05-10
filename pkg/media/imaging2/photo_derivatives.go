@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"image"
+	"image/jpeg"
 )
 
 func (p *ImagingProcessor) BuildPhotoDerivatives(ctx context.Context, original []byte, ext string, isABC bool) ([]PhotoDerivativeBytes, error) {
@@ -81,6 +82,12 @@ func (p *ImagingProcessor) buildDownloadableDerivative(
 		if err != nil {
 			return PhotoDerivativeBytes{}, fmt.Errorf("encode progressive %s photo derivative: %w", size.Type, err)
 		}
+		cfg, err := jpeg.DecodeConfig(bytes.NewReader(data))
+		if err != nil {
+			return PhotoDerivativeBytes{}, fmt.Errorf("decode progressive %s photo derivative config: %w", size.Type, err)
+		}
+		derivative.W = int32(cfg.Width)
+		derivative.H = int32(cfg.Height)
 		derivative.Bytes = data
 		derivative.ProgressiveSizes = progressiveSizes
 		return derivative, nil
