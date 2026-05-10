@@ -654,7 +654,7 @@ func TestMessagesGetDialogsMapsUserDialogAndTopMessage(t *testing.T) {
 				gotMessageViews = in
 				return userupdates.MakeTLMessageViewList(&userupdates.TLMessageViewList{Messages: []tg.MessageClazz{
 					tg.MakeTLMessage(&tg.TLMessage{
-						Out:     true,
+						Out:     false,
 						Id:      42,
 						PeerId:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 200}),
 						Message: "hello",
@@ -707,6 +707,17 @@ func TestMessagesGetDialogsMapsUserDialogAndTopMessage(t *testing.T) {
 	}
 	if slice.Count != 1 || len(slice.Dialogs) != 1 || len(slice.Messages) != 1 || len(slice.Users) != 1 {
 		t.Fatalf("reply lens = count:%d dialogs:%d messages:%d users:%d", slice.Count, len(slice.Dialogs), len(slice.Messages), len(slice.Users))
+	}
+	topMessage, ok := slice.Messages[0].(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("top message = %T, want *tg.TLMessage", slice.Messages[0])
+	}
+	if topMessage.Out || topMessage.FromId != nil {
+		t.Fatalf("incoming top message = out:%t from_id:%#v, want out=false from_id=nil", topMessage.Out, topMessage.FromId)
+	}
+	topPeer, ok := topMessage.PeerId.(*tg.TLPeerUser)
+	if !ok || topPeer.UserId != 200 {
+		t.Fatalf("top message peer_id = %#v, want peerUser(200)", topMessage.PeerId)
 	}
 	if dialog, ok := (&tg.Dialog{Clazz: slice.Dialogs[0]}).ToDialog(); !ok || dialog.TopMessage != 42 || dialog.ReadInboxMaxId != 43 || dialog.ReadOutboxMaxId != 44 {
 		t.Fatalf("dialog = %+v, ok=%v, want public top/read ids", dialog, ok)

@@ -587,6 +587,69 @@ func TestGetMessageViewsByPeerSeqsBuildsMessagesFromViews(t *testing.T) {
 	}
 }
 
+func TestGetMessageViewsByPeerSeqsOmitsFromIDForIncomingPrivateTopMessage(t *testing.T) {
+	eventPayload := mustMarshalMessageEventV3(t, payload.MessageEventV3{
+		SchemaVersion:      payload.MessageEventSchemaVersionV3,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: 2002,
+		PeerSeq:            8,
+		MessageID:          102,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             1001,
+		FromUserID:         1001,
+		ToUserID:           1002,
+		Date:               1_772_000_001,
+		Out:                false,
+		MessageText:        "incoming dialog top",
+	})
+	peer := repository.MessageViewPeerSeq{PeerType: payload.PeerTypeUser, PeerID: 1001, PeerSeq: 8}
+	repo := &fakeUserUpdatesRepository{
+		messageViews: map[repository.MessageViewPeerSeq]repository.MessageView{
+			peer: {
+				UserID:             1002,
+				PeerType:           payload.PeerTypeUser,
+				PeerID:             1001,
+				PeerSeq:            8,
+				UserMessageID:      102,
+				CanonicalMessageID: 2002,
+				FromUserID:         1001,
+				Outgoing:           false,
+				MessageStatus:      repository.MessageStatusLive,
+				ViewSchemaVersion:  payload.MessageEventSchemaVersionV3,
+				ViewPayload:        eventPayload,
+			},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.UserupdatesGetMessageViewsByPeerSeqs(&userupdates.TLUserupdatesGetMessageViewsByPeerSeqs{
+		UserId: 1002,
+		Peers: []userupdates.MessageViewPeerSeqClazz{
+			userupdates.MakeTLMessageViewPeerSeq(&userupdates.TLMessageViewPeerSeq{PeerType: payload.PeerTypeUser, PeerId: 1001, PeerSeq: 8}),
+		},
+	})
+	if err != nil {
+		t.Fatalf("GetMessageViewsByPeerSeqs returned error: %v", err)
+	}
+	if got == nil || len(got.Messages) != 1 {
+		t.Fatalf("expected one message, got %+v", got)
+	}
+	message, ok := got.Messages[0].(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessage", got.Messages[0])
+	}
+	if message.Out {
+		t.Fatalf("message.Out = true, want false for incoming private top message")
+	}
+	if message.FromId != nil {
+		t.Fatalf("message.FromId = %#v, want nil for incoming private top message", message.FromId)
+	}
+	peerID, ok := message.PeerId.(*tg.TLPeerUser)
+	if !ok || peerID.UserId != 1001 {
+		t.Fatalf("message.PeerId = %#v, want peerUser(1001)", message.PeerId)
+	}
+}
+
 func TestMessageViewToTLMessageSupportsLegacyV1PeerSeqID(t *testing.T) {
 	eventPayload := mustMarshalMessageEvent(t, payload.MessageEventV1{
 		SchemaVersion:      payload.MessageEventSchemaVersionV1,

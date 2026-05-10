@@ -233,7 +233,7 @@ func legacyMessageEventToTLMessage(messageEvent payload.MessageEventV1) (tg.Mess
 	return tg.MakeTLMessage(&tg.TLMessage{
 		Out:      messageEvent.Out,
 		Id:       messageID,
-		FromId:   peerFromUser(messageEvent.FromUserID),
+		FromId:   messageFromPeer(messageEvent.Out, messageEvent.PeerType, messageEvent.FromUserID),
 		PeerId:   peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
 		ReplyTo:  replyTo,
 		Date:     date,
@@ -265,7 +265,7 @@ func legacyEditMessageEventToTLMessage(messageEvent payload.MessageEventV1) (tg.
 	return tg.MakeTLMessage(&tg.TLMessage{
 		Out:      messageEvent.Out,
 		Id:       messageID,
-		FromId:   peerFromUser(messageEvent.FromUserID),
+		FromId:   messageFromPeer(messageEvent.Out, messageEvent.PeerType, messageEvent.FromUserID),
 		PeerId:   peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
 		Date:     date,
 		Message:  messageEvent.MessageText,
@@ -293,7 +293,7 @@ func currentMessageEventToTLMessage(messageEvent payload.MessageEventV2) (tg.Mes
 	return tg.MakeTLMessage(&tg.TLMessage{
 		Out:      messageEvent.Out,
 		Id:       messageID,
-		FromId:   peerFromUser(messageEvent.FromUserID),
+		FromId:   messageFromPeer(messageEvent.Out, messageEvent.PeerType, messageEvent.FromUserID),
 		PeerId:   peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
 		ReplyTo:  replyTo,
 		Date:     date,
@@ -325,7 +325,7 @@ func currentEditMessageEventToTLMessage(messageEvent payload.MessageEventV2) (tg
 	return tg.MakeTLMessage(&tg.TLMessage{
 		Out:      messageEvent.Out,
 		Id:       messageID,
-		FromId:   peerFromUser(messageEvent.FromUserID),
+		FromId:   messageFromPeer(messageEvent.Out, messageEvent.PeerType, messageEvent.FromUserID),
 		PeerId:   peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
 		Date:     date,
 		Message:  messageEvent.MessageText,
@@ -360,7 +360,7 @@ func messageEventV3ToTLMessage(messageEvent payload.MessageEventV3) (tg.MessageC
 		Noforwards:  messageAttrsNoforwards(messageEvent.Attrs),
 		InvertMedia: messageAttrsInvertMedia(messageEvent.Attrs),
 		Id:          messageID,
-		FromId:      peerFromUser(messageEvent.FromUserID),
+		FromId:      messageFromPeer(messageEvent.Out, messageEvent.PeerType, messageEvent.FromUserID),
 		PeerId:      peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
 		FwdFrom:     fwdFrom,
 		ReplyTo:     replyTo,
@@ -403,7 +403,7 @@ func messageEventV3EditToTLMessage(messageEvent payload.MessageEventV3) (tg.Mess
 		Noforwards:  messageAttrsNoforwards(messageEvent.Attrs),
 		InvertMedia: messageAttrsInvertMedia(messageEvent.Attrs),
 		Id:          messageID,
-		FromId:      peerFromUser(messageEvent.FromUserID),
+		FromId:      messageFromPeer(messageEvent.Out, messageEvent.PeerType, messageEvent.FromUserID),
 		PeerId:      peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
 		FwdFrom:     fwdFrom,
 		Date:        date,
@@ -809,6 +809,13 @@ func peerFromUser(userID int64) tg.PeerClazz {
 		return nil
 	}
 	return tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: userID})
+}
+
+func messageFromPeer(out bool, peerType int32, fromUserID int64) tg.PeerClazz {
+	if !out && peerType == payload.PeerTypeUser {
+		return nil
+	}
+	return peerFromUser(fromUserID)
 }
 
 func peerFromEvent(peerType int32, peerID int64) tg.PeerClazz {
