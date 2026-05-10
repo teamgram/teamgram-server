@@ -446,8 +446,14 @@ func TestUploadPhotoFileMapsStrippedAndProgressiveSizes(t *testing.T) {
 	if sizesByType["s"] == nil || sizesByType["s"].FilePath != "derivative-object-s" || sizesByType["s"].FileSize != 600 {
 		t.Fatalf("expected normal row with object id path, got %#v", sizesByType["s"])
 	}
+	if sizesByType["s"].StrippedBytes == nil {
+		t.Fatalf("expected normal row stripped bytes to be empty non-nil bytes")
+	}
 	if sizesByType["x"] == nil || sizesByType["x"].FilePath != "derivative-object-x" || sizesByType["x"].CachedType != 4 || sizesByType["x"].CachedBytes == "" {
 		t.Fatalf("expected progressive row with cached scan sizes, got %#v", sizesByType["x"])
+	}
+	if sizesByType["x"].StrippedBytes == nil {
+		t.Fatalf("expected progressive row stripped bytes to be empty non-nil bytes")
 	}
 	var cachedSizes []int32
 	if err := json.Unmarshal([]byte(sizesByType["x"].CachedBytes), &cachedSizes); err != nil {

@@ -651,7 +651,7 @@ func (r *Repository) savePhotoSize(ctx context.Context, id int64, size tg.PhotoS
 func (r *Repository) savePhotoSizeWithPath(ctx context.Context, id int64, size tg.PhotoSizeClazz, sizeObjectIDs map[string]string) error {
 	switch s := size.(type) {
 	case *tg.TLPhotoSize:
-		_, _, err := r.model.PhotoSizesModel.Insert(ctx, &model.PhotoSizes{PhotoSizeId: id, SizeType: s.Type, Width: s.W, Height: s.H, FileSize: s.Size2, FilePath: sizeObjectIDs[s.Type]})
+		_, _, err := r.model.PhotoSizesModel.Insert(ctx, &model.PhotoSizes{PhotoSizeId: id, SizeType: s.Type, Width: s.W, Height: s.H, FileSize: s.Size2, FilePath: sizeObjectIDs[s.Type], StrippedBytes: []byte{}})
 		if err != nil {
 			return wrapStorage("save photo size", err)
 		}
@@ -669,7 +669,7 @@ func (r *Repository) savePhotoSizeWithPath(ctx context.Context, id int64, size t
 		if len(s.Sizes) > 0 {
 			fileSize = s.Sizes[len(s.Sizes)-1]
 		}
-		_, _, err = r.model.PhotoSizesModel.Insert(ctx, &model.PhotoSizes{PhotoSizeId: id, SizeType: s.Type, Width: s.W, Height: s.H, FileSize: fileSize, FilePath: sizeObjectIDs[s.Type], CachedType: photoSizeCachedTypeProgressive, CachedBytes: string(cachedBytes)})
+		_, _, err = r.model.PhotoSizesModel.Insert(ctx, &model.PhotoSizes{PhotoSizeId: id, SizeType: s.Type, Width: s.W, Height: s.H, FileSize: fileSize, FilePath: sizeObjectIDs[s.Type], StrippedBytes: []byte{}, CachedType: photoSizeCachedTypeProgressive, CachedBytes: string(cachedBytes)})
 		if err != nil {
 			return wrapStorage("save progressive photo size", err)
 		}
