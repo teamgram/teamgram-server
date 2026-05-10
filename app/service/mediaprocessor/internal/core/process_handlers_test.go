@@ -20,6 +20,7 @@ import (
 var (
 	errRead    = errors.New("read failed")
 	errPut     = errors.New("put failed")
+	errBuild   = errors.New("build failed")
 	errConvert = errors.New("convert failed")
 	errProbe   = errors.New("probe failed")
 	errCover   = errors.New("cover failed")
@@ -349,6 +350,17 @@ func TestProcessGifSuppliedThumbErrorsAreFatal(t *testing.T) {
 }
 
 func TestProcessHandlersPropagateProcessorErrors(t *testing.T) {
+	t.Run("photo derivatives", func(t *testing.T) {
+		c := New(context.Background(), &svc.ServiceContext{
+			DfsClient: &fakeDFS{readBytes: []byte("original")},
+			Processor: &fakeProcessor{buildErr: errBuild},
+		})
+		_, err := c.MediaProcessorProcessPhoto(validPhotoRequest())
+		if !errors.Is(err, errBuild) {
+			t.Fatalf("MediaProcessorProcessPhoto() error = %v, want build error", err)
+		}
+	})
+
 	t.Run("convert", func(t *testing.T) {
 		c := New(context.Background(), &svc.ServiceContext{
 			DfsClient: &fakeDFS{readBytes: make([]byte, 10240)},
