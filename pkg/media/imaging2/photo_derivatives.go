@@ -5,8 +5,6 @@ import (
 	"context"
 	"fmt"
 	"image"
-
-	strippedjpeg "github.com/teamgram/teamgram-server/v2/pkg/media/imaging2/jpeg"
 )
 
 func (p *ImagingProcessor) BuildPhotoDerivatives(ctx context.Context, original []byte, ext string, isABC bool) ([]PhotoDerivativeBytes, error) {
@@ -36,11 +34,6 @@ func (p *ImagingProcessor) BuildPhotoDerivatives(ctx context.Context, original [
 	}
 	resizeByWidth, originalMaxSide := resizeAxis(img)
 
-	stripped, err := buildStrippedDerivative(img, resizeByWidth, min(originalMaxSide, PhotoSZStrippedSize))
-	if err != nil {
-		return nil, err
-	}
-
 	downloadable := []ResizeInfo{{Type: "m", Size: min(originalMaxSide, PhotoSZMediumSize)}}
 	if originalMaxSide > PhotoSZMediumSize {
 		downloadable = append(downloadable, ResizeInfo{Type: "x", Size: min(originalMaxSide, PhotoSZXLargeSize)})
@@ -50,7 +43,9 @@ func (p *ImagingProcessor) BuildPhotoDerivatives(ctx context.Context, original [
 	}
 
 	out := make([]PhotoDerivativeBytes, 0, 1+len(downloadable))
-	out = append(out, stripped)
+	if stripped, err := p.buildStrippedDerivative(img, resizeByWidth, min(originalMaxSide, PhotoSZStrippedSize)); err == nil {
+		out = append(out, stripped)
+	}
 	for i, size := range downloadable {
 		if err := ctx.Err(); err != nil {
 			return nil, err
@@ -98,10 +93,10 @@ func (p *ImagingProcessor) buildDownloadableDerivative(
 	return derivative, nil
 }
 
-func buildStrippedDerivative(img image.Image, resizeByWidth bool, maxSide int) (PhotoDerivativeBytes, error) {
+func (p *ImagingProcessor) buildStrippedDerivative(img image.Image, resizeByWidth bool, maxSide int) (PhotoDerivativeBytes, error) {
 	resized := resizeByLongestSide(img, resizeByWidth, maxSide)
 	var buf bytes.Buffer
-	if err := strippedjpeg.EncodeStripped(&buf, resized, &strippedjpeg.Options{Quality: 30}); err != nil {
+	if err := p.stripped.EncodeStrippedJPEG(&buf, resized); err != nil {
 		return PhotoDerivativeBytes{}, fmt.Errorf("encode stripped photo derivative: %w", err)
 	}
 	bounds := resized.Bounds()

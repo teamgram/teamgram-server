@@ -3,9 +3,11 @@ package imaging2
 import (
 	"bytes"
 	"context"
+	"errors"
 	"image"
 	"image/color"
 	"image/jpeg"
+	"io"
 	"testing"
 )
 
@@ -62,6 +64,19 @@ func TestBuildPhotoDerivativesCapsYAt1280(t *testing.T) {
 	})
 }
 
+func TestBuildPhotoDerivativesOmitsStrippedWhenStrippedEncodingFails(t *testing.T) {
+	processor := NewProcessorWithProgressiveEncoder(fakeProgressiveJPEGEncoder{})
+	processor.stripped = failingStrippedJPEGEncoder{}
+	derivatives, err := processor.BuildPhotoDerivatives(context.Background(), testSizedJPEG(t, 606, 429), "jpg", false)
+	if err != nil {
+		t.Fatalf("BuildPhotoDerivatives() error = %v", err)
+	}
+	assertPhotoDerivatives(t, derivatives, []wantPhotoDerivative{
+		{typ: "m", w: 320, h: 227},
+		{typ: "x", w: 606, h: 429, progressive: true},
+	})
+}
+
 type wantPhotoDerivative struct {
 	typ         string
 	w           int32
@@ -115,6 +130,12 @@ func (fakeProgressiveJPEGEncoder) EncodeProgressiveJPEG(ctx context.Context, inp
 		return nil, nil, err
 	}
 	return data, []int32{int32(len(data) / 2), int32(len(data))}, nil
+}
+
+type failingStrippedJPEGEncoder struct{}
+
+func (failingStrippedJPEGEncoder) EncodeStrippedJPEG(io.Writer, image.Image) error {
+	return errors.New("stripped encode failed")
 }
 
 func testSizedJPEG(t *testing.T, width, height int) []byte {

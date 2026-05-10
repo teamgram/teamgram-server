@@ -27,6 +27,10 @@ type ProgressiveJPEGEncoder interface {
 	EncodeProgressiveJPEG(ctx context.Context, input []byte, ext string, maxSide int) ([]byte, []int32, error)
 }
 
+type strippedJPEGEncoder interface {
+	EncodeStrippedJPEG(w io.Writer, img image.Image) error
+}
+
 type PhotoSizeBytes struct {
 	Type  string
 	W     int32
@@ -84,6 +88,7 @@ var (
 
 type ImagingProcessor struct {
 	progressive ProgressiveJPEGEncoder
+	stripped    strippedJPEGEncoder
 }
 
 func NewProcessor() *ImagingProcessor {
@@ -94,13 +99,22 @@ func NewProcessorWithProgressiveEncoder(encoder ProgressiveJPEGEncoder) *Imaging
 	if encoder == nil {
 		encoder = noopProgressiveJPEGEncoder{}
 	}
-	return &ImagingProcessor{progressive: encoder}
+	return &ImagingProcessor{
+		progressive: encoder,
+		stripped:    defaultStrippedJPEGEncoder{},
+	}
 }
 
 type noopProgressiveJPEGEncoder struct{}
 
 func (noopProgressiveJPEGEncoder) EncodeProgressiveJPEG(context.Context, []byte, string, int) ([]byte, []int32, error) {
 	return nil, nil, errors.New("progressive jpeg encoder unavailable")
+}
+
+type defaultStrippedJPEGEncoder struct{}
+
+func (defaultStrippedJPEGEncoder) EncodeStrippedJPEG(w io.Writer, img image.Image) error {
+	return strippedjpeg.EncodeStripped(w, img, &strippedjpeg.Options{Quality: 30})
 }
 
 func (p *ImagingProcessor) ResizePhoto(ctx context.Context, original []byte, ext string, isABC bool) ([]PhotoSizeBytes, error) {
