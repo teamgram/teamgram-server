@@ -63,5 +63,9 @@ func decodeDocumentAttributesFromStorage(raw string) ([]tg.DocumentAttributeClaz
 	if err != nil {
 		return nil, fmt.Errorf("%w: decode document attribute storage bytes: %w", media.ErrMediaStorage, err)
 	}
-	return decodeDocumentAttributeVector(data)
+	attrs, err := decodeDocumentAttributeVector(data)
+	if err != nil {
+		return nil, fmt.Errorf("%w: decode stored document attribute vector: %v", media.ErrMediaStorage, err)
+	}
+	return attrs, nil
 }

@@ -162,6 +162,23 @@ func TestDecodeDocumentAttributesFromStorageRejectsMalformedEnvelope(t *testing.
 	}
 }
 
+func TestDecodeDocumentAttributesFromStorageRejectsCorruptTLVector(t *testing.T) {
+	envelope := documentAttributeStorageEnvelope{
+		SchemaVersion: documentAttributeStorageVersionV2,
+		Encoding:      documentAttributeStorageTLVector,
+		Layer:         documentAttributeVectorLayer,
+		Bytes:         base64.StdEncoding.EncodeToString([]byte{1, 2, 3, 4}),
+	}
+	raw, err := json.Marshal(envelope)
+	if err != nil {
+		t.Fatalf("json.Marshal() error = %v", err)
+	}
+	_, err = decodeDocumentAttributesFromStorage(string(raw))
+	if !errors.Is(err, media.ErrMediaStorage) {
+		t.Fatalf("decodeDocumentAttributesFromStorage() error = %v, want ErrMediaStorage", err)
+	}
+}
+
 func TestSaveDocumentAggregateStoresAttributeEnvelope(t *testing.T) {
 	documents := &captureDocumentsModel{}
 	repo := &Repository{model: &model.Models{DocumentsModel: documents}}

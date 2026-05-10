@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"path/filepath"
@@ -487,53 +486,6 @@ func uploadedFileName(uploaded *tg.TLInputMediaUploadedDocument) string {
 
 func documentObjectPath(id int64) string {
 	return strconv.FormatInt(id, 10) + ".dat"
-}
-
-func encodeLegacyDocumentAttributes(attrs []tg.DocumentAttributeClazz) (string, error) {
-	if len(attrs) == 0 {
-		return "", nil
-	}
-	items := make([]legacyAttribute, 0, len(attrs))
-	for _, attr := range attrs {
-		item := legacyAttribute{}
-		switch a := attr.(type) {
-		case *tg.TLDocumentAttributeFilename:
-			item.Name = tg.ClazzName_documentAttributeFilename
-			item.Object.FileName = a.FileName
-		case *tg.TLDocumentAttributeImageSize:
-			item.Name = tg.ClazzName_documentAttributeImageSize
-			item.Object.W = a.W
-			item.Object.H = a.H
-		case *tg.TLDocumentAttributeAnimated:
-			item.Name = tg.ClazzName_documentAttributeAnimated
-		case *tg.TLDocumentAttributeVideo:
-			item.Name = tg.ClazzName_documentAttributeVideo
-			item.Object.RoundMessage = a.RoundMessage
-			item.Object.SupportsStreaming = a.SupportsStreaming
-			item.Object.Nosound = a.Nosound
-			item.Object.Duration = a.Duration
-			item.Object.W = a.W
-			item.Object.H = a.H
-		case *tg.TLDocumentAttributeAudio:
-			item.Name = tg.ClazzName_documentAttributeAudio
-			item.Object.Voice = a.Voice
-			item.Object.Duration = float64(a.Duration)
-			item.Object.Title = a.Title
-			item.Object.Performer = a.Performer
-			item.Object.Waveform = a.Waveform
-		default:
-			continue
-		}
-		items = append(items, item)
-	}
-	if len(items) == 0 {
-		return "", nil
-	}
-	b, err := json.Marshal(items)
-	if err != nil {
-		return "", wrapStorage("encode document attributes", err)
-	}
-	return string(b), nil
 }
 
 func errorsIsDocumentNotFound(err error) bool {
