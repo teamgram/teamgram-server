@@ -436,6 +436,7 @@ func TestSentMessageDocumentMediaProjectsFullUploadedDocumentContract(t *testing
 	if !ok {
 		t.Fatalf("document = %T, want *tg.TLDocument", documentMedia.Document)
 	}
+	assertSentDocumentIdentity(t, document)
 	if len(document.VideoThumbs) != 1 {
 		t.Fatalf("VideoThumbs len = %d, want 1", len(document.VideoThumbs))
 	}
@@ -458,6 +459,19 @@ func TestSentMessageDocumentMediaProjectsFullUploadedDocumentContract(t *testing
 		t.Fatalf("VideoCover = %T, want *tg.TLPhoto", documentMedia.VideoCover)
 	}
 	assertSentVideoCover(t, videoCover)
+}
+
+func assertSentDocumentIdentity(t *testing.T, document *tg.TLDocument) {
+	t.Helper()
+	if document.Id != 555 ||
+		document.AccessHash != 666 ||
+		string(document.FileReference) != "doc-ref" ||
+		document.Date != 1_700_000_000 ||
+		document.DcId != 4 ||
+		document.MimeType != "video/mp4" ||
+		document.Size2 != 98765 {
+		t.Fatalf("document identity = %#v, want full uploaded document identity", document)
+	}
 }
 
 func TestForwardRevalidationRejectsInvisibleSource(t *testing.T) {

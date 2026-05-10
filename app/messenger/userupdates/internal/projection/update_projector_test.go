@@ -912,6 +912,7 @@ func TestProjectMessageEventV3DocumentMediaProjectsFullUploadedDocumentContract(
 	if !ok {
 		t.Fatalf("document = %T, want *tg.TLDocument", media.Document)
 	}
+	assertProjectedDocumentIdentity(t, doc)
 	if len(doc.VideoThumbs) != 1 {
 		t.Fatalf("VideoThumbs len = %d, want 1", len(doc.VideoThumbs))
 	}
@@ -934,6 +935,19 @@ func TestProjectMessageEventV3DocumentMediaProjectsFullUploadedDocumentContract(
 		t.Fatalf("VideoCover = %T, want *tg.TLPhoto", media.VideoCover)
 	}
 	assertProjectedVideoCover(t, videoCover)
+}
+
+func assertProjectedDocumentIdentity(t *testing.T, document *tg.TLDocument) {
+	t.Helper()
+	if document.Id != 555 ||
+		document.AccessHash != 666 ||
+		string(document.FileReference) != "doc-ref" ||
+		document.Date != 1700000000 ||
+		document.DcId != 4 ||
+		document.MimeType != "video/mp4" ||
+		document.Size2 != 98765 {
+		t.Fatalf("document identity = %#v, want full uploaded document identity", document)
+	}
 }
 
 func TestProjectMessageEventV3ContactMedia(t *testing.T) {
