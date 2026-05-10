@@ -335,6 +335,28 @@ func TestUploadedDocumentMediaCommitsAndProcessesByMime(t *testing.T) {
 	}
 }
 
+func TestUploadedDocumentMediaReturnsVideoFlagsForMp4(t *testing.T) {
+	got := uploadTestDocumentMedia(t, false)
+	mediaDoc, ok := got.ToMessageMediaDocument()
+	if !ok {
+		t.Fatalf("expected messageMediaDocument, got %#v", got)
+	}
+	if !mediaDoc.Video || mediaDoc.Round || mediaDoc.Voice {
+		t.Fatalf("unexpected messageMediaDocument flags: %#v", mediaDoc)
+	}
+}
+
+func TestUploadedDocumentMediaReturnsNoVideoFlagForForceFileMp4(t *testing.T) {
+	got := uploadTestDocumentMedia(t, true)
+	mediaDoc, ok := got.ToMessageMediaDocument()
+	if !ok {
+		t.Fatalf("expected messageMediaDocument, got %#v", got)
+	}
+	if mediaDoc.Video || mediaDoc.Round || mediaDoc.Voice {
+		t.Fatalf("unexpected force-file messageMediaDocument flags: %#v", mediaDoc)
+	}
+}
+
 func TestUploadedDocumentMediaViaLegacyDFSCallsLegacyWrappers(t *testing.T) {
 	tests := []struct {
 		name         string
@@ -556,6 +578,44 @@ func testProcessedDocument(t *testing.T, objectID, mimeType string, size int64, 
 		Attributes: testDocumentAttributeVectorBytes(t, attrs),
 		Thumbs:     thumbs,
 	}).ToProcessedDocument()
+}
+
+func uploadTestDocumentMedia(t *testing.T, forceFile bool) *tg.MessageMedia {
+	t.Helper()
+	attrs := []tg.DocumentAttributeClazz{
+		tg.MakeTLDocumentAttributeVideo(&tg.TLDocumentAttributeVideo{SupportsStreaming: true, Duration: 3, W: 640, H: 360}),
+		tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "clip.mp4"}),
+	}
+	documents := &captureDocumentsModel{}
+	dfsClient := &fakeDfsMediaClient{finalized: testFinalizedObject("original-mp4-object", 333)}
+	processorClient := &fakeMediaProcessorClient{document: testProcessedDocument(t, "processed-mp4-object", "video/mp4", 444, attrs, nil)}
+	r := &Repository{
+		model:                &model.Models{DocumentsModel: documents, FileReferencesModel: newCaptureFileReferencesModel(), PhotoSizesModel: &capturePhotoSizesModel{}, VideoSizesModel: &captureVideoSizesModel{}},
+		dfsClient:            dfsClient,
+		processorClient:      processorClient,
+		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
+		fileReferenceTTL:     time.Hour,
+	}
+
+	got, err := r.UploadedDocumentMedia(context.Background(), &media.TLMediaUploadedDocumentMedia{
+		OwnerId: 77,
+		Media: tg.MakeTLInputMediaUploadedDocument(&tg.TLInputMediaUploadedDocument{
+			ForceFile:  forceFile,
+			File:       tg.MakeTLInputFile(&tg.TLInputFile{Id: 8, Parts: 1, Name: "clip.mp4"}),
+			MimeType:   "video/mp4",
+			Attributes: attrs,
+		}),
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if processorClient.mp4Req == nil {
+		t.Fatal("expected mp4 processor request")
+	}
+	if len(documents.inserted) != 1 {
+		t.Fatalf("expected one saved document, got %#v", documents.inserted)
+	}
+	return got
 }
 
 func testDocumentAttributeVectorBytes(t *testing.T, attrs []tg.DocumentAttributeClazz) []byte {

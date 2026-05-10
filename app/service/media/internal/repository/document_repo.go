@@ -59,6 +59,10 @@ func (r *Repository) UploadedDocumentMedia(ctx context.Context, in *media.TLMedi
 	if r.dfsClient == nil {
 		return nil, wrapMediaDownstream("dfs upload document", media.ErrMediaDownstream)
 	}
+	classification, err := classifyUploadedDocument(uploaded)
+	if err != nil {
+		return nil, err
+	}
 
 	finalized, err := r.dfsClient.CommitUpload(ctx, &dfsapi.TLDfsCommitUpload{
 		UploadSessionId: externalUploadSessionID(in.OwnerId, uploaded.File),
@@ -76,13 +80,15 @@ func (r *Repository) UploadedDocumentMedia(ctx context.Context, in *media.TLMedi
 	var doc *tg.Document
 	documentObjectID := finalized.ObjectId
 	thumbObjectIDs := map[string]string(nil)
-	switch {
-	case isAnimatedGif(uploaded):
+	switch classification.RequiredTransform {
+	case requiredDocumentTransformGifv:
 		doc, documentObjectID, thumbObjectIDs, err = r.processUploadedGifDocument(ctx, in.OwnerId, finalized, uploaded)
-	case uploaded.MimeType == "video/mp4":
+	case requiredDocumentTransformMp4:
 		doc, documentObjectID, thumbObjectIDs, err = r.processUploadedMp4Document(ctx, in.OwnerId, finalized, uploaded)
 	default:
 		doc, err = r.documentFromOriginalUpload(ctx, in.OwnerId, finalized, uploaded)
+		documentObjectID = finalized.ObjectId
+		thumbObjectIDs = nil
 	}
 	if err != nil {
 		return nil, err
@@ -94,11 +100,20 @@ func (r *Repository) UploadedDocumentMedia(ctx context.Context, in *media.TLMedi
 	if !ok {
 		return nil, media.ErrMediaInvalidArgument
 	}
+	return uploadedDocumentMessageMedia(uploaded, docClazz, classification, nil), nil
+}
+
+func uploadedDocumentMessageMedia(uploaded *tg.TLInputMediaUploadedDocument, doc tg.DocumentClazz, classification documentClassification, videoCover tg.PhotoClazz) *tg.MessageMedia {
 	return tg.MakeTLMessageMediaDocument(&tg.TLMessageMediaDocument{
-		Spoiler:    uploaded.Spoiler,
-		Document:   docClazz,
-		TtlSeconds: uploaded.TtlSeconds,
-	}).ToMessageMedia(), nil
+		Spoiler:        uploaded.Spoiler,
+		Video:          classification.Video,
+		Round:          classification.Round,
+		Voice:          classification.Voice,
+		Document:       doc,
+		VideoCover:     videoCover,
+		VideoTimestamp: uploaded.VideoTimestamp,
+		TtlSeconds:     uploaded.TtlSeconds,
+	}).ToMessageMedia()
 }
 
 func (r *Repository) UploadedDocumentMediaViaLegacyDFS(ctx context.Context, in *media.TLMediaUploadedDocumentMedia) (*tg.MessageMedia, error) {
