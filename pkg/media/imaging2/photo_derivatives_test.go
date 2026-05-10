@@ -164,6 +164,45 @@ func (e geometryChangingProgressiveJPEGEncoder) EncodeProgressiveJPEG(ctx contex
 	return data, []int32{int32(len(data) / 2), int32(len(data))}, nil
 }
 
+type singleScanProgressiveJPEGEncoder struct{}
+
+func (singleScanProgressiveJPEGEncoder) EncodeProgressiveJPEG(ctx context.Context, input []byte, ext string, _ int) ([]byte, []int32, error) {
+	if err := ctx.Err(); err != nil {
+		return nil, nil, err
+	}
+	img, err := decodeImage(input, ext)
+	if err != nil {
+		return nil, nil, err
+	}
+	data, err := encodeImage(img, ".jpg")
+	if err != nil {
+		return nil, nil, err
+	}
+	return data, []int32{int32(len(data))}, nil
+}
+
+func TestBuildPhotoDerivativesDowngradesSingleScanProgressiveToNormalSize(t *testing.T) {
+	processor := &ImagingProcessor{
+		stripped:    defaultStrippedJPEGEncoder{},
+		progressive: singleScanProgressiveJPEGEncoder{},
+	}
+
+	got, err := processor.BuildPhotoDerivatives(context.Background(), testSizedJPEG(t, 2000, 616), ".jpg", false)
+	if err != nil {
+		t.Fatalf("BuildPhotoDerivatives() error = %v", err)
+	}
+	if len(got) != 4 {
+		t.Fatalf("len(derivatives) = %d, want 4", len(got))
+	}
+	last := got[len(got)-1]
+	if last.Type != "y" {
+		t.Fatalf("last derivative type = %q, want y", last.Type)
+	}
+	if len(last.ProgressiveSizes) != 0 {
+		t.Fatalf("last derivative ProgressiveSizes = %v, want downgraded normal size", last.ProgressiveSizes)
+	}
+}
+
 func testSizedJPEG(t *testing.T, width, height int) []byte {
 	t.Helper()
 	data, err := encodeTestJPEG(width, height)

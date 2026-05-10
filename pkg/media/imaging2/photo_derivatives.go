@@ -82,6 +82,14 @@ func (p *ImagingProcessor) buildDownloadableDerivative(
 		if err != nil {
 			return PhotoDerivativeBytes{}, fmt.Errorf("encode progressive %s photo derivative: %w", size.Type, err)
 		}
+		if len(progressiveSizes) < 2 {
+			data, err := encodeImage(resized, ".jpg")
+			if err != nil {
+				return PhotoDerivativeBytes{}, fmt.Errorf("encode %s photo derivative: %w", size.Type, err)
+			}
+			derivative.Bytes = data
+			return derivative, nil
+		}
 		cfg, err := jpeg.DecodeConfig(bytes.NewReader(data))
 		if err != nil {
 			return PhotoDerivativeBytes{}, fmt.Errorf("decode progressive %s photo derivative config: %w", size.Type, err)

@@ -132,7 +132,7 @@ func ProgressiveScanSizes(data []byte) ([]int32, error) {
 			if scanSizes[len(scanSizes)-1] != int32(len(data)) {
 				scanSizes = appendIncreasingScanSize(scanSizes, len(data))
 			}
-			return scanSizes, nil
+			return limitProgressiveScanSizes(scanSizes, 5), nil
 		case marker == jpegSOF2:
 			progressive = true
 		case isSOFMarker(marker):
@@ -226,6 +226,25 @@ func appendIncreasingScanSize(scanSizes []int32, size int) []int32 {
 		return append(scanSizes, int32(size))
 	}
 	return scanSizes
+}
+
+func limitProgressiveScanSizes(scanSizes []int32, max int) []int32 {
+	if max <= 0 || len(scanSizes) <= max {
+		return scanSizes
+	}
+	limited := make([]int32, 0, max)
+	lastIndex := len(scanSizes) - 1
+	lastPicked := -1
+	for i := 0; i < max; i++ {
+		index := i * lastIndex / (max - 1)
+		if index <= lastPicked {
+			index = lastPicked + 1
+		}
+		limited = append(limited, scanSizes[index])
+		lastPicked = index
+	}
+	limited[len(limited)-1] = scanSizes[lastIndex]
+	return limited
 }
 
 func markerHasPayload(marker byte) bool {

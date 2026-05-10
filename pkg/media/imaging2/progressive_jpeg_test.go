@@ -46,6 +46,18 @@ func TestProgressiveScanSizesSkipsStuffedAndFillBytesInScanData(t *testing.T) {
 	}
 }
 
+func TestProgressiveScanSizesLimitsToFiveRealBoundaries(t *testing.T) {
+	data := progressiveJPEGWithScans(8)
+	sizes, err := ProgressiveScanSizes(data)
+	if err != nil {
+		t.Fatalf("ProgressiveScanSizes() error = %v", err)
+	}
+	want := []int32{13, 27, 41, 55, int32(len(data))}
+	if !reflect.DeepEqual(sizes, want) {
+		t.Fatalf("ProgressiveScanSizes() = %v, want %v", sizes, want)
+	}
+}
+
 func TestProgressiveScanSizesRejectsInvalidInput(t *testing.T) {
 	for _, tc := range []struct {
 		name string
@@ -63,6 +75,21 @@ func TestProgressiveScanSizesRejectsInvalidInput(t *testing.T) {
 			}
 		})
 	}
+}
+
+func progressiveJPEGWithScans(scans int) []byte {
+	data := []byte{
+		0xff, 0xd8,
+		0xff, 0xc2, 0x00, 0x02,
+	}
+	for i := 0; i < scans; i++ {
+		data = append(data,
+			0xff, 0xda, 0x00, 0x02,
+			byte(0x10+i), byte(0x20+i), byte(0x30+i),
+		)
+	}
+	data = append(data, 0xff, 0xd9)
+	return data
 }
 
 func TestImageMagickArgsPreventsUpscaling(t *testing.T) {
