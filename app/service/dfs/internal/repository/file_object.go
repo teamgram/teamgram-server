@@ -32,6 +32,7 @@ const (
 	phase1FileObjectChunkSize  = 128 * 1024
 	defaultReadLeaseTTLSeconds = int64(3600)
 	pendingMultipartUploadID   = "__pending_multipart_upload__"
+	maxInt32                   = int32(^uint32(0) >> 1)
 )
 
 type segmentedUploadStateModel interface {
@@ -661,6 +662,17 @@ func (r *Repository) ReadByLease(ctx context.Context, readLease []byte, offset i
 	}
 	if claims.ObjectID == "" || claims.Bucket == "" || claims.Key == "" {
 		return nil, 0, dfs.ErrDfsInvalidArgument
+	}
+	if claims.Size >= 0 {
+		if offset >= claims.Size {
+			return []byte{}, claims.StorageType, nil
+		}
+		remaining := claims.Size - offset
+		if limit == 0 && remaining <= int64(maxInt32) {
+			limit = int32(remaining)
+		} else if limit > 0 && int64(limit) > remaining {
+			limit = int32(remaining)
+		}
 	}
 	data, err := r.getObjectRange(ctx, claims.Bucket, claims.Key, offset, limit)
 	if err != nil {

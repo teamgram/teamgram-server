@@ -1,6 +1,7 @@
 package core
 
 import (
+	"bytes"
 	"path"
 	"strings"
 
@@ -16,6 +17,7 @@ const (
 	jpegMimeType           = "image/jpeg"
 	mp4MimeType            = "video/mp4"
 	minGifBytes            = 10240
+	readLeaseChunkBytes    = 4 * 1024 * 1024
 )
 
 func validProcessInput(ownerID int64, objectID string, readLease []byte, fileName string) bool {
@@ -23,19 +25,32 @@ func validProcessInput(ownerID int64, objectID string, readLease []byte, fileNam
 }
 
 func (c *MediaProcessorCore) readOriginalBytes(readLease []byte) ([]byte, error) {
-	original, err := c.svcCtx.DfsClient.DfsGetFileByReadLease(c.ctx, &dfs.TLDfsGetFileByReadLease{
-		ReadLease: readLease,
-		Offset:    0,
-		Limit:     0,
-	})
-	if err != nil {
-		return nil, err
+	var out bytes.Buffer
+	for offset := int64(0); ; {
+		original, err := c.svcCtx.DfsClient.DfsGetFileByReadLease(c.ctx, &dfs.TLDfsGetFileByReadLease{
+			ReadLease: readLease,
+			Offset:    offset,
+			Limit:     readLeaseChunkBytes,
+		})
+		if err != nil {
+			return nil, err
+		}
+		uploadFile, ok := original.ToUploadFile()
+		if !ok {
+			return nil, mediaprocessor.ErrMediaProcessorInvalidArgument
+		}
+		if len(uploadFile.Bytes) == 0 {
+			break
+		}
+		if _, err := out.Write(uploadFile.Bytes); err != nil {
+			return nil, err
+		}
+		offset += int64(len(uploadFile.Bytes))
+		if len(uploadFile.Bytes) < readLeaseChunkBytes {
+			break
+		}
 	}
-	uploadFile, ok := original.ToUploadFile()
-	if !ok {
-		return nil, mediaprocessor.ErrMediaProcessorInvalidArgument
-	}
-	return uploadFile.Bytes, nil
+	return out.Bytes(), nil
 }
 
 func makeDerivative(kind string, stored *dfs.FileFinalizedObject, fileName, mimeType string, size int64, width, height int32, bytes []byte) *mediaprocessor.ProcessorDerivative {

@@ -1,6 +1,7 @@
 package core
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -23,6 +24,34 @@ var (
 	errProbe   = errors.New("probe failed")
 	errCover   = errors.New("cover failed")
 )
+
+func TestReadOriginalBytesUsesBoundedRangeReads(t *testing.T) {
+	const testChunkSize = 4 * 1024 * 1024
+
+	payload := bytes.Repeat([]byte("a"), 2*testChunkSize+17)
+	dfsFake := &fakeDFS{readBytes: payload}
+	c := New(context.Background(), &svc.ServiceContext{DfsClient: dfsFake})
+
+	got, err := c.readOriginalBytes([]byte("lease"))
+	if err != nil {
+		t.Fatalf("readOriginalBytes() error = %v", err)
+	}
+	if !bytes.Equal(got, payload) {
+		t.Fatalf("readOriginalBytes() returned %d bytes, want %d", len(got), len(payload))
+	}
+	if len(dfsFake.readRequests) != 3 {
+		t.Fatalf("DfsGetFileByReadLease calls = %d, want 3", len(dfsFake.readRequests))
+	}
+	for i, req := range dfsFake.readRequests {
+		if req.Limit <= 0 || req.Limit > testChunkSize {
+			t.Fatalf("request %d limit = %d, want 1..%d", i, req.Limit, testChunkSize)
+		}
+		wantOffset := int64(i * testChunkSize)
+		if req.Offset != wantOffset {
+			t.Fatalf("request %d offset = %d, want %d", i, req.Offset, wantOffset)
+		}
+	}
+}
 
 func TestProcessHandlersRejectInvalidArgument(t *testing.T) {
 	c := New(context.Background(), &svc.ServiceContext{})
@@ -451,12 +480,24 @@ type fakeDFS struct {
 	putResults     []*dfs.FileFinalizedObject
 	readLease      []byte
 	readLeases     [][]byte
+	readRequests   []readRequest
 	puts           []*dfs.TLDfsPutFile
+}
+
+type readRequest struct {
+	Lease  []byte
+	Offset int64
+	Limit  int32
 }
 
 func (f *fakeDFS) DfsGetFileByReadLease(ctx context.Context, in *dfs.TLDfsGetFileByReadLease) (*tg.UploadFile, error) {
 	f.readLease = append([]byte(nil), in.ReadLease...)
 	f.readLeases = append(f.readLeases, append([]byte(nil), in.ReadLease...))
+	f.readRequests = append(f.readRequests, readRequest{
+		Lease:  append([]byte(nil), in.ReadLease...),
+		Offset: in.Offset,
+		Limit:  in.Limit,
+	})
 	if err := f.readErrByLease[string(in.ReadLease)]; err != nil {
 		return nil, err
 	}
@@ -464,9 +505,20 @@ func (f *fakeDFS) DfsGetFileByReadLease(ctx context.Context, in *dfs.TLDfsGetFil
 		return nil, f.readErr
 	}
 	if bytes, ok := f.readByLease[string(in.ReadLease)]; ok {
-		return (&tg.TLUploadFile{Bytes: bytes}).ToUploadFile(), nil
+		return (&tg.TLUploadFile{Bytes: readRange(bytes, in.Offset, in.Limit)}).ToUploadFile(), nil
 	}
-	return (&tg.TLUploadFile{Bytes: f.readBytes}).ToUploadFile(), nil
+	return (&tg.TLUploadFile{Bytes: readRange(f.readBytes, in.Offset, in.Limit)}).ToUploadFile(), nil
+}
+
+func readRange(data []byte, offset int64, limit int32) []byte {
+	if offset < 0 || limit < 0 || offset >= int64(len(data)) {
+		return nil
+	}
+	end := int64(len(data))
+	if limit > 0 && offset+int64(limit) < end {
+		end = offset + int64(limit)
+	}
+	return append([]byte(nil), data[offset:end]...)
 }
 
 func (f *fakeDFS) DfsPutFile(ctx context.Context, in *dfs.TLDfsPutFile) (*dfs.FileFinalizedObject, error) {

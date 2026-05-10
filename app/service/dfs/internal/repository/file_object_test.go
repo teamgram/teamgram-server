@@ -69,6 +69,39 @@ func TestPutInternalFilePersistsManifestAndSupportsLeaseRead(t *testing.T) {
 	}
 }
 
+func TestReadByLeaseUsesLeaseSizeForEOFAndRangeClamp(t *testing.T) {
+	store := newFakeObjectStore()
+	repo := newFileObjectTestRepository(store, &fakeIDGenerator{id: 9010})
+
+	out, err := repo.PutInternalFile(context.Background(), 1001, "media_derivative", "video.mp4", "video/mp4", []byte("abcdef"))
+	if err != nil {
+		t.Fatalf("PutInternalFile() error = %v", err)
+	}
+
+	store.rangeRequests = nil
+	got, storageType, err := repo.ReadByLease(context.Background(), out.ReadLease, out.Size2, 4)
+	if err != nil {
+		t.Fatalf("ReadByLease() EOF error = %v", err)
+	}
+	if len(got) != 0 || storageType != storageTypeID(tg.ClazzID_storage_fileMp4) {
+		t.Fatalf("ReadByLease() EOF got %q type %#x", got, storageType)
+	}
+	if len(store.rangeRequests) != 0 {
+		t.Fatalf("object store range calls = %d, want 0 at EOF", len(store.rangeRequests))
+	}
+
+	got, _, err = repo.ReadByLease(context.Background(), out.ReadLease, 4, 99)
+	if err != nil {
+		t.Fatalf("ReadByLease() clamp error = %v", err)
+	}
+	if string(got) != "ef" {
+		t.Fatalf("ReadByLease() clamp got %q, want ef", got)
+	}
+	if len(store.rangeRequests) != 1 || store.rangeRequests[0].Offset != 4 || store.rangeRequests[0].Limit != 2 {
+		t.Fatalf("object store range request = %#v, want offset 4 limit 2", store.rangeRequests)
+	}
+}
+
 func TestHashesByLeaseReloadsPersistedHashManifestAfterRestart(t *testing.T) {
 	store := newFakeObjectStore()
 	repo := newFileObjectTestRepository(store, &fakeIDGenerator{id: 9005})
@@ -1290,8 +1323,16 @@ type fakeObjectStore struct {
 	multipartAborts        []string
 	completedMultipartIDs  map[string]struct{}
 	abortedMultipartIDs    map[string]struct{}
+	rangeRequests          []objectRangeRequest
 	listMultipartPartsErr  error
 	afterCompleteMultipart func(objects map[string][]byte, fullKey string)
+}
+
+type objectRangeRequest struct {
+	Bucket string
+	Key    string
+	Offset int64
+	Limit  int32
 }
 
 func newFakeObjectStore() *fakeObjectStore {
@@ -1334,6 +1375,7 @@ func (f *fakeObjectStore) GetObjectReader(_ context.Context, bucket, key string)
 }
 
 func (f *fakeObjectStore) GetObjectRange(_ context.Context, bucket, key string, offset int64, limit int32) ([]byte, error) {
+	f.rangeRequests = append(f.rangeRequests, objectRangeRequest{Bucket: bucket, Key: key, Offset: offset, Limit: limit})
 	if offset < 0 || limit < 0 {
 		return nil, errors.New("invalid range")
 	}
