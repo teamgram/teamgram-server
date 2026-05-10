@@ -178,22 +178,6 @@ func (r *Repository) processUploadedGifDocument(ctx context.Context, ownerID int
 		ReadLease: finalized.ReadLease,
 		FileName:  uploadedFileName(uploaded),
 	}
-	if uploaded.Thumb != nil {
-		thumbFinalized, err := r.dfsClient.CommitUpload(ctx, &dfsapi.TLDfsCommitUpload{
-			UploadSessionId: externalUploadSessionID(ownerID, uploaded.Thumb),
-			OwnerId:         ownerID,
-			File:            uploaded.Thumb,
-			Purpose:         "media_thumbnail",
-		})
-		if err != nil {
-			return nil, "", nil, wrapDfsUploadError("dfs commit document thumb upload", err)
-		}
-		if thumbFinalized == nil || thumbFinalized.ObjectId == "" || len(thumbFinalized.ReadLease) == 0 {
-			return nil, "", nil, wrapMediaInvalidUploadedFile("dfs commit document thumb upload", errors.New("missing finalized thumb object"))
-		}
-		req.ThumbObjectId = thumbFinalized.ObjectId
-		req.ThumbReadLease = thumbFinalized.ReadLease
-	}
 	processed, err := r.processorClient.ProcessGif(ctx, req)
 	if err != nil {
 		return nil, "", nil, wrapMediaDownstream("mediaprocessor process gif", err)

@@ -644,6 +644,74 @@ func TestUploadedDocumentMediaKeepsProcessedThumbForMp4(t *testing.T) {
 	}
 }
 
+func TestUploadedDocumentMediaKeepsProcessedThumbForGif(t *testing.T) {
+	documents := &captureDocumentsModel{}
+	photoSizes := &capturePhotoSizesModel{}
+	dfsClient := &fakeDocumentThumbDfsClient{finalizedByPurpose: map[string]*dfsapi.FileFinalizedObject{
+		"media_original":  testFinalizedObject("original-gif-object", 333),
+		"media_thumbnail": testFinalizedObjectWithLease("uploaded-thumb-object", 123, []byte("thumb-lease")),
+	}}
+	attrs := []tg.DocumentAttributeClazz{
+		tg.MakeTLDocumentAttributeAnimated(&tg.TLDocumentAttributeAnimated{}),
+		tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "loop.gif"}),
+	}
+	processedAttrs := []tg.DocumentAttributeClazz{
+		tg.MakeTLDocumentAttributeAnimated(&tg.TLDocumentAttributeAnimated{}),
+		tg.MakeTLDocumentAttributeVideo(&tg.TLDocumentAttributeVideo{SupportsStreaming: true, Duration: 3, W: 320, H: 180}),
+		tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "loop.mp4"}),
+	}
+	processorClient := &fakeMediaProcessorClient{
+		document: testProcessedDocument(t, "processed-gif-object", "video/mp4", 444, processedAttrs, testDocumentThumbs()),
+		photo: testProcessedPhotoThumb(
+			mediaprocessor.MakeTLProcessorDerivative(&mediaprocessor.TLProcessorDerivative{Kind: "photo_size", ObjectId: "user-thumb-object", FileName: "x_thumb.jpg", Width: 640, Height: 480, Size2: 2000}),
+		),
+	}
+	r := testDocumentRepository(documents, photoSizes, dfsClient, processorClient)
+
+	got, err := r.UploadedDocumentMedia(context.Background(), &media.TLMediaUploadedDocumentMedia{
+		OwnerId: 77,
+		Media: tg.MakeTLInputMediaUploadedDocument(&tg.TLInputMediaUploadedDocument{
+			File:       tg.MakeTLInputFile(&tg.TLInputFile{Id: 8, Parts: 1, Name: "loop.gif"}),
+			Thumb:      tg.MakeTLInputFile(&tg.TLInputFile{Id: 9, Parts: 1, Name: "thumb.jpg"}),
+			MimeType:   "image/gif",
+			Attributes: attrs,
+		}),
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(dfsClient.commits) != 1 || dfsClient.commits[0].Purpose != "media_original" {
+		t.Fatalf("expected only original gif commit, got %#v", dfsClient.commits)
+	}
+	if processorClient.photoReq != nil {
+		t.Fatalf("expected gif path not to process uploaded user thumb as photo, got %#v", processorClient.photoReq)
+	}
+	if processorClient.gifReq == nil {
+		t.Fatal("expected gif processor request")
+	}
+	if processorClient.gifReq.ThumbObjectId != "" || len(processorClient.gifReq.ThumbReadLease) != 0 {
+		t.Fatalf("expected gif request not to forward uploaded thumb, got %#v", processorClient.gifReq)
+	}
+	mediaDoc, ok := got.ToMessageMediaDocument()
+	if !ok || mediaDoc.Document == nil {
+		t.Fatalf("expected messageMediaDocument, got %#v", got)
+	}
+	doc, ok := mediaDoc.Document.(*tg.TLDocument)
+	if !ok {
+		t.Fatalf("expected TLDocument, got %#v", mediaDoc.Document)
+	}
+	if len(doc.Thumbs) != 1 {
+		t.Fatalf("expected processed gif thumb, got %#v", doc.Thumbs)
+	}
+	thumb, ok := doc.Thumbs[0].(*tg.TLPhotoSize)
+	if !ok || thumb.Type != "m" || thumb.W != 320 || thumb.H != 180 || thumb.Size2 != 1234 {
+		t.Fatalf("unexpected gif document thumb: %#v", doc.Thumbs[0])
+	}
+	if len(photoSizes.inserted) != 1 || photoSizes.inserted[0].FilePath != "gif-thumb-object" {
+		t.Fatalf("expected saved processed gif thumb path, got %#v", photoSizes.inserted)
+	}
+}
+
 func TestUploadedDocumentMediaDoesNotReturnOnlyStrippedThumb(t *testing.T) {
 	documents := &captureDocumentsModel{}
 	photoSizes := &capturePhotoSizesModel{}
