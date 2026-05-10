@@ -18,7 +18,6 @@ package core
 
 import (
 	"math/rand"
-	"time"
 
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	mediapb "github.com/teamgram/teamgram-server/v2/app/service/media/media"
@@ -37,7 +36,6 @@ func (c *FilesCore) makeMediaByInputMedia(media tg.InputMediaClazz) (*tg.Message
 		return nil, tg.ErrMediaInvalid
 	}
 
-	now := int32(time.Now().Unix())
 	inputMedia := &tg.InputMedia{Clazz: media}
 
 	switch media.InputMediaClazzName() {
@@ -73,25 +71,17 @@ func (c *FilesCore) makeMediaByInputMedia(media tg.InputMediaClazz) (*tg.Message
 		if !ok {
 			return nil, tg.ErrMediaInvalid
 		}
-		sizeList, err := c.svcCtx.Repo.MediaClient.MediaGetPhotoSizeList(c.ctx, &mediapb.TLMediaGetPhotoSizeList{
-			SizeId: inputPhoto.Id,
+		photo, err := c.svcCtx.Repo.MediaClient.MediaGetPhoto(c.ctx, &mediapb.TLMediaGetPhoto{
+			PhotoId: inputPhoto.Id,
 		})
 		if err != nil {
 			return nil, err
 		}
-		if sizeList == nil {
+		if photo == nil || photo.Clazz == nil {
 			return nil, tg.ErrMediaInvalid
 		}
-		photo := tg.MakeTLPhoto(&tg.TLPhoto{
-			Id:          inputPhoto.Id,
-			HasStickers: false,
-			AccessHash:  inputPhoto.AccessHash,
-			Date:        now,
-			Sizes:       sizeList.Sizes,
-			DcId:        sizeList.DcId,
-		})
 		return tg.MakeTLMessageMediaPhoto(&tg.TLMessageMediaPhoto{
-			Photo:      photo,
+			Photo:      photo.Clazz,
 			TtlSeconds: mediaPhoto.TtlSeconds,
 		}).ToMessageMedia(), nil
 	case tg.ClazzName_inputMediaGeoPoint:

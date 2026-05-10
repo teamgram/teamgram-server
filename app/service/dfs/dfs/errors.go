@@ -16,6 +16,17 @@ var (
 	ErrDfsDownstream         = errors.New("dfs: downstream failure")
 )
 
+type MissingUploadPartError struct {
+	Part int32
+}
+
+func (e *MissingUploadPartError) Error() string {
+	if e == nil {
+		return "dfs: missing upload part"
+	}
+	return fmt.Sprintf("dfs: missing upload part %d", e.Part)
+}
+
 func WrapDfsStorage(op string, err error) error {
 	if err == nil {
 		return nil

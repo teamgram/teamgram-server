@@ -13,7 +13,7 @@ import (
 	"strings"
 
 	"github.com/disintegration/imaging"
-	strippedjpeg "github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/imaging2/jpeg"
+	strippedjpeg "github.com/teamgram/teamgram-server/v2/pkg/media/imaging2/jpeg"
 	"golang.org/x/image/bmp"
 )
 

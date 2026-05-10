@@ -32,3 +32,19 @@ Dfs:
     Hosts:
       - 127.0.0.1:2379
     Key: service.dfs
+
+MediaProcessor:
+  DestService: service.mediaprocessor
+  ServiceName: RPCMediaProcessor
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.mediaprocessor
+
+FileReference:
+  Secret: "teamgram-local-file-reference-secret"
+  TTLSeconds: 86400
+
+ReadLease:
+  Secret: "teamgram-local-read-lease-secret"
+  TTLSeconds: 300

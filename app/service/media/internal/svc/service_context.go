@@ -21,6 +21,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/service/media/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/media/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/service/media/internal/repository/rpc"
+	mediaprocessorclient "github.com/teamgram/teamgram-server/v2/app/service/mediaprocessor/client"
 )
 
 type ServiceContext struct {
@@ -31,8 +32,10 @@ type ServiceContext struct {
 func NewServiceContext(c config.Config) *ServiceContext {
 	dfsKitexClient := dfsclient.MustNewKitexClient(c.Dfs)
 	dfsClient := rpc.NewDFSClient(dfsclient.NewDfsClient(dfsKitexClient))
+	processorKitexClient := mediaprocessorclient.MustNewKitexClient(c.MediaProcessor)
+	processorClient := rpc.NewMediaProcessorClient(mediaprocessorclient.NewMediaProcessorClient(processorKitexClient))
 	return &ServiceContext{
 		Config: c,
-		Repo:   repository.NewRepository(c, dfsClient),
+		Repo:   repository.NewRepository(c, dfsClient, processorClient),
 	}
 }

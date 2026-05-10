@@ -11,6 +11,12 @@
 package dfs
 
 const (
+	ClazzID_fileFinalizedObject          = 0xe83380f0 // e83380f0
+	ClazzID_fileHashChunk                = 0x146aad14 // 146aad14
+	ClazzID_dfs_commitUpload             = 0xdddb9d2c // dddb9d2c
+	ClazzID_dfs_putFile                  = 0x6e20c3e7 // 6e20c3e7
+	ClazzID_dfs_getFileByReadLease       = 0x86c7c115 // 86c7c115
+	ClazzID_dfs_getFileHashesByReadLease = 0xff974b78 // ff974b78
 	ClazzID_dfs_writeFilePartData        = 0x1a484107 // 1a484107
 	ClazzID_dfs_uploadPhotoFileV2        = 0x2410d1a2 // 2410d1a2
 	ClazzID_dfs_uploadProfilePhotoFileV2 = 0x872313d8 // 872313d8

@@ -167,6 +167,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"/media.RPCMedia/media.resolveFileLocation": kitex.NewMethodInfo(
+		resolveFileLocationHandler,
+		newResolveFileLocationArgs,
+		newResolveFileLocationResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 }
 
 var (
@@ -2384,6 +2391,140 @@ func (p *UploadedProfilePhotoResult) GetResult() interface{} {
 	return p.Success
 }
 
+func resolveFileLocationHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*ResolveFileLocationArgs)
+	realResult := result.(*ResolveFileLocationResult)
+	success, err := handler.(media.RPCMedia).MediaResolveFileLocation(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newResolveFileLocationArgs() interface{} {
+	return &ResolveFileLocationArgs{}
+}
+
+func newResolveFileLocationResult() interface{} {
+	return &ResolveFileLocationResult{}
+}
+
+type ResolveFileLocationArgs struct {
+	Req *media.TLMediaResolveFileLocation
+}
+
+func (p *ResolveFileLocationArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in ResolveFileLocationArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *ResolveFileLocationArgs) Unmarshal(in []byte) error {
+	msg := new(media.TLMediaResolveFileLocation)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *ResolveFileLocationArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in ResolveFileLocationArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *ResolveFileLocationArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(media.TLMediaResolveFileLocation)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var ResolveFileLocationArgs_Req_DEFAULT *media.TLMediaResolveFileLocation
+
+func (p *ResolveFileLocationArgs) GetReq() *media.TLMediaResolveFileLocation {
+	if !p.IsSetReq() {
+		return ResolveFileLocationArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *ResolveFileLocationArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type ResolveFileLocationResult struct {
+	Success *media.MediaResolvedFileObject
+}
+
+var ResolveFileLocationResult_Success_DEFAULT *media.MediaResolvedFileObject
+
+func (p *ResolveFileLocationResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in ResolveFileLocationResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *ResolveFileLocationResult) Unmarshal(in []byte) error {
+	msg := new(media.MediaResolvedFileObject)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ResolveFileLocationResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in ResolveFileLocationResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *ResolveFileLocationResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(media.MediaResolvedFileObject)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *ResolveFileLocationResult) GetSuccess() *media.MediaResolvedFileObject {
+	if !p.IsSetSuccess() {
+		return ResolveFileLocationResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *ResolveFileLocationResult) SetSuccess(x interface{}) {
+	p.Success = x.(*media.MediaResolvedFileObject)
+}
+
+func (p *ResolveFileLocationResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ResolveFileLocationResult) GetResult() interface{} {
+	return p.Success
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -2580,6 +2721,18 @@ func (p *kClient) MediaUploadedProfilePhoto(ctx context.Context, req *media.TLMe
 	var _result UploadedProfilePhotoResult
 
 	if err = p.c.Call(ctx, "/media.RPCMedia/media.uploadedProfilePhoto", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) MediaResolveFileLocation(ctx context.Context, req *media.TLMediaResolveFileLocation) (r *media.MediaResolvedFileObject, err error) {
+	// var _args ResolveFileLocationArgs
+	// _args.Req = req
+	var _result ResolveFileLocationResult
+
+	if err = p.c.Call(ctx, "/media.RPCMedia/media.resolveFileLocation", req, &_result); err != nil {
 		return
 	}
 

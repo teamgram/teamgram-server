@@ -11,4 +11,8 @@ var (
 	ErrMediaChecksumInvalid     = errors.New("media: checksum invalid")
 	ErrMediaDownstream          = errors.New("media: downstream failure")
 	ErrMediaBlocked             = errors.New("media: blocked")
+	ErrFileLocationInvalid      = errors.New("media: file location invalid")
+	ErrFileReferenceEmpty       = errors.New("media: file reference empty")
+	ErrFileReferenceExpired     = errors.New("media: file reference expired")
+	ErrFileReferenceInvalid     = errors.New("media: file reference invalid")
 )

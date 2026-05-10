@@ -13,6 +13,7 @@ package media
 const (
 	ClazzID_photoSizeList                = 0x67139b3  // 67139b3
 	ClazzID_videoSizeList                = 0x38d19bf2 // 38d19bf2
+	ClazzID_mediaResolvedFileObject      = 0x986d9e66 // 986d9e66
 	ClazzID_media_uploadPhotoFile        = 0x3c2b0b17 // 3c2b0b17
 	ClazzID_media_uploadProfilePhotoFile = 0xb6a04cc4 // b6a04cc4
 	ClazzID_media_getPhoto               = 0x657eb86b // 657eb86b
@@ -29,4 +30,5 @@ const (
 	ClazzID_media_uploadStickerFile      = 0xacb624ed // acb624ed
 	ClazzID_media_uploadRingtoneFile     = 0x3dbab209 // 3dbab209
 	ClazzID_media_uploadedProfilePhoto   = 0x89d159d2 // 89d159d2
+	ClazzID_media_resolveFileLocation    = 0x474fecf3 // 474fecf3
 )

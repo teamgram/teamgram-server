@@ -6,10 +6,14 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/app/service/media/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/app/service/media/media"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-func mapDocumentAggregate(doc *model.Documents, thumbs []model.PhotoSizes, videoThumbs []model.VideoSizes) (*tg.Document, error) {
+const documentAttributeVectorLayer = 224
+
+func mapDocumentAggregate(doc *model.Documents, thumbs []model.PhotoSizes, videoThumbs []model.VideoSizes, fileReference []byte) (*tg.Document, error) {
 	if doc == nil {
 		return nil, media.ErrDocumentNotFound
 	}
@@ -20,7 +24,7 @@ func mapDocumentAggregate(doc *model.Documents, thumbs []model.PhotoSizes, video
 	return tg.MakeTLDocument(&tg.TLDocument{
 		Id:            doc.DocumentId,
 		AccessHash:    doc.AccessHash,
-		FileReference: []byte{},
+		FileReference: fileReference,
 		Date:          int32(doc.Date2),
 		MimeType:      doc.MimeType,
 		Size2:         doc.FileSize,
@@ -75,6 +79,25 @@ func decodeLegacyDocumentAttributes(raw string) ([]tg.DocumentAttributeClazz, er
 		}
 	}
 	return out, nil
+}
+
+func encodeDocumentAttributeVector(attrs []tg.DocumentAttributeClazz) ([]byte, error) {
+	x := bin.NewEncoder()
+	if err := iface.EncodeObjectList(x, attrs, documentAttributeVectorLayer); err != nil {
+		return nil, fmt.Errorf("%w: encode document attribute vector: %w", media.ErrMediaInvalidUploadedFile, err)
+	}
+	return x.Clone(), nil
+}
+
+func decodeDocumentAttributeVector(raw []byte) ([]tg.DocumentAttributeClazz, error) {
+	if len(raw) == 0 {
+		return []tg.DocumentAttributeClazz{}, nil
+	}
+	attrs, err := iface.DecodeObjectList[tg.DocumentAttributeClazz](bin.NewDecoder(raw))
+	if err != nil {
+		return nil, fmt.Errorf("%w: decode document attribute vector: %w", media.ErrMediaInvalidUploadedFile, err)
+	}
+	return attrs, nil
 }
 
 type legacyAttribute struct {

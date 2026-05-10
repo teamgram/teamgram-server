@@ -20,6 +20,7 @@ func TestMapDocumentIncludesThumbsVideoThumbsAndAttributes(t *testing.T) {
 		},
 		[]model.PhotoSizes{{SizeType: "m", Width: 320, Height: 200, FileSize: 123}},
 		[]model.VideoSizes{{SizeType: "v", Width: 320, Height: 200, FileSize: 456, VideoStartTs: 2}},
+		[]byte("file-reference"),
 	)
 	if err != nil {
 		t.Fatalf("mapDocumentAggregate() error = %v", err)
@@ -46,7 +47,7 @@ func TestMapDocumentIncludesThumbsVideoThumbsAndAttributes(t *testing.T) {
 }
 
 func TestMapDocumentReturnsDecodeErrorForInvalidLegacyAttributes(t *testing.T) {
-	_, err := mapDocumentAggregate(&model.Documents{DocumentId: 20, Attributes: `[`}, nil, nil)
+	_, err := mapDocumentAggregate(&model.Documents{DocumentId: 20, Attributes: `[`}, nil, nil, nil)
 	if err == nil {
 		t.Fatal("mapDocumentAggregate() error = nil, want decode error")
 	}

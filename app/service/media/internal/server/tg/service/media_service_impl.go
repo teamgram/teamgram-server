@@ -275,3 +275,19 @@ func (s *Service) MediaUploadedProfilePhoto(ctx context.Context, request *media.
 	c.Logger.Debugf("media.uploadedProfilePhoto - reply: %s", r)
 	return r, err
 }
+
+// MediaResolveFileLocation
+// media.resolveFileLocation location:InputFileLocation viewer_id:long = MediaResolvedFileObject;
+func (s *Service) MediaResolveFileLocation(ctx context.Context, request *media.TLMediaResolveFileLocation) (*media.MediaResolvedFileObject, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("media.resolveFileLocation - request: %s", request)
+
+	r, err := c.MediaResolveFileLocation(request)
+	if err != nil {
+		c.Logger.Errorf("media.resolveFileLocation - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("media.resolveFileLocation - reply: %s", r)
+	return r, err
+}

@@ -41,6 +41,7 @@ type Client interface {
 	MediaUploadStickerFile(ctx context.Context, req *media.TLMediaUploadStickerFile, callOptions ...callopt.Option) (r *tg.Document, err error)
 	MediaUploadRingtoneFile(ctx context.Context, req *media.TLMediaUploadRingtoneFile, callOptions ...callopt.Option) (r *tg.Document, err error)
 	MediaUploadedProfilePhoto(ctx context.Context, req *media.TLMediaUploadedProfilePhoto, callOptions ...callopt.Option) (r *tg.Photo, err error)
+	MediaResolveFileLocation(ctx context.Context, req *media.TLMediaResolveFileLocation, callOptions ...callopt.Option) (r *media.MediaResolvedFileObject, err error)
 }
 
 // Deprecated: prefer the generated app client helper or pkg/net/kitex.NewClient for TL-aware transport setup.
@@ -158,4 +159,9 @@ func (p *kMediaClient) MediaUploadRingtoneFile(ctx context.Context, req *media.T
 func (p *kMediaClient) MediaUploadedProfilePhoto(ctx context.Context, req *media.TLMediaUploadedProfilePhoto, callOptions ...callopt.Option) (r *tg.Photo, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.MediaUploadedProfilePhoto(ctx, req)
+}
+
+func (p *kMediaClient) MediaResolveFileLocation(ctx context.Context, req *media.TLMediaResolveFileLocation, callOptions ...callopt.Option) (r *media.MediaResolvedFileObject, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.MediaResolveFileLocation(ctx, req)
 }

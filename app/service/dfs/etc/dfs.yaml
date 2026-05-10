@@ -30,6 +30,22 @@ Minio:
   DocumentsBucket: documents
   EncryptedBucket: encryptedfiles
 
+UploadSpool:
+  RootDir: "../data/dfs-spool"
+  NodeIDFile: "node_id"
+  SegmentSize: 16777216
+  LocalShardCount: 256
+  PartTTLSeconds: 86400
+FileObject:
+  MetaPrefix: "_meta"
+  LocalDCID: 1
+ReadLease:
+  Secret: "teamgram-local-read-lease-secret"
+  TTLSeconds: 300
+InternalAPI:
+  Secret: "teamgram-local-internal-file-secret"
+  TTLSeconds: 300
+
 Idgen:
   DestService: service.idgen
   ServiceName: RPCIdgen
@@ -38,4 +54,3 @@ Idgen:
     Hosts:
       - 127.0.0.1:2379
     Key: service.idgen
-

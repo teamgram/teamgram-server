@@ -25,6 +25,10 @@ var _ *tg.Bool
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.
 type Client interface {
+	DfsCommitUpload(ctx context.Context, req *dfs.TLDfsCommitUpload, callOptions ...callopt.Option) (r *dfs.FileFinalizedObject, err error)
+	DfsPutFile(ctx context.Context, req *dfs.TLDfsPutFile, callOptions ...callopt.Option) (r *dfs.FileFinalizedObject, err error)
+	DfsGetFileByReadLease(ctx context.Context, req *dfs.TLDfsGetFileByReadLease, callOptions ...callopt.Option) (r *tg.UploadFile, err error)
+	DfsGetFileHashesByReadLease(ctx context.Context, req *dfs.TLDfsGetFileHashesByReadLease, callOptions ...callopt.Option) (r *dfs.VectorFileHash, err error)
 	DfsWriteFilePartData(ctx context.Context, req *dfs.TLDfsWriteFilePartData, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	DfsUploadPhotoFileV2(ctx context.Context, req *dfs.TLDfsUploadPhotoFileV2, callOptions ...callopt.Option) (r *tg.Photo, err error)
 	DfsUploadProfilePhotoFileV2(ctx context.Context, req *dfs.TLDfsUploadProfilePhotoFileV2, callOptions ...callopt.Option) (r *tg.Photo, err error)
@@ -74,6 +78,26 @@ func NewRPCDfsClient(cli client.Client) Client {
 	return &kDfsClient{
 		kClient: newServiceClient(cli),
 	}
+}
+
+func (p *kDfsClient) DfsCommitUpload(ctx context.Context, req *dfs.TLDfsCommitUpload, callOptions ...callopt.Option) (r *dfs.FileFinalizedObject, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DfsCommitUpload(ctx, req)
+}
+
+func (p *kDfsClient) DfsPutFile(ctx context.Context, req *dfs.TLDfsPutFile, callOptions ...callopt.Option) (r *dfs.FileFinalizedObject, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DfsPutFile(ctx, req)
+}
+
+func (p *kDfsClient) DfsGetFileByReadLease(ctx context.Context, req *dfs.TLDfsGetFileByReadLease, callOptions ...callopt.Option) (r *tg.UploadFile, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DfsGetFileByReadLease(ctx, req)
+}
+
+func (p *kDfsClient) DfsGetFileHashesByReadLease(ctx context.Context, req *dfs.TLDfsGetFileHashesByReadLease, callOptions ...callopt.Option) (r *dfs.VectorFileHash, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.DfsGetFileHashesByReadLease(ctx, req)
 }
 
 func (p *kDfsClient) DfsWriteFilePartData(ctx context.Context, req *dfs.TLDfsWriteFilePartData, callOptions ...callopt.Option) (r *tg.Bool, err error) {

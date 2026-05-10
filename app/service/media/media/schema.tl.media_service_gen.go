@@ -1136,6 +1136,64 @@ func (m *TLMediaUploadedProfilePhoto) Decode(d *bin.Decoder) (err error) {
 	}
 }
 
+// TLMediaResolveFileLocation <--
+type TLMediaResolveFileLocation struct {
+	ClazzID  uint32                    `json:"_id"`
+	Location tg.InputFileLocationClazz `json:"location"`
+	ViewerId int64                     `json:"viewer_id"`
+}
+
+func (m *TLMediaResolveFileLocation) String() string {
+	return iface.DebugStringWithName(ClazzName_media_resolveFileLocation, m)
+}
+
+// Encode <--
+func (m *TLMediaResolveFileLocation) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_media_resolveFileLocation, int(layer)); clazzId {
+	case 0x474fecf3:
+		x.PutClazzID(0x474fecf3)
+
+		if m.Location == nil {
+			return fmt.Errorf("unable to encode media_resolveFileLocation#0x474fecf3: field location is nil")
+		}
+		if err := m.Location.Encode(x, layer); err != nil {
+			return fmt.Errorf("unable to encode media_resolveFileLocation#0x474fecf3: field location: %w", err)
+		}
+		x.PutInt64(m.ViewerId)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode media_resolveFileLocation: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLMediaResolveFileLocation) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return fmt.Errorf("unable to decode media_resolveFileLocation: constructor: %w", err)
+		}
+	}
+	switch m.ClazzID {
+	case 0x474fecf3:
+
+		m.Location, err = tg.DecodeInputFileLocationClazz(d)
+		if err != nil {
+			return fmt.Errorf("unable to decode media_resolveFileLocation#0x474fecf3: field location: %w", err)
+		}
+
+		m.ViewerId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode media_resolveFileLocation#0x474fecf3: field viewer_id: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode media_resolveFileLocation: invalid constructor %x", m.ClazzID)
+	}
+}
+
 // Vector api result type
 // ----------------------------------------------------------------------------
 // VectorResList <--
@@ -1208,4 +1266,5 @@ type RPCMedia interface {
 	MediaUploadStickerFile(ctx context.Context, in *TLMediaUploadStickerFile) (*tg.Document, error)
 	MediaUploadRingtoneFile(ctx context.Context, in *TLMediaUploadRingtoneFile) (*tg.Document, error)
 	MediaUploadedProfilePhoto(ctx context.Context, in *TLMediaUploadedProfilePhoto) (*tg.Photo, error)
+	MediaResolveFileLocation(ctx context.Context, in *TLMediaResolveFileLocation) (*MediaResolvedFileObject, error)
 }

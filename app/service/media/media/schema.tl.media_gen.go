@@ -27,6 +27,177 @@ var (
 	_ json.Marshaler
 )
 
+// MediaResolvedFileObjectClazz <--
+//   - TL_MediaResolvedFileObject
+type MediaResolvedFileObjectClazz = *TLMediaResolvedFileObject
+
+func DecodeMediaResolvedFileObjectClazz(d *bin.Decoder) (MediaResolvedFileObjectClazz, error) {
+	// id, err := d.PeekClazzID()
+	id, err := d.ClazzID()
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode MediaResolvedFileObject: constructor: %w", err)
+	}
+
+	switch id {
+	case 0x986d9e66:
+		x := &TLMediaResolvedFileObject{ClazzID: id, ClazzName2: ClazzName_mediaResolvedFileObject}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
+		return x, nil
+	default:
+		return nil, fmt.Errorf("unable to decode MediaResolvedFileObject: invalid constructor %x", id)
+	}
+
+}
+
+// TLMediaResolvedFileObject <--
+type TLMediaResolvedFileObject struct {
+	ClazzID         uint32 `json:"_id"`
+	ClazzName2      string `json:"_name"`
+	ObjectId        string `json:"object_id"`
+	ReadLease       []byte `json:"read_lease"`
+	Size2           int64  `json:"size2"`
+	MimeType        string `json:"mime_type"`
+	DcId            int32  `json:"dc_id"`
+	StorageFileType int32  `json:"storage_file_type"`
+}
+
+func MakeTLMediaResolvedFileObject(m *TLMediaResolvedFileObject) *TLMediaResolvedFileObject {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_mediaResolvedFileObject
+
+	return m
+}
+
+func (m *TLMediaResolvedFileObject) String() string {
+	return iface.DebugStringWithName("mediaResolvedFileObject", m)
+}
+
+func (m *TLMediaResolvedFileObject) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("mediaResolvedFileObject", m)
+}
+
+// MediaResolvedFileObjectClazzName <--
+func (m *TLMediaResolvedFileObject) MediaResolvedFileObjectClazzName() string {
+	return ClazzName_mediaResolvedFileObject
+}
+
+// ClazzName <--
+func (m *TLMediaResolvedFileObject) ClazzName() string {
+	return m.ClazzName2
+}
+
+// ToMediaResolvedFileObject <--
+func (m *TLMediaResolvedFileObject) ToMediaResolvedFileObject() *MediaResolvedFileObject {
+	if m == nil {
+		return nil
+	}
+
+	return m
+
+}
+
+func (m *TLMediaResolvedFileObject) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_mediaResolvedFileObject, int(layer)); clazzId {
+	case 0x986d9e66:
+		size := 4
+		size += iface.CalcStringSize(m.ObjectId)
+		size += iface.CalcBytesSize(m.ReadLease)
+		size += 8
+		size += iface.CalcStringSize(m.MimeType)
+		size += 4
+		size += 4
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMediaResolvedFileObject) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_mediaResolvedFileObject, int(layer)); clazzId {
+	case 0x986d9e66:
+		if err := iface.ValidateRequiredString("object_id", m.ObjectId); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("read_lease", m.ReadLease); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("mime_type", m.MimeType); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode mediaResolvedFileObject: unsupported layer %d", layer)
+	}
+}
+
+// Encode <--
+func (m *TLMediaResolvedFileObject) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_mediaResolvedFileObject, int(layer)); clazzId {
+	case 0x986d9e66:
+		x.PutClazzID(0x986d9e66)
+
+		x.PutString(m.ObjectId)
+		x.PutBytes(m.ReadLease)
+		x.PutInt64(m.Size2)
+		x.PutString(m.MimeType)
+		x.PutInt32(m.DcId)
+		x.PutInt32(m.StorageFileType)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode mediaResolvedFileObject: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLMediaResolvedFileObject) Decode(d *bin.Decoder) (err error) {
+	switch m.ClazzID {
+	case 0x986d9e66:
+		m.ObjectId, err = d.String()
+		if err != nil {
+			return fmt.Errorf("unable to decode mediaResolvedFileObject#0x986d9e66: field object_id: %w", err)
+		}
+		m.ReadLease, err = d.Bytes()
+		if err != nil {
+			return fmt.Errorf("unable to decode mediaResolvedFileObject#0x986d9e66: field read_lease: %w", err)
+		}
+		m.Size2, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode mediaResolvedFileObject#0x986d9e66: field size2: %w", err)
+		}
+		m.MimeType, err = d.String()
+		if err != nil {
+			return fmt.Errorf("unable to decode mediaResolvedFileObject#0x986d9e66: field mime_type: %w", err)
+		}
+		m.DcId, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode mediaResolvedFileObject#0x986d9e66: field dc_id: %w", err)
+		}
+		m.StorageFileType, err = d.Int32()
+		if err != nil {
+			return fmt.Errorf("unable to decode mediaResolvedFileObject#0x986d9e66: field storage_file_type: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode mediaResolvedFileObject: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// MediaResolvedFileObject <--
+type MediaResolvedFileObject = TLMediaResolvedFileObject
+
 // PhotoSizeListClazz <--
 //   - TL_PhotoSizeList
 type PhotoSizeListClazz = *TLPhotoSizeList

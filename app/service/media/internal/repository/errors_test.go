@@ -37,6 +37,7 @@ func TestWrapDfsUploadErrorMapping(t *testing.T) {
 		{name: "invalid argument", err: dfs.ErrDfsInvalidArgument, want: media.ErrMediaInvalidArgument},
 		{name: "checksum invalid", err: dfs.ErrDfsChecksumInvalid, want: media.ErrMediaChecksumInvalid},
 		{name: "invalid uploaded file", err: dfs.ErrDfsInvalidFilePart, want: media.ErrMediaInvalidUploadedFile},
+		{name: "missing upload part", err: &dfs.MissingUploadPartError{Part: 3}, want: media.ErrMediaInvalidUploadedFile},
 		{name: "downstream", err: dfs.ErrDfsStorage, want: media.ErrMediaDownstream},
 	}
 

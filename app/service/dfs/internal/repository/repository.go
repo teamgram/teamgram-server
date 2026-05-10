@@ -17,27 +17,39 @@
 package repository
 
 import (
+	"context"
 	"fmt"
+	"sync"
 
 	"github.com/teamgram/marmota/pkg/stores/kv"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/config"
-	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/ffmpeg2"
-	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/imaging2"
 	minioadapter "github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/minio"
+	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/objectstore"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/rpc"
+	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/spool"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository/xkv"
 	idgenclient "github.com/teamgram/teamgram-server/v2/app/service/idgen/client"
+	"github.com/teamgram/teamgram-server/v2/pkg/media/ffmpeg2"
+	"github.com/teamgram/teamgram-server/v2/pkg/media/imaging2"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
 // Repository is the dependency container for repository instances.
 type Repository struct {
-	kv               kv.ExtStore
-	uploadStateModel xkv.UploadStateModel
-	objectStore      minioadapter.ObjectStore
-	idgen            rpc.IDGenerator
-	imaging          imaging2.Processor
-	ffmpeg           ffmpeg2.Processor
+	kv                  kv.ExtStore
+	uploadStateModel    uploadStateModel
+	objectStore         minioadapter.ObjectStore
+	idgen               rpc.IDGenerator
+	imaging             imaging2.Processor
+	ffmpeg              ffmpeg2.Processor
+	documentsBucket     string
+	manifestKeys        objectstore.ManifestKeys
+	readLeaseSecret     string
+	readLeaseTTLSeconds int64
+	localDCID           int32
+	uploadNodeMu        sync.RWMutex
+	uploadNodeDraining  bool
+	uploadDrainReason   string
 }
 
 // NewRepository creates a new Repository.
@@ -55,15 +67,34 @@ func NewRepository(c config.Config) *Repository {
 	if hasRPCClientConfig(c.Idgen) {
 		idgen = rpc.NewIDGenClient(idgenclient.NewIdgenClient(idgenclient.MustNewKitexClient(c.Idgen)))
 	}
-
-	return &Repository{
-		kv:               kv2,
-		uploadStateModel: xkv.NewUploadStateModel(kv2),
-		objectStore:      objectStore,
-		idgen:            idgen,
-		imaging:          imaging2.NewProcessor(),
-		ffmpeg:           ffmpeg2.NewProcessor(),
+	uploadState := uploadStateModel(xkv.NewUploadStateModel(kv2))
+	if c.UploadSpool.RootDir != "" {
+		model, err := spool.NewUploadStateModel(c.UploadSpool)
+		if err != nil {
+			panic(fmt.Errorf("new dfs upload spool: %w", err))
+		}
+		uploadState = model
 	}
+
+	repo := &Repository{
+		kv:                  kv2,
+		uploadStateModel:    uploadState,
+		objectStore:         objectStore,
+		idgen:               idgen,
+		imaging:             imaging2.NewProcessor(),
+		ffmpeg:              ffmpeg2.NewProcessor(),
+		documentsBucket:     c.Minio.DocumentsBucket,
+		manifestKeys:        objectstore.ManifestKeys{MetaPrefix: c.FileObject.MetaPrefix},
+		readLeaseSecret:     c.ReadLease.Secret,
+		readLeaseTTLSeconds: c.ReadLease.TTLSeconds,
+		localDCID:           c.FileObject.LocalDCID,
+	}
+	if c.UploadSpool.RootDir != "" {
+		if err := repo.ScanSpoolOnStart(context.Background()); err != nil {
+			panic(fmt.Errorf("scan dfs upload spool on start: %w", err))
+		}
+	}
+	return repo
 }
 
 func hasRPCClientConfig(c kitex.RpcClientConf) bool {

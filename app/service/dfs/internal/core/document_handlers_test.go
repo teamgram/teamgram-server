@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
-	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/ffmpeg2"
 	"github.com/teamgram/teamgram-server/v2/app/service/dfs/internal/repository"
+	"github.com/teamgram/teamgram-server/v2/pkg/media/ffmpeg2"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
