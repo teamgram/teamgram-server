@@ -173,7 +173,7 @@ func TestMediaRefV2CarriesFullDocumentProjection(t *testing.T) {
 			{Kind: "size", Type: "m", W: 320, H: 200, Size: 1234},
 		},
 		DocumentVideoThumbs: []VideoSizeRefV1{
-			{Type: "v", W: 320, H: 200, Size: 4567, VideoStartTs: &videoStartTs},
+			{Kind: "size", Type: "v", W: 320, H: 200, Size: 4567, VideoStartTs: &videoStartTs},
 		},
 		DocumentAttributes: []DocumentAttributeRefV1{
 			{Kind: "filename", FileName: "clip.mp4"},
@@ -204,6 +204,17 @@ func TestMediaRefV2CarriesFullDocumentProjection(t *testing.T) {
 	var got MediaRefV1
 	if err := json.Unmarshal(body, &got); err != nil {
 		t.Fatalf("Unmarshal() error = %v", err)
+	}
+	if got.SchemaVersion != MediaRefSchemaVersionV2 || got.Kind != "document" || got.ID != 555 || got.AccessHash != 666 ||
+		string(got.FileReference) != "doc-ref" || got.Date != 1_700_000_000 || got.DcID != 4 || got.MimeType != "video/mp4" || got.Size != 98765 {
+		t.Fatalf("document media core fields = %+v, want full document identity preserved", got)
+	}
+	if len(got.DocumentThumbs) != 1 {
+		t.Fatalf("DocumentThumbs len = %d, want 1", len(got.DocumentThumbs))
+	}
+	thumb := got.DocumentThumbs[0]
+	if thumb.Kind != "size" || thumb.Type != "m" || thumb.W != 320 || thumb.H != 200 || thumb.Size != 1234 {
+		t.Fatalf("DocumentThumbs[0] = %+v, want size m 320x200/1234", thumb)
 	}
 	if len(got.DocumentAttributes) != 6 {
 		t.Fatalf("DocumentAttributes len = %d, want 6", len(got.DocumentAttributes))
@@ -245,11 +256,26 @@ func TestMediaRefV2CarriesFullDocumentProjection(t *testing.T) {
 	if len(got.DocumentVideoThumbs) != 1 {
 		t.Fatalf("DocumentVideoThumbs len = %d, want 1", len(got.DocumentVideoThumbs))
 	}
+	videoThumb := got.DocumentVideoThumbs[0]
+	if videoThumb.Kind != "size" || videoThumb.Type != "v" || videoThumb.W != 320 || videoThumb.H != 200 || videoThumb.Size != 4567 {
+		t.Fatalf("DocumentVideoThumbs[0] = %+v, want size v 320x200/4567", videoThumb)
+	}
+	if videoThumb.VideoStartTs == nil || *videoThumb.VideoStartTs != videoStartTs {
+		t.Fatalf("DocumentVideoThumbs[0].VideoStartTs = %v, want %v", videoThumb.VideoStartTs, videoStartTs)
+	}
 	if !got.DocumentMediaFlags.Video || !got.DocumentMediaFlags.Spoiler {
 		t.Fatalf("DocumentMediaFlags = %+v, want video spoiler", got.DocumentMediaFlags)
 	}
-	if got.VideoCover == nil || got.VideoCover.ID != 777 {
-		t.Fatalf("VideoCover = %+v, want photo 777", got.VideoCover)
+	if got.VideoCover == nil || got.VideoCover.ID != 777 || got.VideoCover.AccessHash != 888 ||
+		string(got.VideoCover.FileReference) != "cover-ref" || got.VideoCover.Date != 1_700_000_001 || got.VideoCover.DcID != 5 {
+		t.Fatalf("VideoCover = %+v, want full photo 777", got.VideoCover)
+	}
+	if len(got.VideoCover.Sizes) != 1 {
+		t.Fatalf("VideoCover.Sizes len = %d, want 1", len(got.VideoCover.Sizes))
+	}
+	coverSize := got.VideoCover.Sizes[0]
+	if coverSize.Kind != "size" || coverSize.Type != "x" || coverSize.W != 640 || coverSize.H != 360 || coverSize.Size != 4321 {
+		t.Fatalf("VideoCover.Sizes[0] = %+v, want size x 640x360/4321", coverSize)
 	}
 	if got.VideoTimestamp == nil || *got.VideoTimestamp != videoTimestamp {
 		t.Fatalf("VideoTimestamp = %v, want %d", got.VideoTimestamp, videoTimestamp)

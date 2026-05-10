@@ -402,7 +402,7 @@ func TestSentMessageDocumentMediaProjectsFullUploadedDocumentContract(t *testing
 			{Kind: "size", Type: "m", W: 320, H: 200, Size: 1234},
 		},
 		DocumentVideoThumbs: []payload.VideoSizeRefV1{
-			{Type: "v", W: 320, H: 200, Size: 4567, VideoStartTs: &videoStartTs},
+			{Kind: "size", Type: "v", W: 320, H: 200, Size: 4567, VideoStartTs: &videoStartTs},
 		},
 		DocumentAttributes: []payload.DocumentAttributeRefV1{
 			{Kind: "filename", FileName: "clip.mp4"},
@@ -439,16 +439,25 @@ func TestSentMessageDocumentMediaProjectsFullUploadedDocumentContract(t *testing
 	if len(document.VideoThumbs) != 1 {
 		t.Fatalf("VideoThumbs len = %d, want 1", len(document.VideoThumbs))
 	}
-	if _, ok := document.VideoThumbs[0].(*tg.TLVideoSize); !ok {
+	videoThumb, ok := document.VideoThumbs[0].(*tg.TLVideoSize)
+	if !ok {
 		t.Fatalf("VideoThumbs[0] = %T, want *tg.TLVideoSize", document.VideoThumbs[0])
+	}
+	if videoThumb.Type != "v" || videoThumb.W != 320 || videoThumb.H != 200 || videoThumb.Size2 != 4567 {
+		t.Fatalf("VideoThumbs[0] = %#v, want videoSize v 320x200/4567", videoThumb)
+	}
+	if videoThumb.VideoStartTs == nil || *videoThumb.VideoStartTs != videoStartTs {
+		t.Fatalf("VideoThumbs[0].VideoStartTs = %v, want %v", videoThumb.VideoStartTs, videoStartTs)
 	}
 	assertSentDocumentAttributes(t, document.Attributes, videoStartTs)
 	if documentMedia.VideoTimestamp == nil || *documentMedia.VideoTimestamp != videoTimestamp {
 		t.Fatalf("VideoTimestamp = %v, want %d", documentMedia.VideoTimestamp, videoTimestamp)
 	}
-	if _, ok := documentMedia.VideoCover.(*tg.TLPhoto); !ok {
+	videoCover, ok := documentMedia.VideoCover.(*tg.TLPhoto)
+	if !ok {
 		t.Fatalf("VideoCover = %T, want *tg.TLPhoto", documentMedia.VideoCover)
 	}
+	assertSentVideoCover(t, videoCover)
 }
 
 func TestForwardRevalidationRejectsInvisibleSource(t *testing.T) {
@@ -500,6 +509,23 @@ func assertSentDocumentAttributes(t *testing.T, attrs []tg.DocumentAttributeClaz
 	}
 	if customEmoji.Alt != ":)" || !customEmoji.Free || !customEmoji.TextColor {
 		t.Fatalf("custom emoji attr = %#v, want alt/free/text_color preserved", customEmoji)
+	}
+}
+
+func assertSentVideoCover(t *testing.T, cover *tg.TLPhoto) {
+	t.Helper()
+	if cover.Id != 777 || cover.AccessHash != 888 || string(cover.FileReference) != "cover-ref" || cover.Date != 1_700_000_001 || cover.DcId != 5 {
+		t.Fatalf("VideoCover = %#v, want full photo 777", cover)
+	}
+	if len(cover.Sizes) != 1 {
+		t.Fatalf("VideoCover.Sizes len = %d, want 1", len(cover.Sizes))
+	}
+	size, ok := cover.Sizes[0].(*tg.TLPhotoSize)
+	if !ok {
+		t.Fatalf("VideoCover.Sizes[0] = %T, want *tg.TLPhotoSize", cover.Sizes[0])
+	}
+	if size.Type != "x" || size.W != 640 || size.H != 360 || size.Size2 != 4321 {
+		t.Fatalf("VideoCover.Sizes[0] = %#v, want photoSize x 640x360/4321", size)
 	}
 }
 
