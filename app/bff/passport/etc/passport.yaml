@@ -1,2 +1,10 @@
 Name: bff.passport
 ListenOn: 0.0.0.0:21380
+
+UserClient:
+  Endpoints:
+    - 127.0.0.1:20610
+
+AuthsessionClient:
+  Endpoints:
+    - 127.0.0.1:20330

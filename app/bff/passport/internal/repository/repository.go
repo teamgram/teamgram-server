@@ -18,13 +18,29 @@ package repository
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/passport/internal/config"
+	authsessionclient "github.com/teamgram/teamgram-server/v2/app/service/authsession/client"
+	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
+	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
 // Repository is the dependency container for repository instances.
 type Repository struct {
+	UserClient        userclient.UserClient
+	AuthsessionClient authsessionclient.AuthsessionClient
 }
 
 // NewRepository creates a new Repository.
 func NewRepository(c config.Config) *Repository {
-	return &Repository{}
+	r := &Repository{}
+	if hasRPCClientConfig(c.UserClient) {
+		r.UserClient = userclient.NewUserClient(userclient.MustNewKitexClient(c.UserClient))
+	}
+	if hasRPCClientConfig(c.AuthsessionClient) {
+		r.AuthsessionClient = authsessionclient.NewAuthsessionClient(authsessionclient.MustNewKitexClient(c.AuthsessionClient))
+	}
+	return r
+}
+
+func hasRPCClientConfig(c kitex.RpcClientConf) bool {
+	return len(c.Endpoints) > 0 || len(c.Target) > 0 || c.HasEtcd()
 }

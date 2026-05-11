@@ -17,14 +17,31 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // AccountGetAuthorizations
 // account.getAuthorizations#e320c158 = account.Authorizations;
 func (c *PassportCore) AccountGetAuthorizations(in *tg.TLAccountGetAuthorizations) (*tg.AccountAuthorizations, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.getAuthorizations - error: method AccountGetAuthorizations not impl")
+	_ = in
 
-	return nil, tg.ErrMethodNotImpl
+	authorizations, err := c.svcCtx.Repo.AuthsessionClient.AuthsessionGetAuthorizations(c.ctx, &authsession.TLAuthsessionGetAuthorizations{
+		UserId:           c.MD.UserId,
+		ExcludeAuthKeyId: c.MD.PermAuthKeyId,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	ttl, err := c.svcCtx.Repo.UserClient.UserGetAuthorizationTTL(c.ctx, &userpb.TLUserGetAuthorizationTTL{
+		UserId: c.MD.UserId,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	authorizations.AuthorizationTtlDays = ttl.Days
+	return authorizations, nil
 }
