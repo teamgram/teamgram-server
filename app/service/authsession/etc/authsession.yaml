@@ -6,8 +6,8 @@ Etcd:
     - 127.0.0.1:2379
   Key: service.authsession
 Log:
-  #Mode: file
-  #Path: ../logs/authsession
+  Mode: file
+  Path: ../logs/authsession
   Level: debug
 
 Geoip:
