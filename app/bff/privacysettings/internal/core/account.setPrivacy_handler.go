@@ -26,7 +26,7 @@ import (
 // AccountSetPrivacy
 // account.setPrivacy#c9f81ce8 key:InputPrivacyKey rules:Vector<InputPrivacyRule> = account.PrivacyRules;
 func (c *PrivacySettingsCore) AccountSetPrivacy(in *tg.TLAccountSetPrivacy) (*tg.AccountPrivacyRules, error) {
-	key := tg.FromInputPrivacyKeyType(&tg.InputPrivacyKey{Clazz: in.Key})
+	key := tg.FromInputPrivacyKeyType(in.Key)
 
 	if key == tg.KEY_TYPE_INVALID {
 		c.Logger.Errorf("account.setPrivacy - error: invalid privacy key")

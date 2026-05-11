@@ -15,12 +15,12 @@
 
 package tg
 
-func ToUserIdByInput(userSelfId int64, inputUser *InputUser) (id int64) {
+func ToUserIdByInput(userSelfId int64, inputUser InputUserClazz) (id int64) {
 	if inputUser == nil {
 		return 0
 	}
 
-	switch c := inputUser.Clazz.(type) {
+	switch c := inputUser.(type) {
 	case *TLInputUserEmpty:
 		id = 0
 	case *TLInputUserSelf:
@@ -32,7 +32,7 @@ func ToUserIdByInput(userSelfId int64, inputUser *InputUser) (id int64) {
 	return
 }
 
-func ToUserIdListByInput(userSelfId int64, inputUsers []*InputUser) []int64 {
+func ToUserIdListByInput(userSelfId int64, inputUsers []InputUserClazz) []int64 {
 	idList := make([]int64, 0, len(inputUsers))
 	for _, user := range inputUsers {
 		id := ToUserIdByInput(userSelfId, user)
@@ -45,11 +45,11 @@ func ToUserIdListByInput(userSelfId int64, inputUsers []*InputUser) []int64 {
 	return idList
 }
 
-func isUserDeleted(user *User) bool {
+func isUserDeleted(user UserClazz) bool {
 	rV := false
 
 	if user != nil {
-		switch c := user.Clazz.(type) {
+		switch c := user.(type) {
 		case *TLUserEmpty:
 			rV = true
 		case *TLUser:
@@ -62,27 +62,35 @@ func isUserDeleted(user *User) bool {
 	return rV
 }
 
-func isUserContact(user *User) bool {
-	if user2, ok := user.ToUser(); ok {
+func isUserContact(user UserClazz) bool {
+	if user == nil {
+		return false
+	}
+
+	if user2, ok := user.(*TLUser); ok {
 		return user2.Contact || user2.MutualContact
 	} else {
 		return false
 	}
 }
 
-func isUserSelf(user *User) bool {
-	if user2, ok := user.ToUser(); ok {
+func isUserSelf(user UserClazz) bool {
+	if user == nil {
+		return false
+	}
+
+	if user2, ok := user.(*TLUser); ok {
 		return user2.Self
 	} else {
 		return false
 	}
 }
 
-func GetUserName(user *User) (name string) {
+func GetUserName(user UserClazz) (name string) {
 	if user == nil {
 		name = "Deleted Account"
 	} else {
-		switch c := user.Clazz.(type) {
+		switch c := user.(type) {
 		case *TLUserEmpty:
 			name = "Deleted Account"
 		case *TLUser:

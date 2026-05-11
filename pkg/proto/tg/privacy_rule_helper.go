@@ -15,34 +15,6 @@
 
 package tg
 
-/*************************************************************
-	inputPrivacyValueAllowContacts#d09e07b = InputPrivacyRule;
-	inputPrivacyValueAllowAll#184b35ce = InputPrivacyRule;
-	inputPrivacyValueAllowUsers#131cc67f users:Vector<InputUser> = InputPrivacyRule;
-	inputPrivacyValueDisallowContacts#ba52007 = InputPrivacyRule;
-	inputPrivacyValueDisallowAll#d66b66c9 = InputPrivacyRule;
-	inputPrivacyValueDisallowUsers#90110467 users:Vector<InputUser> = InputPrivacyRule;
-	inputPrivacyValueAllowChatParticipants#840649cf chats:Vector<long> = InputPrivacyRule;
-	inputPrivacyValueDisallowChatParticipants#e94f0f86 chats:Vector<long> = InputPrivacyRule;
-	inputPrivacyValueAllowCloseFriends#2f453e49 = InputPrivacyRule;
-	inputPrivacyValueAllowPremium#77cdc9f1 = InputPrivacyRule;
-	inputPrivacyValueAllowBots#5a4fcce5 = InputPrivacyRule;
-	inputPrivacyValueDisallowBots#c4e57915 = InputPrivacyRule;
-
-	privacyValueAllowContacts#fffe1bac = PrivacyRule;
-	privacyValueAllowAll#65427b82 = PrivacyRule;
-	privacyValueAllowUsers#b8905fb2 users:Vector<long> = PrivacyRule;
-	privacyValueDisallowContacts#f888fa1a = PrivacyRule;
-	privacyValueDisallowAll#8b73e763 = PrivacyRule;
-	privacyValueDisallowUsers#e4621141 users:Vector<long> = PrivacyRule;
-	privacyValueAllowChatParticipants#6b134e8e chats:Vector<long> = PrivacyRule;
-	privacyValueDisallowChatParticipants#41c87565 chats:Vector<long> = PrivacyRule;
-	privacyValueAllowCloseFriends#f7e8d89b = PrivacyRule;
-	privacyValueAllowPremium#ece9814b = PrivacyRule;
-	privacyValueAllowBots#21461b5d = PrivacyRule;
-	privacyValueDisallowBots#f6a5f82f = PrivacyRule;
-**/
-
 const (
 	RULE_TYPE_INVALID          = 0
 	ALLOW_CONTACTS             = 1
@@ -59,36 +31,6 @@ const (
 	DISALLOW_BOTS              = 12
 )
 
-/*************************************************************
-	inputPrivacyKeyStatusTimestamp#4f96cb18 = InputPrivacyKey;
-	inputPrivacyKeyChatInvite#bdfb0426 = InputPrivacyKey;
-	inputPrivacyKeyPhoneCall#fabadc5f = InputPrivacyKey;
-	inputPrivacyKeyPhoneP2P#db9e70d2 = InputPrivacyKey;
-	inputPrivacyKeyForwards#a4dd4c08 = InputPrivacyKey;
-	inputPrivacyKeyProfilePhoto#5719bacc = InputPrivacyKey;
-	inputPrivacyKeyPhoneNumber#352dafa = InputPrivacyKey;
-	inputPrivacyKeyAddedByPhone#d1219bdd = InputPrivacyKey;
-	inputPrivacyKeyVoiceMessages#aee69d68 = InputPrivacyKey;
-	inputPrivacyKeyAbout#3823cc40 = InputPrivacyKey;
-	inputPrivacyKeyBirthday#d65a11cc = InputPrivacyKey;
-	inputPrivacyKeyStarGiftsAutoSave#e1732341 = InputPrivacyKey;
-	inputPrivacyKeyNoPaidMessages#bdc597b4 = InputPrivacyKey;
-
-	privacyKeyStatusTimestamp#bc2eab30 = PrivacyKey;
-	privacyKeyChatInvite#500e6dfa = PrivacyKey;
-	privacyKeyPhoneCall#3d662b7b = PrivacyKey;
-	privacyKeyPhoneP2P#39491cc8 = PrivacyKey;
-	privacyKeyForwards#69ec56a3 = PrivacyKey;
-	privacyKeyProfilePhoto#96151fed = PrivacyKey;
-	privacyKeyPhoneNumber#d19ae46d = PrivacyKey;
-	privacyKeyAddedByPhone#42ffd42b = PrivacyKey;
-	privacyKeyVoiceMessages#697f414 = PrivacyKey;
-	privacyKeyAbout#a486b761 = PrivacyKey;
-	privacyKeyBirthday#2000a518 = PrivacyKey;
-	privacyKeyStarGiftsAutoSave#2ca4fdf8 = PrivacyKey;
-	privacyKeyNoPaidMessages#17d348d2 = PrivacyKey;
-**/
-
 const (
 	KEY_TYPE_INVALID     = 0
 	STATUS_TIMESTAMP     = 1 //
@@ -104,134 +46,113 @@ const (
 	BIRTHDAY             = 11
 	STAR_GIFTS_AUTO_SAVE = 12
 	NO_PAID_MESSAGES     = 13
+	SAVED_MUSIC          = 14
 )
 
-func FromInputPrivacyKeyType(k *InputPrivacyKey) int {
-	switch k.Clazz.InputPrivacyKeyClazzName() {
-	case ClazzName_inputPrivacyKeyStatusTimestamp:
+func FromInputPrivacyKeyType(k InputPrivacyKeyClazz) int {
+	switch k.(type) {
+	case *TLInputPrivacyKeyStatusTimestamp:
 		return STATUS_TIMESTAMP
-	case ClazzName_inputPrivacyKeyChatInvite:
+	case *TLInputPrivacyKeyChatInvite:
 		return CHAT_INVITE
-	case ClazzName_inputPrivacyKeyPhoneCall:
+	case *TLInputPrivacyKeyPhoneCall:
 		return PHONE_CALL
-	case ClazzName_inputPrivacyKeyPhoneP2P:
+	case *TLInputPrivacyKeyPhoneP2P:
 		return PHONE_P2P
-	case ClazzName_inputPrivacyKeyForwards:
+	case *TLInputPrivacyKeyForwards:
 		return FORWARDS
-	case ClazzName_inputPrivacyKeyProfilePhoto:
+	case *TLInputPrivacyKeyProfilePhoto:
 		return PROFILE_PHOTO
-	case ClazzName_inputPrivacyKeyPhoneNumber:
+	case *TLInputPrivacyKeyPhoneNumber:
 		return PHONE_NUMBER
-	case ClazzName_inputPrivacyKeyAddedByPhone:
+	case *TLInputPrivacyKeyAddedByPhone:
 		return ADDED_BY_PHONE
-	case ClazzName_inputPrivacyKeyVoiceMessages:
+	case *TLInputPrivacyKeyVoiceMessages:
 		return VOICE_MESSAGES
-	case ClazzName_inputPrivacyKeyAbout:
+	case *TLInputPrivacyKeyAbout:
 		return ABOUT
-	case ClazzName_inputPrivacyKeyBirthday:
+	case *TLInputPrivacyKeyBirthday:
 		return BIRTHDAY
-	case ClazzName_inputPrivacyKeyStarGiftsAutoSave:
+	case *TLInputPrivacyKeyStarGiftsAutoSave:
 		return STAR_GIFTS_AUTO_SAVE
-	case ClazzName_inputPrivacyKeyNoPaidMessages:
+	case *TLInputPrivacyKeyNoPaidMessages:
 		return NO_PAID_MESSAGES
+	case *TLInputPrivacyKeySavedMusic:
+		return SAVED_MUSIC
 	default:
 		return KEY_TYPE_INVALID
 	}
 }
 
-var (
-	cachePrivacyKeyStatusTimestamp   = MakeTLPrivacyKeyStatusTimestamp(&TLPrivacyKeyStatusTimestamp{})
-	cachePrivacyKeyChatInvite        = MakeTLPrivacyKeyChatInvite(&TLPrivacyKeyChatInvite{})
-	cachePrivacyKeyPhoneCall         = MakeTLPrivacyKeyPhoneCall(&TLPrivacyKeyPhoneCall{})
-	cachePrivacyKeyPhoneP2P          = MakeTLPrivacyKeyPhoneP2P(&TLPrivacyKeyPhoneP2P{})
-	cachePrivacyKeyForwards          = MakeTLPrivacyKeyForwards(&TLPrivacyKeyForwards{})
-	cachePrivacyKeyProfilePhoto      = MakeTLPrivacyKeyProfilePhoto(&TLPrivacyKeyProfilePhoto{})
-	cachePrivacyKeyPhoneNumber       = MakeTLPrivacyKeyPhoneNumber(&TLPrivacyKeyPhoneNumber{})
-	cachePrivacyKeyAddedByPhone      = MakeTLPrivacyKeyAddedByPhone(&TLPrivacyKeyAddedByPhone{})
-	cachePrivacyKeyVoiceMessages     = MakeTLPrivacyKeyVoiceMessages(&TLPrivacyKeyVoiceMessages{})
-	cachePrivacyKeyAbout             = MakeTLPrivacyKeyAbout(&TLPrivacyKeyAbout{})
-	cachePrivacyKeyBirthday          = MakeTLPrivacyKeyBirthday(&TLPrivacyKeyBirthday{})
-	cachePrivacyKeyStarGiftsAutoSave = MakeTLPrivacyKeyStarGiftsAutoSave(&TLPrivacyKeyStarGiftsAutoSave{})
-	cachePrivacyKeyNoPaidMessages    = MakeTLPrivacyKeyNoPaidMessages(&TLPrivacyKeyNoPaidMessages{})
-)
-
 func ToPrivacyKey(keyType int) (key PrivacyKeyClazz) {
 	switch keyType {
 	case STATUS_TIMESTAMP:
-		key = cachePrivacyKeyStatusTimestamp
+		key = PrivacyKeyStatusTimestampClazz
 	case CHAT_INVITE:
-		key = cachePrivacyKeyChatInvite
+		key = PrivacyKeyChatInviteClazz
 	case PHONE_CALL:
-		key = cachePrivacyKeyPhoneCall
+		key = PrivacyKeyPhoneCallClazz
 	case PHONE_P2P:
-		key = cachePrivacyKeyPhoneP2P
+		key = PrivacyKeyPhoneP2PClazz
 	case FORWARDS:
-		key = cachePrivacyKeyForwards
+		key = PrivacyKeyForwardsClazz
 	case PROFILE_PHOTO:
-		key = cachePrivacyKeyProfilePhoto
+		key = PrivacyKeyProfilePhotoClazz
 	case PHONE_NUMBER:
-		key = cachePrivacyKeyPhoneNumber
+		key = PrivacyKeyPhoneNumberClazz
 	case ADDED_BY_PHONE:
-		key = cachePrivacyKeyAddedByPhone
+		key = PrivacyKeyAddedByPhoneClazz
 	case VOICE_MESSAGES:
-		key = cachePrivacyKeyVoiceMessages
+		key = PrivacyKeyVoiceMessagesClazz
 	case ABOUT:
-		key = cachePrivacyKeyAbout
+		key = PrivacyKeyAboutClazz
 	case BIRTHDAY:
-		key = cachePrivacyKeyBirthday
+		key = PrivacyKeyBirthdayClazz
 	case STAR_GIFTS_AUTO_SAVE:
-		key = cachePrivacyKeyStarGiftsAutoSave
+		key = PrivacyKeyStarGiftsAutoSaveClazz
 	case NO_PAID_MESSAGES:
-		key = cachePrivacyKeyNoPaidMessages
+		key = PrivacyKeyNoPaidMessagesClazz
+	case SAVED_MUSIC:
+		key = PrivacyKeySavedMusicClazz
 	default:
 		panic("type is invalid")
 	}
 	return
 }
 
-func wrapInputUserSlice(users []InputUserClazz) []*InputUser {
-	wrapped := make([]*InputUser, len(users))
-	for i, u := range users {
-		wrapped[i] = &InputUser{Clazz: u}
-	}
-	return wrapped
-}
-
 func ToPrivacyRuleByInput(userSelfId int64, inputRule InputPrivacyRuleClazz) PrivacyRuleClazz {
-	switch inputRule.InputPrivacyRuleClazzName() {
-	case ClazzName_inputPrivacyValueAllowAll:
+	switch r := inputRule.(type) {
+	case *TLInputPrivacyValueAllowAll:
 		return MakeTLPrivacyValueAllowAll(&TLPrivacyValueAllowAll{})
-	case ClazzName_inputPrivacyValueAllowContacts:
+	case *TLInputPrivacyValueAllowContacts:
 		return MakeTLPrivacyValueAllowContacts(&TLPrivacyValueAllowContacts{})
-	case ClazzName_inputPrivacyValueAllowUsers:
-		inputUsers := inputRule.(*TLInputPrivacyValueAllowUsers).Users
+	case *TLInputPrivacyValueAllowUsers:
 		return MakeTLPrivacyValueAllowUsers(&TLPrivacyValueAllowUsers{
-			Users: ToUserIdListByInput(userSelfId, wrapInputUserSlice(inputUsers)),
+			Users: ToUserIdListByInput(userSelfId, r.Users),
 		})
-	case ClazzName_inputPrivacyValueDisallowAll:
+	case *TLInputPrivacyValueDisallowAll:
 		return MakeTLPrivacyValueDisallowAll(&TLPrivacyValueDisallowAll{})
-	case ClazzName_inputPrivacyValueDisallowContacts:
+	case *TLInputPrivacyValueDisallowContacts:
 		return MakeTLPrivacyValueDisallowContacts(&TLPrivacyValueDisallowContacts{})
-	case ClazzName_inputPrivacyValueDisallowUsers:
-		inputUsers := inputRule.(*TLInputPrivacyValueDisallowUsers).Users
+	case *TLInputPrivacyValueDisallowUsers:
 		return MakeTLPrivacyValueDisallowUsers(&TLPrivacyValueDisallowUsers{
-			Users: ToUserIdListByInput(userSelfId, wrapInputUserSlice(inputUsers)),
+			Users: ToUserIdListByInput(userSelfId, r.Users),
 		})
-	case ClazzName_inputPrivacyValueAllowChatParticipants:
+	case *TLInputPrivacyValueAllowChatParticipants:
 		return MakeTLPrivacyValueAllowChatParticipants(&TLPrivacyValueAllowChatParticipants{
-			Chats: inputRule.(*TLInputPrivacyValueAllowChatParticipants).Chats,
+			Chats: r.Chats,
 		})
-	case ClazzName_inputPrivacyValueDisallowChatParticipants:
+	case *TLInputPrivacyValueDisallowChatParticipants:
 		return MakeTLPrivacyValueDisallowChatParticipants(&TLPrivacyValueDisallowChatParticipants{
-			Chats: inputRule.(*TLInputPrivacyValueDisallowChatParticipants).Chats,
+			Chats: r.Chats,
 		})
-	case ClazzName_inputPrivacyValueAllowCloseFriends:
+	case *TLInputPrivacyValueAllowCloseFriends:
 		return MakeTLPrivacyValueAllowCloseFriends(&TLPrivacyValueAllowCloseFriends{})
-	case ClazzName_inputPrivacyValueAllowPremium:
+	case *TLInputPrivacyValueAllowPremium:
 		return MakeTLPrivacyValueAllowPremium(&TLPrivacyValueAllowPremium{})
-	case ClazzName_inputPrivacyValueAllowBots:
+	case *TLInputPrivacyValueAllowBots:
 		return MakeTLPrivacyValueAllowBots(&TLPrivacyValueAllowBots{})
-	case ClazzName_inputPrivacyValueDisallowBots:
+	case *TLInputPrivacyValueDisallowBots:
 		return MakeTLPrivacyValueDisallowBots(&TLPrivacyValueDisallowBots{})
 	default:
 		panic("type is invalid")
