@@ -131,7 +131,7 @@ func deleteStartupPhoneCode(hash string) {
 func makeAuthSentCode(phoneCodeHash string) *tg.AuthSentCode {
 	timeout := int32(60)
 	return tg.MakeTLAuthSentCode(&tg.TLAuthSentCode{
-		Type:          tg.MakeTLAuthSentCodeTypeApp(&tg.TLAuthSentCodeTypeApp{Length: startupAuthPhoneCodeLength}),
+		Type:          tg.MakeTLAuthSentCodeTypeSms(&tg.TLAuthSentCodeTypeSms{Length: startupAuthPhoneCodeLength}),
 		PhoneCodeHash: phoneCodeHash,
 		Timeout:       &timeout,
 	}).ToAuthSentCode()

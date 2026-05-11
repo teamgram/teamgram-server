@@ -69,7 +69,7 @@ func TestSessionDispatchesRawRPCWithMetadata(t *testing.T) {
 	}
 }
 
-func TestSessionUsesFutureSaltForZeroSaltResponse(t *testing.T) {
+func TestSessionReturnsBadServerSaltForZeroSaltRequest(t *testing.T) {
 	serverKey, clientKey := sessionTestKeys()
 	store := &fakeAuthKeyStore{
 		key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm),
@@ -100,6 +100,13 @@ func TestSessionUsesFutureSaltForZeroSaltResponse(t *testing.T) {
 	decoded := decodeEncryptedForTest(t, clientKey, resp)
 	if decoded.Salt != 777 {
 		t.Fatalf("response salt = %d, want current future salt 777", decoded.Salt)
+	}
+	badSalt := decodeBodyAs[*mt.TLBadServerSalt](t, decoded.Body)
+	if badSalt.BadMsgId != 100 || badSalt.BadMsgSeqno != 1 || badSalt.ErrorCode != 48 || badSalt.NewServerSalt != 777 {
+		t.Fatalf("bad_server_salt = %#v", badSalt)
+	}
+	if len(dispatch.payloads) != 0 {
+		t.Fatalf("dispatch count = %d, want 0", len(dispatch.payloads))
 	}
 }
 

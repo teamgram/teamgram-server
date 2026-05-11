@@ -107,12 +107,28 @@ func (p *Processor) HandleEncryptedWithSession(ctx context.Context, conn ConnInf
 	if err != nil {
 		return nil, err
 	}
-	body, seq, err := p.handleMessageBody(ctx, conn, key, keyInfo, msg, observe)
-	if err != nil || body == nil {
+	salt, valid, err := p.requestSalt(ctx, msg.AuthKeyId, msg.Salt)
+	if err != nil {
 		return nil, err
 	}
-	salt, err := p.responseSalt(ctx, msg.AuthKeyId, msg.Salt)
-	if err != nil {
+	if !valid {
+		body := encodeObject(mt.MakeTLBadServerSalt(&mt.TLBadServerSalt{
+			BadMsgId:      msg.MsgId,
+			BadMsgSeqno:   msg.SeqNo,
+			ErrorCode:     48,
+			NewServerSalt: salt,
+		}))
+		return gmtproto.EncodeEncryptedMessage(gmtproto.EncryptedMessage{
+			AuthKeyId: msg.AuthKeyId,
+			Salt:      salt,
+			SessionId: msg.SessionId,
+			MsgId:     gmtproto.NextServerMsgId(msg.MsgId),
+			SeqNo:     p.nextSeqNo(msg.AuthKeyId, authKeyType(keyInfo), msg.SessionId, false, nil),
+			Body:      body,
+		}, key)
+	}
+	body, seq, err := p.handleMessageBody(ctx, conn, key, keyInfo, msg, observe)
+	if err != nil || body == nil {
 		return nil, err
 	}
 	return gmtproto.EncodeEncryptedMessage(gmtproto.EncryptedMessage{
@@ -155,29 +171,46 @@ func (p *Processor) authKey(ctx context.Context, authKeyId int64) (*crypto.AuthK
 	return key, keyInfo, nil
 }
 
-func (p *Processor) responseSalt(ctx context.Context, authKeyId int64, requestSalt int64) (int64, error) {
+func (p *Processor) requestSalt(ctx context.Context, authKeyId int64, requestSalt int64) (int64, bool, error) {
 	if requestSalt != 0 || p.store == nil {
-		return requestSalt, nil
+		return requestSalt, true, nil
+	}
+	salt, found, err := p.currentServerSalt(ctx, authKeyId)
+	if err != nil {
+		return 0, false, err
+	}
+	if !found {
+		return requestSalt, true, nil
+	}
+	if requestSalt == salt {
+		return requestSalt, true, nil
+	}
+	return salt, false, nil
+}
+
+func (p *Processor) currentServerSalt(ctx context.Context, authKeyId int64) (int64, bool, error) {
+	if p.store == nil {
+		return 0, false, nil
 	}
 	salts, err := p.store.GetFutureSalts(ctx, authKeyId, 1)
 	if err != nil {
-		return 0, fmt.Errorf("session processor: get response salt for auth key %d: %w", authKeyId, err)
+		return 0, false, fmt.Errorf("session processor: get current server salt for auth key %d: %w", authKeyId, err)
 	}
 	if salts == nil || len(salts.Salts) == 0 {
-		return requestSalt, nil
+		return 0, false, nil
 	}
 	now := int32(time.Now().Unix())
 	for _, salt := range salts.Salts {
 		if salt != nil && salt.ValidSince <= now && now < salt.ValidUntil {
-			return salt.Salt, nil
+			return salt.Salt, true, nil
 		}
 	}
 	for _, salt := range salts.Salts {
 		if salt != nil {
-			return salt.Salt, nil
+			return salt.Salt, true, nil
 		}
 	}
-	return requestSalt, nil
+	return 0, false, nil
 }
 
 func (p *Processor) refreshAuthKeyInfo(ctx context.Context, authKeyId int64, current *tg.AuthKeyInfo) (*tg.AuthKeyInfo, error) {

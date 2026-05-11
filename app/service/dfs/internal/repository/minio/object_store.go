@@ -167,7 +167,7 @@ func (s *Store) AbortMultipartUpload(ctx context.Context, bucket, key, uploadID 
 	}
 	core := minio.Core{Client: s.client}
 	if err := core.AbortMultipartUpload(ctx, bucket, key, uploadID); err != nil {
-		return fmt.Errorf("minio abort multipart upload %s/%s upload_id=%s: %w", bucket, key, uploadID, err)
+		return normalizeAbortMultipartUploadError(fmt.Sprintf("minio abort multipart upload %s/%s upload_id=%s", bucket, key, uploadID), err)
 	}
 	return nil
 }
@@ -292,6 +292,27 @@ func isObjectNotFoundResponse(resp minio.ErrorResponse) bool {
 	switch resp.Code {
 	case "NoSuchKey", "NoSuchObject":
 		return true
+	}
+	return false
+}
+
+func normalizeAbortMultipartUploadError(op string, err error) error {
+	if err == nil {
+		return nil
+	}
+	if isNoSuchUpload(err) {
+		return nil
+	}
+	return fmt.Errorf("%s: %w", op, err)
+}
+
+func isNoSuchUpload(err error) bool {
+	if minio.ToErrorResponse(err).Code == minio.NoSuchUpload {
+		return true
+	}
+	var resp minio.ErrorResponse
+	if errors.As(err, &resp) {
+		return resp.Code == minio.NoSuchUpload
 	}
 	return false
 }

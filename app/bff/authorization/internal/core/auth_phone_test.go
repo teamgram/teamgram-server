@@ -47,8 +47,8 @@ func TestAuthPhoneRegistrationFlow(t *testing.T) {
 	if code.PhoneCodeHash == "" {
 		t.Fatal("AuthSendCode returned empty phone_code_hash")
 	}
-	if _, ok := code.Type.(*tg.TLAuthSentCodeTypeApp); !ok {
-		t.Fatalf("AuthSendCode type = %T, want *tg.TLAuthSentCodeTypeApp", code.Type)
+	if _, ok := code.Type.(*tg.TLAuthSentCodeTypeSms); !ok {
+		t.Fatalf("AuthSendCode type = %T, want *tg.TLAuthSentCodeTypeSms", code.Type)
 	}
 	if err := sentCode.Validate(223); err != nil {
 		t.Fatalf("AuthSendCode result Validate(223) error = %v", err)

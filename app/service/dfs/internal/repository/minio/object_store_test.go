@@ -84,3 +84,18 @@ func TestNormalizeObjectReadErrorDoesNotMapStorageErrors(t *testing.T) {
 		})
 	}
 }
+
+func TestNormalizeAbortMultipartUploadErrorIgnoresMissingUpload(t *testing.T) {
+	err := normalizeAbortMultipartUploadError("minio abort multipart upload documents/objects/file.dat upload_id=missing", miniogo.ErrorResponse{Code: miniogo.NoSuchUpload})
+	if err != nil {
+		t.Fatalf("normalizeAbortMultipartUploadError() error = %v, want nil", err)
+	}
+}
+
+func TestNormalizeAbortMultipartUploadErrorPreservesStorageErrors(t *testing.T) {
+	cause := errors.New("connection reset")
+	err := normalizeAbortMultipartUploadError("minio abort multipart upload documents/objects/file.dat upload_id=up-1", cause)
+	if !errors.Is(err, cause) {
+		t.Fatalf("normalizeAbortMultipartUploadError() error = %v, want original cause preserved", err)
+	}
+}
