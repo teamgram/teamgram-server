@@ -237,6 +237,87 @@ func TestUnwrapClientRPCReturnsFullInitConnectionMetadata(t *testing.T) {
 	}
 }
 
+func TestUnwrapClientRPCQueryWrappers(t *testing.T) {
+	inner := encodeTL(t, &tg.TLUpdatesGetState{})
+	wrappers := []struct {
+		name string
+		wrap func([]byte) []byte
+	}{
+		{
+			name: "invokeAfterMsg",
+			wrap: func(query []byte) []byte {
+				return encodeTL(t, &tg.TLInvokeAfterMsg{MsgId: 1, Query: query})
+			},
+		},
+		{
+			name: "invokeAfterMsgs",
+			wrap: func(query []byte) []byte {
+				return encodeTL(t, &tg.TLInvokeAfterMsgs{MsgIds: []int64{1, 2}, Query: query})
+			},
+		},
+		{
+			name: "invokeWithoutUpdates",
+			wrap: func(query []byte) []byte {
+				return encodeTL(t, &tg.TLInvokeWithoutUpdates{Query: query})
+			},
+		},
+		{
+			name: "invokeWithMessagesRange",
+			wrap: func(query []byte) []byte {
+				return encodeTL(t, &tg.TLInvokeWithMessagesRange{
+					Range: tg.MakeTLMessageRange(&tg.TLMessageRange{MinId: 10, MaxId: 20}).ToMessageRange(),
+					Query: query,
+				})
+			},
+		},
+		{
+			name: "invokeWithTakeout",
+			wrap: func(query []byte) []byte {
+				return encodeTL(t, &tg.TLInvokeWithTakeout{TakeoutId: 1, Query: query})
+			},
+		},
+		{
+			name: "invokeWithBusinessConnection",
+			wrap: func(query []byte) []byte {
+				return encodeTL(t, &tg.TLInvokeWithBusinessConnection{ConnectionId: "connection", Query: query})
+			},
+		},
+		{
+			name: "invokeWithGooglePlayIntegrity",
+			wrap: func(query []byte) []byte {
+				return encodeTL(t, &tg.TLInvokeWithGooglePlayIntegrity{Nonce: "nonce", Token: "token", Query: query})
+			},
+		},
+		{
+			name: "invokeWithApnsSecret",
+			wrap: func(query []byte) []byte {
+				return encodeTL(t, &tg.TLInvokeWithApnsSecret{Nonce: "nonce", Secret: "secret", Query: query})
+			},
+		},
+		{
+			name: "invokeWithReCaptcha",
+			wrap: func(query []byte) []byte {
+				return encodeTL(t, &tg.TLInvokeWithReCaptcha{Token: "token", Query: query})
+			},
+		},
+	}
+
+	for _, tt := range wrappers {
+		t.Run(tt.name, func(t *testing.T) {
+			gotInner, md, err := UnwrapClientRPC(tt.wrap(inner))
+			if err != nil {
+				t.Fatalf("UnwrapClientRPC() error = %v", err)
+			}
+			if !bytes.Equal(gotInner, inner) {
+				t.Fatalf("inner = %x, want %x", gotInner, inner)
+			}
+			if md != (WrapperMetadata{}) {
+				t.Fatalf("metadata = %#v, want zero", md)
+			}
+		})
+	}
+}
+
 func TestUnwrapClientRPCLeavesBusinessMethodRaw(t *testing.T) {
 	payload := encodeTL(t, &mt.TLPing{PingId: 11})
 	got, md, err := UnwrapClientRPC(payload)
