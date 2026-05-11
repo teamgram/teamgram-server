@@ -288,10 +288,10 @@ func (c *BFFProxyClient2) TryReturnFakeRpcResult(object iface.TLObject) (iface.T
 			Sets: []tg.StickerSetClazz{},
 		}).ToMessagesAllStickers(), nil
 	case "TLMessagesGetFeaturedEmojiStickers":
-		return tg.MakeTLMessagesAllStickers(&tg.TLMessagesAllStickers{
+		return tg.MakeTLMessagesFeaturedStickers(&tg.TLMessagesFeaturedStickers{
 			Hash: 0,
-			Sets: []tg.StickerSetClazz{},
-		}).ToMessagesAllStickers(), nil
+			Sets: []tg.StickerSetCoveredClazz{},
+		}).ToMessagesFeaturedStickers(), nil
 
 	// promodata
 	case "TLHelpGetPromoData":

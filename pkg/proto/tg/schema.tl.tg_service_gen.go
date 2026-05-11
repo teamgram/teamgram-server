@@ -89562,6 +89562,6 @@ type RPCPredefined interface {
 	PredefinedGetPredefinedUsers(ctx context.Context, in *TLPredefinedGetPredefinedUsers) (*VectorPredefinedUser, error)
 }
 
-type RPCbiz interface {
+type RPCBiz interface {
 	BizInvokeBizDataRaw(ctx context.Context, in *TLBizInvokeBizDataRaw) (*BizDataRaw, error)
 }

@@ -306,9 +306,9 @@ func (s *Server) Initialize() error {
 			_ = passportservice.RegisterService(
 				s,
 				passporthelper.New(passporthelper.Config{
-					RpcServerConf: c.RpcServerConf,
-					//AuthsessionClient: c.AuthSessionClient,
-					//UserClient:        c.BizServiceClient,
+					RpcServerConf:     c.RpcServerConf,
+					AuthsessionClient: c.AuthSessionClient,
+					UserClient:        c.BizServiceClient,
 				}))
 
 			// updateshelper
