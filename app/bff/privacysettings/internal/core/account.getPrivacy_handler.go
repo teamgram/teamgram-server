@@ -17,7 +17,7 @@
 package core
 
 import (
-	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
+	"github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -26,7 +26,7 @@ import (
 // AccountGetPrivacy
 // account.getPrivacy#dadbc950 key:InputPrivacyKey = account.PrivacyRules;
 func (c *PrivacySettingsCore) AccountGetPrivacy(in *tg.TLAccountGetPrivacy) (*tg.AccountPrivacyRules, error) {
-	key := tg.FromInputPrivacyKeyType(&tg.InputPrivacyKey{Clazz: in.Key})
+	key := tg.FromInputPrivacyKeyType(in.Key)
 
 	if key == tg.KEY_TYPE_INVALID {
 		c.Logger.Errorf("account.getPrivacy - error: invalid privacy key")
