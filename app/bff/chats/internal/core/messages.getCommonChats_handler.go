@@ -24,7 +24,9 @@ import (
 // messages.getCommonChats#e40ca104 user_id:InputUser max_id:long limit:int = messages.Chats;
 func (c *ChatsCore) MessagesGetCommonChats(in *tg.TLMessagesGetCommonChats) (*tg.MessagesChats, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.getCommonChats - error: method MessagesGetCommonChats not impl")
+	// c.Logger.Errorf("messages.getCommonChats - error: method MessagesGetCommonChats not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.MakeTLMessagesChats(&tg.TLMessagesChats{
+		Chats: []tg.ChatClazz{},
+	}).ToMessagesChats(), nil
 }

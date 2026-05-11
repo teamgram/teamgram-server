@@ -119,6 +119,27 @@ func TestGatewayPushLocalWriterWriteUpdatesByPermAuthKey(t *testing.T) {
 	}
 }
 
+func TestGatewayPushLocalWriterWriteUpdatesDeduplicatesSessionsByAuthKey(t *testing.T) {
+	writer := NewLocalWriter()
+	permKey := crypto.CreateAuthKey()
+	tempKey := crypto.CreateAuthKey()
+	first := &fakeSessionWriter{}
+	second := &fakeSessionWriter{}
+	writer.Register(LocalTarget{PermAuthKeyId: permKey.AuthKeyId(), AuthKeyId: tempKey.AuthKeyId(), AuthKeyType: tg.AuthKeyTypeTemp, SessionId: 22, AuthKey: tempKey, Layer: 223, Writer: first})
+	writer.Register(LocalTarget{PermAuthKeyId: permKey.AuthKeyId(), AuthKeyId: tempKey.AuthKeyId(), AuthKeyType: tg.AuthKeyTypeTemp, SessionId: 23, AuthKey: tempKey, Layer: 223, Writer: second})
+
+	count, err := writer.WriteUpdates(context.Background(), permKey.AuthKeyId(), tg.MakeTLUpdatesTooLong(&tg.TLUpdatesTooLong{}))
+	if err != nil {
+		t.Fatalf("WriteUpdates() error = %v", err)
+	}
+	if count != 1 {
+		t.Fatalf("WriteUpdates() count = %d, want 1", count)
+	}
+	if first.seq+second.seq != 1 {
+		t.Fatalf("first seq=%d second seq=%d, want one write", first.seq, second.seq)
+	}
+}
+
 func TestGatewayPushLocalWriterWriteSessionUpdates(t *testing.T) {
 	writer := NewLocalWriter()
 	key := crypto.CreateAuthKey()

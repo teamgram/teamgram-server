@@ -24,7 +24,10 @@ import (
 // messages.getSearchResultsPositions#9c7f2f10 flags:# peer:InputPeer saved_peer_id:flags.2?InputPeer filter:MessagesFilter offset_id:int limit:int = messages.SearchResultsPositions;
 func (c *MessagesCore) MessagesGetSearchResultsPositions(in *tg.TLMessagesGetSearchResultsPositions) (*tg.MessagesSearchResultsPositions, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.getSearchResultsPositions - error: method MessagesGetSearchResultsPositions not impl")
+	// c.Logger.Errorf("messages.getSearchResultsPositions - error: method MessagesGetSearchResultsPositions not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.MakeTLMessagesSearchResultsPositions(&tg.TLMessagesSearchResultsPositions{
+		Count:     0,
+		Positions: []tg.SearchResultsPositionClazz{},
+	}).ToMessagesSearchResultsPositions(), nil
 }

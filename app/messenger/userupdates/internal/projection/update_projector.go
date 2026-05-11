@@ -296,31 +296,6 @@ func projectNewMessage(in messageEventProjectionInput) (Result, error) {
 		return Result{}, err
 	}
 	if in.mode == ModePush {
-		date, err := userupdatesDateInt32FromUnixSeconds(int64(in.message.Date), in.datePrefix+" message date")
-		if err != nil {
-			return Result{}, err
-		}
-		replyTo, err := replyHeaderFromUserMessageID(in.message.ReplyToUserMessageID)
-		if err != nil {
-			return Result{}, err
-		}
-		if in.message.PeerType == payload.PeerTypeUser && !requiresFullPushMessage(in.message) {
-			return Result{
-				Updates: tg.MakeTLUpdateShortMessage(&tg.TLUpdateShortMessage{
-					Out:      in.message.Out,
-					Id:       message.(*tg.TLMessage).Id,
-					UserId:   shortMessageUserID(in.message),
-					Message:  in.message.MessageText,
-					Pts:      pts,
-					PtsCount: in.ptsCount,
-					Date:     date,
-					Silent:   messageAttrsSilent(in.message.Attrs),
-					ReplyTo:  replyTo,
-					Entities: messageEntities(in.message.Entities),
-				}),
-				AuthKeyIDExclude: in.message.AuthKeyIdExclude,
-			}, nil
-		}
 		updates, err := wrapPushUpdate(tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
 			Message:  message,
 			Pts:      pts,
@@ -932,13 +907,6 @@ func messageForwardHeader(ref *payload.ForwardRefV1) (tg.MessageFwdHeaderClazz, 
 	}), nil
 }
 
-func requiresFullPushMessage(event decodedMessageEvent) bool {
-	if event.MediaRef != nil || event.ForwardRef != nil {
-		return true
-	}
-	return event.Attrs != nil && (event.Attrs.GroupedID != 0 || event.Attrs.Noforwards || event.Attrs.InvertMedia)
-}
-
 func forwardPeer(fromUserID int64, sourcePeerType int32, sourcePeerID int64) tg.PeerClazz {
 	if fromUserID > 0 {
 		return peerFromUser(fromUserID)
@@ -969,13 +937,6 @@ func replyHeaderFromUserMessageID(userMessageID int64) (tg.MessageReplyHeaderCla
 		return nil, err
 	}
 	return tg.MakeTLMessageReplyHeader(&tg.TLMessageReplyHeader{ReplyToMsgId: &replyToMsgID}), nil
-}
-
-func shortMessageUserID(event decodedMessageEvent) int64 {
-	if event.Out {
-		return event.PeerID
-	}
-	return event.FromUserID
 }
 
 func messageIDInt32(v int64, field string) (int32, error) {

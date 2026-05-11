@@ -67,7 +67,7 @@ func TestProjectMessageEventNewMessageForDifference(t *testing.T) {
 	}
 }
 
-func TestProjectMessageEventNewMessageForPushShortMessage(t *testing.T) {
+func TestProjectMessageEventNewMessageForPushFullMessage(t *testing.T) {
 	exclude := int64(9001)
 	body := mustMarshalMessageEventV2(t, payload.MessageEventV2{
 		SchemaVersion:      payload.MessageEventSchemaVersion,
@@ -96,12 +96,27 @@ func TestProjectMessageEventNewMessageForPushShortMessage(t *testing.T) {
 	if err != nil {
 		t.Fatalf("ProjectPushTask() error = %v", err)
 	}
-	update, ok := got.Updates.(*tg.TLUpdateShortMessage)
+	updates, ok := got.Updates.(*tg.TLUpdates)
 	if !ok {
-		t.Fatalf("updates = %T, want *tg.TLUpdateShortMessage", got.Updates)
+		t.Fatalf("updates = %T, want *tg.TLUpdates", got.Updates)
 	}
-	if update.Id != 101 || update.UserId != 1002 || update.Message != "hello" || update.Pts != 18 || update.PtsCount != 1 {
-		t.Fatalf("update = %+v", update)
+	if len(updates.Updates) != 1 {
+		t.Fatalf("updates len = %d, want 1", len(updates.Updates))
+	}
+	update, ok := updates.Updates[0].(*tg.TLUpdateNewMessage)
+	if !ok {
+		t.Fatalf("update = %T, want *tg.TLUpdateNewMessage", updates.Updates[0])
+	}
+	message, ok := update.Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessage", update.Message)
+	}
+	peer, ok := message.PeerId.(*tg.TLPeerUser)
+	if !ok || peer.UserId != 1002 {
+		t.Fatalf("message peer = %#v, want peerUser(1002)", message.PeerId)
+	}
+	if message.Id != 101 || message.Message != "hello" || message.Out || update.Pts != 18 || update.PtsCount != 1 {
+		t.Fatalf("message/update = %+v / %+v", message, update)
 	}
 	if got.AuthKeyIDExclude == nil || *got.AuthKeyIDExclude != exclude {
 		t.Fatalf("auth key exclude = %v, want %d", got.AuthKeyIDExclude, exclude)
@@ -650,7 +665,7 @@ func TestProjectMessageEventV3UserPeerFullPushWhenMediaGroupedForward(t *testing
 	}
 }
 
-func TestProjectMessageEventV3ShortPushPreservesSilent(t *testing.T) {
+func TestProjectMessageEventV3FullPushPreservesSilent(t *testing.T) {
 	body := mustMarshalMessageEventV3(t, payload.MessageEventV3{
 		SchemaVersion:      payload.MessageEventSchemaVersionV3,
 		EventKind:          payload.EventKindNewMessage,
@@ -674,16 +689,24 @@ func TestProjectMessageEventV3ShortPushPreservesSilent(t *testing.T) {
 	if err != nil {
 		t.Fatalf("ProjectPushTask() error = %v", err)
 	}
-	update, ok := got.Updates.(*tg.TLUpdateShortMessage)
+	updates, ok := got.Updates.(*tg.TLUpdates)
 	if !ok {
-		t.Fatalf("updates = %T, want *tg.TLUpdateShortMessage", got.Updates)
+		t.Fatalf("updates = %T, want *tg.TLUpdates", got.Updates)
 	}
-	if !update.Silent {
+	update, ok := updates.Updates[0].(*tg.TLUpdateNewMessage)
+	if !ok {
+		t.Fatalf("update = %T, want *tg.TLUpdateNewMessage", updates.Updates[0])
+	}
+	message, ok := update.Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessage", update.Message)
+	}
+	if !message.Silent {
 		t.Fatalf("silent = false, want true")
 	}
 }
 
-func TestProjectMessageEventV3ShortPushPreservesEntities(t *testing.T) {
+func TestProjectMessageEventV3FullPushPreservesEntities(t *testing.T) {
 	body := mustMarshalMessageEventV3(t, payload.MessageEventV3{
 		SchemaVersion:      payload.MessageEventSchemaVersionV3,
 		EventKind:          payload.EventKindNewMessage,
@@ -710,18 +733,26 @@ func TestProjectMessageEventV3ShortPushPreservesEntities(t *testing.T) {
 	if err != nil {
 		t.Fatalf("ProjectPushTask() error = %v", err)
 	}
-	update, ok := got.Updates.(*tg.TLUpdateShortMessage)
+	updates, ok := got.Updates.(*tg.TLUpdates)
 	if !ok {
-		t.Fatalf("updates = %T, want *tg.TLUpdateShortMessage", got.Updates)
+		t.Fatalf("updates = %T, want *tg.TLUpdates", got.Updates)
 	}
-	if len(update.Entities) != 2 {
-		t.Fatalf("entities len = %d, want 2", len(update.Entities))
+	update, ok := updates.Updates[0].(*tg.TLUpdateNewMessage)
+	if !ok {
+		t.Fatalf("update = %T, want *tg.TLUpdateNewMessage", updates.Updates[0])
 	}
-	if _, ok := update.Entities[0].(*tg.TLMessageEntityMention); !ok {
-		t.Fatalf("entities[0] = %T, want mention", update.Entities[0])
+	message, ok := update.Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessage", update.Message)
 	}
-	if _, ok := update.Entities[1].(*tg.TLMessageEntityUrl); !ok {
-		t.Fatalf("entities[1] = %T, want url", update.Entities[1])
+	if len(message.Entities) != 2 {
+		t.Fatalf("entities len = %d, want 2", len(message.Entities))
+	}
+	if _, ok := message.Entities[0].(*tg.TLMessageEntityMention); !ok {
+		t.Fatalf("entities[0] = %T, want mention", message.Entities[0])
+	}
+	if _, ok := message.Entities[1].(*tg.TLMessageEntityUrl); !ok {
+		t.Fatalf("entities[1] = %T, want url", message.Entities[1])
 	}
 }
 

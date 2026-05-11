@@ -23,11 +23,13 @@ type LocalTarget struct {
 	Layer         int32
 	AuthKey       *crypto.AuthKey
 	Writer        SessionWriter
+	registerSeq   uint64
 }
 
 type LocalWriter struct {
-	mu      sync.RWMutex
-	targets map[sessionKey]LocalTarget
+	mu          sync.RWMutex
+	targets     map[sessionKey]LocalTarget
+	registerSeq uint64
 }
 
 type sessionKey struct {
@@ -52,6 +54,8 @@ func (w *LocalWriter) Register(target LocalTarget) {
 	if target.PermAuthKeyId == 0 {
 		target.PermAuthKeyId = target.AuthKeyId
 	}
+	w.registerSeq++
+	target.registerSeq = w.registerSeq
 	w.targets[sessionKey{authKeyId: target.AuthKeyId, authKeyType: target.AuthKeyType, sessionId: target.SessionId}] = target
 }
 
@@ -99,6 +103,7 @@ func (w *LocalWriter) WriteUpdates(ctx context.Context, permAuthKeyId int64, upd
 	targets := w.matchTargets(func(key sessionKey, target LocalTarget) bool {
 		return target.PermAuthKeyId == permAuthKeyId && isNormalAuthKeyType(key.authKeyType)
 	})
+	targets = newestTargetByAuthKey(targets)
 	return writeUpdatesToTargets(ctx, targets, updates)
 }
 
@@ -147,6 +152,27 @@ func writeUpdatesToTargets(ctx context.Context, targets []LocalTarget, updates t
 		written++
 	}
 	return written, nil
+}
+
+func newestTargetByAuthKey(targets []LocalTarget) []LocalTarget {
+	if len(targets) <= 1 {
+		return targets
+	}
+	byAuthKey := make(map[int64]LocalTarget, len(targets))
+	for _, target := range targets {
+		current, ok := byAuthKey[target.AuthKeyId]
+		if !ok || target.registerSeq > current.registerSeq {
+			byAuthKey[target.AuthKeyId] = target
+		}
+	}
+	if len(byAuthKey) == len(targets) {
+		return targets
+	}
+	out := make([]LocalTarget, 0, len(byAuthKey))
+	for _, target := range byAuthKey {
+		out = append(out, target)
+	}
+	return out
 }
 
 func isNormalAuthKeyType(authKeyType int32) bool {

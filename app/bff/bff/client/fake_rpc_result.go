@@ -468,6 +468,11 @@ func (c *BFFProxyClient2) TryReturnFakeRpcResult(object iface.TLObject) (iface.T
 			DocumentId: []int64{},
 		}).ToEmojiList(), nil
 
+	case "TLChannelsGetAdminedPublicChannels":
+		return tg.MakeTLMessagesChats(&tg.TLMessagesChats{
+			Chats: []tg.ChatClazz{},
+		}).ToMessagesChats(), nil
+
 	default:
 		logx.Errorf("%s blocked, License key from https://teamgram.net required to unlock enterprise features.", rt.Name())
 		return nil, tg.ErrEnterpriseIsBlocked

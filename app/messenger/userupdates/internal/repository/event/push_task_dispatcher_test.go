@@ -95,22 +95,34 @@ func TestPushTaskDispatcherRoutesMessageUpdateToUserAuthKeys(t *testing.T) {
 	if len(gatewayClient.requests) != 2 {
 		t.Fatalf("gateway push count = %d, want 2", len(gatewayClient.requests))
 	}
-	if userClient.calls != 0 {
-		t.Fatalf("user projection calls = %d, want 0 for updateShortMessage", userClient.calls)
+	if userClient.calls != 1 {
+		t.Fatalf("user projection calls = %d, want 1 for full message update", userClient.calls)
 	}
 	for i, req := range gatewayClient.requests {
 		if req.PermAuthKeyId != []int64{111, 222}[i] {
 			t.Fatalf("request %d perm_auth_key_id = %d", i, req.PermAuthKeyId)
 		}
-		update, ok := req.Updates.(*tg.TLUpdateShortMessage)
+		updates, ok := req.Updates.(*tg.TLUpdates)
 		if !ok {
-			t.Fatalf("request %d updates = %T, want *tg.TLUpdateShortMessage", i, req.Updates)
+			t.Fatalf("request %d updates = %T, want *tg.TLUpdates", i, req.Updates)
+		}
+		update, ok := updates.Updates[0].(*tg.TLUpdateNewMessage)
+		if !ok {
+			t.Fatalf("request %d update = %T, want *tg.TLUpdateNewMessage", i, updates.Updates[0])
+		}
+		message, ok := update.Message.(*tg.TLMessage)
+		if !ok {
+			t.Fatalf("request %d message = %T, want *tg.TLMessage", i, update.Message)
 		}
 		if update.Pts != 38 || update.PtsCount != 1 {
 			t.Fatalf("request %d update pts = %#v", i, update)
 		}
-		if update.Id != 9 || update.UserId != 1001 || update.Message != "hello" || update.Out || update.Date != 1777781234 {
-			t.Fatalf("request %d update = %#v", i, update)
+		if message.Id != 9 || message.Message != "hello" || message.Out || message.Date != 1777781234 {
+			t.Fatalf("request %d message = %#v", i, message)
+		}
+		peer, ok := message.PeerId.(*tg.TLPeerUser)
+		if !ok || peer.UserId != 1001 {
+			t.Fatalf("request %d message peer = %#v, want peerUser(1001)", i, message.PeerId)
 		}
 	}
 }
