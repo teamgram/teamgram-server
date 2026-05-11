@@ -434,6 +434,47 @@ func TestLocatorPeerPhotoUsesPhotoSizeMetadataInsteadOfLegacyPath(t *testing.T) 
 	}
 }
 
+func TestLocatorPeerPhotoSupportsProfilePhotoABCSizes(t *testing.T) {
+	now := time.Unix(1700000000, 0)
+	repo := testLocatorRepository(now)
+	repo.model.PhotosModel = &capturePhotosModel{found: &model.Photos{PhotoId: 501, AccessHash: 601, DcId: 5, SizeId: 501}}
+	repo.model.PhotoSizesModel = &capturePhotoSizesModel{byID: []model.PhotoSizes{
+		{PhotoSizeId: 501, SizeType: "i", HasStripped: true, StrippedBytes: []byte{0x01}},
+		{PhotoSizeId: 501, SizeType: "a", Width: 160, Height: 160, FileSize: 50, FilePath: "profile-a-object"},
+		{PhotoSizeId: 501, SizeType: "b", Width: 320, Height: 320, FileSize: 100, FilePath: "profile-b-object"},
+		{PhotoSizeId: 501, SizeType: "c", Width: 640, Height: 640, FileSize: 150, FilePath: "profile-c-object"},
+	}}
+
+	small, err := repo.ResolveFileLocation(context.Background(), &media.TLMediaResolveFileLocation{
+		Location: tg.MakeTLInputPeerPhotoFileLocation(&tg.TLInputPeerPhotoFileLocation{
+			Peer:    tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 8, AccessHash: 9}),
+			PhotoId: 501,
+		}),
+		ViewerId: 8,
+	})
+	if err != nil {
+		t.Fatalf("ResolveFileLocation(small) error = %v", err)
+	}
+	if small.ObjectId != "profile-a-object" {
+		t.Fatalf("small resolved object = %q, want profile-a-object", small.ObjectId)
+	}
+
+	big, err := repo.ResolveFileLocation(context.Background(), &media.TLMediaResolveFileLocation{
+		Location: tg.MakeTLInputPeerPhotoFileLocation(&tg.TLInputPeerPhotoFileLocation{
+			Big:     true,
+			Peer:    tg.MakeTLInputPeerUser(&tg.TLInputPeerUser{UserId: 8, AccessHash: 9}),
+			PhotoId: 501,
+		}),
+		ViewerId: 8,
+	})
+	if err != nil {
+		t.Fatalf("ResolveFileLocation(big) error = %v", err)
+	}
+	if big.ObjectId != "profile-c-object" {
+		t.Fatalf("big resolved object = %q, want profile-c-object", big.ObjectId)
+	}
+}
+
 func TestLocatorFileReferenceErrorsRemainSemantic(t *testing.T) {
 	now := time.Unix(1700000000, 0)
 	repo := testLocatorRepository(now)

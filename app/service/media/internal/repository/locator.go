@@ -23,6 +23,11 @@ const (
 	fileObjectKeyFormat   = "objects/%s.dat"
 )
 
+var (
+	peerPhotoSmallSizePreference = []string{"s", "a", "m", "b", "x", "c", "y"}
+	peerPhotoBigSizePreference   = []string{"x", "c", "y", "b", "m", "a", "s"}
+)
+
 // ResolveFileLocation resolves a Telegram file location into a direct file object lease.
 func (r *Repository) ResolveFileLocation(ctx context.Context, in *media.TLMediaResolveFileLocation) (*media.MediaResolvedFileObject, error) {
 	if in == nil || in.Location == nil {
@@ -115,9 +120,9 @@ func (r *Repository) resolvePeerPhotoLocation(ctx context.Context, loc *tg.TLInp
 	if err != nil {
 		return nil, err
 	}
-	preferred := []string{"s", "m", "x", "y"}
+	preferred := peerPhotoSmallSizePreference
 	if loc.Big {
-		preferred = []string{"x", "y", "m", "s"}
+		preferred = peerPhotoBigSizePreference
 	}
 	size, err := r.findFirstPhotoSize(ctx, photo.SizeId, preferred)
 	if err != nil {
