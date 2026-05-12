@@ -95,7 +95,7 @@ func FromInputPeer(peer InputPeerClazz) PeerUtilClazz {
 	p := MakeTLPeerUtil(&TLPeerUtil{
 		PeerType: PEER_UNKNOWN,
 	})
-	if peer != nil {
+	if peer == nil {
 		return p
 	}
 
@@ -128,7 +128,7 @@ func FromInputPeer2(selfId int64, peer InputPeerClazz) PeerUtilClazz {
 		PeerType: PEER_UNKNOWN,
 		SelfId:   selfId,
 	})
-	if peer != nil {
+	if peer == nil {
 		return p
 	}
 
@@ -216,7 +216,7 @@ func (m *PeerUtil) ToInputPeer() (peer InputPeerClazz) {
 
 func FromPeer(peer PeerClazz) PeerUtilClazz {
 	p := MakeTLPeerUtil(&TLPeerUtil{PeerType: PEER_UNKNOWN})
-	if peer != nil {
+	if peer == nil {
 		return p
 	}
 
