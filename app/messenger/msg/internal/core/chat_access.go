@@ -45,3 +45,17 @@ func (c *MsgCore) activeChatMemberIDs(chatID int64) ([]int64, error) {
 	}
 	return append([]int64(nil), result.Datas...), nil
 }
+
+func chatSendActionForNormalized(normalized normalizedOutboxMessage) (action string, mediaKind string) {
+	if normalized.MediaRef == nil {
+		return chatpb.MessageActionSendText, ""
+	}
+	switch normalized.MediaRef.Kind {
+	case "photo":
+		return chatpb.MessageActionSendMediaPhoto, "photo"
+	case "document":
+		return chatpb.MessageActionSendMediaDoc, "document"
+	default:
+		return chatpb.MessageActionSendMediaDoc, normalized.MediaRef.Kind
+	}
+}

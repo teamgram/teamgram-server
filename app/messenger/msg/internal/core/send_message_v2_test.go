@@ -12,6 +12,7 @@ import (
 	msgpb "github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/pagination"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -341,6 +342,85 @@ func TestMsgSendMessageV2SingleUserPublishesReceiverOperation(t *testing.T) {
 	}
 	if !senderOp.Out || senderOp.PeerID != 1002 || senderOp.FromUserID != 1001 || senderOp.ToUserID != 1002 || senderOp.MessageText != "hello" {
 		t.Fatalf("unexpected sender payload: %+v", senderOp)
+	}
+}
+
+func TestMsgSendMessageV2PeerTypeChatUsesAffectedOutboxFanout(t *testing.T) {
+	responsePayload := []byte(`{"schema_version":2,"pts":21,"pts_count":1,"event_type":"new_message","user_message_id":42}`)
+	updatesClient := &fakeUserUpdatesClient{
+		processWithEffectsResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:              1001,
+			OperationId:         payload.SenderOperationID(7001, 1001),
+			Status:              1,
+			Pts:                 21,
+			PtsCount:            1,
+			CurrentPts:          21,
+			ResponsePayload:     responsePayload,
+			ResponsePayloadHash: payload.HashBytes(responsePayload),
+		}),
+	}
+	chatClient := &fakeMsgChatClient{
+		memberIDs: []int64{1001, 1002, 1003},
+	}
+	repo := newFakeSendMessageRepositoryForChat(7001, 1)
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:        repo,
+		UserUpdates: updatesClient,
+		Chat:        chatClient,
+	})
+
+	got, err := core.MsgSendMessageV2(&msgpb.TLMsgSendMessageV2{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		PeerType:  payload.PeerTypeChat,
+		PeerId:    55,
+		Message: []msgpb.OutboxMessageClazz{msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
+			RandomId: 12345,
+			Message: tg.MakeTLMessage(&tg.TLMessage{
+				Out:     true,
+				FromId:  tg.MakePeerUser(1001),
+				PeerId:  tg.MakePeerChat(55),
+				Message: "hello chat",
+				Date:    1778584910,
+			}),
+		})},
+	})
+	if err != nil {
+		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	}
+	if got == nil {
+		t.Fatal("MsgSendMessageV2() returned nil updates")
+	}
+	if len(chatClient.actions) != 1 || chatClient.actions[0].Action != chatpb.MessageActionSendText || chatClient.actions[0].ChatId != 55 {
+		t.Fatalf("chat action checks = %+v, want send_text for chat 55", chatClient.actions)
+	}
+	if updatesClient.processWithEffects == nil {
+		t.Fatal("UserupdatesProcessUserOperationWithEffects was not called")
+	}
+	if len(updatesClient.processWithEffects.AffectedEffects) != 2 {
+		t.Fatalf("affected effects = %d, want 2 receivers", len(updatesClient.processWithEffects.AffectedEffects))
+	}
+	if repo.markReceiverAckedCalls != 1 || repo.markCompletedCalls != 1 {
+		t.Fatalf("unexpected completion calls: repo=%+v", repo)
+	}
+	for _, effect := range updatesClient.processWithEffects.AffectedEffects {
+		if effect.DeliveryPolicy != int32(DeliveryPolicyDurableAsync) {
+			t.Fatalf("effect policy = %d, want durable async", effect.DeliveryPolicy)
+		}
+		op := effect.Operation
+		if op.PeerType != payload.PeerTypeChat || op.PeerId != 55 {
+			t.Fatalf("receiver peer = type:%d id:%d, want chat 55", op.PeerType, op.PeerId)
+		}
+		if op.UserId == 1001 {
+			t.Fatalf("sender was included as receiver effect: %+v", op)
+		}
+		var body payload.MessageOperationV3
+		if err := json.Unmarshal(op.Payload, &body); err != nil {
+			t.Fatalf("decode receiver payload: %v", err)
+		}
+		if body.PeerType != payload.PeerTypeChat || body.PeerID != 55 || body.FromUserID != 1001 || body.ToUserID != op.UserId || body.Out {
+			t.Fatalf("receiver payload = %+v, want chat incoming from sender", body)
+		}
 	}
 }
 
@@ -3344,6 +3424,40 @@ func (f *fakeMsgRepository) MarkRetryableFailure(context.Context, repository.Mar
 	return nil
 }
 
+type fakeMsgChatClient struct {
+	actions   []*chatpb.TLChatCheckMessageAction
+	accesses  []*chatpb.TLChatCheckChatAccess
+	memberIDs []int64
+	err       error
+}
+
+func (f *fakeMsgChatClient) ChatCheckMessageAction(_ context.Context, in *chatpb.TLChatCheckMessageAction) (*chatpb.MessageActionCheckResult, error) {
+	f.actions = append(f.actions, in)
+	if f.err != nil {
+		return nil, f.err
+	}
+	return chatpb.MakeTLMessageActionCheckResult(&chatpb.TLMessageActionCheckResult{
+		SelfId: in.SelfId, ChatId: in.ChatId, Action: in.Action, MediaKind: in.MediaKind,
+	}).ToMessageActionCheckResult(), nil
+}
+
+func (f *fakeMsgChatClient) ChatCheckChatAccess(_ context.Context, in *chatpb.TLChatCheckChatAccess) (*chatpb.ChatAccessCheckResult, error) {
+	f.accesses = append(f.accesses, in)
+	if f.err != nil {
+		return nil, f.err
+	}
+	return chatpb.MakeTLChatAccessCheckResult(&chatpb.TLChatAccessCheckResult{
+		SelfId: in.SelfId, ChatId: in.ChatId, AccessKind: in.AccessKind,
+	}).ToChatAccessCheckResult(), nil
+}
+
+func (f *fakeMsgChatClient) ChatGetChatParticipantIdList(context.Context, *chatpb.TLChatGetChatParticipantIdList) (*chatpb.VectorLong, error) {
+	if f.err != nil {
+		return nil, f.err
+	}
+	return &chatpb.VectorLong{Datas: append([]int64(nil), f.memberIDs...)}, nil
+}
+
 type fakeUserUpdatesClient struct {
 	processed                *userupdates.TLUserOperation
 	processedList            []*userupdates.TLUserOperation
@@ -3438,6 +3552,21 @@ func sendMessageRequest(senderID, peerID, authKeyID int64, text string) *msgpb.T
 				RandomId: 77,
 				Message:  tg.MakeTLMessage(&tg.TLMessage{Message: text}),
 			}),
+		},
+	}
+}
+
+func newFakeSendMessageRepositoryForChat(canonicalID, peerSeq int64) *fakeMsgRepository {
+	return &fakeMsgRepository{
+		forwardVisible: true,
+		sendState:      &repository.SendState{SendStateID: 1, Status: repository.SendStateStatusInitialized},
+		canonical: &repository.CanonicalMessageResult{
+			SendStateID:        1,
+			CanonicalMessageID: canonicalID,
+			PeerSeq:            peerSeq,
+			MessageDate:        1_772_000_000,
+			RequestPayloadHash: payload.HashBytes([]byte("request")),
+			CreatedNew:         true,
 		},
 	}
 }

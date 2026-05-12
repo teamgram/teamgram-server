@@ -41,8 +41,8 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 	if len(in.Message) > maxSendMessageV2BatchSize {
 		return nil, fmt.Errorf("%w: max=%d got=%d", msg.ErrBatchTooLarge, maxSendMessageV2BatchSize, len(in.Message))
 	}
-	if in.PeerType != payload.PeerTypeUser {
-		return nil, fmt.Errorf("%w: first slice only supports user peer", msg.ErrSendStateConflict)
+	if in.PeerType != payload.PeerTypeUser && in.PeerType != payload.PeerTypeChat {
+		return nil, fmt.Errorf("%w: unsupported peer type=%d", msg.ErrSendStateConflict, in.PeerType)
 	}
 	normalizedBatch := make([]normalizedOutboxMessage, 0, len(in.Message))
 	for _, outbox := range in.Message {
@@ -67,10 +67,22 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 	}
 	sideEffects := batchSideEffectsFromRequest(in)
 	if len(normalizedBatch) > 1 {
+		if in.PeerType == payload.PeerTypeChat {
+			return nil, fmt.Errorf("%w: chat batch send is not implemented yet", msg.ErrSendStateConflict)
+		}
 		return c.sendMessageV2Batch(in, normalizedBatch, sideEffects)
 	}
 
 	normalized := normalizedBatch[0]
+	if in.PeerType == payload.PeerTypeChat {
+		if requiresFullSentUpdates(normalized) {
+			return nil, fmt.Errorf("%w: chat rich send is not implemented yet", msg.ErrSendStateConflict)
+		}
+		action, mediaKind := chatSendActionForNormalized(normalized)
+		if err := c.checkChatAction(in.UserId, in.PeerId, action, mediaKind); err != nil {
+			return nil, err
+		}
+	}
 	_, requestHash, err := marshalSendRequestV3(normalized, sideEffects)
 	if err != nil {
 		return nil, err
@@ -128,7 +140,11 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 		senderResult = senderResultFromSendState(sendState)
 	} else {
 		var senderHash []byte
-		senderResult, senderHash, err = c.processSenderOperation(in, canonical, senderOperationID, normalized, sideEffects)
+		effects, err := c.buildSendMessageChatReceiverEffects(in, canonical, normalized)
+		if err != nil {
+			return nil, err
+		}
+		senderResult, senderHash, err = c.processSenderOperation(in, canonical, senderOperationID, normalized, sideEffects, effects)
 		if err != nil {
 			return nil, err
 		}
@@ -147,7 +163,7 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 		}
 	}
 
-	if in.UserId != in.PeerId && needsReceiverAck(sendState.Status) {
+	if in.PeerType == payload.PeerTypeUser && in.UserId != in.PeerId && needsReceiverAck(sendState.Status) {
 		receiverOp, err := buildReceiverOperationEnvelope(in, canonical, normalized)
 		if err != nil {
 			return nil, err
@@ -462,12 +478,12 @@ type resolvedReplyToMessage struct {
 	UserMessageID      int64
 }
 
-func (c *MsgCore) processSenderOperation(in *msg.TLMsgSendMessageV2, canonical *repository.CanonicalMessageResult, operationID string, normalized normalizedOutboxMessage, sideEffects batchSideEffects) (*userupdates.UserOperationResult, []byte, error) {
+func (c *MsgCore) processSenderOperation(in *msg.TLMsgSendMessageV2, canonical *repository.CanonicalMessageResult, operationID string, normalized normalizedOutboxMessage, sideEffects batchSideEffects, effects []OperationEnvelope) (*userupdates.UserOperationResult, []byte, error) {
 	envelope, hashBytes, err := c.buildSenderOperationEnvelope(in, canonical, operationID, normalized, sideEffects)
 	if err != nil {
 		return nil, nil, err
 	}
-	result, err := c.dispatchRequesterSync(envelope, nil)
+	result, err := c.dispatchRequesterSync(envelope, effects)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -549,6 +565,58 @@ func buildReceiverOperationEnvelope(in *msg.TLMsgSendMessageV2, canonical *repos
 		Payload:              body,
 		PayloadHash:          hashBytes,
 		DeliveryPolicy:       DeliveryPolicyBrokerDurableAck,
+	}, nil
+}
+
+func (c *MsgCore) buildSendMessageChatReceiverEffects(in *msg.TLMsgSendMessageV2, canonical *repository.CanonicalMessageResult, normalized normalizedOutboxMessage) ([]OperationEnvelope, error) {
+	if in.PeerType != payload.PeerTypeChat {
+		return nil, nil
+	}
+	memberIDs, err := c.activeChatMemberIDs(in.PeerId)
+	if err != nil {
+		return nil, err
+	}
+	effects := make([]OperationEnvelope, 0, len(memberIDs))
+	seen := make(map[int64]struct{}, len(memberIDs))
+	for _, receiverUserID := range memberIDs {
+		if receiverUserID <= 0 || receiverUserID == in.UserId {
+			continue
+		}
+		if _, ok := seen[receiverUserID]; ok {
+			continue
+		}
+		seen[receiverUserID] = struct{}{}
+		effect, err := buildChatReceiverEffectEnvelope(in, canonical, normalized, receiverUserID)
+		if err != nil {
+			return nil, err
+		}
+		effects = append(effects, effect)
+	}
+	return effects, nil
+}
+
+func buildChatReceiverEffectEnvelope(in *msg.TLMsgSendMessageV2, canonical *repository.CanonicalMessageResult, normalized normalizedOutboxMessage, receiverUserID int64) (OperationEnvelope, error) {
+	operationID := payload.ReceiverOperationID(canonical.CanonicalMessageID, receiverUserID)
+	body, hashBytes, _, err := buildNormalizedMessageOperationPayload(normalized, receiverUserID, in.PeerId, false, canonical, batchSideEffects{})
+	if err != nil {
+		return OperationEnvelope{}, err
+	}
+	return OperationEnvelope{
+		UserID:               receiverUserID,
+		OperationID:          operationID,
+		OpType:               payload.OpTypeSendMessage,
+		OperationKind:        payload.OperationKindSendMessage,
+		ActorUserID:          in.UserId,
+		PeerType:             payload.PeerTypeChat,
+		PeerID:               in.PeerId,
+		CanonicalMessageID:   &canonical.CanonicalMessageID,
+		CanonicalPeerSeq:     &canonical.PeerSeq,
+		CanonicalDate:        int64Ptr(canonical.MessageDate),
+		PayloadSchemaVersion: payload.MessageOperationSchemaVersionV3,
+		PayloadCodec:         payload.PayloadCodecJSON,
+		Payload:              body,
+		PayloadHash:          hashBytes,
+		DeliveryPolicy:       DeliveryPolicyDurableAsync,
 	}, nil
 }
 
