@@ -67,6 +67,9 @@ func (c *MsgCore) activeChatReceiverIDs(chatID int64, actorUserID int64) ([]int6
 }
 
 func chatSendActionForNormalized(normalized normalizedOutboxMessage) (action string, mediaKind string) {
+	if normalized.ForwardRef != nil {
+		return chatpb.MessageActionForwardToChat, "forward"
+	}
 	if normalized.MediaRef == nil {
 		return chatpb.MessageActionSendText, ""
 	}
@@ -78,4 +81,29 @@ func chatSendActionForNormalized(normalized normalizedOutboxMessage) (action str
 	default:
 		return chatpb.MessageActionSendMediaDoc, normalized.MediaRef.Kind
 	}
+}
+
+func (c *MsgCore) checkChatBatchActions(userID int64, chatID int64, normalizedBatch []normalizedOutboxMessage) error {
+	if len(normalizedBatch) > 1 {
+		if err := c.checkChatAction(userID, chatID, chatpb.MessageActionSendAlbum, "album"); err != nil {
+			return err
+		}
+	}
+	checked := make(map[string]struct{})
+	for _, normalized := range normalizedBatch {
+		action, mediaKind := chatSendActionForNormalized(normalized)
+		key := chatMessageActionKey(action, mediaKind)
+		if _, ok := checked[key]; ok {
+			continue
+		}
+		if err := c.checkChatAction(userID, chatID, action, mediaKind); err != nil {
+			return err
+		}
+		checked[key] = struct{}{}
+	}
+	return nil
+}
+
+func chatMessageActionKey(action string, mediaKind string) string {
+	return action + "\x00" + mediaKind
 }

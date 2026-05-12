@@ -8,6 +8,8 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/app/bff/messages/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	mediaclient "github.com/teamgram/teamgram-server/v2/app/service/media/client"
 	mediapb "github.com/teamgram/teamgram-server/v2/app/service/media/media"
@@ -102,6 +104,51 @@ func TestMessagesSendMediaBuildsOutboxAndReturnsFullUpdates(t *testing.T) {
 	}
 	if reply, ok := message.ReplyTo.(*tg.TLMessageReplyHeader); !ok || reply.ReplyToMsgId == nil || *reply.ReplyToMsgId != 7 {
 		t.Fatalf("ReplyTo = %#v, want reply header msg 7", message.ReplyTo)
+	}
+}
+
+func TestMessagesSendMediaAllowsInputPeerChat(t *testing.T) {
+	var got *msg.TLMsgSendMessageV2
+	var checked *chatpb.TLChatCheckMessageAction
+	core := newMessagesCoreWithRepo(&repository.Repository{
+		ChatClient: &messagesFakeChatClient{
+			checkMessageAction: func(_ context.Context, in *chatpb.TLChatCheckMessageAction) (*chatpb.MessageActionCheckResult, error) {
+				checked = in
+				return chatpb.MakeTLMessageActionCheckResult(&chatpb.TLMessageActionCheckResult{
+					SelfId: in.SelfId, ChatId: in.ChatId, Action: in.Action, MediaKind: in.MediaKind,
+				}).ToMessageActionCheckResult(), nil
+			},
+		},
+		MsgClient: &messagesFakeMsgClient{sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+			got = in
+			return testUpdates(), nil
+		}},
+		MediaClient: &messagesFakeMediaClient{uploadPhotoFile: func(_ context.Context, _ *mediapb.TLMediaUploadPhotoFile) (*tg.Photo, error) {
+			return tg.MakeTLPhoto(&tg.TLPhoto{Id: 777}).ToPhoto(), nil
+		}},
+	}, 1001, 9001)
+
+	_, err := core.MessagesSendMedia(&tg.TLMessagesSendMedia{
+		Peer:     inputPeerChat(55),
+		Media:    tg.MakeTLInputMediaUploadedPhoto(&tg.TLInputMediaUploadedPhoto{}),
+		Message:  "caption",
+		RandomId: 42,
+	})
+	if err != nil {
+		t.Fatalf("MessagesSendMedia() error = %v", err)
+	}
+	if checked == nil || checked.ChatId != 55 || checked.Action != chatpb.MessageActionSendMediaPhoto || checked.MediaKind != "photo" {
+		t.Fatalf("chat check = %+v, want send_media_photo for chat 55", checked)
+	}
+	if got == nil || got.PeerType != payload.PeerTypeChat || got.PeerId != 55 {
+		t.Fatalf("msg request = %+v, want PeerTypeChat/chat 55", got)
+	}
+	message, ok := got.Message[0].Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("outbox message type = %T, want *tg.TLMessage", got.Message[0].Message)
+	}
+	if peer, ok := message.PeerId.(*tg.TLPeerChat); !ok || peer.ChatId != 55 {
+		t.Fatalf("outbox peer = %#v, want peerChat 55", message.PeerId)
 	}
 }
 

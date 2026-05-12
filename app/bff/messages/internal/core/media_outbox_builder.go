@@ -14,7 +14,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-func buildMediaOutbox(in *tg.TLMessagesSendMedia, selfUserID, peerUserID int64, media tg.MessageMediaClazz, replyTo tg.MessageReplyHeaderClazz) (*msg.TLOutboxMessage, int32) {
+func buildMediaOutbox(in *tg.TLMessagesSendMedia, selfUserID int64, peer resolvedMessagePeer, media tg.MessageMediaClazz, replyTo tg.MessageReplyHeaderClazz) (*msg.TLOutboxMessage, int32) {
 	date := int32(time.Now().Unix())
 	return buildMessageMediaOutbox(mediaOutboxInput{
 		RandomId:    in.RandomId,
@@ -23,7 +23,8 @@ func buildMediaOutbox(in *tg.TLMessagesSendMedia, selfUserID, peerUserID int64, 
 		Noforwards:  in.Noforwards,
 		InvertMedia: in.InvertMedia,
 		FromId:      selfUserID,
-		PeerId:      peerUserID,
+		PeerType:    peer.PeerType,
+		PeerId:      peer.PeerID,
 		ReplyTo:     replyTo,
 		Date:        date,
 		Message:     in.Message,
@@ -39,6 +40,7 @@ type mediaOutboxInput struct {
 	Noforwards  bool
 	InvertMedia bool
 	FromId      int64
+	PeerType    int32
 	PeerId      int64
 	ReplyTo     tg.MessageReplyHeaderClazz
 	Date        int32
@@ -58,7 +60,7 @@ func buildMessageMediaOutbox(in mediaOutboxInput) *msg.TLOutboxMessage {
 			Noforwards:  in.Noforwards,
 			InvertMedia: in.InvertMedia,
 			FromId:      tg.MakePeerUser(in.FromId),
-			PeerId:      tg.MakePeerUser(in.PeerId),
+			PeerId:      messagePeerClazz(in.PeerType, in.PeerId),
 			ReplyTo:     in.ReplyTo,
 			Date:        in.Date,
 			Message:     in.Message,

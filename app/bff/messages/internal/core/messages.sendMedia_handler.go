@@ -37,7 +37,7 @@ func (c *MessagesCore) MessagesSendMedia(in *tg.TLMessagesSendMedia) (*tg.Update
 		return nil, tg.ErrInputRequestInvalid
 	}
 
-	peerUserID, ok := resolveUserPeerID(in.Peer, selfUserID)
+	peer, ok := resolveMessagePeer(in.Peer, selfUserID)
 	if !ok {
 		return nil, tg.Err400PeerIdInvalid
 	}
@@ -62,13 +62,19 @@ func (c *MessagesCore) MessagesSendMedia(in *tg.TLMessagesSendMedia) (*tg.Update
 	if err != nil {
 		mappedErr := mapMediaResolveError(err)
 		if mappedErr == tg.ErrInternalServerError {
-			c.Logger.Errorf("messages.sendMedia - media resolve failed: self_user_id: %d, peer_id: %d, random_id: %d, err: %v",
-				selfUserID, peerUserID, in.RandomId, err)
+			c.Logger.Errorf("messages.sendMedia - media resolve failed: self_user_id: %d, peer_type: %d, peer_id: %d, random_id: %d, err: %v",
+				selfUserID, peer.PeerType, peer.PeerID, in.RandomId, err)
 		}
 		return nil, mappedErr
 	}
+	if peer.PeerType == payload.PeerTypeChat {
+		action, mediaKind := chatMessageActionForMedia(media)
+		if err := c.checkChatMessageAction(peer.PeerID, action, mediaKind); err != nil {
+			return nil, err
+		}
+	}
 
-	outbox, clearDraftBeforeDate := buildMediaOutbox(in, selfUserID, peerUserID, media, replyHeader)
+	outbox, clearDraftBeforeDate := buildMediaOutbox(in, selfUserID, peer, media, replyHeader)
 	var sendClient sendMessageClient = c.svcCtx.Repo.MsgClient
 	updates, err := sendClient.MsgSendMessageV2(c.ctx, &msg.TLMsgSendMessageV2{
 		ClearDraft:           in.ClearDraft,
@@ -76,13 +82,13 @@ func (c *MessagesCore) MessagesSendMedia(in *tg.TLMessagesSendMedia) (*tg.Update
 		AuthKeyId:            authKeyID,
 		SourcePermAuthKeyId:  &authKeyID,
 		ClearDraftBeforeDate: &clearDraftBeforeDate,
-		PeerType:             payload.PeerTypeUser,
-		PeerId:               peerUserID,
+		PeerType:             peer.PeerType,
+		PeerId:               peer.PeerID,
 		Message:              []msg.OutboxMessageClazz{outbox},
 	})
 	if err != nil {
-		c.Logger.Errorf("messages.sendMedia - msg error: self_user_id: %d, peer_id: %d, random_id: %d, err: %v",
-			selfUserID, peerUserID, in.RandomId, err)
+		c.Logger.Errorf("messages.sendMedia - msg error: self_user_id: %d, peer_type: %d, peer_id: %d, random_id: %d, err: %v",
+			selfUserID, peer.PeerType, peer.PeerID, in.RandomId, err)
 		return nil, mapMsgSendError(err)
 	}
 	if err := userprojection.FillUpdatesUsers(c.ctx, c.svcCtx.Repo.UserClient, selfUserID, updates, userprojection.MissingStoredReference); err != nil {

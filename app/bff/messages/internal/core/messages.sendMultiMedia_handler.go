@@ -22,6 +22,7 @@ import (
 	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	idgenpb "github.com/teamgram/teamgram-server/v2/app/service/idgen/idgen"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -42,7 +43,7 @@ func (c *MessagesCore) MessagesSendMultiMedia(in *tg.TLMessagesSendMultiMedia) (
 		return nil, tg.ErrInputRequestInvalid
 	}
 
-	peerUserID, ok := resolveUserPeerID(in.Peer, selfUserID)
+	peer, ok := resolveMessagePeer(in.Peer, selfUserID)
 	if !ok {
 		return nil, tg.Err400PeerIdInvalid
 	}
@@ -57,22 +58,38 @@ func (c *MessagesCore) MessagesSendMultiMedia(in *tg.TLMessagesSendMultiMedia) (
 	if err := checkSendMultiMediaItems(in.MultiMedia); err != nil {
 		return nil, err
 	}
+	if peer.PeerType == payload.PeerTypeChat {
+		if err := c.checkChatMessageAction(peer.PeerID, chatpb.MessageActionSendAlbum, "album"); err != nil {
+			return nil, err
+		}
+	}
 
 	groupedID, err := c.newMessageGroupedID("messages.sendMultiMedia")
 	if err != nil {
 		return nil, err
 	}
 	date := int32(time.Now().Unix())
+	checkedMediaActions := make(map[string]struct{})
 	outboxes := make([]msg.OutboxMessageClazz, 0, len(in.MultiMedia))
 	for _, item := range in.MultiMedia {
 		media, err := resolveMessageMedia(c.ctx, c.svcCtx.Repo.MediaClient, c.svcCtx.Repo.UserClient, authKeyID, item.Media)
 		if err != nil {
 			mappedErr := mapMediaResolveError(err)
 			if mappedErr == tg.ErrInternalServerError {
-				c.Logger.Errorf("messages.sendMultiMedia - media resolve failed: self_user_id: %d, peer_id: %d, random_id: %d, err: %v",
-					selfUserID, peerUserID, item.RandomId, err)
+				c.Logger.Errorf("messages.sendMultiMedia - media resolve failed: self_user_id: %d, peer_type: %d, peer_id: %d, random_id: %d, err: %v",
+					selfUserID, peer.PeerType, peer.PeerID, item.RandomId, err)
 			}
 			return nil, mappedErr
+		}
+		if peer.PeerType == payload.PeerTypeChat {
+			action, mediaKind := chatMessageActionForMedia(media)
+			key := chatMessageActionKey(action, mediaKind)
+			if _, ok := checkedMediaActions[key]; !ok {
+				if err := c.checkChatMessageAction(peer.PeerID, action, mediaKind); err != nil {
+					return nil, err
+				}
+				checkedMediaActions[key] = struct{}{}
+			}
 		}
 		outboxes = append(outboxes, buildMessageMediaOutbox(mediaOutboxInput{
 			RandomId:    item.RandomId,
@@ -81,7 +98,8 @@ func (c *MessagesCore) MessagesSendMultiMedia(in *tg.TLMessagesSendMultiMedia) (
 			Noforwards:  in.Noforwards,
 			InvertMedia: in.InvertMedia,
 			FromId:      selfUserID,
-			PeerId:      peerUserID,
+			PeerType:    peer.PeerType,
+			PeerId:      peer.PeerID,
 			ReplyTo:     replyHeader,
 			Date:        date,
 			Message:     item.Message,
@@ -98,13 +116,13 @@ func (c *MessagesCore) MessagesSendMultiMedia(in *tg.TLMessagesSendMultiMedia) (
 		AuthKeyId:            authKeyID,
 		SourcePermAuthKeyId:  &authKeyID,
 		ClearDraftBeforeDate: &date,
-		PeerType:             payload.PeerTypeUser,
-		PeerId:               peerUserID,
+		PeerType:             peer.PeerType,
+		PeerId:               peer.PeerID,
 		Message:              outboxes,
 	})
 	if err != nil {
-		c.Logger.Errorf("messages.sendMultiMedia - msg error: self_user_id: %d, peer_id: %d, err: %v",
-			selfUserID, peerUserID, err)
+		c.Logger.Errorf("messages.sendMultiMedia - msg error: self_user_id: %d, peer_type: %d, peer_id: %d, err: %v",
+			selfUserID, peer.PeerType, peer.PeerID, err)
 		return nil, mapMsgSendError(err)
 	}
 	if err := userprojection.FillUpdatesUsers(c.ctx, c.svcCtx.Repo.UserClient, selfUserID, updates, userprojection.MissingStoredReference); err != nil {

@@ -821,10 +821,18 @@ func messageForwardHeader(ref *payload.ForwardRefV1) (tg.MessageFwdHeaderClazz, 
 }
 
 func forwardPeer(fromUserID int64, sourcePeerType int32, sourcePeerID int64) tg.PeerClazz {
+	if sourcePeerType != payload.PeerTypeUser {
+		if peer := peerFromOptional(sourcePeerType, sourcePeerID); peer != nil {
+			return peer
+		}
+	}
 	if fromUserID > 0 {
 		return peerFromUser(fromUserID)
 	}
-	return peerFromOptional(sourcePeerType, sourcePeerID)
+	if peer := peerFromOptional(sourcePeerType, sourcePeerID); peer != nil {
+		return peer
+	}
+	return nil
 }
 
 func peerFromOptional(peerType int32, peerID int64) tg.PeerClazz {

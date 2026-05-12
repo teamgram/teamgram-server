@@ -232,6 +232,7 @@ func TestMessagesSendMessageAllowsInputPeerChat(t *testing.T) {
 
 	_, err := core.MessagesSendMessage(&tg.TLMessagesSendMessage{
 		Peer:     inputPeerChat(55),
+		ReplyTo:  tg.MakeTLInputReplyToMessage(&tg.TLInputReplyToMessage{ReplyToMsgId: 7}),
 		Message:  "hello chat",
 		RandomId: 12345,
 	})
@@ -243,6 +244,16 @@ func TestMessagesSendMessageAllowsInputPeerChat(t *testing.T) {
 	}
 	if got == nil || got.PeerType != payload.PeerTypeChat || got.PeerId != 55 {
 		t.Fatalf("msg request = %+v, want PeerTypeChat/chat 55", got)
+	}
+	message, ok := got.Message[0].Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("outbox message type = %T, want *tg.TLMessage", got.Message[0].Message)
+	}
+	if peer, ok := message.PeerId.(*tg.TLPeerChat); !ok || peer.ChatId != 55 {
+		t.Fatalf("outbox peer = %#v, want peerChat 55", message.PeerId)
+	}
+	if reply, ok := message.ReplyTo.(*tg.TLMessageReplyHeader); !ok || reply.ReplyToMsgId == nil || *reply.ReplyToMsgId != 7 {
+		t.Fatalf("reply header = %#v, want reply to chat message 7", message.ReplyTo)
 	}
 }
 

@@ -424,6 +424,138 @@ func TestMsgSendMessageV2PeerTypeChatUsesAffectedOutboxFanout(t *testing.T) {
 	}
 }
 
+func TestMsgSendMessageV2PeerTypeChatMediaReturnsFullUpdatesAndFansOut(t *testing.T) {
+	responsePayload := []byte(`{"schema_version":2,"pts":31,"pts_count":1,"event_type":"new_message","user_message_id":61}`)
+	updatesClient := &fakeUserUpdatesClient{
+		processWithEffectsResult: testUserOperationResult(1001, payload.SenderOperationID(7002, 1001), 31, responsePayload),
+	}
+	chatClient := &fakeMsgChatClient{memberIDs: []int64{1001, 1002}}
+	repo := newFakeSendMessageRepositoryForChat(7002, 2)
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:        repo,
+		UserUpdates: updatesClient,
+		Chat:        chatClient,
+	})
+	req := buildMediaSendRequestForTest(1001, 55, 9001, 11, "caption")
+	req.PeerType = payload.PeerTypeChat
+	req.PeerId = 55
+	req.Message[0].Message.(*tg.TLMessage).PeerId = tg.MakePeerChat(55)
+
+	got, err := core.MsgSendMessageV2(req)
+	if err != nil {
+		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	}
+	if len(chatClient.actions) != 1 || chatClient.actions[0].Action != chatpb.MessageActionSendMediaPhoto || chatClient.actions[0].MediaKind != "photo" {
+		t.Fatalf("chat action checks = %+v, want send_media_photo/photo", chatClient.actions)
+	}
+	if updatesClient.processWithEffects == nil || len(updatesClient.processWithEffects.AffectedEffects) != 1 {
+		t.Fatalf("affected effects = %+v, want one chat receiver", updatesClient.processWithEffects)
+	}
+	message := firstSentUpdateMessage(t, got)
+	if peer, ok := message.PeerId.(*tg.TLPeerChat); !ok || peer.ChatId != 55 {
+		t.Fatalf("sent peer = %#v, want peerChat 55", message.PeerId)
+	}
+	if _, ok := message.Media.(*tg.TLMessageMediaPhoto); !ok {
+		t.Fatalf("sent media = %T, want photo", message.Media)
+	}
+}
+
+func TestMsgSendMessageV2PeerTypeChatForwardUsesForwardAction(t *testing.T) {
+	responsePayload := []byte(`{"schema_version":2,"pts":32,"pts_count":1,"event_type":"new_message","user_message_id":62}`)
+	updatesClient := &fakeUserUpdatesClient{
+		processWithEffectsResult: testUserOperationResult(1001, payload.SenderOperationID(7003, 1001), 32, responsePayload),
+	}
+	chatClient := &fakeMsgChatClient{memberIDs: []int64{1001, 1002}}
+	repo := newFakeSendMessageRepositoryForChat(7003, 3)
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:        repo,
+		UserUpdates: updatesClient,
+		Chat:        chatClient,
+	})
+	req := buildForwardSendRequestForTest(1001, 55, 9001, 12, 7)
+	req.PeerType = payload.PeerTypeChat
+	req.PeerId = 55
+	req.Message[0].Message.(*tg.TLMessage).PeerId = tg.MakePeerChat(55)
+
+	got, err := core.MsgSendMessageV2(req)
+	if err != nil {
+		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	}
+	if len(chatClient.actions) != 1 || chatClient.actions[0].Action != chatpb.MessageActionForwardToChat {
+		t.Fatalf("chat action checks = %+v, want forward_to_chat", chatClient.actions)
+	}
+	message := firstSentUpdateMessage(t, got)
+	if peer, ok := message.PeerId.(*tg.TLPeerChat); !ok || peer.ChatId != 55 {
+		t.Fatalf("sent peer = %#v, want peerChat 55", message.PeerId)
+	}
+	if message.FwdFrom == nil {
+		t.Fatal("sent message missing forward header")
+	}
+}
+
+func TestMsgSendMessageV2PeerTypeChatAlbumUsesBatchCanonicalAndAffectedEffects(t *testing.T) {
+	groupedID := int64(9901)
+	responsePayload1 := []byte(`{"schema_version":2,"pts":41,"pts_count":1,"event_type":"new_message","user_message_id":71}`)
+	responsePayload2 := []byte(`{"schema_version":2,"pts":42,"pts_count":1,"event_type":"new_message","user_message_id":72}`)
+	repo := &fakeMsgRepository{
+		forwardVisible: true,
+		batchResult: &repository.CanonicalBatchResult{Items: []repository.CanonicalMessageResult{
+			{SendStateID: 601, CanonicalMessageID: 8001, PeerSeq: 1, MessageDate: 1_772_000_000, RequestPayloadHash: payload.HashBytes([]byte("h1")), CreatedNew: true},
+			{SendStateID: 602, CanonicalMessageID: 8002, PeerSeq: 2, MessageDate: 1_772_000_001, RequestPayloadHash: payload.HashBytes([]byte("h2")), CreatedNew: true},
+		}},
+	}
+	updatesClient := &fakeUserUpdatesClient{processResults: []*userupdates.UserOperationResult{
+		testUserOperationResult(1001, payload.SenderOperationID(8001, 1001), 41, responsePayload1),
+		testUserOperationResult(1001, payload.SenderOperationID(8002, 1001), 42, responsePayload2),
+	}}
+	chatClient := &fakeMsgChatClient{memberIDs: []int64{1001, 1002}}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:        repo,
+		UserUpdates: updatesClient,
+		Chat:        chatClient,
+	})
+	req := buildBatchSendRequestForTest(1001, 55, 9001, []int64{11, 12})
+	req.PeerType = payload.PeerTypeChat
+	req.PeerId = 55
+	for _, outbox := range req.Message {
+		message := outbox.Message.(*tg.TLMessage)
+		message.PeerId = tg.MakePeerChat(55)
+		message.GroupedId = &groupedID
+		message.Media = tg.MakeTLMessageMediaPhoto(&tg.TLMessageMediaPhoto{Photo: tg.MakeTLPhotoEmpty(&tg.TLPhotoEmpty{Id: 333})})
+	}
+
+	got, err := core.MsgSendMessageV2(req)
+	if err != nil {
+		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	}
+	if repo.batchCreateCalls != 1 {
+		t.Fatalf("batchCreateCalls = %d, want 1", repo.batchCreateCalls)
+	}
+	if len(chatClient.actions) != 2 ||
+		chatClient.actions[0].Action != chatpb.MessageActionSendAlbum || chatClient.actions[0].MediaKind != "album" ||
+		chatClient.actions[1].Action != chatpb.MessageActionSendMediaPhoto || chatClient.actions[1].MediaKind != "photo" {
+		t.Fatalf("chat action checks = %+v, want send_album then send_media_photo", chatClient.actions)
+	}
+	if updatesClient.batchApplyCalls != 0 {
+		t.Fatalf("batchApplyCalls = %d, want per-sender with-effects dispatch", updatesClient.batchApplyCalls)
+	}
+	if len(updatesClient.processWithEffectsList) != 2 || len(updatesClient.processedOperations) != 2 {
+		t.Fatalf("with-effects calls=%d processed=%d, want 2/2", len(updatesClient.processWithEffectsList), len(updatesClient.processedOperations))
+	}
+	for i, call := range updatesClient.processWithEffectsList {
+		if len(call.AffectedEffects) != 1 {
+			t.Fatalf("call %d affected effects = %d, want one receiver", i, len(call.AffectedEffects))
+		}
+	}
+	if repo.markSenderCalls != 2 || repo.markReceiverAckedCalls != 2 || repo.markCompletedCalls != 2 {
+		t.Fatalf("unexpected repo calls: %+v", repo)
+	}
+	message := firstSentUpdateMessage(t, got)
+	if peer, ok := message.PeerId.(*tg.TLPeerChat); !ok || peer.ChatId != 55 {
+		t.Fatalf("sent peer = %#v, want peerChat 55", message.PeerId)
+	}
+}
+
 func TestMsgSendMessageV2BatchReturnsFullUpdates(t *testing.T) {
 	core, fakeRepo, fakeUpdates := newBatchMsgCoreForTest(t)
 	in := buildBatchSendRequestForTest(100, 200, 9001, []int64{11, 12})
@@ -992,6 +1124,87 @@ func TestNormalizeOutboxMessageKeepsSavedForwardFieldsOnlyForSavedMessages(t *te
 		got.ForwardRef.SavedFromPeerID != 200 ||
 		got.ForwardRef.SavedFromMessageID != 77 {
 		t.Fatalf("forward ref = %+v, want saved and source fields", got.ForwardRef)
+	}
+	if peer, ok := sentMessageForwardPeer(got.ForwardRef).(*tg.TLPeerUser); !ok || peer.UserId != 300 {
+		t.Fatalf("sent forward peer = %#v, want original author peerUser 300", sentMessageForwardPeer(got.ForwardRef))
+	}
+}
+
+func TestNormalizeOutboxMessagePreservesChatForwardSourcePeer(t *testing.T) {
+	sourceID := int32(77)
+	repo := &fakeMsgRepository{forwardVisible: true}
+	got, err := normalizeOutboxMessage(normalizeOutboxInput{
+		Ctx:          context.Background(),
+		SenderUserID: 1001,
+		PeerType:     payload.PeerTypeChat,
+		PeerID:       55,
+		Repo:         repo,
+		Outbox: msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
+			RandomId:        11,
+			ForwardSourceId: &sourceID,
+			Message: tg.MakeTLMessage(&tg.TLMessage{
+				Message: "chat forward",
+				FwdFrom: tg.MakeTLMessageFwdHeader(&tg.TLMessageFwdHeader{
+					FromId:        tg.MakePeerUser(2002),
+					Date:          1_772_000_010,
+					SavedFromPeer: tg.MakePeerChat(44),
+				}),
+			}),
+		}),
+	})
+	if err != nil {
+		t.Fatalf("normalizeOutboxMessage() error = %v", err)
+	}
+	if repo.resolveForwardInput.SourcePeerType != payload.PeerTypeChat || repo.resolveForwardInput.SourcePeerID != 44 || repo.resolveForwardInput.SourceUserMessageID != 77 {
+		t.Fatalf("forward resolve input = %+v, want chat 44 message 77", repo.resolveForwardInput)
+	}
+	if got.ForwardRef == nil ||
+		got.ForwardRef.FromUserID != 2002 ||
+		got.ForwardRef.SourcePeerType != payload.PeerTypeChat ||
+		got.ForwardRef.SourcePeerID != 44 ||
+		got.ForwardRef.SavedFromPeerType != 0 ||
+		got.ForwardRef.SavedFromPeerID != 0 ||
+		got.ForwardRef.SavedFromMessageID != 0 {
+		t.Fatalf("forward ref = %+v, want sender user and non-saved chat source", got.ForwardRef)
+	}
+	if peer, ok := sentMessageForwardPeer(got.ForwardRef).(*tg.TLPeerChat); !ok || peer.ChatId != 44 {
+		t.Fatalf("sent forward peer = %#v, want source peerChat 44", sentMessageForwardPeer(got.ForwardRef))
+	}
+}
+
+func TestNormalizeOutboxMessageResolvesReplyInChatScope(t *testing.T) {
+	replyToMsgID := int32(42)
+	repo := &fakeMsgRepository{resolvedMessageID: &repository.ResolvedMessageID{
+		UserID:             1001,
+		PeerType:           payload.PeerTypeChat,
+		PeerID:             55,
+		UserMessageID:      42,
+		CanonicalMessageID: 7001,
+	}}
+	got, err := normalizeOutboxMessage(normalizeOutboxInput{
+		Ctx:          context.Background(),
+		SenderUserID: 1001,
+		PeerType:     payload.PeerTypeChat,
+		PeerID:       55,
+		Repo:         repo,
+		Outbox: msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
+			RandomId: 99,
+			Message: tg.MakeTLMessage(&tg.TLMessage{
+				Message: "reply",
+				ReplyTo: tg.MakeTLMessageReplyHeader(&tg.TLMessageReplyHeader{
+					ReplyToMsgId: &replyToMsgID,
+				}),
+			}),
+		}),
+	})
+	if err != nil {
+		t.Fatalf("normalizeOutboxMessage() error = %v", err)
+	}
+	if repo.resolveInput.UserID != 1001 || repo.resolveInput.PeerType != payload.PeerTypeChat || repo.resolveInput.PeerID != 55 || repo.resolveInput.UserMessageID != 42 {
+		t.Fatalf("reply resolver input = %+v, want chat-scoped lookup", repo.resolveInput)
+	}
+	if got.ReplyToCanonicalMessageID != 7001 || got.ReplyToUserMessageID != 42 {
+		t.Fatalf("reply ids = canonical:%d user:%d, want 7001/42", got.ReplyToCanonicalMessageID, got.ReplyToUserMessageID)
 	}
 }
 
@@ -3465,6 +3678,7 @@ type fakeUserUpdatesClient struct {
 	processResult            *userupdates.UserOperationResult
 	processResults           []*userupdates.UserOperationResult
 	processWithEffects       *userupdates.TLUserupdatesProcessUserOperationWithEffects
+	processWithEffectsList   []*userupdates.TLUserupdatesProcessUserOperationWithEffects
 	processWithEffectsResult *userupdates.UserOperationResult
 	batchApplyCalls          int
 	batchApplyLen            int
@@ -3743,6 +3957,19 @@ func mustMarshalMsgMessageEventV3(t *testing.T, event payload.MessageEventV3) []
 		t.Fatalf("marshal MessageEventV3: %v", err)
 	}
 	return body
+}
+
+func testUserOperationResult(userID int64, operationID string, pts int64, responsePayload []byte) *userupdates.UserOperationResult {
+	return userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+		UserId:              userID,
+		OperationId:         operationID,
+		Status:              1,
+		Pts:                 pts,
+		PtsCount:            1,
+		CurrentPts:          pts,
+		ResponsePayload:     responsePayload,
+		ResponsePayloadHash: payload.HashBytes(responsePayload),
+	})
 }
 
 func makeSequentialRandomIDsForTest(count int) []int64 {

@@ -39,3 +39,18 @@ func (c *MessagesCore) checkChatAccess(chatID int64, accessKind string) error {
 	}
 	return nil
 }
+
+func chatMessageActionForMedia(media tg.MessageMediaClazz) (action string, mediaKind string) {
+	switch media.(type) {
+	case *tg.TLMessageMediaPhoto:
+		return chatpb.MessageActionSendMediaPhoto, "photo"
+	case *tg.TLMessageMediaDocument:
+		return chatpb.MessageActionSendMediaDoc, "document"
+	default:
+		return chatpb.MessageActionSendMediaDoc, "media"
+	}
+}
+
+func chatMessageActionKey(action string, mediaKind string) string {
+	return action + "\x00" + mediaKind
+}

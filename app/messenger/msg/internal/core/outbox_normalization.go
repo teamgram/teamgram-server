@@ -467,8 +467,10 @@ func normalizeForwardRef(in normalizeOutboxInput, message *tg.TLMessage) (*paylo
 	var sourceLookupPeerID int64
 	var savedPeerType int32
 	var savedPeerID int64
-	if fwd.SavedFromMsgId != nil {
+	if fwd.SavedFromPeer != nil {
 		savedPeerType, savedPeerID = peerIdentity(fwd.SavedFromPeer)
+	}
+	if fwd.SavedFromMsgId != nil {
 		if sourceMessageID == 0 {
 			sourceMessageID = int64(*fwd.SavedFromMsgId)
 		}
@@ -490,6 +492,12 @@ func normalizeForwardRef(in normalizeOutboxInput, message *tg.TLMessage) (*paylo
 		ref.SavedFromPeerType = savedPeerType
 		ref.SavedFromPeerID = savedPeerID
 		ref.SavedFromMessageID = sourceMessageID
+	}
+	if message.SavedPeerId == nil && savedPeerType != 0 && savedPeerID > 0 {
+		sourceLookupPeerType = savedPeerType
+		sourceLookupPeerID = savedPeerID
+		ref.SourcePeerType = savedPeerType
+		ref.SourcePeerID = savedPeerID
 	}
 	source, err := in.Repo.ResolveForwardSourceIdentity(in.Ctx, repository.ForwardSourceLookup{
 		UserID:              in.SenderUserID,

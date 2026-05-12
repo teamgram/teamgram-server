@@ -47,3 +47,14 @@ func resolveMessagePeer(peer tg.InputPeerClazz, selfUserID int64) (resolvedMessa
 		return resolvedMessagePeer{}, false
 	}
 }
+
+func messagePeerClazz(peerType int32, peerID int64) tg.PeerClazz {
+	switch peerType {
+	case 0, payload.PeerTypeUser:
+		return tg.MakePeerUser(peerID)
+	case payload.PeerTypeChat:
+		return tg.MakePeerChat(peerID)
+	default:
+		return nil
+	}
+}
