@@ -19,7 +19,7 @@ package core
 import (
 	"strings"
 
-	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
+	"github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -37,9 +37,12 @@ func (c *MessagesCore) MessagesSearch(in *tg.TLMessagesSearch) (*tg.MessagesMess
 
 	peerUserID, ok := resolveUserPeerID(in.Peer, c.MD.UserId)
 	if !ok {
-		return nil, tg.Err400PeerIdInvalid
+		// c.Logger.Errorf("messages.search - error: peerId invalid")
+		// return nil, tg.Err400PeerIdInvalid
+		return emptyMessagesMessages(), nil
 	}
 	if _, ok := in.Filter.(*tg.TLInputMessagesFilterEmpty); ok && in.Q == "" && in.FromId == nil {
+		c.Logger.Errorf("messages.search - error: not in filter")
 		return nil, tg.ErrSearchQueryEmpty
 	}
 	if _, ok := in.Filter.(*tg.TLInputMessagesFilterEmpty); ok {

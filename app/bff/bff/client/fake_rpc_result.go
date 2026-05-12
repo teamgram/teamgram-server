@@ -473,6 +473,12 @@ func (c *BFFProxyClient2) TryReturnFakeRpcResult(object iface.TLObject) (iface.T
 			Chats: []tg.ChatClazz{},
 		}).ToMessagesChats(), nil
 
+	case "TLAccountGetConnectedBots":
+		return tg.MakeTLAccountConnectedBots(&tg.TLAccountConnectedBots{
+			ConnectedBots: []tg.ConnectedBotClazz{},
+			Users:         []tg.UserClazz{},
+		}).ToAccountConnectedBots(), nil
+
 	default:
 		logx.Errorf("%s blocked, License key from https://teamgram.net required to unlock enterprise features.", rt.Name())
 		return nil, tg.ErrEnterpriseIsBlocked
