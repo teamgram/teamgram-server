@@ -34,17 +34,6 @@ const (
 	PEER_UNKNOWN         = -1
 )
 
-var (
-// EmptyPeer
-)
-
-//type PeerUtil struct {
-//	selfId     int64
-//	PeerType   int32
-//	PeerId     int64
-//	AccessHash int64
-//}
-
 func (m *PeerUtil) ToString() (s string) {
 	switch m.PeerType {
 	case PEER_EMPTY:
@@ -103,8 +92,11 @@ func FromInputUser(selfId int64, user InputUserClazz) PeerUtilClazz {
 }
 
 func FromInputPeer(peer InputPeerClazz) PeerUtilClazz {
-	p := &TLPeerUtil{
+	p := MakeTLPeerUtil(&TLPeerUtil{
 		PeerType: PEER_UNKNOWN,
+	})
+	if peer != nil {
+		return p
 	}
 
 	switch c := peer.(type) {
@@ -132,9 +124,12 @@ func FromInputPeer(peer InputPeerClazz) PeerUtilClazz {
 }
 
 func FromInputPeer2(selfId int64, peer InputPeerClazz) PeerUtilClazz {
-	p := &TLPeerUtil{
+	p := MakeTLPeerUtil(&TLPeerUtil{
 		PeerType: PEER_UNKNOWN,
 		SelfId:   selfId,
+	})
+	if peer != nil {
+		return p
 	}
 
 	switch c := peer.(type) {
@@ -166,9 +161,9 @@ func FromInputPeer2(selfId int64, peer InputPeerClazz) PeerUtilClazz {
 }
 
 func FromInputEncryptedChat(peer InputEncryptedChatClazz) PeerUtilClazz {
-	p := &TLPeerUtil{
+	p := MakeTLPeerUtil(&TLPeerUtil{
 		PeerType: PEER_UNKNOWN,
-	}
+	})
 
 	if peer != nil {
 		p.PeerType = PEER_ENCRYPTED_CHAT
@@ -195,23 +190,23 @@ func FromInputEncryptedChat(peer InputEncryptedChatClazz) PeerUtilClazz {
 func (m *PeerUtil) ToInputPeer() (peer InputPeerClazz) {
 	switch m.PeerType {
 	case PEER_EMPTY:
-		peer = &TLInputPeerEmpty{}
+		peer = InputPeerEmptyClazz
 	case PEER_SELF:
-		peer = &TLInputPeerSelf{}
+		peer = MakeTLInputPeerSelf(&TLInputPeerSelf{})
 	case PEER_USER:
-		peer = &TLInputPeerUser{
+		peer = MakeTLInputPeerUser(&TLInputPeerUser{
 			UserId:     m.PeerId,
 			AccessHash: m.AccessHash,
-		}
+		})
 	case PEER_CHAT:
-		peer = &TLInputPeerChat{
+		peer = MakeTLInputPeerChat(&TLInputPeerChat{
 			ChatId: m.PeerId,
-		}
+		})
 	case PEER_CHANNEL:
-		peer = &TLInputPeerChannel{
+		peer = MakeTLInputPeerChannel(&TLInputPeerChannel{
 			ChannelId:  m.PeerId,
 			AccessHash: m.AccessHash,
-		}
+		})
 	default:
 		panic(fmt.Sprintf("ToInputPeer(%v) error!", m))
 	}
@@ -220,7 +215,10 @@ func (m *PeerUtil) ToInputPeer() (peer InputPeerClazz) {
 }
 
 func FromPeer(peer PeerClazz) PeerUtilClazz {
-	p := &TLPeerUtil{}
+	p := MakeTLPeerUtil(&TLPeerUtil{PeerType: PEER_UNKNOWN})
+	if peer != nil {
+		return p
+	}
 
 	switch c := peer.(type) {
 	case *TLPeerUser:
@@ -246,28 +244,28 @@ func (m *PeerUtil) ToPeer() (peer PeerClazz) {
 	switch m.PeerType {
 	case PEER_SELF:
 		if m.PeerId != 0 {
-			peer = &TLPeerUser{
+			peer = MakeTLPeerUser(&TLPeerUser{
 				UserId: m.PeerId,
-			}
+			})
 		} else if m.SelfId != 0 {
-			peer = &TLPeerUser{
+			peer = MakeTLPeerUser(&TLPeerUser{
 				UserId: m.SelfId,
-			}
+			})
 		} else {
 			panic(fmt.Sprintf("ToPeer(%v) error!", m))
 		}
 	case PEER_USER:
-		peer = &TLPeerUser{
+		peer = MakeTLPeerUser(&TLPeerUser{
 			UserId: m.PeerId,
-		}
+		})
 	case PEER_CHAT:
-		peer = &TLPeerChat{
+		peer = MakeTLPeerChat(&TLPeerChat{
 			ChatId: m.PeerId,
-		}
+		})
 	case PEER_CHANNEL:
-		peer = &TLPeerChannel{
+		peer = MakeTLPeerChannel(&TLPeerChannel{
 			ChannelId: m.PeerId,
-		}
+		})
 	default:
 		peer = nil
 	}
@@ -402,17 +400,17 @@ func (m *PeerUtil) ToNotifyPeer() (peer *NotifyPeer) {
 func ToPeerByTypeAndID(peerType int32, peerId int64) (peer PeerClazz) {
 	switch peerType {
 	case PEER_USER:
-		peer = &TLPeerUser{
+		peer = MakeTLPeerUser(&TLPeerUser{
 			UserId: peerId,
-		}
+		})
 	case PEER_CHAT:
-		peer = &TLPeerChat{
+		peer = MakeTLPeerChat(&TLPeerChat{
 			ChatId: peerId,
-		}
+		})
 	case PEER_CHANNEL:
-		peer = &TLPeerChannel{
+		peer = MakeTLPeerChannel(&TLPeerChannel{
 			ChannelId: peerId,
-		}
+		})
 	default:
 		panic(fmt.Sprintf("ToPeerByTypeAndID(%d, %d) error!", peerType, peerId))
 	}
@@ -448,21 +446,21 @@ func PickAllIdListByPeers(peers []PeerClazz) (idList, chatIdList, channelIdList 
 }
 
 func MakePeerUser(peerId int64) PeerClazz {
-	return &TLPeerUser{
+	return MakeTLPeerUser(&TLPeerUser{
 		UserId: peerId,
-	}
+	})
 }
 
 func MakePeerChat(peerId int64) PeerClazz {
-	return &TLPeerChat{
+	return MakeTLPeerChat(&TLPeerChat{
 		ChatId: peerId,
-	}
+	})
 }
 
 func MakePeerChannel(peerId int64) PeerClazz {
-	return &TLPeerChannel{
+	return MakeTLPeerChannel(&TLPeerChannel{
 		ChannelId: peerId,
-	}
+	})
 }
 
 func MakePeerHelper(peerType int32, peerId int64) PeerClazz {
@@ -477,43 +475,43 @@ func MakePeerHelper(peerType int32, peerId int64) PeerClazz {
 }
 
 func MakePeerUtilHelper(peerType int32, peerId int64) PeerUtilClazz {
-	return &TLPeerUtil{
+	return MakeTLPeerUtil(&TLPeerUtil{
 		PeerType: peerType,
 		PeerId:   peerId,
-	}
+	})
 }
 
 func MakeUserPeerUtil(peerId int64) PeerUtilClazz {
-	return &TLPeerUtil{
+	return MakeTLPeerUtil(&TLPeerUtil{
 		PeerType: PEER_USER,
 		PeerId:   peerId,
-	}
+	})
 }
 
 func MakeChatPeerUtil(peerId int64) PeerUtilClazz {
-	return &TLPeerUtil{
+	return MakeTLPeerUtil(&TLPeerUtil{
 		PeerType: PEER_CHAT,
 		PeerId:   peerId,
-	}
+	})
 }
 
 func MakeChannelPeerUtil(peerId int64) PeerUtilClazz {
-	return &TLPeerUtil{
+	return MakeTLPeerUtil(&TLPeerUtil{
 		PeerType: PEER_CHANNEL,
 		PeerId:   peerId,
-	}
+	})
 }
 
 func MakeInputPeerChat(peerId int64) InputPeerClazz {
-	return &TLInputPeerChat{
+	return MakeTLInputPeerChat(&TLInputPeerChat{
 		ChatId: peerId,
-	}
+	})
 }
 
 func MakeInputPeerChannel(peerId int64) InputPeerClazz {
-	return &TLInputPeerChannel{
+	return MakeTLInputPeerChannel(&TLInputPeerChannel{
 		ChannelId: peerId,
-	}
+	})
 }
 
 func MakePeerDialogId(peerType int32, peerId int64) int64 {
@@ -550,18 +548,46 @@ func GetPeerUtilByPeerDialogId(id int64) (int32, int64) {
 }
 
 func IsChannelInputPeer(peer InputPeerClazz) bool {
-	return peer.InputPeerClazzName() == ClazzName_inputPeerChannel
+	if peer == nil {
+		return false
+	}
+
+	_, b := peer.(*TLInputPeerChannel)
+
+	return b
 }
 
 func IsChatInputPeer(peer InputPeerClazz) bool {
-	return peer.InputPeerClazzName() == ClazzName_inputPeerChat
+	if peer == nil {
+		return false
+	}
+
+	_, b := peer.(*TLInputPeerChat)
+
+	return b
 }
 
 func IsUserInputPeer(peer InputPeerClazz) bool {
-	return peer.InputPeerClazzName() == ClazzName_inputPeerUser ||
-		peer.InputPeerClazzName() == ClazzName_inputPeerSelf
+	if peer == nil {
+		return false
+	}
+
+	switch peer.(type) {
+	case *TLInputPeerUser:
+		return true
+	case *TLInputPeerSelf:
+		return true
+	default:
+		return false
+	}
 }
 
 func PeerIsChannel(peer PeerClazz) bool {
-	return peer.PeerClazzName() == ClazzName_peerChannel
+	if peer == nil {
+		return false
+	}
+
+	_, b := peer.(*TLPeerChannel)
+
+	return b
 }
