@@ -15,6 +15,8 @@
 
 package tg
 
+import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+
 const (
 	AuthStateUnknown      = 0
 	AuthStateNew          = 1
@@ -35,14 +37,14 @@ const (
 )
 
 func NewAuthKeyInfo(keyId int64, key []byte, keyType int) *TLAuthKeyInfo {
-	keyData := &TLAuthKeyInfo{
+	keyData := tg.MakeTLAuthKeyInfo(&TLAuthKeyInfo{
 		AuthKeyId:          keyId,
 		AuthKey:            key,
 		AuthKeyType:        int32(keyType),
 		PermAuthKeyId:      0,
 		TempAuthKeyId:      0,
 		MediaTempAuthKeyId: 0,
-	}
+	})
 
 	switch keyType {
 	case AuthKeyTypePerm:
