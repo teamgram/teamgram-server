@@ -28,7 +28,7 @@ func TestMessagesForwardMessagesReordersSourcesAndSendsBatch(t *testing.T) {
 					MessageId: 2,
 					UserId:    100,
 					PeerType:  payload.PeerTypeUser,
-					PeerId:    100,
+					PeerId:    300,
 					Message: tg.MakeTLMessage(&tg.TLMessage{
 						Id:      2,
 						FromId:  tg.MakePeerUser(302),
@@ -315,6 +315,46 @@ func TestMessagesForwardMessagesMapsMissingOrInvalidSourceToMessageIdInvalid(t *
 				t.Fatalf("error = %v, want %v", err, tt.want)
 			}
 		})
+	}
+}
+
+func TestMessagesForwardMessagesRejectsSourcePeerMismatch(t *testing.T) {
+	called := false
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		getUserMessageList: func(context.Context, *msg.TLMsgGetUserMessageList) (*msg.VectorMessageBox, error) {
+			return &msg.VectorMessageBox{Datas: []tg.MessageBoxClazz{
+				tg.MakeTLMessageBox(&tg.TLMessageBox{
+					MessageId: 1,
+					UserId:    1001,
+					PeerType:  payload.PeerTypeChat,
+					PeerId:    45,
+					Message: tg.MakeTLMessage(&tg.TLMessage{
+						Id:      1,
+						FromId:  tg.MakePeerUser(2002),
+						PeerId:  tg.MakePeerChat(45),
+						Date:    1,
+						Message: "wrong chat",
+					}),
+				}),
+			}}, nil
+		},
+		sendMessageV2: func(context.Context, *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+			called = true
+			return nil, nil
+		},
+	}, 1001, 9001)
+
+	_, err := c.MessagesForwardMessages(&tg.TLMessagesForwardMessages{
+		FromPeer: inputPeerChat(44),
+		ToPeer:   inputPeerUser(400),
+		Id:       []int32{1},
+		RandomId: []int64{11},
+	})
+	if !errors.Is(err, tg.ErrMessageIdInvalid) {
+		t.Fatalf("MessagesForwardMessages() error = %v, want MESSAGE_ID_INVALID", err)
+	}
+	if called {
+		t.Fatal("msg send was called for source peer mismatch")
 	}
 }
 

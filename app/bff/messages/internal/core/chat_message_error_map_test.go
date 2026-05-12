@@ -18,3 +18,22 @@ func TestMapChatMessageErrorUsesMessagePeerSemantics(t *testing.T) {
 		t.Fatalf("write forbidden maps to %v, want CHAT_WRITE_FORBIDDEN", got)
 	}
 }
+
+func TestMapMsgSendErrorMapsDownstreamChatErrors(t *testing.T) {
+	tests := []struct {
+		name string
+		err  error
+		want error
+	}{
+		{name: "not participant", err: fmt.Errorf("msg fallback: %w", chatpb.ErrUserNotParticipant), want: tg.Err400PeerIdInvalid},
+		{name: "admin required", err: fmt.Errorf("msg fallback: %w", chatpb.ErrChatAdminRequired), want: tg.Err400ChatAdminRequired},
+		{name: "write forbidden", err: fmt.Errorf("msg fallback: %w", chatpb.ErrChatWriteForbidden), want: tg.ErrChatWriteForbidden},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := mapMsgSendError(tt.err); got != tt.want {
+				t.Fatalf("mapMsgSendError(%v) = %v, want %v", tt.err, got, tt.want)
+			}
+		})
+	}
+}

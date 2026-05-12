@@ -74,7 +74,7 @@ func (c *MessagesCore) MessagesForwardMessages(in *tg.TLMessagesForwardMessages)
 		return nil, mapMsgSendError(err)
 	}
 
-	sources, err := orderForwardSources(sourceList, in.Id)
+	sources, err := orderForwardSources(sourceList, in.Id, sourcePeer)
 	if err != nil {
 		return nil, err
 	}
@@ -216,13 +216,16 @@ func checkForwardMessagesIDs(ids []int32, randomIDs []int64) error {
 	return nil
 }
 
-func orderForwardSources(list *msg.VectorMessageBox, ids []int32) ([]*tg.TLMessage, error) {
+func orderForwardSources(list *msg.VectorMessageBox, ids []int32, sourcePeer resolvedMessagePeer) ([]*tg.TLMessage, error) {
 	if list == nil {
 		return nil, tg.ErrMessageIdInvalid
 	}
 	byID := make(map[int32]*tg.TLMessage, len(list.Datas))
 	for _, box := range list.Datas {
 		if box == nil {
+			return nil, tg.ErrMessageIdInvalid
+		}
+		if !forwardSourceBoxMatchesPeer(box, sourcePeer) {
 			return nil, tg.ErrMessageIdInvalid
 		}
 		source, ok := box.Message.(*tg.TLMessage)
@@ -244,6 +247,10 @@ func orderForwardSources(list *msg.VectorMessageBox, ids []int32) ([]*tg.TLMessa
 		ordered = append(ordered, source)
 	}
 	return ordered, nil
+}
+
+func forwardSourceBoxMatchesPeer(box tg.MessageBoxClazz, sourcePeer resolvedMessagePeer) bool {
+	return box.PeerType == sourcePeer.PeerType && box.PeerId == sourcePeer.PeerID
 }
 
 func isForwardableMessageMedia(media tg.MessageMediaClazz) bool {
