@@ -23,8 +23,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository"
 	receiverevent "github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository/event"
+	msgrpc "github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository/rpc"
 	userupdatesclient "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/client"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
+	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
@@ -40,10 +43,17 @@ type UserUpdatesClient interface {
 	UserupdatesGetOperationResult(ctx context.Context, in *userupdates.TLUserupdatesGetOperationResult) (*userupdates.UserOperationResult, error)
 }
 
+type ChatClient interface {
+	ChatCheckChatAccess(ctx context.Context, in *chatpb.TLChatCheckChatAccess) (*chatpb.ChatAccessCheckResult, error)
+	ChatCheckMessageAction(ctx context.Context, in *chatpb.TLChatCheckMessageAction) (*chatpb.MessageActionCheckResult, error)
+	ChatGetChatParticipantIdList(ctx context.Context, in *chatpb.TLChatGetChatParticipantIdList) (*chatpb.VectorLong, error)
+}
+
 type ServiceContext struct {
 	Config            config.Config
 	Repo              MsgRepository
 	UserUpdates       UserUpdatesClient
+	Chat              ChatClient
 	ReceiverPublisher repository.ReceiverOperationPublisher
 }
 
@@ -52,10 +62,15 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	if hasRPCClientConfig(c.Userupdates) {
 		updates = userupdatesclient.NewUserupdatesClient(userupdatesclient.MustNewKitexClient(c.Userupdates))
 	}
+	var chat ChatClient
+	if hasRPCClientConfig(c.Chat) {
+		chat = msgrpc.NewChatClient(chatclient.NewChatClient(chatclient.MustNewKitexClient(c.Chat)))
+	}
 	sc := &ServiceContext{
 		Config:      c,
 		Repo:        repository.NewRepository(c),
 		UserUpdates: updates,
+		Chat:        chat,
 	}
 	if c.ReceiverOperations != nil {
 		publisher, err := receiverevent.NewKafkaReceiverOperationPublisher(c.ReceiverOperations)
