@@ -320,7 +320,7 @@ func defaultPrivacyRules(keyType int32) []tg.PrivacyRuleClazz {
 }
 
 func isValidPrivacyKey(keyType int32) bool {
-	return keyType >= tg.STATUS_TIMESTAMP && keyType <= tg.NO_PAID_MESSAGES
+	return keyType >= tg.STATUS_TIMESTAMP && keyType <= tg.SAVED_MUSIC
 }
 
 func privacyAffectsUserData(keyType int32) bool {
