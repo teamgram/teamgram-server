@@ -1421,6 +1421,76 @@ func TestMsgSendMessageV2ClearDraftWritesSenderOperationPayload(t *testing.T) {
 	}
 }
 
+func TestMsgSendMessageV2PeerTypeChatClearDraftSideEffect(t *testing.T) {
+	responsePayload := []byte(`{"schema_version":2,"pts":22,"pts_count":1,"event_type":"new_message","user_message_id":43}`)
+	responseHash := mustHashBytes(t, responsePayload)
+	updatesClient := &fakeUserUpdatesClient{
+		processWithEffectsResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
+			UserId:              1001,
+			OperationId:         payload.SenderOperationID(7001, 1001),
+			Status:              1,
+			Pts:                 22,
+			PtsCount:            1,
+			CurrentPts:          22,
+			ResponsePayload:     responsePayload,
+			ResponsePayloadHash: responseHash,
+		}),
+	}
+	chatClient := &fakeMsgChatClient{memberIDs: []int64{1001, 1002}}
+	repo := newFakeSendMessageRepositoryForChat(7001, 1)
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:        repo,
+		UserUpdates: updatesClient,
+		Chat:        chatClient,
+	})
+
+	sourceAuth := int64(9001)
+	clearBefore := int32(1_772_000_049)
+	req := &msgpb.TLMsgSendMessageV2{
+		UserId:               1001,
+		AuthKeyId:            9001,
+		PeerType:             payload.PeerTypeChat,
+		PeerId:               55,
+		ClearDraft:           true,
+		SourcePermAuthKeyId:  &sourceAuth,
+		ClearDraftBeforeDate: &clearBefore,
+		Message: []msgpb.OutboxMessageClazz{msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
+			RandomId: 12345,
+			Message: tg.MakeTLMessage(&tg.TLMessage{
+				Out:     true,
+				FromId:  tg.MakePeerUser(1001),
+				PeerId:  tg.MakePeerChat(55),
+				Message: "clear chat draft",
+				Date:    1778584910,
+			}),
+		})},
+	}
+
+	if _, err := core.MsgSendMessageV2(req); err != nil {
+		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	}
+	if updatesClient.processWithEffects == nil {
+		t.Fatal("UserupdatesProcessUserOperationWithEffects was not called")
+	}
+	var senderOp payload.MessageOperationV3
+	if err := json.Unmarshal(updatesClient.processWithEffects.Operation.Payload, &senderOp); err != nil {
+		t.Fatalf("decode sender payload: %v", err)
+	}
+	if !senderOp.ClearDraft || senderOp.SourcePermAuthKeyID != sourceAuth || senderOp.ClearDraftBeforeDate != clearBefore {
+		t.Fatalf("sender clear draft payload = %+v, want clear draft side effect", senderOp)
+	}
+	if len(updatesClient.processWithEffects.AffectedEffects) != 1 {
+		t.Fatalf("affected effects = %d, want one receiver", len(updatesClient.processWithEffects.AffectedEffects))
+	}
+	var receiverOp payload.MessageOperationV3
+	if err := json.Unmarshal(updatesClient.processWithEffects.AffectedEffects[0].Operation.Payload, &receiverOp); err != nil {
+		t.Fatalf("decode receiver payload: %v", err)
+	}
+	if receiverOp.ClearDraft || receiverOp.SourcePermAuthKeyID != 0 || receiverOp.ClearDraftBeforeDate != 0 {
+		t.Fatalf("receiver payload carried sender draft side effect: %+v", receiverOp)
+	}
+}
+
 func TestMsgSendMessageV2ReceiverDispatchUsesBrokerDurableAck(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":2,"pts":17,"pts_count":1,"event_type":"new_message","user_message_id":47}`)
 	responseHash := mustHashBytes(t, responsePayload)

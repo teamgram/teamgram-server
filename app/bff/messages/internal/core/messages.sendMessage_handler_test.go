@@ -541,6 +541,51 @@ func TestMessagesSearchHashtagRoutesToMsg(t *testing.T) {
 	}
 }
 
+func TestMessagesSearchInputPeerChatUsesChatPeerForHashtag(t *testing.T) {
+	var got *msg.TLMsgSearchHashtag
+	var checked *chatpb.TLChatCheckChatAccess
+	reply := tg.MakeTLMessagesMessages(&tg.TLMessagesMessages{
+		Messages: []tg.MessageClazz{},
+		Chats:    []tg.ChatClazz{},
+		Users:    []tg.UserClazz{},
+	}).ToMessagesMessages()
+	c := newMessagesCoreWithRepo(&repository.Repository{
+		ChatClient: &messagesFakeChatClient{
+			checkChatAccess: func(_ context.Context, in *chatpb.TLChatCheckChatAccess) (*chatpb.ChatAccessCheckResult, error) {
+				checked = in
+				return chatpb.MakeTLChatAccessCheckResult(&chatpb.TLChatAccessCheckResult{
+					SelfId: in.SelfId, ChatId: in.ChatId, AccessKind: in.AccessKind,
+				}).ToChatAccessCheckResult(), nil
+			},
+		},
+		MsgClient: &messagesFakeMsgClient{
+			searchHashtag: func(_ context.Context, in *msg.TLMsgSearchHashtag) (*tg.MessagesMessages, error) {
+				got = in
+				return reply, nil
+			},
+		},
+	}, 1001, 9001)
+
+	r, err := c.MessagesSearch(&tg.TLMessagesSearch{
+		Peer:   inputPeerChat(55),
+		Q:      "#topic",
+		Limit:  20,
+		Filter: tg.MakeTLInputMessagesFilterEmpty(&tg.TLInputMessagesFilterEmpty{}),
+	})
+	if err != nil {
+		t.Fatalf("MessagesSearch error = %v", err)
+	}
+	if r != reply {
+		t.Fatalf("reply mismatch: got %p want %p", r, reply)
+	}
+	if checked == nil || checked.ChatId != 55 || checked.SelfId != 1001 || checked.AccessKind != chatpb.ChatAccessSearch {
+		t.Fatalf("chat access check = %+v, want search for chat 55", checked)
+	}
+	if got == nil || got.UserId != 1001 || got.AuthKeyId != 9001 || got.PeerType != payload.PeerTypeChat || got.PeerId != 55 || got.HashTag != "topic" || got.Limit != 20 {
+		t.Fatalf("MsgSearchHashtag request = %+v, want PeerTypeChat/chat 55", got)
+	}
+}
+
 func TestMessagesSearchEmptyQueryRejectedForEmptyFilter(t *testing.T) {
 	c := newSendMsgCore(&messagesFakeMsgClient{}, 100, 200)
 

@@ -22,6 +22,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -35,11 +36,16 @@ func (c *MessagesCore) MessagesSearch(in *tg.TLMessagesSearch) (*tg.MessagesMess
 		return nil, tg.ErrInputRequestInvalid
 	}
 
-	peerUserID, ok := resolveUserPeerID(in.Peer, c.MD.UserId)
+	peer, ok := resolveMessagePeer(in.Peer, c.MD.UserId)
 	if !ok {
 		// c.Logger.Errorf("messages.search - error: peerId invalid")
 		// return nil, tg.Err400PeerIdInvalid
 		return emptyMessagesMessages(), nil
+	}
+	if peer.PeerType == payload.PeerTypeChat {
+		if err := c.checkChatAccess(peer.PeerID, chatpb.ChatAccessSearch); err != nil {
+			return nil, err
+		}
 	}
 	if _, ok := in.Filter.(*tg.TLInputMessagesFilterEmpty); ok && in.Q == "" && in.FromId == nil {
 		c.Logger.Errorf("messages.search - error: not in filter")
@@ -50,15 +56,15 @@ func (c *MessagesCore) MessagesSearch(in *tg.TLMessagesSearch) (*tg.MessagesMess
 			r, err := c.svcCtx.Repo.MsgClient.MsgSearchHashtag(c.ctx, &msg.TLMsgSearchHashtag{
 				UserId:    c.MD.UserId,
 				AuthKeyId: c.MD.PermAuthKeyId,
-				PeerType:  payload.PeerTypeUser,
-				PeerId:    peerUserID,
+				PeerType:  peer.PeerType,
+				PeerId:    peer.PeerID,
 				HashTag:   tag,
 				OffsetId:  in.OffsetId,
 				Limit:     in.Limit,
 			})
 			if err != nil {
-				c.Logger.Errorf("messages.search hashtag - msg error: self_user_id: %d, peer_id: %d, tag: %s, err: %v",
-					c.MD.UserId, peerUserID, tag, err)
+				c.Logger.Errorf("messages.search hashtag - msg error: self_user_id: %d, peer_type: %d, peer_id: %d, tag: %s, err: %v",
+					c.MD.UserId, peer.PeerType, peer.PeerID, tag, err)
 				return nil, mapMsgSendError(err)
 			}
 			if err = userprojection.FillMessagesMessagesUsers(c.ctx, c.svcCtx.Repo.UserClient, c.MD.UserId, r, userprojection.MissingStoredReference); err != nil {
