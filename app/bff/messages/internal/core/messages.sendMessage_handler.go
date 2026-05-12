@@ -21,6 +21,7 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -38,7 +39,7 @@ func (c *MessagesCore) MessagesSendMessage(in *tg.TLMessagesSendMessage) (*tg.Up
 		return nil, tg.ErrInputRequestInvalid
 	}
 
-	peerUserID, ok := resolveUserPeerID(in.Peer, selfUserID)
+	peer, ok := resolveMessagePeer(in.Peer, selfUserID)
 	if !ok {
 		return nil, tg.Err400PeerIdInvalid
 	}
@@ -54,15 +55,24 @@ func (c *MessagesCore) MessagesSendMessage(in *tg.TLMessagesSendMessage) (*tg.Up
 	if err := checkUnsupportedFields(in); err != nil {
 		return nil, err
 	}
+	if peer.PeerType == payload.PeerTypeChat {
+		if err := c.checkChatMessageAction(peer.PeerID, chatpb.MessageActionSendText, ""); err != nil {
+			return nil, err
+		}
+	}
 	replyHeader, err := makeMessageReplyHeader(in.ReplyTo)
 	if err != nil {
 		return nil, err
+	}
+	peerID := tg.MakePeerUser(peer.PeerID)
+	if peer.PeerType == payload.PeerTypeChat {
+		peerID = tg.MakePeerChat(peer.PeerID)
 	}
 
 	outgoingMsg := tg.MakeTLMessage(&tg.TLMessage{
 		Out:      true,
 		FromId:   tg.MakePeerUser(selfUserID),
-		PeerId:   tg.MakePeerUser(peerUserID),
+		PeerId:   peerID,
 		ReplyTo:  replyHeader,
 		Date:     int32(time.Now().Unix()),
 		Message:  in.Message,
@@ -82,13 +92,13 @@ func (c *MessagesCore) MessagesSendMessage(in *tg.TLMessagesSendMessage) (*tg.Up
 		AuthKeyId:            authKeyID,
 		SourcePermAuthKeyId:  &authKeyID,
 		ClearDraftBeforeDate: &clearDraftBeforeDate,
-		PeerType:             payload.PeerTypeUser,
-		PeerId:               peerUserID,
+		PeerType:             peer.PeerType,
+		PeerId:               peer.PeerID,
 		Message:              []msg.OutboxMessageClazz{outbox},
 	})
 	if err != nil {
-		c.Logger.Errorf("messages.sendMessage - msg error: self_user_id: %d, peer_id: %d, random_id: %d, err: %v",
-			selfUserID, peerUserID, in.RandomId, err)
+		c.Logger.Errorf("messages.sendMessage - msg error: self_user_id: %d, peer_type: %d, peer_id: %d, random_id: %d, err: %v",
+			selfUserID, peer.PeerType, peer.PeerID, in.RandomId, err)
 		return nil, mapMsgSendError(err)
 	}
 

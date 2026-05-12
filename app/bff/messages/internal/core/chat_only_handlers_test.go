@@ -15,11 +15,21 @@ import (
 type messagesFakeChatClient struct {
 	chatclient.ChatClient
 
-	toggleNoForwards func(context.Context, *chatpb.TLChatToggleNoForwards) (*tg.MutableChat, error)
+	toggleNoForwards   func(context.Context, *chatpb.TLChatToggleNoForwards) (*tg.MutableChat, error)
+	checkMessageAction func(context.Context, *chatpb.TLChatCheckMessageAction) (*chatpb.MessageActionCheckResult, error)
+	checkChatAccess    func(context.Context, *chatpb.TLChatCheckChatAccess) (*chatpb.ChatAccessCheckResult, error)
 }
 
 func (f *messagesFakeChatClient) ChatToggleNoForwards(ctx context.Context, in *chatpb.TLChatToggleNoForwards) (*tg.MutableChat, error) {
 	return f.toggleNoForwards(ctx, in)
+}
+
+func (f *messagesFakeChatClient) ChatCheckMessageAction(ctx context.Context, in *chatpb.TLChatCheckMessageAction) (*chatpb.MessageActionCheckResult, error) {
+	return f.checkMessageAction(ctx, in)
+}
+
+func (f *messagesFakeChatClient) ChatCheckChatAccess(ctx context.Context, in *chatpb.TLChatCheckChatAccess) (*chatpb.ChatAccessCheckResult, error) {
+	return f.checkChatAccess(ctx, in)
 }
 
 func newMessagesCore(client chatclient.ChatClient, selfID int64) *MessagesCore {

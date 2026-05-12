@@ -24,6 +24,7 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -33,8 +34,17 @@ func (c *MsgCore) MsgDeleteHistory(in *msg.TLMsgDeleteHistory) (*tg.MessagesAffe
 	if in == nil || in.UserId <= 0 || in.PeerId <= 0 || in.MaxId < 0 {
 		return nil, fmt.Errorf("%w: invalid delete history request", msg.ErrSendStateConflict)
 	}
-	if in.PeerType != payload.PeerTypeUser {
-		return nil, fmt.Errorf("%w: delete history first slice only supports user peer", msg.ErrSendStateConflict)
+	if in.PeerType != payload.PeerTypeUser && in.PeerType != payload.PeerTypeChat {
+		return nil, fmt.Errorf("%w: unsupported delete history peer type=%d", msg.ErrSendStateConflict, in.PeerType)
+	}
+	if in.PeerType == payload.PeerTypeChat {
+		action := chatpb.MessageActionDeleteLocal
+		if in.Revoke {
+			action = chatpb.MessageActionDeleteRevoke
+		}
+		if err := c.checkChatAction(in.UserId, in.PeerId, action, ""); err != nil {
+			return nil, err
+		}
 	}
 	maxPeerSeq := int64(0)
 	if in.MaxId > 0 {
@@ -47,23 +57,16 @@ func (c *MsgCore) MsgDeleteHistory(in *msg.TLMsgDeleteHistory) (*tg.MessagesAffe
 		}
 		maxPeerSeq = resolved.PeerSeq
 	}
-	body, err := json.Marshal(payload.MessageOperationV1{
-		SchemaVersion:    payload.MessageOperationSchemaVersion,
-		OperationKind:    payload.OperationKindDeleteHistory,
-		PeerType:         in.PeerType,
-		PeerID:           in.PeerId,
-		PeerSeq:          maxPeerSeq,
-		FromUserID:       in.UserId,
-		ToUserID:         in.UserId,
-		Date:             int32(time.Now().Unix()),
-		DeleteMaxPeerSeq: maxPeerSeq,
-		JustClear:        in.JustClear,
-		Revoke:           in.Revoke,
-	})
+	date := int32(time.Now().Unix())
+	body, err := buildDeleteHistoryPayload(in.UserId, in.UserId, in.PeerType, in.PeerId, maxPeerSeq, date, in.JustClear, in.Revoke)
 	if err != nil {
-		return nil, fmt.Errorf("%w: marshal delete history operation user_id=%d peer_id=%d", msg.ErrMsgStorage, in.UserId, in.PeerId)
+		return nil, err
 	}
-	result, err := c.processUserDialogOperation(in.UserId, in.AuthKeyId, in.PeerType, in.PeerId, deleteHistoryOperationID(in.UserId, in.PeerId, maxPeerSeq, in.JustClear, in.Revoke, in.AuthKeyId), body)
+	effects, err := c.buildDeleteHistoryChatReceiverEffects(in, maxPeerSeq, date)
+	if err != nil {
+		return nil, err
+	}
+	result, err := c.processUserDialogOperation(in.UserId, in.AuthKeyId, in.PeerType, in.PeerId, deleteHistoryOperationID(in.UserId, in.PeerId, maxPeerSeq, in.JustClear, in.Revoke, in.AuthKeyId), body, effects)
 	if err != nil {
 		return nil, err
 	}
@@ -76,4 +79,57 @@ func (c *MsgCore) MsgDeleteHistory(in *msg.TLMsgDeleteHistory) (*tg.MessagesAffe
 
 func deleteHistoryOperationID(userID int64, peerID int64, maxPeerSeq int64, justClear bool, revoke bool, authKeyID int64) string {
 	return fmt.Sprintf("v2:dialog:delete_history:user:%d:peer:%d:max_peer_seq:%d:clear:%t:revoke:%t:auth:%d", userID, peerID, maxPeerSeq, justClear, revoke, authKeyID)
+}
+
+func buildDeleteHistoryPayload(fromUserID int64, toUserID int64, peerType int32, peerID int64, maxPeerSeq int64, date int32, justClear bool, revoke bool) ([]byte, error) {
+	body, err := json.Marshal(payload.MessageOperationV1{
+		SchemaVersion:    payload.MessageOperationSchemaVersion,
+		OperationKind:    payload.OperationKindDeleteHistory,
+		PeerType:         peerType,
+		PeerID:           peerID,
+		PeerSeq:          maxPeerSeq,
+		FromUserID:       fromUserID,
+		ToUserID:         toUserID,
+		Date:             date,
+		DeleteMaxPeerSeq: maxPeerSeq,
+		JustClear:        justClear,
+		Revoke:           revoke,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("%w: marshal delete history operation user_id=%d peer_id=%d", msg.ErrMsgStorage, fromUserID, peerID)
+	}
+	return body, nil
+}
+
+func (c *MsgCore) buildDeleteHistoryChatReceiverEffects(in *msg.TLMsgDeleteHistory, maxPeerSeq int64, date int32) ([]OperationEnvelope, error) {
+	if in.PeerType != payload.PeerTypeChat || !in.Revoke {
+		return nil, nil
+	}
+	receiverIDs, err := c.activeChatReceiverIDs(in.PeerId, in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	effects := make([]OperationEnvelope, 0, len(receiverIDs))
+	for _, receiverUserID := range receiverIDs {
+		peerBody, err := buildDeleteHistoryPayload(in.UserId, receiverUserID, payload.PeerTypeChat, in.PeerId, maxPeerSeq, date, in.JustClear, in.Revoke)
+		if err != nil {
+			return nil, err
+		}
+		effects = append(effects, OperationEnvelope{
+			UserID:               receiverUserID,
+			OperationID:          deleteHistoryOperationID(receiverUserID, in.PeerId, maxPeerSeq, in.JustClear, in.Revoke, 0),
+			OpType:               payload.OpTypeSendMessage,
+			OperationKind:        payload.OperationKindDeleteHistory,
+			ActorUserID:          in.UserId,
+			PeerType:             payload.PeerTypeChat,
+			PeerID:               in.PeerId,
+			CanonicalPeerSeq:     int64Ptr(maxPeerSeq),
+			PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+			PayloadCodec:         payload.PayloadCodecJSON,
+			PayloadHash:          payload.HashBytes(peerBody),
+			Payload:              peerBody,
+			DeliveryPolicy:       DeliveryPolicyDurableAsync,
+		})
+	}
+	return effects, nil
 }

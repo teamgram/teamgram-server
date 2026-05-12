@@ -153,6 +153,7 @@ func TestOperationDispatcherNilServiceContextReturnsSentinel(t *testing.T) {
 
 func (f *fakeUserUpdatesClient) UserupdatesProcessUserOperationWithEffects(_ context.Context, in *userupdates.TLUserupdatesProcessUserOperationWithEffects) (*userupdates.UserOperationResult, error) {
 	f.processWithEffects = in
+	f.processWithEffectsList = append(f.processWithEffectsList, in)
 	f.processedOperations = append(f.processedOperations, in.Operation)
 	if f.processWithEffectsErr != nil {
 		return nil, f.processWithEffectsErr

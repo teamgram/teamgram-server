@@ -195,6 +195,41 @@ func TestParticipantStateRoleAndPermissions(t *testing.T) {
 	}
 }
 
+func TestCanPinMessages(t *testing.T) {
+	creator := participantWithRights(1, ChatMemberCreator, ChatMemberStateNormal, nil)
+	adminWithPin := participantWithRights(2, ChatMemberAdmin, ChatMemberStateNormal, &tg.TLChatAdminRights{
+		PinMessages: true,
+	})
+	adminWithoutPin := participantWithRights(3, ChatMemberAdmin, ChatMemberStateNormal, &tg.TLChatAdminRights{
+		BanUsers: true,
+	})
+	adminWithoutRights := participantWithRights(4, ChatMemberAdmin, ChatMemberStateNormal, nil)
+	normalWithPin := participantWithRights(5, ChatMemberNormal, ChatMemberStateNormal, &tg.TLChatAdminRights{
+		PinMessages: true,
+	})
+	leftAdminWithPin := participantWithRights(6, ChatMemberAdmin, ChatMemberStateLeft, &tg.TLChatAdminRights{
+		PinMessages: true,
+	})
+
+	if !CanPinMessages(creator) {
+		t.Fatal("CanPinMessages(creator) = false, want true")
+	}
+	if !CanPinMessages(adminWithPin) {
+		t.Fatal("CanPinMessages(admin with pin right) = false, want true")
+	}
+	for name, participant := range map[string]*tg.ImmutableChatParticipant{
+		"nil":                  nil,
+		"admin without pin":    adminWithoutPin,
+		"admin without rights": adminWithoutRights,
+		"normal with pin":      normalWithPin,
+		"left admin with pin":  leftAdminWithPin,
+	} {
+		if CanPinMessages(participant) {
+			t.Fatalf("CanPinMessages(%s) = true, want false", name)
+		}
+	}
+}
+
 func participantWithRights(userID int64, participantType int32, state int32, rights *tg.TLChatAdminRights) *tg.ImmutableChatParticipant {
 	return tg.MakeTLImmutableChatParticipant(&tg.TLImmutableChatParticipant{
 		UserId:          userID,

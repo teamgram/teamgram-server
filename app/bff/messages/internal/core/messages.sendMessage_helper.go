@@ -106,6 +106,9 @@ func mapMsgSendError(err error) error {
 	if err == nil {
 		return nil
 	}
+	if mapped, ok := mapKnownChatMessageError(err); ok {
+		return mapped
+	}
 	switch {
 	case errors.Is(err, context.DeadlineExceeded), errors.Is(err, context.Canceled):
 		return tg.ErrTimeout
@@ -144,6 +147,16 @@ func mapMsgEditError(err error) error {
 }
 
 func isMsgServiceError(err error, target error) bool {
+	if err == nil || target == nil {
+		return false
+	}
+	if errors.Is(err, target) {
+		return true
+	}
+	return strings.Contains(err.Error(), target.Error())
+}
+
+func isChatMessageServiceError(err error, target error) bool {
 	if err == nil || target == nil {
 		return false
 	}

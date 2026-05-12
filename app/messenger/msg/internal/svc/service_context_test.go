@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository"
 )
 
@@ -28,5 +29,12 @@ func TestServiceContextCloseClosesReceiverPublisher(t *testing.T) {
 	}
 	if publisher.closed != 1 {
 		t.Fatalf("closed = %d, want 1", publisher.closed)
+	}
+}
+
+func TestServiceContextLeavesChatClientNilWithoutConfig(t *testing.T) {
+	sc := NewServiceContext(config.Config{})
+	if sc.Chat != nil {
+		t.Fatalf("Chat client = %#v, want nil without config", sc.Chat)
 	}
 }

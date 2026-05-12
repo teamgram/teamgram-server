@@ -28,6 +28,7 @@ type Config struct {
 	Mysql       sqlx.Config         `json:",optional"`
 	Idgen       kitex.RpcClientConf `json:",optional"`
 	Userupdates kitex.RpcClientConf `json:",optional"`
+	Chat        kitex.RpcClientConf `json:",optional"`
 	// ReceiverOperations is nil when durable receiver production is disabled.
 	ReceiverOperations *kafka.KafkaProducerConf `json:",optional"`
 }

@@ -64,6 +64,10 @@ type updatePinnedMessageClient interface {
 	MsgUpdatePinnedMessage(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error)
 }
 
+type unpinAllMessagesClient interface {
+	MsgUnpinAllMessages(ctx context.Context, in *msg.TLMsgUnpinAllMessages) (*tg.MessagesAffectedHistory, error)
+}
+
 type deleteMessagesClient interface {
 	MsgDeleteMessages(ctx context.Context, in *msg.TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error)
 }

@@ -18,15 +18,71 @@
 package core
 
 import (
+	"fmt"
+
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MsgUnpinAllMessages
 // msg.unpinAllMessages user_id:long auth_key_id:long peer_type:int peer_id:long = messages.AffectedHistory;
 func (c *MsgCore) MsgUnpinAllMessages(in *msg.TLMsgUnpinAllMessages) (*tg.MessagesAffectedHistory, error) {
-	// TODO: not impl
-	c.Logger.Errorf("msg.unpinAllMessages - error: method MsgUnpinAllMessages not impl")
+	if in == nil || in.UserId <= 0 || in.PeerId <= 0 {
+		return nil, fmt.Errorf("%w: invalid unpin all request", msg.ErrSendStateConflict)
+	}
+	if in.PeerType != payload.PeerTypeUser && in.PeerType != payload.PeerTypeChat {
+		return nil, fmt.Errorf("%w: unsupported unpin all peer type=%d", msg.ErrSendStateConflict, in.PeerType)
+	}
+	if in.PeerType == payload.PeerTypeChat {
+		if err := c.checkChatAction(in.UserId, in.PeerId, chatpb.MessageActionUnpinAll, ""); err != nil {
+			return nil, err
+		}
+	}
+	pin := &msg.TLMsgUpdatePinnedMessage{
+		UserId:    in.UserId,
+		AuthKeyId: in.AuthKeyId,
+		Unpin:     true,
+		PeerType:  in.PeerType,
+		PeerId:    in.PeerId,
+		Id:        0,
+	}
+	body, hashBytes, err := buildPinnedMessageOperation(pin, in.UserId, 0, 0, 0)
+	if err != nil {
+		return nil, err
+	}
+	effects, err := c.buildUpdatePinnedChatReceiverEffects(pin, 0, 0, 0)
+	if err != nil {
+		return nil, err
+	}
+	authKeyID := in.AuthKeyId
+	result, err := c.dispatchRequesterSync(OperationEnvelope{
+		UserID:               in.UserId,
+		OperationID:          updatePinnedOperationID(in.UserId, in.PeerId, 0, true, in.AuthKeyId),
+		OpType:               payload.OpTypeSendMessage,
+		OperationKind:        payload.OperationKindUpdatePinnedMessage,
+		ActorUserID:          in.UserId,
+		AuthKeyID:            &authKeyID,
+		AuthKeyIDExclude:     &authKeyID,
+		PeerType:             in.PeerType,
+		PeerID:               in.PeerId,
+		PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+		PayloadCodec:         payload.PayloadCodecJSON,
+		PayloadHash:          hashBytes,
+		Payload:              body,
+		DeliveryPolicy:       DeliveryPolicyRequesterSync,
+	}, effects)
+	if err != nil {
+		return nil, err
+	}
+	pts, err := int64ToInt32(result.Pts, "pts")
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.MakeTLMessagesAffectedHistory(&tg.TLMessagesAffectedHistory{
+		Pts:      pts,
+		PtsCount: result.PtsCount,
+	}).ToMessagesAffectedHistory(), nil
 }

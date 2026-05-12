@@ -22,6 +22,7 @@ import (
 	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -41,11 +42,11 @@ func (c *MessagesCore) MessagesForwardMessages(in *tg.TLMessagesForwardMessages)
 		return nil, tg.ErrInputRequestInvalid
 	}
 
-	sourcePeerID, ok := resolveUserPeerID(in.FromPeer, selfUserID)
+	sourcePeer, ok := resolveMessagePeer(in.FromPeer, selfUserID)
 	if !ok {
 		return nil, tg.Err400PeerIdInvalid
 	}
-	peerUserID, saved, ok := resolveForwardTargetPeer(in.ToPeer, selfUserID)
+	targetPeer, saved, ok := resolveForwardTargetPeer(in.ToPeer, selfUserID)
 	if !ok {
 		return nil, tg.Err400PeerIdInvalid
 	}
@@ -56,6 +57,11 @@ func (c *MessagesCore) MessagesForwardMessages(in *tg.TLMessagesForwardMessages)
 	if err := checkForwardMessagesIDs(in.Id, in.RandomId); err != nil {
 		return nil, err
 	}
+	if targetPeer.PeerType == payload.PeerTypeChat {
+		if err := c.checkChatMessageAction(targetPeer.PeerID, chatpb.MessageActionForwardToChat, "forward"); err != nil {
+			return nil, err
+		}
+	}
 
 	var sendClient sendMessageClient = c.svcCtx.Repo.MsgClient
 	sourceList, err := sendClient.MsgGetUserMessageList(c.ctx, &msg.TLMsgGetUserMessageList{
@@ -63,18 +69,18 @@ func (c *MessagesCore) MessagesForwardMessages(in *tg.TLMessagesForwardMessages)
 		IdList: in.Id,
 	})
 	if err != nil {
-		c.Logger.Errorf("messages.forwardMessages - get source messages failed: self_user_id: %d, source_peer_id: %d, ids: %v, err: %v",
-			selfUserID, sourcePeerID, in.Id, err)
+		c.Logger.Errorf("messages.forwardMessages - get source messages failed: self_user_id: %d, source_peer_type: %d, source_peer_id: %d, ids: %v, err: %v",
+			selfUserID, sourcePeer.PeerType, sourcePeer.PeerID, in.Id, err)
 		return nil, mapMsgSendError(err)
 	}
 
-	sources, err := orderForwardSources(sourceList, in.Id)
+	sources, err := orderForwardSources(sourceList, in.Id, sourcePeer)
 	if err != nil {
 		return nil, err
 	}
 
 	date := int32(time.Now().Unix())
-	sourcePeer := tg.MakePeerUser(sourcePeerID)
+	sourceTLPeer := messagePeerClazz(sourcePeer.PeerType, sourcePeer.PeerID)
 	forwardedGroupedIDs := make(map[int64]int64)
 	outboxes := make([]msg.OutboxMessageClazz, 0, len(sources))
 	for i, source := range sources {
@@ -99,8 +105,9 @@ func (c *MessagesCore) MessagesForwardMessages(in *tg.TLMessagesForwardMessages)
 			Silent:          in.Silent,
 			Noforwards:      in.Noforwards,
 			FromUserID:      selfUserID,
-			PeerUserID:      peerUserID,
-			SourcePeer:      sourcePeer,
+			PeerType:        targetPeer.PeerType,
+			PeerID:          targetPeer.PeerID,
+			SourcePeer:      sourceTLPeer,
 			SourceMessageID: in.Id[i],
 			Date:            date,
 			Source:          source,
@@ -113,13 +120,13 @@ func (c *MessagesCore) MessagesForwardMessages(in *tg.TLMessagesForwardMessages)
 		UserId:              selfUserID,
 		AuthKeyId:           authKeyID,
 		SourcePermAuthKeyId: &authKeyID,
-		PeerType:            payload.PeerTypeUser,
-		PeerId:              peerUserID,
+		PeerType:            targetPeer.PeerType,
+		PeerId:              targetPeer.PeerID,
 		Message:             outboxes,
 	})
 	if err != nil {
-		c.Logger.Errorf("messages.forwardMessages - msg error: self_user_id: %d, peer_id: %d, ids: %v, err: %v",
-			selfUserID, peerUserID, in.Id, err)
+		c.Logger.Errorf("messages.forwardMessages - msg error: self_user_id: %d, peer_type: %d, peer_id: %d, ids: %v, err: %v",
+			selfUserID, targetPeer.PeerType, targetPeer.PeerID, in.Id, err)
 		return nil, mapMsgSendError(err)
 	}
 	if err := userprojection.FillUpdatesUsers(c.ctx, c.svcCtx.Repo.UserClient, selfUserID, updates, userprojection.MissingStoredReference); err != nil {
@@ -129,16 +136,12 @@ func (c *MessagesCore) MessagesForwardMessages(in *tg.TLMessagesForwardMessages)
 	return updates, nil
 }
 
-func resolveForwardTargetPeer(peer tg.InputPeerClazz, selfUserID int64) (int64, bool, bool) {
-	p := tg.FromInputPeer2(selfUserID, peer)
-	switch p.PeerType {
-	case tg.PEER_SELF:
-		return selfUserID, true, selfUserID > 0
-	case tg.PEER_USER:
-		return p.PeerId, p.PeerId == selfUserID, p.PeerId > 0
-	default:
-		return 0, false, false
+func resolveForwardTargetPeer(peer tg.InputPeerClazz, selfUserID int64) (resolvedMessagePeer, bool, bool) {
+	p, ok := resolveMessagePeer(peer, selfUserID)
+	if !ok {
+		return resolvedMessagePeer{}, false, false
 	}
+	return p, p.PeerType == payload.PeerTypeUser && p.PeerID == selfUserID, true
 }
 
 func checkForwardMessagesUnsupportedFields(in *tg.TLMessagesForwardMessages) error {
@@ -213,13 +216,16 @@ func checkForwardMessagesIDs(ids []int32, randomIDs []int64) error {
 	return nil
 }
 
-func orderForwardSources(list *msg.VectorMessageBox, ids []int32) ([]*tg.TLMessage, error) {
+func orderForwardSources(list *msg.VectorMessageBox, ids []int32, sourcePeer resolvedMessagePeer) ([]*tg.TLMessage, error) {
 	if list == nil {
 		return nil, tg.ErrMessageIdInvalid
 	}
 	byID := make(map[int32]*tg.TLMessage, len(list.Datas))
 	for _, box := range list.Datas {
 		if box == nil {
+			return nil, tg.ErrMessageIdInvalid
+		}
+		if !forwardSourceBoxMatchesPeer(box, sourcePeer) {
 			return nil, tg.ErrMessageIdInvalid
 		}
 		source, ok := box.Message.(*tg.TLMessage)
@@ -243,6 +249,10 @@ func orderForwardSources(list *msg.VectorMessageBox, ids []int32) ([]*tg.TLMessa
 	return ordered, nil
 }
 
+func forwardSourceBoxMatchesPeer(box tg.MessageBoxClazz, sourcePeer resolvedMessagePeer) bool {
+	return box.PeerType == sourcePeer.PeerType && box.PeerId == sourcePeer.PeerID
+}
+
 func isForwardableMessageMedia(media tg.MessageMediaClazz) bool {
 	switch media.(type) {
 	case nil, *tg.TLMessageMediaEmpty, *tg.TLMessageMediaPhoto, *tg.TLMessageMediaDocument:
@@ -258,7 +268,8 @@ type forwardOutboxInput struct {
 	Silent          bool
 	Noforwards      bool
 	FromUserID      int64
-	PeerUserID      int64
+	PeerType        int32
+	PeerID          int64
 	SourcePeer      tg.PeerClazz
 	SourceMessageID int32
 	Date            int32
@@ -275,7 +286,7 @@ func buildForwardOutbox(in forwardOutboxInput) msg.OutboxMessageClazz {
 		Silent:     in.Silent,
 		Noforwards: in.Noforwards,
 		FromId:     tg.MakePeerUser(in.FromUserID),
-		PeerId:     tg.MakePeerUser(in.PeerUserID),
+		PeerId:     messagePeerClazz(in.PeerType, in.PeerID),
 		Date:       in.Date,
 		Message:    in.Source.Message,
 		Media:      in.Source.Media,
@@ -331,10 +342,34 @@ func forwardHeaderForSource(source *tg.TLMessage, sourcePeer tg.PeerClazz, sourc
 		date = source.Date
 		fromID = source.FromId
 	}
+	if fromID == nil {
+		fromID = sourcePeer
+	}
+	sourcePeerHint := forwardSourcePeerHint(sourcePeer, fromID)
 	return tg.MakeTLMessageFwdHeader(&tg.TLMessageFwdHeader{
 		FromId:         fromID,
 		Date:           date,
-		SavedFromPeer:  savedFromPeer,
+		SavedFromPeer:  firstPeer(savedFromPeer, sourcePeerHint),
 		SavedFromMsgId: savedFromMessageID,
 	})
+}
+
+func forwardSourcePeerHint(sourcePeer tg.PeerClazz, fromID tg.PeerClazz) tg.PeerClazz {
+	sourceChat, ok := sourcePeer.(*tg.TLPeerChat)
+	if !ok || sourceChat == nil {
+		return nil
+	}
+	if fromChat, ok := fromID.(*tg.TLPeerChat); ok && fromChat != nil && fromChat.ChatId == sourceChat.ChatId {
+		return nil
+	}
+	return sourcePeer
+}
+
+func firstPeer(peers ...tg.PeerClazz) tg.PeerClazz {
+	for _, peer := range peers {
+		if peer != nil {
+			return peer
+		}
+	}
+	return nil
 }

@@ -30,5 +30,5 @@ func (c *MessagesCore) MessagesSearchGlobal(in *tg.TLMessagesSearchGlobal) (*tg.
 		return nil, tg.ErrInputRequestInvalid
 	}
 
-	return emptyMessagesMessages(), nil
+	return nil, tg.ErrMethodNotImpl
 }

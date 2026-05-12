@@ -28,6 +28,8 @@ type Client interface {
 	ChatGetMutableChat(ctx context.Context, req *chat.TLChatGetMutableChat, callOptions ...callopt.Option) (r *tg.MutableChat, err error)
 	ChatGetChatListByIdList(ctx context.Context, req *chat.TLChatGetChatListByIdList, callOptions ...callopt.Option) (r *chat.VectorMutableChat, err error)
 	ChatGetChatBySelfId(ctx context.Context, req *chat.TLChatGetChatBySelfId, callOptions ...callopt.Option) (r *tg.MutableChat, err error)
+	ChatCheckChatAccess(ctx context.Context, req *chat.TLChatCheckChatAccess, callOptions ...callopt.Option) (r *chat.ChatAccessCheckResult, err error)
+	ChatCheckMessageAction(ctx context.Context, req *chat.TLChatCheckMessageAction, callOptions ...callopt.Option) (r *chat.MessageActionCheckResult, err error)
 	ChatCreateChat2(ctx context.Context, req *chat.TLChatCreateChat2, callOptions ...callopt.Option) (r *tg.MutableChat, err error)
 	ChatDeleteChat(ctx context.Context, req *chat.TLChatDeleteChat, callOptions ...callopt.Option) (r *tg.MutableChat, err error)
 	ChatDeleteChatUser(ctx context.Context, req *chat.TLChatDeleteChatUser, callOptions ...callopt.Option) (r *tg.MutableChat, err error)
@@ -111,6 +113,16 @@ func (p *kChatClient) ChatGetChatListByIdList(ctx context.Context, req *chat.TLC
 func (p *kChatClient) ChatGetChatBySelfId(ctx context.Context, req *chat.TLChatGetChatBySelfId, callOptions ...callopt.Option) (r *tg.MutableChat, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.ChatGetChatBySelfId(ctx, req)
+}
+
+func (p *kChatClient) ChatCheckChatAccess(ctx context.Context, req *chat.TLChatCheckChatAccess, callOptions ...callopt.Option) (r *chat.ChatAccessCheckResult, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.ChatCheckChatAccess(ctx, req)
+}
+
+func (p *kChatClient) ChatCheckMessageAction(ctx context.Context, req *chat.TLChatCheckMessageAction, callOptions ...callopt.Option) (r *chat.MessageActionCheckResult, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.ChatCheckMessageAction(ctx, req)
 }
 
 func (p *kChatClient) ChatCreateChat2(ctx context.Context, req *chat.TLChatCreateChat2, callOptions ...callopt.Option) (r *tg.MutableChat, err error) {

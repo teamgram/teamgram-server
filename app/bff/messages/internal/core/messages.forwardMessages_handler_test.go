@@ -6,8 +6,10 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/teamgram/teamgram-server/v2/app/bff/messages/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -26,7 +28,7 @@ func TestMessagesForwardMessagesReordersSourcesAndSendsBatch(t *testing.T) {
 					MessageId: 2,
 					UserId:    100,
 					PeerType:  payload.PeerTypeUser,
-					PeerId:    100,
+					PeerId:    300,
 					Message: tg.MakeTLMessage(&tg.TLMessage{
 						Id:      2,
 						FromId:  tg.MakePeerUser(302),
@@ -134,6 +136,76 @@ func TestMessagesForwardMessagesReordersSourcesAndSendsBatch(t *testing.T) {
 	}
 }
 
+func TestMessagesForwardMessagesAllowsChatSourceAndTarget(t *testing.T) {
+	var got *msg.TLMsgSendMessageV2
+	var checked *chatpb.TLChatCheckMessageAction
+	core := newMessagesCoreWithRepo(&repository.Repository{
+		ChatClient: &messagesFakeChatClient{
+			checkMessageAction: func(_ context.Context, in *chatpb.TLChatCheckMessageAction) (*chatpb.MessageActionCheckResult, error) {
+				checked = in
+				return chatpb.MakeTLMessageActionCheckResult(&chatpb.TLMessageActionCheckResult{
+					SelfId: in.SelfId, ChatId: in.ChatId, Action: in.Action, MediaKind: in.MediaKind,
+				}).ToMessageActionCheckResult(), nil
+			},
+		},
+		MsgClient: &messagesFakeMsgClient{
+			getUserMessageList: func(_ context.Context, _ *msg.TLMsgGetUserMessageList) (*msg.VectorMessageBox, error) {
+				return &msg.VectorMessageBox{Datas: []tg.MessageBoxClazz{
+					tg.MakeTLMessageBox(&tg.TLMessageBox{
+						MessageId: 1,
+						UserId:    1001,
+						PeerType:  payload.PeerTypeChat,
+						PeerId:    44,
+						Message: tg.MakeTLMessage(&tg.TLMessage{
+							Id:      1,
+							FromId:  tg.MakePeerUser(2002),
+							PeerId:  tg.MakePeerChat(44),
+							Date:    2001,
+							Message: "from chat",
+						}),
+					}),
+				}}, nil
+			},
+			sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+				got = in
+				return testUpdates(), nil
+			},
+		},
+	}, 1001, 9001)
+
+	_, err := core.MessagesForwardMessages(&tg.TLMessagesForwardMessages{
+		FromPeer: inputPeerChat(44),
+		ToPeer:   inputPeerChat(55),
+		Id:       []int32{1},
+		RandomId: []int64{11},
+	})
+	if err != nil {
+		t.Fatalf("MessagesForwardMessages() error = %v", err)
+	}
+	if checked == nil || checked.ChatId != 55 || checked.Action != chatpb.MessageActionForwardToChat {
+		t.Fatalf("chat check = %+v, want forward_to_chat for target chat 55", checked)
+	}
+	if got == nil || got.PeerType != payload.PeerTypeChat || got.PeerId != 55 {
+		t.Fatalf("msg request = %+v, want target chat 55", got)
+	}
+	message := assertForwardOutbox(t, got.Message[0], 11, "from chat")
+	if peer, ok := message.PeerId.(*tg.TLPeerChat); !ok || peer.ChatId != 55 {
+		t.Fatalf("target peer = %#v, want peerChat 55", message.PeerId)
+	}
+	if message.FwdFrom == nil {
+		t.Fatalf("fwd_from = nil, want chat source fallback")
+	}
+	if peer, ok := message.FwdFrom.FromId.(*tg.TLPeerUser); !ok || peer.UserId != 2002 {
+		t.Fatalf("fwd_from.from_id = %#v, want original sender peerUser 2002", message.FwdFrom.FromId)
+	}
+	if peer, ok := message.FwdFrom.SavedFromPeer.(*tg.TLPeerChat); !ok || peer.ChatId != 44 {
+		t.Fatalf("fwd_from.saved_from_peer = %#v, want source peerChat 44 hint", message.FwdFrom.SavedFromPeer)
+	}
+	if message.FwdFrom.SavedFromMsgId != nil {
+		t.Fatalf("fwd_from.saved_from_msg_id = %v, want nil for source peer hint", message.FwdFrom.SavedFromMsgId)
+	}
+}
+
 func TestMessagesForwardMessagesRejectsInvalidRequests(t *testing.T) {
 	topMsgID := int32(1)
 	scheduleDate := int32(2000000)
@@ -161,8 +233,6 @@ func TestMessagesForwardMessagesRejectsInvalidRequests(t *testing.T) {
 		{name: "zero id", patch: func(in *tg.TLMessagesForwardMessages) { in.Id[0] = 0 }, want: tg.ErrMessageIdInvalid},
 		{name: "zero random id", patch: func(in *tg.TLMessagesForwardMessages) { in.RandomId[0] = 0 }, want: tg.ErrRandomIdEmpty},
 		{name: "duplicate random id", patch: func(in *tg.TLMessagesForwardMessages) { in.RandomId[1] = in.RandomId[0] }, want: tg.ErrRandomIdDuplicate},
-		{name: "unsupported source peer", patch: func(in *tg.TLMessagesForwardMessages) { in.FromPeer = inputPeerChat(5) }, want: tg.Err400PeerIdInvalid},
-		{name: "unsupported target peer", patch: func(in *tg.TLMessagesForwardMessages) { in.ToPeer = inputPeerChat(5) }, want: tg.Err400PeerIdInvalid},
 		{name: "with my score", patch: func(in *tg.TLMessagesForwardMessages) { in.WithMyScore = true }, want: tg.ErrInputRequestInvalid},
 		{name: "drop author", patch: func(in *tg.TLMessagesForwardMessages) { in.DropAuthor = true }, want: tg.ErrInputRequestInvalid},
 		{name: "drop media captions", patch: func(in *tg.TLMessagesForwardMessages) { in.DropMediaCaptions = true }, want: tg.ErrInputRequestInvalid},
@@ -245,6 +315,46 @@ func TestMessagesForwardMessagesMapsMissingOrInvalidSourceToMessageIdInvalid(t *
 				t.Fatalf("error = %v, want %v", err, tt.want)
 			}
 		})
+	}
+}
+
+func TestMessagesForwardMessagesRejectsSourcePeerMismatch(t *testing.T) {
+	called := false
+	c := newSendMsgCore(&messagesFakeMsgClient{
+		getUserMessageList: func(context.Context, *msg.TLMsgGetUserMessageList) (*msg.VectorMessageBox, error) {
+			return &msg.VectorMessageBox{Datas: []tg.MessageBoxClazz{
+				tg.MakeTLMessageBox(&tg.TLMessageBox{
+					MessageId: 1,
+					UserId:    1001,
+					PeerType:  payload.PeerTypeChat,
+					PeerId:    45,
+					Message: tg.MakeTLMessage(&tg.TLMessage{
+						Id:      1,
+						FromId:  tg.MakePeerUser(2002),
+						PeerId:  tg.MakePeerChat(45),
+						Date:    1,
+						Message: "wrong chat",
+					}),
+				}),
+			}}, nil
+		},
+		sendMessageV2: func(context.Context, *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+			called = true
+			return nil, nil
+		},
+	}, 1001, 9001)
+
+	_, err := c.MessagesForwardMessages(&tg.TLMessagesForwardMessages{
+		FromPeer: inputPeerChat(44),
+		ToPeer:   inputPeerUser(400),
+		Id:       []int32{1},
+		RandomId: []int64{11},
+	})
+	if !errors.Is(err, tg.ErrMessageIdInvalid) {
+		t.Fatalf("MessagesForwardMessages() error = %v, want MESSAGE_ID_INVALID", err)
+	}
+	if called {
+		t.Fatal("msg send was called for source peer mismatch")
 	}
 }
 

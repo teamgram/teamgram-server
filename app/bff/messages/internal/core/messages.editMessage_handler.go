@@ -22,6 +22,7 @@ import (
 	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -54,16 +55,25 @@ func (c *MessagesCore) MessagesEditMessage(in *tg.TLMessagesEditMessage) (*tg.Up
 		return nil, err
 	}
 
-	peerUserID, ok := resolveUserPeerID(in.Peer, md.UserId)
+	peer, ok := resolveMessagePeer(in.Peer, md.UserId)
 	if !ok {
 		return nil, tg.Err400PeerIdInvalid
+	}
+	if peer.PeerType == payload.PeerTypeChat {
+		if err := c.checkChatMessageAction(peer.PeerID, chatpb.MessageActionEditOwnMessage, ""); err != nil {
+			return nil, err
+		}
+	}
+	peerID := tg.MakePeerUser(peer.PeerID)
+	if peer.PeerType == payload.PeerTypeChat {
+		peerID = tg.MakePeerChat(peer.PeerID)
 	}
 
 	now := int32(time.Now().Unix())
 	newMessage := tg.MakeTLMessage(&tg.TLMessage{
 		Out:         true,
 		FromId:      tg.MakePeerUser(md.UserId),
-		PeerId:      tg.MakePeerUser(peerUserID),
+		PeerId:      peerID,
 		Id:          in.Id,
 		Date:        now,
 		Message:     *in.Message,
@@ -76,8 +86,8 @@ func (c *MessagesCore) MessagesEditMessage(in *tg.TLMessagesEditMessage) (*tg.Up
 		UserId:       md.UserId,
 		MessageId:    in.Id,
 		SenderUserId: md.UserId,
-		PeerType:     payload.PeerTypeUser,
-		PeerId:       peerUserID,
+		PeerType:     peer.PeerType,
+		PeerId:       peer.PeerID,
 		Message:      newMessage,
 	})
 
@@ -85,8 +95,8 @@ func (c *MessagesCore) MessagesEditMessage(in *tg.TLMessagesEditMessage) (*tg.Up
 	updates, err := editClient.MsgEditMessageV2(c.ctx, &msg.TLMsgEditMessageV2{
 		UserId:    md.UserId,
 		AuthKeyId: md.PermAuthKeyId,
-		PeerType:  payload.PeerTypeUser,
-		PeerId:    peerUserID,
+		PeerType:  peer.PeerType,
+		PeerId:    peer.PeerID,
 		EditType:  0,
 		NewMessage: msg.MakeTLOutboxMessage(&msg.TLOutboxMessage{
 			NoWebpage:    in.NoWebpage,

@@ -16,7 +16,15 @@
 
 package core
 
-import "github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+import (
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
+)
+
+type resolvedMessagePeer struct {
+	PeerType int32
+	PeerID   int64
+}
 
 func resolveUserPeerID(peer tg.InputPeerClazz, selfUserID int64) (int64, bool) {
 	p := tg.FromInputPeer2(selfUserID, peer)
@@ -25,5 +33,28 @@ func resolveUserPeerID(peer tg.InputPeerClazz, selfUserID int64) (int64, bool) {
 		return p.PeerId, p.PeerId > 0
 	default:
 		return 0, false
+	}
+}
+
+func resolveMessagePeer(peer tg.InputPeerClazz, selfUserID int64) (resolvedMessagePeer, bool) {
+	p := tg.FromInputPeer2(selfUserID, peer)
+	switch p.PeerType {
+	case tg.PEER_SELF, tg.PEER_USER:
+		return resolvedMessagePeer{PeerType: payload.PeerTypeUser, PeerID: p.PeerId}, p.PeerId > 0
+	case tg.PEER_CHAT:
+		return resolvedMessagePeer{PeerType: payload.PeerTypeChat, PeerID: p.PeerId}, p.PeerId > 0
+	default:
+		return resolvedMessagePeer{}, false
+	}
+}
+
+func messagePeerClazz(peerType int32, peerID int64) tg.PeerClazz {
+	switch peerType {
+	case 0, payload.PeerTypeUser:
+		return tg.MakePeerUser(peerID)
+	case payload.PeerTypeChat:
+		return tg.MakePeerChat(peerID)
+	default:
+		return nil
 	}
 }

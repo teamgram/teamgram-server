@@ -12,6 +12,7 @@ import (
 	userupdatesclient "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/client"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	idgenclient "github.com/teamgram/teamgram-server/v2/app/service/idgen/client"
@@ -28,6 +29,7 @@ type messagesFakeMsgClient struct {
 	getHistory          func(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error)
 	readHistoryV2       func(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error)
 	updatePinnedMessage func(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error)
+	unpinAllMessages    func(ctx context.Context, in *msg.TLMsgUnpinAllMessages) (*tg.MessagesAffectedHistory, error)
 	deleteMessages      func(ctx context.Context, in *msg.TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error)
 	deleteHistory       func(ctx context.Context, in *msg.TLMsgDeleteHistory) (*tg.MessagesAffectedHistory, error)
 	editMessageV2       func(ctx context.Context, in *msg.TLMsgEditMessageV2) (*tg.Updates, error)
@@ -56,6 +58,10 @@ func (f *messagesFakeMsgClient) MsgReadHistoryV2(ctx context.Context, in *msg.TL
 
 func (f *messagesFakeMsgClient) MsgUpdatePinnedMessage(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error) {
 	return f.updatePinnedMessage(ctx, in)
+}
+
+func (f *messagesFakeMsgClient) MsgUnpinAllMessages(ctx context.Context, in *msg.TLMsgUnpinAllMessages) (*tg.MessagesAffectedHistory, error) {
+	return f.unpinAllMessages(ctx, in)
 }
 
 func (f *messagesFakeMsgClient) MsgDeleteMessages(ctx context.Context, in *msg.TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error) {
@@ -206,6 +212,51 @@ func TestMessagesSendMessage_Success(t *testing.T) {
 	}
 }
 
+func TestMessagesSendMessageAllowsInputPeerChat(t *testing.T) {
+	var got *msg.TLMsgSendMessageV2
+	var checked *chatpb.TLChatCheckMessageAction
+	core := newMessagesCoreWithRepo(&repository.Repository{
+		ChatClient: &messagesFakeChatClient{
+			checkMessageAction: func(_ context.Context, in *chatpb.TLChatCheckMessageAction) (*chatpb.MessageActionCheckResult, error) {
+				checked = in
+				return chatpb.MakeTLMessageActionCheckResult(&chatpb.TLMessageActionCheckResult{
+					SelfId: in.SelfId, ChatId: in.ChatId, Action: in.Action, MediaKind: in.MediaKind,
+				}).ToMessageActionCheckResult(), nil
+			},
+		},
+		MsgClient: &messagesFakeMsgClient{sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+			got = in
+			return testUpdates(), nil
+		}},
+	}, 1001, 9001)
+
+	_, err := core.MessagesSendMessage(&tg.TLMessagesSendMessage{
+		Peer:     inputPeerChat(55),
+		ReplyTo:  tg.MakeTLInputReplyToMessage(&tg.TLInputReplyToMessage{ReplyToMsgId: 7}),
+		Message:  "hello chat",
+		RandomId: 12345,
+	})
+	if err != nil {
+		t.Fatalf("MessagesSendMessage() error = %v", err)
+	}
+	if checked == nil || checked.ChatId != 55 || checked.SelfId != 1001 || checked.Action != chatpb.MessageActionSendText {
+		t.Fatalf("chat check = %+v, want send_text for chat 55", checked)
+	}
+	if got == nil || got.PeerType != payload.PeerTypeChat || got.PeerId != 55 {
+		t.Fatalf("msg request = %+v, want PeerTypeChat/chat 55", got)
+	}
+	message, ok := got.Message[0].Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("outbox message type = %T, want *tg.TLMessage", got.Message[0].Message)
+	}
+	if peer, ok := message.PeerId.(*tg.TLPeerChat); !ok || peer.ChatId != 55 {
+		t.Fatalf("outbox peer = %#v, want peerChat 55", message.PeerId)
+	}
+	if reply, ok := message.ReplyTo.(*tg.TLMessageReplyHeader); !ok || reply.ReplyToMsgId == nil || *reply.ReplyToMsgId != 7 {
+		t.Fatalf("reply header = %#v, want reply to chat message 7", message.ReplyTo)
+	}
+}
+
 func TestSendMessageClearDraftCarriesSourcePermAuthKey(t *testing.T) {
 	var got *msg.TLMsgSendMessageV2
 	c := newSendMsgCore(&messagesFakeMsgClient{
@@ -346,6 +397,46 @@ func TestMessagesGetHistory_UserPeerSuccess(t *testing.T) {
 	}
 }
 
+func TestMessagesGetHistoryAllowsInputPeerChat(t *testing.T) {
+	var got *msg.TLMsgGetHistory
+	var checked *chatpb.TLChatCheckChatAccess
+	reply := tg.MakeTLMessagesMessages(&tg.TLMessagesMessages{
+		Messages: []tg.MessageClazz{},
+		Chats:    []tg.ChatClazz{},
+		Users:    []tg.UserClazz{},
+	}).ToMessagesMessages()
+	c := newMessagesCoreWithRepo(&repository.Repository{
+		ChatClient: &messagesFakeChatClient{
+			checkChatAccess: func(_ context.Context, in *chatpb.TLChatCheckChatAccess) (*chatpb.ChatAccessCheckResult, error) {
+				checked = in
+				return chatpb.MakeTLChatAccessCheckResult(&chatpb.TLChatAccessCheckResult{
+					SelfId: in.SelfId, ChatId: in.ChatId, AccessKind: in.AccessKind,
+				}).ToChatAccessCheckResult(), nil
+			},
+		},
+		MsgClient: &messagesFakeMsgClient{
+			getHistory: func(_ context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error) {
+				got = in
+				return reply, nil
+			},
+		},
+	}, 1001, 9001)
+
+	_, err := c.MessagesGetHistory(&tg.TLMessagesGetHistory{
+		Peer:  inputPeerChat(55),
+		Limit: 20,
+	})
+	if err != nil {
+		t.Fatalf("MessagesGetHistory() error = %v", err)
+	}
+	if checked == nil || checked.ChatId != 55 || checked.SelfId != 1001 || checked.AccessKind != chatpb.ChatAccessGetHistory {
+		t.Fatalf("chat access check = %+v, want get_history for chat 55", checked)
+	}
+	if got == nil || got.PeerType != payload.PeerTypeChat || got.PeerId != 55 || got.Limit != 20 {
+		t.Fatalf("msg request = %+v, want PeerTypeChat/chat 55", got)
+	}
+}
+
 func TestMessagesGetHistory_InputPeerSelfTargetsCurrentUser(t *testing.T) {
 	var got *msg.TLMsgGetHistory
 	reply := tg.MakeTLMessagesMessages(&tg.TLMessagesMessages{
@@ -450,6 +541,51 @@ func TestMessagesSearchHashtagRoutesToMsg(t *testing.T) {
 	}
 }
 
+func TestMessagesSearchInputPeerChatUsesChatPeerForHashtag(t *testing.T) {
+	var got *msg.TLMsgSearchHashtag
+	var checked *chatpb.TLChatCheckChatAccess
+	reply := tg.MakeTLMessagesMessages(&tg.TLMessagesMessages{
+		Messages: []tg.MessageClazz{},
+		Chats:    []tg.ChatClazz{},
+		Users:    []tg.UserClazz{},
+	}).ToMessagesMessages()
+	c := newMessagesCoreWithRepo(&repository.Repository{
+		ChatClient: &messagesFakeChatClient{
+			checkChatAccess: func(_ context.Context, in *chatpb.TLChatCheckChatAccess) (*chatpb.ChatAccessCheckResult, error) {
+				checked = in
+				return chatpb.MakeTLChatAccessCheckResult(&chatpb.TLChatAccessCheckResult{
+					SelfId: in.SelfId, ChatId: in.ChatId, AccessKind: in.AccessKind,
+				}).ToChatAccessCheckResult(), nil
+			},
+		},
+		MsgClient: &messagesFakeMsgClient{
+			searchHashtag: func(_ context.Context, in *msg.TLMsgSearchHashtag) (*tg.MessagesMessages, error) {
+				got = in
+				return reply, nil
+			},
+		},
+	}, 1001, 9001)
+
+	r, err := c.MessagesSearch(&tg.TLMessagesSearch{
+		Peer:   inputPeerChat(55),
+		Q:      "#topic",
+		Limit:  20,
+		Filter: tg.MakeTLInputMessagesFilterEmpty(&tg.TLInputMessagesFilterEmpty{}),
+	})
+	if err != nil {
+		t.Fatalf("MessagesSearch error = %v", err)
+	}
+	if r != reply {
+		t.Fatalf("reply mismatch: got %p want %p", r, reply)
+	}
+	if checked == nil || checked.ChatId != 55 || checked.SelfId != 1001 || checked.AccessKind != chatpb.ChatAccessSearch {
+		t.Fatalf("chat access check = %+v, want search for chat 55", checked)
+	}
+	if got == nil || got.UserId != 1001 || got.AuthKeyId != 9001 || got.PeerType != payload.PeerTypeChat || got.PeerId != 55 || got.HashTag != "topic" || got.Limit != 20 {
+		t.Fatalf("MsgSearchHashtag request = %+v, want PeerTypeChat/chat 55", got)
+	}
+}
+
 func TestMessagesSearchEmptyQueryRejectedForEmptyFilter(t *testing.T) {
 	c := newSendMsgCore(&messagesFakeMsgClient{}, 100, 200)
 
@@ -517,7 +653,7 @@ func TestMessagesReadHistory_InputPeerSelfSuccess(t *testing.T) {
 	}
 }
 
-func TestMessagesReadHistory_NonUserPeerRejected(t *testing.T) {
+func TestMessagesReadHistory_UnsupportedPeerRejected(t *testing.T) {
 	called := false
 	c := newSendMsgCore(&messagesFakeMsgClient{
 		readHistoryV2: func(context.Context, *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error) {
@@ -527,7 +663,7 @@ func TestMessagesReadHistory_NonUserPeerRejected(t *testing.T) {
 	}, 100, 200)
 
 	_, err := c.MessagesReadHistory(&tg.TLMessagesReadHistory{
-		Peer:  inputPeerChat(300),
+		Peer:  tg.MakeTLInputPeerChannel(&tg.TLInputPeerChannel{ChannelId: 300}),
 		MaxId: 2,
 	})
 	if err != tg.Err400PeerIdInvalid {
@@ -705,7 +841,7 @@ func TestMessagesEditMessage_EmptyTextRejected(t *testing.T) {
 	}
 }
 
-func TestMessagesEditMessage_NonUserPeerRejected(t *testing.T) {
+func TestMessagesEditMessage_UnsupportedPeerRejected(t *testing.T) {
 	called := false
 	c := newSendMsgCore(&messagesFakeMsgClient{
 		editMessageV2: func(_ context.Context, _ *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
@@ -716,7 +852,7 @@ func TestMessagesEditMessage_NonUserPeerRejected(t *testing.T) {
 	text := "edited"
 
 	_, err := c.MessagesEditMessage(&tg.TLMessagesEditMessage{
-		Peer:    inputPeerChat(300),
+		Peer:    tg.MakeTLInputPeerChannel(&tg.TLInputPeerChannel{ChannelId: 300}),
 		Id:      7,
 		Message: &text,
 	})
@@ -832,7 +968,7 @@ func TestMessagesSendMessage_NilPeerRejected(t *testing.T) {
 	}
 }
 
-func TestMessagesSendMessage_NonUserPeerRejected(t *testing.T) {
+func TestMessagesSendMessage_UnsupportedPeerRejected(t *testing.T) {
 	called := false
 	c := newSendMsgCore(&messagesFakeMsgClient{
 		sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
@@ -842,7 +978,7 @@ func TestMessagesSendMessage_NonUserPeerRejected(t *testing.T) {
 	}, 100, 200)
 
 	_, err := c.MessagesSendMessage(&tg.TLMessagesSendMessage{
-		Peer:     inputPeerChat(42),
+		Peer:     tg.MakeTLInputPeerChannel(&tg.TLInputPeerChannel{ChannelId: 42}),
 		Message:  "hello",
 		RandomId: 42,
 	})
