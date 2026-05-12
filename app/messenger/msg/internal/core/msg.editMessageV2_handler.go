@@ -26,6 +26,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -35,8 +36,13 @@ func (c *MsgCore) MsgEditMessageV2(in *msg.TLMsgEditMessageV2) (*tg.Updates, err
 	if in == nil || in.NewMessage == nil || in.DstMessage == nil {
 		return nil, fmt.Errorf("%w: missing edit message input", msg.ErrSendStateConflict)
 	}
-	if in.PeerType != payload.PeerTypeUser {
-		return nil, fmt.Errorf("%w: first slice only supports user peer", msg.ErrSendStateConflict)
+	if in.PeerType != payload.PeerTypeUser && in.PeerType != payload.PeerTypeChat {
+		return nil, fmt.Errorf("%w: unsupported edit peer type=%d", msg.ErrSendStateConflict, in.PeerType)
+	}
+	if in.PeerType == payload.PeerTypeChat {
+		if err := c.checkChatAction(in.UserId, in.PeerId, chatpb.MessageActionEditOwnMessage, ""); err != nil {
+			return nil, err
+		}
 	}
 	newMessage, err := outboxTLMessage(in.NewMessage)
 	if err != nil {
@@ -73,11 +79,15 @@ func (c *MsgCore) MsgEditMessageV2(in *msg.TLMsgEditMessageV2) (*tg.Updates, err
 		return nil, msg.ErrMsgStorage
 	}
 
-	senderResult, senderHash, err := c.processEditSenderOperation(in, edited, resolved.UserMessageID)
+	effects, err := c.buildEditChatReceiverEffects(in, edited)
 	if err != nil {
 		return nil, err
 	}
-	if in.UserId != in.PeerId {
+	senderResult, senderHash, err := c.processEditSenderOperation(in, edited, resolved.UserMessageID, effects)
+	if err != nil {
+		return nil, err
+	}
+	if in.PeerType == payload.PeerTypeUser && in.UserId != in.PeerId {
 		receiverOp, err := buildEditReceiverOperationEnvelope(in, edited)
 		if err != nil {
 			return nil, err
@@ -87,11 +97,11 @@ func (c *MsgCore) MsgEditMessageV2(in *msg.TLMsgEditMessageV2) (*tg.Updates, err
 		}
 	}
 
-	return shortEditMessage(edited, senderResult, senderHash, in.PeerId)
+	return shortEditMessage(edited, senderResult, senderHash, in.PeerType, in.PeerId)
 }
 
-func (c *MsgCore) processEditSenderOperation(in *msg.TLMsgEditMessageV2, edited *repository.EditMessageResult, userMessageID int64) (*userupdates.UserOperationResult, []byte, error) {
-	body, hashBytes, err := buildEditMessageOperationPayload(in.UserId, in.PeerId, in.PeerId, true, edited, userMessageID)
+func (c *MsgCore) processEditSenderOperation(in *msg.TLMsgEditMessageV2, edited *repository.EditMessageResult, userMessageID int64, effects []OperationEnvelope) (*userupdates.UserOperationResult, []byte, error) {
+	body, hashBytes, err := buildEditMessageOperationPayload(in.UserId, in.PeerId, in.PeerType, in.PeerId, true, edited, userMessageID)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -114,7 +124,7 @@ func (c *MsgCore) processEditSenderOperation(in *msg.TLMsgEditMessageV2, edited 
 		PayloadHash:          hashBytes,
 		Payload:              body,
 		DeliveryPolicy:       DeliveryPolicyRequesterSync,
-	}, nil)
+	}, effects)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -122,7 +132,7 @@ func (c *MsgCore) processEditSenderOperation(in *msg.TLMsgEditMessageV2, edited 
 }
 
 func buildEditReceiverOperationEnvelope(in *msg.TLMsgEditMessageV2, edited *repository.EditMessageResult) (OperationEnvelope, error) {
-	body, hashBytes, err := buildEditMessageOperationPayload(in.UserId, in.PeerId, in.UserId, false, edited, 0)
+	body, hashBytes, err := buildEditMessageOperationPayload(in.UserId, in.PeerId, in.PeerType, in.UserId, false, edited, 0)
 	if err != nil {
 		return OperationEnvelope{}, err
 	}
@@ -145,7 +155,42 @@ func buildEditReceiverOperationEnvelope(in *msg.TLMsgEditMessageV2, edited *repo
 	}, nil
 }
 
-func buildEditMessageOperationPayload(fromUserID int64, toUserID int64, peerID int64, out bool, edited *repository.EditMessageResult, userMessageID int64) ([]byte, []byte, error) {
+func (c *MsgCore) buildEditChatReceiverEffects(in *msg.TLMsgEditMessageV2, edited *repository.EditMessageResult) ([]OperationEnvelope, error) {
+	if in.PeerType != payload.PeerTypeChat {
+		return nil, nil
+	}
+	receiverIDs, err := c.activeChatReceiverIDs(in.PeerId, in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	effects := make([]OperationEnvelope, 0, len(receiverIDs))
+	for _, receiverUserID := range receiverIDs {
+		body, hashBytes, err := buildEditMessageOperationPayload(in.UserId, receiverUserID, payload.PeerTypeChat, in.PeerId, false, edited, 0)
+		if err != nil {
+			return nil, err
+		}
+		effects = append(effects, OperationEnvelope{
+			UserID:               receiverUserID,
+			OperationID:          editMessageOperationID(edited.CanonicalMessageID, edited.EditVersion, receiverUserID),
+			OpType:               payload.OpTypeSendMessage,
+			OperationKind:        payload.OperationKindEditMessage,
+			ActorUserID:          in.UserId,
+			PeerType:             payload.PeerTypeChat,
+			PeerID:               in.PeerId,
+			CanonicalMessageID:   &edited.CanonicalMessageID,
+			CanonicalPeerSeq:     &edited.PeerSeq,
+			CanonicalDate:        int64Ptr(edited.MessageDate),
+			PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+			PayloadCodec:         payload.PayloadCodecJSON,
+			PayloadHash:          hashBytes,
+			Payload:              body,
+			DeliveryPolicy:       DeliveryPolicyDurableAsync,
+		})
+	}
+	return effects, nil
+}
+
+func buildEditMessageOperationPayload(fromUserID int64, toUserID int64, peerType int32, peerID int64, out bool, edited *repository.EditMessageResult, userMessageID int64) ([]byte, []byte, error) {
 	date, err := msgDateInt32FromUnixSeconds(edited.MessageDate, "edit message date")
 	if err != nil {
 		return nil, nil, err
@@ -158,7 +203,7 @@ func buildEditMessageOperationPayload(fromUserID int64, toUserID int64, peerID i
 		SchemaVersion:      payload.MessageOperationSchemaVersion,
 		OperationKind:      payload.OperationKindEditMessage,
 		CanonicalMessageID: edited.CanonicalMessageID,
-		PeerType:           payload.PeerTypeUser,
+		PeerType:           peerType,
 		PeerID:             peerID,
 		PeerSeq:            edited.PeerSeq,
 		FromUserID:         fromUserID,
@@ -176,7 +221,7 @@ func buildEditMessageOperationPayload(fromUserID int64, toUserID int64, peerID i
 	return body, payload.HashBytes(body), nil
 }
 
-func shortEditMessage(edited *repository.EditMessageResult, result *userupdates.UserOperationResult, _ []byte, peerID int64) (*tg.Updates, error) {
+func shortEditMessage(edited *repository.EditMessageResult, result *userupdates.UserOperationResult, _ []byte, peerType int32, peerID int64) (*tg.Updates, error) {
 	if edited == nil || result == nil {
 		return nil, msg.ErrSenderSyncFailed
 	}
@@ -208,7 +253,7 @@ func shortEditMessage(edited *repository.EditMessageResult, result *userupdates.
 		Out:      true,
 		Id:       userMessageID,
 		FromId:   tg.MakePeerUser(edited.FromUserID),
-		PeerId:   tg.MakePeerUser(peerID),
+		PeerId:   sentMessagePeerFromOptional(peerType, peerID),
 		Date:     date,
 		Message:  edited.MessageText,
 		EditDate: &editDate,

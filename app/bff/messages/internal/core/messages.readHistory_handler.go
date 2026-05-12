@@ -19,6 +19,7 @@ package core
 import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -33,22 +34,27 @@ func (c *MessagesCore) MessagesReadHistory(in *tg.TLMessagesReadHistory) (*tg.Me
 		return nil, tg.ErrInputRequestInvalid
 	}
 
-	peerUserID, ok := resolveUserPeerID(in.Peer, md.UserId)
+	peer, ok := resolveMessagePeer(in.Peer, md.UserId)
 	if !ok {
 		return nil, tg.Err400PeerIdInvalid
+	}
+	if peer.PeerType == payload.PeerTypeChat {
+		if err := c.checkChatAccess(peer.PeerID, chatpb.ChatAccessReadHistory); err != nil {
+			return nil, err
+		}
 	}
 
 	var readClient readHistoryClient = c.svcCtx.Repo.MsgClient
 	r, err := readClient.MsgReadHistoryV2(c.ctx, &msg.TLMsgReadHistoryV2{
 		UserId:    md.UserId,
 		AuthKeyId: md.PermAuthKeyId,
-		PeerType:  payload.PeerTypeUser,
-		PeerId:    peerUserID,
+		PeerType:  peer.PeerType,
+		PeerId:    peer.PeerID,
 		MaxId:     in.MaxId,
 	})
 	if err != nil {
-		c.Logger.Errorf("messages.readHistory - msg error: self_user_id: %d, peer_id: %d, max_id: %d, err: %v",
-			md.UserId, peerUserID, in.MaxId, err)
+		c.Logger.Errorf("messages.readHistory - msg error: self_user_id: %d, peer_type: %d, peer_id: %d, max_id: %d, err: %v",
+			md.UserId, peer.PeerType, peer.PeerID, in.MaxId, err)
 		return nil, mapMsgSendError(err)
 	}
 	return r, nil

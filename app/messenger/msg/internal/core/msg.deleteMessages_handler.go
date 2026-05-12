@@ -24,6 +24,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -35,8 +36,8 @@ func (c *MsgCore) MsgDeleteMessages(in *msg.TLMsgDeleteMessages) (*tg.MessagesAf
 	if in == nil || in.UserId <= 0 || len(in.Id) == 0 {
 		return nil, fmt.Errorf("%w: invalid delete messages request", msg.ErrSendStateConflict)
 	}
-	if in.PeerType != 0 && in.PeerType != payload.PeerTypeUser {
-		return nil, fmt.Errorf("%w: delete messages first slice only supports user peer", msg.ErrSendStateConflict)
+	if in.PeerType != 0 && in.PeerType != payload.PeerTypeUser && in.PeerType != payload.PeerTypeChat {
+		return nil, fmt.Errorf("%w: unsupported delete messages peer type=%d", msg.ErrSendStateConflict, in.PeerType)
 	}
 	if in.PeerType == 0 && in.PeerId != 0 {
 		return nil, fmt.Errorf("%w: invalid delete messages peer", msg.ErrSendStateConflict)
@@ -91,6 +92,15 @@ func (c *MsgCore) MsgDeleteMessages(in *msg.TLMsgDeleteMessages) (*tg.MessagesAf
 				DeliveryPolicy:       DeliveryPolicyDurableAsync,
 			})
 		}
+		if in.Revoke && group.peerType == payload.PeerTypeChat {
+			if err := c.checkChatDeleteRevoke(in.UserId, group); err != nil {
+				return nil, err
+			}
+			effects, err = c.buildDeleteMessagesChatReceiverEffects(in.UserId, group)
+			if err != nil {
+				return nil, err
+			}
+		}
 		result, err := c.dispatchRequesterSync(OperationEnvelope{
 			UserID:               in.UserId,
 			OperationID:          deleteMessagesOperationID(in.UserId, group.peerID, int64SliceToInt32(group.userMessageIDs), in.Revoke, in.AuthKeyId),
@@ -129,11 +139,12 @@ func deleteMessagesPeerSeqOperationID(userID int64, peerID int64, peerSeqs []int
 }
 
 type deleteMessageGroup struct {
-	peerType       int32
-	peerID         int64
-	messageDate    int32
-	peerSeqs       []int64
-	userMessageIDs []int64
+	peerType            int32
+	peerID              int64
+	messageDate         int32
+	peerSeqs            []int64
+	userMessageIDs      []int64
+	allOutgoingForActor bool
 }
 
 func groupDeleteMessageIDs(items []repository.ResolvedMessageID, peerType int32, peerID int64) []deleteMessageGroup {
@@ -157,7 +168,10 @@ func groupDeleteMessageIDs(items []repository.ResolvedMessageID, peerType int32,
 		if !ok {
 			groupIndex = len(groups)
 			index[key] = groupIndex
-			groups = append(groups, deleteMessageGroup{peerType: item.PeerType, peerID: item.PeerID})
+			groups = append(groups, deleteMessageGroup{peerType: item.PeerType, peerID: item.PeerID, allOutgoingForActor: true})
+		}
+		if !item.Outgoing {
+			groups[groupIndex].allOutgoingForActor = false
 		}
 		if date := stableDeleteMessageDate(item.MessageDate); date > groups[groupIndex].messageDate {
 			groups[groupIndex].messageDate = date
@@ -166,6 +180,45 @@ func groupDeleteMessageIDs(items []repository.ResolvedMessageID, peerType int32,
 		groups[groupIndex].userMessageIDs = append(groups[groupIndex].userMessageIDs, item.UserMessageID)
 	}
 	return groups
+}
+
+func (c *MsgCore) checkChatDeleteRevoke(actorUserID int64, group deleteMessageGroup) error {
+	if err := c.checkChatAccess(actorUserID, group.peerID, chatpb.ChatAccessGetHistory); err != nil {
+		return err
+	}
+	if group.allOutgoingForActor {
+		return nil
+	}
+	return c.checkChatAction(actorUserID, group.peerID, chatpb.MessageActionDeleteRevoke, "")
+}
+
+func (c *MsgCore) buildDeleteMessagesChatReceiverEffects(actorUserID int64, group deleteMessageGroup) ([]OperationEnvelope, error) {
+	receiverIDs, err := c.activeChatReceiverIDs(group.peerID, actorUserID)
+	if err != nil {
+		return nil, err
+	}
+	effects := make([]OperationEnvelope, 0, len(receiverIDs))
+	for _, receiverUserID := range receiverIDs {
+		peerBody, peerHash, err := buildDeleteMessagesPayload(actorUserID, receiverUserID, payload.PeerTypeChat, group.peerID, group.messageDate, group.peerSeqs, nil, true)
+		if err != nil {
+			return nil, err
+		}
+		effects = append(effects, OperationEnvelope{
+			UserID:               receiverUserID,
+			OperationID:          deleteMessagesPeerSeqOperationID(receiverUserID, group.peerID, group.peerSeqs, true),
+			OpType:               payload.OpTypeSendMessage,
+			OperationKind:        payload.OperationKindDeleteMessages,
+			ActorUserID:          actorUserID,
+			PeerType:             payload.PeerTypeChat,
+			PeerID:               group.peerID,
+			PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+			PayloadCodec:         payload.PayloadCodecJSON,
+			PayloadHash:          peerHash,
+			Payload:              peerBody,
+			DeliveryPolicy:       DeliveryPolicyDurableAsync,
+		})
+	}
+	return effects, nil
 }
 
 func buildDeleteMessagesPayload(fromUserID int64, toUserID int64, peerType int32, peerID int64, date int32, peerSeqs []int64, userMessageIDs []int64, revoke bool) ([]byte, []byte, error) {

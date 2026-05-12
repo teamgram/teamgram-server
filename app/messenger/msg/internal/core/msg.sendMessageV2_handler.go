@@ -572,20 +572,12 @@ func (c *MsgCore) buildSendMessageChatReceiverEffects(in *msg.TLMsgSendMessageV2
 	if in.PeerType != payload.PeerTypeChat {
 		return nil, nil
 	}
-	memberIDs, err := c.activeChatMemberIDs(in.PeerId)
+	memberIDs, err := c.activeChatReceiverIDs(in.PeerId, in.UserId)
 	if err != nil {
 		return nil, err
 	}
 	effects := make([]OperationEnvelope, 0, len(memberIDs))
-	seen := make(map[int64]struct{}, len(memberIDs))
 	for _, receiverUserID := range memberIDs {
-		if receiverUserID <= 0 || receiverUserID == in.UserId {
-			continue
-		}
-		if _, ok := seen[receiverUserID]; ok {
-			continue
-		}
-		seen[receiverUserID] = struct{}{}
 		effect, err := buildChatReceiverEffectEnvelope(in, canonical, normalized, receiverUserID)
 		if err != nil {
 			return nil, err

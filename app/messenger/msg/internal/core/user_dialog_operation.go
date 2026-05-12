@@ -9,7 +9,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 )
 
-func (c *MsgCore) processUserDialogOperation(userID int64, authKeyID int64, peerType int32, peerID int64, operationID string, body []byte) (*userupdates.UserOperationResult, error) {
+func (c *MsgCore) processUserDialogOperation(userID int64, authKeyID int64, peerType int32, peerID int64, operationID string, body []byte, effects []OperationEnvelope) (*userupdates.UserOperationResult, error) {
 	hashBytes := payload.HashBytes(body)
 	var op payload.MessageOperationV1
 	if err := json.Unmarshal(body, &op); err != nil {
@@ -30,5 +30,5 @@ func (c *MsgCore) processUserDialogOperation(userID int64, authKeyID int64, peer
 		PayloadHash:          hashBytes,
 		Payload:              body,
 		DeliveryPolicy:       DeliveryPolicyRequesterSync,
-	}, nil)
+	}, effects)
 }

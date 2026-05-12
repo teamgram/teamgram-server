@@ -19,6 +19,7 @@ package core
 import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -32,9 +33,18 @@ func (c *MessagesCore) MessagesUpdatePinnedMessage(in *tg.TLMessagesUpdatePinned
 	if in == nil {
 		return nil, tg.ErrInputRequestInvalid
 	}
-	peerUserID, ok := resolveUserPeerID(in.Peer, md.UserId)
+	peer, ok := resolveMessagePeer(in.Peer, md.UserId)
 	if !ok {
 		return nil, tg.Err400PeerIdInvalid
+	}
+	if peer.PeerType == payload.PeerTypeChat {
+		action := chatpb.MessageActionPinMessage
+		if in.Unpin {
+			action = chatpb.MessageActionUnpinAll
+		}
+		if err := c.checkChatMessageAction(peer.PeerID, action, ""); err != nil {
+			return nil, err
+		}
 	}
 	var pinClient updatePinnedMessageClient = c.svcCtx.Repo.MsgClient
 	r, err := pinClient.MsgUpdatePinnedMessage(c.ctx, &msg.TLMsgUpdatePinnedMessage{
@@ -43,13 +53,13 @@ func (c *MessagesCore) MessagesUpdatePinnedMessage(in *tg.TLMessagesUpdatePinned
 		Silent:    in.Silent,
 		Unpin:     in.Unpin,
 		PmOneside: in.PmOneside,
-		PeerType:  payload.PeerTypeUser,
-		PeerId:    peerUserID,
+		PeerType:  peer.PeerType,
+		PeerId:    peer.PeerID,
 		Id:        in.Id,
 	})
 	if err != nil {
-		c.Logger.Errorf("messages.updatePinnedMessage - msg error: self_user_id: %d, peer_id: %d, id: %d, unpin: %t, err: %v",
-			md.UserId, peerUserID, in.Id, in.Unpin, err)
+		c.Logger.Errorf("messages.updatePinnedMessage - msg error: self_user_id: %d, peer_type: %d, peer_id: %d, id: %d, unpin: %t, err: %v",
+			md.UserId, peer.PeerType, peer.PeerID, in.Id, in.Unpin, err)
 		return nil, mapMsgSendError(err)
 	}
 	return r, nil

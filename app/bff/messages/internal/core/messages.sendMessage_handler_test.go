@@ -29,6 +29,7 @@ type messagesFakeMsgClient struct {
 	getHistory          func(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error)
 	readHistoryV2       func(ctx context.Context, in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error)
 	updatePinnedMessage func(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error)
+	unpinAllMessages    func(ctx context.Context, in *msg.TLMsgUnpinAllMessages) (*tg.MessagesAffectedHistory, error)
 	deleteMessages      func(ctx context.Context, in *msg.TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error)
 	deleteHistory       func(ctx context.Context, in *msg.TLMsgDeleteHistory) (*tg.MessagesAffectedHistory, error)
 	editMessageV2       func(ctx context.Context, in *msg.TLMsgEditMessageV2) (*tg.Updates, error)
@@ -57,6 +58,10 @@ func (f *messagesFakeMsgClient) MsgReadHistoryV2(ctx context.Context, in *msg.TL
 
 func (f *messagesFakeMsgClient) MsgUpdatePinnedMessage(ctx context.Context, in *msg.TLMsgUpdatePinnedMessage) (*tg.Updates, error) {
 	return f.updatePinnedMessage(ctx, in)
+}
+
+func (f *messagesFakeMsgClient) MsgUnpinAllMessages(ctx context.Context, in *msg.TLMsgUnpinAllMessages) (*tg.MessagesAffectedHistory, error) {
+	return f.unpinAllMessages(ctx, in)
 }
 
 func (f *messagesFakeMsgClient) MsgDeleteMessages(ctx context.Context, in *msg.TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error) {
@@ -592,7 +597,7 @@ func TestMessagesReadHistory_InputPeerSelfSuccess(t *testing.T) {
 	}
 }
 
-func TestMessagesReadHistory_NonUserPeerRejected(t *testing.T) {
+func TestMessagesReadHistory_UnsupportedPeerRejected(t *testing.T) {
 	called := false
 	c := newSendMsgCore(&messagesFakeMsgClient{
 		readHistoryV2: func(context.Context, *msg.TLMsgReadHistoryV2) (*tg.MessagesAffectedMessages, error) {
@@ -602,7 +607,7 @@ func TestMessagesReadHistory_NonUserPeerRejected(t *testing.T) {
 	}, 100, 200)
 
 	_, err := c.MessagesReadHistory(&tg.TLMessagesReadHistory{
-		Peer:  inputPeerChat(300),
+		Peer:  tg.MakeTLInputPeerChannel(&tg.TLInputPeerChannel{ChannelId: 300}),
 		MaxId: 2,
 	})
 	if err != tg.Err400PeerIdInvalid {
@@ -780,7 +785,7 @@ func TestMessagesEditMessage_EmptyTextRejected(t *testing.T) {
 	}
 }
 
-func TestMessagesEditMessage_NonUserPeerRejected(t *testing.T) {
+func TestMessagesEditMessage_UnsupportedPeerRejected(t *testing.T) {
 	called := false
 	c := newSendMsgCore(&messagesFakeMsgClient{
 		editMessageV2: func(_ context.Context, _ *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
@@ -791,7 +796,7 @@ func TestMessagesEditMessage_NonUserPeerRejected(t *testing.T) {
 	text := "edited"
 
 	_, err := c.MessagesEditMessage(&tg.TLMessagesEditMessage{
-		Peer:    inputPeerChat(300),
+		Peer:    tg.MakeTLInputPeerChannel(&tg.TLInputPeerChannel{ChannelId: 300}),
 		Id:      7,
 		Message: &text,
 	})

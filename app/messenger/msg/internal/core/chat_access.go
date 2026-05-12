@@ -46,6 +46,26 @@ func (c *MsgCore) activeChatMemberIDs(chatID int64) ([]int64, error) {
 	return append([]int64(nil), result.Datas...), nil
 }
 
+func (c *MsgCore) activeChatReceiverIDs(chatID int64, actorUserID int64) ([]int64, error) {
+	memberIDs, err := c.activeChatMemberIDs(chatID)
+	if err != nil {
+		return nil, err
+	}
+	out := make([]int64, 0, len(memberIDs))
+	seen := make(map[int64]struct{}, len(memberIDs))
+	for _, memberID := range memberIDs {
+		if memberID <= 0 || memberID == actorUserID {
+			continue
+		}
+		if _, ok := seen[memberID]; ok {
+			continue
+		}
+		seen[memberID] = struct{}{}
+		out = append(out, memberID)
+	}
+	return out, nil
+}
+
 func chatSendActionForNormalized(normalized normalizedOutboxMessage) (action string, mediaKind string) {
 	if normalized.MediaRef == nil {
 		return chatpb.MessageActionSendText, ""

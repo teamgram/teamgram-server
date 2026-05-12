@@ -24,6 +24,7 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -36,11 +37,16 @@ func (c *MsgCore) MsgReadHistoryV2(in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffe
 	if in.UserId <= 0 || in.PeerId <= 0 || in.MaxId < 0 {
 		return nil, fmt.Errorf("%w: invalid read history request", msg.ErrSendStateConflict)
 	}
-	if in.PeerType != payload.PeerTypeUser {
-		return nil, fmt.Errorf("%w: read history first slice only supports user peer", msg.ErrSendStateConflict)
+	if in.PeerType != payload.PeerTypeUser && in.PeerType != payload.PeerTypeChat {
+		return nil, fmt.Errorf("%w: unsupported read history peer type=%d", msg.ErrSendStateConflict, in.PeerType)
 	}
 	if c == nil || c.svcCtx == nil || c.svcCtx.Repo == nil || c.svcCtx.UserUpdates == nil {
 		return nil, msg.ErrSenderSyncFailed
+	}
+	if in.PeerType == payload.PeerTypeChat {
+		if err := c.checkChatAccess(in.UserId, in.PeerId, chatpb.ChatAccessReadHistory); err != nil {
+			return nil, err
+		}
 	}
 
 	maxPeerSeq := int64(0)
@@ -97,7 +103,7 @@ func (c *MsgCore) MsgReadHistoryV2(in *msg.TLMsgReadHistoryV2) (*tg.MessagesAffe
 	}
 
 	var effects []OperationEnvelope
-	if in.UserId != in.PeerId {
+	if in.PeerType == payload.PeerTypeUser && in.UserId != in.PeerId {
 		peerBody, err := json.Marshal(payload.MessageOperationV1{
 			SchemaVersion:        payload.MessageOperationSchemaVersion,
 			OperationKind:        payload.OperationKindReadHistory,

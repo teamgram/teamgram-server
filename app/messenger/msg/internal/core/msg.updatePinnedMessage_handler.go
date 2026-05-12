@@ -24,6 +24,7 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -36,8 +37,17 @@ func (c *MsgCore) MsgUpdatePinnedMessage(in *msg.TLMsgUpdatePinnedMessage) (*tg.
 	if in.UserId <= 0 || in.PeerId <= 0 || in.Id < 0 || (!in.Unpin && in.Id == 0) {
 		return nil, fmt.Errorf("%w: invalid update pinned request", msg.ErrSendStateConflict)
 	}
-	if in.PeerType != payload.PeerTypeUser {
-		return nil, fmt.Errorf("%w: update pinned first slice only supports user peer", msg.ErrSendStateConflict)
+	if in.PeerType != payload.PeerTypeUser && in.PeerType != payload.PeerTypeChat {
+		return nil, fmt.Errorf("%w: unsupported update pinned peer type=%d", msg.ErrSendStateConflict, in.PeerType)
+	}
+	if in.PeerType == payload.PeerTypeChat {
+		action := chatpb.MessageActionPinMessage
+		if in.Unpin {
+			action = chatpb.MessageActionUnpinAll
+		}
+		if err := c.checkChatAction(in.UserId, in.PeerId, action, ""); err != nil {
+			return nil, err
+		}
 	}
 	var pinnedPeerSeq int64
 	var pinnedCanonicalID int64
@@ -55,7 +65,11 @@ func (c *MsgCore) MsgUpdatePinnedMessage(in *msg.TLMsgUpdatePinnedMessage) (*tg.
 		pinnedCanonicalID = resolved.CanonicalMessageID
 		pinnedUserMessageID = resolved.UserMessageID
 	}
-	body, hashBytes, err := buildPinnedMessageOperation(in, pinnedPeerSeq, pinnedCanonicalID, pinnedUserMessageID)
+	body, hashBytes, err := buildPinnedMessageOperation(in, in.UserId, pinnedPeerSeq, pinnedCanonicalID, pinnedUserMessageID)
+	if err != nil {
+		return nil, err
+	}
+	effects, err := c.buildUpdatePinnedChatReceiverEffects(in, pinnedPeerSeq, pinnedCanonicalID, pinnedUserMessageID)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +91,7 @@ func (c *MsgCore) MsgUpdatePinnedMessage(in *msg.TLMsgUpdatePinnedMessage) (*tg.
 		PayloadHash:          hashBytes,
 		Payload:              body,
 		DeliveryPolicy:       DeliveryPolicyRequesterSync,
-	}, nil)
+	}, effects)
 	if err != nil {
 		return nil, err
 	}
@@ -99,7 +113,7 @@ func (c *MsgCore) MsgUpdatePinnedMessage(in *msg.TLMsgUpdatePinnedMessage) (*tg.
 	return tg.MakeTLUpdateShort(&tg.TLUpdateShort{
 		Update: tg.MakeTLUpdatePinnedMessages(&tg.TLUpdatePinnedMessages{
 			Pinned:   !in.Unpin,
-			Peer:     tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: in.PeerId}),
+			Peer:     sentMessagePeerFromOptional(in.PeerType, in.PeerId),
 			Messages: messages,
 			Pts:      pts,
 			PtsCount: result.PtsCount,
@@ -108,7 +122,41 @@ func (c *MsgCore) MsgUpdatePinnedMessage(in *msg.TLMsgUpdatePinnedMessage) (*tg.
 	}).ToUpdates(), nil
 }
 
-func buildPinnedMessageOperation(in *msg.TLMsgUpdatePinnedMessage, pinnedPeerSeq int64, pinnedCanonicalID int64, pinnedUserMessageID int64) ([]byte, []byte, error) {
+func (c *MsgCore) buildUpdatePinnedChatReceiverEffects(in *msg.TLMsgUpdatePinnedMessage, pinnedPeerSeq int64, pinnedCanonicalID int64, pinnedUserMessageID int64) ([]OperationEnvelope, error) {
+	if in.PeerType != payload.PeerTypeChat {
+		return nil, nil
+	}
+	receiverIDs, err := c.activeChatReceiverIDs(in.PeerId, in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	effects := make([]OperationEnvelope, 0, len(receiverIDs))
+	for _, receiverUserID := range receiverIDs {
+		body, hashBytes, err := buildPinnedMessageOperation(in, receiverUserID, pinnedPeerSeq, pinnedCanonicalID, pinnedUserMessageID)
+		if err != nil {
+			return nil, err
+		}
+		effects = append(effects, OperationEnvelope{
+			UserID:               receiverUserID,
+			OperationID:          updatePinnedOperationID(receiverUserID, in.PeerId, in.Id, in.Unpin, 0),
+			OpType:               payload.OpTypeSendMessage,
+			OperationKind:        payload.OperationKindUpdatePinnedMessage,
+			ActorUserID:          in.UserId,
+			PeerType:             payload.PeerTypeChat,
+			PeerID:               in.PeerId,
+			CanonicalMessageID:   int64Ptr(pinnedCanonicalID),
+			CanonicalPeerSeq:     int64Ptr(pinnedPeerSeq),
+			PayloadSchemaVersion: payload.MessageOperationSchemaVersion,
+			PayloadCodec:         payload.PayloadCodecJSON,
+			PayloadHash:          hashBytes,
+			Payload:              body,
+			DeliveryPolicy:       DeliveryPolicyDurableAsync,
+		})
+	}
+	return effects, nil
+}
+
+func buildPinnedMessageOperation(in *msg.TLMsgUpdatePinnedMessage, targetUserID int64, pinnedPeerSeq int64, pinnedCanonicalID int64, pinnedUserMessageID int64) ([]byte, []byte, error) {
 	date, err := msgDateInt32FromUnixSeconds(time.Now().UTC().Unix(), "pinned operation date")
 	if err != nil {
 		return nil, nil, err
@@ -120,7 +168,8 @@ func buildPinnedMessageOperation(in *msg.TLMsgUpdatePinnedMessage, pinnedPeerSeq
 		PeerType:                 in.PeerType,
 		PeerID:                   in.PeerId,
 		PeerSeq:                  pinnedPeerSeq,
-		ToUserID:                 in.UserId,
+		FromUserID:               in.UserId,
+		ToUserID:                 targetUserID,
 		Date:                     date,
 		PinnedPeerSeq:            pinnedPeerSeq,
 		PinnedUserMessageID:      pinnedUserMessageID,
