@@ -27,6 +27,148 @@ var (
 	_ json.Marshaler
 )
 
+// ChatAccessCheckResultClazz <--
+//   - TL_ChatAccessCheckResult
+type ChatAccessCheckResultClazz = *TLChatAccessCheckResult
+
+func DecodeChatAccessCheckResultClazz(d *bin.Decoder) (ChatAccessCheckResultClazz, error) {
+	// id, err := d.PeekClazzID()
+	id, err := d.ClazzID()
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode ChatAccessCheckResult: constructor: %w", err)
+	}
+
+	switch id {
+	case 0xc9b5daa6:
+		x := &TLChatAccessCheckResult{ClazzID: id, ClazzName2: ClazzName_chatAccessCheckResult}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
+		return x, nil
+	default:
+		return nil, fmt.Errorf("unable to decode ChatAccessCheckResult: invalid constructor %x", id)
+	}
+
+}
+
+// TLChatAccessCheckResult <--
+type TLChatAccessCheckResult struct {
+	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
+	SelfId     int64  `json:"self_id"`
+	ChatId     int64  `json:"chat_id"`
+	AccessKind string `json:"access_kind"`
+}
+
+func MakeTLChatAccessCheckResult(m *TLChatAccessCheckResult) *TLChatAccessCheckResult {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_chatAccessCheckResult
+
+	return m
+}
+
+func (m *TLChatAccessCheckResult) String() string {
+	return iface.DebugStringWithName("chatAccessCheckResult", m)
+}
+
+func (m *TLChatAccessCheckResult) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("chatAccessCheckResult", m)
+}
+
+// ChatAccessCheckResultClazzName <--
+func (m *TLChatAccessCheckResult) ChatAccessCheckResultClazzName() string {
+	return ClazzName_chatAccessCheckResult
+}
+
+// ClazzName <--
+func (m *TLChatAccessCheckResult) ClazzName() string {
+	return m.ClazzName2
+}
+
+// ToChatAccessCheckResult <--
+func (m *TLChatAccessCheckResult) ToChatAccessCheckResult() *ChatAccessCheckResult {
+	if m == nil {
+		return nil
+	}
+
+	return m
+
+}
+
+func (m *TLChatAccessCheckResult) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatAccessCheckResult, int(layer)); clazzId {
+	case 0xc9b5daa6:
+		size := 4
+		size += 8
+		size += 8
+		size += iface.CalcStringSize(m.AccessKind)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChatAccessCheckResult) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatAccessCheckResult, int(layer)); clazzId {
+	case 0xc9b5daa6:
+		if err := iface.ValidateRequiredString("access_kind", m.AccessKind); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode chatAccessCheckResult: unsupported layer %d", layer)
+	}
+}
+
+// Encode <--
+func (m *TLChatAccessCheckResult) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatAccessCheckResult, int(layer)); clazzId {
+	case 0xc9b5daa6:
+		x.PutClazzID(0xc9b5daa6)
+
+		x.PutInt64(m.SelfId)
+		x.PutInt64(m.ChatId)
+		x.PutString(m.AccessKind)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode chatAccessCheckResult: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLChatAccessCheckResult) Decode(d *bin.Decoder) (err error) {
+	switch m.ClazzID {
+	case 0xc9b5daa6:
+		m.SelfId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode chatAccessCheckResult#0xc9b5daa6: field self_id: %w", err)
+		}
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode chatAccessCheckResult#0xc9b5daa6: field chat_id: %w", err)
+		}
+		m.AccessKind, err = d.String()
+		if err != nil {
+			return fmt.Errorf("unable to decode chatAccessCheckResult#0xc9b5daa6: field access_kind: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode chatAccessCheckResult: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// ChatAccessCheckResult <--
+type ChatAccessCheckResult = TLChatAccessCheckResult
+
 // ChatInviteExtClazz <--
 //   - TL_ChatInviteAlready
 //   - TL_ChatInvite
@@ -763,6 +905,159 @@ func (m *TLChatInviteImported) Decode(d *bin.Decoder) (err error) {
 
 // ChatInviteImported <--
 type ChatInviteImported = TLChatInviteImported
+
+// MessageActionCheckResultClazz <--
+//   - TL_MessageActionCheckResult
+type MessageActionCheckResultClazz = *TLMessageActionCheckResult
+
+func DecodeMessageActionCheckResultClazz(d *bin.Decoder) (MessageActionCheckResultClazz, error) {
+	// id, err := d.PeekClazzID()
+	id, err := d.ClazzID()
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode MessageActionCheckResult: constructor: %w", err)
+	}
+
+	switch id {
+	case 0x667011da:
+		x := &TLMessageActionCheckResult{ClazzID: id, ClazzName2: ClazzName_messageActionCheckResult}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
+		return x, nil
+	default:
+		return nil, fmt.Errorf("unable to decode MessageActionCheckResult: invalid constructor %x", id)
+	}
+
+}
+
+// TLMessageActionCheckResult <--
+type TLMessageActionCheckResult struct {
+	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
+	SelfId     int64  `json:"self_id"`
+	ChatId     int64  `json:"chat_id"`
+	Action     string `json:"action"`
+	MediaKind  string `json:"media_kind"`
+}
+
+func MakeTLMessageActionCheckResult(m *TLMessageActionCheckResult) *TLMessageActionCheckResult {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_messageActionCheckResult
+
+	return m
+}
+
+func (m *TLMessageActionCheckResult) String() string {
+	return iface.DebugStringWithName("messageActionCheckResult", m)
+}
+
+func (m *TLMessageActionCheckResult) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("messageActionCheckResult", m)
+}
+
+// MessageActionCheckResultClazzName <--
+func (m *TLMessageActionCheckResult) MessageActionCheckResultClazzName() string {
+	return ClazzName_messageActionCheckResult
+}
+
+// ClazzName <--
+func (m *TLMessageActionCheckResult) ClazzName() string {
+	return m.ClazzName2
+}
+
+// ToMessageActionCheckResult <--
+func (m *TLMessageActionCheckResult) ToMessageActionCheckResult() *MessageActionCheckResult {
+	if m == nil {
+		return nil
+	}
+
+	return m
+
+}
+
+func (m *TLMessageActionCheckResult) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messageActionCheckResult, int(layer)); clazzId {
+	case 0x667011da:
+		size := 4
+		size += 8
+		size += 8
+		size += iface.CalcStringSize(m.Action)
+		size += iface.CalcStringSize(m.MediaKind)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLMessageActionCheckResult) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messageActionCheckResult, int(layer)); clazzId {
+	case 0x667011da:
+		if err := iface.ValidateRequiredString("action", m.Action); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredString("media_kind", m.MediaKind); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode messageActionCheckResult: unsupported layer %d", layer)
+	}
+}
+
+// Encode <--
+func (m *TLMessageActionCheckResult) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_messageActionCheckResult, int(layer)); clazzId {
+	case 0x667011da:
+		x.PutClazzID(0x667011da)
+
+		x.PutInt64(m.SelfId)
+		x.PutInt64(m.ChatId)
+		x.PutString(m.Action)
+		x.PutString(m.MediaKind)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode messageActionCheckResult: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLMessageActionCheckResult) Decode(d *bin.Decoder) (err error) {
+	switch m.ClazzID {
+	case 0x667011da:
+		m.SelfId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode messageActionCheckResult#0x667011da: field self_id: %w", err)
+		}
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode messageActionCheckResult#0x667011da: field chat_id: %w", err)
+		}
+		m.Action, err = d.String()
+		if err != nil {
+			return fmt.Errorf("unable to decode messageActionCheckResult#0x667011da: field action: %w", err)
+		}
+		m.MediaKind, err = d.String()
+		if err != nil {
+			return fmt.Errorf("unable to decode messageActionCheckResult#0x667011da: field media_kind: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode messageActionCheckResult: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// MessageActionCheckResult <--
+type MessageActionCheckResult = TLMessageActionCheckResult
 
 // RecentChatInviteRequestersClazz <--
 //   - TL_RecentChatInviteRequesters

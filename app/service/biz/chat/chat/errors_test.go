@@ -33,6 +33,17 @@ func TestDomainErrorsAreStableSentinels(t *testing.T) {
 	}
 }
 
+func TestMessageActionErrorsAreStableSentinels(t *testing.T) {
+	for _, err := range []error{
+		ErrChatWriteForbidden,
+		ErrMessageActionUnsupported,
+	} {
+		if err == nil {
+			t.Fatalf("message action sentinel is nil")
+		}
+	}
+}
+
 func TestCreateChatFloodErrorCarriesWaitSecondsAndMatchesSentinel(t *testing.T) {
 	err := NewCreateChatFloodError(37)
 

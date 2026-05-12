@@ -16,10 +16,14 @@ const (
 	ClazzID_chatInvitePeek                        = 0xace3e26e // ace3e26e
 	ClazzID_userChatIdList                        = 0x50067224 // 50067224
 	ClazzID_recentChatInviteRequesters            = 0x1c6e3c54 // 1c6e3c54
+	ClazzID_chatAccessCheckResult                 = 0xc9b5daa6 // c9b5daa6
+	ClazzID_messageActionCheckResult              = 0x667011da // 667011da
 	ClazzID_chatInviteImported                    = 0x721051f6 // 721051f6
 	ClazzID_chat_getMutableChat                   = 0x2c2c25d2 // 2c2c25d2
 	ClazzID_chat_getChatListByIdList              = 0xe740f539 // e740f539
 	ClazzID_chat_getChatBySelfId                  = 0x49b71a48 // 49b71a48
+	ClazzID_chat_checkChatAccess                  = 0xfff473b3 // fff473b3
+	ClazzID_chat_checkMessageAction               = 0x3d9abe5b // 3d9abe5b
 	ClazzID_chat_createChat2                      = 0xed17acf5 // ed17acf5
 	ClazzID_chat_deleteChat                       = 0x6d11ec1e // 6d11ec1e
 	ClazzID_chat_deleteChatUser                   = 0xb270fd5  // b270fd5

@@ -132,6 +132,12 @@ func CanAdminAddAdmins(p *tg.ImmutableChatParticipant) bool {
 	})
 }
 
+func CanPinMessages(p *tg.ImmutableChatParticipant) bool {
+	return isCreatorOrHasRight(p, func(rights tg.ChatAdminRightsClazz) bool {
+		return rights.PinMessages
+	})
+}
+
 func isCreatorOrHasRight(p *tg.ImmutableChatParticipant, hasRight func(tg.ChatAdminRightsClazz) bool) bool {
 	if IsChatMemberCreator(p) {
 		return true

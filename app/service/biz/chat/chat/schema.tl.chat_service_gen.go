@@ -177,6 +177,126 @@ func (m *TLChatGetChatBySelfId) Decode(d *bin.Decoder) (err error) {
 	}
 }
 
+// TLChatCheckChatAccess <--
+type TLChatCheckChatAccess struct {
+	ClazzID    uint32 `json:"_id"`
+	SelfId     int64  `json:"self_id"`
+	ChatId     int64  `json:"chat_id"`
+	AccessKind string `json:"access_kind"`
+}
+
+func (m *TLChatCheckChatAccess) String() string {
+	return iface.DebugStringWithName(ClazzName_chat_checkChatAccess, m)
+}
+
+// Encode <--
+func (m *TLChatCheckChatAccess) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_checkChatAccess, int(layer)); clazzId {
+	case 0xfff473b3:
+		x.PutClazzID(0xfff473b3)
+
+		x.PutInt64(m.SelfId)
+		x.PutInt64(m.ChatId)
+		x.PutString(m.AccessKind)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode chat_checkChatAccess: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLChatCheckChatAccess) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return fmt.Errorf("unable to decode chat_checkChatAccess: constructor: %w", err)
+		}
+	}
+	switch m.ClazzID {
+	case 0xfff473b3:
+		m.SelfId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode chat_checkChatAccess#0xfff473b3: field self_id: %w", err)
+		}
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode chat_checkChatAccess#0xfff473b3: field chat_id: %w", err)
+		}
+		m.AccessKind, err = d.String()
+		if err != nil {
+			return fmt.Errorf("unable to decode chat_checkChatAccess#0xfff473b3: field access_kind: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode chat_checkChatAccess: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// TLChatCheckMessageAction <--
+type TLChatCheckMessageAction struct {
+	ClazzID   uint32 `json:"_id"`
+	SelfId    int64  `json:"self_id"`
+	ChatId    int64  `json:"chat_id"`
+	Action    string `json:"action"`
+	MediaKind string `json:"media_kind"`
+}
+
+func (m *TLChatCheckMessageAction) String() string {
+	return iface.DebugStringWithName(ClazzName_chat_checkMessageAction, m)
+}
+
+// Encode <--
+func (m *TLChatCheckMessageAction) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_checkMessageAction, int(layer)); clazzId {
+	case 0x3d9abe5b:
+		x.PutClazzID(0x3d9abe5b)
+
+		x.PutInt64(m.SelfId)
+		x.PutInt64(m.ChatId)
+		x.PutString(m.Action)
+		x.PutString(m.MediaKind)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode chat_checkMessageAction: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLChatCheckMessageAction) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return fmt.Errorf("unable to decode chat_checkMessageAction: constructor: %w", err)
+		}
+	}
+	switch m.ClazzID {
+	case 0x3d9abe5b:
+		m.SelfId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode chat_checkMessageAction#0x3d9abe5b: field self_id: %w", err)
+		}
+		m.ChatId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode chat_checkMessageAction#0x3d9abe5b: field chat_id: %w", err)
+		}
+		m.Action, err = d.String()
+		if err != nil {
+			return fmt.Errorf("unable to decode chat_checkMessageAction#0x3d9abe5b: field action: %w", err)
+		}
+		m.MediaKind, err = d.String()
+		if err != nil {
+			return fmt.Errorf("unable to decode chat_checkMessageAction#0x3d9abe5b: field media_kind: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode chat_checkMessageAction: invalid constructor %x", m.ClazzID)
+	}
+}
+
 // TLChatCreateChat2 <--
 type TLChatCreateChat2 struct {
 	ClazzID    uint32  `json:"_id"`
@@ -2463,6 +2583,8 @@ type RPCChat interface {
 	ChatGetMutableChat(ctx context.Context, in *TLChatGetMutableChat) (*tg.MutableChat, error)
 	ChatGetChatListByIdList(ctx context.Context, in *TLChatGetChatListByIdList) (*VectorMutableChat, error)
 	ChatGetChatBySelfId(ctx context.Context, in *TLChatGetChatBySelfId) (*tg.MutableChat, error)
+	ChatCheckChatAccess(ctx context.Context, in *TLChatCheckChatAccess) (*ChatAccessCheckResult, error)
+	ChatCheckMessageAction(ctx context.Context, in *TLChatCheckMessageAction) (*MessageActionCheckResult, error)
 	ChatCreateChat2(ctx context.Context, in *TLChatCreateChat2) (*tg.MutableChat, error)
 	ChatDeleteChat(ctx context.Context, in *TLChatDeleteChat) (*tg.MutableChat, error)
 	ChatDeleteChatUser(ctx context.Context, in *TLChatDeleteChatUser) (*tg.MutableChat, error)

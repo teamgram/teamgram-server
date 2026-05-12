@@ -76,6 +76,20 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"/chat.RPCChat/chat.checkChatAccess": kitex.NewMethodInfo(
+		checkChatAccessHandler,
+		newCheckChatAccessArgs,
+		newCheckChatAccessResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
+	"/chat.RPCChat/chat.checkMessageAction": kitex.NewMethodInfo(
+		checkMessageActionHandler,
+		newCheckMessageActionArgs,
+		newCheckMessageActionResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 	"/chat.RPCChat/chat.createChat2": kitex.NewMethodInfo(
 		createChat2Handler,
 		newCreateChat2Args,
@@ -765,6 +779,274 @@ func (p *GetChatBySelfIdResult) IsSetSuccess() bool {
 }
 
 func (p *GetChatBySelfIdResult) GetResult() interface{} {
+	return p.Success
+}
+
+func checkChatAccessHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*CheckChatAccessArgs)
+	realResult := result.(*CheckChatAccessResult)
+	success, err := handler.(chat.RPCChat).ChatCheckChatAccess(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newCheckChatAccessArgs() interface{} {
+	return &CheckChatAccessArgs{}
+}
+
+func newCheckChatAccessResult() interface{} {
+	return &CheckChatAccessResult{}
+}
+
+type CheckChatAccessArgs struct {
+	Req *chat.TLChatCheckChatAccess
+}
+
+func (p *CheckChatAccessArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in CheckChatAccessArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *CheckChatAccessArgs) Unmarshal(in []byte) error {
+	msg := new(chat.TLChatCheckChatAccess)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *CheckChatAccessArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in CheckChatAccessArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *CheckChatAccessArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(chat.TLChatCheckChatAccess)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var CheckChatAccessArgs_Req_DEFAULT *chat.TLChatCheckChatAccess
+
+func (p *CheckChatAccessArgs) GetReq() *chat.TLChatCheckChatAccess {
+	if !p.IsSetReq() {
+		return CheckChatAccessArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *CheckChatAccessArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type CheckChatAccessResult struct {
+	Success *chat.ChatAccessCheckResult
+}
+
+var CheckChatAccessResult_Success_DEFAULT *chat.ChatAccessCheckResult
+
+func (p *CheckChatAccessResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in CheckChatAccessResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *CheckChatAccessResult) Unmarshal(in []byte) error {
+	msg := new(chat.ChatAccessCheckResult)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CheckChatAccessResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in CheckChatAccessResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *CheckChatAccessResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(chat.ChatAccessCheckResult)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CheckChatAccessResult) GetSuccess() *chat.ChatAccessCheckResult {
+	if !p.IsSetSuccess() {
+		return CheckChatAccessResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *CheckChatAccessResult) SetSuccess(x interface{}) {
+	p.Success = x.(*chat.ChatAccessCheckResult)
+}
+
+func (p *CheckChatAccessResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *CheckChatAccessResult) GetResult() interface{} {
+	return p.Success
+}
+
+func checkMessageActionHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*CheckMessageActionArgs)
+	realResult := result.(*CheckMessageActionResult)
+	success, err := handler.(chat.RPCChat).ChatCheckMessageAction(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newCheckMessageActionArgs() interface{} {
+	return &CheckMessageActionArgs{}
+}
+
+func newCheckMessageActionResult() interface{} {
+	return &CheckMessageActionResult{}
+}
+
+type CheckMessageActionArgs struct {
+	Req *chat.TLChatCheckMessageAction
+}
+
+func (p *CheckMessageActionArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in CheckMessageActionArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *CheckMessageActionArgs) Unmarshal(in []byte) error {
+	msg := new(chat.TLChatCheckMessageAction)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *CheckMessageActionArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in CheckMessageActionArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *CheckMessageActionArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(chat.TLChatCheckMessageAction)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var CheckMessageActionArgs_Req_DEFAULT *chat.TLChatCheckMessageAction
+
+func (p *CheckMessageActionArgs) GetReq() *chat.TLChatCheckMessageAction {
+	if !p.IsSetReq() {
+		return CheckMessageActionArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *CheckMessageActionArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type CheckMessageActionResult struct {
+	Success *chat.MessageActionCheckResult
+}
+
+var CheckMessageActionResult_Success_DEFAULT *chat.MessageActionCheckResult
+
+func (p *CheckMessageActionResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in CheckMessageActionResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *CheckMessageActionResult) Unmarshal(in []byte) error {
+	msg := new(chat.MessageActionCheckResult)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CheckMessageActionResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in CheckMessageActionResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *CheckMessageActionResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(chat.MessageActionCheckResult)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *CheckMessageActionResult) GetSuccess() *chat.MessageActionCheckResult {
+	if !p.IsSetSuccess() {
+		return CheckMessageActionResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *CheckMessageActionResult) SetSuccess(x interface{}) {
+	p.Success = x.(*chat.MessageActionCheckResult)
+}
+
+func (p *CheckMessageActionResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *CheckMessageActionResult) GetResult() interface{} {
 	return p.Success
 }
 
@@ -4962,6 +5244,30 @@ func (p *kClient) ChatGetChatBySelfId(ctx context.Context, req *chat.TLChatGetCh
 	var _result GetChatBySelfIdResult
 
 	if err = p.c.Call(ctx, "/chat.RPCChat/chat.getChatBySelfId", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) ChatCheckChatAccess(ctx context.Context, req *chat.TLChatCheckChatAccess) (r *chat.ChatAccessCheckResult, err error) {
+	// var _args CheckChatAccessArgs
+	// _args.Req = req
+	var _result CheckChatAccessResult
+
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.checkChatAccess", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) ChatCheckMessageAction(ctx context.Context, req *chat.TLChatCheckMessageAction) (r *chat.MessageActionCheckResult, err error) {
+	// var _args CheckMessageActionArgs
+	// _args.Req = req
+	var _result CheckMessageActionResult
+
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.checkMessageAction", req, &_result); err != nil {
 		return
 	}
 

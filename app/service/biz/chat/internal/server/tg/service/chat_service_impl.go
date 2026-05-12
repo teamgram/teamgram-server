@@ -21,7 +21,7 @@ import (
 var _ *tg.Bool
 
 // ChatGetMutableChat
-// chat.getMutableChat chat_id:long = MutableChat;
+// chat.getMutableChat#2c2c25d2 chat_id:long = MutableChat;
 func (s *Service) ChatGetMutableChat(ctx context.Context, request *chat.TLChatGetMutableChat) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.getMutableChat - request: %s", request)
@@ -37,7 +37,7 @@ func (s *Service) ChatGetMutableChat(ctx context.Context, request *chat.TLChatGe
 }
 
 // ChatGetChatListByIdList
-// chat.getChatListByIdList self_id:long id_list:Vector<long> = Vector<MutableChat>;
+// chat.getChatListByIdList#e740f539 self_id:long id_list:Vector<long> = Vector<MutableChat>;
 func (s *Service) ChatGetChatListByIdList(ctx context.Context, request *chat.TLChatGetChatListByIdList) (*chat.VectorMutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.getChatListByIdList - request: %s", request)
@@ -53,7 +53,7 @@ func (s *Service) ChatGetChatListByIdList(ctx context.Context, request *chat.TLC
 }
 
 // ChatGetChatBySelfId
-// chat.getChatBySelfId self_id:long chat_id:long = MutableChat;
+// chat.getChatBySelfId#49b71a48 self_id:long chat_id:long = MutableChat;
 func (s *Service) ChatGetChatBySelfId(ctx context.Context, request *chat.TLChatGetChatBySelfId) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.getChatBySelfId - request: %s", request)
@@ -68,8 +68,40 @@ func (s *Service) ChatGetChatBySelfId(ctx context.Context, request *chat.TLChatG
 	return r, err
 }
 
+// ChatCheckChatAccess
+// chat.checkChatAccess#fff473b3 self_id:long chat_id:long access_kind:string = ChatAccessCheckResult;
+func (s *Service) ChatCheckChatAccess(ctx context.Context, request *chat.TLChatCheckChatAccess) (*chat.ChatAccessCheckResult, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("chat.checkChatAccess - request: %s", request)
+
+	r, err := c.ChatCheckChatAccess(request)
+	if err != nil {
+		c.Logger.Errorf("chat.checkChatAccess - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("chat.checkChatAccess - reply: %s", r)
+	return r, err
+}
+
+// ChatCheckMessageAction
+// chat.checkMessageAction#3d9abe5b self_id:long chat_id:long action:string media_kind:string = MessageActionCheckResult;
+func (s *Service) ChatCheckMessageAction(ctx context.Context, request *chat.TLChatCheckMessageAction) (*chat.MessageActionCheckResult, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("chat.checkMessageAction - request: %s", request)
+
+	r, err := c.ChatCheckMessageAction(request)
+	if err != nil {
+		c.Logger.Errorf("chat.checkMessageAction - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("chat.checkMessageAction - reply: %s", r)
+	return r, err
+}
+
 // ChatCreateChat2
-// chat.createChat2 flags:# creator_id:long user_id_list:Vector<long> title:string bots:flags.0?Vector<long> ttl_period:flags.1?int = MutableChat;
+// chat.createChat2#ed17acf5 flags:# creator_id:long user_id_list:Vector<long> title:string bots:flags.0?Vector<long> ttl_period:flags.1?int = MutableChat;
 func (s *Service) ChatCreateChat2(ctx context.Context, request *chat.TLChatCreateChat2) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.createChat2 - request: %s", request)
@@ -85,7 +117,7 @@ func (s *Service) ChatCreateChat2(ctx context.Context, request *chat.TLChatCreat
 }
 
 // ChatDeleteChat
-// chat.deleteChat chat_id:long operator_id:long = MutableChat;
+// chat.deleteChat#6d11ec1e chat_id:long operator_id:long = MutableChat;
 func (s *Service) ChatDeleteChat(ctx context.Context, request *chat.TLChatDeleteChat) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.deleteChat - request: %s", request)
@@ -101,7 +133,7 @@ func (s *Service) ChatDeleteChat(ctx context.Context, request *chat.TLChatDelete
 }
 
 // ChatDeleteChatUser
-// chat.deleteChatUser chat_id:long operator_id:long delete_user_id:long = MutableChat;
+// chat.deleteChatUser#0b270fd5 chat_id:long operator_id:long delete_user_id:long = MutableChat;
 func (s *Service) ChatDeleteChatUser(ctx context.Context, request *chat.TLChatDeleteChatUser) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.deleteChatUser - request: %s", request)
@@ -117,7 +149,7 @@ func (s *Service) ChatDeleteChatUser(ctx context.Context, request *chat.TLChatDe
 }
 
 // ChatEditChatTitle
-// chat.editChatTitle chat_id:long edit_user_id:long title:string = MutableChat;
+// chat.editChatTitle#95c59ea7 chat_id:long edit_user_id:long title:string = MutableChat;
 func (s *Service) ChatEditChatTitle(ctx context.Context, request *chat.TLChatEditChatTitle) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.editChatTitle - request: %s", request)
@@ -133,7 +165,7 @@ func (s *Service) ChatEditChatTitle(ctx context.Context, request *chat.TLChatEdi
 }
 
 // ChatEditChatAbout
-// chat.editChatAbout chat_id:long edit_user_id:long about:string = MutableChat;
+// chat.editChatAbout#5c737c78 chat_id:long edit_user_id:long about:string = MutableChat;
 func (s *Service) ChatEditChatAbout(ctx context.Context, request *chat.TLChatEditChatAbout) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.editChatAbout - request: %s", request)
@@ -149,7 +181,7 @@ func (s *Service) ChatEditChatAbout(ctx context.Context, request *chat.TLChatEdi
 }
 
 // ChatEditChatPhoto
-// chat.editChatPhoto chat_id:long edit_user_id:long chat_photo:Photo = MutableChat;
+// chat.editChatPhoto#45c2a668 chat_id:long edit_user_id:long chat_photo:Photo = MutableChat;
 func (s *Service) ChatEditChatPhoto(ctx context.Context, request *chat.TLChatEditChatPhoto) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.editChatPhoto - request: %s", request)
@@ -165,7 +197,7 @@ func (s *Service) ChatEditChatPhoto(ctx context.Context, request *chat.TLChatEdi
 }
 
 // ChatEditChatAdmin
-// chat.editChatAdmin chat_id:long operator_id:long edit_chat_admin_id:long is_admin:Bool = MutableChat;
+// chat.editChatAdmin#1905e5ec chat_id:long operator_id:long edit_chat_admin_id:long is_admin:Bool = MutableChat;
 func (s *Service) ChatEditChatAdmin(ctx context.Context, request *chat.TLChatEditChatAdmin) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.editChatAdmin - request: %s", request)
@@ -181,7 +213,7 @@ func (s *Service) ChatEditChatAdmin(ctx context.Context, request *chat.TLChatEdi
 }
 
 // ChatEditChatDefaultBannedRights
-// chat.editChatDefaultBannedRights chat_id:long operator_id:long banned_rights:ChatBannedRights = MutableChat;
+// chat.editChatDefaultBannedRights#5a34a687 chat_id:long operator_id:long banned_rights:ChatBannedRights = MutableChat;
 func (s *Service) ChatEditChatDefaultBannedRights(ctx context.Context, request *chat.TLChatEditChatDefaultBannedRights) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.editChatDefaultBannedRights - request: %s", request)
@@ -197,7 +229,7 @@ func (s *Service) ChatEditChatDefaultBannedRights(ctx context.Context, request *
 }
 
 // ChatAddChatUser
-// chat.addChatUser flags:# chat_id:long inviter_id:long user_id:long is_bot:flags.0?true = MutableChat;
+// chat.addChatUser#e5554168 flags:# chat_id:long inviter_id:long user_id:long is_bot:flags.0?true = MutableChat;
 func (s *Service) ChatAddChatUser(ctx context.Context, request *chat.TLChatAddChatUser) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.addChatUser - request: %s", request)
@@ -213,7 +245,7 @@ func (s *Service) ChatAddChatUser(ctx context.Context, request *chat.TLChatAddCh
 }
 
 // ChatGetMutableChatByLink
-// chat.getMutableChatByLink link:string = MutableChat;
+// chat.getMutableChatByLink#a266278b link:string = MutableChat;
 func (s *Service) ChatGetMutableChatByLink(ctx context.Context, request *chat.TLChatGetMutableChatByLink) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.getMutableChatByLink - request: %s", request)
@@ -229,7 +261,7 @@ func (s *Service) ChatGetMutableChatByLink(ctx context.Context, request *chat.TL
 }
 
 // ChatToggleNoForwards
-// chat.toggleNoForwards chat_id:long operator_id:long enabled:Bool = MutableChat;
+// chat.toggleNoForwards#d5952af9 chat_id:long operator_id:long enabled:Bool = MutableChat;
 func (s *Service) ChatToggleNoForwards(ctx context.Context, request *chat.TLChatToggleNoForwards) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.toggleNoForwards - request: %s", request)
@@ -245,7 +277,7 @@ func (s *Service) ChatToggleNoForwards(ctx context.Context, request *chat.TLChat
 }
 
 // ChatMigratedToChannel
-// chat.migratedToChannel chat:MutableChat id:long access_hash:long = Bool;
+// chat.migratedToChannel#083faadf chat:MutableChat id:long access_hash:long = Bool;
 func (s *Service) ChatMigratedToChannel(ctx context.Context, request *chat.TLChatMigratedToChannel) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.migratedToChannel - request: %s", request)
@@ -261,7 +293,7 @@ func (s *Service) ChatMigratedToChannel(ctx context.Context, request *chat.TLCha
 }
 
 // ChatGetChatParticipantIdList
-// chat.getChatParticipantIdList chat_id:long = Vector<long>;
+// chat.getChatParticipantIdList#329622a9 chat_id:long = Vector<long>;
 func (s *Service) ChatGetChatParticipantIdList(ctx context.Context, request *chat.TLChatGetChatParticipantIdList) (*chat.VectorLong, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.getChatParticipantIdList - request: %s", request)
@@ -277,7 +309,7 @@ func (s *Service) ChatGetChatParticipantIdList(ctx context.Context, request *cha
 }
 
 // ChatGetUsersChatIdList
-// chat.getUsersChatIdList id:Vector<long> = Vector<UserChatIdList>;
+// chat.getUsersChatIdList#2f36ab4c id:Vector<long> = Vector<UserChatIdList>;
 func (s *Service) ChatGetUsersChatIdList(ctx context.Context, request *chat.TLChatGetUsersChatIdList) (*chat.VectorUserChatIdList, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.getUsersChatIdList - request: %s", request)
@@ -293,7 +325,7 @@ func (s *Service) ChatGetUsersChatIdList(ctx context.Context, request *chat.TLCh
 }
 
 // ChatGetMyChatList
-// chat.getMyChatList user_id:long is_creator:Bool = Vector<MutableChat>;
+// chat.getMyChatList#f3756c88 user_id:long is_creator:Bool = Vector<MutableChat>;
 func (s *Service) ChatGetMyChatList(ctx context.Context, request *chat.TLChatGetMyChatList) (*chat.VectorMutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.getMyChatList - request: %s", request)
@@ -309,7 +341,7 @@ func (s *Service) ChatGetMyChatList(ctx context.Context, request *chat.TLChatGet
 }
 
 // ChatExportChatInvite
-// chat.exportChatInvite flags:# chat_id:long admin_id:long legacy_revoke_permanent:flags.2?true request_needed:flags.3?true expire_date:flags.0?int usage_limit:flags.1?int title:flags.4?string = ExportedChatInvite;
+// chat.exportChatInvite#c5cf804b flags:# chat_id:long admin_id:long legacy_revoke_permanent:flags.2?true request_needed:flags.3?true expire_date:flags.0?int usage_limit:flags.1?int title:flags.4?string = ExportedChatInvite;
 func (s *Service) ChatExportChatInvite(ctx context.Context, request *chat.TLChatExportChatInvite) (*tg.ExportedChatInvite, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.exportChatInvite - request: %s", request)
@@ -325,7 +357,7 @@ func (s *Service) ChatExportChatInvite(ctx context.Context, request *chat.TLChat
 }
 
 // ChatGetAdminsWithInvites
-// chat.getAdminsWithInvites self_id:long chat_id:long = Vector<ChatAdminWithInvites>;
+// chat.getAdminsWithInvites#d2ea41d2 self_id:long chat_id:long = Vector<ChatAdminWithInvites>;
 func (s *Service) ChatGetAdminsWithInvites(ctx context.Context, request *chat.TLChatGetAdminsWithInvites) (*chat.VectorChatAdminWithInvites, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.getAdminsWithInvites - request: %s", request)
@@ -341,7 +373,7 @@ func (s *Service) ChatGetAdminsWithInvites(ctx context.Context, request *chat.TL
 }
 
 // ChatGetExportedChatInvite
-// chat.getExportedChatInvite chat_id:long link:string = ExportedChatInvite;
+// chat.getExportedChatInvite#ddea3250 chat_id:long link:string = ExportedChatInvite;
 func (s *Service) ChatGetExportedChatInvite(ctx context.Context, request *chat.TLChatGetExportedChatInvite) (*tg.ExportedChatInvite, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.getExportedChatInvite - request: %s", request)
@@ -357,7 +389,7 @@ func (s *Service) ChatGetExportedChatInvite(ctx context.Context, request *chat.T
 }
 
 // ChatGetExportedChatInvites
-// chat.getExportedChatInvites flags:# chat_id:long admin_id:long revoked:flags.3?true offset_date:flags.2?int offset_link:flags.2?string limit:int = Vector<ExportedChatInvite>;
+// chat.getExportedChatInvites#b48f18f6 flags:# chat_id:long admin_id:long revoked:flags.3?true offset_date:flags.2?int offset_link:flags.2?string limit:int = Vector<ExportedChatInvite>;
 func (s *Service) ChatGetExportedChatInvites(ctx context.Context, request *chat.TLChatGetExportedChatInvites) (*chat.VectorExportedChatInvite, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.getExportedChatInvites - request: %s", request)
@@ -373,7 +405,7 @@ func (s *Service) ChatGetExportedChatInvites(ctx context.Context, request *chat.
 }
 
 // ChatCheckChatInvite
-// chat.checkChatInvite self_id:long hash:string = ChatInviteExt;
+// chat.checkChatInvite#7387f28c self_id:long hash:string = ChatInviteExt;
 func (s *Service) ChatCheckChatInvite(ctx context.Context, request *chat.TLChatCheckChatInvite) (*chat.ChatInviteExt, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.checkChatInvite - request: %s", request)
@@ -389,7 +421,7 @@ func (s *Service) ChatCheckChatInvite(ctx context.Context, request *chat.TLChatC
 }
 
 // ChatImportChatInvite
-// chat.importChatInvite self_id:long hash:string = MutableChat;
+// chat.importChatInvite#58e660d4 self_id:long hash:string = MutableChat;
 func (s *Service) ChatImportChatInvite(ctx context.Context, request *chat.TLChatImportChatInvite) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.importChatInvite - request: %s", request)
@@ -405,7 +437,7 @@ func (s *Service) ChatImportChatInvite(ctx context.Context, request *chat.TLChat
 }
 
 // ChatGetChatInviteImporters
-// chat.getChatInviteImporters flags:# self_id:long chat_id:long requested:flags.0?true link:flags.1?string q:flags.2?string offset_date:int offset_user:long limit:int = Vector<ChatInviteImporter>;
+// chat.getChatInviteImporters#9846557f flags:# self_id:long chat_id:long requested:flags.0?true link:flags.1?string q:flags.2?string offset_date:int offset_user:long limit:int = Vector<ChatInviteImporter>;
 func (s *Service) ChatGetChatInviteImporters(ctx context.Context, request *chat.TLChatGetChatInviteImporters) (*chat.VectorChatInviteImporter, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.getChatInviteImporters - request: %s", request)
@@ -421,7 +453,7 @@ func (s *Service) ChatGetChatInviteImporters(ctx context.Context, request *chat.
 }
 
 // ChatDeleteExportedChatInvite
-// chat.deleteExportedChatInvite self_id:long chat_id:long link:string = Bool;
+// chat.deleteExportedChatInvite#562288b8 self_id:long chat_id:long link:string = Bool;
 func (s *Service) ChatDeleteExportedChatInvite(ctx context.Context, request *chat.TLChatDeleteExportedChatInvite) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.deleteExportedChatInvite - request: %s", request)
@@ -437,7 +469,7 @@ func (s *Service) ChatDeleteExportedChatInvite(ctx context.Context, request *cha
 }
 
 // ChatDeleteRevokedExportedChatInvites
-// chat.deleteRevokedExportedChatInvites self_id:long chat_id:long admin_id:long = Bool;
+// chat.deleteRevokedExportedChatInvites#d0126269 self_id:long chat_id:long admin_id:long = Bool;
 func (s *Service) ChatDeleteRevokedExportedChatInvites(ctx context.Context, request *chat.TLChatDeleteRevokedExportedChatInvites) (*tg.Bool, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.deleteRevokedExportedChatInvites - request: %s", request)
@@ -453,7 +485,7 @@ func (s *Service) ChatDeleteRevokedExportedChatInvites(ctx context.Context, requ
 }
 
 // ChatEditExportedChatInvite
-// chat.editExportedChatInvite flags:# self_id:long chat_id:long revoked:flags.2?true link:string expire_date:flags.0?int usage_limit:flags.1?int request_needed:flags.3?Bool title:flags.4?string = Vector<ExportedChatInvite>;
+// chat.editExportedChatInvite#af994c76 flags:# self_id:long chat_id:long revoked:flags.2?true link:string expire_date:flags.0?int usage_limit:flags.1?int request_needed:flags.3?Bool title:flags.4?string = Vector<ExportedChatInvite>;
 func (s *Service) ChatEditExportedChatInvite(ctx context.Context, request *chat.TLChatEditExportedChatInvite) (*chat.VectorExportedChatInvite, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.editExportedChatInvite - request: %s", request)
@@ -469,7 +501,7 @@ func (s *Service) ChatEditExportedChatInvite(ctx context.Context, request *chat.
 }
 
 // ChatSetChatAvailableReactions
-// chat.setChatAvailableReactions self_id:long chat_id:long available_reactions_type:int available_reactions:Vector<string> = MutableChat;
+// chat.setChatAvailableReactions#c4d08972 self_id:long chat_id:long available_reactions_type:int available_reactions:Vector<string> = MutableChat;
 func (s *Service) ChatSetChatAvailableReactions(ctx context.Context, request *chat.TLChatSetChatAvailableReactions) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.setChatAvailableReactions - request: %s", request)
@@ -485,7 +517,7 @@ func (s *Service) ChatSetChatAvailableReactions(ctx context.Context, request *ch
 }
 
 // ChatSetHistoryTTL
-// chat.setHistoryTTL self_id:long chat_id:long ttl_period:int = MutableChat;
+// chat.setHistoryTTL#3cfb6384 self_id:long chat_id:long ttl_period:int = MutableChat;
 func (s *Service) ChatSetHistoryTTL(ctx context.Context, request *chat.TLChatSetHistoryTTL) (*tg.MutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.setHistoryTTL - request: %s", request)
@@ -501,7 +533,7 @@ func (s *Service) ChatSetHistoryTTL(ctx context.Context, request *chat.TLChatSet
 }
 
 // ChatSearch
-// chat.search self_id:long q:string offset:long limit:int = Vector<MutableChat>;
+// chat.search#21e014fb self_id:long q:string offset:long limit:int = Vector<MutableChat>;
 func (s *Service) ChatSearch(ctx context.Context, request *chat.TLChatSearch) (*chat.VectorMutableChat, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.search - request: %s", request)
@@ -517,7 +549,7 @@ func (s *Service) ChatSearch(ctx context.Context, request *chat.TLChatSearch) (*
 }
 
 // ChatGetRecentChatInviteRequesters
-// chat.getRecentChatInviteRequesters self_id:long chat_id:long = RecentChatInviteRequesters;
+// chat.getRecentChatInviteRequesters#fedc1098 self_id:long chat_id:long = RecentChatInviteRequesters;
 func (s *Service) ChatGetRecentChatInviteRequesters(ctx context.Context, request *chat.TLChatGetRecentChatInviteRequesters) (*chat.RecentChatInviteRequesters, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.getRecentChatInviteRequesters - request: %s", request)
@@ -533,7 +565,7 @@ func (s *Service) ChatGetRecentChatInviteRequesters(ctx context.Context, request
 }
 
 // ChatHideChatJoinRequests
-// chat.hideChatJoinRequests flags:# self_id:long chat_id:long approved:flags.0?true link:flags.1?string user_id:flags.2?long = RecentChatInviteRequesters;
+// chat.hideChatJoinRequests#3ea52cd1 flags:# self_id:long chat_id:long approved:flags.0?true link:flags.1?string user_id:flags.2?long = RecentChatInviteRequesters;
 func (s *Service) ChatHideChatJoinRequests(ctx context.Context, request *chat.TLChatHideChatJoinRequests) (*chat.RecentChatInviteRequesters, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.hideChatJoinRequests - request: %s", request)
@@ -549,7 +581,7 @@ func (s *Service) ChatHideChatJoinRequests(ctx context.Context, request *chat.TL
 }
 
 // ChatImportChatInvite2
-// chat.importChatInvite2 self_id:long hash:string = ChatInviteImported;
+// chat.importChatInvite2#dcd93dbf self_id:long hash:string = ChatInviteImported;
 func (s *Service) ChatImportChatInvite2(ctx context.Context, request *chat.TLChatImportChatInvite2) (*chat.ChatInviteImported, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("chat.importChatInvite2 - request: %s", request)
