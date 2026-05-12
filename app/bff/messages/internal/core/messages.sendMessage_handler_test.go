@@ -12,6 +12,7 @@ import (
 	userupdatesclient "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/client"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	idgenclient "github.com/teamgram/teamgram-server/v2/app/service/idgen/client"
@@ -206,6 +207,40 @@ func TestMessagesSendMessage_Success(t *testing.T) {
 	}
 }
 
+func TestMessagesSendMessageAllowsInputPeerChat(t *testing.T) {
+	var got *msg.TLMsgSendMessageV2
+	var checked *chatpb.TLChatCheckMessageAction
+	core := newMessagesCoreWithRepo(&repository.Repository{
+		ChatClient: &messagesFakeChatClient{
+			checkMessageAction: func(_ context.Context, in *chatpb.TLChatCheckMessageAction) (*chatpb.MessageActionCheckResult, error) {
+				checked = in
+				return chatpb.MakeTLMessageActionCheckResult(&chatpb.TLMessageActionCheckResult{
+					SelfId: in.SelfId, ChatId: in.ChatId, Action: in.Action, MediaKind: in.MediaKind,
+				}).ToMessageActionCheckResult(), nil
+			},
+		},
+		MsgClient: &messagesFakeMsgClient{sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+			got = in
+			return testUpdates(), nil
+		}},
+	}, 1001, 9001)
+
+	_, err := core.MessagesSendMessage(&tg.TLMessagesSendMessage{
+		Peer:     inputPeerChat(55),
+		Message:  "hello chat",
+		RandomId: 12345,
+	})
+	if err != nil {
+		t.Fatalf("MessagesSendMessage() error = %v", err)
+	}
+	if checked == nil || checked.ChatId != 55 || checked.SelfId != 1001 || checked.Action != chatpb.MessageActionSendText {
+		t.Fatalf("chat check = %+v, want send_text for chat 55", checked)
+	}
+	if got == nil || got.PeerType != payload.PeerTypeChat || got.PeerId != 55 {
+		t.Fatalf("msg request = %+v, want PeerTypeChat/chat 55", got)
+	}
+}
+
 func TestSendMessageClearDraftCarriesSourcePermAuthKey(t *testing.T) {
 	var got *msg.TLMsgSendMessageV2
 	c := newSendMsgCore(&messagesFakeMsgClient{
@@ -343,6 +378,46 @@ func TestMessagesGetHistory_UserPeerSuccess(t *testing.T) {
 	messages, ok := r.ToMessagesMessages()
 	if !ok || len(messages.Users) != 2 {
 		t.Fatalf("history users = %#v, ok=%v, want projected users", r, ok)
+	}
+}
+
+func TestMessagesGetHistoryAllowsInputPeerChat(t *testing.T) {
+	var got *msg.TLMsgGetHistory
+	var checked *chatpb.TLChatCheckChatAccess
+	reply := tg.MakeTLMessagesMessages(&tg.TLMessagesMessages{
+		Messages: []tg.MessageClazz{},
+		Chats:    []tg.ChatClazz{},
+		Users:    []tg.UserClazz{},
+	}).ToMessagesMessages()
+	c := newMessagesCoreWithRepo(&repository.Repository{
+		ChatClient: &messagesFakeChatClient{
+			checkChatAccess: func(_ context.Context, in *chatpb.TLChatCheckChatAccess) (*chatpb.ChatAccessCheckResult, error) {
+				checked = in
+				return chatpb.MakeTLChatAccessCheckResult(&chatpb.TLChatAccessCheckResult{
+					SelfId: in.SelfId, ChatId: in.ChatId, AccessKind: in.AccessKind,
+				}).ToChatAccessCheckResult(), nil
+			},
+		},
+		MsgClient: &messagesFakeMsgClient{
+			getHistory: func(_ context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error) {
+				got = in
+				return reply, nil
+			},
+		},
+	}, 1001, 9001)
+
+	_, err := c.MessagesGetHistory(&tg.TLMessagesGetHistory{
+		Peer:  inputPeerChat(55),
+		Limit: 20,
+	})
+	if err != nil {
+		t.Fatalf("MessagesGetHistory() error = %v", err)
+	}
+	if checked == nil || checked.ChatId != 55 || checked.SelfId != 1001 || checked.AccessKind != chatpb.ChatAccessGetHistory {
+		t.Fatalf("chat access check = %+v, want get_history for chat 55", checked)
+	}
+	if got == nil || got.PeerType != payload.PeerTypeChat || got.PeerId != 55 || got.Limit != 20 {
+		t.Fatalf("msg request = %+v, want PeerTypeChat/chat 55", got)
 	}
 }
 
@@ -832,7 +907,7 @@ func TestMessagesSendMessage_NilPeerRejected(t *testing.T) {
 	}
 }
 
-func TestMessagesSendMessage_NonUserPeerRejected(t *testing.T) {
+func TestMessagesSendMessage_UnsupportedPeerRejected(t *testing.T) {
 	called := false
 	c := newSendMsgCore(&messagesFakeMsgClient{
 		sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
@@ -842,7 +917,7 @@ func TestMessagesSendMessage_NonUserPeerRejected(t *testing.T) {
 	}, 100, 200)
 
 	_, err := c.MessagesSendMessage(&tg.TLMessagesSendMessage{
-		Peer:     inputPeerChat(42),
+		Peer:     tg.MakeTLInputPeerChannel(&tg.TLInputPeerChannel{ChannelId: 42}),
 		Message:  "hello",
 		RandomId: 42,
 	})

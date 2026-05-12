@@ -20,6 +20,7 @@ import (
 	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -34,17 +35,22 @@ func (c *MessagesCore) MessagesGetHistory(in *tg.TLMessagesGetHistory) (*tg.Mess
 		return nil, tg.ErrInputRequestInvalid
 	}
 
-	peerUserID, ok := resolveUserPeerID(in.Peer, md.UserId)
+	peer, ok := resolveMessagePeer(in.Peer, md.UserId)
 	if !ok {
 		return nil, tg.Err400PeerIdInvalid
+	}
+	if peer.PeerType == payload.PeerTypeChat {
+		if err := c.checkChatAccess(peer.PeerID, chatpb.ChatAccessGetHistory); err != nil {
+			return nil, err
+		}
 	}
 
 	var historyClient getHistoryClient = c.svcCtx.Repo.MsgClient
 	r, err := historyClient.MsgGetHistory(c.ctx, &msg.TLMsgGetHistory{
 		UserId:     md.UserId,
 		AuthKeyId:  md.PermAuthKeyId,
-		PeerType:   payload.PeerTypeUser,
-		PeerId:     peerUserID,
+		PeerType:   peer.PeerType,
+		PeerId:     peer.PeerID,
 		OffsetId:   in.OffsetId,
 		OffsetDate: in.OffsetDate,
 		AddOffset:  in.AddOffset,
@@ -54,8 +60,8 @@ func (c *MessagesCore) MessagesGetHistory(in *tg.TLMessagesGetHistory) (*tg.Mess
 		Hash:       in.Hash,
 	})
 	if err != nil {
-		c.Logger.Errorf("messages.getHistory - msg error: self_user_id: %d, peer_id: %d, offset_id: %d, limit: %d, err: %v",
-			md.UserId, peerUserID, in.OffsetId, in.Limit, err)
+		c.Logger.Errorf("messages.getHistory - msg error: self_user_id: %d, peer_type: %d, peer_id: %d, offset_id: %d, limit: %d, err: %v",
+			md.UserId, peer.PeerType, peer.PeerID, in.OffsetId, in.Limit, err)
 		return nil, mapMsgSendError(err)
 	}
 	if err = userprojection.FillMessagesMessagesUsers(c.ctx, c.svcCtx.Repo.UserClient, md.UserId, r, userprojection.MissingStoredReference); err != nil {
