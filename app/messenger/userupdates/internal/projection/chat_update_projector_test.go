@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/eventtypes"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -27,15 +27,15 @@ func TestProjectUserEventChatNewMessageKeepsPeerChatAndFromUser(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	result, err := ProjectUserEvent(repository.UserEvent{
+	result, err := ProjectUserEvent(eventtypes.UserEvent{
 		UserID:             1002,
-		EventType:          repository.EventTypeNewMessage,
+		EventType:          eventtypes.EventTypeNewMessage,
 		PeerType:           payload.PeerTypeChat,
 		PeerID:             55,
 		Pts:                11,
 		PtsCount:           1,
 		EventSchemaVersion: payload.MessageEventSchemaVersionV3,
-		EventCodec:         repository.PayloadCodecJSON,
+		EventCodec:         eventtypes.PayloadCodecJSON,
 		EventPayload:       body,
 		EventPayloadHash:   payload.HashBytes(body),
 	}, ModeDifference)

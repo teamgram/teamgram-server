@@ -57,7 +57,7 @@ func TestRemakeMessageTextEntitiesConvertsInputMentionName(t *testing.T) {
 func TestMessagesSendMessageGeneratesMessageTextEntities(t *testing.T) {
 	var gotEntities []tg.MessageEntityClazz
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			message, ok := in.Message[0].Message.(*tg.TLMessage)
 			if !ok {
 				t.Fatalf("message = %T, want *tg.TLMessage", in.Message[0].Message)

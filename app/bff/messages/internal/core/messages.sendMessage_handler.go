@@ -86,7 +86,7 @@ func (c *MessagesCore) MessagesSendMessage(in *tg.TLMessagesSendMessage) (*tg.Up
 	clearDraftBeforeDate := outgoingMsg.Date
 
 	var sendClient sendMessageClient = c.svcCtx.Repo.MsgClient
-	updates, err := sendClient.MsgSendMessageV2(c.ctx, &msg.TLMsgSendMessageV2{
+	updates, err := sendClient.MsgSendMessage(c.ctx, &msg.TLMsgSendMessage{
 		ClearDraft:           in.ClearDraft,
 		UserId:               selfUserID,
 		AuthKeyId:            authKeyID,

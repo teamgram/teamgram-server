@@ -27,8 +27,8 @@ var _ *tg.Bool
 type Client interface {
 	MsgPushUserMessage(ctx context.Context, req *msg.TLMsgPushUserMessage, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	MsgReadMessageContents(ctx context.Context, req *msg.TLMsgReadMessageContents, callOptions ...callopt.Option) (r *tg.MessagesAffectedMessages, err error)
-	MsgSendMessageV2(ctx context.Context, req *msg.TLMsgSendMessageV2, callOptions ...callopt.Option) (r *tg.Updates, err error)
-	MsgEditMessageV2(ctx context.Context, req *msg.TLMsgEditMessageV2, callOptions ...callopt.Option) (r *tg.Updates, err error)
+	MsgSendMessage(ctx context.Context, req *msg.TLMsgSendMessage, callOptions ...callopt.Option) (r *tg.Updates, err error)
+	MsgEditMessage(ctx context.Context, req *msg.TLMsgEditMessage, callOptions ...callopt.Option) (r *tg.Updates, err error)
 	MsgDeleteMessages(ctx context.Context, req *msg.TLMsgDeleteMessages, callOptions ...callopt.Option) (r *tg.MessagesAffectedMessages, err error)
 	MsgDeleteHistory(ctx context.Context, req *msg.TLMsgDeleteHistory, callOptions ...callopt.Option) (r *tg.MessagesAffectedHistory, err error)
 	MsgDeletePhoneCallHistory(ctx context.Context, req *msg.TLMsgDeletePhoneCallHistory, callOptions ...callopt.Option) (r *tg.MessagesAffectedFoundMessages, err error)
@@ -91,14 +91,14 @@ func (p *kMsgClient) MsgReadMessageContents(ctx context.Context, req *msg.TLMsgR
 	return p.kClient.MsgReadMessageContents(ctx, req)
 }
 
-func (p *kMsgClient) MsgSendMessageV2(ctx context.Context, req *msg.TLMsgSendMessageV2, callOptions ...callopt.Option) (r *tg.Updates, err error) {
+func (p *kMsgClient) MsgSendMessage(ctx context.Context, req *msg.TLMsgSendMessage, callOptions ...callopt.Option) (r *tg.Updates, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.MsgSendMessageV2(ctx, req)
+	return p.kClient.MsgSendMessage(ctx, req)
 }
 
-func (p *kMsgClient) MsgEditMessageV2(ctx context.Context, req *msg.TLMsgEditMessageV2, callOptions ...callopt.Option) (r *tg.Updates, err error) {
+func (p *kMsgClient) MsgEditMessage(ctx context.Context, req *msg.TLMsgEditMessage, callOptions ...callopt.Option) (r *tg.Updates, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.MsgEditMessageV2(ctx, req)
+	return p.kClient.MsgEditMessage(ctx, req)
 }
 
 func (p *kMsgClient) MsgDeleteMessages(ctx context.Context, req *msg.TLMsgDeleteMessages, callOptions ...callopt.Option) (r *tg.MessagesAffectedMessages, err error) {

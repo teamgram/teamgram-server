@@ -25,8 +25,8 @@ var _ *tg.Bool
 type MsgClient interface {
 	MsgPushUserMessage(ctx context.Context, in *msg.TLMsgPushUserMessage) (*tg.Bool, error)
 	MsgReadMessageContents(ctx context.Context, in *msg.TLMsgReadMessageContents) (*tg.MessagesAffectedMessages, error)
-	MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error)
-	MsgEditMessageV2(ctx context.Context, in *msg.TLMsgEditMessageV2) (*tg.Updates, error)
+	MsgSendMessage(ctx context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error)
+	MsgEditMessage(ctx context.Context, in *msg.TLMsgEditMessage) (*tg.Updates, error)
 	MsgDeleteMessages(ctx context.Context, in *msg.TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error)
 	MsgDeleteHistory(ctx context.Context, in *msg.TLMsgDeleteHistory) (*tg.MessagesAffectedHistory, error)
 	MsgDeletePhoneCallHistory(ctx context.Context, in *msg.TLMsgDeletePhoneCallHistory) (*tg.MessagesAffectedFoundMessages, error)
@@ -66,16 +66,16 @@ func (m *defaultMsgClient) MsgReadMessageContents(ctx context.Context, in *msg.T
 	return m.rpc.MsgReadMessageContents(ctx, in)
 }
 
-// MsgSendMessageV2
-// msg.sendMessageV2 flags:# clear_draft:flags.0?true user_id:long auth_key_id:long source_perm_auth_key_id:flags.1?long clear_draft_before_date:flags.2?int peer_type:int peer_id:long message:Vector<OutboxMessage> = Updates;
-func (m *defaultMsgClient) MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
-	return m.rpc.MsgSendMessageV2(ctx, in)
+// MsgSendMessage
+// msg.sendMessage flags:# clear_draft:flags.0?true user_id:long auth_key_id:long source_perm_auth_key_id:flags.1?long clear_draft_before_date:flags.2?int peer_type:int peer_id:long message:Vector<OutboxMessage> = Updates;
+func (m *defaultMsgClient) MsgSendMessage(ctx context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error) {
+	return m.rpc.MsgSendMessage(ctx, in)
 }
 
-// MsgEditMessageV2
-// msg.editMessageV2 user_id:long auth_key_id:long peer_type:int peer_id:long edit_type:int new_message:OutboxMessage dst_message:MessageBox = Updates;
-func (m *defaultMsgClient) MsgEditMessageV2(ctx context.Context, in *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
-	return m.rpc.MsgEditMessageV2(ctx, in)
+// MsgEditMessage
+// msg.editMessage user_id:long auth_key_id:long peer_type:int peer_id:long edit_type:int new_message:OutboxMessage dst_message:MessageBox = Updates;
+func (m *defaultMsgClient) MsgEditMessage(ctx context.Context, in *msg.TLMsgEditMessage) (*tg.Updates, error) {
+	return m.rpc.MsgEditMessage(ctx, in)
 }
 
 // MsgDeleteMessages

@@ -15,6 +15,7 @@ import (
 )
 
 type Models struct {
+	ChatCreateOperationsModel   ChatCreateOperationsModel
 	ChatInviteParticipantsModel ChatInviteParticipantsModel
 	ChatInvitesModel            ChatInvitesModel
 	ChatParticipantsModel       ChatParticipantsModel
@@ -22,6 +23,7 @@ type Models struct {
 }
 
 type TxModels struct {
+	ChatCreateOperationsModel   ChatCreateOperationsTxModel
 	ChatInviteParticipantsModel ChatInviteParticipantsTxModel
 	ChatInvitesModel            ChatInvitesTxModel
 	ChatParticipantsModel       ChatParticipantsTxModel
@@ -30,6 +32,7 @@ type TxModels struct {
 
 func NewModels(db *sqlx.DB) *Models {
 	return &Models{
+		ChatCreateOperationsModel:   NewChatCreateOperationsModel(db),
 		ChatInviteParticipantsModel: NewChatInviteParticipantsModel(db),
 		ChatInvitesModel:            NewChatInvitesModel(db),
 		ChatParticipantsModel:       NewChatParticipantsModel(db),
@@ -39,6 +42,7 @@ func NewModels(db *sqlx.DB) *Models {
 
 func (m *Models) WithTx(tx *sqlx.Tx) *TxModels {
 	return &TxModels{
+		ChatCreateOperationsModel:   NewChatCreateOperationsTxModel(tx),
 		ChatInviteParticipantsModel: NewChatInviteParticipantsTxModel(tx),
 		ChatInvitesModel:            NewChatInvitesTxModel(tx),
 		ChatParticipantsModel:       NewChatParticipantsTxModel(tx),

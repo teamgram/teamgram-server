@@ -6,33 +6,42 @@ import (
 )
 
 var (
-	ErrChatNotFound             = errors.New("chat: chat not found")
-	ErrChatMigrated             = errors.New("chat: chat migrated")
-	ErrChatDeactivated          = errors.New("chat: chat deactivated")
-	ErrChatAdminRequired        = errors.New("chat: chat admin required")
-	ErrChatWriteForbidden       = errors.New("chat: write forbidden")
-	ErrChatTitleEmpty           = errors.New("chat: title empty")
-	ErrChatNotModified          = errors.New("chat: not modified")
-	ErrCreateChatFlood          = errors.New("chat: create chat flood")
-	ErrParticipantInvalid       = errors.New("chat: participant invalid")
-	ErrMessageActionUnsupported = errors.New("chat: message action unsupported")
-	ErrInputUserDeactivated     = errors.New("chat: input user deactivated")
-	ErrUserAlreadyParticipant   = errors.New("chat: user already participant")
-	ErrUserNotParticipant       = errors.New("chat: user not participant")
-	ErrUsersTooFew              = errors.New("chat: users too few")
-	ErrUsersTooMuch             = errors.New("chat: users too much")
-	ErrInviteHashInvalid        = errors.New("chat: invite hash invalid")
-	ErrInviteHashExpired        = errors.New("chat: invite hash expired")
-	ErrChatLinkExists           = errors.New("chat: link exists")
-	ErrChatStorage              = errors.New("chat: storage failure")
+	ErrChatNotFound               = errors.New("chat: chat not found")
+	ErrChatMigrated               = errors.New("chat: chat migrated")
+	ErrChatDeactivated            = errors.New("chat: chat deactivated")
+	ErrChatAdminRequired          = errors.New("chat: chat admin required")
+	ErrChatWriteForbidden         = errors.New("chat: write forbidden")
+	ErrChatTitleEmpty             = errors.New("chat: title empty")
+	ErrChatNotModified            = errors.New("chat: not modified")
+	ErrCreateChatFlood            = errors.New("chat: create chat flood")
+	ErrParticipantInvalid         = errors.New("chat: participant invalid")
+	ErrMessageActionUnsupported   = errors.New("chat: message action unsupported")
+	ErrInputUserDeactivated       = errors.New("chat: input user deactivated")
+	ErrUserAlreadyParticipant     = errors.New("chat: user already participant")
+	ErrUserNotParticipant         = errors.New("chat: user not participant")
+	ErrUsersTooFew                = errors.New("chat: users too few")
+	ErrUsersTooMuch               = errors.New("chat: users too much")
+	ErrInviteHashInvalid          = errors.New("chat: invite hash invalid")
+	ErrInviteHashExpired          = errors.New("chat: invite hash expired")
+	ErrChatLinkExists             = errors.New("chat: link exists")
+	ErrChatStorage                = errors.New("chat: storage failure")
+	ErrCreateChatOperationPending = errors.New("chat: create chat operation pending")
 )
 
 type CreateChatFloodError struct {
 	WaitSeconds int32
 }
 
+type CreateChatOperationPendingError struct {
+	WaitSeconds int32
+}
+
 func NewCreateChatFloodError(waitSeconds int32) error {
 	return &CreateChatFloodError{WaitSeconds: waitSeconds}
+}
+
+func NewCreateChatOperationPendingError(waitSeconds int32) error {
+	return &CreateChatOperationPendingError{WaitSeconds: waitSeconds}
 }
 
 func (e *CreateChatFloodError) Error() string {
@@ -41,6 +50,14 @@ func (e *CreateChatFloodError) Error() string {
 
 func (e *CreateChatFloodError) Is(target error) bool {
 	return target == ErrCreateChatFlood
+}
+
+func (e *CreateChatOperationPendingError) Error() string {
+	return fmt.Sprintf("%s: wait_seconds=%d", ErrCreateChatOperationPending, e.WaitSeconds)
+}
+
+func (e *CreateChatOperationPendingError) Is(target error) bool {
+	return target == ErrCreateChatOperationPending
 }
 
 func WrapChatStorage(op string, err error) error {

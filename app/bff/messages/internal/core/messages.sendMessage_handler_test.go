@@ -23,7 +23,7 @@ import (
 
 type messagesFakeMsgClient struct {
 	msgclient.MsgClient
-	sendMessageV2       func(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error)
+	sendMessage         func(ctx context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error)
 	getUserMessage      func(ctx context.Context, in *msg.TLMsgGetUserMessage) (*tg.MessageBox, error)
 	getUserMessageList  func(ctx context.Context, in *msg.TLMsgGetUserMessageList) (*msg.VectorMessageBox, error)
 	getHistory          func(ctx context.Context, in *msg.TLMsgGetHistory) (*tg.MessagesMessages, error)
@@ -32,12 +32,12 @@ type messagesFakeMsgClient struct {
 	unpinAllMessages    func(ctx context.Context, in *msg.TLMsgUnpinAllMessages) (*tg.MessagesAffectedHistory, error)
 	deleteMessages      func(ctx context.Context, in *msg.TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error)
 	deleteHistory       func(ctx context.Context, in *msg.TLMsgDeleteHistory) (*tg.MessagesAffectedHistory, error)
-	editMessageV2       func(ctx context.Context, in *msg.TLMsgEditMessageV2) (*tg.Updates, error)
+	editMessage         func(ctx context.Context, in *msg.TLMsgEditMessage) (*tg.Updates, error)
 	searchHashtag       func(ctx context.Context, in *msg.TLMsgSearchHashtag) (*tg.MessagesMessages, error)
 }
 
-func (f *messagesFakeMsgClient) MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
-	return f.sendMessageV2(ctx, in)
+func (f *messagesFakeMsgClient) MsgSendMessage(ctx context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error) {
+	return f.sendMessage(ctx, in)
 }
 
 func (f *messagesFakeMsgClient) MsgGetUserMessage(ctx context.Context, in *msg.TLMsgGetUserMessage) (*tg.MessageBox, error) {
@@ -72,8 +72,8 @@ func (f *messagesFakeMsgClient) MsgDeleteHistory(ctx context.Context, in *msg.TL
 	return f.deleteHistory(ctx, in)
 }
 
-func (f *messagesFakeMsgClient) MsgEditMessageV2(ctx context.Context, in *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
-	return f.editMessageV2(ctx, in)
+func (f *messagesFakeMsgClient) MsgEditMessage(ctx context.Context, in *msg.TLMsgEditMessage) (*tg.Updates, error) {
+	return f.editMessage(ctx, in)
 }
 
 func (f *messagesFakeMsgClient) MsgSearchHashtag(ctx context.Context, in *msg.TLMsgSearchHashtag) (*tg.MessagesMessages, error) {
@@ -173,9 +173,9 @@ func inputPeerChat(chatID int64) *tg.TLInputPeerChat {
 // --- Success ---
 
 func TestMessagesSendMessage_Success(t *testing.T) {
-	var got *msg.TLMsgSendMessageV2
+	var got *msg.TLMsgSendMessage
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			got = in
 			return testUpdates(), nil
 		},
@@ -213,7 +213,7 @@ func TestMessagesSendMessage_Success(t *testing.T) {
 }
 
 func TestMessagesSendMessageAllowsInputPeerChat(t *testing.T) {
-	var got *msg.TLMsgSendMessageV2
+	var got *msg.TLMsgSendMessage
 	var checked *chatpb.TLChatCheckMessageAction
 	core := newMessagesCoreWithRepo(&repository.Repository{
 		ChatClient: &messagesFakeChatClient{
@@ -224,7 +224,7 @@ func TestMessagesSendMessageAllowsInputPeerChat(t *testing.T) {
 				}).ToMessageActionCheckResult(), nil
 			},
 		},
-		MsgClient: &messagesFakeMsgClient{sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		MsgClient: &messagesFakeMsgClient{sendMessage: func(_ context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			got = in
 			return testUpdates(), nil
 		}},
@@ -258,9 +258,9 @@ func TestMessagesSendMessageAllowsInputPeerChat(t *testing.T) {
 }
 
 func TestSendMessageClearDraftCarriesSourcePermAuthKey(t *testing.T) {
-	var got *msg.TLMsgSendMessageV2
+	var got *msg.TLMsgSendMessage
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			got = in
 			return testUpdates(), nil
 		},
@@ -290,9 +290,9 @@ func TestSendMessageClearDraftCarriesSourcePermAuthKey(t *testing.T) {
 }
 
 func TestMessagesSendMessage_InputReplyToMessageSetsReplyHeader(t *testing.T) {
-	var got *msg.TLMsgSendMessageV2
+	var got *msg.TLMsgSendMessage
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			got = in
 			return testUpdates(), nil
 		},
@@ -746,9 +746,9 @@ func TestMessagesDeleteMessagesRoutesGlobalPublicIDs(t *testing.T) {
 }
 
 func TestMessagesEditMessage_TextUserPeerRoutesToMsg(t *testing.T) {
-	var got *msg.TLMsgEditMessageV2
+	var got *msg.TLMsgEditMessage
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		editMessageV2: func(_ context.Context, in *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
+		editMessage: func(_ context.Context, in *msg.TLMsgEditMessage) (*tg.Updates, error) {
 			got = in
 			return testUpdates(), nil
 		},
@@ -796,9 +796,9 @@ func TestMessagesEditMessage_TextUserPeerRoutesToMsg(t *testing.T) {
 }
 
 func TestMessagesEditMessage_InputPeerSelfTargetsCurrentUser(t *testing.T) {
-	var got *msg.TLMsgEditMessageV2
+	var got *msg.TLMsgEditMessage
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		editMessageV2: func(_ context.Context, in *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
+		editMessage: func(_ context.Context, in *msg.TLMsgEditMessage) (*tg.Updates, error) {
 			got = in
 			return testUpdates(), nil
 		},
@@ -821,7 +821,7 @@ func TestMessagesEditMessage_InputPeerSelfTargetsCurrentUser(t *testing.T) {
 func TestMessagesEditMessage_EmptyTextRejected(t *testing.T) {
 	called := false
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		editMessageV2: func(_ context.Context, _ *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
+		editMessage: func(_ context.Context, _ *msg.TLMsgEditMessage) (*tg.Updates, error) {
 			called = true
 			return nil, nil
 		},
@@ -844,7 +844,7 @@ func TestMessagesEditMessage_EmptyTextRejected(t *testing.T) {
 func TestMessagesEditMessage_UnsupportedPeerRejected(t *testing.T) {
 	called := false
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		editMessageV2: func(_ context.Context, _ *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
+		editMessage: func(_ context.Context, _ *msg.TLMsgEditMessage) (*tg.Updates, error) {
 			called = true
 			return nil, nil
 		},
@@ -867,7 +867,7 @@ func TestMessagesEditMessage_UnsupportedPeerRejected(t *testing.T) {
 func TestMessagesEditMessage_MediaRejectedUntilSupported(t *testing.T) {
 	called := false
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		editMessageV2: func(_ context.Context, _ *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
+		editMessage: func(_ context.Context, _ *msg.TLMsgEditMessage) (*tg.Updates, error) {
 			called = true
 			return nil, nil
 		},
@@ -890,7 +890,7 @@ func TestMessagesEditMessage_MediaRejectedUntilSupported(t *testing.T) {
 
 func TestMessagesEditMessage_MsgStateConflictMappedToMsgIdInvalid(t *testing.T) {
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		editMessageV2: func(_ context.Context, _ *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
+		editMessage: func(_ context.Context, _ *msg.TLMsgEditMessage) (*tg.Updates, error) {
 			return nil, msg.ErrSendStateConflict
 		},
 	}, 100, 200)
@@ -908,7 +908,7 @@ func TestMessagesEditMessage_MsgStateConflictMappedToMsgIdInvalid(t *testing.T) 
 
 func TestMessagesEditMessage_RemoteMsgNotModifiedMapped(t *testing.T) {
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		editMessageV2: func(_ context.Context, _ *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
+		editMessage: func(_ context.Context, _ *msg.TLMsgEditMessage) (*tg.Updates, error) {
 			return nil, errors.New("remote or network error: biz error: msg: message not modified")
 		},
 	}, 100, 200)
@@ -927,9 +927,9 @@ func TestMessagesEditMessage_RemoteMsgNotModifiedMapped(t *testing.T) {
 // --- Input validation (must NOT call msg) ---
 
 func TestMessagesSendMessage_InputPeerSelfTargetsCurrentUser(t *testing.T) {
-	var got *msg.TLMsgSendMessageV2
+	var got *msg.TLMsgSendMessage
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			got = in
 			return testUpdates(), nil
 		},
@@ -950,7 +950,7 @@ func TestMessagesSendMessage_InputPeerSelfTargetsCurrentUser(t *testing.T) {
 func TestMessagesSendMessage_NilPeerRejected(t *testing.T) {
 	called := false
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, _ *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			called = true
 			return nil, nil
 		},
@@ -971,7 +971,7 @@ func TestMessagesSendMessage_NilPeerRejected(t *testing.T) {
 func TestMessagesSendMessage_UnsupportedPeerRejected(t *testing.T) {
 	called := false
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, _ *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			called = true
 			return nil, nil
 		},
@@ -993,7 +993,7 @@ func TestMessagesSendMessage_UnsupportedPeerRejected(t *testing.T) {
 func TestMessagesSendMessage_EmptyMessageRejected(t *testing.T) {
 	called := false
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, _ *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			called = true
 			return nil, nil
 		},
@@ -1015,7 +1015,7 @@ func TestMessagesSendMessage_EmptyMessageRejected(t *testing.T) {
 func TestMessagesSendMessage_WhitespaceMessageRejected(t *testing.T) {
 	called := false
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, _ *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			called = true
 			return nil, nil
 		},
@@ -1041,7 +1041,7 @@ func TestMessagesSendMessage_MessageTooLongRejected(t *testing.T) {
 	}
 	called := false
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, _ *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			called = true
 			return nil, nil
 		},
@@ -1065,9 +1065,9 @@ func TestMessagesSendMessage_Message4096CodeUnitsAccepted(t *testing.T) {
 	for i := 0; i < 4096; i++ {
 		text += "a"
 	}
-	var got *msg.TLMsgSendMessageV2
+	var got *msg.TLMsgSendMessage
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			got = in
 			return testUpdates(), nil
 		},
@@ -1089,7 +1089,7 @@ func TestMessagesSendMessage_Message4096CodeUnitsAccepted(t *testing.T) {
 func TestMessagesSendMessage_RandomIdZeroRejected(t *testing.T) {
 	called := false
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, _ *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			called = true
 			return nil, nil
 		},
@@ -1111,9 +1111,9 @@ func TestMessagesSendMessage_RandomIdZeroRejected(t *testing.T) {
 // --- Supported semantic fields ---
 
 func TestMessagesSendMessage_EntitiesPassedToMsg(t *testing.T) {
-	var got *msg.TLMsgSendMessageV2
+	var got *msg.TLMsgSendMessage
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			got = in
 			return testUpdates(), nil
 		},
@@ -1151,7 +1151,7 @@ func TestMessagesSendMessage_EntitiesPassedToMsg(t *testing.T) {
 func TestMessagesSendMessage_SilentTrueRejected(t *testing.T) {
 	called := false
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, _ *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			called = true
 			return nil, nil
 		},
@@ -1174,7 +1174,7 @@ func TestMessagesSendMessage_SilentTrueRejected(t *testing.T) {
 func TestMessagesSendMessage_NoforwardsTrueRejected(t *testing.T) {
 	called := false
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, _ *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			called = true
 			return nil, nil
 		},
@@ -1198,7 +1198,7 @@ func TestMessagesSendMessage_ScheduleDateRejected(t *testing.T) {
 	called := false
 	sched := int32(2000000)
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, _ *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			called = true
 			return nil, nil
 		},
@@ -1221,7 +1221,7 @@ func TestMessagesSendMessage_ScheduleDateRejected(t *testing.T) {
 func TestMessagesSendMessage_ReplyMarkupRejected(t *testing.T) {
 	called := false
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, _ *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			called = true
 			return nil, nil
 		},
@@ -1244,9 +1244,9 @@ func TestMessagesSendMessage_ReplyMarkupRejected(t *testing.T) {
 // --- Default/empty fields accepted ---
 
 func TestMessagesSendMessage_EmptyEntitiesAccepted(t *testing.T) {
-	var got *msg.TLMsgSendMessageV2
+	var got *msg.TLMsgSendMessage
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			got = in
 			return testUpdates(), nil
 		},
@@ -1267,9 +1267,9 @@ func TestMessagesSendMessage_EmptyEntitiesAccepted(t *testing.T) {
 }
 
 func TestMessagesSendMessage_SilentFalseAccepted(t *testing.T) {
-	var got *msg.TLMsgSendMessageV2
+	var got *msg.TLMsgSendMessage
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			got = in
 			return testUpdates(), nil
 		},
@@ -1293,7 +1293,7 @@ func TestMessagesSendMessage_SilentFalseAccepted(t *testing.T) {
 
 func TestMessagesSendMessage_RandomIdConflictMapped(t *testing.T) {
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, _ *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			return nil, msg.ErrRandomIdConflict
 		},
 	}, 100, 200)
@@ -1310,7 +1310,7 @@ func TestMessagesSendMessage_RandomIdConflictMapped(t *testing.T) {
 
 func TestMessagesSendMessage_ReceiverBackpressureMapped(t *testing.T) {
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, _ *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			return nil, msg.ErrReceiverBackpressure
 		},
 	}, 100, 200)
@@ -1327,7 +1327,7 @@ func TestMessagesSendMessage_ReceiverBackpressureMapped(t *testing.T) {
 
 func TestMessagesSendMessage_SenderSyncFailedMapped(t *testing.T) {
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, _ *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			return nil, msg.ErrSenderSyncFailed
 		},
 	}, 100, 200)
@@ -1344,7 +1344,7 @@ func TestMessagesSendMessage_SenderSyncFailedMapped(t *testing.T) {
 
 func TestMessagesSendMessage_MsgStorageMapped(t *testing.T) {
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, _ *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			return nil, msg.ErrMsgStorage
 		},
 	}, 100, 200)
@@ -1361,7 +1361,7 @@ func TestMessagesSendMessage_MsgStorageMapped(t *testing.T) {
 
 func TestMessagesSendMessage_SendStateConflictMapped(t *testing.T) {
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, _ *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			return nil, msg.ErrSendStateConflict
 		},
 	}, 100, 200)
@@ -1378,7 +1378,7 @@ func TestMessagesSendMessage_SendStateConflictMapped(t *testing.T) {
 
 func TestMessagesSendMessage_ContextDeadlineMapped(t *testing.T) {
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, _ *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			return nil, context.DeadlineExceeded
 		},
 	}, 100, 200)
@@ -1395,7 +1395,7 @@ func TestMessagesSendMessage_ContextDeadlineMapped(t *testing.T) {
 
 func TestMessagesSendMessage_UnknownErrorMapped(t *testing.T) {
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, _ *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			return nil, errors.New("some unknown transport error")
 		},
 	}, 100, 200)
@@ -1412,7 +1412,7 @@ func TestMessagesSendMessage_UnknownErrorMapped(t *testing.T) {
 
 func TestMessagesSendMessage_TgErrorPassThrough(t *testing.T) {
 	c := newSendMsgCore(&messagesFakeMsgClient{
-		sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, _ *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			return nil, tg.ErrChatIdInvalid
 		},
 	}, 100, 200)

@@ -34,7 +34,7 @@ func TestMessagesEditMessageProjectsUsers(t *testing.T) {
 	userClient := &fakeEditProjectionUserClient{}
 	core := New(context.Background(), &svc.ServiceContext{Repo: &repository.Repository{
 		MsgClient: &messagesFakeMsgClient{
-			editMessageV2: func(_ context.Context, _ *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
+			editMessage: func(_ context.Context, _ *msg.TLMsgEditMessage) (*tg.Updates, error) {
 				return tg.MakeTLUpdates(&tg.TLUpdates{
 					Updates: []tg.UpdateClazz{tg.MakeTLUpdateEditMessage(&tg.TLUpdateEditMessage{
 						Message: tg.MakeTLMessage(&tg.TLMessage{

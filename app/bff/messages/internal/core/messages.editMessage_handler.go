@@ -92,7 +92,7 @@ func (c *MessagesCore) MessagesEditMessage(in *tg.TLMessagesEditMessage) (*tg.Up
 	})
 
 	var editClient editMessageClient = c.svcCtx.Repo.MsgClient
-	updates, err := editClient.MsgEditMessageV2(c.ctx, &msg.TLMsgEditMessageV2{
+	updates, err := editClient.MsgEditMessage(c.ctx, &msg.TLMsgEditMessage{
 		UserId:    md.UserId,
 		AuthKeyId: md.PermAuthKeyId,
 		PeerType:  peer.PeerType,

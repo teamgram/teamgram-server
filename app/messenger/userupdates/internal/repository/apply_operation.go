@@ -12,9 +12,13 @@ import (
 	"unicode/utf8"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/envelope"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/projection"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 func (r *Repository) ClaimPartitionOwner(ctx context.Context, partitionID int32) (int64, error) {
@@ -148,6 +152,9 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 	if err != nil {
 		return nil, err
 	}
+	if op.MessageFact != nil {
+		op.Out = in.UserID == op.MessageFact.SenderUserID
+	}
 	if len(in.DependencyPts) != 0 || len(op.DependencyPts) != 0 {
 		return nil, userupdates.ErrOperationTerminal
 	}
@@ -171,7 +178,7 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 
 	nextPTS := state.Pts + 1
 	ptsCount := int32(1)
-	eventPayload, eventPayloadHash, responsePayload, responsePayloadHash, err := buildEventAndResponse(in, op, nextPTS, ptsCount)
+	eventPayload, eventPayloadHash, responseSchemaVersion, responsePayload, responsePayloadHash, err := r.buildEventAndResponseForApply(ctx, in, op, nextPTS, ptsCount)
 	if err != nil {
 		return nil, err
 	}
@@ -197,7 +204,7 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 			return nil, err
 		}
 		op.MessageOperationV1 = updated
-		eventPayload, eventPayloadHash, responsePayload, responsePayloadHash, err = buildEventAndResponse(in, op, nextPTS, ptsCount)
+		eventPayload, eventPayloadHash, responseSchemaVersion, responsePayload, responsePayloadHash, err = r.buildEventAndResponseForApply(ctx, in, op, nextPTS, ptsCount)
 		if err != nil {
 			return nil, err
 		}
@@ -230,7 +237,7 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 	if err := insertPushTask(ctx, txModels, r, in, op.MessageOperationV1, nextPTS, eventPayload); err != nil {
 		return nil, err
 	}
-	if err := insertOperationResult(txModels, in, nextPTS, ptsCount, responsePayload, responsePayloadHash); err != nil {
+	if err := insertOperationResult(txModels, in, nextPTS, ptsCount, responseSchemaVersion, responsePayload, responsePayloadHash); err != nil {
 		return nil, err
 	}
 	if err := r.insertAffectedOutboxesTx(ctx, txModels, in.AffectedOutboxes); err != nil {
@@ -248,7 +255,7 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 		OperationID:           in.OperationID,
 		Pts:                   nextPTS,
 		PtsCount:              ptsCount,
-		ResponseSchemaVersion: payload.OperationResponseSchemaVersion,
+		ResponseSchemaVersion: responseSchemaVersion,
 		ResponsePayload:       responsePayload,
 		ResponseHash:          responsePayloadHash,
 	}, nil
@@ -261,6 +268,8 @@ type messageOperation struct {
 	Attrs              *payload.MessageAttrsV1
 	ForwardRef         *payload.ForwardRefV1
 	ServiceAction      *payload.ServiceActionRefV1
+	MessageFact        *payload.NewMessageFactV1
+	AttachFacts        []payload.UpdateFactV1
 }
 
 func decodeMessageOperation(body []byte) (messageOperation, error) {
@@ -284,8 +293,45 @@ func decodeMessageOperation(body []byte) (messageOperation, error) {
 			return messageOperation{}, fmt.Errorf("%w: decode v3 message operation: %v", userupdates.ErrOperationTerminal, err)
 		}
 		return messageOperationFromV3(op), nil
+	case payload.MessageOperationSchemaVersionV4:
+		var op payload.MessageOperationV4
+		if err := json.Unmarshal(body, &op); err != nil {
+			return messageOperation{}, fmt.Errorf("%w: decode v4 message operation: %v", userupdates.ErrOperationTerminal, err)
+		}
+		return messageOperationFromV4(op), nil
 	default:
 		return messageOperation{}, fmt.Errorf("%w: unsupported operation schema=%d kind=%s", userupdates.ErrOperationTerminal, envelope.SchemaVersion, envelope.OperationKind)
+	}
+}
+
+func messageOperationFromV4(op payload.MessageOperationV4) messageOperation {
+	fact := op.MessageFact
+	return messageOperation{
+		MessageOperationV1: payload.MessageOperationV1{
+			SchemaVersion:             op.SchemaVersion,
+			OperationKind:             op.OperationKind,
+			CanonicalMessageID:        fact.CanonicalMessageID,
+			PeerType:                  fact.PeerType,
+			PeerID:                    fact.PeerID,
+			PeerSeq:                   fact.PeerSeq,
+			FromUserID:                fact.SenderUserID,
+			ToUserID:                  fact.ToUserID,
+			Date:                      fact.Date,
+			MessageText:               fact.MessageText,
+			Entities:                  fact.Entities,
+			ReplyToCanonicalMessageID: fact.ReplyToCanonicalMessageID,
+			ReplyToUserMessageID:      fact.ReplyToUserMessageID,
+			ClearDraft:                fact.ClearDraft,
+			SourcePermAuthKeyID:       fact.SourcePermAuthKeyID,
+			ClearDraftBeforeDate:      fact.ClearDraftBeforeDate,
+		},
+		EventSchemaVersion: payload.MessageEventSchemaVersionV4,
+		MediaRef:           fact.MediaRef,
+		Attrs:              fact.Attrs,
+		ForwardRef:         fact.ForwardRef,
+		ServiceAction:      fact.ServiceAction,
+		MessageFact:        &fact,
+		AttachFacts:        append([]payload.UpdateFactV1(nil), op.AttachFacts...),
 	}
 }
 
@@ -479,13 +525,29 @@ func (r *Repository) lockUserPTSState(txModels *model.TxModels, userID int64) (*
 }
 
 func buildEventAndResponse(in ApplyUserOperationInput, op messageOperation, pts int64, ptsCount int32) ([]byte, []byte, []byte, []byte, error) {
+	eventPayload, eventPayloadHash, _, responsePayload, responsePayloadHash, err := buildEventAndResponsePayloads(context.Background(), nil, in, op, pts, ptsCount)
+	return eventPayload, eventPayloadHash, responsePayload, responsePayloadHash, err
+}
+
+func (r *Repository) buildEventAndResponseForApply(ctx context.Context, in ApplyUserOperationInput, op messageOperation, pts int64, ptsCount int32) ([]byte, []byte, int32, []byte, []byte, error) {
+	return buildEventAndResponsePayloads(ctx, r, in, op, pts, ptsCount)
+}
+
+func buildEventAndResponsePayloads(ctx context.Context, r *Repository, in ApplyUserOperationInput, op messageOperation, pts int64, ptsCount int32) ([]byte, []byte, int32, []byte, []byte, error) {
 	eventKind := payload.EventKindNewMessage
 	if op.OperationKind != payload.OperationKindSendMessage {
 		eventKind = op.OperationKind
 	}
-	eventPayload, err := marshalMessageEvent(in, op, eventKind)
+	eventPayload, err := marshalMessageEvent(in, op, eventKind, pts, ptsCount)
 	if err != nil {
-		return nil, nil, nil, nil, err
+		return nil, nil, 0, nil, nil, err
+	}
+	if op.EventSchemaVersion == payload.MessageEventSchemaVersionV4 {
+		responsePayload, responsePayloadHash, err := buildOperationResponseV3(ctx, r, in, op, pts, ptsCount, eventKind)
+		if err != nil {
+			return nil, nil, 0, nil, nil, err
+		}
+		return eventPayload, payload.HashBytes(eventPayload), payload.OperationResponseSchemaVersionV3, responsePayload, responsePayloadHash, nil
 	}
 	response := payload.OperationResponseV2{
 		SchemaVersion: payload.OperationResponseSchemaVersion,
@@ -497,12 +559,111 @@ func buildEventAndResponse(in ApplyUserOperationInput, op messageOperation, pts 
 	}
 	responsePayload, err := json.Marshal(response)
 	if err != nil {
-		return nil, nil, nil, nil, storageError("marshal operation response", err)
+		return nil, nil, 0, nil, nil, storageError("marshal operation response", err)
 	}
-	return eventPayload, payload.HashBytes(eventPayload), responsePayload, payload.HashBytes(responsePayload), nil
+	return eventPayload, payload.HashBytes(eventPayload), payload.OperationResponseSchemaVersion, responsePayload, payload.HashBytes(responsePayload), nil
 }
 
-func marshalMessageEvent(in ApplyUserOperationInput, op messageOperation, eventKind string) ([]byte, error) {
+func buildOperationResponseV3(ctx context.Context, r *Repository, in ApplyUserOperationInput, op messageOperation, pts int64, ptsCount int32, eventKind string) ([]byte, []byte, error) {
+	replyEnvelope, err := buildV4ReplyEnvelope(ctx, r, in, op, pts, ptsCount)
+	if err != nil {
+		return nil, nil, err
+	}
+	response := payload.OperationResponseV3{
+		SchemaVersion:       payload.OperationResponseSchemaVersionV3,
+		OperationID:         in.OperationID,
+		Pts:                 pts,
+		PtsCount:            ptsCount,
+		EventType:           eventKind,
+		UserMessageID:       op.UserMessageID,
+		ClientRandomID:      op.MessageFact.ClientRandomID,
+		ReplyEnvelope:       replyEnvelope,
+		ReplyEnvelopeCodec:  payload.ReplyEnvelopeCodecTLBinary,
+		ReplyEnvelopeSchema: payload.ReplyEnvelopeSchemaV1,
+	}
+	responsePayload, err := json.Marshal(response)
+	if err != nil {
+		return nil, nil, storageError("marshal v3 operation response", err)
+	}
+	return responsePayload, payload.HashBytes(responsePayload), nil
+}
+
+func buildV4ReplyEnvelope(ctx context.Context, r *Repository, in ApplyUserOperationInput, op messageOperation, pts int64, ptsCount int32) ([]byte, error) {
+	if op.MessageFact == nil {
+		return nil, fmt.Errorf("%w: v4 message fact is nil", userupdates.ErrUserupdatesStorage)
+	}
+	messageFact := *op.MessageFact
+	messageFact.ReplyToUserMessageID = op.ReplyToUserMessageID
+	fact, err := payload.WrapFact(payload.FactKindNewMessage, messageFact)
+	if err != nil {
+		return nil, storageError("wrap v4 message fact", err)
+	}
+	facts := make([]payload.UpdateFactV1, 0, len(op.AttachFacts)+1)
+	facts = append(facts, op.AttachFacts...)
+	facts = append(facts, fact)
+	projected, err := projection.ProjectFacts(facts, projection.ViewerContext{
+		UserID:           in.UserID,
+		AuthKeyIDExclude: in.AuthKeyIDExclude,
+	}, envelope.ModeReply, pts, ptsCount, op.UserMessageID)
+	if err != nil {
+		return nil, err
+	}
+	updates := make([]tg.UpdateClazz, 0, len(projected))
+	for _, item := range projected {
+		updates = append(updates, item.Update)
+	}
+	messageID, err := int64ToInt32ForResponse(op.UserMessageID, "user message id")
+	if err != nil {
+		return nil, err
+	}
+	reply, err := BuildUpdatesWithDependencies(ctx, r, in.UserID, envelope.Input{
+		Mode:          envelope.ModeReply,
+		Updates:       updates,
+		Date:          op.Date,
+		MessageIDByID: map[int32]int64{messageID: op.MessageFact.ClientRandomID},
+	})
+	if err != nil {
+		return nil, storageError("build v4 reply envelope", err)
+	}
+	body, err := iface.EncodeObject(reply, replyEnvelopeTLLayer)
+	if err != nil {
+		return nil, storageError("encode v4 reply envelope", err)
+	}
+	return append([]byte(nil), body...), nil
+}
+
+const replyEnvelopeTLLayer int32 = 224
+
+func int64ToInt32ForResponse(v int64, field string) (int32, error) {
+	if v < math.MinInt32 || v > math.MaxInt32 {
+		return 0, fmt.Errorf("%w: %s overflows int32: %d", userupdates.ErrUserupdatesStorage, field, v)
+	}
+	return int32(v), nil
+}
+
+func marshalMessageEvent(in ApplyUserOperationInput, op messageOperation, eventKind string, pts int64, ptsCount int32) ([]byte, error) {
+	if op.EventSchemaVersion == payload.MessageEventSchemaVersionV4 {
+		if op.MessageFact == nil {
+			return nil, fmt.Errorf("%w: v4 message fact is nil", userupdates.ErrUserupdatesStorage)
+		}
+		messageFact := *op.MessageFact
+		messageFact.ReplyToUserMessageID = op.ReplyToUserMessageID
+		event := payload.MessageEventV4{
+			SchemaVersion:    payload.MessageEventSchemaVersionV4,
+			EventKind:        eventKind,
+			MessageFact:      messageFact,
+			AttachFacts:      append([]payload.UpdateFactV1(nil), op.AttachFacts...),
+			MessageID:        op.UserMessageID,
+			Pts:              pts,
+			PtsCount:         ptsCount,
+			AuthKeyIdExclude: in.AuthKeyIDExclude,
+		}
+		body, err := json.Marshal(event)
+		if err != nil {
+			return nil, storageError("marshal v4 message event", err)
+		}
+		return body, nil
+	}
 	if op.EventSchemaVersion == payload.MessageEventSchemaVersionV3 {
 		event := payload.MessageEventV3{
 			SchemaVersion:        payload.MessageEventSchemaVersionV3,
@@ -1202,7 +1363,7 @@ func shouldWriteSavedDialogSideEffect(in ApplyUserOperationInput, op payload.Mes
 	return op.PeerType == payload.PeerTypeUser && op.PeerID == in.UserID
 }
 
-func insertOperationResult(txModels *model.TxModels, in ApplyUserOperationInput, pts int64, ptsCount int32, responsePayload []byte, responseHash []byte) error {
+func insertOperationResult(txModels *model.TxModels, in ApplyUserOperationInput, pts int64, ptsCount int32, responseSchemaVersion int32, responsePayload []byte, responseHash []byte) error {
 	_, _, err := txModels.UserOperationResultsModel.Insert(&model.UserOperationResults{
 		UserId:                in.UserID,
 		OperationId:           in.OperationID,
@@ -1211,7 +1372,7 @@ func insertOperationResult(txModels *model.TxModels, in ApplyUserOperationInput,
 		Pts:                   pts,
 		PtsCount:              ptsCount,
 		PayloadHash:           in.PayloadHash,
-		ResponseSchemaVersion: payload.OperationResponseSchemaVersion,
+		ResponseSchemaVersion: responseSchemaVersion,
 		ResponseCodec:         PayloadCodecJSON,
 		ResponsePayload:       responsePayload,
 		ResponsePayloadHash:   responseHash,

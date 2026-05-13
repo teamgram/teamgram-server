@@ -15,7 +15,7 @@ import (
 
 func TestMessagesForwardMessagesReordersSourcesAndSendsBatch(t *testing.T) {
 	var fetch *msg.TLMsgGetUserMessageList
-	var got *msg.TLMsgSendMessageV2
+	var got *msg.TLMsgSendMessage
 	updates := testUpdates()
 	entity := tg.MakeTLMessageEntityBold(&tg.TLMessageEntityBold{Offset: 0, Length: 3})
 	media := tg.MakeTLMessageMediaPhoto(&tg.TLMessageMediaPhoto{Photo: tg.MakeTLPhoto(&tg.TLPhoto{Id: 777})})
@@ -63,7 +63,7 @@ func TestMessagesForwardMessagesReordersSourcesAndSendsBatch(t *testing.T) {
 				}),
 			}}, nil
 		},
-		sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			got = in
 			return updates, nil
 		},
@@ -137,7 +137,7 @@ func TestMessagesForwardMessagesReordersSourcesAndSendsBatch(t *testing.T) {
 }
 
 func TestMessagesForwardMessagesAllowsChatSourceAndTarget(t *testing.T) {
-	var got *msg.TLMsgSendMessageV2
+	var got *msg.TLMsgSendMessage
 	var checked *chatpb.TLChatCheckMessageAction
 	core := newMessagesCoreWithRepo(&repository.Repository{
 		ChatClient: &messagesFakeChatClient{
@@ -166,7 +166,7 @@ func TestMessagesForwardMessagesAllowsChatSourceAndTarget(t *testing.T) {
 					}),
 				}}, nil
 			},
-			sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+			sendMessage: func(_ context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error) {
 				got = in
 				return testUpdates(), nil
 			},
@@ -262,7 +262,7 @@ func TestMessagesForwardMessagesRejectsInvalidRequests(t *testing.T) {
 					called = true
 					return nil, nil
 				},
-				sendMessageV2: func(context.Context, *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+				sendMessage: func(context.Context, *msg.TLMsgSendMessage) (*tg.Updates, error) {
 					called = true
 					return nil, nil
 				},
@@ -338,7 +338,7 @@ func TestMessagesForwardMessagesRejectsSourcePeerMismatch(t *testing.T) {
 				}),
 			}}, nil
 		},
-		sendMessageV2: func(context.Context, *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(context.Context, *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			called = true
 			return nil, nil
 		},
@@ -367,7 +367,7 @@ func TestMessagesForwardMessagesRejectsUnsupportedSourceMediaBeforeMsgSend(t *te
 				messageBox(2, "plain"),
 			}}, nil
 		},
-		sendMessageV2: func(context.Context, *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(context.Context, *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			called = true
 			return nil, nil
 		},
@@ -383,7 +383,7 @@ func TestMessagesForwardMessagesRejectsUnsupportedSourceMediaBeforeMsgSend(t *te
 
 func TestMessagesForwardMessagesAssignsNewGroupedIDForGroupedMedia(t *testing.T) {
 	groupedID := int64(99)
-	var got *msg.TLMsgSendMessageV2
+	var got *msg.TLMsgSendMessage
 	c := newSendMsgCore(&messagesFakeMsgClient{
 		getUserMessageList: func(context.Context, *msg.TLMsgGetUserMessageList) (*msg.VectorMessageBox, error) {
 			return &msg.VectorMessageBox{Datas: []tg.MessageBoxClazz{
@@ -391,7 +391,7 @@ func TestMessagesForwardMessagesAssignsNewGroupedIDForGroupedMedia(t *testing.T)
 				tg.MakeTLMessageBox(&tg.TLMessageBox{MessageId: 2, PeerType: payload.PeerTypeUser, PeerId: 300, Message: tg.MakeTLMessage(&tg.TLMessage{Id: 2, FromId: tg.MakePeerUser(300), PeerId: tg.MakePeerUser(100), Date: 2, Message: "two", GroupedId: &groupedID})}),
 			}}, nil
 		},
-		sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			got = in
 			return testUpdates(), nil
 		},
@@ -410,7 +410,7 @@ func TestMessagesForwardMessagesAssignsNewGroupedIDForGroupedMedia(t *testing.T)
 
 func TestMessagesForwardMessagesDoesNotGroupPlainMessagesAfterGroupedMedia(t *testing.T) {
 	groupedID := int64(99)
-	var got *msg.TLMsgSendMessageV2
+	var got *msg.TLMsgSendMessage
 	c := newSendMsgCore(&messagesFakeMsgClient{
 		getUserMessageList: func(context.Context, *msg.TLMsgGetUserMessageList) (*msg.VectorMessageBox, error) {
 			return &msg.VectorMessageBox{Datas: []tg.MessageBoxClazz{
@@ -418,7 +418,7 @@ func TestMessagesForwardMessagesDoesNotGroupPlainMessagesAfterGroupedMedia(t *te
 				messageBox(2, "plain"),
 			}}, nil
 		},
-		sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			got = in
 			return testUpdates(), nil
 		},
@@ -439,7 +439,7 @@ func TestMessagesForwardMessagesDoesNotGroupPlainMessagesAfterGroupedMedia(t *te
 }
 
 func TestMessagesForwardMessagesMarksSavedPeerWhenForwardingToSelf(t *testing.T) {
-	var got *msg.TLMsgSendMessageV2
+	var got *msg.TLMsgSendMessage
 	c := newSendMsgCore(&messagesFakeMsgClient{
 		getUserMessageList: func(context.Context, *msg.TLMsgGetUserMessageList) (*msg.VectorMessageBox, error) {
 			return &msg.VectorMessageBox{Datas: []tg.MessageBoxClazz{
@@ -457,7 +457,7 @@ func TestMessagesForwardMessagesMarksSavedPeerWhenForwardingToSelf(t *testing.T)
 				}),
 			}}, nil
 		},
-		sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		sendMessage: func(_ context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			got = in
 			return testUpdates(), nil
 		},

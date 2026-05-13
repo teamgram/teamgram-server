@@ -715,3 +715,142 @@ func (m *TLSender) Decode(d *bin.Decoder) (err error) {
 
 // Sender <--
 type Sender = TLSender
+
+// UpdateFactClazz <--
+//   - TL_UpdateFact
+type UpdateFactClazz = *TLUpdateFact
+
+func DecodeUpdateFactClazz(d *bin.Decoder) (UpdateFactClazz, error) {
+	// id, err := d.PeekClazzID()
+	id, err := d.ClazzID()
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode UpdateFact: constructor: %w", err)
+	}
+
+	switch id {
+	case 0x4561a083:
+		x := &TLUpdateFact{ClazzID: id, ClazzName2: ClazzName_updateFact}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
+		return x, nil
+	default:
+		return nil, fmt.Errorf("unable to decode UpdateFact: invalid constructor %x", id)
+	}
+
+}
+
+// TLUpdateFact <--
+type TLUpdateFact struct {
+	ClazzID    uint32 `json:"_id"`
+	ClazzName2 string `json:"_name"`
+	Kind       string `json:"kind"`
+	Payload    []byte `json:"payload"`
+}
+
+func MakeTLUpdateFact(m *TLUpdateFact) *TLUpdateFact {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_updateFact
+
+	return m
+}
+
+func (m *TLUpdateFact) String() string {
+	return iface.DebugStringWithName("updateFact", m)
+}
+
+func (m *TLUpdateFact) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("updateFact", m)
+}
+
+// UpdateFactClazzName <--
+func (m *TLUpdateFact) UpdateFactClazzName() string {
+	return ClazzName_updateFact
+}
+
+// ClazzName <--
+func (m *TLUpdateFact) ClazzName() string {
+	return m.ClazzName2
+}
+
+// ToUpdateFact <--
+func (m *TLUpdateFact) ToUpdateFact() *UpdateFact {
+	if m == nil {
+		return nil
+	}
+
+	return m
+
+}
+
+func (m *TLUpdateFact) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_updateFact, int(layer)); clazzId {
+	case 0x4561a083:
+		size := 4
+		size += iface.CalcStringSize(m.Kind)
+		size += iface.CalcBytesSize(m.Payload)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLUpdateFact) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_updateFact, int(layer)); clazzId {
+	case 0x4561a083:
+		if err := iface.ValidateRequiredString("kind", m.Kind); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredBytes("payload", m.Payload); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode updateFact: unsupported layer %d", layer)
+	}
+}
+
+// Encode <--
+func (m *TLUpdateFact) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_updateFact, int(layer)); clazzId {
+	case 0x4561a083:
+		x.PutClazzID(0x4561a083)
+
+		x.PutString(m.Kind)
+		x.PutBytes(m.Payload)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode updateFact: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLUpdateFact) Decode(d *bin.Decoder) (err error) {
+	switch m.ClazzID {
+	case 0x4561a083:
+		m.Kind, err = d.String()
+		if err != nil {
+			return fmt.Errorf("unable to decode updateFact#0x4561a083: field kind: %w", err)
+		}
+		m.Payload, err = d.Bytes()
+		if err != nil {
+			return fmt.Errorf("unable to decode updateFact#0x4561a083: field payload: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode updateFact: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// UpdateFact <--
+type UpdateFact = TLUpdateFact

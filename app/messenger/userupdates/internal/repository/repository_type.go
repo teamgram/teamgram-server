@@ -17,8 +17,10 @@
 
 package repository
 
+import "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/eventtypes"
+
 const (
-	PayloadCodecJSON int32 = 1
+	PayloadCodecJSON int32 = eventtypes.PayloadCodecJSON
 
 	OpTypeSendMessage int32 = 1
 
@@ -28,15 +30,16 @@ const (
 	DeliveryPolicyApplyAck           int32 = 4
 	DeliveryPolicyBestEffortPushOnly int32 = 5
 
-	EventTypeNewMessage          int32 = 1
-	EventTypeReadHistory         int32 = 2
-	EventTypeUpdatePinnedMessage int32 = 3
-	EventTypeMarkDialogUnread    int32 = 4
-	EventTypeScheduledMarker     int32 = 5
-	EventTypeDeleteMessages      int32 = 6
-	EventTypeDeleteHistory       int32 = 7
-	EventTypeEditMessage         int32 = 8
-	EventTypeDialogPublicUpdate  int32 = 100
+	EventTypeNewMessage              int32 = eventtypes.EventTypeNewMessage
+	EventTypeReadHistory             int32 = eventtypes.EventTypeReadHistory
+	EventTypeUpdatePinnedMessage     int32 = eventtypes.EventTypeUpdatePinnedMessage
+	EventTypeMarkDialogUnread        int32 = eventtypes.EventTypeMarkDialogUnread
+	EventTypeScheduledMarker         int32 = eventtypes.EventTypeScheduledMarker
+	EventTypeDeleteMessages          int32 = eventtypes.EventTypeDeleteMessages
+	EventTypeDeleteHistory           int32 = eventtypes.EventTypeDeleteHistory
+	EventTypeEditMessage             int32 = eventtypes.EventTypeEditMessage
+	EventTypeChatParticipantsChanged int32 = eventtypes.EventTypeChatParticipantsChanged
+	EventTypeDialogPublicUpdate      int32 = eventtypes.EventTypeDialogPublicUpdate
 
 	OperationResultStatusCompleted int32 = 1
 
@@ -217,23 +220,7 @@ type UserState struct {
 	RowVersion  int64
 }
 
-type UserEvent struct {
-	UserID             int64
-	Pts                int64
-	PtsCount           int32
-	OperationID        string
-	OpType             int32
-	EventType          int32
-	PeerType           int32
-	PeerID             int64
-	CanonicalMessageID int64
-	PeerSeq            int64
-	ActorUserID        int64
-	EventSchemaVersion int32
-	EventCodec         int32
-	EventPayload       []byte
-	EventPayloadHash   []byte
-}
+type UserEvent = eventtypes.UserEvent
 
 type GetDifferenceInput struct {
 	UserID        int64

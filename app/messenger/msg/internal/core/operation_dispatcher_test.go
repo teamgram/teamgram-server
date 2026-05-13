@@ -159,12 +159,12 @@ func (f *fakeUserUpdatesClient) UserupdatesProcessUserOperationWithEffects(_ con
 		return nil, f.processWithEffectsErr
 	}
 	if len(f.processResults) > 0 {
-		return f.nextProcessResult(), nil
+		return upgradeLegacyTestOperationResult(f.nextProcessResult(), in.Operation, false), nil
 	}
 	if f.processWithEffectsResult != nil {
-		return f.processWithEffectsResult, nil
+		return upgradeLegacyTestOperationResult(f.processWithEffectsResult, in.Operation, false), nil
 	}
-	return f.nextProcessResult(), nil
+	return upgradeLegacyTestOperationResult(f.nextProcessResult(), in.Operation, false), nil
 }
 
 type operationDispatcherUserUpdatesClient struct {

@@ -1,8 +1,10 @@
 package payload
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 )
 
@@ -233,6 +235,57 @@ type MessageOperationV3 struct {
 	ServiceAction              *ServiceActionRefV1 `json:"service_action,omitempty"`
 }
 
+type UpdateFactV1 struct {
+	SchemaVersion int             `json:"schema_version"`
+	Kind          string          `json:"kind"`
+	Payload       json.RawMessage `json:"payload"`
+}
+
+type NewMessageFactV1 struct {
+	SchemaVersion             int                 `json:"schema_version"`
+	CanonicalMessageID        int64               `json:"canonical_message_id"`
+	PeerType                  int32               `json:"peer_type"`
+	PeerID                    int64               `json:"peer_id"`
+	PeerSeq                   int64               `json:"peer_seq,omitempty"`
+	SenderUserID              int64               `json:"sender_user_id"`
+	ToUserID                  int64               `json:"to_user_id,omitempty"`
+	ClientRandomID            int64               `json:"client_random_id"`
+	Date                      int32               `json:"date"`
+	MessageText               string              `json:"message_text,omitempty"`
+	Entities                  []MessageEntityV1   `json:"entities,omitempty"`
+	ReplyToCanonicalMessageID int64               `json:"reply_to_canonical_message_id,omitempty"`
+	ReplyToUserMessageID      int64               `json:"reply_to_user_message_id,omitempty"`
+	MediaRef                  *MediaRefV1         `json:"media_ref,omitempty"`
+	Attrs                     *MessageAttrsV1     `json:"attrs,omitempty"`
+	ForwardRef                *ForwardRefV1       `json:"forward_ref,omitempty"`
+	ServiceAction             *ServiceActionRefV1 `json:"service_action,omitempty"`
+	ClearDraft                bool                `json:"clear_draft,omitempty"`
+	SourcePermAuthKeyID       int64               `json:"source_perm_auth_key_id,omitempty"`
+	ClearDraftBeforeDate      int32               `json:"clear_draft_before_date,omitempty"`
+}
+
+type ChatParticipantFactV1 struct {
+	UserID        int64  `json:"user_id"`
+	Role          string `json:"role"`
+	InviterUserID int64  `json:"inviter_user_id,omitempty"`
+	Date          int32  `json:"date,omitempty"`
+}
+
+type ChatParticipantsChangedFactV1 struct {
+	SchemaVersion int                     `json:"schema_version"`
+	ChatID        int64                   `json:"chat_id"`
+	ActorUserID   int64                   `json:"actor_user_id"`
+	Version       int32                   `json:"version"`
+	Participants  []ChatParticipantFactV1 `json:"participants"`
+}
+
+type MessageOperationV4 struct {
+	SchemaVersion int              `json:"schema_version"`
+	OperationKind string           `json:"operation_kind"`
+	MessageFact   NewMessageFactV1 `json:"message_fact"`
+	AttachFacts   []UpdateFactV1   `json:"attach_facts,omitempty"`
+}
+
 type OperationResponseV1 struct {
 	SchemaVersion int    `json:"schema_version"`
 	OperationID   string `json:"operation_id,omitempty"`
@@ -248,6 +301,19 @@ type OperationResponseV2 struct {
 	PtsCount      int32  `json:"pts_count"`
 	EventType     string `json:"event_type,omitempty"`
 	UserMessageID int64  `json:"user_message_id,omitempty"`
+}
+
+type OperationResponseV3 struct {
+	SchemaVersion       int    `json:"schema_version"`
+	OperationID         string `json:"operation_id,omitempty"`
+	Pts                 int64  `json:"pts"`
+	PtsCount            int32  `json:"pts_count"`
+	EventType           string `json:"event_type,omitempty"`
+	UserMessageID       int64  `json:"user_message_id,omitempty"`
+	ClientRandomID      int64  `json:"client_random_id,omitempty"`
+	ReplyEnvelope       []byte `json:"reply_envelope,omitempty"`
+	ReplyEnvelopeCodec  int32  `json:"reply_envelope_codec,omitempty"`
+	ReplyEnvelopeSchema int32  `json:"reply_envelope_schema,omitempty"`
 }
 
 type MessageEventV1 struct {
@@ -317,6 +383,71 @@ type MessageEventV3 struct {
 	Attrs                *MessageAttrsV1     `json:"attrs,omitempty"`
 	ForwardRef           *ForwardRefV1       `json:"forward_ref,omitempty"`
 	ServiceAction        *ServiceActionRefV1 `json:"service_action,omitempty"`
+}
+
+type MessageEventV4 struct {
+	SchemaVersion    int              `json:"schema_version"`
+	EventKind        string           `json:"event_kind"`
+	MessageFact      NewMessageFactV1 `json:"message_fact"`
+	AttachFacts      []UpdateFactV1   `json:"attach_facts,omitempty"`
+	MessageID        int64            `json:"message_id"`
+	Pts              int64            `json:"pts"`
+	PtsCount         int32            `json:"pts_count"`
+	AuthKeyIdExclude *int64           `json:"auth_key_id_exclude,omitempty"`
+}
+
+func WrapFact(kind string, value any) (UpdateFactV1, error) {
+	if kind == "" {
+		return UpdateFactV1{}, fmt.Errorf("update fact kind is empty")
+	}
+	if value == nil {
+		return UpdateFactV1{}, fmt.Errorf("update fact %s value is nil", kind)
+	}
+	body, err := json.Marshal(value)
+	if err != nil {
+		return UpdateFactV1{}, fmt.Errorf("marshal update fact %s: %w", kind, err)
+	}
+	if err := validateUpdateFactPayload(kind, body); err != nil {
+		return UpdateFactV1{}, err
+	}
+	return UpdateFactV1{
+		SchemaVersion: 1,
+		Kind:          kind,
+		Payload:       body,
+	}, nil
+}
+
+func DecodeUpdateFact(f UpdateFactV1) (any, error) {
+	if err := validateUpdateFactPayload(f.Kind, f.Payload); err != nil {
+		return nil, err
+	}
+	switch f.Kind {
+	case FactKindChatParticipantsChanged:
+		var fact ChatParticipantsChangedFactV1
+		if err := json.Unmarshal(f.Payload, &fact); err != nil {
+			return nil, fmt.Errorf("decode update fact %s: %w", f.Kind, err)
+		}
+		return fact, nil
+	case FactKindNewMessage:
+		var fact NewMessageFactV1
+		if err := json.Unmarshal(f.Payload, &fact); err != nil {
+			return nil, fmt.Errorf("decode update fact %s: %w", f.Kind, err)
+		}
+		return fact, nil
+	default:
+		return nil, fmt.Errorf("unsupported update fact kind: %s", f.Kind)
+	}
+}
+
+func validateUpdateFactPayload(kind string, payload []byte) error {
+	trimmed := bytes.TrimSpace(payload)
+	if len(trimmed) == 0 {
+		return fmt.Errorf("update fact %s payload is empty", kind)
+	}
+	if bytes.Equal(trimmed, []byte("null")) {
+		return fmt.Errorf("update fact %s payload is null", kind)
+	}
+	return nil
 }
 
 func HashBytes(b []byte) []byte {

@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"math"
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -153,6 +154,149 @@ func TestMessageOperationV3CarriesV2AndMediaFields(t *testing.T) {
 	}
 	if got.MediaRef == nil || got.MediaRef.Kind != "photo" || got.Attrs == nil || got.Attrs.GroupedID != 444 || got.ForwardRef == nil || got.ForwardRef.FromUserID != 3030 {
 		t.Fatalf("decoded V3 missing media/attrs/forward: %+v", got)
+	}
+}
+
+func TestMessageOperationV4RoundTripsClientRandomID(t *testing.T) {
+	op := MessageOperationV4{
+		SchemaVersion: MessageOperationSchemaVersionV4,
+		OperationKind: OperationKindSendMessage,
+		MessageFact: NewMessageFactV1{
+			SchemaVersion:      1,
+			CanonicalMessageID: 101,
+			PeerType:           PeerTypeChat,
+			PeerID:             202,
+			PeerSeq:            7,
+			SenderUserID:       303,
+			ClientRandomID:     404,
+			Date:               1_772_000_000,
+			MessageText:        "hello",
+		},
+	}
+	body, err := json.Marshal(op)
+	if err != nil {
+		t.Fatalf("Marshal() error = %v", err)
+	}
+
+	var got MessageOperationV4
+	if err := json.Unmarshal(body, &got); err != nil {
+		t.Fatalf("Unmarshal() error = %v", err)
+	}
+	if got.SchemaVersion != MessageOperationSchemaVersionV4 || got.MessageFact.ClientRandomID != op.MessageFact.ClientRandomID {
+		t.Fatalf("decoded V4 = %+v, want client_random_id %d", got, op.MessageFact.ClientRandomID)
+	}
+}
+
+func TestWrapAndDecodeChatParticipantsChangedFact(t *testing.T) {
+	fact := ChatParticipantsChangedFactV1{
+		SchemaVersion: 1,
+		ChatID:        7001,
+		ActorUserID:   1001,
+		Version:       3,
+		Participants: []ChatParticipantFactV1{
+			{UserID: 1001, Role: "creator", Date: 1_772_000_000},
+			{UserID: 1002, Role: "admin", InviterUserID: 1001, Date: 1_772_000_001},
+			{UserID: 1003, Role: "member", InviterUserID: 1001, Date: 1_772_000_002},
+		},
+	}
+	wrapped, err := WrapFact(FactKindChatParticipantsChanged, fact)
+	if err != nil {
+		t.Fatalf("WrapFact() error = %v", err)
+	}
+
+	decoded, err := DecodeUpdateFact(wrapped)
+	if err != nil {
+		t.Fatalf("DecodeUpdateFact() error = %v", err)
+	}
+	got, ok := decoded.(ChatParticipantsChangedFactV1)
+	if !ok {
+		t.Fatalf("decoded type = %T, want ChatParticipantsChangedFactV1", decoded)
+	}
+	if got.ChatID != fact.ChatID || got.ActorUserID != fact.ActorUserID || got.Version != fact.Version {
+		t.Fatalf("decoded fact = %+v, want %+v", got, fact)
+	}
+	if len(got.Participants) != len(fact.Participants) {
+		t.Fatalf("participants len = %d, want %d", len(got.Participants), len(fact.Participants))
+	}
+	for i, want := range fact.Participants {
+		if got.Participants[i] != want {
+			t.Fatalf("participants[%d] = %+v, want %+v", i, got.Participants[i], want)
+		}
+	}
+}
+
+func TestUpdateFactEnvelopeBytesRoundTrip(t *testing.T) {
+	fact := NewMessageFactV1{
+		SchemaVersion:      1,
+		CanonicalMessageID: 9001,
+		PeerType:           PeerTypeUser,
+		PeerID:             1002,
+		SenderUserID:       1001,
+		ToUserID:           1002,
+		ClientRandomID:     777,
+		Date:               1_772_000_000,
+		MessageText:        "hello",
+	}
+	wrapped, err := WrapFact(FactKindNewMessage, fact)
+	if err != nil {
+		t.Fatalf("WrapFact() error = %v", err)
+	}
+	storedPayloadBytes, err := json.Marshal(UpdateFactV1{SchemaVersion: wrapped.SchemaVersion, Kind: wrapped.Kind, Payload: wrapped.Payload})
+	if err != nil {
+		t.Fatalf("Marshal(UpdateFactV1) error = %v", err)
+	}
+
+	var envelope UpdateFactV1
+	if err := json.Unmarshal(storedPayloadBytes, &envelope); err != nil {
+		t.Fatalf("Unmarshal(UpdateFactV1) error = %v", err)
+	}
+	decoded, err := DecodeUpdateFact(envelope)
+	if err != nil {
+		t.Fatalf("DecodeUpdateFact() error = %v", err)
+	}
+	got, ok := decoded.(NewMessageFactV1)
+	if !ok {
+		t.Fatalf("decoded type = %T, want NewMessageFactV1", decoded)
+	}
+	if !reflect.DeepEqual(got, fact) {
+		t.Fatalf("decoded fact = %+v, want %+v", got, fact)
+	}
+}
+
+func TestWrapFactRejectsNilValue(t *testing.T) {
+	if _, err := WrapFact(FactKindNewMessage, nil); err == nil {
+		t.Fatal("expected nil value error")
+	}
+}
+
+func TestDecodeUpdateFactRejectsEmptyPayloads(t *testing.T) {
+	tests := []struct {
+		name    string
+		payload json.RawMessage
+	}{
+		{name: "nil", payload: nil},
+		{name: "empty", payload: json.RawMessage{}},
+		{name: "whitespace", payload: json.RawMessage(" \n\t ")},
+		{name: "null", payload: json.RawMessage("null")},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := DecodeUpdateFact(UpdateFactV1{
+				SchemaVersion: 1,
+				Kind:          FactKindNewMessage,
+				Payload:       tt.payload,
+			})
+			if err == nil {
+				t.Fatal("expected payload validation error")
+			}
+		})
+	}
+}
+
+func TestDecodeUpdateFactRejectsUnknownKind(t *testing.T) {
+	_, err := DecodeUpdateFact(UpdateFactV1{SchemaVersion: 1, Kind: "unknown", Payload: json.RawMessage(`{}`)})
+	if err == nil {
+		t.Fatal("expected unsupported kind error")
 	}
 }
 
@@ -410,6 +554,38 @@ func TestMessageEventV2DeleteMessagesCarriesPublicIDs(t *testing.T) {
 	}
 	if len(got.DeleteUserMessageIDs) != 2 || got.DeleteUserMessageIDs[0] != 107 || got.DeleteUserMessageIDs[1] != 108 {
 		t.Fatalf("delete ids = %v", got.DeleteUserMessageIDs)
+	}
+}
+
+func TestOperationResponseV3CarriesReplyEnvelope(t *testing.T) {
+	resp := OperationResponseV3{
+		SchemaVersion:       OperationResponseSchemaVersionV3,
+		OperationID:         "op",
+		Pts:                 3,
+		PtsCount:            1,
+		EventType:           EventKindNewMessage,
+		UserMessageID:       123,
+		ClientRandomID:      987654321,
+		ReplyEnvelope:       []byte{0x40, 0x42, 0xae, 0x74},
+		ReplyEnvelopeCodec:  ReplyEnvelopeCodecTLBinary,
+		ReplyEnvelopeSchema: ReplyEnvelopeSchemaV1,
+	}
+	body, err := json.Marshal(resp)
+	if err != nil {
+		t.Fatalf("marshal OperationResponseV3: %v", err)
+	}
+	var got OperationResponseV3
+	if err := json.Unmarshal(body, &got); err != nil {
+		t.Fatalf("unmarshal OperationResponseV3: %v", err)
+	}
+	if got.SchemaVersion != OperationResponseSchemaVersionV3 || got.ClientRandomID != resp.ClientRandomID {
+		t.Fatalf("response = %+v, want schema V3 and client_random_id", got)
+	}
+	if string(got.ReplyEnvelope) != string(resp.ReplyEnvelope) {
+		t.Fatalf("reply envelope = %v, want %v", got.ReplyEnvelope, resp.ReplyEnvelope)
+	}
+	if got.ReplyEnvelopeCodec != ReplyEnvelopeCodecTLBinary || got.ReplyEnvelopeSchema != ReplyEnvelopeSchemaV1 {
+		t.Fatalf("reply envelope codec/schema = %d/%d", got.ReplyEnvelopeCodec, got.ReplyEnvelopeSchema)
 	}
 }
 

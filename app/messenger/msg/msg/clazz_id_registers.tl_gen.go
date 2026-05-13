@@ -23,12 +23,13 @@ func init() {
 	iface.RegisterClazzID(0x625d8b25, func() iface.TLObject { return &TLOutboxMessage{ClazzID: 0x625d8b25} })        // 0x625d8b25
 	iface.RegisterClazzID(0x7debda91, func() iface.TLObject { return &TLResolvedDialogCursor{ClazzID: 0x7debda91} }) // 0x7debda91
 	iface.RegisterClazzID(0x5a3864ba, func() iface.TLObject { return &TLSender{ClazzID: 0x5a3864ba} })               // 0x5a3864ba
+	iface.RegisterClazzID(0x4561a083, func() iface.TLObject { return &TLUpdateFact{ClazzID: 0x4561a083} })           // 0x4561a083
 
 	// Method
 	iface.RegisterClazzID(0x35d0fa1a, func() iface.TLObject { return &TLMsgPushUserMessage{ClazzID: 0x35d0fa1a} })               // 0x35d0fa1a
 	iface.RegisterClazzID(0x282484d4, func() iface.TLObject { return &TLMsgReadMessageContents{ClazzID: 0x282484d4} })           // 0x282484d4
-	iface.RegisterClazzID(0x1c17890c, func() iface.TLObject { return &TLMsgSendMessageV2{ClazzID: 0x1c17890c} })                 // 0x1c17890c
-	iface.RegisterClazzID(0x69fe5fe1, func() iface.TLObject { return &TLMsgEditMessageV2{ClazzID: 0x69fe5fe1} })                 // 0x69fe5fe1
+	iface.RegisterClazzID(0x93e882df, func() iface.TLObject { return &TLMsgSendMessage{ClazzID: 0x93e882df} })                   // 0x93e882df
+	iface.RegisterClazzID(0x1ddc94, func() iface.TLObject { return &TLMsgEditMessage{ClazzID: 0x1ddc94} })                       // 0x1ddc94
 	iface.RegisterClazzID(0x21e80a1d, func() iface.TLObject { return &TLMsgDeleteMessages{ClazzID: 0x21e80a1d} })                // 0x21e80a1d
 	iface.RegisterClazzID(0x75c0e8ca, func() iface.TLObject { return &TLMsgDeleteHistory{ClazzID: 0x75c0e8ca} })                 // 0x75c0e8ca
 	iface.RegisterClazzID(0x26b7a13e, func() iface.TLObject { return &TLMsgDeletePhoneCallHistory{ClazzID: 0x26b7a13e} })        // 0x26b7a13e

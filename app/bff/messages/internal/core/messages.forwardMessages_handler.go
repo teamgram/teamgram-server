@@ -116,7 +116,7 @@ func (c *MessagesCore) MessagesForwardMessages(in *tg.TLMessagesForwardMessages)
 		}))
 	}
 
-	updates, err := sendClient.MsgSendMessageV2(c.ctx, &msg.TLMsgSendMessageV2{
+	updates, err := sendClient.MsgSendMessage(c.ctx, &msg.TLMsgSendMessage{
 		UserId:              selfUserID,
 		AuthKeyId:           authKeyID,
 		SourcePermAuthKeyId: &authKeyID,

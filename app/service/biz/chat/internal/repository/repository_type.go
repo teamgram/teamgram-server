@@ -28,7 +28,14 @@ const (
 	chatParticipantCacheKeyPrefix = "chat:participant"
 	createChatFloodKeyPrefix      = "chat:create:flood"
 
-	createChatFloodInterval = time.Hour
+	createChatFloodInterval = time.Minute
+)
+
+const (
+	CreateChatOperationStatusPending     int32 = 1
+	CreateChatOperationStatusChatCreated int32 = 2
+	CreateChatOperationStatusCompleted   int32 = 3
+	CreateChatOperationStatusFailed      int32 = 4
 )
 
 // Type aliases for convenience in the Logic layer.

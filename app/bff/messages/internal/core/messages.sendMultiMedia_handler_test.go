@@ -15,11 +15,11 @@ import (
 )
 
 func TestMessagesSendMultiMediaBuildsGroupedBatchAndReturnsFullUpdates(t *testing.T) {
-	var got *msg.TLMsgSendMessageV2
+	var got *msg.TLMsgSendMessage
 	updates := testUpdates()
 	resolved := tg.MakeTLPhoto(&tg.TLPhoto{Id: 777})
 	c := newMessagesCoreWithRepo(&repository.Repository{
-		MsgClient: &messagesFakeMsgClient{sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		MsgClient: &messagesFakeMsgClient{sendMessage: func(_ context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			got = in
 			return updates, nil
 		}},
@@ -65,7 +65,7 @@ func TestMessagesSendMultiMediaBuildsGroupedBatchAndReturnsFullUpdates(t *testin
 		t.Fatal("handler did not pass through tg.Updates")
 	}
 	if got == nil || len(got.Message) != 2 {
-		t.Fatalf("MsgSendMessageV2 input = %#v, want two outboxes", got)
+		t.Fatalf("MsgSendMessage input = %#v, want two outboxes", got)
 	}
 	if !got.ClearDraft {
 		t.Fatal("ClearDraft = false, want true")
@@ -101,7 +101,7 @@ func TestMessagesSendMultiMediaBuildsGroupedBatchAndReturnsFullUpdates(t *testin
 }
 
 func TestMessagesSendMultiMediaAllowsInputPeerChat(t *testing.T) {
-	var got *msg.TLMsgSendMessageV2
+	var got *msg.TLMsgSendMessage
 	var checks []*chatpb.TLChatCheckMessageAction
 	core := newMessagesCoreWithRepo(&repository.Repository{
 		ChatClient: &messagesFakeChatClient{
@@ -112,7 +112,7 @@ func TestMessagesSendMultiMediaAllowsInputPeerChat(t *testing.T) {
 				}).ToMessageActionCheckResult(), nil
 			},
 		},
-		MsgClient: &messagesFakeMsgClient{sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		MsgClient: &messagesFakeMsgClient{sendMessage: func(_ context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			got = in
 			return testUpdates(), nil
 		}},
@@ -146,9 +146,9 @@ func TestMessagesSendMultiMediaAllowsInputPeerChat(t *testing.T) {
 }
 
 func TestMessagesSendMultiMediaEmptyCaptionAllowed(t *testing.T) {
-	var got *msg.TLMsgSendMessageV2
+	var got *msg.TLMsgSendMessage
 	c := newMessagesCoreWithRepo(&repository.Repository{
-		MsgClient: &messagesFakeMsgClient{sendMessageV2: func(_ context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		MsgClient: &messagesFakeMsgClient{sendMessage: func(_ context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			got = in
 			return testUpdates(), nil
 		}},
@@ -288,7 +288,7 @@ func TestMessagesSendMultiMediaRejectsUnsupportedFields(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			called := false
 			c := newMessagesCoreWithRepo(&repository.Repository{
-				MsgClient: &messagesFakeMsgClient{sendMessageV2: func(_ context.Context, _ *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+				MsgClient: &messagesFakeMsgClient{sendMessage: func(_ context.Context, _ *msg.TLMsgSendMessage) (*tg.Updates, error) {
 					called = true
 					return nil, nil
 				}},
@@ -325,7 +325,7 @@ func TestMessagesSendMultiMediaMapsInvalidMediaToMediaEmpty(t *testing.T) {
 func TestMessagesSendMultiMediaRejectsUnsupportedMediaBeforeMsgSend(t *testing.T) {
 	called := false
 	c := newMessagesCoreWithRepo(&repository.Repository{
-		MsgClient: &messagesFakeMsgClient{sendMessageV2: func(context.Context, *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+		MsgClient: &messagesFakeMsgClient{sendMessage: func(context.Context, *msg.TLMsgSendMessage) (*tg.Updates, error) {
 			called = true
 			return nil, nil
 		}},

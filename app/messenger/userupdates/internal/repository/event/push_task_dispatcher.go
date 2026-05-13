@@ -2,12 +2,16 @@ package event
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/gateway"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/envelope"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/projection"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -33,14 +37,23 @@ type PushTaskUserProjector interface {
 	UserGetUserProjectionBundle(ctx context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error)
 }
 
+type PushTaskChatProjector interface {
+	ChatGetChatListByIdList(ctx context.Context, in *chatpb.TLChatGetChatListByIdList) (*chatpb.VectorMutableChat, error)
+}
+
 type PushTaskDispatcher struct {
 	authsession PushTaskAuthKeyRouter
 	gateway     PushTaskGateway
 	user        PushTaskUserProjector
+	chat        PushTaskChatProjector
 }
 
-func NewPushTaskDispatcher(authsession PushTaskAuthKeyRouter, gateway PushTaskGateway, user PushTaskUserProjector) *PushTaskDispatcher {
-	return &PushTaskDispatcher{authsession: authsession, gateway: gateway, user: user}
+func NewPushTaskDispatcher(authsession PushTaskAuthKeyRouter, gateway PushTaskGateway, user PushTaskUserProjector, chat ...PushTaskChatProjector) *PushTaskDispatcher {
+	d := &PushTaskDispatcher{authsession: authsession, gateway: gateway, user: user}
+	if len(chat) > 0 {
+		d.chat = chat[0]
+	}
+	return d
 }
 
 func (d *PushTaskDispatcher) HandlePushTaskKafkaRecord(ctx context.Context, record PushTaskKafkaRecord) error {
@@ -53,13 +66,15 @@ func (d *PushTaskDispatcher) HandlePushTaskKafkaRecord(ctx context.Context, reco
 		logx.WithContext(ctx).Errorf("push task terminal: task_id=%d user_id=%d code=unsupported_push_type push_type=%d", msg.TaskID, msg.UserID, msg.PushType)
 		return nil
 	}
-	updates, authKeyIDExclude, err := pushTaskUpdates(msg)
+	updates, authKeyIDExclude, err := d.pushTaskUpdates(ctx, msg)
 	if err != nil {
 		logx.WithContext(ctx).Errorf("push task terminal: task_id=%d user_id=%d code=payload_projection_failed err=%v", msg.TaskID, msg.UserID, err)
 		return nil
 	}
-	if err := d.projectPushUsers(ctx, msg, updates); err != nil {
-		return err
+	if !isV4PushTaskPayload(msg.Payload) {
+		if err := d.projectPushUsers(ctx, msg, updates); err != nil {
+			return err
+		}
 	}
 	if d.authsession == nil || d.gateway == nil {
 		return fmt.Errorf("push task dispatcher dependencies are nil")
@@ -154,6 +169,153 @@ func pushProjectionTargetIDs(viewerUserID int64, updates *tg.Updates) []int64 {
 		ids = append(ids, viewerUserID)
 	}
 	return ids
+}
+
+func (d *PushTaskDispatcher) pushTaskUpdates(ctx context.Context, msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, *int64, error) {
+	if isV4PushTaskPayload(msg.Payload) {
+		return d.pushTaskUpdatesV4(ctx, msg)
+	}
+	return pushTaskUpdates(msg)
+}
+
+func (d *PushTaskDispatcher) pushTaskUpdatesV4(ctx context.Context, msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, *int64, error) {
+	var messageEvent payload.MessageEventV4
+	if err := json.Unmarshal(msg.Payload, &messageEvent); err != nil {
+		return nil, nil, fmt.Errorf("%w: decode v4 push message event: %v", userupdates.ErrUserupdatesStorage, err)
+	}
+	if messageEvent.SchemaVersion != payload.MessageEventSchemaVersionV4 {
+		return nil, nil, fmt.Errorf("%w: unsupported v4 push message event schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.SchemaVersion)
+	}
+	projected, err := projection.ProjectPushTaskV4Updates(msg)
+	if err != nil {
+		return nil, nil, err
+	}
+	mode := envelope.ModeReceiverStream
+	if messageEvent.MessageFact.SenderUserID == msg.UserID {
+		mode = envelope.ModeSenderStream
+	}
+	wrapper, err := d.buildPushEnvelopeWithDependencies(ctx, msg.UserID, envelope.Input{
+		Mode:    mode,
+		Updates: projected.OtherUpdates,
+		Date:    messageEvent.MessageFact.Date,
+	})
+	if err != nil {
+		return nil, nil, err
+	}
+	full, ok := wrapper.ToUpdates()
+	if !ok {
+		return nil, nil, fmt.Errorf("%w: v4 push envelope is %s, want updates", userupdates.ErrUserupdatesStorage, wrapper.ClazzName())
+	}
+	return full, projected.AuthKeyIDExclude, nil
+}
+
+func isV4PushTaskPayload(body []byte) bool {
+	var header struct {
+		SchemaVersion int `json:"schema_version"`
+	}
+	if err := json.Unmarshal(body, &header); err != nil {
+		return false
+	}
+	return header.SchemaVersion == payload.MessageEventSchemaVersionV4
+}
+
+func (d *PushTaskDispatcher) buildPushEnvelopeWithDependencies(ctx context.Context, viewerUserID int64, in envelope.Input) (*tg.Updates, error) {
+	return envelope.BuildUpdatesWithDependencies(ctx, d, viewerUserID, in)
+}
+
+func (d *PushTaskDispatcher) ProjectUsers(ctx context.Context, viewerUserID int64, ids []int64) ([]tg.UserClazz, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+	if d == nil || d.user == nil {
+		return nil, fmt.Errorf("%w: project v4 push users: user client is not configured", userupdates.ErrUserupdatesStorage)
+	}
+	bundle, err := d.user.UserGetUserProjectionBundle(ctx, &userpb.TLUserGetUserProjectionBundle{
+		ViewerUserIds: []int64{viewerUserID},
+		TargetUserIds: ids,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("%w: project v4 push users: %v", userupdates.ErrUserupdatesStorage, err)
+	}
+	if bundle == nil {
+		return nil, fmt.Errorf("%w: project v4 push users: nil projection bundle", userupdates.ErrUserupdatesStorage)
+	}
+	for _, viewer := range bundle.ViewerUsers {
+		if viewer != nil && viewer.ViewerUserId == viewerUserID {
+			return viewer.Users, nil
+		}
+	}
+	return nil, fmt.Errorf("%w: project v4 push users: missing viewer projection for user_id %d", userupdates.ErrUserupdatesStorage, viewerUserID)
+}
+
+func (d *PushTaskDispatcher) ProjectChats(ctx context.Context, viewerUserID int64, ids []int64) ([]tg.ChatClazz, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+	if d == nil || d.chat == nil {
+		return nil, fmt.Errorf("%w: project v4 push chats: chat client is not configured", userupdates.ErrUserupdatesStorage)
+	}
+	mutableChats, err := d.chat.ChatGetChatListByIdList(ctx, &chatpb.TLChatGetChatListByIdList{
+		SelfId: viewerUserID,
+		IdList: ids,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("%w: project v4 push chats: %v", userupdates.ErrUserupdatesStorage, err)
+	}
+	if mutableChats == nil {
+		return nil, fmt.Errorf("%w: project v4 push chats: nil mutable chat list", userupdates.ErrUserupdatesStorage)
+	}
+	chats := make([]tg.ChatClazz, 0, len(mutableChats.Datas))
+	for _, mutableChat := range mutableChats.Datas {
+		chat, err := projectPushMutableChat(mutableChat, viewerUserID)
+		if err != nil {
+			return nil, fmt.Errorf("%w: project v4 push chats: %v", userupdates.ErrUserupdatesStorage, err)
+		}
+		if chat != nil {
+			chats = append(chats, chat)
+		}
+	}
+	return chats, nil
+}
+
+func projectPushMutableChat(mutableChat tg.MutableChatClazz, viewerUserID int64) (tg.ChatClazz, error) {
+	if mutableChat == nil || mutableChat.Chat == nil {
+		return nil, nil
+	}
+	chat := mutableChat.Chat
+	if chat.Date < pushMinInt32 || chat.Date > pushMaxInt32 {
+		return nil, fmt.Errorf("chat date overflows int32: chat_id %d date %d", chat.Id, chat.Date)
+	}
+	return tg.MakeTLChat(&tg.TLChat{
+		Creator:             chat.Creator == viewerUserID,
+		Deactivated:         chat.Deactivated,
+		CallActive:          chat.CallActive,
+		CallNotEmpty:        chat.CallNotEmpty,
+		Noforwards:          chat.Noforwards,
+		Id:                  chat.Id,
+		Title:               chat.Title,
+		Photo:               projectPushChatPhoto(chat.Photo),
+		ParticipantsCount:   chat.ParticipantsCount,
+		Date:                int32(chat.Date),
+		Version:             chat.Version,
+		MigratedTo:          chat.MigratedTo,
+		DefaultBannedRights: chat.DefaultBannedRights,
+	}), nil
+}
+
+const (
+	pushMinInt32 = -1 << 31
+	pushMaxInt32 = 1<<31 - 1
+)
+
+func projectPushChatPhoto(photo tg.PhotoClazz) tg.ChatPhotoClazz {
+	if p, ok := photo.(*tg.TLPhoto); ok {
+		return tg.MakeTLChatPhoto(&tg.TLChatPhoto{
+			PhotoId: p.Id,
+			DcId:    p.DcId,
+		})
+	}
+	return tg.MakeTLChatPhotoEmpty(&tg.TLChatPhotoEmpty{})
 }
 
 func pushTaskUpdates(msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, *int64, error) {

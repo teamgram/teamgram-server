@@ -14,9 +14,15 @@ import (
 	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/projection"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 type testIDGenerator struct {
@@ -1441,6 +1447,245 @@ func TestApplyUserOperationV3PersistsMediaAttrsForwardEvent(t *testing.T) {
 	}
 }
 
+func TestApplyMessageOperationV4AssignsUserMessageIDAndStoresClientRandomID(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	senderID := base + 2701
+	receiverID := base + 2702
+	chatID := base + 2703
+	repo := newV4ApplyTestRepository(db, base, senderID, receiverID, chatID)
+	op := buildV4ApplyTestOperation(t, senderID, receiverID, chatID, base+2704)
+	in := buildOperationApplyInputV4(t, senderID, op, "assigns-user-message-id")
+	if _, err := repo.ClaimPartitionOwner(ctx, in.PartitionID); err != nil {
+		t.Fatalf("ClaimPartitionOwner() error = %v", err)
+	}
+
+	result, err := repo.ApplyUserOperation(ctx, in)
+	if err != nil {
+		t.Fatalf("ApplyUserOperation(V4) error = %v", err)
+	}
+
+	view, err := repo.models.UserMessageViewsModel.SelectByUserCanonical(ctx, senderID, op.MessageFact.CanonicalMessageID)
+	if err != nil {
+		t.Fatalf("SelectByUserCanonical() error = %v", err)
+	}
+	if view.UserMessageId <= 0 {
+		t.Fatalf("user_message_id = %d, want assigned positive id", view.UserMessageId)
+	}
+	var response payload.OperationResponseV3
+	if err := json.Unmarshal(result.ResponsePayload, &response); err != nil {
+		t.Fatalf("unmarshal V4 response: %v", err)
+	}
+	if response.SchemaVersion != payload.OperationResponseSchemaVersionV3 {
+		t.Fatalf("response schema = %d, want V3", response.SchemaVersion)
+	}
+	if response.UserMessageID != view.UserMessageId || response.ClientRandomID != op.MessageFact.ClientRandomID {
+		t.Fatalf("response = %+v, want user_message_id=%d client_random_id=%d", response, view.UserMessageId, op.MessageFact.ClientRandomID)
+	}
+	if len(response.ReplyEnvelope) == 0 {
+		t.Fatalf("reply envelope is empty")
+	}
+	if response.ReplyEnvelopeCodec != payload.ReplyEnvelopeCodecTLBinary || response.ReplyEnvelopeSchema != payload.ReplyEnvelopeSchemaV1 {
+		t.Fatalf("reply envelope codec/schema = %d/%d", response.ReplyEnvelopeCodec, response.ReplyEnvelopeSchema)
+	}
+	reply := decodeOperationResponseV3ReplyUpdates(t, response)
+	if len(reply.Updates) != 3 {
+		t.Fatalf("reply update count = %d, want 3", len(reply.Updates))
+	}
+	messageID, ok := reply.Updates[0].(*tg.TLUpdateMessageID)
+	if !ok {
+		t.Fatalf("first reply update = %T, want *tg.TLUpdateMessageID", reply.Updates[0])
+	}
+	if _, ok := reply.Updates[1].(*tg.TLUpdateChatParticipants); !ok {
+		t.Fatalf("second reply update = %T, want *tg.TLUpdateChatParticipants", reply.Updates[1])
+	}
+	newMessage, ok := reply.Updates[2].(*tg.TLUpdateNewMessage)
+	if !ok {
+		t.Fatalf("third reply update = %T, want *tg.TLUpdateNewMessage", reply.Updates[2])
+	}
+	serviceMessage, ok := newMessage.Message.(*tg.TLMessageService)
+	if !ok {
+		t.Fatalf("third reply message = %T, want *tg.TLMessageService", newMessage.Message)
+	}
+	if _, ok := serviceMessage.Action.(*tg.TLMessageActionChatCreate); !ok {
+		t.Fatalf("service action = %T, want *tg.TLMessageActionChatCreate", serviceMessage.Action)
+	}
+	if messageID.Id != serviceMessage.Id || messageID.RandomId != op.MessageFact.ClientRandomID {
+		t.Fatalf("updateMessageID = %+v, want id=%d random_id=%d", messageID, serviceMessage.Id, op.MessageFact.ClientRandomID)
+	}
+}
+
+func TestApplyMessageOperationV4ComputesOutFromViewer(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	senderID := base + 2801
+	receiverID := base + 2802
+	chatID := base + 2803
+	repo := newV4ApplyTestRepository(db, base, senderID, receiverID, chatID)
+	op := buildV4ApplyTestOperation(t, senderID, receiverID, chatID, base+2804)
+	senderIn := buildOperationApplyInputV4(t, senderID, op, "out-sender")
+	receiverIn := buildOperationApplyInputV4(t, receiverID, op, "out-receiver")
+	for _, in := range []ApplyUserOperationInput{senderIn, receiverIn} {
+		if _, err := repo.ClaimPartitionOwner(ctx, in.PartitionID); err != nil {
+			t.Fatalf("ClaimPartitionOwner(%d) error = %v", in.UserID, err)
+		}
+		if _, err := repo.ApplyUserOperation(ctx, in); err != nil {
+			t.Fatalf("ApplyUserOperation(V4 user_id=%d) error = %v", in.UserID, err)
+		}
+	}
+
+	senderView, err := repo.models.UserMessageViewsModel.SelectByUserCanonical(ctx, senderID, op.MessageFact.CanonicalMessageID)
+	if err != nil {
+		t.Fatalf("SelectByUserCanonical(sender) error = %v", err)
+	}
+	receiverView, err := repo.models.UserMessageViewsModel.SelectByUserCanonical(ctx, receiverID, op.MessageFact.CanonicalMessageID)
+	if err != nil {
+		t.Fatalf("SelectByUserCanonical(receiver) error = %v", err)
+	}
+	if !senderView.Outgoing {
+		t.Fatalf("sender outgoing = false, want true")
+	}
+	if receiverView.Outgoing {
+		t.Fatalf("receiver outgoing = true, want false")
+	}
+}
+
+func TestApplyMessageOperationV4StoresAttachFacts(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	senderID := base + 2901
+	receiverID := base + 2902
+	chatID := base + 2903
+	repo := newV4ApplyTestRepository(db, base, senderID, receiverID, chatID)
+	op := buildV4ApplyTestOperation(t, senderID, receiverID, chatID, base+2904)
+	in := buildOperationApplyInputV4(t, senderID, op, "attach-facts")
+	if _, err := repo.ClaimPartitionOwner(ctx, in.PartitionID); err != nil {
+		t.Fatalf("ClaimPartitionOwner() error = %v", err)
+	}
+	if _, err := repo.ApplyUserOperation(ctx, in); err != nil {
+		t.Fatalf("ApplyUserOperation(V4) error = %v", err)
+	}
+
+	event, err := repo.models.UserPtsEventsModel.SelectByOperation(ctx, senderID, in.OperationID)
+	if err != nil {
+		t.Fatalf("SelectByOperation() error = %v", err)
+	}
+	if event.EventType != EventTypeNewMessage {
+		t.Fatalf("event type = %d, want new message", event.EventType)
+	}
+	if !bytes.Contains(event.EventPayload, []byte(payload.EventKindChatParticipantsChanged)) {
+		t.Fatalf("event payload missing chat_participants_changed: %s", event.EventPayload)
+	}
+}
+
+func TestApplyMessageOperationV4ReplayIsIdempotent(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	senderID := base + 3001
+	receiverID := base + 3002
+	chatID := base + 3003
+	repo := newV4ApplyTestRepository(db, base, senderID, receiverID, chatID)
+	op := buildV4ApplyTestOperation(t, senderID, receiverID, chatID, base+3004)
+	in := buildOperationApplyInputV4(t, senderID, op, "replay")
+	if _, err := repo.ClaimPartitionOwner(ctx, in.PartitionID); err != nil {
+		t.Fatalf("ClaimPartitionOwner() error = %v", err)
+	}
+	first, err := repo.ApplyUserOperation(ctx, in)
+	if err != nil {
+		t.Fatalf("ApplyUserOperation(V4 first) error = %v", err)
+	}
+	again, err := repo.ApplyUserOperation(ctx, in)
+	if err != nil {
+		t.Fatalf("ApplyUserOperation(V4 replay) error = %v", err)
+	}
+	if !again.AlreadyApplied {
+		t.Fatalf("AlreadyApplied = false, want true")
+	}
+	if again.Pts != first.Pts || !bytes.Equal(again.ResponsePayload, first.ResponsePayload) || !bytes.Equal(again.ResponseHash, first.ResponseHash) {
+		t.Fatalf("replay result mismatch: first=%+v again=%+v", first, again)
+	}
+}
+
+func TestApplyMessageOperationV4DifferenceProjectsResolvedCanonicalReply(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	senderID := base + 3101
+	receiverID := base + 3102
+	chatID := base + 3103
+	repo := newV4ApplyTestRepository(db, base, senderID, receiverID, chatID)
+	seed := buildV4ApplyTestOperation(t, senderID, receiverID, chatID, base+3104)
+	seed.AttachFacts = nil
+	seed.MessageFact.ServiceAction = nil
+	seed.MessageFact.MessageText = "reply target"
+	seedIn := buildOperationApplyInputV4(t, senderID, seed, "reply-target")
+	if _, err := repo.ClaimPartitionOwner(ctx, seedIn.PartitionID); err != nil {
+		t.Fatalf("ClaimPartitionOwner() error = %v", err)
+	}
+	seedResult, err := repo.ApplyUserOperation(ctx, seedIn)
+	if err != nil {
+		t.Fatalf("ApplyUserOperation(V4 seed) error = %v", err)
+	}
+	var seedResponse payload.OperationResponseV3
+	if err := json.Unmarshal(seedResult.ResponsePayload, &seedResponse); err != nil {
+		t.Fatalf("unmarshal seed response: %v", err)
+	}
+	reply := buildV4ApplyTestOperation(t, senderID, receiverID, chatID, base+3105)
+	reply.AttachFacts = nil
+	reply.MessageFact.ServiceAction = nil
+	reply.MessageFact.PeerSeq = 2
+	reply.MessageFact.MessageText = "canonical reply"
+	reply.MessageFact.ReplyToCanonicalMessageID = seed.MessageFact.CanonicalMessageID
+	replyIn := buildOperationApplyInputV4(t, senderID, reply, "canonical-reply")
+	replyResult, err := repo.ApplyUserOperation(ctx, replyIn)
+	if err != nil {
+		t.Fatalf("ApplyUserOperation(V4 reply) error = %v", err)
+	}
+
+	row, err := repo.models.UserPtsEventsModel.SelectByOperation(ctx, senderID, replyIn.OperationID)
+	if err != nil {
+		t.Fatalf("SelectByOperation(reply) error = %v", err)
+	}
+	var stored payload.MessageEventV4
+	if err := json.Unmarshal(row.EventPayload, &stored); err != nil {
+		t.Fatalf("unmarshal stored V4 event: %v", err)
+	}
+	if stored.MessageFact.ReplyToUserMessageID != seedResponse.UserMessageID {
+		t.Fatalf("stored reply_to_user_message_id = %d, want %d", stored.MessageFact.ReplyToUserMessageID, seedResponse.UserMessageID)
+	}
+
+	diff, err := repo.GetDifference(ctx, GetDifferenceInput{UserID: senderID, Pts: seedResult.Pts, Limit: 10})
+	if err != nil {
+		t.Fatalf("GetDifference() error = %v", err)
+	}
+	if len(diff.Events) != 1 {
+		t.Fatalf("difference event count = %d, want 1", len(diff.Events))
+	}
+	projected, err := projection.ProjectUserEvent(diff.Events[0], projection.ModeDifference)
+	if err != nil {
+		t.Fatalf("ProjectUserEvent(V4 difference) error = %v", err)
+	}
+	update, ok := projected.Update.(*tg.TLUpdateNewMessage)
+	if !ok {
+		t.Fatalf("projected update = %T, want *tg.TLUpdateNewMessage", projected.Update)
+	}
+	message, ok := update.Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("projected message = %T, want *tg.TLMessage", update.Message)
+	}
+	replyHeader, ok := message.ReplyTo.(*tg.TLMessageReplyHeader)
+	if !ok || replyHeader.ReplyToMsgId == nil || int64(*replyHeader.ReplyToMsgId) != seedResponse.UserMessageID {
+		t.Fatalf("reply header = %+v ok=%v, want reply_to_msg_id=%d", replyHeader, ok, seedResponse.UserMessageID)
+	}
+	if replyResult.Pts <= seedResult.Pts {
+		t.Fatalf("reply pts = %d, want after seed pts %d", replyResult.Pts, seedResult.Pts)
+	}
+}
+
 func TestGetDifferenceLegacyMessageHydrationRequiresExactEventPeerSeq(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)
@@ -1839,6 +2084,123 @@ func buildOperationApplyInputV3(t *testing.T, userID int64, op payload.MessageOp
 		BucketID:     int32(route.BucketID),
 		PartitionID:  int32(route.ReceiverPartitionID),
 	}
+}
+
+func buildOperationApplyInputV4(t *testing.T, userID int64, op payload.MessageOperationV4, suffix string) ApplyUserOperationInput {
+	t.Helper()
+	route := payload.RouteUser(userID)
+	body, err := json.Marshal(op)
+	if err != nil {
+		t.Fatalf("marshal V4 operation: %v", err)
+	}
+	return ApplyUserOperationInput{
+		UserID:       userID,
+		OperationID:  fmt.Sprintf("v4:%s:user:%d:%s:%d", op.OperationKind, userID, suffix, time.Now().UnixNano()),
+		OpType:       OpTypeSendMessage,
+		PeerType:     op.MessageFact.PeerType,
+		PeerID:       op.MessageFact.PeerID,
+		PayloadCodec: PayloadCodecJSON,
+		Payload:      body,
+		PayloadHash:  payload.HashBytes(body),
+		BucketID:     int32(route.BucketID),
+		PartitionID:  int32(route.ReceiverPartitionID),
+	}
+}
+
+func buildV4ApplyTestOperation(t *testing.T, senderID, receiverID, chatID, canonicalMessageID int64) payload.MessageOperationV4 {
+	t.Helper()
+	date := int32(time.Now().Unix())
+	chatFact, err := payload.WrapFact(payload.FactKindChatParticipantsChanged, payload.ChatParticipantsChangedFactV1{
+		SchemaVersion: payload.MessageOperationSchemaVersionV4,
+		ChatID:        chatID,
+		ActorUserID:   senderID,
+		Version:       1,
+		Participants: []payload.ChatParticipantFactV1{
+			{UserID: senderID, Role: "creator", Date: date},
+			{UserID: receiverID, Role: "member", InviterUserID: senderID, Date: date},
+		},
+	})
+	if err != nil {
+		t.Fatalf("wrap chat participants fact: %v", err)
+	}
+	return payload.MessageOperationV4{
+		SchemaVersion: payload.MessageOperationSchemaVersionV4,
+		OperationKind: payload.OperationKindSendMessage,
+		MessageFact: payload.NewMessageFactV1{
+			SchemaVersion:      payload.MessageOperationSchemaVersionV4,
+			CanonicalMessageID: canonicalMessageID,
+			PeerType:           payload.PeerTypeChat,
+			PeerID:             chatID,
+			PeerSeq:            1,
+			SenderUserID:       senderID,
+			ToUserID:           receiverID,
+			ClientRandomID:     canonicalMessageID + 900000,
+			Date:               date,
+			MessageText:        "v4 hello",
+			ServiceAction: &payload.ServiceActionRefV1{
+				SchemaVersion: payload.ServiceActionSchemaVersionV1,
+				Kind:          payload.ServiceActionKindChatCreate,
+				Title:         "v4 chat",
+				Users:         []int64{senderID, receiverID},
+			},
+		},
+		AttachFacts: []payload.UpdateFactV1{chatFact},
+	}
+}
+
+func decodeOperationResponseV3ReplyUpdates(t *testing.T, response payload.OperationResponseV3) *tg.TLUpdates {
+	t.Helper()
+	obj, err := iface.DecodeObject(bin.NewDecoder(response.ReplyEnvelope))
+	if err != nil {
+		t.Fatalf("decode reply envelope: %v", err)
+	}
+	reply, ok := obj.(*tg.TLUpdates)
+	if !ok {
+		t.Fatalf("reply envelope = %T, want *tg.TLUpdates", obj)
+	}
+	return reply
+}
+
+func newV4ApplyTestRepository(db *sqlx.DB, base, senderID, receiverID, chatID int64) *Repository {
+	repo := NewForTest(db, &testIDGenerator{next: base + 90_000}, "local-userupdates")
+	userClient := &fakeUserProjectionClient{
+		bundle: userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+			ViewerUsers: []userpb.ViewerUsersClazz{
+				userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{
+					ViewerUserId: senderID,
+					Users: []tg.UserClazz{
+						tg.MakeTLUser(&tg.TLUser{Id: senderID}),
+						tg.MakeTLUser(&tg.TLUser{Id: receiverID}),
+					},
+				}),
+				userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{
+					ViewerUserId: receiverID,
+					Users: []tg.UserClazz{
+						tg.MakeTLUser(&tg.TLUser{Id: senderID}),
+						tg.MakeTLUser(&tg.TLUser{Id: receiverID}),
+					},
+				}),
+			},
+		}),
+	}
+	chatClient := &fakeChatProjectionClient{
+		chats: &chatpb.VectorMutableChat{
+			Datas: []tg.MutableChatClazz{
+				tg.MakeTLMutableChat(&tg.TLMutableChat{
+					Chat: tg.MakeTLImmutableChat(&tg.TLImmutableChat{
+						Id:                chatID,
+						Creator:           senderID,
+						Title:             "v4 chat",
+						ParticipantsCount: 2,
+						Date:              time.Now().Unix(),
+						Version:           1,
+					}),
+				}),
+			},
+		},
+	}
+	repo.SetPeerProjectionClients(userClient, chatClient)
+	return repo
 }
 
 func mustMarshalMessageEvent(t *testing.T, event payload.MessageEventV1) []byte {

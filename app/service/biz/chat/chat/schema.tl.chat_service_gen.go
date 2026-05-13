@@ -299,12 +299,14 @@ func (m *TLChatCheckMessageAction) Decode(d *bin.Decoder) (err error) {
 
 // TLChatCreateChat2 <--
 type TLChatCreateChat2 struct {
-	ClazzID    uint32  `json:"_id"`
-	CreatorId  int64   `json:"creator_id"`
-	UserIdList []int64 `json:"user_id_list"`
-	Title      string  `json:"title"`
-	Bots       []int64 `json:"bots"`
-	TtlPeriod  *int32  `json:"ttl_period"`
+	ClazzID     uint32  `json:"_id"`
+	CreatorId   int64   `json:"creator_id"`
+	UserIdList  []int64 `json:"user_id_list"`
+	Title       string  `json:"title"`
+	Bots        []int64 `json:"bots"`
+	TtlPeriod   *int32  `json:"ttl_period"`
+	ClientMsgId *int64  `json:"client_msg_id"`
+	OperationId *string `json:"operation_id"`
 }
 
 func (m *TLChatCreateChat2) String() string {
@@ -327,6 +329,12 @@ func (m *TLChatCreateChat2) Encode(x *bin.Encoder, layer int32) error {
 			if m.TtlPeriod != nil {
 				flags |= 1 << 1
 			}
+			if m.ClientMsgId != nil {
+				flags |= 1 << 2
+			}
+			if m.OperationId != nil {
+				flags |= 1 << 3
+			}
 
 			return flags
 		}
@@ -344,6 +352,14 @@ func (m *TLChatCreateChat2) Encode(x *bin.Encoder, layer int32) error {
 		}
 		if m.TtlPeriod != nil {
 			x.PutInt32(*m.TtlPeriod)
+		}
+
+		if m.ClientMsgId != nil {
+			x.PutInt64(*m.ClientMsgId)
+		}
+
+		if m.OperationId != nil {
+			x.PutString(*m.OperationId)
 		}
 
 		return nil
@@ -392,6 +408,21 @@ func (m *TLChatCreateChat2) Decode(d *bin.Decoder) (err error) {
 			*m.TtlPeriod, err = d.Int32()
 			if err != nil {
 				return fmt.Errorf("unable to decode chat_createChat2#0xed17acf5: field ttl_period: %w", err)
+			}
+		}
+		if (flags & (1 << 2)) != 0 {
+			m.ClientMsgId = new(int64)
+			*m.ClientMsgId, err = d.Int64()
+			if err != nil {
+				return fmt.Errorf("unable to decode chat_createChat2#0xed17acf5: field client_msg_id: %w", err)
+			}
+		}
+
+		if (flags & (1 << 3)) != 0 {
+			m.OperationId = new(string)
+			*m.OperationId, err = d.String()
+			if err != nil {
+				return fmt.Errorf("unable to decode chat_createChat2#0xed17acf5: field operation_id: %w", err)
 			}
 		}
 

@@ -30,9 +30,9 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-// MsgEditMessageV2
-// msg.editMessageV2 user_id:long auth_key_id:long peer_type:int peer_id:long edit_type:int new_message:OutboxMessage dst_message:MessageBox = Updates;
-func (c *MsgCore) MsgEditMessageV2(in *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
+// MsgEditMessage
+// msg.editMessage user_id:long auth_key_id:long peer_type:int peer_id:long edit_type:int new_message:OutboxMessage dst_message:MessageBox = Updates;
+func (c *MsgCore) MsgEditMessage(in *msg.TLMsgEditMessage) (*tg.Updates, error) {
 	if in == nil || in.NewMessage == nil || in.DstMessage == nil {
 		return nil, fmt.Errorf("%w: missing edit message input", msg.ErrSendStateConflict)
 	}
@@ -100,7 +100,7 @@ func (c *MsgCore) MsgEditMessageV2(in *msg.TLMsgEditMessageV2) (*tg.Updates, err
 	return shortEditMessage(edited, senderResult, senderHash, in.PeerType, in.PeerId)
 }
 
-func (c *MsgCore) processEditSenderOperation(in *msg.TLMsgEditMessageV2, edited *repository.EditMessageResult, userMessageID int64, effects []OperationEnvelope) (*userupdates.UserOperationResult, []byte, error) {
+func (c *MsgCore) processEditSenderOperation(in *msg.TLMsgEditMessage, edited *repository.EditMessageResult, userMessageID int64, effects []OperationEnvelope) (*userupdates.UserOperationResult, []byte, error) {
 	body, hashBytes, err := buildEditMessageOperationPayload(in.UserId, in.PeerId, in.PeerType, in.PeerId, true, edited, userMessageID)
 	if err != nil {
 		return nil, nil, err
@@ -131,7 +131,7 @@ func (c *MsgCore) processEditSenderOperation(in *msg.TLMsgEditMessageV2, edited 
 	return result, hashBytes, nil
 }
 
-func buildEditReceiverOperationEnvelope(in *msg.TLMsgEditMessageV2, edited *repository.EditMessageResult) (OperationEnvelope, error) {
+func buildEditReceiverOperationEnvelope(in *msg.TLMsgEditMessage, edited *repository.EditMessageResult) (OperationEnvelope, error) {
 	body, hashBytes, err := buildEditMessageOperationPayload(in.UserId, in.PeerId, in.PeerType, in.UserId, false, edited, 0)
 	if err != nil {
 		return OperationEnvelope{}, err
@@ -155,7 +155,7 @@ func buildEditReceiverOperationEnvelope(in *msg.TLMsgEditMessageV2, edited *repo
 	}, nil
 }
 
-func (c *MsgCore) buildEditChatReceiverEffects(in *msg.TLMsgEditMessageV2, edited *repository.EditMessageResult) ([]OperationEnvelope, error) {
+func (c *MsgCore) buildEditChatReceiverEffects(in *msg.TLMsgEditMessage, edited *repository.EditMessageResult) ([]OperationEnvelope, error) {
 	if in.PeerType != payload.PeerTypeChat {
 		return nil, nil
 	}

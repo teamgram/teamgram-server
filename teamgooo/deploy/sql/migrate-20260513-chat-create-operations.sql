@@ -1,0 +1,23 @@
+CREATE TABLE IF NOT EXISTS `chat_create_operations` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `operation_id` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `replay_key` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `actor_user_id` bigint NOT NULL,
+  `client_msg_id` bigint NOT NULL DEFAULT '0',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT '',
+  `invitee_ids` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `ttl_period` int NOT NULL DEFAULT '0',
+  `chat_id` bigint NOT NULL DEFAULT '0',
+  `participants_version` int NOT NULL DEFAULT '0',
+  `status` int NOT NULL DEFAULT '0',
+  `date` bigint NOT NULL DEFAULT '0',
+  `updated_at_sec` bigint NOT NULL DEFAULT '0',
+  `expires_at` bigint NOT NULL DEFAULT '0',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `operation_id` (`operation_id`),
+  UNIQUE KEY `replay_key` (`replay_key`),
+  KEY `actor_status_updated_at` (`actor_user_id`,`status`,`updated_at_sec`),
+  KEY `expires_at` (`expires_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

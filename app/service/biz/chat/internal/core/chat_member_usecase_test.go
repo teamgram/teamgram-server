@@ -182,6 +182,31 @@ func TestCreateChatReturnsTypedFloodError(t *testing.T) {
 	}
 }
 
+func TestCreateChatPassesClientMsgIDAndOperationIDToRepository(t *testing.T) {
+	clientMsgID := int64(101)
+	operationID := "operation-101"
+	write := &fakeWriteRepo{mutableChat: mutableChatForMemberTests(42, 1)}
+	core := newWriteTestCore(&fakeReadRepo{}, write)
+
+	_, err := core.ChatCreateChat2(&chat.TLChatCreateChat2{
+		CreatorId:   1,
+		UserIdList:  []int64{2},
+		Title:       "team",
+		ClientMsgId: &clientMsgID,
+		OperationId: &operationID,
+	})
+	if err != nil {
+		t.Fatalf("ChatCreateChat2 error = %v", err)
+	}
+	if write.createArg.ClientMsgID != clientMsgID || write.createArg.OperationID != operationID {
+		t.Fatalf("CreateChatArg client_msg_id/operation_id = %d/%q, want %d/%q",
+			write.createArg.ClientMsgID,
+			write.createArg.OperationID,
+			clientMsgID,
+			operationID)
+	}
+}
+
 func TestAddChatUserBranches(t *testing.T) {
 	adminNoInvite := tg.MakeTLChatAdminRights(&tg.TLChatAdminRights{BanUsers: true}).ToChatAdminRights()
 

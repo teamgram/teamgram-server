@@ -69,15 +69,15 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"/msg.RPCMsg/msg.sendMessageV2": kitex.NewMethodInfo(
-		sendMessageV2Handler,
+	"/msg.RPCMsg/msg.sendMessage": kitex.NewMethodInfo(
+		sendMessageHandler,
 		newSendMessageV2Args,
 		newSendMessageV2Result,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
-	"/msg.RPCMsg/msg.editMessageV2": kitex.NewMethodInfo(
-		editMessageV2Handler,
+	"/msg.RPCMsg/msg.editMessage": kitex.NewMethodInfo(
+		editMessageHandler,
 		newEditMessageV2Args,
 		newEditMessageV2Result,
 		false,
@@ -515,10 +515,10 @@ func (p *ReadMessageContentsResult) GetResult() interface{} {
 	return p.Success
 }
 
-func sendMessageV2Handler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+func sendMessageHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*SendMessageV2Args)
 	realResult := result.(*SendMessageV2Result)
-	success, err := handler.(msg.RPCMsg).MsgSendMessageV2(ctx, realArg.Req)
+	success, err := handler.(msg.RPCMsg).MsgSendMessage(ctx, realArg.Req)
 	if err != nil {
 		return err
 	}
@@ -535,7 +535,7 @@ func newSendMessageV2Result() interface{} {
 }
 
 type SendMessageV2Args struct {
-	Req *msg.TLMsgSendMessageV2
+	Req *msg.TLMsgSendMessage
 }
 
 func (p *SendMessageV2Args) Marshal(out []byte) ([]byte, error) {
@@ -546,7 +546,7 @@ func (p *SendMessageV2Args) Marshal(out []byte) ([]byte, error) {
 }
 
 func (p *SendMessageV2Args) Unmarshal(in []byte) error {
-	msg := new(msg.TLMsgSendMessageV2)
+	msg := new(msg.TLMsgSendMessage)
 	if err := json.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -563,7 +563,7 @@ func (p *SendMessageV2Args) Encode(x *bin.Encoder, layer int32) error {
 }
 
 func (p *SendMessageV2Args) Decode(d *bin.Decoder) (err error) {
-	msg := new(msg.TLMsgSendMessageV2)
+	msg := new(msg.TLMsgSendMessage)
 	msg.ClazzID, err = d.ClazzID()
 	if err != nil {
 		return err
@@ -575,9 +575,9 @@ func (p *SendMessageV2Args) Decode(d *bin.Decoder) (err error) {
 	return nil
 }
 
-var SendMessageV2Args_Req_DEFAULT *msg.TLMsgSendMessageV2
+var SendMessageV2Args_Req_DEFAULT *msg.TLMsgSendMessage
 
-func (p *SendMessageV2Args) GetReq() *msg.TLMsgSendMessageV2 {
+func (p *SendMessageV2Args) GetReq() *msg.TLMsgSendMessage {
 	if !p.IsSetReq() {
 		return SendMessageV2Args_Req_DEFAULT
 	}
@@ -649,10 +649,10 @@ func (p *SendMessageV2Result) GetResult() interface{} {
 	return p.Success
 }
 
-func editMessageV2Handler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+func editMessageHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*EditMessageV2Args)
 	realResult := result.(*EditMessageV2Result)
-	success, err := handler.(msg.RPCMsg).MsgEditMessageV2(ctx, realArg.Req)
+	success, err := handler.(msg.RPCMsg).MsgEditMessage(ctx, realArg.Req)
 	if err != nil {
 		return err
 	}
@@ -669,7 +669,7 @@ func newEditMessageV2Result() interface{} {
 }
 
 type EditMessageV2Args struct {
-	Req *msg.TLMsgEditMessageV2
+	Req *msg.TLMsgEditMessage
 }
 
 func (p *EditMessageV2Args) Marshal(out []byte) ([]byte, error) {
@@ -680,7 +680,7 @@ func (p *EditMessageV2Args) Marshal(out []byte) ([]byte, error) {
 }
 
 func (p *EditMessageV2Args) Unmarshal(in []byte) error {
-	msg := new(msg.TLMsgEditMessageV2)
+	msg := new(msg.TLMsgEditMessage)
 	if err := json.Unmarshal(in, msg); err != nil {
 		return err
 	}
@@ -697,7 +697,7 @@ func (p *EditMessageV2Args) Encode(x *bin.Encoder, layer int32) error {
 }
 
 func (p *EditMessageV2Args) Decode(d *bin.Decoder) (err error) {
-	msg := new(msg.TLMsgEditMessageV2)
+	msg := new(msg.TLMsgEditMessage)
 	msg.ClazzID, err = d.ClazzID()
 	if err != nil {
 		return err
@@ -709,9 +709,9 @@ func (p *EditMessageV2Args) Decode(d *bin.Decoder) (err error) {
 	return nil
 }
 
-var EditMessageV2Args_Req_DEFAULT *msg.TLMsgEditMessageV2
+var EditMessageV2Args_Req_DEFAULT *msg.TLMsgEditMessage
 
-func (p *EditMessageV2Args) GetReq() *msg.TLMsgEditMessageV2 {
+func (p *EditMessageV2Args) GetReq() *msg.TLMsgEditMessage {
 	if !p.IsSetReq() {
 		return EditMessageV2Args_Req_DEFAULT
 	}
@@ -2556,24 +2556,24 @@ func (p *kClient) MsgReadMessageContents(ctx context.Context, req *msg.TLMsgRead
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) MsgSendMessageV2(ctx context.Context, req *msg.TLMsgSendMessageV2) (r *tg.Updates, err error) {
+func (p *kClient) MsgSendMessage(ctx context.Context, req *msg.TLMsgSendMessage) (r *tg.Updates, err error) {
 	// var _args SendMessageV2Args
 	// _args.Req = req
 	var _result SendMessageV2Result
 
-	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.sendMessageV2", req, &_result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.sendMessage", req, &_result); err != nil {
 		return
 	}
 
 	return _result.GetSuccess(), nil
 }
 
-func (p *kClient) MsgEditMessageV2(ctx context.Context, req *msg.TLMsgEditMessageV2) (r *tg.Updates, err error) {
+func (p *kClient) MsgEditMessage(ctx context.Context, req *msg.TLMsgEditMessage) (r *tg.Updates, err error) {
 	// var _args EditMessageV2Args
 	// _args.Req = req
 	var _result EditMessageV2Result
 
-	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.editMessageV2", req, &_result); err != nil {
+	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.editMessage", req, &_result); err != nil {
 		return
 	}
 

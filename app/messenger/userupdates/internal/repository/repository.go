@@ -36,6 +36,8 @@ type Repository struct {
 	db            *sqlx.DB
 	models        *model.Models
 	idgen         IDGenerator
+	userProjector UserProjectionClient
+	chatProjector ChatProjectionClient
 	ownerInstance string
 }
 

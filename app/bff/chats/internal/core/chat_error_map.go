@@ -13,11 +13,14 @@ func mapChatError(err error) error {
 	}
 
 	var floodErr *chatpb.CreateChatFloodError
+	var pendingErr *chatpb.CreateChatOperationPendingError
 	switch {
 	case errors.Is(err, chatpb.ErrChatStorage):
 		return tg.ErrInternalServerError
 	case errors.As(err, &floodErr):
 		return tg.NewErrFloodWaitX(floodErr.WaitSeconds)
+	case errors.As(err, &pendingErr):
+		return tg.NewErrFloodWaitX(pendingErr.WaitSeconds)
 	case errors.Is(err, chatpb.ErrChatNotFound),
 		errors.Is(err, chatpb.ErrChatMigrated),
 		errors.Is(err, chatpb.ErrChatDeactivated):

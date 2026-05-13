@@ -486,6 +486,111 @@ func TestGetDifferenceBuildsVisibleMessageFromEventPayload(t *testing.T) {
 	}
 }
 
+func TestV4CreateChatDifferenceOmitsUpdateMessageID(t *testing.T) {
+	chatFact, err := payload.WrapFact(payload.FactKindChatParticipantsChanged, payload.ChatParticipantsChangedFactV1{
+		SchemaVersion: payload.MessageOperationSchemaVersionV4,
+		ChatID:        2002,
+		ActorUserID:   1001,
+		Version:       1,
+		Participants: []payload.ChatParticipantFactV1{
+			{UserID: 1001, Role: "creator", Date: 1_772_000_000},
+			{UserID: 1002, Role: "member", InviterUserID: 1001, Date: 1_772_000_000},
+		},
+	})
+	if err != nil {
+		t.Fatalf("WrapFact(chat participants) error = %v", err)
+	}
+	eventPayload := mustMarshalMessageEventV4(t, payload.MessageEventV4{
+		SchemaVersion: payload.MessageEventSchemaVersionV4,
+		EventKind:     payload.EventKindNewMessage,
+		MessageFact: payload.NewMessageFactV1{
+			SchemaVersion:      payload.MessageOperationSchemaVersionV4,
+			CanonicalMessageID: 2001,
+			PeerType:           payload.PeerTypeChat,
+			PeerID:             2002,
+			PeerSeq:            1,
+			SenderUserID:       1001,
+			Date:               1_772_000_000,
+			ServiceAction: &payload.ServiceActionRefV1{
+				SchemaVersion: payload.ServiceActionSchemaVersionV1,
+				Kind:          payload.ServiceActionKindChatCreate,
+				Title:         "v4 chat",
+				Users:         []int64{1001, 1002},
+			},
+		},
+		AttachFacts: []payload.UpdateFactV1{chatFact},
+		MessageID:   101,
+		Pts:         18,
+		PtsCount:    1,
+	})
+	repo := &fakeUserUpdatesRepository{
+		difference: &repository.GetDifferenceResult{
+			State: repository.UserState{UserID: 1001, Pts: 18},
+			Events: []repository.UserEvent{
+				{
+					UserID:             1001,
+					Pts:                18,
+					PtsCount:           1,
+					OperationID:        "v4-chat-create",
+					EventType:          repository.EventTypeNewMessage,
+					PeerType:           payload.PeerTypeChat,
+					PeerID:             2002,
+					CanonicalMessageID: 2001,
+					PeerSeq:            1,
+					ActorUserID:        1001,
+					EventSchemaVersion: payload.MessageEventSchemaVersionV4,
+					EventCodec:         repository.PayloadCodecJSON,
+					EventPayload:       eventPayload,
+					EventPayloadHash:   payload.HashBytes(eventPayload),
+				},
+			},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.UserupdatesGetDifference(&userupdates.TLUserupdatesGetDifference{
+		UserId:        1001,
+		AuthKeyId:     9001,
+		Pts:           17,
+		PtsTotalLimit: int32Ptr(10),
+	})
+	if err != nil {
+		t.Fatalf("GetDifference returned error: %v", err)
+	}
+	diff, ok := got.ToUserDifference()
+	if !ok {
+		t.Fatalf("expected userDifference, got %s", got.ClazzName())
+	}
+	if len(diff.NewMessages) != 1 {
+		t.Fatalf("new message count = %d, want 1", len(diff.NewMessages))
+	}
+	service, ok := diff.NewMessages[0].(*tg.TLMessageService)
+	if !ok {
+		t.Fatalf("new message = %T, want *tg.TLMessageService", diff.NewMessages[0])
+	}
+	if _, ok := service.Action.(*tg.TLMessageActionChatCreate); !ok {
+		t.Fatalf("service action = %T, want *tg.TLMessageActionChatCreate", service.Action)
+	}
+	if len(diff.OtherUpdates) != 2 {
+		t.Fatalf("other update count = %d, want 2", len(diff.OtherUpdates))
+	}
+	for i, update := range diff.OtherUpdates {
+		if _, ok := update.(*tg.TLUpdateMessageID); ok {
+			t.Fatalf("other_updates[%d] = *tg.TLUpdateMessageID, want difference to omit reply-only update", i)
+		}
+	}
+	if _, ok := diff.OtherUpdates[0].(*tg.TLUpdateChatParticipants); !ok {
+		t.Fatalf("first update = %T, want *tg.TLUpdateChatParticipants", diff.OtherUpdates[0])
+	}
+	newMessage, ok := diff.OtherUpdates[1].(*tg.TLUpdateNewMessage)
+	if !ok {
+		t.Fatalf("second update = %T, want *tg.TLUpdateNewMessage", diff.OtherUpdates[1])
+	}
+	if newMessage.Message != diff.NewMessages[0] {
+		t.Fatalf("update new message does not match NewMessages entry")
+	}
+}
+
 func TestGetDifferenceBuildsReadHistoryOutboxUpdate(t *testing.T) {
 	eventPayload := mustMarshalMessageEvent(t, payload.MessageEventV1{
 		SchemaVersion: payload.MessageEventSchemaVersion,
@@ -853,6 +958,58 @@ func TestMessageViewToTLMessageSupportsV3MediaAttrsForward(t *testing.T) {
 	}
 	if tlMessage.GroupedId == nil || *tlMessage.GroupedId != 444 || tlMessage.FwdFrom == nil {
 		t.Fatalf("grouped/forward = grouped:%v fwd:%T", tlMessage.GroupedId, tlMessage.FwdFrom)
+	}
+}
+
+func TestMessageViewToTLMessageSupportsV4SharedProjection(t *testing.T) {
+	eventPayload := mustMarshalMessageEventV4(t, payload.MessageEventV4{
+		SchemaVersion: payload.MessageEventSchemaVersionV4,
+		EventKind:     payload.EventKindNewMessage,
+		MessageFact: payload.NewMessageFactV1{
+			SchemaVersion:        payload.MessageOperationSchemaVersionV4,
+			CanonicalMessageID:   2004,
+			PeerType:             payload.PeerTypeChat,
+			PeerID:               1002,
+			PeerSeq:              10,
+			SenderUserID:         1001,
+			Date:                 1_772_000_000,
+			ReplyToUserMessageID: 77,
+			ServiceAction: &payload.ServiceActionRefV1{
+				SchemaVersion: payload.ServiceActionSchemaVersionV1,
+				Kind:          payload.ServiceActionKindChatCreate,
+				Title:         "v4 chat",
+				Users:         []int64{1001, 1002},
+			},
+		},
+		MessageID: 104,
+	})
+	message, err := messageViewToTLMessage(repository.MessageView{
+		UserID:             1001,
+		PeerType:           payload.PeerTypeChat,
+		PeerID:             1002,
+		PeerSeq:            10,
+		UserMessageID:      104,
+		CanonicalMessageID: 2004,
+		MessageStatus:      repository.MessageStatusLive,
+		ViewSchemaVersion:  payload.MessageEventSchemaVersionV4,
+		ViewPayload:        eventPayload,
+	})
+	if err != nil {
+		t.Fatalf("messageViewToTLMessage error = %v", err)
+	}
+	service, ok := message.(*tg.TLMessageService)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessageService", message)
+	}
+	if service.Id != 104 || !service.Out {
+		t.Fatalf("service message = %+v, want id=104 outgoing", service)
+	}
+	if _, ok := service.Action.(*tg.TLMessageActionChatCreate); !ok {
+		t.Fatalf("service action = %T, want *tg.TLMessageActionChatCreate", service.Action)
+	}
+	reply, ok := service.ReplyTo.(*tg.TLMessageReplyHeader)
+	if !ok || reply.ReplyToMsgId == nil || *reply.ReplyToMsgId != 77 {
+		t.Fatalf("reply header = %+v ok=%v, want reply_to_msg_id=77", reply, ok)
 	}
 }
 
@@ -1383,6 +1540,15 @@ func mustMarshalMessageEventV3(t *testing.T, event payload.MessageEventV3) []byt
 	b, err := json.Marshal(event)
 	if err != nil {
 		t.Fatalf("marshal message event v3: %v", err)
+	}
+	return b
+}
+
+func mustMarshalMessageEventV4(t *testing.T, event payload.MessageEventV4) []byte {
+	t.Helper()
+	b, err := json.Marshal(event)
+	if err != nil {
+		t.Fatalf("marshal message event v4: %v", err)
 	}
 	return b
 }

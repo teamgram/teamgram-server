@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/envelope"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/projection"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
@@ -86,6 +87,14 @@ func operationResponseSchemaVersion(storedSchemaVersion int32, responsePayload [
 		if response.SchemaVersion != payload.OperationResponseSchemaVersion {
 			return nil, fmt.Errorf("%w: operation response schema mismatch stored=%d payload=%d", userupdates.ErrUserupdatesStorage, schemaVersion, response.SchemaVersion)
 		}
+	case payload.OperationResponseSchemaVersionV3:
+		var response payload.OperationResponseV3
+		if err := json.Unmarshal(responsePayload, &response); err != nil {
+			return nil, fmt.Errorf("%w: decode v3 operation response: %v", userupdates.ErrUserupdatesStorage, err)
+		}
+		if response.SchemaVersion != payload.OperationResponseSchemaVersionV3 {
+			return nil, fmt.Errorf("%w: operation response schema mismatch stored=%d payload=%d", userupdates.ErrUserupdatesStorage, schemaVersion, response.SchemaVersion)
+		}
 	default:
 		return nil, fmt.Errorf("%w: unsupported operation response schema=%d", userupdates.ErrUserupdatesStorage, schemaVersion)
 	}
@@ -125,7 +134,11 @@ func differenceToTL(in *repository.GetDifferenceResult) (*userupdates.UserDiffer
 		if projected.Message != nil {
 			newMessages = append(newMessages, projected.Message)
 		}
-		otherUpdates = append(otherUpdates, projected.Update)
+		if len(projected.OtherUpdates) > 0 {
+			otherUpdates = append(otherUpdates, projected.OtherUpdates...)
+		} else if projected.Update != nil {
+			otherUpdates = append(otherUpdates, projected.Update)
+		}
 	}
 	for _, event := range in.AuthSeqEvents {
 		update, err := authSeqEventToTLUpdate(event)
@@ -152,6 +165,8 @@ func messageViewToTLMessage(view repository.MessageView) (tg.MessageClazz, error
 		return currentMessageViewToTLMessage(view)
 	case payload.MessageEventSchemaVersionV3:
 		return messageViewV3ToTLMessage(view)
+	case payload.MessageEventSchemaVersionV4:
+		return messageViewV4ToTLMessage(view)
 	default:
 		return nil, fmt.Errorf("%w: unsupported message view schema=%d", userupdates.ErrUserupdatesStorage, view.ViewSchemaVersion)
 	}
@@ -212,6 +227,41 @@ func messageViewV3ToTLMessage(view repository.MessageView) (tg.MessageClazz, err
 		return messageEventV3EditToTLMessage(messageEvent)
 	}
 	return messageEventV3ToTLMessage(messageEvent)
+}
+
+func messageViewV4ToTLMessage(view repository.MessageView) (tg.MessageClazz, error) {
+	var messageEvent payload.MessageEventV4
+	if err := json.Unmarshal(view.ViewPayload, &messageEvent); err != nil {
+		return nil, fmt.Errorf("%w: decode v4 message view payload: %v", userupdates.ErrUserupdatesStorage, err)
+	}
+	if messageEvent.SchemaVersion != payload.MessageEventSchemaVersionV4 {
+		return nil, fmt.Errorf("%w: unsupported v4 message view event schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.SchemaVersion)
+	}
+	if messageEvent.MessageFact.PeerType != view.PeerType ||
+		messageEvent.MessageFact.PeerID != view.PeerID ||
+		messageEvent.MessageFact.PeerSeq != view.PeerSeq ||
+		messageEvent.MessageID != view.UserMessageID ||
+		messageEvent.MessageFact.CanonicalMessageID != view.CanonicalMessageID {
+		return nil, fmt.Errorf("%w: v4 message view payload mismatch", userupdates.ErrUserupdatesStorage)
+	}
+	fact, err := payload.WrapFact(payload.FactKindNewMessage, messageEvent.MessageFact)
+	if err != nil {
+		return nil, fmt.Errorf("%w: wrap v4 message view fact: %v", userupdates.ErrUserupdatesStorage, err)
+	}
+	projected, err := projection.ProjectFacts([]payload.UpdateFactV1{fact}, projection.ViewerContext{
+		UserID:           view.UserID,
+		AuthKeyIDExclude: messageEvent.AuthKeyIdExclude,
+	}, envelope.ModeDifference, 0, 0, view.UserMessageID)
+	if err != nil {
+		return nil, err
+	}
+	for _, update := range projected {
+		newMessage, ok := update.Update.(*tg.TLUpdateNewMessage)
+		if ok {
+			return newMessage.Message, nil
+		}
+	}
+	return nil, fmt.Errorf("%w: v4 message view did not project a new message", userupdates.ErrUserupdatesStorage)
 }
 
 func legacyMessageEventToTLMessage(messageEvent payload.MessageEventV1) (tg.MessageClazz, error) {

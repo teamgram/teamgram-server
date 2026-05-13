@@ -2,9 +2,14 @@ package repository
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
+	"errors"
 	"fmt"
 	"math"
 	"math/rand"
+	"strconv"
+	"strings"
 	"time"
 
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
@@ -15,11 +20,13 @@ import (
 )
 
 type CreateChatArg struct {
-	CreatorID int64
-	UserIDs   []int64
-	Title     string
-	BotIDs    []int64
-	TTLPeriod int32
+	CreatorID   int64
+	UserIDs     []int64
+	Title       string
+	BotIDs      []int64
+	TTLPeriod   int32
+	ClientMsgID int64
+	OperationID string
 }
 
 type AddChatUserArg struct {
@@ -82,16 +89,34 @@ func (op chatAttributeMutation) needsExplicitVersionBump() bool {
 	}
 }
 
+func CreateChatReplayKey(actorUserID, clientMsgID int64) string {
+	if clientMsgID == 0 {
+		return ""
+	}
+	return fmt.Sprintf("create_chat:%d:%d", actorUserID, clientMsgID)
+}
+
+func CreateChatOperationID(actorUserID, clientMsgID int64) string {
+	sum := sha256.Sum256([]byte(CreateChatReplayKey(actorUserID, clientMsgID)))
+	return hex.EncodeToString(sum[:])
+}
+
+func createChatActorLockOperationID(actorUserID int64) string {
+	sum := sha256.Sum256([]byte(fmt.Sprintf("create_chat_actor_lock:%d", actorUserID)))
+	return hex.EncodeToString(sum[:])
+}
+
+func createChatActorLockReplayKey(actorUserID int64) string {
+	return fmt.Sprintf("create_chat_actor_lock:%d", actorUserID)
+}
+
 func (r *Repository) CreateChat(ctx context.Context, arg CreateChatArg) (*tg.MutableChat, error) {
 	now := time.Now().Unix()
-	last, err := r.model.ChatsModel.SelectLastCreator(ctx, arg.CreatorID)
-	if err != nil && !isNotFound(err) {
-		return nil, wrapStorage("chats.SelectLastCreator", err)
-	}
-	if last != nil {
-		elapsed := time.Duration(now-last.Date) * time.Second
-		if elapsed < createChatFloodInterval {
-			return nil, chatpb.NewCreateChatFloodError(int32((createChatFloodInterval - elapsed).Seconds()))
+	replayKey := CreateChatReplayKey(arg.CreatorID, arg.ClientMsgID)
+	operationID := arg.OperationID
+	if replayKey != "" {
+		if operationID == "" {
+			operationID = CreateChatOperationID(arg.CreatorID, arg.ClientMsgID)
 		}
 	}
 
@@ -140,8 +165,62 @@ func (r *Repository) CreateChat(ctx context.Context, arg CreateChatArg) (*tg.Mut
 		})
 	}
 
+	if err := r.ensureCreateChatActorLockRow(ctx, arg.CreatorID, now); err != nil {
+		return nil, wrapStorage("chat_create_operations.EnsureActorLock", err)
+	}
+
+	var replayChatID int64
 	if err := r.db.Transact(ctx, func(tx *sqlx.Tx) error {
 		txModel := r.model.WithTx(tx)
+		if err := lockCreateChatActorTx(txModel, arg.CreatorID); err != nil {
+			return err
+		}
+		if replayKey != "" {
+			existing, err := txModel.ChatCreateOperationsModel.SelectByReplayKeyForUpdate(replayKey)
+			if err != nil && !isNotFound(err) {
+				return err
+			}
+			if existing != nil {
+				switch existing.Status {
+				case CreateChatOperationStatusChatCreated, CreateChatOperationStatusCompleted:
+					if existing.ChatId != 0 {
+						replayChatID = existing.ChatId
+						return nil
+					}
+				case CreateChatOperationStatusPending:
+					if existing.ExpiresAt > now {
+						return chatpb.NewCreateChatOperationPendingError(waitSecondsUntil(now, existing.ExpiresAt))
+					}
+				case CreateChatOperationStatusFailed:
+				}
+				if err := resetCreateChatOperationForRetry(txModel, existing, arg, operationID, now, chatRow.Version); err != nil {
+					return err
+				}
+			} else {
+				if err := enforceCreateChatOperationFloodTx(txModel, arg.CreatorID, now); err != nil {
+					return err
+				}
+				_, _, err = txModel.ChatCreateOperationsModel.Insert(&model.ChatCreateOperations{
+					OperationId:         operationID,
+					ReplayKey:           replayKey,
+					ActorUserId:         arg.CreatorID,
+					ClientMsgId:         arg.ClientMsgID,
+					Title:               arg.Title,
+					InviteeIds:          encodeCreateChatInviteeIDs(arg.UserIDs, arg.BotIDs),
+					TtlPeriod:           arg.TTLPeriod,
+					Status:              CreateChatOperationStatusPending,
+					Date:                now,
+					UpdatedAtSec:        now,
+					ExpiresAt:           now + int64(createChatFloodInterval.Seconds()),
+					ParticipantsVersion: chatRow.Version,
+				})
+				if err != nil {
+					return err
+				}
+			}
+		} else if err := enforceLegacyCreateChatFloodTx(txModel, arg.CreatorID, now); err != nil {
+			return err
+		}
 		id, _, err := r.model.ChatsModel.InsertFullTx(tx, chatRow)
 		if err != nil {
 			return err
@@ -164,9 +243,28 @@ func (r *Repository) CreateChat(ctx context.Context, arg CreateChatArg) (*tg.Mut
 			Permanent: true,
 			Date2:     now,
 		})
-		return err
+		if err != nil {
+			return err
+		}
+		if replayKey != "" {
+			_, err = txModel.ChatCreateOperationsModel.MarkChatCreated(
+				chatRow.Id,
+				chatRow.Version,
+				CreateChatOperationStatusChatCreated,
+				now,
+				operationID,
+			)
+			return err
+		}
+		return nil
 	}); err != nil {
+		if errors.Is(err, chatpb.ErrCreateChatFlood) || errors.Is(err, chatpb.ErrCreateChatOperationPending) {
+			return nil, err
+		}
 		return nil, wrapStorage("chat.CreateChat transaction", err)
+	}
+	if replayChatID != 0 {
+		return r.GetMutableChat(ctx, replayChatID)
 	}
 
 	outRows := make([]model.ChatParticipants, 0, len(participantRows))
@@ -177,6 +275,120 @@ func (r *Repository) CreateChat(ctx context.Context, arg CreateChatArg) (*tg.Mut
 	}
 	_ = r.CachedConn.DelCache(ctx, chatAggregateAndParticipantCacheKeys(chatRow.Id, userIDs)...)
 	return r.makeMutableChatFromRows(ctx, chatRow, outRows), nil
+}
+
+func resetCreateChatOperationForRetry(txModel *model.TxModels, existing *model.ChatCreateOperations, arg CreateChatArg, operationID string, now int64, participantsVersion int32) error {
+	if existing == nil {
+		return nil
+	}
+	_, err := txModel.ChatCreateOperationsModel.ResetForRetry(
+		operationID,
+		arg.CreatorID,
+		arg.ClientMsgID,
+		arg.Title,
+		encodeCreateChatInviteeIDs(arg.UserIDs, arg.BotIDs),
+		arg.TTLPeriod,
+		participantsVersion,
+		CreateChatOperationStatusPending,
+		now,
+		now,
+		now+int64(createChatFloodInterval.Seconds()),
+		existing.ReplayKey,
+	)
+	return err
+}
+
+func (r *Repository) ensureCreateChatActorLockRow(ctx context.Context, actorUserID, now int64) error {
+	_, _, err := r.model.ChatCreateOperationsModel.EnsureActorLock(ctx, &model.ChatCreateOperations{
+		OperationId:  createChatActorLockOperationID(actorUserID),
+		ReplayKey:    createChatActorLockReplayKey(actorUserID),
+		ActorUserId:  actorUserID,
+		Status:       0,
+		Date:         now,
+		UpdatedAtSec: now,
+		ExpiresAt:    0,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func lockCreateChatActorTx(txModel *model.TxModels, actorUserID int64) error {
+	_, err := txModel.ChatCreateOperationsModel.SelectActorLockForUpdate(createChatActorLockOperationID(actorUserID))
+	return err
+}
+
+func waitSecondsUntil(now, expiresAt int64) int32 {
+	if expiresAt <= now {
+		return 0
+	}
+	remaining := expiresAt - now
+	if remaining > math.MaxInt32 {
+		return math.MaxInt32
+	}
+	return int32(remaining)
+}
+
+func enforceCreateChatOperationFloodTx(txModel *model.TxModels, actorUserID int64, now int64) error {
+	last, err := selectLastCreateChatOperationTx(txModel, actorUserID, CreateChatOperationStatusChatCreated, CreateChatOperationStatusCompleted)
+	if err != nil {
+		return err
+	}
+	if last == nil {
+		return nil
+	}
+	elapsed := time.Duration(now-last.UpdatedAtSec) * time.Second
+	if elapsed < createChatFloodInterval {
+		return chatpb.NewCreateChatFloodError(int32((createChatFloodInterval - elapsed).Seconds()))
+	}
+	return nil
+}
+
+func selectLastCreateChatOperationTx(txModel *model.TxModels, actorUserID int64, statuses ...int32) (*model.ChatCreateOperations, error) {
+	var last *model.ChatCreateOperations
+	for _, status := range statuses {
+		row, err := txModel.ChatCreateOperationsModel.SelectLastCompletedByActor(actorUserID, status)
+		if err != nil {
+			if isNotFound(err) {
+				continue
+			}
+			return nil, err
+		}
+		if last == nil || row.UpdatedAtSec > last.UpdatedAtSec {
+			last = row
+		}
+	}
+	return last, nil
+}
+
+func enforceLegacyCreateChatFloodTx(txModel *model.TxModels, creatorID int64, now int64) error {
+	last, err := txModel.ChatsModel.SelectLastCreator(creatorID)
+	if err != nil {
+		if isNotFound(err) {
+			return nil
+		}
+		return err
+	}
+	elapsed := time.Duration(now-last.Date) * time.Second
+	if elapsed < createChatFloodInterval {
+		return chatpb.NewCreateChatFloodError(int32((createChatFloodInterval - elapsed).Seconds()))
+	}
+	return nil
+}
+
+func encodeCreateChatInviteeIDs(userIDs, botIDs []int64) string {
+	if len(userIDs) == 0 && len(botIDs) == 0 {
+		return ""
+	}
+	ids := make([]string, 0, len(userIDs)+len(botIDs))
+	for _, id := range userIDs {
+		ids = append(ids, strconv.FormatInt(id, 10))
+	}
+	for _, id := range botIDs {
+		ids = append(ids, strconv.FormatInt(id, 10))
+	}
+	return strings.Join(ids, ",")
 }
 
 func (r *Repository) DeleteChat(ctx context.Context, chatID int64) error {

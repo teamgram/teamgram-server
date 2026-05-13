@@ -24,6 +24,7 @@ func TestDomainErrorsAreStableSentinels(t *testing.T) {
 		ErrInviteHashExpired,
 		ErrChatLinkExists,
 		ErrChatStorage,
+		ErrCreateChatOperationPending,
 	}
 
 	for _, err := range errs {
@@ -57,6 +58,22 @@ func TestCreateChatFloodErrorCarriesWaitSecondsAndMatchesSentinel(t *testing.T) 
 	}
 	if floodErr.WaitSeconds != 37 {
 		t.Fatalf("WaitSeconds = %d, want 37", floodErr.WaitSeconds)
+	}
+}
+
+func TestCreateChatOperationPendingErrorCarriesWaitSecondsAndMatchesSentinel(t *testing.T) {
+	err := NewCreateChatOperationPendingError(23)
+
+	if !errors.Is(err, ErrCreateChatOperationPending) {
+		t.Fatalf("errors.Is(%v, ErrCreateChatOperationPending) = false", err)
+	}
+
+	var pendingErr *CreateChatOperationPendingError
+	if !errors.As(err, &pendingErr) {
+		t.Fatalf("errors.As(%T) = false", pendingErr)
+	}
+	if pendingErr.WaitSeconds != 23 {
+		t.Fatalf("WaitSeconds = %d, want 23", pendingErr.WaitSeconds)
 	}
 }
 

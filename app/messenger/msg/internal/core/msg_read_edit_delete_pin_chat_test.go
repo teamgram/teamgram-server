@@ -85,7 +85,7 @@ func TestMsgUpdatePinnedMessageRequiresChatActionAndFansOut(t *testing.T) {
 	}
 }
 
-func TestMsgEditMessageV2PeerTypeChatFansOut(t *testing.T) {
+func TestMsgEditMessagePeerTypeChatFansOut(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":2,"pts":34,"pts_count":1,"event_type":"edit_message","user_message_id":10}`)
 	chatClient := &fakeMsgChatClient{memberIDs: []int64{1001, 1002, 1003}}
 	updatesClient := &fakeUserUpdatesClient{processWithEffectsResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
@@ -117,7 +117,7 @@ func TestMsgEditMessageV2PeerTypeChatFansOut(t *testing.T) {
 	}
 	core := New(context.Background(), &svc.ServiceContext{Repo: repo, UserUpdates: updatesClient, Chat: chatClient})
 
-	_, err := core.MsgEditMessageV2(&msgpb.TLMsgEditMessageV2{
+	_, err := core.MsgEditMessage(&msgpb.TLMsgEditMessage{
 		UserId:    1001,
 		AuthKeyId: 9001,
 		PeerType:  payload.PeerTypeChat,
@@ -128,7 +128,7 @@ func TestMsgEditMessageV2PeerTypeChatFansOut(t *testing.T) {
 		DstMessage: testMessageBox(1001, payload.PeerTypeChat, 55, 10),
 	})
 	if err != nil {
-		t.Fatalf("MsgEditMessageV2() error = %v", err)
+		t.Fatalf("MsgEditMessage() error = %v", err)
 	}
 	if len(chatClient.actions) != 1 || chatClient.actions[0].Action != chatpb.MessageActionEditOwnMessage {
 		t.Fatalf("chat action checks = %+v, want edit_own_message", chatClient.actions)

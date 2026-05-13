@@ -6,7 +6,8 @@ import (
 	"fmt"
 	"math"
 
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/envelope"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/eventtypes"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -22,16 +23,20 @@ const (
 type Result struct {
 	Message          tg.MessageClazz
 	Update           tg.UpdateClazz
+	OtherUpdates     []tg.UpdateClazz
 	Updates          tg.UpdatesClazz
 	AuthKeyIDExclude *int64
 }
 
-func ProjectUserEvent(event repository.UserEvent, mode Mode) (Result, error) {
+func ProjectUserEvent(event eventtypes.UserEvent, mode Mode) (Result, error) {
+	if event.EventSchemaVersion == payload.MessageEventSchemaVersionV4 {
+		return projectMessageEventV4(event, mode)
+	}
 	messageEvent, err := decodeUserEventPayload(event)
 	if err != nil {
 		return Result{}, err
 	}
-	if event.EventType == repository.EventTypeDialogPublicUpdate {
+	if event.EventType == eventtypes.EventTypeDialogPublicUpdate {
 		update, err := dialogEventToTLUpdate(dialogEventFromMessageEvent(event, messageEvent), event.Pts, event.PtsCount)
 		if err != nil {
 			return Result{}, err
@@ -50,9 +55,64 @@ func ProjectUserEvent(event repository.UserEvent, mode Mode) (Result, error) {
 	})
 }
 
+func projectMessageEventV4(event eventtypes.UserEvent, mode Mode) (Result, error) {
+	messageEvent, err := decodeUserEventPayloadV4(event)
+	if err != nil {
+		return Result{}, err
+	}
+	if messageEvent.EventKind != payload.EventKindNewMessage {
+		return Result{}, fmt.Errorf("%w: unsupported v4 event kind=%s", userupdates.ErrUserupdatesStorage, messageEvent.EventKind)
+	}
+	facts := make([]payload.UpdateFactV1, 0, len(messageEvent.AttachFacts)+1)
+	facts = append(facts, messageEvent.AttachFacts...)
+	messageFact, err := payload.WrapFact(payload.FactKindNewMessage, messageEvent.MessageFact)
+	if err != nil {
+		return Result{}, fmt.Errorf("%w: wrap v4 message fact: %v", userupdates.ErrUserupdatesStorage, err)
+	}
+	facts = append(facts, messageFact)
+	projected, err := ProjectFacts(facts, ViewerContext{
+		UserID:           event.UserID,
+		AuthKeyIDExclude: messageEvent.AuthKeyIdExclude,
+	}, factProjectionMode(mode), event.Pts, event.PtsCount, messageEvent.MessageID)
+	if err != nil {
+		return Result{}, err
+	}
+	updates := make([]tg.UpdateClazz, 0, len(projected))
+	var message tg.MessageClazz
+	for _, update := range projected {
+		if update.Update == nil {
+			continue
+		}
+		updates = append(updates, update.Update)
+		if newMessage, ok := update.Update.(*tg.TLUpdateNewMessage); ok && message == nil {
+			message = newMessage.Message
+		}
+	}
+	var firstUpdate tg.UpdateClazz
+	if len(updates) > 0 {
+		firstUpdate = updates[0]
+	}
+	return Result{
+		Message:          message,
+		Update:           firstUpdate,
+		OtherUpdates:     updates,
+		AuthKeyIDExclude: messageEvent.AuthKeyIdExclude,
+	}, nil
+}
+
+func factProjectionMode(mode Mode) envelope.Mode {
+	if mode == ModePush {
+		return envelope.ModeEphemeralPush
+	}
+	return envelope.ModeDifference
+}
+
 func ProjectPushTask(msg *payload.PushTaskKafkaMessageV1) (Result, error) {
 	if msg == nil {
 		return Result{}, fmt.Errorf("%w: push task is nil", userupdates.ErrUserupdatesStorage)
+	}
+	if detectMessageEventSchemaVersion(msg.Payload) == payload.MessageEventSchemaVersionV4 {
+		return projectPushTaskV4(msg)
 	}
 	messageEvent, err := decodeMessageEventPayloadBytes(detectMessageEventSchemaVersion(msg.Payload), msg.Payload)
 	if err != nil {
@@ -67,6 +127,50 @@ func ProjectPushTask(msg *payload.PushTaskKafkaMessageV1) (Result, error) {
 		message:    messageEvent,
 		datePrefix: "push",
 	})
+}
+
+func projectPushTaskV4(msg *payload.PushTaskKafkaMessageV1) (Result, error) {
+	return ProjectPushTaskV4Updates(msg)
+}
+
+func ProjectPushTaskV4Updates(msg *payload.PushTaskKafkaMessageV1) (Result, error) {
+	if msg == nil {
+		return Result{}, fmt.Errorf("%w: push task is nil", userupdates.ErrUserupdatesStorage)
+	}
+	var messageEvent payload.MessageEventV4
+	if err := json.Unmarshal(msg.Payload, &messageEvent); err != nil {
+		return Result{}, fmt.Errorf("%w: decode v4 push message event: %v", userupdates.ErrUserupdatesStorage, err)
+	}
+	if messageEvent.SchemaVersion != payload.MessageEventSchemaVersionV4 {
+		return Result{}, fmt.Errorf("%w: unsupported v4 push message event schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.SchemaVersion)
+	}
+	if messageEvent.EventKind != payload.EventKindNewMessage {
+		return Result{}, fmt.Errorf("%w: unsupported v4 push event kind=%s", userupdates.ErrUserupdatesStorage, messageEvent.EventKind)
+	}
+	facts := make([]payload.UpdateFactV1, 0, len(messageEvent.AttachFacts)+1)
+	facts = append(facts, messageEvent.AttachFacts...)
+	messageFact, err := payload.WrapFact(payload.FactKindNewMessage, messageEvent.MessageFact)
+	if err != nil {
+		return Result{}, fmt.Errorf("%w: wrap v4 push message fact: %v", userupdates.ErrUserupdatesStorage, err)
+	}
+	facts = append(facts, messageFact)
+	projected, err := ProjectFacts(facts, ViewerContext{
+		UserID:           msg.UserID,
+		AuthKeyIDExclude: messageEvent.AuthKeyIdExclude,
+	}, envelope.ModeEphemeralPush, msg.Pts, 1, messageEvent.MessageID)
+	if err != nil {
+		return Result{}, err
+	}
+	updates := make([]tg.UpdateClazz, 0, len(projected))
+	for _, item := range projected {
+		if item.Update != nil {
+			updates = append(updates, item.Update)
+		}
+	}
+	return Result{
+		OtherUpdates:     updates,
+		AuthKeyIDExclude: messageEvent.AuthKeyIdExclude,
+	}, nil
 }
 
 type messageEventProjectionInput struct {
@@ -172,14 +276,31 @@ func projectMessageEvent(in messageEventProjectionInput) (Result, error) {
 	}
 }
 
-func decodeUserEventPayload(event repository.UserEvent) (decodedMessageEvent, error) {
-	if event.EventCodec != repository.PayloadCodecJSON {
+func decodeUserEventPayload(event eventtypes.UserEvent) (decodedMessageEvent, error) {
+	if event.EventCodec != eventtypes.PayloadCodecJSON {
 		return decodedMessageEvent{}, fmt.Errorf("%w: unsupported event codec=%d schema=%d", userupdates.ErrUserupdatesStorage, event.EventCodec, event.EventSchemaVersion)
 	}
 	if len(event.EventPayloadHash) != 0 && !bytes.Equal(payload.HashBytes(event.EventPayload), event.EventPayloadHash) {
 		return decodedMessageEvent{}, fmt.Errorf("%w: event payload hash mismatch", userupdates.ErrUserupdatesStorage)
 	}
 	return decodeMessageEventPayloadBytes(event.EventSchemaVersion, event.EventPayload)
+}
+
+func decodeUserEventPayloadV4(event eventtypes.UserEvent) (payload.MessageEventV4, error) {
+	if event.EventCodec != eventtypes.PayloadCodecJSON {
+		return payload.MessageEventV4{}, fmt.Errorf("%w: unsupported event codec=%d schema=%d", userupdates.ErrUserupdatesStorage, event.EventCodec, event.EventSchemaVersion)
+	}
+	if len(event.EventPayloadHash) != 0 && !bytes.Equal(payload.HashBytes(event.EventPayload), event.EventPayloadHash) {
+		return payload.MessageEventV4{}, fmt.Errorf("%w: event payload hash mismatch", userupdates.ErrUserupdatesStorage)
+	}
+	var messageEvent payload.MessageEventV4
+	if err := json.Unmarshal(event.EventPayload, &messageEvent); err != nil {
+		return payload.MessageEventV4{}, fmt.Errorf("%w: decode v4 message event: %v", userupdates.ErrUserupdatesStorage, err)
+	}
+	if messageEvent.SchemaVersion != payload.MessageEventSchemaVersionV4 {
+		return payload.MessageEventV4{}, fmt.Errorf("%w: unsupported v4 message event schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.SchemaVersion)
+	}
+	return messageEvent, nil
 }
 
 func decodeMessageEventPayloadBytes(schemaVersion int32, body []byte) (decodedMessageEvent, error) {
@@ -410,12 +531,16 @@ func updatePinnedMessageUpdate(in messageEventProjectionInput) (tg.UpdateClazz, 
 }
 
 func wrapPushUpdate(update tg.UpdateClazz, dateSeconds int32) (tg.UpdatesClazz, error) {
+	return wrapPushUpdates([]tg.UpdateClazz{update}, dateSeconds)
+}
+
+func wrapPushUpdates(updates []tg.UpdateClazz, dateSeconds int32) (tg.UpdatesClazz, error) {
 	date, err := userupdatesDateInt32FromUnixSeconds(int64(dateSeconds), "updates date")
 	if err != nil {
 		return nil, err
 	}
 	return tg.MakeTLUpdates(&tg.TLUpdates{
-		Updates: []tg.UpdateClazz{update},
+		Updates: updates,
 		Users:   []tg.UserClazz{},
 		Chats:   []tg.ChatClazz{},
 		Date:    date,
@@ -1028,7 +1153,7 @@ func peerFromEvent(peerType int32, peerID int64) tg.PeerClazz {
 	}
 }
 
-func dialogEventFromMessageEvent(event repository.UserEvent, messageEvent decodedMessageEvent) payload.DialogEventV1 {
+func dialogEventFromMessageEvent(event eventtypes.UserEvent, messageEvent decodedMessageEvent) payload.DialogEventV1 {
 	return payload.DialogEventV1{
 		SchemaVersion:    payload.DialogEventSchemaVersion,
 		EventKind:        messageEvent.EventKind,

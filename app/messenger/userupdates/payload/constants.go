@@ -14,9 +14,10 @@ const (
 	OperationResponseSchemaVersionV1 = 1
 	MessageEventSchemaVersionV1      = 1
 
-	MessageOperationSchemaVersion  = 2
-	OperationResponseSchemaVersion = 2
-	MessageEventSchemaVersion      = 2
+	MessageOperationSchemaVersion    = 2
+	OperationResponseSchemaVersion   = 2
+	MessageEventSchemaVersion        = 2
+	OperationResponseSchemaVersionV3 = 3
 
 	MediaRefSchemaVersionV1         = 1
 	MediaRefSchemaVersionV2         = 2
@@ -25,6 +26,11 @@ const (
 	ServiceActionSchemaVersionV1    = 1
 	MessageOperationSchemaVersionV3 = 3
 	MessageEventSchemaVersionV3     = 3
+	MessageOperationSchemaVersionV4 = 4
+	MessageEventSchemaVersionV4     = 4
+
+	ReplyEnvelopeCodecTLBinary int32 = 1
+	ReplyEnvelopeSchemaV1      int32 = 1
 )
 
 const (
@@ -43,6 +49,9 @@ const (
 	OperationKindScheduledMarker     = "scheduled_marker"
 	OperationKindMarkDialogUnread    = "mark_dialog_unread"
 	EventKindNewMessage              = "new_message"
+	EventKindChatParticipantsChanged = "chat_participants_changed"
+	FactKindNewMessage               = "new_message"
+	FactKindChatParticipantsChanged  = "chat_participants_changed"
 )
 
 const (

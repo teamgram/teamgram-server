@@ -19,10 +19,11 @@ const (
 	ClazzName_outboxMessage                     = "outboxMessage"
 	ClazzName_contentMessage                    = "contentMessage"
 	ClazzName_resolvedDialogCursor              = "resolvedDialogCursor"
+	ClazzName_updateFact                        = "updateFact"
 	ClazzName_msg_pushUserMessage               = "msg_pushUserMessage"
 	ClazzName_msg_readMessageContents           = "msg_readMessageContents"
-	ClazzName_msg_sendMessageV2                 = "msg_sendMessageV2"
-	ClazzName_msg_editMessageV2                 = "msg_editMessageV2"
+	ClazzName_msg_sendMessage                   = "msg_sendMessage"
+	ClazzName_msg_editMessage                   = "msg_editMessage"
 	ClazzName_msg_deleteMessages                = "msg_deleteMessages"
 	ClazzName_msg_deleteHistory                 = "msg_deleteHistory"
 	ClazzName_msg_deletePhoneCallHistory        = "msg_deletePhoneCallHistory"
@@ -44,10 +45,11 @@ func init() {
 	iface.RegisterClazzName(ClazzName_outboxMessage, 0, 0x625d8b25)                     // 625d8b25
 	iface.RegisterClazzName(ClazzName_contentMessage, 0, 0x8d64b133)                    // 8d64b133
 	iface.RegisterClazzName(ClazzName_resolvedDialogCursor, 0, 0x7debda91)              // 7debda91
+	iface.RegisterClazzName(ClazzName_updateFact, 0, 0x4561a083)                        // 4561a083
 	iface.RegisterClazzName(ClazzName_msg_pushUserMessage, 0, 0x35d0fa1a)               // 35d0fa1a
 	iface.RegisterClazzName(ClazzName_msg_readMessageContents, 0, 0x282484d4)           // 282484d4
-	iface.RegisterClazzName(ClazzName_msg_sendMessageV2, 0, 0x1c17890c)                 // 1c17890c
-	iface.RegisterClazzName(ClazzName_msg_editMessageV2, 0, 0x69fe5fe1)                 // 69fe5fe1
+	iface.RegisterClazzName(ClazzName_msg_sendMessage, 0, 0x93e882df)                   // 93e882df
+	iface.RegisterClazzName(ClazzName_msg_editMessage, 0, 0x1ddc94)                     // 1ddc94
 	iface.RegisterClazzName(ClazzName_msg_deleteMessages, 0, 0x21e80a1d)                // 21e80a1d
 	iface.RegisterClazzName(ClazzName_msg_deleteHistory, 0, 0x75c0e8ca)                 // 75c0e8ca
 	iface.RegisterClazzName(ClazzName_msg_deletePhoneCallHistory, 0, 0x26b7a13e)        // 26b7a13e
@@ -67,10 +69,11 @@ func init() {
 	iface.RegisterClazzIDName(ClazzName_outboxMessage, 0x625d8b25)                     // 625d8b25
 	iface.RegisterClazzIDName(ClazzName_contentMessage, 0x8d64b133)                    // 8d64b133
 	iface.RegisterClazzIDName(ClazzName_resolvedDialogCursor, 0x7debda91)              // 7debda91
+	iface.RegisterClazzIDName(ClazzName_updateFact, 0x4561a083)                        // 4561a083
 	iface.RegisterClazzIDName(ClazzName_msg_pushUserMessage, 0x35d0fa1a)               // 35d0fa1a
 	iface.RegisterClazzIDName(ClazzName_msg_readMessageContents, 0x282484d4)           // 282484d4
-	iface.RegisterClazzIDName(ClazzName_msg_sendMessageV2, 0x1c17890c)                 // 1c17890c
-	iface.RegisterClazzIDName(ClazzName_msg_editMessageV2, 0x69fe5fe1)                 // 69fe5fe1
+	iface.RegisterClazzIDName(ClazzName_msg_sendMessage, 0x93e882df)                   // 93e882df
+	iface.RegisterClazzIDName(ClazzName_msg_editMessage, 0x1ddc94)                     // 1ddc94
 	iface.RegisterClazzIDName(ClazzName_msg_deleteMessages, 0x21e80a1d)                // 21e80a1d
 	iface.RegisterClazzIDName(ClazzName_msg_deleteHistory, 0x75c0e8ca)                 // 75c0e8ca
 	iface.RegisterClazzIDName(ClazzName_msg_deletePhoneCallHistory, 0x26b7a13e)        // 26b7a13e

@@ -26,6 +26,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
 	receiverevent "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/event"
 	authsessionclient "github.com/teamgram/teamgram-server/v2/app/service/authsession/client"
+	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
 	dialogclient "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/client"
 	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
@@ -69,6 +70,13 @@ type ServiceContext struct {
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	repo := repository.NewRepository(c)
+	var userProjectionClient repository.UserProjectionClient
+	var chatProjectionClient repository.ChatProjectionClient
+	if hasRPCClientConfig(c.BizServiceClient) {
+		userProjectionClient = userclient.NewUserClient(userclient.MustNewKitexClient(c.BizServiceClient))
+		chatProjectionClient = chatclient.NewChatClient(chatclient.MustNewKitexClient(c.BizServiceClient))
+		repo.SetPeerProjectionClients(userProjectionClient, chatProjectionClient)
+	}
 	sc := &ServiceContext{
 		Config: c,
 		Repo:   repo,
@@ -112,8 +120,13 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	if c.PushTaskConsumer != nil {
 		authsessionClient := authsessionclient.NewAuthsessionClient(authsessionclient.MustNewKitexClient(c.Authsession))
 		gatewayClient := gatewayclient.NewGatewayClient(gatewayclient.MustNewKitexClient(c.Gateway))
-		userClient := userclient.NewUserClient(userclient.MustNewKitexClient(c.BizServiceClient))
-		consumer, err := receiverevent.NewPushTaskConsumer(c.PushTaskConsumer, receiverevent.NewPushTaskDispatcher(authsessionClient, gatewayClient, userClient))
+		if userProjectionClient == nil {
+			userProjectionClient = userclient.NewUserClient(userclient.MustNewKitexClient(c.BizServiceClient))
+		}
+		if chatProjectionClient == nil {
+			chatProjectionClient = chatclient.NewChatClient(chatclient.MustNewKitexClient(c.BizServiceClient))
+		}
+		consumer, err := receiverevent.NewPushTaskConsumer(c.PushTaskConsumer, receiverevent.NewPushTaskDispatcher(authsessionClient, gatewayClient, userProjectionClient, chatProjectionClient))
 		if err != nil {
 			panic(err)
 		}

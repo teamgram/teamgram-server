@@ -61,6 +61,15 @@ func TestMapChatErrorFloodPreservesWaitSeconds(t *testing.T) {
 	}
 }
 
+func TestMapChatErrorPendingPreservesWaitSeconds(t *testing.T) {
+	got := mapChatError(fmt.Errorf("wrapped: %w", chatpb.NewCreateChatOperationPendingError(23)))
+
+	gotCode, wantCode := mustCodeError(t, got), mustCodeError(t, tg.NewErrFloodWaitX(23))
+	if gotCode.Code() != wantCode.Code() || gotCode.Msg() != wantCode.Msg() {
+		t.Fatalf("mapChatError(pending) = %v, want %v", got, tg.NewErrFloodWaitX(23))
+	}
+}
+
 func mustCodeError(t *testing.T, err error) ecode.CodeError {
 	t.Helper()
 

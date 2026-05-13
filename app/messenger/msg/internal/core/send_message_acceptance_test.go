@@ -20,7 +20,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-func TestSendMessageV2SingleChatAcceptance(t *testing.T) {
+func TestSendMessageSingleChatAcceptance(t *testing.T) {
 	ctx := context.Background()
 	db := openAcceptanceDB(t)
 	base := time.Now().UnixNano() % 1_000_000_000
@@ -40,9 +40,9 @@ func TestSendMessageV2SingleChatAcceptance(t *testing.T) {
 		ReceiverPublisher: publisher,
 	})
 
-	first, err := msgCore.MsgSendMessageV2(acceptanceSendRequest(senderID, receiverID, 9001, randomID, "hello acceptance"))
+	first, err := msgCore.MsgSendMessage(acceptanceSendRequest(senderID, receiverID, 9001, randomID, "hello acceptance"))
 	if err != nil {
-		t.Fatalf("MsgSendMessageV2() error = %v", err)
+		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
 	firstShort := mustShortSent(t, first)
 	if firstShort.Pts != 1 || firstShort.Id != 1 {
@@ -52,9 +52,9 @@ func TestSendMessageV2SingleChatAcceptance(t *testing.T) {
 	assertDifferenceMessage(t, ctx, updatesKit, senderID, true, "hello acceptance")
 	assertDifferenceMessage(t, ctx, updatesKit, receiverID, false, "hello acceptance")
 
-	again, err := msgCore.MsgSendMessageV2(acceptanceSendRequest(senderID, receiverID, 9001, randomID, "hello acceptance"))
+	again, err := msgCore.MsgSendMessage(acceptanceSendRequest(senderID, receiverID, 9001, randomID, "hello acceptance"))
 	if err != nil {
-		t.Fatalf("MsgSendMessageV2() retry error = %v", err)
+		t.Fatalf("MsgSendMessage() retry error = %v", err)
 	}
 	againShort := mustShortSent(t, again)
 	if againShort.Pts != firstShort.Pts || againShort.Id != firstShort.Id {
@@ -67,7 +67,7 @@ func TestSendMessageV2SingleChatAcceptance(t *testing.T) {
 	assertDifferenceMessage(t, ctx, updatesKit, receiverID, false, "hello acceptance")
 }
 
-func TestSendMessageV2SingleChatAcceptanceRecoversSenderCommit(t *testing.T) {
+func TestSendMessageSingleChatAcceptanceRecoversSenderCommit(t *testing.T) {
 	ctx := context.Background()
 	db := openAcceptanceDB(t)
 	base := time.Now().UnixNano() % 1_000_000_000
@@ -87,9 +87,9 @@ func TestSendMessageV2SingleChatAcceptanceRecoversSenderCommit(t *testing.T) {
 		ReceiverPublisher: &msgrepo.InMemoryReceiverOperationPublisher{OnPublish: updatesKit.ProcessReceiverOperation},
 	})
 
-	result, err := msgCore.MsgSendMessageV2(acceptanceSendRequest(senderID, receiverID, 9002, randomID, "recover acceptance"))
+	result, err := msgCore.MsgSendMessage(acceptanceSendRequest(senderID, receiverID, 9002, randomID, "recover acceptance"))
 	if err != nil {
-		t.Fatalf("MsgSendMessageV2() error = %v", err)
+		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
 	short := mustShortSent(t, result)
 	if short.Pts != 1 {
@@ -121,9 +121,9 @@ func TestMsgReadHistoryV2DurablyEnqueuesPeerReceiptAcceptance(t *testing.T) {
 		ReceiverPublisher: &msgrepo.InMemoryReceiverOperationPublisher{OnPublish: updatesKit.ProcessReceiverOperation},
 	})
 
-	_, err := msgCore.MsgSendMessageV2(acceptanceSendRequest(peerID, requesterID, 9004, base+3003, "receipt acceptance"))
+	_, err := msgCore.MsgSendMessage(acceptanceSendRequest(peerID, requesterID, 9004, base+3003, "receipt acceptance"))
 	if err != nil {
-		t.Fatalf("seed MsgSendMessageV2() error = %v", err)
+		t.Fatalf("seed MsgSendMessage() error = %v", err)
 	}
 	view := selectAcceptanceMessageView(t, ctx, db, requesterID, payload.PeerTypeUser, peerID)
 	maxID := int32(view.UserMessageId)
@@ -245,8 +245,8 @@ func claimUserPartitions(t *testing.T, ctx context.Context, kit *userupdatestest
 	}
 }
 
-func acceptanceSendRequest(senderID, receiverID, authKeyID, randomID int64, text string) *msgpb.TLMsgSendMessageV2 {
-	return &msgpb.TLMsgSendMessageV2{
+func acceptanceSendRequest(senderID, receiverID, authKeyID, randomID int64, text string) *msgpb.TLMsgSendMessage {
+	return &msgpb.TLMsgSendMessage{
 		UserId:    senderID,
 		AuthKeyId: authKeyID,
 		PeerType:  payload.PeerTypeUser,

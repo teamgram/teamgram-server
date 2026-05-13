@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="chat_create_operations">
+    <operation name="Insert">
+        <sql>
+            INSERT INTO chat_create_operations
+                (operation_id, replay_key, actor_user_id, client_msg_id, title, invitee_ids, ttl_period, chat_id, participants_version, status, date, updated_at_sec, expires_at)
+            VALUES
+                (:operation_id, :replay_key, :actor_user_id, :client_msg_id, :title, :invitee_ids, :ttl_period, :chat_id, :participants_version, :status, :date, :updated_at_sec, :expires_at)
+        </sql>
+    </operation>
+
+    <operation name="SelectByReplayKey">
+        <sql>
+            SELECT
+                id, operation_id, replay_key, actor_user_id, client_msg_id, title, invitee_ids, ttl_period, chat_id, participants_version, status, date, updated_at_sec, expires_at
+            FROM
+                chat_create_operations
+            WHERE
+                replay_key=:replay_key
+        </sql>
+    </operation>
+
+    <operation name="SelectByReplayKeyForUpdate">
+        <sql>
+            SELECT
+                id, operation_id, replay_key, actor_user_id, client_msg_id, title, invitee_ids, ttl_period, chat_id, participants_version, status, date, updated_at_sec, expires_at
+            FROM
+                chat_create_operations
+            WHERE
+                replay_key=:replay_key
+            FOR UPDATE
+        </sql>
+    </operation>
+
+    <operation name="SelectLastCompletedByActor">
+        <sql>
+            SELECT
+                id, operation_id, replay_key, actor_user_id, client_msg_id, title, invitee_ids, ttl_period, chat_id, participants_version, status, date, updated_at_sec, expires_at
+            FROM
+                chat_create_operations
+            WHERE
+                actor_user_id=:actor_user_id AND status=:status
+            ORDER BY updated_at_sec DESC LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="EnsureActorLock">
+        <sql>
+            INSERT IGNORE INTO chat_create_operations
+                (operation_id, replay_key, actor_user_id, client_msg_id, title, invitee_ids, ttl_period, chat_id, participants_version, status, date, updated_at_sec, expires_at)
+            VALUES
+                (:operation_id, :replay_key, :actor_user_id, 0, '', '', 0, 0, 0, :status, :date, :updated_at_sec, :expires_at)
+        </sql>
+    </operation>
+
+    <operation name="SelectActorLockForUpdate">
+        <sql>
+            SELECT
+                id, operation_id, replay_key, actor_user_id, client_msg_id, title, invitee_ids, ttl_period, chat_id, participants_version, status, date, updated_at_sec, expires_at
+            FROM
+                chat_create_operations
+            WHERE
+                operation_id=:operation_id
+            FOR UPDATE
+        </sql>
+    </operation>
+
+    <operation name="MarkChatCreated">
+        <sql>
+            UPDATE
+                chat_create_operations
+            SET
+                chat_id=:chat_id, participants_version=:participants_version, status=:status, updated_at_sec=:updated_at_sec
+            WHERE
+                operation_id=:operation_id
+        </sql>
+    </operation>
+
+    <operation name="ResetForRetry">
+        <sql>
+            UPDATE
+                chat_create_operations
+            SET
+                operation_id=:operation_id, actor_user_id=:actor_user_id, client_msg_id=:client_msg_id, title=:title, invitee_ids=:invitee_ids, ttl_period=:ttl_period,
+                chat_id=0, participants_version=:participants_version, status=:status, date=:date, updated_at_sec=:updated_at_sec, expires_at=:expires_at
+            WHERE
+                replay_key=:replay_key
+        </sql>
+    </operation>
+</table>

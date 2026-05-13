@@ -197,28 +197,29 @@ func (m *TLMsgReadMessageContents) Decode(d *bin.Decoder) (err error) {
 	}
 }
 
-// TLMsgSendMessageV2 <--
-type TLMsgSendMessageV2 struct {
+// TLMsgSendMessage <--
+type TLMsgSendMessage struct {
 	ClazzID              uint32               `json:"_id"`
 	ClearDraft           bool                 `json:"clear_draft"`
 	UserId               int64                `json:"user_id"`
 	AuthKeyId            int64                `json:"auth_key_id"`
 	SourcePermAuthKeyId  *int64               `json:"source_perm_auth_key_id"`
 	ClearDraftBeforeDate *int32               `json:"clear_draft_before_date"`
+	AttachFacts          []UpdateFactClazz    `json:"attach_facts"`
 	PeerType             int32                `json:"peer_type"`
 	PeerId               int64                `json:"peer_id"`
 	Message              []OutboxMessageClazz `json:"message"`
 }
 
-func (m *TLMsgSendMessageV2) String() string {
-	return iface.DebugStringWithName(ClazzName_msg_sendMessageV2, m)
+func (m *TLMsgSendMessage) String() string {
+	return iface.DebugStringWithName(ClazzName_msg_sendMessage, m)
 }
 
 // Encode <--
-func (m *TLMsgSendMessageV2) Encode(x *bin.Encoder, layer int32) error {
-	switch clazzId := iface.GetClazzIDByName(ClazzName_msg_sendMessageV2, int(layer)); clazzId {
-	case 0x1c17890c:
-		x.PutClazzID(0x1c17890c)
+func (m *TLMsgSendMessage) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_msg_sendMessage, int(layer)); clazzId {
+	case 0x93e882df:
+		x.PutClazzID(0x93e882df)
 
 		// set flags
 		var getFlags = func() uint32 {
@@ -233,6 +234,9 @@ func (m *TLMsgSendMessageV2) Encode(x *bin.Encoder, layer int32) error {
 			}
 			if m.ClearDraftBeforeDate != nil {
 				flags |= 1 << 2
+			}
+			if m.AttachFacts != nil {
+				flags |= 1 << 3
 			}
 
 			return flags
@@ -251,32 +255,37 @@ func (m *TLMsgSendMessageV2) Encode(x *bin.Encoder, layer int32) error {
 			x.PutInt32(*m.ClearDraftBeforeDate)
 		}
 
+		if m.AttachFacts != nil {
+			if err := iface.EncodeObjectList(x, m.AttachFacts, layer); err != nil {
+				return fmt.Errorf("unable to encode msg_sendMessage#0x93e882df: field attach_facts: %w", err)
+			}
+		}
 		x.PutInt32(m.PeerType)
 		x.PutInt64(m.PeerId)
 
 		if err := iface.EncodeObjectList(x, m.Message, layer); err != nil {
-			return fmt.Errorf("unable to encode msg_sendMessageV2#0x1c17890c: field message: %w", err)
+			return fmt.Errorf("unable to encode msg_sendMessage#0x93e882df: field message: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("unable to encode msg_sendMessageV2: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode msg_sendMessage: unsupported layer %d", layer)
 	}
 }
 
 // Decode <--
-func (m *TLMsgSendMessageV2) Decode(d *bin.Decoder) (err error) {
+func (m *TLMsgSendMessage) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return fmt.Errorf("unable to decode msg_sendMessageV2: constructor: %w", err)
+			return fmt.Errorf("unable to decode msg_sendMessage: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
-	case 0x1c17890c:
+	case 0x93e882df:
 		flags, err := d.Uint32()
 		if err != nil {
-			return fmt.Errorf("unable to decode msg_sendMessageV2: field flags: %w", err)
+			return fmt.Errorf("unable to decode msg_sendMessage: field flags: %w", err)
 		}
 		_ = flags
 		if (flags & (1 << 0)) != 0 {
@@ -284,17 +293,17 @@ func (m *TLMsgSendMessageV2) Decode(d *bin.Decoder) (err error) {
 		}
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field user_id: %w", err)
+			return fmt.Errorf("unable to decode msg_sendMessage#0x93e882df: field user_id: %w", err)
 		}
 		m.AuthKeyId, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field auth_key_id: %w", err)
+			return fmt.Errorf("unable to decode msg_sendMessage#0x93e882df: field auth_key_id: %w", err)
 		}
 		if (flags & (1 << 1)) != 0 {
 			m.SourcePermAuthKeyId = new(int64)
 			*m.SourcePermAuthKeyId, err = d.Int64()
 			if err != nil {
-				return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field source_perm_auth_key_id: %w", err)
+				return fmt.Errorf("unable to decode msg_sendMessage#0x93e882df: field source_perm_auth_key_id: %w", err)
 			}
 		}
 
@@ -302,46 +311,68 @@ func (m *TLMsgSendMessageV2) Decode(d *bin.Decoder) (err error) {
 			m.ClearDraftBeforeDate = new(int32)
 			*m.ClearDraftBeforeDate, err = d.Int32()
 			if err != nil {
-				return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field clear_draft_before_date: %w", err)
+				return fmt.Errorf("unable to decode msg_sendMessage#0x93e882df: field clear_draft_before_date: %w", err)
 			}
+		}
+		if (flags & (1 << 3)) != 0 {
+			l7, err3 := d.VectorHeader()
+			if err3 != nil {
+				return fmt.Errorf("unable to decode msg_sendMessage#0x93e882df: field attach_facts: %w", err3)
+			}
+			if l7 > bin.MaxVectorLen {
+				return fmt.Errorf("unable to decode msg_sendMessage#0x93e882df: field attach_facts: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l7)})
+			}
+			prealloc7 := int(l7)
+			if prealloc7 > bin.PreallocateLimit {
+				prealloc7 = bin.PreallocateLimit
+			}
+			v7 := make([]UpdateFactClazz, 0, prealloc7)
+			for i := int32(0); i < l7; i++ {
+				vv7, err3 := DecodeUpdateFactClazz(d)
+				if err3 != nil {
+					return fmt.Errorf("unable to decode msg_sendMessage#0x93e882df: field attach_facts: %w", err3)
+				}
+				v7 = append(v7, vv7)
+			}
+			m.AttachFacts = v7
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field peer_type: %w", err)
+			return fmt.Errorf("unable to decode msg_sendMessage#0x93e882df: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field peer_id: %w", err)
+			return fmt.Errorf("unable to decode msg_sendMessage#0x93e882df: field peer_id: %w", err)
 		}
-		l9, err3 := d.VectorHeader()
+		l10, err3 := d.VectorHeader()
 		if err3 != nil {
-			return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field message: %w", err3)
+			return fmt.Errorf("unable to decode msg_sendMessage#0x93e882df: field message: %w", err3)
 		}
-		if l9 > bin.MaxVectorLen {
-			return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field message: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l9)})
+		if l10 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode msg_sendMessage#0x93e882df: field message: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l10)})
 		}
-		prealloc9 := int(l9)
-		if prealloc9 > bin.PreallocateLimit {
-			prealloc9 = bin.PreallocateLimit
+		prealloc10 := int(l10)
+		if prealloc10 > bin.PreallocateLimit {
+			prealloc10 = bin.PreallocateLimit
 		}
-		v9 := make([]OutboxMessageClazz, 0, prealloc9)
-		for i := int32(0); i < l9; i++ {
-			vv9, err3 := DecodeOutboxMessageClazz(d)
+		v10 := make([]OutboxMessageClazz, 0, prealloc10)
+		for i := int32(0); i < l10; i++ {
+			vv10, err3 := DecodeOutboxMessageClazz(d)
 			if err3 != nil {
-				return fmt.Errorf("unable to decode msg_sendMessageV2#0x1c17890c: field message: %w", err3)
+				return fmt.Errorf("unable to decode msg_sendMessage#0x93e882df: field message: %w", err3)
 			}
-			v9 = append(v9, vv9)
+			v10 = append(v10, vv10)
 		}
-		m.Message = v9
+		m.Message = v10
 
 		return nil
 	default:
-		return fmt.Errorf("unable to decode msg_sendMessageV2: invalid constructor %x", m.ClazzID)
+		return fmt.Errorf("unable to decode msg_sendMessage: invalid constructor %x", m.ClazzID)
 	}
 }
 
-// TLMsgEditMessageV2 <--
-type TLMsgEditMessageV2 struct {
+// TLMsgEditMessage <--
+type TLMsgEditMessage struct {
 	ClazzID    uint32             `json:"_id"`
 	UserId     int64              `json:"user_id"`
 	AuthKeyId  int64              `json:"auth_key_id"`
@@ -352,15 +383,15 @@ type TLMsgEditMessageV2 struct {
 	DstMessage tg.MessageBoxClazz `json:"dst_message"`
 }
 
-func (m *TLMsgEditMessageV2) String() string {
-	return iface.DebugStringWithName(ClazzName_msg_editMessageV2, m)
+func (m *TLMsgEditMessage) String() string {
+	return iface.DebugStringWithName(ClazzName_msg_editMessage, m)
 }
 
 // Encode <--
-func (m *TLMsgEditMessageV2) Encode(x *bin.Encoder, layer int32) error {
-	switch clazzId := iface.GetClazzIDByName(ClazzName_msg_editMessageV2, int(layer)); clazzId {
-	case 0x69fe5fe1:
-		x.PutClazzID(0x69fe5fe1)
+func (m *TLMsgEditMessage) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_msg_editMessage, int(layer)); clazzId {
+	case 0x1ddc94:
+		x.PutClazzID(0x1ddc94)
 
 		x.PutInt64(m.UserId)
 		x.PutInt64(m.AuthKeyId)
@@ -368,68 +399,68 @@ func (m *TLMsgEditMessageV2) Encode(x *bin.Encoder, layer int32) error {
 		x.PutInt64(m.PeerId)
 		x.PutInt32(m.EditType)
 		if m.NewMessage == nil {
-			return fmt.Errorf("unable to encode msg_editMessageV2#0x69fe5fe1: field new_message is nil")
+			return fmt.Errorf("unable to encode msg_editMessage#0x1ddc94: field new_message is nil")
 		}
 		if err := m.NewMessage.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to encode msg_editMessageV2#0x69fe5fe1: field new_message: %w", err)
+			return fmt.Errorf("unable to encode msg_editMessage#0x1ddc94: field new_message: %w", err)
 		}
 		if m.DstMessage == nil {
-			return fmt.Errorf("unable to encode msg_editMessageV2#0x69fe5fe1: field dst_message is nil")
+			return fmt.Errorf("unable to encode msg_editMessage#0x1ddc94: field dst_message is nil")
 		}
 		if err := m.DstMessage.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to encode msg_editMessageV2#0x69fe5fe1: field dst_message: %w", err)
+			return fmt.Errorf("unable to encode msg_editMessage#0x1ddc94: field dst_message: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("unable to encode msg_editMessageV2: unsupported layer %d", layer)
+		return fmt.Errorf("unable to encode msg_editMessage: unsupported layer %d", layer)
 	}
 }
 
 // Decode <--
-func (m *TLMsgEditMessageV2) Decode(d *bin.Decoder) (err error) {
+func (m *TLMsgEditMessage) Decode(d *bin.Decoder) (err error) {
 	if m.ClazzID == 0 {
 		m.ClazzID, err = d.ClazzID()
 		if err != nil {
-			return fmt.Errorf("unable to decode msg_editMessageV2: constructor: %w", err)
+			return fmt.Errorf("unable to decode msg_editMessage: constructor: %w", err)
 		}
 	}
 	switch m.ClazzID {
-	case 0x69fe5fe1:
+	case 0x1ddc94:
 		m.UserId, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode msg_editMessageV2#0x69fe5fe1: field user_id: %w", err)
+			return fmt.Errorf("unable to decode msg_editMessage#0x1ddc94: field user_id: %w", err)
 		}
 		m.AuthKeyId, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode msg_editMessageV2#0x69fe5fe1: field auth_key_id: %w", err)
+			return fmt.Errorf("unable to decode msg_editMessage#0x1ddc94: field auth_key_id: %w", err)
 		}
 		m.PeerType, err = d.Int32()
 		if err != nil {
-			return fmt.Errorf("unable to decode msg_editMessageV2#0x69fe5fe1: field peer_type: %w", err)
+			return fmt.Errorf("unable to decode msg_editMessage#0x1ddc94: field peer_type: %w", err)
 		}
 		m.PeerId, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode msg_editMessageV2#0x69fe5fe1: field peer_id: %w", err)
+			return fmt.Errorf("unable to decode msg_editMessage#0x1ddc94: field peer_id: %w", err)
 		}
 		m.EditType, err = d.Int32()
 		if err != nil {
-			return fmt.Errorf("unable to decode msg_editMessageV2#0x69fe5fe1: field edit_type: %w", err)
+			return fmt.Errorf("unable to decode msg_editMessage#0x1ddc94: field edit_type: %w", err)
 		}
 
 		m.NewMessage, err = DecodeOutboxMessageClazz(d)
 		if err != nil {
-			return fmt.Errorf("unable to decode msg_editMessageV2#0x69fe5fe1: field new_message: %w", err)
+			return fmt.Errorf("unable to decode msg_editMessage#0x1ddc94: field new_message: %w", err)
 		}
 
 		m.DstMessage, err = tg.DecodeMessageBoxClazz(d)
 		if err != nil {
-			return fmt.Errorf("unable to decode msg_editMessageV2#0x69fe5fe1: field dst_message: %w", err)
+			return fmt.Errorf("unable to decode msg_editMessage#0x1ddc94: field dst_message: %w", err)
 		}
 
 		return nil
 	default:
-		return fmt.Errorf("unable to decode msg_editMessageV2: invalid constructor %x", m.ClazzID)
+		return fmt.Errorf("unable to decode msg_editMessage: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -1433,8 +1464,8 @@ func (m *VectorMessageBox) Decode(d *bin.Decoder) (err error) {
 type RPCMsg interface {
 	MsgPushUserMessage(ctx context.Context, in *TLMsgPushUserMessage) (*tg.Bool, error)
 	MsgReadMessageContents(ctx context.Context, in *TLMsgReadMessageContents) (*tg.MessagesAffectedMessages, error)
-	MsgSendMessageV2(ctx context.Context, in *TLMsgSendMessageV2) (*tg.Updates, error)
-	MsgEditMessageV2(ctx context.Context, in *TLMsgEditMessageV2) (*tg.Updates, error)
+	MsgSendMessage(ctx context.Context, in *TLMsgSendMessage) (*tg.Updates, error)
+	MsgEditMessage(ctx context.Context, in *TLMsgEditMessage) (*tg.Updates, error)
 	MsgDeleteMessages(ctx context.Context, in *TLMsgDeleteMessages) (*tg.MessagesAffectedMessages, error)
 	MsgDeleteHistory(ctx context.Context, in *TLMsgDeleteHistory) (*tg.MessagesAffectedHistory, error)
 	MsgDeletePhoneCallHistory(ctx context.Context, in *TLMsgDeletePhoneCallHistory) (*tg.MessagesAffectedFoundMessages, error)

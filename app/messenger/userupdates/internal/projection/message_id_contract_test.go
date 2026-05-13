@@ -3,7 +3,7 @@ package projection
 import (
 	"testing"
 
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/eventtypes"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -23,13 +23,13 @@ func TestProjectionUsesPublicMessageIDWhenPeerSeqDiffers(t *testing.T) {
 		MessageText:        "public id contract",
 	})
 
-	got, err := ProjectUserEvent(repository.UserEvent{
+	got, err := ProjectUserEvent(eventtypes.UserEvent{
 		UserID:             1001,
 		Pts:                18,
 		PtsCount:           1,
-		EventType:          repository.EventTypeNewMessage,
+		EventType:          eventtypes.EventTypeNewMessage,
 		EventSchemaVersion: payload.MessageEventSchemaVersion,
-		EventCodec:         repository.PayloadCodecJSON,
+		EventCodec:         eventtypes.PayloadCodecJSON,
 		EventPayload:       body,
 		EventPayloadHash:   payload.HashBytes(body),
 	}, ModeDifference)
@@ -58,13 +58,13 @@ func TestProjectionReadHistoryMaxIDUsesReadMaxUserMessageID(t *testing.T) {
 		Out:                  false,
 	})
 
-	got, err := ProjectUserEvent(repository.UserEvent{
+	got, err := ProjectUserEvent(eventtypes.UserEvent{
 		UserID:             1001,
 		Pts:                19,
 		PtsCount:           1,
-		EventType:          repository.EventTypeReadHistory,
+		EventType:          eventtypes.EventTypeReadHistory,
 		EventSchemaVersion: payload.MessageEventSchemaVersion,
-		EventCodec:         repository.PayloadCodecJSON,
+		EventCodec:         eventtypes.PayloadCodecJSON,
 		EventPayload:       body,
 		EventPayloadHash:   payload.HashBytes(body),
 	}, ModeDifference)
@@ -91,15 +91,15 @@ func TestDeleteMessagesProjectionUsesDeleteUserMessageIDsNotPeerSeq(t *testing.T
 		Date:                 1_772_000_000,
 		DeleteUserMessageIDs: []int64{107},
 	})
-	got, err := ProjectUserEvent(repository.UserEvent{
+	got, err := ProjectUserEvent(eventtypes.UserEvent{
 		UserID:             1001,
 		Pts:                35,
 		PtsCount:           1,
-		EventType:          repository.EventTypeDeleteMessages,
+		EventType:          eventtypes.EventTypeDeleteMessages,
 		PeerType:           payload.PeerTypeUser,
 		PeerID:             1002,
 		EventSchemaVersion: payload.MessageEventSchemaVersion,
-		EventCodec:         repository.PayloadCodecJSON,
+		EventCodec:         eventtypes.PayloadCodecJSON,
 		EventPayload:       body,
 		EventPayloadHash:   payload.HashBytes(body),
 	}, ModeDifference)

@@ -31,11 +31,11 @@ func TestMessagesReadHistoryAllowsInputPeerChat(t *testing.T) {
 }
 
 func TestMessagesEditMessageAllowsInputPeerChat(t *testing.T) {
-	var got *msgpb.TLMsgEditMessageV2
+	var got *msgpb.TLMsgEditMessage
 	text := "edited"
 	core := newMessagesCoreWithRepo(&repository.Repository{
 		ChatClient: allowAllMessagesChatClient(),
-		MsgClient: &messagesFakeMsgClient{editMessageV2: func(_ context.Context, in *msgpb.TLMsgEditMessageV2) (*tg.Updates, error) {
+		MsgClient: &messagesFakeMsgClient{editMessage: func(_ context.Context, in *msgpb.TLMsgEditMessage) (*tg.Updates, error) {
 			got = in
 			return testUpdates(), nil
 		}},

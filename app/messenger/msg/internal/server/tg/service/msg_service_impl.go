@@ -52,35 +52,35 @@ func (s *Service) MsgReadMessageContents(ctx context.Context, request *msg.TLMsg
 	return r, err
 }
 
-// MsgSendMessageV2
-// msg.sendMessageV2 flags:# clear_draft:flags.0?true user_id:long auth_key_id:long source_perm_auth_key_id:flags.1?long clear_draft_before_date:flags.2?int peer_type:int peer_id:long message:Vector<OutboxMessage> = Updates;
-func (s *Service) MsgSendMessageV2(ctx context.Context, request *msg.TLMsgSendMessageV2) (*tg.Updates, error) {
+// MsgSendMessage
+// msg.sendMessage flags:# clear_draft:flags.0?true user_id:long auth_key_id:long source_perm_auth_key_id:flags.1?long clear_draft_before_date:flags.2?int peer_type:int peer_id:long message:Vector<OutboxMessage> = Updates;
+func (s *Service) MsgSendMessage(ctx context.Context, request *msg.TLMsgSendMessage) (*tg.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("msg.sendMessageV2 - request: %s", request)
+	c.Logger.Debugf("msg.sendMessage - request: %s", request)
 
-	r, err := c.MsgSendMessageV2(request)
+	r, err := c.MsgSendMessage(request)
 	if err != nil {
-		c.Logger.Errorf("msg.sendMessageV2 - error: request: %s, err: %v", request, err)
+		c.Logger.Errorf("msg.sendMessage - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
-	c.Logger.Debugf("msg.sendMessageV2 - reply: %s", r)
+	c.Logger.Debugf("msg.sendMessage - reply: %s", r)
 	return r, err
 }
 
-// MsgEditMessageV2
-// msg.editMessageV2 user_id:long auth_key_id:long peer_type:int peer_id:long edit_type:int new_message:OutboxMessage dst_message:MessageBox = Updates;
-func (s *Service) MsgEditMessageV2(ctx context.Context, request *msg.TLMsgEditMessageV2) (*tg.Updates, error) {
+// MsgEditMessage
+// msg.editMessage user_id:long auth_key_id:long peer_type:int peer_id:long edit_type:int new_message:OutboxMessage dst_message:MessageBox = Updates;
+func (s *Service) MsgEditMessage(ctx context.Context, request *msg.TLMsgEditMessage) (*tg.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("msg.editMessageV2 - request: %s", request)
+	c.Logger.Debugf("msg.editMessage - request: %s", request)
 
-	r, err := c.MsgEditMessageV2(request)
+	r, err := c.MsgEditMessage(request)
 	if err != nil {
-		c.Logger.Errorf("msg.editMessageV2 - error: request: %s, err: %v", request, err)
+		c.Logger.Errorf("msg.editMessage - error: request: %s, err: %v", request, err)
 		return nil, err
 	}
 
-	c.Logger.Debugf("msg.editMessageV2 - reply: %s", r)
+	c.Logger.Debugf("msg.editMessage - reply: %s", r)
 	return r, err
 }
 

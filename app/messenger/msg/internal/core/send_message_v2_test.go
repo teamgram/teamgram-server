@@ -14,6 +14,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/pagination"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -302,7 +303,7 @@ func TestMarshalSendRequestV3IncludesMediaAttrsForward(t *testing.T) {
 	}
 }
 
-func TestMsgSendMessageV2SingleUserPublishesReceiverOperation(t *testing.T) {
+func TestMsgSendMessageSingleUserPublishesReceiverOperation(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":2,"pts":11,"pts_count":1,"event_type":"new_message","user_message_id":42}`)
 	responseHash := mustHashBytes(t, responsePayload)
 	repo := &fakeMsgRepository{
@@ -335,9 +336,9 @@ func TestMsgSendMessageV2SingleUserPublishesReceiverOperation(t *testing.T) {
 		ReceiverPublisher: publisher,
 	})
 
-	got, err := core.MsgSendMessageV2(sendMessageRequest(1001, 1002, 9001, "hello"))
+	got, err := core.MsgSendMessage(sendMessageRequest(1001, 1002, 9001, "hello"))
 	if err != nil {
-		t.Fatalf("MsgSendMessageV2() error = %v", err)
+		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
 	short, ok := got.ToUpdateShortSentMessage()
 	if !ok {
@@ -352,11 +353,8 @@ func TestMsgSendMessageV2SingleUserPublishesReceiverOperation(t *testing.T) {
 	if publisher.published.UserID != 1002 || publisher.published.OperationID != payload.ReceiverOperationID(2001, 1002) {
 		t.Fatalf("unexpected receiver operation: %+v", publisher.published)
 	}
-	var receiverOp payload.MessageOperationV1
-	if err := json.Unmarshal(publisher.published.Payload, &receiverOp); err != nil {
-		t.Fatalf("decode receiver payload: %v", err)
-	}
-	if receiverOp.Out || receiverOp.FromUserID != 1001 || receiverOp.ToUserID != 1002 || receiverOp.PeerID != 1001 {
+	receiverOp := mustDecodeMessageOperationV4(t, publisher.published.Payload)
+	if receiverOp.MessageFact.SenderUserID != 1001 || receiverOp.MessageFact.ToUserID != 1002 || receiverOp.MessageFact.PeerID != 1001 {
 		t.Fatalf("unexpected receiver payload: %+v", receiverOp)
 	}
 	if updatesClient.processed == nil || updatesClient.processed.UserId != 1001 {
@@ -365,16 +363,59 @@ func TestMsgSendMessageV2SingleUserPublishesReceiverOperation(t *testing.T) {
 	if updatesClient.processed.AuthKeyIdExclude == nil || *updatesClient.processed.AuthKeyIdExclude != 9001 {
 		t.Fatalf("sender operation auth_key_id_exclude = %v, want 9001", updatesClient.processed.AuthKeyIdExclude)
 	}
-	var senderOp payload.MessageOperationV1
-	if err := json.Unmarshal(updatesClient.processed.Payload, &senderOp); err != nil {
-		t.Fatalf("decode sender payload: %v", err)
-	}
-	if !senderOp.Out || senderOp.PeerID != 1002 || senderOp.FromUserID != 1001 || senderOp.ToUserID != 1002 || senderOp.MessageText != "hello" {
+	senderOp := mustDecodeMessageOperationV4(t, updatesClient.processed.Payload)
+	if senderOp.MessageFact.PeerID != 1002 || senderOp.MessageFact.SenderUserID != 1001 || senderOp.MessageFact.ToUserID != 1002 || senderOp.MessageFact.MessageText != "hello" {
 		t.Fatalf("unexpected sender payload: %+v", senderOp)
 	}
 }
 
-func TestMsgSendMessageV2PeerTypeChatUsesAffectedOutboxFanout(t *testing.T) {
+func TestMsgSendMessageBuildsV4PayloadWithClientRandomID(t *testing.T) {
+	responsePayload := mustOperationResponseV3Payload(t, payload.SenderOperationID(2001, 1001), 11, 1, 42, 77, replyUpdatesForText(t, 42, 77, 11, 1))
+	repo := &fakeMsgRepository{
+		sendState: &repository.SendState{SendStateID: 1, Status: repository.SendStateStatusInitialized},
+		canonical: &repository.CanonicalMessageResult{
+			SendStateID:        1,
+			CanonicalMessageID: 2001,
+			PeerSeq:            5,
+			MessageDate:        1_772_000_000,
+			RequestPayloadHash: payload.HashBytes([]byte("request")),
+			CreatedNew:         true,
+		},
+	}
+	updatesClient := &fakeUserUpdatesClient{
+		processResult: testUserOperationResult(1001, payload.SenderOperationID(2001, 1001), 11, responsePayload),
+	}
+	publisher := &fakeReceiverPublisher{}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:              repo,
+		UserUpdates:       updatesClient,
+		ReceiverPublisher: publisher,
+	})
+
+	if _, err := core.MsgSendMessage(sendMessageRequest(1001, 1002, 9001, "hello")); err != nil {
+		t.Fatalf("MsgSendMessage() error = %v", err)
+	}
+	if updatesClient.processed == nil {
+		t.Fatal("sender operation was not sent to userupdates")
+	}
+	var senderOp payload.MessageOperationV4
+	if err := json.Unmarshal(updatesClient.processed.Payload, &senderOp); err != nil {
+		t.Fatalf("decode sender v4 payload: %v", err)
+	}
+	if senderOp.SchemaVersion != payload.MessageOperationSchemaVersionV4 || senderOp.OperationKind != payload.OperationKindSendMessage {
+		t.Fatalf("sender v4 identity = %+v", senderOp)
+	}
+	if senderOp.MessageFact.ClientRandomID != 77 || senderOp.MessageFact.SenderUserID != 1001 ||
+		senderOp.MessageFact.PeerType != payload.PeerTypeUser || senderOp.MessageFact.PeerID != 1002 ||
+		senderOp.MessageFact.MessageText != "hello" {
+		t.Fatalf("sender message fact = %+v, want random/user/peer/text preserved", senderOp.MessageFact)
+	}
+	if !bytes.Equal(updatesClient.processed.PayloadHash, payload.HashBytes(updatesClient.processed.Payload)) {
+		t.Fatalf("payload hash = %x, want hash of exact payload bytes", updatesClient.processed.PayloadHash)
+	}
+}
+
+func TestMsgSendMessagePeerTypeChatUsesAffectedOutboxFanout(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":2,"pts":21,"pts_count":1,"event_type":"new_message","user_message_id":42}`)
 	updatesClient := &fakeUserUpdatesClient{
 		processWithEffectsResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{
@@ -398,7 +439,7 @@ func TestMsgSendMessageV2PeerTypeChatUsesAffectedOutboxFanout(t *testing.T) {
 		Chat:        chatClient,
 	})
 
-	got, err := core.MsgSendMessageV2(&msgpb.TLMsgSendMessageV2{
+	got, err := core.MsgSendMessage(&msgpb.TLMsgSendMessage{
 		UserId:    1001,
 		AuthKeyId: 9001,
 		PeerType:  payload.PeerTypeChat,
@@ -415,10 +456,10 @@ func TestMsgSendMessageV2PeerTypeChatUsesAffectedOutboxFanout(t *testing.T) {
 		})},
 	})
 	if err != nil {
-		t.Fatalf("MsgSendMessageV2() error = %v", err)
+		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
 	if got == nil {
-		t.Fatal("MsgSendMessageV2() returned nil updates")
+		t.Fatal("MsgSendMessage() returned nil updates")
 	}
 	if len(chatClient.actions) != 1 || chatClient.actions[0].Action != chatpb.MessageActionSendText || chatClient.actions[0].ChatId != 55 {
 		t.Fatalf("chat action checks = %+v, want send_text for chat 55", chatClient.actions)
@@ -443,17 +484,132 @@ func TestMsgSendMessageV2PeerTypeChatUsesAffectedOutboxFanout(t *testing.T) {
 		if op.UserId == 1001 {
 			t.Fatalf("sender was included as receiver effect: %+v", op)
 		}
-		var body payload.MessageOperationV3
-		if err := json.Unmarshal(op.Payload, &body); err != nil {
-			t.Fatalf("decode receiver payload: %v", err)
-		}
-		if body.PeerType != payload.PeerTypeChat || body.PeerID != 55 || body.FromUserID != 1001 || body.ToUserID != op.UserId || body.Out {
+		body := mustDecodeMessageOperationV4(t, op.Payload)
+		if body.MessageFact.PeerType != payload.PeerTypeChat || body.MessageFact.PeerID != 55 || body.MessageFact.SenderUserID != 1001 || body.MessageFact.ToUserID != op.UserId {
 			t.Fatalf("receiver payload = %+v, want chat incoming from sender", body)
 		}
 	}
 }
 
-func TestMsgSendMessageV2PeerTypeChatCreateServiceActionFansOut(t *testing.T) {
+func TestMsgSendMessagePropagatesAttachFactsToChatReceivers(t *testing.T) {
+	responsePayload := mustOperationResponseV3Payload(t, payload.SenderOperationID(7101, 1001), 22, 1, 43, 12346, replyUpdatesForChatService(t, 43, 12346, 22, 1))
+	updatesClient := &fakeUserUpdatesClient{
+		processWithEffectsResult: testUserOperationResult(1001, payload.SenderOperationID(7101, 1001), 22, responsePayload),
+	}
+	chatClient := &fakeMsgChatClient{memberIDs: []int64{1001, 1002, 1003}}
+	repo := newFakeSendMessageRepositoryForChat(7101, 4)
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:        repo,
+		UserUpdates: updatesClient,
+		Chat:        chatClient,
+	})
+	attachFact := chatParticipantsChangedTLFact(t, 55, 1001, []int64{1001, 1002, 1003})
+	req := chatCreateServiceSendRequest(1001, 55, 9001, 12346)
+	req.AttachFacts = []msgpb.UpdateFactClazz{attachFact}
+
+	if _, err := core.MsgSendMessage(req); err != nil {
+		t.Fatalf("MsgSendMessage() error = %v", err)
+	}
+	if updatesClient.processWithEffects == nil {
+		t.Fatal("UserupdatesProcessUserOperationWithEffects was not called")
+	}
+	var senderOp payload.MessageOperationV4
+	if err := json.Unmarshal(updatesClient.processWithEffects.Operation.Payload, &senderOp); err != nil {
+		t.Fatalf("decode sender payload: %v", err)
+	}
+	if len(senderOp.AttachFacts) != 1 || senderOp.AttachFacts[0].Kind != payload.FactKindChatParticipantsChanged {
+		t.Fatalf("sender attach facts = %+v, want one chat participants fact", senderOp.AttachFacts)
+	}
+	if len(updatesClient.processWithEffects.AffectedEffects) != 2 {
+		t.Fatalf("affected effects = %d, want 2 receivers", len(updatesClient.processWithEffects.AffectedEffects))
+	}
+	for _, effect := range updatesClient.processWithEffects.AffectedEffects {
+		var receiverOp payload.MessageOperationV4
+		if err := json.Unmarshal(effect.Operation.Payload, &receiverOp); err != nil {
+			t.Fatalf("decode receiver payload: %v", err)
+		}
+		if len(receiverOp.AttachFacts) != 1 || receiverOp.AttachFacts[0].Kind != payload.FactKindChatParticipantsChanged {
+			t.Fatalf("receiver attach facts = %+v, want one chat participants fact", receiverOp.AttachFacts)
+		}
+		if receiverOp.MessageFact.PeerID != 55 || receiverOp.MessageFact.SenderUserID != 1001 || receiverOp.MessageFact.ClientRandomID != 12346 {
+			t.Fatalf("receiver message fact = %+v, want chat peer/sender/random", receiverOp.MessageFact)
+		}
+	}
+}
+
+func TestMsgSendMessageReplyUsesUserupdatesEnvelope(t *testing.T) {
+	responsePayload := mustOperationResponseV3Payload(t, payload.SenderOperationID(7201, 1001), 33, 1, 44, 12347, replyUpdatesForChatService(t, 44, 12347, 33, 1))
+	updatesClient := &fakeUserUpdatesClient{
+		processWithEffectsResult: testUserOperationResult(1001, payload.SenderOperationID(7201, 1001), 33, responsePayload),
+	}
+	chatClient := &fakeMsgChatClient{memberIDs: []int64{1001, 1002}}
+	repo := newFakeSendMessageRepositoryForChat(7201, 5)
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:        repo,
+		UserUpdates: updatesClient,
+		Chat:        chatClient,
+	})
+
+	got, err := core.MsgSendMessage(chatCreateServiceSendRequest(1001, 55, 9001, 12347))
+	if err != nil {
+		t.Fatalf("MsgSendMessage() error = %v", err)
+	}
+	updates, ok := got.ToUpdates()
+	if !ok {
+		t.Fatalf("updates = %T, want TLUpdates envelope from userupdates", got.Clazz)
+	}
+	if len(updates.Users) == 0 || len(updates.Chats) == 0 {
+		t.Fatalf("reply envelope dependencies users=%d chats=%d, want non-empty", len(updates.Users), len(updates.Chats))
+	}
+	if len(updates.Updates) < 2 {
+		t.Fatalf("reply updates len = %d, want updateMessageID and updateNewMessage", len(updates.Updates))
+	}
+	if _, ok := updates.Updates[0].(*tg.TLUpdateMessageID); !ok {
+		t.Fatalf("updates[0] = %T, want updateMessageID from userupdates envelope", updates.Updates[0])
+	}
+	if _, ok := updates.Updates[1].(*tg.TLUpdateNewMessage); !ok {
+		t.Fatalf("updates[1] = %T, want updateNewMessage from userupdates envelope", updates.Updates[1])
+	}
+	if updatesClient.getOperationResultCalls != 0 {
+		t.Fatalf("get operation result calls = %d, want no extra userupdates RPC", updatesClient.getOperationResultCalls)
+	}
+}
+
+func TestMsgSendMessageReplyRejectsLegacyOrEmptyUserupdatesEnvelope(t *testing.T) {
+	tests := []struct {
+		name string
+		body []byte
+	}{
+		{
+			name: "v2 response",
+			body: []byte(`{"schema_version":2,"pts":11,"pts_count":1,"event_type":"new_message","user_message_id":42}`),
+		},
+		{
+			name: "empty v3 reply envelope",
+			body: mustMarshalOperationResponseV3(t, payload.OperationResponseV3{
+				SchemaVersion:       payload.OperationResponseSchemaVersionV3,
+				OperationID:         payload.SenderOperationID(2001, 1001),
+				Pts:                 11,
+				PtsCount:            1,
+				EventType:           payload.EventKindNewMessage,
+				UserMessageID:       42,
+				ClientRandomID:      77,
+				ReplyEnvelopeCodec:  payload.ReplyEnvelopeCodecTLBinary,
+				ReplyEnvelopeSchema: payload.ReplyEnvelopeSchemaV1,
+			}),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := sentMessageUpdatesFromUserupdatesEnvelope(testUserOperationResult(1001, payload.SenderOperationID(2001, 1001), 11, tt.body), "sender")
+			if !errors.Is(err, msgpb.ErrSenderSyncFailed) {
+				t.Fatalf("sentMessageUpdatesFromUserupdatesEnvelope() error = %v, want ErrSenderSyncFailed", err)
+			}
+		})
+	}
+}
+
+func TestMsgSendMessagePeerTypeChatCreateServiceActionFansOut(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":2,"pts":22,"pts_count":1,"event_type":"new_message","user_message_id":43}`)
 	updatesClient := &fakeUserUpdatesClient{
 		processWithEffectsResult: testUserOperationResult(1001, payload.SenderOperationID(7004, 1001), 22, responsePayload),
@@ -466,7 +622,7 @@ func TestMsgSendMessageV2PeerTypeChatCreateServiceActionFansOut(t *testing.T) {
 		Chat:        chatClient,
 	})
 
-	got, err := core.MsgSendMessageV2(&msgpb.TLMsgSendMessageV2{
+	got, err := core.MsgSendMessage(&msgpb.TLMsgSendMessage{
 		UserId:    1001,
 		AuthKeyId: 9001,
 		PeerType:  payload.PeerTypeChat,
@@ -486,7 +642,7 @@ func TestMsgSendMessageV2PeerTypeChatCreateServiceActionFansOut(t *testing.T) {
 		})},
 	})
 	if err != nil {
-		t.Fatalf("MsgSendMessageV2() error = %v", err)
+		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
 	updates, ok := got.ToUpdates()
 	if !ok || len(updates.Updates) != 2 {
@@ -507,25 +663,19 @@ func TestMsgSendMessageV2PeerTypeChatCreateServiceActionFansOut(t *testing.T) {
 	if updatesClient.processWithEffects == nil || len(updatesClient.processWithEffects.AffectedEffects) != 2 {
 		t.Fatalf("affected effects = %+v, want 2 receivers", updatesClient.processWithEffects)
 	}
-	var senderOp payload.MessageOperationV3
-	if err := json.Unmarshal(updatesClient.processWithEffects.Operation.Payload, &senderOp); err != nil {
-		t.Fatalf("decode sender payload: %v", err)
-	}
-	if senderOp.ServiceAction == nil || senderOp.ServiceAction.Kind != payload.ServiceActionKindChatCreate {
-		t.Fatalf("sender service action = %+v, want chat create", senderOp.ServiceAction)
+	senderOp := mustDecodeMessageOperationV4(t, updatesClient.processWithEffects.Operation.Payload)
+	if senderOp.MessageFact.ServiceAction == nil || senderOp.MessageFact.ServiceAction.Kind != payload.ServiceActionKindChatCreate {
+		t.Fatalf("sender service action = %+v, want chat create", senderOp.MessageFact.ServiceAction)
 	}
 	for _, effect := range updatesClient.processWithEffects.AffectedEffects {
-		var receiverOp payload.MessageOperationV3
-		if err := json.Unmarshal(effect.Operation.Payload, &receiverOp); err != nil {
-			t.Fatalf("decode receiver payload: %v", err)
-		}
-		if receiverOp.ServiceAction == nil || receiverOp.ServiceAction.Kind != payload.ServiceActionKindChatCreate || receiverOp.PeerID != 55 {
+		receiverOp := mustDecodeMessageOperationV4(t, effect.Operation.Payload)
+		if receiverOp.MessageFact.ServiceAction == nil || receiverOp.MessageFact.ServiceAction.Kind != payload.ServiceActionKindChatCreate || receiverOp.MessageFact.PeerID != 55 {
 			t.Fatalf("receiver payload = %+v, want chat create in peer 55", receiverOp)
 		}
 	}
 }
 
-func TestMsgSendMessageV2PeerTypeChatMediaReturnsFullUpdatesAndFansOut(t *testing.T) {
+func TestMsgSendMessagePeerTypeChatMediaReturnsFullUpdatesAndFansOut(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":2,"pts":31,"pts_count":1,"event_type":"new_message","user_message_id":61}`)
 	updatesClient := &fakeUserUpdatesClient{
 		processWithEffectsResult: testUserOperationResult(1001, payload.SenderOperationID(7002, 1001), 31, responsePayload),
@@ -542,9 +692,9 @@ func TestMsgSendMessageV2PeerTypeChatMediaReturnsFullUpdatesAndFansOut(t *testin
 	req.PeerId = 55
 	req.Message[0].Message.(*tg.TLMessage).PeerId = tg.MakePeerChat(55)
 
-	got, err := core.MsgSendMessageV2(req)
+	got, err := core.MsgSendMessage(req)
 	if err != nil {
-		t.Fatalf("MsgSendMessageV2() error = %v", err)
+		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
 	if len(chatClient.actions) != 1 || chatClient.actions[0].Action != chatpb.MessageActionSendMediaPhoto || chatClient.actions[0].MediaKind != "photo" {
 		t.Fatalf("chat action checks = %+v, want send_media_photo/photo", chatClient.actions)
@@ -561,7 +711,7 @@ func TestMsgSendMessageV2PeerTypeChatMediaReturnsFullUpdatesAndFansOut(t *testin
 	}
 }
 
-func TestMsgSendMessageV2PeerTypeChatForwardUsesForwardAction(t *testing.T) {
+func TestMsgSendMessagePeerTypeChatForwardUsesForwardAction(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":2,"pts":32,"pts_count":1,"event_type":"new_message","user_message_id":62}`)
 	updatesClient := &fakeUserUpdatesClient{
 		processWithEffectsResult: testUserOperationResult(1001, payload.SenderOperationID(7003, 1001), 32, responsePayload),
@@ -578,9 +728,9 @@ func TestMsgSendMessageV2PeerTypeChatForwardUsesForwardAction(t *testing.T) {
 	req.PeerId = 55
 	req.Message[0].Message.(*tg.TLMessage).PeerId = tg.MakePeerChat(55)
 
-	got, err := core.MsgSendMessageV2(req)
+	got, err := core.MsgSendMessage(req)
 	if err != nil {
-		t.Fatalf("MsgSendMessageV2() error = %v", err)
+		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
 	if len(chatClient.actions) != 1 || chatClient.actions[0].Action != chatpb.MessageActionForwardToChat {
 		t.Fatalf("chat action checks = %+v, want forward_to_chat", chatClient.actions)
@@ -594,7 +744,7 @@ func TestMsgSendMessageV2PeerTypeChatForwardUsesForwardAction(t *testing.T) {
 	}
 }
 
-func TestMsgSendMessageV2PeerTypeChatAlbumUsesBatchCanonicalAndAffectedEffects(t *testing.T) {
+func TestMsgSendMessagePeerTypeChatAlbumUsesBatchCanonicalAndAffectedEffects(t *testing.T) {
 	groupedID := int64(9901)
 	responsePayload1 := []byte(`{"schema_version":2,"pts":41,"pts_count":1,"event_type":"new_message","user_message_id":71}`)
 	responsePayload2 := []byte(`{"schema_version":2,"pts":42,"pts_count":1,"event_type":"new_message","user_message_id":72}`)
@@ -625,9 +775,9 @@ func TestMsgSendMessageV2PeerTypeChatAlbumUsesBatchCanonicalAndAffectedEffects(t
 		message.Media = tg.MakeTLMessageMediaPhoto(&tg.TLMessageMediaPhoto{Photo: tg.MakeTLPhotoEmpty(&tg.TLPhotoEmpty{Id: 333})})
 	}
 
-	got, err := core.MsgSendMessageV2(req)
+	got, err := core.MsgSendMessage(req)
 	if err != nil {
-		t.Fatalf("MsgSendMessageV2() error = %v", err)
+		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
 	if repo.batchCreateCalls != 1 {
 		t.Fatalf("batchCreateCalls = %d, want 1", repo.batchCreateCalls)
@@ -657,13 +807,13 @@ func TestMsgSendMessageV2PeerTypeChatAlbumUsesBatchCanonicalAndAffectedEffects(t
 	}
 }
 
-func TestMsgSendMessageV2BatchReturnsFullUpdates(t *testing.T) {
+func TestMsgSendMessageBatchReturnsFullUpdates(t *testing.T) {
 	core, fakeRepo, fakeUpdates := newBatchMsgCoreForTest(t)
 	in := buildBatchSendRequestForTest(100, 200, 9001, []int64{11, 12})
 
-	got, err := core.MsgSendMessageV2(in)
+	got, err := core.MsgSendMessage(in)
 	if err != nil {
-		t.Fatalf("MsgSendMessageV2() error = %v", err)
+		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
 	if fakeRepo.batchCreateCalls != 1 {
 		t.Fatalf("batchCreateCalls = %d, want 1", fakeRepo.batchCreateCalls)
@@ -679,6 +829,70 @@ func TestMsgSendMessageV2BatchReturnsFullUpdates(t *testing.T) {
 	}
 	if _, ok := got.Clazz.(*tg.TLUpdates); !ok {
 		t.Fatalf("updates = %T, want *tg.TLUpdates", got.Clazz)
+	}
+}
+
+func TestMsgSendMessageBatchCombinesUserupdatesReplyEnvelopesInItemOrder(t *testing.T) {
+	core, _, fakeUpdates := newBatchMsgCoreForTest(t)
+	fakeUpdates.processResults = []*userupdates.UserOperationResult{
+		testUserOperationResult(100, payload.SenderOperationID(9001, 100), 31,
+			mustOperationResponseV3Payload(t, payload.SenderOperationID(9001, 100), 31, 1, 101, 11,
+				replyUpdatesForBatchEnvelope(t, 101, 910011, 31, 1, "from envelope first", 3001, 901))),
+		testUserOperationResult(100, payload.SenderOperationID(9002, 100), 32,
+			mustOperationResponseV3Payload(t, payload.SenderOperationID(9002, 100), 32, 1, 102, 12,
+				replyUpdatesForBatchEnvelope(t, 102, 910012, 32, 1, "from envelope second", 3002, 902))),
+	}
+
+	got, err := core.MsgSendMessage(buildBatchSendRequestForTest(100, 200, 9001, []int64{11, 12}))
+	if err != nil {
+		t.Fatalf("MsgSendMessage() error = %v", err)
+	}
+	updates, ok := got.Clazz.(*tg.TLUpdates)
+	if !ok {
+		t.Fatalf("updates = %T, want *tg.TLUpdates", got.Clazz)
+	}
+	if len(updates.Updates) != 4 {
+		t.Fatalf("updates len = %d, want 4", len(updates.Updates))
+	}
+	firstID, ok := updates.Updates[0].(*tg.TLUpdateMessageID)
+	if !ok || firstID.RandomId != 910011 {
+		t.Fatalf("first update = %#v, want envelope updateMessageID random 910011", updates.Updates[0])
+	}
+	firstNew, ok := updates.Updates[1].(*tg.TLUpdateNewMessage)
+	if !ok {
+		t.Fatalf("second update = %T, want updateNewMessage", updates.Updates[1])
+	}
+	firstMessage, ok := firstNew.Message.(*tg.TLMessage)
+	if !ok || firstMessage.Message != "from envelope first" {
+		t.Fatalf("first message = %#v, want envelope message text", firstNew.Message)
+	}
+	secondID, ok := updates.Updates[2].(*tg.TLUpdateMessageID)
+	if !ok || secondID.RandomId != 910012 {
+		t.Fatalf("third update = %#v, want envelope updateMessageID random 910012", updates.Updates[2])
+	}
+	secondNew, ok := updates.Updates[3].(*tg.TLUpdateNewMessage)
+	if !ok {
+		t.Fatalf("fourth update = %T, want updateNewMessage", updates.Updates[3])
+	}
+	secondMessage, ok := secondNew.Message.(*tg.TLMessage)
+	if !ok || secondMessage.Message != "from envelope second" {
+		t.Fatalf("second message = %#v, want envelope message text", secondNew.Message)
+	}
+	if len(updates.Users) != 2 {
+		t.Fatalf("users len = %d, want 2", len(updates.Users))
+	}
+	firstUser, firstUserOK := updates.Users[0].(*tg.TLUserEmpty)
+	secondUser, secondUserOK := updates.Users[1].(*tg.TLUserEmpty)
+	if !firstUserOK || firstUser.Id != 3001 || !secondUserOK || secondUser.Id != 3002 {
+		t.Fatalf("users = %#v, want envelope users in item order", updates.Users)
+	}
+	if len(updates.Chats) != 2 {
+		t.Fatalf("chats len = %d, want 2", len(updates.Chats))
+	}
+	firstChat, firstChatOK := updates.Chats[0].(*tg.TLChatEmpty)
+	secondChat, secondChatOK := updates.Chats[1].(*tg.TLChatEmpty)
+	if !firstChatOK || firstChat.Id != 901 || !secondChatOK || secondChat.Id != 902 {
+		t.Fatalf("chats = %#v, want envelope chats in item order", updates.Chats)
 	}
 }
 
@@ -941,7 +1155,7 @@ func TestForwardRevalidationRejectsInvisibleSource(t *testing.T) {
 	core, fakeRepo, _ := newBatchMsgCoreForTest(t)
 	fakeRepo.forwardVisible = false
 
-	_, err := core.MsgSendMessageV2(buildForwardSendRequestForTest(100, 200, 9001, 11, 7))
+	_, err := core.MsgSendMessage(buildForwardSendRequestForTest(100, 200, 9001, 11, 7))
 	if !errors.Is(err, msgpb.ErrMsgIdInvalid) {
 		t.Fatalf("error = %v, want ErrMsgIdInvalid", err)
 	}
@@ -1016,11 +1230,11 @@ func findSentDocumentAttribute[T tg.DocumentAttributeClazz](attrs []tg.DocumentA
 	return zero, false
 }
 
-func TestMsgSendMessageV2BatchReceiverAckFailureIsRetryable(t *testing.T) {
+func TestMsgSendMessageBatchReceiverAckFailureIsRetryable(t *testing.T) {
 	core, fakeRepo, fakeUpdates := newBatchMsgCoreForTest(t)
 	fakeUpdates.receiverErr = errors.New("broker unavailable")
 
-	_, err := core.MsgSendMessageV2(buildBatchSendRequestForTest(100, 200, 9001, []int64{11, 12}))
+	_, err := core.MsgSendMessage(buildBatchSendRequestForTest(100, 200, 9001, []int64{11, 12}))
 	if !errors.Is(err, msgpb.ErrSenderSyncFailed) {
 		t.Fatalf("error = %v, want retryable msg error", err)
 	}
@@ -1029,9 +1243,9 @@ func TestMsgSendMessageV2BatchReceiverAckFailureIsRetryable(t *testing.T) {
 	}
 }
 
-func TestMsgSendMessageV2BatchRetrySkipsCommittedSenderItems(t *testing.T) {
+func TestMsgSendMessageBatchRetrySkipsCommittedSenderItems(t *testing.T) {
 	core, fakeRepo, fakeUpdates := newBatchMsgCoreForTest(t)
-	committedPayload := []byte(`{"schema_version":2,"pts":21,"pts_count":1,"event_type":"new_message","user_message_id":51}`)
+	committedPayload := mustOperationResponseV3Payload(t, payload.SenderOperationID(9001, 100), 21, 1, 51, 11, replyUpdatesForText(t, 51, 11, 21, 1))
 	fakeRepo.batchResult.Items[0].SendStateStatus = repository.SendStateStatusSenderCommitted
 	fakeRepo.batchResult.Items[0].SenderOperationID = payload.SenderOperationID(fakeRepo.batchResult.Items[0].CanonicalMessageID, 100)
 	fakeRepo.batchResult.Items[0].SenderPTS = 21
@@ -1040,9 +1254,9 @@ func TestMsgSendMessageV2BatchRetrySkipsCommittedSenderItems(t *testing.T) {
 	fakeRepo.batchResult.Items[0].SenderUpdatePayloadHash = payload.HashBytes(committedPayload)
 	fakeRepo.batchResult.Items[1].SendStateStatus = repository.SendStateStatusCanonical
 
-	got, err := core.MsgSendMessageV2(buildBatchSendRequestForTest(100, 200, 9001, []int64{11, 12}))
+	got, err := core.MsgSendMessage(buildBatchSendRequestForTest(100, 200, 9001, []int64{11, 12}))
 	if err != nil {
-		t.Fatalf("MsgSendMessageV2() error = %v", err)
+		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
 	if fakeUpdates.batchApplyCalls != 1 {
 		t.Fatalf("batchApplyCalls = %d, want 1", fakeUpdates.batchApplyCalls)
@@ -1061,25 +1275,25 @@ func TestMsgSendMessageV2BatchRetrySkipsCommittedSenderItems(t *testing.T) {
 	}
 }
 
-func TestMsgSendMessageV2BatchRetryResumesReceiverAckWithoutSenderDuplicate(t *testing.T) {
+func TestMsgSendMessageBatchRetryResumesReceiverAckWithoutSenderDuplicate(t *testing.T) {
 	core, fakeRepo, fakeUpdates := newBatchMsgCoreForTest(t)
 	for i := range fakeRepo.batchResult.Items {
 		item := &fakeRepo.batchResult.Items[i]
-		responsePayload := []byte(`{"schema_version":2,"pts":21,"pts_count":1,"event_type":"new_message","user_message_id":51}`)
-		if i == 1 {
-			responsePayload = []byte(`{"schema_version":2,"pts":22,"pts_count":1,"event_type":"new_message","user_message_id":52}`)
-		}
+		pts := int64(21 + i)
+		userMessageID := int64(51 + i)
+		randomID := int64(11 + i)
+		responsePayload := mustOperationResponseV3Payload(t, payload.SenderOperationID(item.CanonicalMessageID, 100), pts, 1, userMessageID, randomID, replyUpdatesForText(t, userMessageID, randomID, pts, 1))
 		item.SendStateStatus = repository.SendStateStatusFailedRetryable
 		item.SenderOperationID = payload.SenderOperationID(item.CanonicalMessageID, 100)
-		item.SenderPTS = int64(21 + i)
+		item.SenderPTS = pts
 		item.SenderPTSCount = 1
 		item.SenderUpdatePayload = responsePayload
 		item.SenderUpdatePayloadHash = payload.HashBytes(responsePayload)
 	}
 
-	got, err := core.MsgSendMessageV2(buildBatchSendRequestForTest(100, 200, 9001, []int64{11, 12}))
+	got, err := core.MsgSendMessage(buildBatchSendRequestForTest(100, 200, 9001, []int64{11, 12}))
 	if err != nil {
-		t.Fatalf("MsgSendMessageV2() error = %v", err)
+		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
 	if fakeUpdates.batchApplyCalls != 0 || fakeRepo.markSenderCalls != 0 {
 		t.Fatalf("sender projection duplicated: batchApplyCalls=%d markSenderCalls=%d", fakeUpdates.batchApplyCalls, fakeRepo.markSenderCalls)
@@ -1095,7 +1309,7 @@ func TestMsgSendMessageV2BatchRetryResumesReceiverAckWithoutSenderDuplicate(t *t
 	}
 }
 
-func TestMsgSendMessageV2BatchReceiverPayloadIncludesRichFields(t *testing.T) {
+func TestMsgSendMessageBatchReceiverPayloadIncludesRichFields(t *testing.T) {
 	core, fakeRepo, fakeUpdates := newBatchMsgCoreForTest(t)
 	fakeRepo.resolvedMessageID = &repository.ResolvedMessageID{
 		UserID:             100,
@@ -1129,9 +1343,9 @@ func TestMsgSendMessageV2BatchReceiverPayloadIncludesRichFields(t *testing.T) {
 		}),
 	})
 
-	got, err := core.MsgSendMessageV2(req)
+	got, err := core.MsgSendMessage(req)
 	if err != nil {
-		t.Fatalf("MsgSendMessageV2() error = %v", err)
+		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
 	if _, ok := got.Clazz.(*tg.TLUpdates); !ok {
 		t.Fatalf("updates = %T, want *tg.TLUpdates", got.Clazz)
@@ -1139,33 +1353,30 @@ func TestMsgSendMessageV2BatchReceiverPayloadIncludesRichFields(t *testing.T) {
 	if len(fakeUpdates.receiverPublished) != 2 {
 		t.Fatalf("receiver published len = %d, want 2", len(fakeUpdates.receiverPublished))
 	}
-	var receiverOp payload.MessageOperationV3
-	if err := json.Unmarshal(fakeUpdates.receiverPublished[0].Payload, &receiverOp); err != nil {
-		t.Fatalf("decode receiver payload: %v", err)
-	}
-	if receiverOp.Out || receiverOp.PeerID != 100 || receiverOp.ToUserID != 200 || receiverOp.MessageText != "caption" {
+	receiverOp := mustDecodeMessageOperationV4(t, fakeUpdates.receiverPublished[0].Payload)
+	if receiverOp.MessageFact.PeerID != 100 || receiverOp.MessageFact.ToUserID != 200 || receiverOp.MessageFact.MessageText != "caption" {
 		t.Fatalf("unexpected receiver viewer fields: %+v", receiverOp)
 	}
-	if receiverOp.MediaRef == nil || receiverOp.MediaRef.Kind != "photo" || receiverOp.MediaRef.ID != 333 {
-		t.Fatalf("receiver media ref = %+v, want photo 333", receiverOp.MediaRef)
+	if receiverOp.MessageFact.MediaRef == nil || receiverOp.MessageFact.MediaRef.Kind != "photo" || receiverOp.MessageFact.MediaRef.ID != 333 {
+		t.Fatalf("receiver media ref = %+v, want photo 333", receiverOp.MessageFact.MediaRef)
 	}
-	if receiverOp.Attrs == nil || receiverOp.Attrs.GroupedID != groupedID {
-		t.Fatalf("receiver attrs = %+v, want grouped_id %d", receiverOp.Attrs, groupedID)
+	if receiverOp.MessageFact.Attrs == nil || receiverOp.MessageFact.Attrs.GroupedID != groupedID {
+		t.Fatalf("receiver attrs = %+v, want grouped_id %d", receiverOp.MessageFact.Attrs, groupedID)
 	}
-	if receiverOp.ForwardRef == nil || receiverOp.ForwardRef.FromUserID != 300 {
-		t.Fatalf("receiver forward ref = %+v, want from user 300", receiverOp.ForwardRef)
+	if receiverOp.MessageFact.ForwardRef == nil || receiverOp.MessageFact.ForwardRef.FromUserID != 300 {
+		t.Fatalf("receiver forward ref = %+v, want from user 300", receiverOp.MessageFact.ForwardRef)
 	}
-	if receiverOp.ForwardRef.SourceMessageID != 0 {
-		t.Fatalf("receiver source_message_id = %d, want empty for non-channel user forward", receiverOp.ForwardRef.SourceMessageID)
+	if receiverOp.MessageFact.ForwardRef.SourceMessageID != 0 {
+		t.Fatalf("receiver source_message_id = %d, want empty for non-channel user forward", receiverOp.MessageFact.ForwardRef.SourceMessageID)
 	}
-	if receiverOp.ForwardRef.SavedFromPeerType != 0 || receiverOp.ForwardRef.SavedFromPeerID != 0 || receiverOp.ForwardRef.SavedFromMessageID != 0 {
-		t.Fatalf("receiver saved forward fields = %+v, want empty for non-saved forward", receiverOp.ForwardRef)
+	if receiverOp.MessageFact.ForwardRef.SavedFromPeerType != 0 || receiverOp.MessageFact.ForwardRef.SavedFromPeerID != 0 || receiverOp.MessageFact.ForwardRef.SavedFromMessageID != 0 {
+		t.Fatalf("receiver saved forward fields = %+v, want empty for non-saved forward", receiverOp.MessageFact.ForwardRef)
 	}
-	if len(receiverOp.Entities) != 1 || receiverOp.Entities[0].Kind != "bold" {
-		t.Fatalf("receiver entities = %+v, want bold entity", receiverOp.Entities)
+	if len(receiverOp.MessageFact.Entities) != 1 || receiverOp.MessageFact.Entities[0].Kind != "bold" {
+		t.Fatalf("receiver entities = %+v, want bold entity", receiverOp.MessageFact.Entities)
 	}
-	if receiverOp.ReplyToCanonicalMessageID != 7001 {
-		t.Fatalf("reply_to_canonical_message_id = %d, want 7001", receiverOp.ReplyToCanonicalMessageID)
+	if receiverOp.MessageFact.ReplyToCanonicalMessageID != 7001 {
+		t.Fatalf("reply_to_canonical_message_id = %d, want 7001", receiverOp.MessageFact.ReplyToCanonicalMessageID)
 	}
 	tlUpdates, ok := got.Clazz.(*tg.TLUpdates)
 	if !ok {
@@ -1309,7 +1520,7 @@ func TestNormalizeOutboxMessageResolvesReplyInChatScope(t *testing.T) {
 	}
 }
 
-func TestMsgSendMessageV2MediaReturnsTLUpdates(t *testing.T) {
+func TestMsgSendMessageMediaReturnsTLUpdates(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":2,"pts":31,"pts_count":1,"event_type":"new_message","user_message_id":61}`)
 	responseHash := mustHashBytes(t, responsePayload)
 	repo := &fakeMsgRepository{
@@ -1341,9 +1552,9 @@ func TestMsgSendMessageV2MediaReturnsTLUpdates(t *testing.T) {
 		ReceiverPublisher: &fakeReceiverPublisher{},
 	})
 
-	got, err := core.MsgSendMessageV2(buildMediaSendRequestForTest(100, 200, 9001, 11, "caption"))
+	got, err := core.MsgSendMessage(buildMediaSendRequestForTest(100, 200, 9001, 11, "caption"))
 	if err != nil {
-		t.Fatalf("MsgSendMessageV2() error = %v", err)
+		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
 	updates, ok := got.Clazz.(*tg.TLUpdates)
 	if !ok {
@@ -1397,7 +1608,7 @@ func TestMsgSendMessageV2MediaReturnsTLUpdates(t *testing.T) {
 	}
 }
 
-func TestMsgSendMessageV2ContactMediaReturnsTLUpdates(t *testing.T) {
+func TestMsgSendMessageContactMediaReturnsTLUpdates(t *testing.T) {
 	core := newSingleSendMsgCoreForTest(t, 100, 9101, 61)
 	req := sendMessageRequest(100, 200, 9001, "")
 	req.Message[0].Message.(*tg.TLMessage).Media = tg.MakeTLMessageMediaContact(&tg.TLMessageMediaContact{
@@ -1407,9 +1618,9 @@ func TestMsgSendMessageV2ContactMediaReturnsTLUpdates(t *testing.T) {
 		UserId:      1571266964,
 	})
 
-	got, err := core.MsgSendMessageV2(req)
+	got, err := core.MsgSendMessage(req)
 	if err != nil {
-		t.Fatalf("MsgSendMessageV2() error = %v", err)
+		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
 	message := firstSentUpdateMessage(t, got)
 	media, ok := message.Media.(*tg.TLMessageMediaContact)
@@ -1421,16 +1632,16 @@ func TestMsgSendMessageV2ContactMediaReturnsTLUpdates(t *testing.T) {
 	}
 }
 
-func TestMsgSendMessageV2GroupedAndForwardReturnTLUpdates(t *testing.T) {
+func TestMsgSendMessageGroupedAndForwardReturnTLUpdates(t *testing.T) {
 	t.Run("grouped", func(t *testing.T) {
 		core := newSingleSendMsgCoreForTest(t, 100, 9102, 62)
 		req := sendMessageRequest(100, 200, 9001, "album caption")
 		groupedID := int64(7002)
 		req.Message[0].Message.(*tg.TLMessage).GroupedId = &groupedID
 
-		got, err := core.MsgSendMessageV2(req)
+		got, err := core.MsgSendMessage(req)
 		if err != nil {
-			t.Fatalf("MsgSendMessageV2() error = %v", err)
+			t.Fatalf("MsgSendMessage() error = %v", err)
 		}
 		message := firstSentUpdateMessage(t, got)
 		if message.GroupedId == nil || *message.GroupedId != groupedID {
@@ -1449,9 +1660,9 @@ func TestMsgSendMessageV2GroupedAndForwardReturnTLUpdates(t *testing.T) {
 			SavedFromMsgId: &sourceID,
 		})
 
-		got, err := core.MsgSendMessageV2(req)
+		got, err := core.MsgSendMessage(req)
 		if err != nil {
-			t.Fatalf("MsgSendMessageV2() error = %v", err)
+			t.Fatalf("MsgSendMessage() error = %v", err)
 		}
 		message := firstSentUpdateMessage(t, got)
 		if message.FwdFrom == nil {
@@ -1460,18 +1671,18 @@ func TestMsgSendMessageV2GroupedAndForwardReturnTLUpdates(t *testing.T) {
 	})
 }
 
-func TestMsgSendMessageV2BatchTooLargeFailsBeforeRepositoryBatchCreate(t *testing.T) {
+func TestMsgSendMessageBatchTooLargeFailsBeforeRepositoryBatchCreate(t *testing.T) {
 	core, fakeRepo, _ := newBatchMsgCoreForTest(t)
-	_, err := core.MsgSendMessageV2(buildBatchSendRequestForTest(100, 200, 9001, makeSequentialRandomIDsForTest(101)))
+	_, err := core.MsgSendMessage(buildBatchSendRequestForTest(100, 200, 9001, makeSequentialRandomIDsForTest(101)))
 	if !errors.Is(err, msgpb.ErrBatchTooLarge) {
-		t.Fatalf("MsgSendMessageV2() error = %v, want %v", err, msgpb.ErrBatchTooLarge)
+		t.Fatalf("MsgSendMessage() error = %v, want %v", err, msgpb.ErrBatchTooLarge)
 	}
 	if fakeRepo.batchCreateCalls != 0 {
 		t.Fatalf("batchCreateCalls = %d, want 0", fakeRepo.batchCreateCalls)
 	}
 }
 
-func TestMsgSendMessageV2ClearDraftWritesSenderOperationPayload(t *testing.T) {
+func TestMsgSendMessageClearDraftWritesSenderOperationPayload(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":2,"pts":15,"pts_count":1,"event_type":"new_message","user_message_id":45}`)
 	responseHash := mustHashBytes(t, responsePayload)
 	repo := &fakeMsgRepository{
@@ -1510,19 +1721,16 @@ func TestMsgSendMessageV2ClearDraftWritesSenderOperationPayload(t *testing.T) {
 	req.SourcePermAuthKeyId = &sourceAuth
 	req.ClearDraftBeforeDate = &clearBefore
 
-	if _, err := core.MsgSendMessageV2(req); err != nil {
-		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	if _, err := core.MsgSendMessage(req); err != nil {
+		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
-	var senderOp payload.MessageOperationV1
-	if err := json.Unmarshal(updatesClient.processed.Payload, &senderOp); err != nil {
-		t.Fatalf("decode sender payload: %v", err)
-	}
-	if !senderOp.ClearDraft || senderOp.SourcePermAuthKeyID != sourceAuth || senderOp.ClearDraftBeforeDate != clearBefore {
+	senderOp := mustDecodeMessageOperationV4(t, updatesClient.processed.Payload)
+	if !senderOp.MessageFact.ClearDraft || senderOp.MessageFact.SourcePermAuthKeyID != sourceAuth || senderOp.MessageFact.ClearDraftBeforeDate != clearBefore {
 		t.Fatalf("unexpected clear draft payload: %+v", senderOp)
 	}
 }
 
-func TestMsgSendMessageV2PeerTypeChatClearDraftSideEffect(t *testing.T) {
+func TestMsgSendMessagePeerTypeChatClearDraftSideEffect(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":2,"pts":22,"pts_count":1,"event_type":"new_message","user_message_id":43}`)
 	responseHash := mustHashBytes(t, responsePayload)
 	updatesClient := &fakeUserUpdatesClient{
@@ -1547,7 +1755,7 @@ func TestMsgSendMessageV2PeerTypeChatClearDraftSideEffect(t *testing.T) {
 
 	sourceAuth := int64(9001)
 	clearBefore := int32(1_772_000_049)
-	req := &msgpb.TLMsgSendMessageV2{
+	req := &msgpb.TLMsgSendMessage{
 		UserId:               1001,
 		AuthKeyId:            9001,
 		PeerType:             payload.PeerTypeChat,
@@ -1567,32 +1775,26 @@ func TestMsgSendMessageV2PeerTypeChatClearDraftSideEffect(t *testing.T) {
 		})},
 	}
 
-	if _, err := core.MsgSendMessageV2(req); err != nil {
-		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	if _, err := core.MsgSendMessage(req); err != nil {
+		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
 	if updatesClient.processWithEffects == nil {
 		t.Fatal("UserupdatesProcessUserOperationWithEffects was not called")
 	}
-	var senderOp payload.MessageOperationV3
-	if err := json.Unmarshal(updatesClient.processWithEffects.Operation.Payload, &senderOp); err != nil {
-		t.Fatalf("decode sender payload: %v", err)
-	}
-	if !senderOp.ClearDraft || senderOp.SourcePermAuthKeyID != sourceAuth || senderOp.ClearDraftBeforeDate != clearBefore {
+	senderOp := mustDecodeMessageOperationV4(t, updatesClient.processWithEffects.Operation.Payload)
+	if !senderOp.MessageFact.ClearDraft || senderOp.MessageFact.SourcePermAuthKeyID != sourceAuth || senderOp.MessageFact.ClearDraftBeforeDate != clearBefore {
 		t.Fatalf("sender clear draft payload = %+v, want clear draft side effect", senderOp)
 	}
 	if len(updatesClient.processWithEffects.AffectedEffects) != 1 {
 		t.Fatalf("affected effects = %d, want one receiver", len(updatesClient.processWithEffects.AffectedEffects))
 	}
-	var receiverOp payload.MessageOperationV3
-	if err := json.Unmarshal(updatesClient.processWithEffects.AffectedEffects[0].Operation.Payload, &receiverOp); err != nil {
-		t.Fatalf("decode receiver payload: %v", err)
-	}
-	if receiverOp.ClearDraft || receiverOp.SourcePermAuthKeyID != 0 || receiverOp.ClearDraftBeforeDate != 0 {
+	receiverOp := mustDecodeMessageOperationV4(t, updatesClient.processWithEffects.AffectedEffects[0].Operation.Payload)
+	if receiverOp.MessageFact.ClearDraft || receiverOp.MessageFact.SourcePermAuthKeyID != 0 || receiverOp.MessageFact.ClearDraftBeforeDate != 0 {
 		t.Fatalf("receiver payload carried sender draft side effect: %+v", receiverOp)
 	}
 }
 
-func TestMsgSendMessageV2ReceiverDispatchUsesBrokerDurableAck(t *testing.T) {
+func TestMsgSendMessageReceiverDispatchUsesBrokerDurableAck(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":2,"pts":17,"pts_count":1,"event_type":"new_message","user_message_id":47}`)
 	responseHash := mustHashBytes(t, responsePayload)
 	repo := &fakeMsgRepository{
@@ -1625,9 +1827,9 @@ func TestMsgSendMessageV2ReceiverDispatchUsesBrokerDurableAck(t *testing.T) {
 		ReceiverPublisher: publisher,
 	})
 
-	got, err := core.MsgSendMessageV2(sendMessageRequest(1001, 1002, 9001, "broker ack"))
+	got, err := core.MsgSendMessage(sendMessageRequest(1001, 1002, 9001, "broker ack"))
 	if err != nil {
-		t.Fatalf("MsgSendMessageV2() error = %v", err)
+		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
 	if _, ok := got.ToUpdateShortSentMessage(); !ok {
 		t.Fatalf("expected updateShortSentMessage, got %s", got.ClazzName())
@@ -1679,15 +1881,15 @@ func TestMsgSendMessageV2ReceiverDispatchUsesBrokerDurableAck(t *testing.T) {
 		ReceiverPublisher: publisher,
 	})
 
-	got, err = core.MsgSendMessageV2(sendMessageRequest(1001, 1002, 9001, "broker fail"))
+	got, err = core.MsgSendMessage(sendMessageRequest(1001, 1002, 9001, "broker fail"))
 	if err == nil {
-		t.Fatalf("MsgSendMessageV2() error = nil, got=%+v", got)
+		t.Fatalf("MsgSendMessage() error = nil, got=%+v", got)
 	}
 	if !errors.Is(err, msgpb.ErrReceiverBackpressure) {
-		t.Fatalf("MsgSendMessageV2() error = %v, want ErrReceiverBackpressure", err)
+		t.Fatalf("MsgSendMessage() error = %v, want ErrReceiverBackpressure", err)
 	}
 	if !errors.Is(err, publishErr) {
-		t.Fatalf("MsgSendMessageV2() error = %v, want upstream publish error", err)
+		t.Fatalf("MsgSendMessage() error = %v, want upstream publish error", err)
 	}
 	if publisher.calls != 1 {
 		t.Fatalf("publisher calls = %d, want 1", publisher.calls)
@@ -1719,7 +1921,7 @@ func TestMarshalSendRequestHashIgnoresClearDraftBeforeDate(t *testing.T) {
 	}
 }
 
-func TestMsgSendMessageV2ReplyToPayloadUsesPublicIDResolution(t *testing.T) {
+func TestMsgSendMessageReplyToPayloadUsesPublicIDResolution(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":2,"pts":16,"pts_count":1,"event_type":"new_message","user_message_id":43}`)
 	responseHash := mustHashBytes(t, responsePayload)
 	repo := &fakeMsgRepository{
@@ -1766,8 +1968,8 @@ func TestMsgSendMessageV2ReplyToPayloadUsesPublicIDResolution(t *testing.T) {
 		ReplyToMsgId: &replyToMsgID,
 	})
 
-	if _, err := core.MsgSendMessageV2(req); err != nil {
-		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	if _, err := core.MsgSendMessage(req); err != nil {
+		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
 	if repo.resolveInput.UserMessageID != 42 || repo.resolveInput.PeerSeq != 0 {
 		t.Fatalf("reply resolver input = %+v, want public user_message_id 42", repo.resolveInput)
@@ -1776,23 +1978,17 @@ func TestMsgSendMessageV2ReplyToPayloadUsesPublicIDResolution(t *testing.T) {
 		"sender":   updatesClient.processed.Payload,
 		"receiver": publisher.published.Payload,
 	} {
-		var raw map[string]any
-		if err := json.Unmarshal(body, &raw); err != nil {
-			t.Fatalf("decode %s payload: %v", name, err)
+		op := mustDecodeMessageOperationV4(t, body)
+		if op.MessageFact.ReplyToCanonicalMessageID != 7001 {
+			t.Fatalf("%s reply_to_canonical_message_id = %v, want 7001; payload=%s", name, op.MessageFact.ReplyToCanonicalMessageID, string(body))
 		}
-		if raw["reply_to_canonical_message_id"] != float64(7001) {
-			t.Fatalf("%s reply_to_canonical_message_id = %v, want 7001; payload=%s", name, raw["reply_to_canonical_message_id"], string(body))
-		}
-		if _, ok := raw["reply_to_peer_seq"]; ok {
-			t.Fatalf("%s payload leaked view peer_seq before projection: %s", name, string(body))
-		}
-		if _, ok := raw["reply_to_user_message_id"]; ok {
+		if op.MessageFact.ReplyToUserMessageID != 0 {
 			t.Fatalf("%s payload must not include reply_to_user_message_id for retry hash compatibility: %s", name, string(body))
 		}
 	}
 }
 
-func TestMsgSendMessageV2RecoversSenderCommitFromUserUpdatesResult(t *testing.T) {
+func TestMsgSendMessageRecoversSenderCommitFromUserUpdatesResult(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":2,"pts":12,"pts_count":1,"event_type":"new_message","user_message_id":44}`)
 	responseHash := mustHashBytes(t, responsePayload)
 	repo := &fakeMsgRepository{
@@ -1836,9 +2032,9 @@ func TestMsgSendMessageV2RecoversSenderCommitFromUserUpdatesResult(t *testing.T)
 		ReceiverPublisher: publisher,
 	})
 
-	got, err := core.MsgSendMessageV2(sendMessageRequest(1001, 1002, 9001, "recover"))
+	got, err := core.MsgSendMessage(sendMessageRequest(1001, 1002, 9001, "recover"))
 	if err != nil {
-		t.Fatalf("MsgSendMessageV2() error = %v", err)
+		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
 	if _, ok := got.ToUpdateShortSentMessage(); !ok {
 		t.Fatalf("expected updateShortSentMessage, got %s", got.ClazzName())
@@ -1854,7 +2050,7 @@ func TestMsgSendMessageV2RecoversSenderCommitFromUserUpdatesResult(t *testing.T)
 	}
 }
 
-func TestMsgSendMessageV2RetrySkipsCanonicalMarkWhenAlreadyCanonical(t *testing.T) {
+func TestMsgSendMessageRetrySkipsCanonicalMarkWhenAlreadyCanonical(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":2,"pts":13,"pts_count":1,"event_type":"new_message","user_message_id":46}`)
 	responseHash := mustHashBytes(t, responsePayload)
 	repo := &fakeMsgRepository{
@@ -1893,9 +2089,9 @@ func TestMsgSendMessageV2RetrySkipsCanonicalMarkWhenAlreadyCanonical(t *testing.
 		ReceiverPublisher: publisher,
 	})
 
-	got, err := core.MsgSendMessageV2(sendMessageRequest(1001, 1002, 9001, "retry"))
+	got, err := core.MsgSendMessage(sendMessageRequest(1001, 1002, 9001, "retry"))
 	if err != nil {
-		t.Fatalf("MsgSendMessageV2() error = %v", err)
+		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
 	if _, ok := got.ToUpdateShortSentMessage(); !ok {
 		t.Fatalf("expected updateShortSentMessage, got %s", got.ClazzName())
@@ -1908,7 +2104,7 @@ func TestMsgSendMessageV2RetrySkipsCanonicalMarkWhenAlreadyCanonical(t *testing.
 	}
 }
 
-func TestMsgSendMessageV2RetryableWithoutSenderResultReprocessesSender(t *testing.T) {
+func TestMsgSendMessageRetryableWithoutSenderResultReprocessesSender(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":2,"pts":15,"pts_count":1,"event_type":"new_message","user_message_id":50}`)
 	responseHash := mustHashBytes(t, responsePayload)
 	repo := &fakeMsgRepository{
@@ -1945,9 +2141,9 @@ func TestMsgSendMessageV2RetryableWithoutSenderResultReprocessesSender(t *testin
 		ReceiverPublisher: &fakeReceiverPublisher{},
 	})
 
-	got, err := core.MsgSendMessageV2(sendMessageRequest(1001, 1001, 9001, "retryable"))
+	got, err := core.MsgSendMessage(sendMessageRequest(1001, 1001, 9001, "retryable"))
 	if err != nil {
-		t.Fatalf("MsgSendMessageV2() error = %v", err)
+		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
 	short, ok := got.ToUpdateShortSentMessage()
 	if !ok {
@@ -1964,8 +2160,8 @@ func TestMsgSendMessageV2RetryableWithoutSenderResultReprocessesSender(t *testin
 	}
 }
 
-func TestMsgSendMessageV2SelfRetryUsesCommittedSenderState(t *testing.T) {
-	responsePayload := []byte(`{"schema_version":2,"pts":14,"pts_count":1,"event_type":"new_message","user_message_id":48}`)
+func TestMsgSendMessageSelfRetryUsesCommittedSenderState(t *testing.T) {
+	responsePayload := mustOperationResponseV3Payload(t, payload.SenderOperationID(5001, 1001), 14, 1, 48, 77, replyShortSentMessageForText(t, 48, 14, 1))
 	responseHash := mustHashBytes(t, responsePayload)
 	repo := &fakeMsgRepository{
 		sendState: &repository.SendState{
@@ -1996,9 +2192,9 @@ func TestMsgSendMessageV2SelfRetryUsesCommittedSenderState(t *testing.T) {
 		ReceiverPublisher: publisher,
 	})
 
-	got, err := core.MsgSendMessageV2(sendMessageRequest(1001, 1001, 9001, "self retry"))
+	got, err := core.MsgSendMessage(sendMessageRequest(1001, 1001, 9001, "self retry"))
 	if err != nil {
-		t.Fatalf("MsgSendMessageV2() error = %v", err)
+		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
 	short, ok := got.ToUpdateShortSentMessage()
 	if !ok {
@@ -3290,7 +3486,7 @@ func TestTask6DialogOperationIDsUseV2ResolvedIdentity(t *testing.T) {
 	}
 }
 
-func TestMsgEditMessageV2UpdatesCanonicalAndRoutesOperations(t *testing.T) {
+func TestMsgEditMessageUpdatesCanonicalAndRoutesOperations(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":2,"pts":41,"pts_count":1,"user_message_id":107}`)
 	responseHash := mustHashBytes(t, responsePayload)
 	repo := &fakeMsgRepository{
@@ -3336,9 +3532,9 @@ func TestMsgEditMessageV2UpdatesCanonicalAndRoutesOperations(t *testing.T) {
 		ReceiverPublisher: publisher,
 	})
 
-	got, err := core.MsgEditMessageV2(editMessageRequest(1001, 1002, 9001, 107, "edited"))
+	got, err := core.MsgEditMessage(editMessageRequest(1001, 1002, 9001, 107, "edited"))
 	if err != nil {
-		t.Fatalf("MsgEditMessageV2() error = %v", err)
+		t.Fatalf("MsgEditMessage() error = %v", err)
 	}
 	updates, ok := got.ToUpdates()
 	if !ok {
@@ -3391,7 +3587,7 @@ func TestMsgEditMessageV2UpdatesCanonicalAndRoutesOperations(t *testing.T) {
 	}
 }
 
-func TestMsgEditMessageV2OperationIDIncludesEditVersion(t *testing.T) {
+func TestMsgEditMessageOperationIDIncludesEditVersion(t *testing.T) {
 	first := editMessageOperationID(7001, 1, 1001)
 	second := editMessageOperationID(7001, 2, 1001)
 	if first == second {
@@ -3402,7 +3598,7 @@ func TestMsgEditMessageV2OperationIDIncludesEditVersion(t *testing.T) {
 	}
 }
 
-func TestMsgEditMessageV2ReceiverDispatchUsesBrokerDurableAck(t *testing.T) {
+func TestMsgEditMessageReceiverDispatchUsesBrokerDurableAck(t *testing.T) {
 	responsePayload := []byte(`{"schema_version":2,"pts":42,"pts_count":1,"user_message_id":108}`)
 	responseHash := mustHashBytes(t, responsePayload)
 	repo := &fakeMsgRepository{
@@ -3447,9 +3643,9 @@ func TestMsgEditMessageV2ReceiverDispatchUsesBrokerDurableAck(t *testing.T) {
 		ReceiverPublisher: publisher,
 	})
 
-	got, err := core.MsgEditMessageV2(editMessageRequest(1001, 1002, 9001, 108, "edited by broker ack"))
+	got, err := core.MsgEditMessage(editMessageRequest(1001, 1002, 9001, 108, "edited by broker ack"))
 	if err != nil {
-		t.Fatalf("MsgEditMessageV2() error = %v", err)
+		t.Fatalf("MsgEditMessage() error = %v", err)
 	}
 	if _, ok := got.ToUpdates(); !ok {
 		t.Fatalf("expected updates, got %s", got.ClazzName())
@@ -3510,22 +3706,22 @@ func TestMsgEditMessageV2ReceiverDispatchUsesBrokerDurableAck(t *testing.T) {
 		ReceiverPublisher: publisher,
 	})
 
-	got, err = core.MsgEditMessageV2(editMessageRequest(1001, 1002, 9001, 109, "edited fail"))
+	got, err = core.MsgEditMessage(editMessageRequest(1001, 1002, 9001, 109, "edited fail"))
 	if err == nil {
-		t.Fatalf("MsgEditMessageV2() error = nil, got=%+v", got)
+		t.Fatalf("MsgEditMessage() error = nil, got=%+v", got)
 	}
 	if !errors.Is(err, msgpb.ErrReceiverBackpressure) {
-		t.Fatalf("MsgEditMessageV2() error = %v, want ErrReceiverBackpressure", err)
+		t.Fatalf("MsgEditMessage() error = %v, want ErrReceiverBackpressure", err)
 	}
 	if !errors.Is(err, publishErr) {
-		t.Fatalf("MsgEditMessageV2() error = %v, want upstream publish error", err)
+		t.Fatalf("MsgEditMessage() error = %v, want upstream publish error", err)
 	}
 	if publisher.calls != 1 {
 		t.Fatalf("publisher calls = %d, want 1", publisher.calls)
 	}
 }
 
-func TestMsgEditMessageV2RejectsNonAuthor(t *testing.T) {
+func TestMsgEditMessageRejectsNonAuthor(t *testing.T) {
 	repo := &fakeMsgRepository{
 		resolveByUserMessageID: map[resolveMessageKey]*repository.ResolvedMessageID{
 			{userID: 1001, peerType: payload.PeerTypeUser, peerID: 1002, userMessageID: 107}: {
@@ -3541,9 +3737,9 @@ func TestMsgEditMessageV2RejectsNonAuthor(t *testing.T) {
 	}
 	core := New(context.Background(), &svc.ServiceContext{Repo: repo, UserUpdates: &fakeUserUpdatesClient{}, ReceiverPublisher: &fakeReceiverPublisher{}})
 
-	_, err := core.MsgEditMessageV2(editMessageRequest(1001, 1002, 9001, 107, "edited"))
+	_, err := core.MsgEditMessage(editMessageRequest(1001, 1002, 9001, 107, "edited"))
 	if !errors.Is(err, msgpb.ErrMessageAuthorRequired) {
-		t.Fatalf("MsgEditMessageV2 error = %v, want %v", err, msgpb.ErrMessageAuthorRequired)
+		t.Fatalf("MsgEditMessage error = %v, want %v", err, msgpb.ErrMessageAuthorRequired)
 	}
 }
 
@@ -3877,7 +4073,7 @@ func (f *fakeUserUpdatesClient) UserupdatesProcessUserOperation(_ context.Contex
 	if f.processErr != nil {
 		return nil, f.processErr
 	}
-	return f.nextProcessResult(), nil
+	return upgradeLegacyTestOperationResult(f.nextProcessResult(), in.Operation, false), nil
 }
 
 func (f *fakeUserUpdatesClient) UserupdatesProcessUserOperationBatch(_ context.Context, in *userupdates.TLUserupdatesProcessUserOperationBatch) (*userupdates.VectorUserOperationResult, error) {
@@ -3888,19 +4084,129 @@ func (f *fakeUserUpdatesClient) UserupdatesProcessUserOperationBatch(_ context.C
 		return nil, f.processErr
 	}
 	out := &userupdates.VectorUserOperationResult{Datas: make([]userupdates.UserOperationResultClazz, 0, len(in.Operations))}
-	for range in.Operations {
+	for _, operation := range in.Operations {
 		result := f.nextProcessResult()
 		if result == nil {
 			result = userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{Status: 1})
 		}
-		out.Datas = append(out.Datas, result)
+		out.Datas = append(out.Datas, upgradeLegacyTestOperationResult(result, operation, true))
 	}
 	return out, nil
 }
 
 func (f *fakeUserUpdatesClient) UserupdatesGetOperationResult(_ context.Context, _ *userupdates.TLUserupdatesGetOperationResult) (*userupdates.UserOperationResult, error) {
 	f.getOperationResultCalls++
-	return f.getResult, nil
+	return upgradeLegacyTestOperationResult(f.getResult, f.processed, false), nil
+}
+
+func upgradeLegacyTestOperationResult(result *userupdates.UserOperationResult, operation *userupdates.TLUserOperation, forceFull bool) *userupdates.UserOperationResult {
+	if result == nil || operation == nil || len(result.ResponsePayload) == 0 {
+		return result
+	}
+	var header struct {
+		SchemaVersion int `json:"schema_version"`
+	}
+	if err := json.Unmarshal(result.ResponsePayload, &header); err != nil || header.SchemaVersion != payload.OperationResponseSchemaVersion {
+		return result
+	}
+	var legacy payload.OperationResponseV2
+	if err := json.Unmarshal(result.ResponsePayload, &legacy); err != nil {
+		return result
+	}
+	var op payload.MessageOperationV4
+	if err := json.Unmarshal(operation.Payload, &op); err != nil || op.SchemaVersion != payload.MessageOperationSchemaVersionV4 {
+		return result
+	}
+	reply := legacyReplyUpdatesForTest(legacy, op, forceFull)
+	envelope, err := iface.EncodeObject(reply, 224)
+	if err != nil {
+		return result
+	}
+	responsePayload, err := json.Marshal(payload.OperationResponseV3{
+		SchemaVersion:       payload.OperationResponseSchemaVersionV3,
+		OperationID:         result.OperationId,
+		Pts:                 legacy.Pts,
+		PtsCount:            legacy.PtsCount,
+		EventType:           legacy.EventType,
+		UserMessageID:       legacy.UserMessageID,
+		ClientRandomID:      op.MessageFact.ClientRandomID,
+		ReplyEnvelope:       envelope,
+		ReplyEnvelopeCodec:  payload.ReplyEnvelopeCodecTLBinary,
+		ReplyEnvelopeSchema: payload.ReplyEnvelopeSchemaV1,
+	})
+	if err != nil {
+		return result
+	}
+	clone := *result
+	clone.ResponsePayload = responsePayload
+	clone.ResponsePayloadHash = payload.HashBytes(responsePayload)
+	return &clone
+}
+
+func mustDecodeMessageOperationV4(t *testing.T, body []byte) payload.MessageOperationV4 {
+	t.Helper()
+	var op payload.MessageOperationV4
+	if err := json.Unmarshal(body, &op); err != nil {
+		t.Fatalf("decode message operation v4: %v", err)
+	}
+	if op.SchemaVersion != payload.MessageOperationSchemaVersionV4 {
+		t.Fatalf("message operation schema = %d, want v4; payload=%s", op.SchemaVersion, string(body))
+	}
+	return op
+}
+
+func legacyReplyUpdatesForTest(response payload.OperationResponseV2, op payload.MessageOperationV4, forceFull bool) *tg.Updates {
+	messageID := int32(response.UserMessageID)
+	pts := int32(response.Pts)
+	fact := op.MessageFact
+	if !forceFull && fact.ServiceAction == nil && fact.MediaRef == nil && fact.ForwardRef == nil &&
+		len(fact.Entities) == 0 && fact.Attrs == nil && fact.ReplyToUserMessageID == 0 {
+		return tg.MakeTLUpdateShortSentMessage(&tg.TLUpdateShortSentMessage{
+			Out:      true,
+			Id:       messageID,
+			Pts:      pts,
+			PtsCount: response.PtsCount,
+			Date:     fact.Date,
+		}).ToUpdates()
+	}
+	message := tg.MessageClazz(tg.MakeTLMessage(&tg.TLMessage{
+		Out:         true,
+		Silent:      fact.Attrs != nil && fact.Attrs.Silent,
+		Noforwards:  fact.Attrs != nil && fact.Attrs.Noforwards,
+		InvertMedia: fact.Attrs != nil && fact.Attrs.InvertMedia,
+		Id:          messageID,
+		FromId:      tg.MakePeerUser(fact.SenderUserID),
+		PeerId:      sentMessagePeerFromOptional(fact.PeerType, fact.PeerID),
+		FwdFrom:     sentMessageForwardHeader(fact.ForwardRef),
+		ReplyTo:     sentMessageReplyHeader(fact.ReplyToUserMessageID),
+		Date:        fact.Date,
+		Message:     fact.MessageText,
+		Media:       sentMessageMedia(fact.MediaRef),
+		Entities:    sentMessageEntities(fact.Entities),
+		GroupedId:   sentMessageGroupedID(fact.Attrs),
+		TtlPeriod:   sentMessageTTLPeriod(fact.MediaRef),
+	}))
+	if fact.ServiceAction != nil {
+		action, _ := sentMessageServiceAction(fact.ServiceAction)
+		message = tg.MakeTLMessageService(&tg.TLMessageService{
+			Out:    true,
+			Silent: fact.Attrs != nil && fact.Attrs.Silent,
+			Id:     messageID,
+			FromId: tg.MakePeerUser(fact.SenderUserID),
+			PeerId: sentMessagePeerFromOptional(fact.PeerType, fact.PeerID),
+			Date:   fact.Date,
+			Action: action,
+		})
+	}
+	return tg.MakeTLUpdates(&tg.TLUpdates{
+		Updates: []tg.UpdateClazz{
+			tg.MakeTLUpdateMessageID(&tg.TLUpdateMessageID{Id: messageID, RandomId: fact.ClientRandomID}),
+			tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{Message: message, Pts: pts, PtsCount: response.PtsCount}),
+		},
+		Users: []tg.UserClazz{},
+		Chats: []tg.ChatClazz{},
+		Date:  fact.Date,
+	}).ToUpdates()
 }
 
 type fakeReceiverPublisher struct {
@@ -3926,8 +4232,8 @@ func (f *fakeReceiverPublisher) Publish(_ context.Context, op repository.Receive
 	return repository.KafkaAck{Topic: "memory", Partition: op.PartitionID, Offset: 0}, nil
 }
 
-func sendMessageRequest(senderID, peerID, authKeyID int64, text string) *msgpb.TLMsgSendMessageV2 {
-	return &msgpb.TLMsgSendMessageV2{
+func sendMessageRequest(senderID, peerID, authKeyID int64, text string) *msgpb.TLMsgSendMessage {
+	return &msgpb.TLMsgSendMessage{
 		UserId:    senderID,
 		AuthKeyId: authKeyID,
 		PeerType:  payload.PeerTypeUser,
@@ -3978,8 +4284,8 @@ func newBatchMsgCoreForTest(t *testing.T) (*MsgCore, *fakeMsgRepository, *fakeUs
 	return New(context.Background(), &svc.ServiceContext{Repo: fakeRepo, UserUpdates: fakeUpdates, ReceiverPublisher: publisher}), fakeRepo, fakeUpdates
 }
 
-func buildBatchSendRequestForTest(senderID, peerID, authKeyID int64, randomIDs []int64) *msgpb.TLMsgSendMessageV2 {
-	out := &msgpb.TLMsgSendMessageV2{
+func buildBatchSendRequestForTest(senderID, peerID, authKeyID int64, randomIDs []int64) *msgpb.TLMsgSendMessage {
+	out := &msgpb.TLMsgSendMessage{
 		UserId:    senderID,
 		AuthKeyId: authKeyID,
 		PeerType:  payload.PeerTypeUser,
@@ -3995,8 +4301,56 @@ func buildBatchSendRequestForTest(senderID, peerID, authKeyID int64, randomIDs [
 	return out
 }
 
-func buildMediaSendRequestForTest(senderID, peerID, authKeyID, randomID int64, caption string) *msgpb.TLMsgSendMessageV2 {
-	return &msgpb.TLMsgSendMessageV2{
+func chatCreateServiceSendRequest(senderID, chatID, authKeyID, randomID int64) *msgpb.TLMsgSendMessage {
+	return &msgpb.TLMsgSendMessage{
+		UserId:    senderID,
+		AuthKeyId: authKeyID,
+		PeerType:  payload.PeerTypeChat,
+		PeerId:    chatID,
+		Message: []msgpb.OutboxMessageClazz{msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
+			RandomId: randomID,
+			Message: tg.MakeTLMessageService(&tg.TLMessageService{
+				Out:    true,
+				FromId: tg.MakePeerUser(senderID),
+				PeerId: tg.MakePeerChat(chatID),
+				Date:   1778648899,
+				Action: tg.MakeTLMessageActionChatCreate(&tg.TLMessageActionChatCreate{
+					Title: "new chat",
+					Users: []int64{1002, 1003},
+				}),
+			}),
+		})},
+	}
+}
+
+func chatParticipantsChangedTLFact(t *testing.T, chatID, actorUserID int64, participantIDs []int64) msgpb.UpdateFactClazz {
+	t.Helper()
+	participants := make([]payload.ChatParticipantFactV1, 0, len(participantIDs))
+	for _, userID := range participantIDs {
+		participants = append(participants, payload.ChatParticipantFactV1{UserID: userID, Role: "member", InviterUserID: actorUserID, Date: 1_772_000_000})
+	}
+	fact, err := payload.WrapFact(payload.FactKindChatParticipantsChanged, payload.ChatParticipantsChangedFactV1{
+		SchemaVersion: 1,
+		ChatID:        chatID,
+		ActorUserID:   actorUserID,
+		Version:       1,
+		Participants:  participants,
+	})
+	if err != nil {
+		t.Fatalf("wrap chat participants fact: %v", err)
+	}
+	body, err := json.Marshal(fact)
+	if err != nil {
+		t.Fatalf("marshal update fact envelope: %v", err)
+	}
+	return msgpb.MakeTLUpdateFact(&msgpb.TLUpdateFact{
+		Kind:    fact.Kind,
+		Payload: body,
+	})
+}
+
+func buildMediaSendRequestForTest(senderID, peerID, authKeyID, randomID int64, caption string) *msgpb.TLMsgSendMessage {
+	return &msgpb.TLMsgSendMessage{
 		UserId:    senderID,
 		AuthKeyId: authKeyID,
 		PeerType:  payload.PeerTypeUser,
@@ -4025,9 +4379,9 @@ func buildMediaSendRequestForTest(senderID, peerID, authKeyID, randomID int64, c
 	}
 }
 
-func buildForwardSendRequestForTest(senderID, peerID, authKeyID, randomID, sourceUserMessageID int64) *msgpb.TLMsgSendMessageV2 {
+func buildForwardSendRequestForTest(senderID, peerID, authKeyID, randomID, sourceUserMessageID int64) *msgpb.TLMsgSendMessage {
 	sourceID := int32(sourceUserMessageID)
-	return &msgpb.TLMsgSendMessageV2{
+	return &msgpb.TLMsgSendMessage{
 		UserId:    senderID,
 		AuthKeyId: authKeyID,
 		PeerType:  payload.PeerTypeUser,
@@ -4143,6 +4497,138 @@ func testUserOperationResult(userID int64, operationID string, pts int64, respon
 	})
 }
 
+func mustOperationResponseV3Payload(t *testing.T, operationID string, pts int64, ptsCount int32, userMessageID, clientRandomID int64, updates *tg.Updates) []byte {
+	t.Helper()
+	replyEnvelope, err := iface.EncodeObject(updates, 224)
+	if err != nil {
+		t.Fatalf("encode reply updates: %v", err)
+	}
+	body, err := json.Marshal(payload.OperationResponseV3{
+		SchemaVersion:       payload.OperationResponseSchemaVersionV3,
+		OperationID:         operationID,
+		Pts:                 pts,
+		PtsCount:            ptsCount,
+		EventType:           payload.EventKindNewMessage,
+		UserMessageID:       userMessageID,
+		ClientRandomID:      clientRandomID,
+		ReplyEnvelope:       replyEnvelope,
+		ReplyEnvelopeCodec:  payload.ReplyEnvelopeCodecTLBinary,
+		ReplyEnvelopeSchema: payload.ReplyEnvelopeSchemaV1,
+	})
+	if err != nil {
+		t.Fatalf("marshal OperationResponseV3: %v", err)
+	}
+	return body
+}
+
+func mustMarshalOperationResponseV3(t *testing.T, response payload.OperationResponseV3) []byte {
+	t.Helper()
+	body, err := json.Marshal(response)
+	if err != nil {
+		t.Fatalf("marshal OperationResponseV3: %v", err)
+	}
+	return body
+}
+
+func replyUpdatesForText(t *testing.T, userMessageID int64, randomID int64, pts int64, ptsCount int32) *tg.Updates {
+	t.Helper()
+	messageID := int64ToTestInt32(t, userMessageID)
+	pts32 := int64ToTestInt32(t, pts)
+	return tg.MakeTLUpdates(&tg.TLUpdates{
+		Updates: []tg.UpdateClazz{
+			tg.MakeTLUpdateMessageID(&tg.TLUpdateMessageID{Id: messageID, RandomId: randomID}),
+			tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
+				Message: tg.MakeTLMessage(&tg.TLMessage{
+					Out:     true,
+					Id:      messageID,
+					FromId:  tg.MakePeerUser(1001),
+					PeerId:  tg.MakePeerUser(1002),
+					Date:    1_772_000_000,
+					Message: "hello",
+				}),
+				Pts:      pts32,
+				PtsCount: ptsCount,
+			}),
+		},
+		Users: []tg.UserClazz{tg.MakeTLUserEmpty(&tg.TLUserEmpty{Id: 1002})},
+		Date:  1_772_000_000,
+	}).ToUpdates()
+}
+
+func replyUpdatesForBatchEnvelope(t *testing.T, userMessageID int64, randomID int64, pts int64, ptsCount int32, text string, userID int64, chatID int64) *tg.Updates {
+	t.Helper()
+	messageID := int64ToTestInt32(t, userMessageID)
+	pts32 := int64ToTestInt32(t, pts)
+	return tg.MakeTLUpdates(&tg.TLUpdates{
+		Updates: []tg.UpdateClazz{
+			tg.MakeTLUpdateMessageID(&tg.TLUpdateMessageID{Id: messageID, RandomId: randomID}),
+			tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
+				Message: tg.MakeTLMessage(&tg.TLMessage{
+					Out:     true,
+					Id:      messageID,
+					FromId:  tg.MakePeerUser(100),
+					PeerId:  tg.MakePeerUser(200),
+					Date:    1_772_000_000,
+					Message: text,
+				}),
+				Pts:      pts32,
+				PtsCount: ptsCount,
+			}),
+		},
+		Users: []tg.UserClazz{tg.MakeTLUserEmpty(&tg.TLUserEmpty{Id: userID})},
+		Chats: []tg.ChatClazz{tg.MakeTLChatEmpty(&tg.TLChatEmpty{Id: chatID})},
+		Date:  1_772_000_000,
+	}).ToUpdates()
+}
+
+func replyShortSentMessageForText(t *testing.T, userMessageID int64, pts int64, ptsCount int32) *tg.Updates {
+	t.Helper()
+	return tg.MakeTLUpdateShortSentMessage(&tg.TLUpdateShortSentMessage{
+		Out:      true,
+		Id:       int64ToTestInt32(t, userMessageID),
+		Pts:      int64ToTestInt32(t, pts),
+		PtsCount: ptsCount,
+		Date:     1_772_000_000,
+	}).ToUpdates()
+}
+
+func replyUpdatesForChatService(t *testing.T, userMessageID int64, randomID int64, pts int64, ptsCount int32) *tg.Updates {
+	t.Helper()
+	messageID := int64ToTestInt32(t, userMessageID)
+	pts32 := int64ToTestInt32(t, pts)
+	return tg.MakeTLUpdates(&tg.TLUpdates{
+		Updates: []tg.UpdateClazz{
+			tg.MakeTLUpdateMessageID(&tg.TLUpdateMessageID{Id: messageID, RandomId: randomID}),
+			tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
+				Message: tg.MakeTLMessageService(&tg.TLMessageService{
+					Out:    true,
+					Id:     messageID,
+					FromId: tg.MakePeerUser(1001),
+					PeerId: tg.MakePeerChat(55),
+					Date:   1_772_000_000,
+					Action: tg.MakeTLMessageActionChatCreate(&tg.TLMessageActionChatCreate{
+						Title: "new chat",
+						Users: []int64{1002, 1003},
+					}),
+				}),
+				Pts:      pts32,
+				PtsCount: ptsCount,
+			}),
+		},
+		Users: []tg.UserClazz{tg.MakeTLUserEmpty(&tg.TLUserEmpty{Id: 1001})},
+		Chats: []tg.ChatClazz{tg.MakeTLChatEmpty(&tg.TLChatEmpty{Id: 55})},
+		Date:  1_772_000_000,
+	}).ToUpdates()
+}
+
+func int64ToTestInt32(t *testing.T, value int64) int32 {
+	t.Helper()
+	if value > int64(^uint32(0)>>1) || value < -int64(^uint32(0)>>1)-1 {
+		t.Fatalf("value %d does not fit int32", value)
+	}
+	return int32(value)
+}
+
 func makeSequentialRandomIDsForTest(count int) []int64 {
 	out := make([]int64, 0, count)
 	for i := 0; i < count; i++ {
@@ -4151,8 +4637,8 @@ func makeSequentialRandomIDsForTest(count int) []int64 {
 	return out
 }
 
-func editMessageRequest(userID, peerID, authKeyID int64, peerSeq int32, text string) *msgpb.TLMsgEditMessageV2 {
-	return &msgpb.TLMsgEditMessageV2{
+func editMessageRequest(userID, peerID, authKeyID int64, peerSeq int32, text string) *msgpb.TLMsgEditMessage {
+	return &msgpb.TLMsgEditMessage{
 		UserId:    userID,
 		AuthKeyId: authKeyID,
 		PeerType:  payload.PeerTypeUser,

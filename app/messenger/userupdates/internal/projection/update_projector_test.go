@@ -7,7 +7,8 @@ import (
 	"math"
 	"testing"
 
-	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/envelope"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/eventtypes"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -28,13 +29,13 @@ func TestProjectMessageEventNewMessageForDifference(t *testing.T) {
 		MessageText:        "hello",
 	})
 
-	got, err := ProjectUserEvent(repository.UserEvent{
+	got, err := ProjectUserEvent(eventtypes.UserEvent{
 		UserID:             1001,
 		Pts:                18,
 		PtsCount:           1,
-		EventType:          repository.EventTypeNewMessage,
+		EventType:          eventtypes.EventTypeNewMessage,
 		EventSchemaVersion: payload.MessageEventSchemaVersion,
-		EventCodec:         repository.PayloadCodecJSON,
+		EventCodec:         eventtypes.PayloadCodecJSON,
 		EventPayload:       body,
 		EventPayloadHash:   payload.HashBytes(body),
 	}, ModeDifference)
@@ -64,6 +65,318 @@ func TestProjectMessageEventNewMessageForDifference(t *testing.T) {
 	}
 	if update.Message != got.Message || update.Pts != 18 || update.PtsCount != 1 {
 		t.Fatalf("update = %+v", update)
+	}
+}
+
+func TestProjectNewMessageFactComputesOutFromViewer(t *testing.T) {
+	fact := payload.NewMessageFactV1{
+		SchemaVersion: payload.MessageOperationSchemaVersionV4,
+		PeerType:      payload.PeerTypeChat,
+		PeerID:        55,
+		SenderUserID:  1001,
+		Date:          1_772_000_000,
+		MessageText:   "hello chat",
+	}
+
+	got, err := ProjectNewMessageFact(fact, ViewerContext{UserID: 1001}, envelope.ModeDifference, 18, 1, 101)
+	if err != nil {
+		t.Fatalf("ProjectNewMessageFact() error = %v", err)
+	}
+	message := mustUpdateNewMessage(t, got[0]).Message.(*tg.TLMessage)
+	if !message.Out {
+		t.Fatalf("message.Out = false, want true for sender viewer")
+	}
+	from, ok := message.FromId.(*tg.TLPeerUser)
+	if !ok || from.UserId != 1001 {
+		t.Fatalf("message.FromId = %#v, want peerUser(1001)", message.FromId)
+	}
+	peer, ok := message.PeerId.(*tg.TLPeerChat)
+	if !ok || peer.ChatId != 55 {
+		t.Fatalf("message.PeerId = %#v, want peerChat(55)", message.PeerId)
+	}
+
+	got, err = ProjectNewMessageFact(fact, ViewerContext{UserID: 1002}, envelope.ModeDifference, 19, 1, 102)
+	if err != nil {
+		t.Fatalf("ProjectNewMessageFact() error = %v", err)
+	}
+	message = mustUpdateNewMessage(t, got[0]).Message.(*tg.TLMessage)
+	if message.Out {
+		t.Fatalf("message.Out = true, want false for non-sender viewer")
+	}
+}
+
+func TestProjectNewMessageFactPrivatePeerFromIDParity(t *testing.T) {
+	fact := payload.NewMessageFactV1{
+		SchemaVersion: payload.MessageOperationSchemaVersionV4,
+		PeerType:      payload.PeerTypeUser,
+		PeerID:        2002,
+		SenderUserID:  1001,
+		Date:          1_772_000_000,
+		MessageText:   "hello private",
+	}
+
+	inbound, err := ProjectNewMessageFact(fact, ViewerContext{UserID: 2002}, envelope.ModeDifference, 18, 1, 101)
+	if err != nil {
+		t.Fatalf("ProjectNewMessageFact(inbound) error = %v", err)
+	}
+	inboundMessage := mustUpdateNewMessage(t, inbound[0]).Message.(*tg.TLMessage)
+	if inboundMessage.Out {
+		t.Fatalf("inbound message.Out = true, want false")
+	}
+	if inboundMessage.FromId != nil {
+		t.Fatalf("inbound message.FromId = %#v, want nil for private receiver projection", inboundMessage.FromId)
+	}
+
+	outbound, err := ProjectNewMessageFact(fact, ViewerContext{UserID: 1001}, envelope.ModeDifference, 19, 1, 102)
+	if err != nil {
+		t.Fatalf("ProjectNewMessageFact(outbound) error = %v", err)
+	}
+	outboundMessage := mustUpdateNewMessage(t, outbound[0]).Message.(*tg.TLMessage)
+	if !outboundMessage.Out {
+		t.Fatalf("outbound message.Out = false, want true")
+	}
+	from, ok := outboundMessage.FromId.(*tg.TLPeerUser)
+	if !ok || from.UserId != 1001 {
+		t.Fatalf("outbound message.FromId = %#v, want peerUser(1001)", outboundMessage.FromId)
+	}
+}
+
+func TestProjectNewMessageFactPreservesClientRandomIDOutOfUpdate(t *testing.T) {
+	fact := payload.NewMessageFactV1{
+		SchemaVersion:  payload.MessageOperationSchemaVersionV4,
+		PeerType:       payload.PeerTypeUser,
+		PeerID:         1002,
+		SenderUserID:   1001,
+		ClientRandomID: 987654321,
+		Date:           1_772_000_000,
+		MessageText:    "hello",
+	}
+
+	got, err := ProjectNewMessageFact(fact, ViewerContext{UserID: 1001}, envelope.ModeDifference, 18, 1, 101)
+	if err != nil {
+		t.Fatalf("ProjectNewMessageFact() error = %v", err)
+	}
+	if len(got) != 1 {
+		t.Fatalf("projected update count = %d, want 1", len(got))
+	}
+	if _, ok := got[0].Update.(*tg.TLUpdateMessageID); ok {
+		t.Fatalf("projected update = %T, want no updateMessageID from projector", got[0].Update)
+	}
+	update := mustUpdateNewMessage(t, got[0])
+	message, ok := update.Message.(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessage", update.Message)
+	}
+	if message.Id != 101 || update.Pts != 18 || update.PtsCount != 1 {
+		t.Fatalf("projected update = %+v message = %+v", update, message)
+	}
+}
+
+func TestProjectUserEventV4UsesSharedFactsInPayloadOrder(t *testing.T) {
+	chatFact, err := payload.WrapFact(payload.FactKindChatParticipantsChanged, payload.ChatParticipantsChangedFactV1{
+		SchemaVersion: payload.MessageOperationSchemaVersionV4,
+		ChatID:        55,
+		ActorUserID:   1001,
+		Version:       1,
+		Participants: []payload.ChatParticipantFactV1{
+			{UserID: 1001, Role: "creator", Date: 1_772_000_000},
+			{UserID: 1002, Role: "member", InviterUserID: 1001, Date: 1_772_000_000},
+		},
+	})
+	if err != nil {
+		t.Fatalf("WrapFact(chat participants) error = %v", err)
+	}
+	body := mustMarshalMessageEventV4(t, payload.MessageEventV4{
+		SchemaVersion: payload.MessageEventSchemaVersionV4,
+		EventKind:     payload.EventKindNewMessage,
+		MessageFact: payload.NewMessageFactV1{
+			SchemaVersion:        payload.MessageOperationSchemaVersionV4,
+			CanonicalMessageID:   7002,
+			PeerType:             payload.PeerTypeChat,
+			PeerID:               55,
+			PeerSeq:              1,
+			SenderUserID:         1001,
+			ClientRandomID:       123456789,
+			Date:                 1_772_000_000,
+			ReplyToUserMessageID: 99,
+			ServiceAction: &payload.ServiceActionRefV1{
+				SchemaVersion: payload.ServiceActionSchemaVersionV1,
+				Kind:          payload.ServiceActionKindChatCreate,
+				Title:         "v4 chat",
+				Users:         []int64{1001, 1002},
+			},
+		},
+		AttachFacts: []payload.UpdateFactV1{chatFact},
+		MessageID:   101,
+		Pts:         18,
+		PtsCount:    1,
+	})
+
+	got, err := ProjectUserEvent(eventtypes.UserEvent{
+		UserID:             1001,
+		Pts:                18,
+		PtsCount:           1,
+		EventType:          eventtypes.EventTypeNewMessage,
+		PeerType:           payload.PeerTypeChat,
+		PeerID:             55,
+		EventSchemaVersion: payload.MessageEventSchemaVersionV4,
+		EventCodec:         eventtypes.PayloadCodecJSON,
+		EventPayload:       body,
+		EventPayloadHash:   payload.HashBytes(body),
+	}, ModeDifference)
+	if err != nil {
+		t.Fatalf("ProjectUserEvent(V4) error = %v", err)
+	}
+	if len(got.OtherUpdates) != 2 {
+		t.Fatalf("OtherUpdates len = %d, want 2", len(got.OtherUpdates))
+	}
+	if _, ok := got.OtherUpdates[0].(*tg.TLUpdateChatParticipants); !ok {
+		t.Fatalf("first update = %T, want *tg.TLUpdateChatParticipants", got.OtherUpdates[0])
+	}
+	newMessage, ok := got.OtherUpdates[1].(*tg.TLUpdateNewMessage)
+	if !ok {
+		t.Fatalf("second update = %T, want *tg.TLUpdateNewMessage", got.OtherUpdates[1])
+	}
+	service, ok := newMessage.Message.(*tg.TLMessageService)
+	if !ok {
+		t.Fatalf("new message = %T, want *tg.TLMessageService", newMessage.Message)
+	}
+	if got.Message != service {
+		t.Fatalf("Result.Message = %T, want projected service message", got.Message)
+	}
+	if _, ok := service.Action.(*tg.TLMessageActionChatCreate); !ok {
+		t.Fatalf("service action = %T, want *tg.TLMessageActionChatCreate", service.Action)
+	}
+	if service.Id != 101 || !service.Out {
+		t.Fatalf("service message = %+v, want id=101 outgoing", service)
+	}
+	reply, ok := service.ReplyTo.(*tg.TLMessageReplyHeader)
+	if !ok || reply.ReplyToMsgId == nil || *reply.ReplyToMsgId != 99 {
+		t.Fatalf("reply header = %+v ok=%v, want reply_to_msg_id=99", reply, ok)
+	}
+}
+
+func TestProjectPushTaskV4UpdatesProjectsRawFactUpdatesWithoutPushEnvelope(t *testing.T) {
+	chatFact, err := payload.WrapFact(payload.FactKindChatParticipantsChanged, payload.ChatParticipantsChangedFactV1{
+		SchemaVersion: payload.MessageOperationSchemaVersionV4,
+		ChatID:        55,
+		ActorUserID:   1001,
+		Version:       1,
+		Participants: []payload.ChatParticipantFactV1{
+			{UserID: 1001, Role: "creator", Date: 1_772_000_000},
+			{UserID: 1002, Role: "member", InviterUserID: 1001, Date: 1_772_000_000},
+		},
+	})
+	if err != nil {
+		t.Fatalf("WrapFact(chat participants) error = %v", err)
+	}
+	excludedAuthKeyID := int64(9001)
+	body := mustMarshalMessageEventV4(t, payload.MessageEventV4{
+		SchemaVersion: payload.MessageEventSchemaVersionV4,
+		EventKind:     payload.EventKindNewMessage,
+		MessageFact: payload.NewMessageFactV1{
+			SchemaVersion:      payload.MessageOperationSchemaVersionV4,
+			CanonicalMessageID: 7003,
+			PeerType:           payload.PeerTypeChat,
+			PeerID:             55,
+			PeerSeq:            1,
+			SenderUserID:       1001,
+			Date:               1_772_000_000,
+			ServiceAction: &payload.ServiceActionRefV1{
+				SchemaVersion: payload.ServiceActionSchemaVersionV1,
+				Kind:          payload.ServiceActionKindChatCreate,
+				Title:         "v4 chat",
+				Users:         []int64{1001, 1002},
+			},
+		},
+		AttachFacts:      []payload.UpdateFactV1{chatFact},
+		MessageID:        102,
+		Pts:              19,
+		PtsCount:         1,
+		AuthKeyIdExclude: &excludedAuthKeyID,
+	})
+
+	got, err := ProjectPushTaskV4Updates(&payload.PushTaskKafkaMessageV1{
+		SchemaVersion: payload.PushTaskKafkaMessageSchemaVersion,
+		TaskID:        11,
+		UserID:        1001,
+		Pts:           19,
+		PushType:      1,
+		PeerType:      payload.PeerTypeChat,
+		PeerID:        55,
+		OperationID:   "v4-push",
+		Payload:       body,
+	})
+	if err != nil {
+		t.Fatalf("ProjectPushTaskV4Updates() error = %v", err)
+	}
+	if got.Updates != nil {
+		t.Fatalf("Updates = %T, want nil raw projection without push envelope", got.Updates)
+	}
+	if got.AuthKeyIDExclude == nil || *got.AuthKeyIDExclude != excludedAuthKeyID {
+		t.Fatalf("AuthKeyIDExclude = %v, want %d", got.AuthKeyIDExclude, excludedAuthKeyID)
+	}
+	if len(got.OtherUpdates) != 2 {
+		t.Fatalf("updates len = %d, want 2", len(got.OtherUpdates))
+	}
+	if _, ok := got.OtherUpdates[0].(*tg.TLUpdateChatParticipants); !ok {
+		t.Fatalf("first update = %T, want *tg.TLUpdateChatParticipants", got.OtherUpdates[0])
+	}
+	newMessage, ok := got.OtherUpdates[1].(*tg.TLUpdateNewMessage)
+	if !ok {
+		t.Fatalf("second update = %T, want *tg.TLUpdateNewMessage", got.OtherUpdates[1])
+	}
+	service, ok := newMessage.Message.(*tg.TLMessageService)
+	if !ok {
+		t.Fatalf("new message = %T, want *tg.TLMessageService", newMessage.Message)
+	}
+	if service.Id != 102 || newMessage.Pts != 19 || newMessage.PtsCount != 1 {
+		t.Fatalf("service/update = %+v/%+v", service, newMessage)
+	}
+	if _, ok := service.Action.(*tg.TLMessageActionChatCreate); !ok {
+		t.Fatalf("service action = %T, want *tg.TLMessageActionChatCreate", service.Action)
+	}
+}
+
+func TestProjectNewMessageFactRejectsInvalidSenderID(t *testing.T) {
+	_, err := ProjectNewMessageFact(payload.NewMessageFactV1{
+		SchemaVersion: payload.MessageOperationSchemaVersionV4,
+		PeerType:      payload.PeerTypeUser,
+		PeerID:        1002,
+		SenderUserID:  0,
+		Date:          1_772_000_000,
+		MessageText:   "hello",
+	}, ViewerContext{UserID: 1001}, envelope.ModeDifference, 18, 1, 101)
+	if !errors.Is(err, userupdates.ErrUserupdatesStorage) {
+		t.Fatalf("error = %v, want ErrUserupdatesStorage", err)
+	}
+}
+
+func TestProjectNewMessageFactRejectsInvalidPeerID(t *testing.T) {
+	_, err := ProjectNewMessageFact(payload.NewMessageFactV1{
+		SchemaVersion: payload.MessageOperationSchemaVersionV4,
+		PeerType:      payload.PeerTypeUser,
+		PeerID:        0,
+		SenderUserID:  1001,
+		Date:          1_772_000_000,
+		MessageText:   "hello",
+	}, ViewerContext{UserID: 1001}, envelope.ModeDifference, 18, 1, 101)
+	if !errors.Is(err, userupdates.ErrUserupdatesStorage) {
+		t.Fatalf("error = %v, want ErrUserupdatesStorage", err)
+	}
+}
+
+func TestProjectNewMessageFactRejectsUnsupportedPeerType(t *testing.T) {
+	_, err := ProjectNewMessageFact(payload.NewMessageFactV1{
+		SchemaVersion: payload.MessageOperationSchemaVersionV4,
+		PeerType:      99,
+		PeerID:        1002,
+		SenderUserID:  1001,
+		Date:          1_772_000_000,
+		MessageText:   "hello",
+	}, ViewerContext{UserID: 1001}, envelope.ModeDifference, 18, 1, 101)
+	if !errors.Is(err, userupdates.ErrUserupdatesStorage) {
+		t.Fatalf("error = %v, want ErrUserupdatesStorage", err)
 	}
 }
 
@@ -174,15 +487,15 @@ func TestProjectDeleteMessagesForDifferenceUsesPublicIDs(t *testing.T) {
 		DeleteUserMessageIDs: []int64{107, 108},
 	})
 
-	got, err := ProjectUserEvent(repository.UserEvent{
+	got, err := ProjectUserEvent(eventtypes.UserEvent{
 		UserID:             1001,
 		Pts:                31,
 		PtsCount:           1,
-		EventType:          repository.EventTypeDeleteMessages,
+		EventType:          eventtypes.EventTypeDeleteMessages,
 		PeerType:           payload.PeerTypeUser,
 		PeerID:             1002,
 		EventSchemaVersion: payload.MessageEventSchemaVersion,
-		EventCodec:         repository.PayloadCodecJSON,
+		EventCodec:         eventtypes.PayloadCodecJSON,
 		EventPayload:       body,
 		EventPayloadHash:   payload.HashBytes(body),
 	}, ModeDifference)
@@ -294,15 +607,15 @@ func TestProjectUpdatePinnedMessageUsesPublicMessageIDForDifference(t *testing.T
 		Date:                1_772_000_000,
 	})
 
-	got, err := ProjectUserEvent(repository.UserEvent{
+	got, err := ProjectUserEvent(eventtypes.UserEvent{
 		UserID:             1001,
 		Pts:                21,
 		PtsCount:           1,
-		EventType:          repository.EventTypeUpdatePinnedMessage,
+		EventType:          eventtypes.EventTypeUpdatePinnedMessage,
 		PeerType:           payload.PeerTypeUser,
 		PeerID:             1002,
 		EventSchemaVersion: payload.MessageEventSchemaVersion,
-		EventCodec:         repository.PayloadCodecJSON,
+		EventCodec:         eventtypes.PayloadCodecJSON,
 		EventPayload:       body,
 		EventPayloadHash:   payload.HashBytes(body),
 	}, ModeDifference)
@@ -386,12 +699,12 @@ func TestProjectRejectsPayloadHashMismatch(t *testing.T) {
 		Date:          1_772_000_000,
 	})
 
-	_, err := ProjectUserEvent(repository.UserEvent{
+	_, err := ProjectUserEvent(eventtypes.UserEvent{
 		Pts:                18,
 		PtsCount:           1,
-		EventType:          repository.EventTypeNewMessage,
+		EventType:          eventtypes.EventTypeNewMessage,
 		EventSchemaVersion: payload.MessageEventSchemaVersion,
-		EventCodec:         repository.PayloadCodecJSON,
+		EventCodec:         eventtypes.PayloadCodecJSON,
 		EventPayload:       body,
 		EventPayloadHash:   payload.HashBytes([]byte("different")),
 	}, ModeDifference)
@@ -416,13 +729,13 @@ func TestProjectMessageEventV2UsesReplyPublicID(t *testing.T) {
 		MessageText:          "reply",
 	})
 
-	got, err := ProjectUserEvent(repository.UserEvent{
+	got, err := ProjectUserEvent(eventtypes.UserEvent{
 		UserID:             1001,
 		Pts:                18,
 		PtsCount:           1,
-		EventType:          repository.EventTypeNewMessage,
+		EventType:          eventtypes.EventTypeNewMessage,
 		EventSchemaVersion: payload.MessageEventSchemaVersion,
-		EventCodec:         repository.PayloadCodecJSON,
+		EventCodec:         eventtypes.PayloadCodecJSON,
 		EventPayload:       body,
 		EventPayloadHash:   payload.HashBytes(body),
 	}, ModeDifference)
@@ -456,13 +769,13 @@ func TestProjectMessageEventV1LegacyCompatibility(t *testing.T) {
 		MessageText:        "legacy",
 	})
 
-	_, err := ProjectUserEvent(repository.UserEvent{
+	_, err := ProjectUserEvent(eventtypes.UserEvent{
 		UserID:             1001,
 		Pts:                18,
 		PtsCount:           1,
-		EventType:          repository.EventTypeNewMessage,
+		EventType:          eventtypes.EventTypeNewMessage,
 		EventSchemaVersion: payload.MessageEventSchemaVersionV1,
-		EventCodec:         repository.PayloadCodecJSON,
+		EventCodec:         eventtypes.PayloadCodecJSON,
 		EventPayload:       body,
 		EventPayloadHash:   payload.HashBytes(body),
 	}, ModeDifference)
@@ -486,13 +799,13 @@ func TestProjectMessageEventV2Compatibility(t *testing.T) {
 		MessageText:        "v2",
 	})
 
-	got, err := ProjectUserEvent(repository.UserEvent{
+	got, err := ProjectUserEvent(eventtypes.UserEvent{
 		UserID:             1001,
 		Pts:                18,
 		PtsCount:           1,
-		EventType:          repository.EventTypeNewMessage,
+		EventType:          eventtypes.EventTypeNewMessage,
 		EventSchemaVersion: payload.MessageEventSchemaVersion,
-		EventCodec:         repository.PayloadCodecJSON,
+		EventCodec:         eventtypes.PayloadCodecJSON,
 		EventPayload:       body,
 		EventPayloadHash:   payload.HashBytes(body),
 	}, ModeDifference)
@@ -624,13 +937,13 @@ func TestProjectMessageEventV3PhotoSizesSurviveJSONProjection(t *testing.T) {
 		},
 	})
 
-	got, err := ProjectUserEvent(repository.UserEvent{
+	got, err := ProjectUserEvent(eventtypes.UserEvent{
 		UserID:             202,
 		Pts:                24,
 		PtsCount:           1,
-		EventType:          repository.EventTypeNewMessage,
+		EventType:          eventtypes.EventTypeNewMessage,
 		EventSchemaVersion: payload.MessageEventSchemaVersionV3,
-		EventCodec:         repository.PayloadCodecJSON,
+		EventCodec:         eventtypes.PayloadCodecJSON,
 		EventPayload:       body,
 		EventPayloadHash:   payload.HashBytes(body),
 	}, ModeDifference)
@@ -820,13 +1133,13 @@ func TestProjectMessageEventV3FullMessagePreservesEntities(t *testing.T) {
 			{Offset: 6, Length: 4, Kind: "mention_name", UserID: 303},
 		},
 	})
-	got, err := ProjectUserEvent(repository.UserEvent{
+	got, err := ProjectUserEvent(eventtypes.UserEvent{
 		UserID:             202,
 		Pts:                23,
 		PtsCount:           1,
-		EventType:          repository.EventTypeNewMessage,
+		EventType:          eventtypes.EventTypeNewMessage,
 		EventSchemaVersion: payload.MessageEventSchemaVersionV3,
-		EventCodec:         repository.PayloadCodecJSON,
+		EventCodec:         eventtypes.PayloadCodecJSON,
 		EventPayload:       body,
 		EventPayloadHash:   payload.HashBytes(body),
 	}, ModeDifference)
@@ -878,13 +1191,13 @@ func TestProjectMessageEventV3DocumentMedia(t *testing.T) {
 			},
 		},
 	})
-	got, err := ProjectUserEvent(repository.UserEvent{
+	got, err := ProjectUserEvent(eventtypes.UserEvent{
 		UserID:             1001,
 		Pts:                21,
 		PtsCount:           1,
-		EventType:          repository.EventTypeNewMessage,
+		EventType:          eventtypes.EventTypeNewMessage,
 		EventSchemaVersion: payload.MessageEventSchemaVersionV3,
-		EventCodec:         repository.PayloadCodecJSON,
+		EventCodec:         eventtypes.PayloadCodecJSON,
 		EventPayload:       body,
 		EventPayloadHash:   payload.HashBytes(body),
 	}, ModeDifference)
@@ -962,13 +1275,13 @@ func TestProjectMessageEventV3DocumentMediaProjectsFullUploadedDocumentContract(
 			VideoTimestamp: &videoTimestamp,
 		},
 	})
-	got, err := ProjectUserEvent(repository.UserEvent{
+	got, err := ProjectUserEvent(eventtypes.UserEvent{
 		UserID:             1001,
 		Pts:                21,
 		PtsCount:           1,
-		EventType:          repository.EventTypeNewMessage,
+		EventType:          eventtypes.EventTypeNewMessage,
 		EventSchemaVersion: payload.MessageEventSchemaVersionV3,
-		EventCodec:         repository.PayloadCodecJSON,
+		EventCodec:         eventtypes.PayloadCodecJSON,
 		EventPayload:       body,
 		EventPayloadHash:   payload.HashBytes(body),
 	}, ModeDifference)
@@ -1096,13 +1409,13 @@ func TestProjectMessageEventV3ContactMedia(t *testing.T) {
 			UserID:        1571266964,
 		},
 	})
-	got, err := ProjectUserEvent(repository.UserEvent{
+	got, err := ProjectUserEvent(eventtypes.UserEvent{
 		UserID:             1001,
 		Pts:                21,
 		PtsCount:           1,
-		EventType:          repository.EventTypeNewMessage,
+		EventType:          eventtypes.EventTypeNewMessage,
 		EventSchemaVersion: payload.MessageEventSchemaVersionV3,
-		EventCodec:         repository.PayloadCodecJSON,
+		EventCodec:         eventtypes.PayloadCodecJSON,
 		EventPayload:       body,
 		EventPayloadHash:   payload.HashBytes(body),
 	}, ModeDifference)
@@ -1204,13 +1517,13 @@ func TestProjectMessageEventV3RejectsOutOfRangeForwardDate(t *testing.T) {
 		MessageText:        "forward",
 		ForwardRef:         &payload.ForwardRefV1{SchemaVersion: payload.ForwardRefSchemaVersionV1, FromUserID: 303, Date: int64(math.MaxInt32) + 1},
 	})
-	_, err := ProjectUserEvent(repository.UserEvent{
+	_, err := ProjectUserEvent(eventtypes.UserEvent{
 		UserID:             1001,
 		Pts:                22,
 		PtsCount:           1,
-		EventType:          repository.EventTypeNewMessage,
+		EventType:          eventtypes.EventTypeNewMessage,
 		EventSchemaVersion: payload.MessageEventSchemaVersionV3,
-		EventCodec:         repository.PayloadCodecJSON,
+		EventCodec:         eventtypes.PayloadCodecJSON,
 		EventPayload:       body,
 		EventPayloadHash:   payload.HashBytes(body),
 	}, ModeDifference)
@@ -1233,13 +1546,13 @@ func TestProjectRejectsUnhydratedLegacyV1MessageID(t *testing.T) {
 		MessageText:        "legacy",
 	})
 
-	_, err := ProjectUserEvent(repository.UserEvent{
+	_, err := ProjectUserEvent(eventtypes.UserEvent{
 		UserID:             1001,
 		Pts:                18,
 		PtsCount:           1,
-		EventType:          repository.EventTypeNewMessage,
+		EventType:          eventtypes.EventTypeNewMessage,
 		EventSchemaVersion: payload.MessageEventSchemaVersionV1,
-		EventCodec:         repository.PayloadCodecJSON,
+		EventCodec:         eventtypes.PayloadCodecJSON,
 		EventPayload:       body,
 		EventPayloadHash:   payload.HashBytes(body),
 	}, ModeDifference)
@@ -1262,6 +1575,15 @@ func mustMarshalMessageEventV3(t *testing.T, event payload.MessageEventV3) []byt
 	body, err := json.Marshal(event)
 	if err != nil {
 		t.Fatalf("marshal MessageEventV3: %v", err)
+	}
+	return body
+}
+
+func mustMarshalMessageEventV4(t *testing.T, event payload.MessageEventV4) []byte {
+	t.Helper()
+	body, err := json.Marshal(event)
+	if err != nil {
+		t.Fatalf("marshal MessageEventV4: %v", err)
 	}
 	return body
 }

@@ -15,10 +15,11 @@ const (
 	ClazzID_outboxMessage                     = 0x625d8b25 // 625d8b25
 	ClazzID_contentMessage                    = 0x8d64b133 // 8d64b133
 	ClazzID_resolvedDialogCursor              = 0x7debda91 // 7debda91
+	ClazzID_updateFact                        = 0x4561a083 // 4561a083
 	ClazzID_msg_pushUserMessage               = 0x35d0fa1a // 35d0fa1a
 	ClazzID_msg_readMessageContents           = 0x282484d4 // 282484d4
-	ClazzID_msg_sendMessageV2                 = 0x1c17890c // 1c17890c
-	ClazzID_msg_editMessageV2                 = 0x69fe5fe1 // 69fe5fe1
+	ClazzID_msg_sendMessage                   = 0x93e882df // 93e882df
+	ClazzID_msg_editMessage                   = 0x1ddc94   // 1ddc94
 	ClazzID_msg_deleteMessages                = 0x21e80a1d // 21e80a1d
 	ClazzID_msg_deleteHistory                 = 0x75c0e8ca // 75c0e8ca
 	ClazzID_msg_deletePhoneCallHistory        = 0x26b7a13e // 26b7a13e

@@ -9,6 +9,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 func TestApplyUserOperationBatchEmptyReturnsEmptyResult(t *testing.T) {
@@ -150,6 +155,131 @@ func TestBuildEventAndResponseV3CarriesMediaAttrsForward(t *testing.T) {
 	}
 	if response.UserMessageID != 101 {
 		t.Fatalf("response user_message_id = %d, want 101", response.UserMessageID)
+	}
+}
+
+func TestV4CreateChatReplyProjectsParticipantsMessageAndUsersChats(t *testing.T) {
+	senderID := int64(1001)
+	receiverID := int64(1002)
+	chatID := int64(7001)
+	clientRandomID := int64(9000001)
+	chatFact, err := payload.WrapFact(payload.FactKindChatParticipantsChanged, payload.ChatParticipantsChangedFactV1{
+		SchemaVersion: payload.MessageOperationSchemaVersionV4,
+		ChatID:        chatID,
+		ActorUserID:   senderID,
+		Version:       1,
+		Participants: []payload.ChatParticipantFactV1{
+			{UserID: senderID, Role: "creator", Date: 1_772_000_000},
+			{UserID: receiverID, Role: "member", InviterUserID: senderID, Date: 1_772_000_000},
+		},
+	})
+	if err != nil {
+		t.Fatalf("WrapFact(chat participants) error = %v", err)
+	}
+	op := messageOperationFromV4(payload.MessageOperationV4{
+		SchemaVersion: payload.MessageOperationSchemaVersionV4,
+		OperationKind: payload.OperationKindSendMessage,
+		MessageFact: payload.NewMessageFactV1{
+			SchemaVersion:      payload.MessageOperationSchemaVersionV4,
+			CanonicalMessageID: 8001,
+			PeerType:           payload.PeerTypeChat,
+			PeerID:             chatID,
+			PeerSeq:            1,
+			SenderUserID:       senderID,
+			ToUserID:           receiverID,
+			ClientRandomID:     clientRandomID,
+			Date:               1_772_000_000,
+			ServiceAction: &payload.ServiceActionRefV1{
+				SchemaVersion: payload.ServiceActionSchemaVersionV1,
+				Kind:          payload.ServiceActionKindChatCreate,
+				Title:         "team",
+				Users:         []int64{senderID, receiverID},
+			},
+		},
+		AttachFacts: []payload.UpdateFactV1{chatFact},
+	})
+	op.UserMessageID = 101
+	op.Out = true
+	repo := NewForTest(nil, nil, "")
+	repo.SetPeerProjectionClients(
+		&fakeUserProjectionClient{bundle: userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+			ViewerUsers: []userpb.ViewerUsersClazz{
+				userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{
+					ViewerUserId: senderID,
+					Users: []tg.UserClazz{
+						tg.MakeTLUser(&tg.TLUser{Id: senderID}),
+						tg.MakeTLUser(&tg.TLUser{Id: receiverID}),
+					},
+				}),
+			},
+		})},
+		&fakeChatProjectionClient{chats: &chatpb.VectorMutableChat{
+			Datas: []tg.MutableChatClazz{
+				tg.MakeTLMutableChat(&tg.TLMutableChat{
+					Chat: tg.MakeTLImmutableChat(&tg.TLImmutableChat{
+						Id:                chatID,
+						Creator:           senderID,
+						Title:             "team",
+						ParticipantsCount: 2,
+						Date:              1_772_000_000,
+						Version:           1,
+					}),
+				}),
+			},
+		}},
+	)
+
+	_, _, responseSchemaVersion, responsePayload, _, err := buildEventAndResponsePayloads(context.Background(), repo, ApplyUserOperationInput{
+		UserID:      senderID,
+		OperationID: "v4-service",
+	}, op, 22, 1)
+	if err != nil {
+		t.Fatalf("buildEventAndResponsePayloads(V4) error = %v", err)
+	}
+	if responseSchemaVersion != payload.OperationResponseSchemaVersionV3 {
+		t.Fatalf("response schema version = %d, want V3", responseSchemaVersion)
+	}
+	var response payload.OperationResponseV3
+	if err := json.Unmarshal(responsePayload, &response); err != nil {
+		t.Fatalf("unmarshal V4 response: %v", err)
+	}
+	obj, err := iface.DecodeObject(bin.NewDecoder(response.ReplyEnvelope))
+	if err != nil {
+		t.Fatalf("decode reply envelope: %v", err)
+	}
+	reply, ok := obj.(*tg.TLUpdates)
+	if !ok {
+		t.Fatalf("reply envelope = %T, want *tg.TLUpdates", obj)
+	}
+	if len(reply.Updates) != 3 {
+		t.Fatalf("reply update count = %d, want 3", len(reply.Updates))
+	}
+	messageID, ok := reply.Updates[0].(*tg.TLUpdateMessageID)
+	if !ok {
+		t.Fatalf("first reply update = %T, want *tg.TLUpdateMessageID", reply.Updates[0])
+	}
+	if _, ok := reply.Updates[1].(*tg.TLUpdateChatParticipants); !ok {
+		t.Fatalf("second reply update = %T, want *tg.TLUpdateChatParticipants", reply.Updates[1])
+	}
+	newMessage, ok := reply.Updates[2].(*tg.TLUpdateNewMessage)
+	if !ok {
+		t.Fatalf("third reply update = %T, want *tg.TLUpdateNewMessage", reply.Updates[2])
+	}
+	serviceMessage, ok := newMessage.Message.(*tg.TLMessageService)
+	if !ok {
+		t.Fatalf("third reply message = %T, want *tg.TLMessageService", newMessage.Message)
+	}
+	if _, ok := serviceMessage.Action.(*tg.TLMessageActionChatCreate); !ok {
+		t.Fatalf("service action = %T, want *tg.TLMessageActionChatCreate", serviceMessage.Action)
+	}
+	if messageID.Id != serviceMessage.Id || messageID.RandomId != clientRandomID {
+		t.Fatalf("updateMessageID = %+v, want id=%d random_id=%d", messageID, serviceMessage.Id, clientRandomID)
+	}
+	if !hasUserID(reply.Users, senderID) || !hasUserID(reply.Users, receiverID) {
+		t.Fatalf("reply users = %#v, want creator and invitee", reply.Users)
+	}
+	if !hasChatID(reply.Chats, chatID) {
+		t.Fatalf("reply chats = %#v, want chat %d", reply.Chats, chatID)
 	}
 }
 

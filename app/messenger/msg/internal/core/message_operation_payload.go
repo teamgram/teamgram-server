@@ -31,6 +31,7 @@ type sendRequestPayloadV3 struct {
 	PeerType                  int32                       `json:"peer_type"`
 	PeerID                    int64                       `json:"peer_id"`
 	ClientRandomID            int64                       `json:"client_random_id"`
+	AttachFacts               []payload.UpdateFactV1      `json:"attach_facts,omitempty"`
 	MessageText               string                      `json:"message_text,omitempty"`
 	Entities                  []payload.MessageEntityV1   `json:"entities,omitempty"`
 	ReplyToCanonicalMessageID int64                       `json:"reply_to_canonical_message_id,omitempty"`
@@ -44,13 +45,14 @@ type sendRequestPayloadV3 struct {
 	ClearDraftBeforeDate      int32                       `json:"clear_draft_before_date,omitempty"`
 }
 
-func marshalSendRequestV3(normalized normalizedOutboxMessage, effects batchSideEffects) ([]byte, []byte, error) {
+func marshalSendRequestV3(normalized normalizedOutboxMessage, effects batchSideEffects, attachFacts ...payload.UpdateFactV1) ([]byte, []byte, error) {
 	request := sendRequestPayloadV3{
 		SchemaVersion:             payload.MessageOperationSchemaVersionV3,
 		SenderUserID:              normalized.FromUserID,
 		PeerType:                  normalized.PeerType,
 		PeerID:                    normalized.PeerID,
 		ClientRandomID:            normalized.RandomID,
+		AttachFacts:               append([]payload.UpdateFactV1(nil), attachFacts...),
 		MessageText:               normalized.MessageText,
 		Entities:                  normalized.Entities,
 		ReplyToCanonicalMessageID: normalized.ReplyToCanonicalMessageID,
@@ -76,37 +78,41 @@ func marshalSendRequestV3(normalized normalizedOutboxMessage, effects batchSideE
 	return body, payload.HashBytes(body), nil
 }
 
-func buildNormalizedMessageOperationPayload(normalized normalizedOutboxMessage, toUserID int64, peerID int64, out bool, canonical *repository.CanonicalMessageResult, effects batchSideEffects) ([]byte, []byte, []byte, error) {
+func buildMessageOperationV4Payload(normalized normalizedOutboxMessage, toUserID int64, peerID int64, canonical *repository.CanonicalMessageResult, effects batchSideEffects, attachFacts []payload.UpdateFactV1) ([]byte, []byte, []byte, error) {
 	date, err := msgDateInt32FromUnixSeconds(canonical.MessageDate, "message date")
 	if err != nil {
 		return nil, nil, nil, err
 	}
-	operation := payload.MessageOperationV3{
-		SchemaVersion:             payload.MessageOperationSchemaVersionV3,
-		OperationKind:             payload.OperationKindSendMessage,
-		CanonicalMessageID:        canonical.CanonicalMessageID,
-		PeerType:                  normalized.PeerType,
-		PeerID:                    peerID,
-		PeerSeq:                   canonical.PeerSeq,
-		FromUserID:                normalized.FromUserID,
-		ToUserID:                  toUserID,
-		Date:                      date,
-		Out:                       out,
-		MessageText:               normalized.MessageText,
-		Entities:                  normalized.Entities,
-		ReplyToCanonicalMessageID: normalized.ReplyToCanonicalMessageID,
-		ReplyToUserMessageID:      0,
-		MediaRef:                  normalized.MediaRef,
-		Attrs:                     normalized.attrsPtr(),
-		ForwardRef:                normalized.ForwardRef,
-		ServiceAction:             normalized.ServiceAction,
-		ClearDraft:                effects.ClearDraft,
-		SourcePermAuthKeyID:       effects.SourcePermAuthKeyID,
-		ClearDraftBeforeDate:      effects.ClearDraftBeforeDate,
+	operation := payload.MessageOperationV4{
+		SchemaVersion: payload.MessageOperationSchemaVersionV4,
+		OperationKind: payload.OperationKindSendMessage,
+		MessageFact: payload.NewMessageFactV1{
+			SchemaVersion:             1,
+			CanonicalMessageID:        canonical.CanonicalMessageID,
+			PeerType:                  normalized.PeerType,
+			PeerID:                    peerID,
+			PeerSeq:                   canonical.PeerSeq,
+			SenderUserID:              normalized.FromUserID,
+			ToUserID:                  toUserID,
+			ClientRandomID:            normalized.RandomID,
+			Date:                      date,
+			MessageText:               normalized.MessageText,
+			Entities:                  normalized.Entities,
+			ReplyToCanonicalMessageID: normalized.ReplyToCanonicalMessageID,
+			ReplyToUserMessageID:      0,
+			MediaRef:                  normalized.MediaRef,
+			Attrs:                     normalized.attrsPtr(),
+			ForwardRef:                normalized.ForwardRef,
+			ServiceAction:             normalized.ServiceAction,
+			ClearDraft:                effects.ClearDraft,
+			SourcePermAuthKeyID:       effects.SourcePermAuthKeyID,
+			ClearDraftBeforeDate:      effects.ClearDraftBeforeDate,
+		},
+		AttachFacts: append([]payload.UpdateFactV1(nil), attachFacts...),
 	}
 	body, err := json.Marshal(operation)
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf("%w: marshal message operation from_user_id=%d peer_id=%d", msg.ErrMsgStorage, normalized.FromUserID, peerID)
+		return nil, nil, nil, fmt.Errorf("%w: marshal message operation v4 from_user_id=%d peer_id=%d", msg.ErrMsgStorage, normalized.FromUserID, peerID)
 	}
 	hashBytes := payload.HashBytes(body)
 	return body, hashBytes, hashBytes, nil

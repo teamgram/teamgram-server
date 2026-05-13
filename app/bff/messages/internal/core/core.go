@@ -31,7 +31,7 @@ import (
 )
 
 type sendMessageClient interface {
-	MsgSendMessageV2(ctx context.Context, in *msg.TLMsgSendMessageV2) (*tg.Updates, error)
+	MsgSendMessage(ctx context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error)
 	MsgGetUserMessage(ctx context.Context, in *msg.TLMsgGetUserMessage) (*tg.MessageBox, error)
 	MsgGetUserMessageList(ctx context.Context, in *msg.TLMsgGetUserMessageList) (*msg.VectorMessageBox, error)
 }
@@ -77,7 +77,7 @@ type deleteHistoryClient interface {
 }
 
 type editMessageClient interface {
-	MsgEditMessageV2(ctx context.Context, in *msg.TLMsgEditMessageV2) (*tg.Updates, error)
+	MsgEditMessage(ctx context.Context, in *msg.TLMsgEditMessage) (*tg.Updates, error)
 }
 
 type MessagesCore struct {
