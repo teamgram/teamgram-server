@@ -74,217 +74,217 @@ func NewChatClient(cli client.Client) ChatClient {
 }
 
 // ChatGetMutableChat
-// chat.getMutableChat#2c2c25d2 chat_id:long = MutableChat;
+// chat.getMutableChat chat_id:long = MutableChat;
 func (m *defaultChatClient) ChatGetMutableChat(ctx context.Context, in *chat.TLChatGetMutableChat) (*tg.MutableChat, error) {
 	return m.rpc.ChatGetMutableChat(ctx, in)
 }
 
 // ChatGetChatListByIdList
-// chat.getChatListByIdList#e740f539 self_id:long id_list:Vector<long> = Vector<MutableChat>;
+// chat.getChatListByIdList self_id:long id_list:Vector<long> = Vector<MutableChat>;
 func (m *defaultChatClient) ChatGetChatListByIdList(ctx context.Context, in *chat.TLChatGetChatListByIdList) (*chat.VectorMutableChat, error) {
 	return m.rpc.ChatGetChatListByIdList(ctx, in)
 }
 
 // ChatGetChatBySelfId
-// chat.getChatBySelfId#49b71a48 self_id:long chat_id:long = MutableChat;
+// chat.getChatBySelfId self_id:long chat_id:long = MutableChat;
 func (m *defaultChatClient) ChatGetChatBySelfId(ctx context.Context, in *chat.TLChatGetChatBySelfId) (*tg.MutableChat, error) {
 	return m.rpc.ChatGetChatBySelfId(ctx, in)
 }
 
 // ChatCheckChatAccess
-// chat.checkChatAccess#fff473b3 self_id:long chat_id:long access_kind:string = ChatAccessCheckResult;
+// chat.checkChatAccess self_id:long chat_id:long access_kind:string = ChatAccessCheckResult;
 func (m *defaultChatClient) ChatCheckChatAccess(ctx context.Context, in *chat.TLChatCheckChatAccess) (*chat.ChatAccessCheckResult, error) {
 	return m.rpc.ChatCheckChatAccess(ctx, in)
 }
 
 // ChatCheckMessageAction
-// chat.checkMessageAction#3d9abe5b self_id:long chat_id:long action:string media_kind:string = MessageActionCheckResult;
+// chat.checkMessageAction self_id:long chat_id:long action:string media_kind:string = MessageActionCheckResult;
 func (m *defaultChatClient) ChatCheckMessageAction(ctx context.Context, in *chat.TLChatCheckMessageAction) (*chat.MessageActionCheckResult, error) {
 	return m.rpc.ChatCheckMessageAction(ctx, in)
 }
 
 // ChatCreateChat2
-// chat.createChat2#ed17acf5 flags:# creator_id:long user_id_list:Vector<long> title:string bots:flags.0?Vector<long> ttl_period:flags.1?int = MutableChat;
+// chat.createChat2 flags:# creator_id:long user_id_list:Vector<long> title:string bots:flags.0?Vector<long> ttl_period:flags.1?int client_msg_id:flags.2?long operation_id:flags.3?string = MutableChat;
 func (m *defaultChatClient) ChatCreateChat2(ctx context.Context, in *chat.TLChatCreateChat2) (*tg.MutableChat, error) {
 	return m.rpc.ChatCreateChat2(ctx, in)
 }
 
 // ChatDeleteChat
-// chat.deleteChat#6d11ec1e chat_id:long operator_id:long = MutableChat;
+// chat.deleteChat chat_id:long operator_id:long = MutableChat;
 func (m *defaultChatClient) ChatDeleteChat(ctx context.Context, in *chat.TLChatDeleteChat) (*tg.MutableChat, error) {
 	return m.rpc.ChatDeleteChat(ctx, in)
 }
 
 // ChatDeleteChatUser
-// chat.deleteChatUser#0b270fd5 chat_id:long operator_id:long delete_user_id:long = MutableChat;
+// chat.deleteChatUser chat_id:long operator_id:long delete_user_id:long = MutableChat;
 func (m *defaultChatClient) ChatDeleteChatUser(ctx context.Context, in *chat.TLChatDeleteChatUser) (*tg.MutableChat, error) {
 	return m.rpc.ChatDeleteChatUser(ctx, in)
 }
 
 // ChatEditChatTitle
-// chat.editChatTitle#95c59ea7 chat_id:long edit_user_id:long title:string = MutableChat;
+// chat.editChatTitle chat_id:long edit_user_id:long title:string = MutableChat;
 func (m *defaultChatClient) ChatEditChatTitle(ctx context.Context, in *chat.TLChatEditChatTitle) (*tg.MutableChat, error) {
 	return m.rpc.ChatEditChatTitle(ctx, in)
 }
 
 // ChatEditChatAbout
-// chat.editChatAbout#5c737c78 chat_id:long edit_user_id:long about:string = MutableChat;
+// chat.editChatAbout chat_id:long edit_user_id:long about:string = MutableChat;
 func (m *defaultChatClient) ChatEditChatAbout(ctx context.Context, in *chat.TLChatEditChatAbout) (*tg.MutableChat, error) {
 	return m.rpc.ChatEditChatAbout(ctx, in)
 }
 
 // ChatEditChatPhoto
-// chat.editChatPhoto#45c2a668 chat_id:long edit_user_id:long chat_photo:Photo = MutableChat;
+// chat.editChatPhoto chat_id:long edit_user_id:long chat_photo:Photo = MutableChat;
 func (m *defaultChatClient) ChatEditChatPhoto(ctx context.Context, in *chat.TLChatEditChatPhoto) (*tg.MutableChat, error) {
 	return m.rpc.ChatEditChatPhoto(ctx, in)
 }
 
 // ChatEditChatAdmin
-// chat.editChatAdmin#1905e5ec chat_id:long operator_id:long edit_chat_admin_id:long is_admin:Bool = MutableChat;
+// chat.editChatAdmin chat_id:long operator_id:long edit_chat_admin_id:long is_admin:Bool = MutableChat;
 func (m *defaultChatClient) ChatEditChatAdmin(ctx context.Context, in *chat.TLChatEditChatAdmin) (*tg.MutableChat, error) {
 	return m.rpc.ChatEditChatAdmin(ctx, in)
 }
 
 // ChatEditChatDefaultBannedRights
-// chat.editChatDefaultBannedRights#5a34a687 chat_id:long operator_id:long banned_rights:ChatBannedRights = MutableChat;
+// chat.editChatDefaultBannedRights chat_id:long operator_id:long banned_rights:ChatBannedRights = MutableChat;
 func (m *defaultChatClient) ChatEditChatDefaultBannedRights(ctx context.Context, in *chat.TLChatEditChatDefaultBannedRights) (*tg.MutableChat, error) {
 	return m.rpc.ChatEditChatDefaultBannedRights(ctx, in)
 }
 
 // ChatAddChatUser
-// chat.addChatUser#e5554168 flags:# chat_id:long inviter_id:long user_id:long is_bot:flags.0?true = MutableChat;
+// chat.addChatUser flags:# chat_id:long inviter_id:long user_id:long is_bot:flags.0?true = MutableChat;
 func (m *defaultChatClient) ChatAddChatUser(ctx context.Context, in *chat.TLChatAddChatUser) (*tg.MutableChat, error) {
 	return m.rpc.ChatAddChatUser(ctx, in)
 }
 
 // ChatGetMutableChatByLink
-// chat.getMutableChatByLink#a266278b link:string = MutableChat;
+// chat.getMutableChatByLink link:string = MutableChat;
 func (m *defaultChatClient) ChatGetMutableChatByLink(ctx context.Context, in *chat.TLChatGetMutableChatByLink) (*tg.MutableChat, error) {
 	return m.rpc.ChatGetMutableChatByLink(ctx, in)
 }
 
 // ChatToggleNoForwards
-// chat.toggleNoForwards#d5952af9 chat_id:long operator_id:long enabled:Bool = MutableChat;
+// chat.toggleNoForwards chat_id:long operator_id:long enabled:Bool = MutableChat;
 func (m *defaultChatClient) ChatToggleNoForwards(ctx context.Context, in *chat.TLChatToggleNoForwards) (*tg.MutableChat, error) {
 	return m.rpc.ChatToggleNoForwards(ctx, in)
 }
 
 // ChatMigratedToChannel
-// chat.migratedToChannel#083faadf chat:MutableChat id:long access_hash:long = Bool;
+// chat.migratedToChannel chat:MutableChat id:long access_hash:long = Bool;
 func (m *defaultChatClient) ChatMigratedToChannel(ctx context.Context, in *chat.TLChatMigratedToChannel) (*tg.Bool, error) {
 	return m.rpc.ChatMigratedToChannel(ctx, in)
 }
 
 // ChatGetChatParticipantIdList
-// chat.getChatParticipantIdList#329622a9 chat_id:long = Vector<long>;
+// chat.getChatParticipantIdList chat_id:long = Vector<long>;
 func (m *defaultChatClient) ChatGetChatParticipantIdList(ctx context.Context, in *chat.TLChatGetChatParticipantIdList) (*chat.VectorLong, error) {
 	return m.rpc.ChatGetChatParticipantIdList(ctx, in)
 }
 
 // ChatGetUsersChatIdList
-// chat.getUsersChatIdList#2f36ab4c id:Vector<long> = Vector<UserChatIdList>;
+// chat.getUsersChatIdList id:Vector<long> = Vector<UserChatIdList>;
 func (m *defaultChatClient) ChatGetUsersChatIdList(ctx context.Context, in *chat.TLChatGetUsersChatIdList) (*chat.VectorUserChatIdList, error) {
 	return m.rpc.ChatGetUsersChatIdList(ctx, in)
 }
 
 // ChatGetMyChatList
-// chat.getMyChatList#f3756c88 user_id:long is_creator:Bool = Vector<MutableChat>;
+// chat.getMyChatList user_id:long is_creator:Bool = Vector<MutableChat>;
 func (m *defaultChatClient) ChatGetMyChatList(ctx context.Context, in *chat.TLChatGetMyChatList) (*chat.VectorMutableChat, error) {
 	return m.rpc.ChatGetMyChatList(ctx, in)
 }
 
 // ChatExportChatInvite
-// chat.exportChatInvite#c5cf804b flags:# chat_id:long admin_id:long legacy_revoke_permanent:flags.2?true request_needed:flags.3?true expire_date:flags.0?int usage_limit:flags.1?int title:flags.4?string = ExportedChatInvite;
+// chat.exportChatInvite flags:# chat_id:long admin_id:long legacy_revoke_permanent:flags.2?true request_needed:flags.3?true expire_date:flags.0?int usage_limit:flags.1?int title:flags.4?string = ExportedChatInvite;
 func (m *defaultChatClient) ChatExportChatInvite(ctx context.Context, in *chat.TLChatExportChatInvite) (*tg.ExportedChatInvite, error) {
 	return m.rpc.ChatExportChatInvite(ctx, in)
 }
 
 // ChatGetAdminsWithInvites
-// chat.getAdminsWithInvites#d2ea41d2 self_id:long chat_id:long = Vector<ChatAdminWithInvites>;
+// chat.getAdminsWithInvites self_id:long chat_id:long = Vector<ChatAdminWithInvites>;
 func (m *defaultChatClient) ChatGetAdminsWithInvites(ctx context.Context, in *chat.TLChatGetAdminsWithInvites) (*chat.VectorChatAdminWithInvites, error) {
 	return m.rpc.ChatGetAdminsWithInvites(ctx, in)
 }
 
 // ChatGetExportedChatInvite
-// chat.getExportedChatInvite#ddea3250 chat_id:long link:string = ExportedChatInvite;
+// chat.getExportedChatInvite chat_id:long link:string = ExportedChatInvite;
 func (m *defaultChatClient) ChatGetExportedChatInvite(ctx context.Context, in *chat.TLChatGetExportedChatInvite) (*tg.ExportedChatInvite, error) {
 	return m.rpc.ChatGetExportedChatInvite(ctx, in)
 }
 
 // ChatGetExportedChatInvites
-// chat.getExportedChatInvites#b48f18f6 flags:# chat_id:long admin_id:long revoked:flags.3?true offset_date:flags.2?int offset_link:flags.2?string limit:int = Vector<ExportedChatInvite>;
+// chat.getExportedChatInvites flags:# chat_id:long admin_id:long revoked:flags.3?true offset_date:flags.2?int offset_link:flags.2?string limit:int = Vector<ExportedChatInvite>;
 func (m *defaultChatClient) ChatGetExportedChatInvites(ctx context.Context, in *chat.TLChatGetExportedChatInvites) (*chat.VectorExportedChatInvite, error) {
 	return m.rpc.ChatGetExportedChatInvites(ctx, in)
 }
 
 // ChatCheckChatInvite
-// chat.checkChatInvite#7387f28c self_id:long hash:string = ChatInviteExt;
+// chat.checkChatInvite self_id:long hash:string = ChatInviteExt;
 func (m *defaultChatClient) ChatCheckChatInvite(ctx context.Context, in *chat.TLChatCheckChatInvite) (*chat.ChatInviteExt, error) {
 	return m.rpc.ChatCheckChatInvite(ctx, in)
 }
 
 // ChatImportChatInvite
-// chat.importChatInvite#58e660d4 self_id:long hash:string = MutableChat;
+// chat.importChatInvite self_id:long hash:string = MutableChat;
 func (m *defaultChatClient) ChatImportChatInvite(ctx context.Context, in *chat.TLChatImportChatInvite) (*tg.MutableChat, error) {
 	return m.rpc.ChatImportChatInvite(ctx, in)
 }
 
 // ChatGetChatInviteImporters
-// chat.getChatInviteImporters#9846557f flags:# self_id:long chat_id:long requested:flags.0?true link:flags.1?string q:flags.2?string offset_date:int offset_user:long limit:int = Vector<ChatInviteImporter>;
+// chat.getChatInviteImporters flags:# self_id:long chat_id:long requested:flags.0?true link:flags.1?string q:flags.2?string offset_date:int offset_user:long limit:int = Vector<ChatInviteImporter>;
 func (m *defaultChatClient) ChatGetChatInviteImporters(ctx context.Context, in *chat.TLChatGetChatInviteImporters) (*chat.VectorChatInviteImporter, error) {
 	return m.rpc.ChatGetChatInviteImporters(ctx, in)
 }
 
 // ChatDeleteExportedChatInvite
-// chat.deleteExportedChatInvite#562288b8 self_id:long chat_id:long link:string = Bool;
+// chat.deleteExportedChatInvite self_id:long chat_id:long link:string = Bool;
 func (m *defaultChatClient) ChatDeleteExportedChatInvite(ctx context.Context, in *chat.TLChatDeleteExportedChatInvite) (*tg.Bool, error) {
 	return m.rpc.ChatDeleteExportedChatInvite(ctx, in)
 }
 
 // ChatDeleteRevokedExportedChatInvites
-// chat.deleteRevokedExportedChatInvites#d0126269 self_id:long chat_id:long admin_id:long = Bool;
+// chat.deleteRevokedExportedChatInvites self_id:long chat_id:long admin_id:long = Bool;
 func (m *defaultChatClient) ChatDeleteRevokedExportedChatInvites(ctx context.Context, in *chat.TLChatDeleteRevokedExportedChatInvites) (*tg.Bool, error) {
 	return m.rpc.ChatDeleteRevokedExportedChatInvites(ctx, in)
 }
 
 // ChatEditExportedChatInvite
-// chat.editExportedChatInvite#af994c76 flags:# self_id:long chat_id:long revoked:flags.2?true link:string expire_date:flags.0?int usage_limit:flags.1?int request_needed:flags.3?Bool title:flags.4?string = Vector<ExportedChatInvite>;
+// chat.editExportedChatInvite flags:# self_id:long chat_id:long revoked:flags.2?true link:string expire_date:flags.0?int usage_limit:flags.1?int request_needed:flags.3?Bool title:flags.4?string = Vector<ExportedChatInvite>;
 func (m *defaultChatClient) ChatEditExportedChatInvite(ctx context.Context, in *chat.TLChatEditExportedChatInvite) (*chat.VectorExportedChatInvite, error) {
 	return m.rpc.ChatEditExportedChatInvite(ctx, in)
 }
 
 // ChatSetChatAvailableReactions
-// chat.setChatAvailableReactions#c4d08972 self_id:long chat_id:long available_reactions_type:int available_reactions:Vector<string> = MutableChat;
+// chat.setChatAvailableReactions self_id:long chat_id:long available_reactions_type:int available_reactions:Vector<string> = MutableChat;
 func (m *defaultChatClient) ChatSetChatAvailableReactions(ctx context.Context, in *chat.TLChatSetChatAvailableReactions) (*tg.MutableChat, error) {
 	return m.rpc.ChatSetChatAvailableReactions(ctx, in)
 }
 
 // ChatSetHistoryTTL
-// chat.setHistoryTTL#3cfb6384 self_id:long chat_id:long ttl_period:int = MutableChat;
+// chat.setHistoryTTL self_id:long chat_id:long ttl_period:int = MutableChat;
 func (m *defaultChatClient) ChatSetHistoryTTL(ctx context.Context, in *chat.TLChatSetHistoryTTL) (*tg.MutableChat, error) {
 	return m.rpc.ChatSetHistoryTTL(ctx, in)
 }
 
 // ChatSearch
-// chat.search#21e014fb self_id:long q:string offset:long limit:int = Vector<MutableChat>;
+// chat.search self_id:long q:string offset:long limit:int = Vector<MutableChat>;
 func (m *defaultChatClient) ChatSearch(ctx context.Context, in *chat.TLChatSearch) (*chat.VectorMutableChat, error) {
 	return m.rpc.ChatSearch(ctx, in)
 }
 
 // ChatGetRecentChatInviteRequesters
-// chat.getRecentChatInviteRequesters#fedc1098 self_id:long chat_id:long = RecentChatInviteRequesters;
+// chat.getRecentChatInviteRequesters self_id:long chat_id:long = RecentChatInviteRequesters;
 func (m *defaultChatClient) ChatGetRecentChatInviteRequesters(ctx context.Context, in *chat.TLChatGetRecentChatInviteRequesters) (*chat.RecentChatInviteRequesters, error) {
 	return m.rpc.ChatGetRecentChatInviteRequesters(ctx, in)
 }
 
 // ChatHideChatJoinRequests
-// chat.hideChatJoinRequests#3ea52cd1 flags:# self_id:long chat_id:long approved:flags.0?true link:flags.1?string user_id:flags.2?long = RecentChatInviteRequesters;
+// chat.hideChatJoinRequests flags:# self_id:long chat_id:long approved:flags.0?true link:flags.1?string user_id:flags.2?long = RecentChatInviteRequesters;
 func (m *defaultChatClient) ChatHideChatJoinRequests(ctx context.Context, in *chat.TLChatHideChatJoinRequests) (*chat.RecentChatInviteRequesters, error) {
 	return m.rpc.ChatHideChatJoinRequests(ctx, in)
 }
 
 // ChatImportChatInvite2
-// chat.importChatInvite2#dcd93dbf self_id:long hash:string = ChatInviteImported;
+// chat.importChatInvite2 self_id:long hash:string = ChatInviteImported;
 func (m *defaultChatClient) ChatImportChatInvite2(ctx context.Context, in *chat.TLChatImportChatInvite2) (*chat.ChatInviteImported, error) {
 	return m.rpc.ChatImportChatInvite2(ctx, in)
 }

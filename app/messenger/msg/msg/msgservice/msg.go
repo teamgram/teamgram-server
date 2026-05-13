@@ -71,15 +71,15 @@ var serviceMethods = map[string]kitex.MethodInfo{
 	),
 	"/msg.RPCMsg/msg.sendMessage": kitex.NewMethodInfo(
 		sendMessageHandler,
-		newSendMessageV2Args,
-		newSendMessageV2Result,
+		newSendMessageArgs,
+		newSendMessageResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
 	"/msg.RPCMsg/msg.editMessage": kitex.NewMethodInfo(
 		editMessageHandler,
-		newEditMessageV2Args,
-		newEditMessageV2Result,
+		newEditMessageArgs,
+		newEditMessageResult,
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
@@ -516,8 +516,8 @@ func (p *ReadMessageContentsResult) GetResult() interface{} {
 }
 
 func sendMessageHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*SendMessageV2Args)
-	realResult := result.(*SendMessageV2Result)
+	realArg := arg.(*SendMessageArgs)
+	realResult := result.(*SendMessageResult)
 	success, err := handler.(msg.RPCMsg).MsgSendMessage(ctx, realArg.Req)
 	if err != nil {
 		return err
@@ -526,26 +526,26 @@ func sendMessageHandler(ctx context.Context, handler interface{}, arg, result in
 	return nil
 }
 
-func newSendMessageV2Args() interface{} {
-	return &SendMessageV2Args{}
+func newSendMessageArgs() interface{} {
+	return &SendMessageArgs{}
 }
 
-func newSendMessageV2Result() interface{} {
-	return &SendMessageV2Result{}
+func newSendMessageResult() interface{} {
+	return &SendMessageResult{}
 }
 
-type SendMessageV2Args struct {
+type SendMessageArgs struct {
 	Req *msg.TLMsgSendMessage
 }
 
-func (p *SendMessageV2Args) Marshal(out []byte) ([]byte, error) {
+func (p *SendMessageArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("no req in SendMessageV2Args")
+		return out, fmt.Errorf("no req in SendMessageArgs")
 	}
 	return json.Marshal(p.Req)
 }
 
-func (p *SendMessageV2Args) Unmarshal(in []byte) error {
+func (p *SendMessageArgs) Unmarshal(in []byte) error {
 	msg := new(msg.TLMsgSendMessage)
 	if err := json.Unmarshal(in, msg); err != nil {
 		return err
@@ -554,15 +554,15 @@ func (p *SendMessageV2Args) Unmarshal(in []byte) error {
 	return nil
 }
 
-func (p *SendMessageV2Args) Encode(x *bin.Encoder, layer int32) error {
+func (p *SendMessageArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("no req in SendMessageV2Args")
+		return fmt.Errorf("no req in SendMessageArgs")
 	}
 
 	return p.Req.Encode(x, layer)
 }
 
-func (p *SendMessageV2Args) Decode(d *bin.Decoder) (err error) {
+func (p *SendMessageArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(msg.TLMsgSendMessage)
 	msg.ClazzID, err = d.ClazzID()
 	if err != nil {
@@ -575,33 +575,33 @@ func (p *SendMessageV2Args) Decode(d *bin.Decoder) (err error) {
 	return nil
 }
 
-var SendMessageV2Args_Req_DEFAULT *msg.TLMsgSendMessage
+var SendMessageArgs_Req_DEFAULT *msg.TLMsgSendMessage
 
-func (p *SendMessageV2Args) GetReq() *msg.TLMsgSendMessage {
+func (p *SendMessageArgs) GetReq() *msg.TLMsgSendMessage {
 	if !p.IsSetReq() {
-		return SendMessageV2Args_Req_DEFAULT
+		return SendMessageArgs_Req_DEFAULT
 	}
 	return p.Req
 }
 
-func (p *SendMessageV2Args) IsSetReq() bool {
+func (p *SendMessageArgs) IsSetReq() bool {
 	return p.Req != nil
 }
 
-type SendMessageV2Result struct {
+type SendMessageResult struct {
 	Success *tg.Updates
 }
 
-var SendMessageV2Result_Success_DEFAULT *tg.Updates
+var SendMessageResult_Success_DEFAULT *tg.Updates
 
-func (p *SendMessageV2Result) Marshal(out []byte) ([]byte, error) {
+func (p *SendMessageResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("no req in SendMessageV2Result")
+		return out, fmt.Errorf("no req in SendMessageResult")
 	}
 	return json.Marshal(p.Success)
 }
 
-func (p *SendMessageV2Result) Unmarshal(in []byte) error {
+func (p *SendMessageResult) Unmarshal(in []byte) error {
 	msg := new(tg.Updates)
 	if err := json.Unmarshal(in, msg); err != nil {
 		return err
@@ -610,15 +610,15 @@ func (p *SendMessageV2Result) Unmarshal(in []byte) error {
 	return nil
 }
 
-func (p *SendMessageV2Result) Encode(x *bin.Encoder, layer int32) error {
+func (p *SendMessageResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("no req in SendMessageV2Result")
+		return fmt.Errorf("no req in SendMessageResult")
 	}
 
 	return p.Success.Encode(x, layer)
 }
 
-func (p *SendMessageV2Result) Decode(d *bin.Decoder) (err error) {
+func (p *SendMessageResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
 	if err = decodeConstructorIfPresent(d, msg); err != nil {
 		return err
@@ -630,28 +630,28 @@ func (p *SendMessageV2Result) Decode(d *bin.Decoder) (err error) {
 	return nil
 }
 
-func (p *SendMessageV2Result) GetSuccess() *tg.Updates {
+func (p *SendMessageResult) GetSuccess() *tg.Updates {
 	if !p.IsSetSuccess() {
-		return SendMessageV2Result_Success_DEFAULT
+		return SendMessageResult_Success_DEFAULT
 	}
 	return p.Success
 }
 
-func (p *SendMessageV2Result) SetSuccess(x interface{}) {
+func (p *SendMessageResult) SetSuccess(x interface{}) {
 	p.Success = x.(*tg.Updates)
 }
 
-func (p *SendMessageV2Result) IsSetSuccess() bool {
+func (p *SendMessageResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *SendMessageV2Result) GetResult() interface{} {
+func (p *SendMessageResult) GetResult() interface{} {
 	return p.Success
 }
 
 func editMessageHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
-	realArg := arg.(*EditMessageV2Args)
-	realResult := result.(*EditMessageV2Result)
+	realArg := arg.(*EditMessageArgs)
+	realResult := result.(*EditMessageResult)
 	success, err := handler.(msg.RPCMsg).MsgEditMessage(ctx, realArg.Req)
 	if err != nil {
 		return err
@@ -660,26 +660,26 @@ func editMessageHandler(ctx context.Context, handler interface{}, arg, result in
 	return nil
 }
 
-func newEditMessageV2Args() interface{} {
-	return &EditMessageV2Args{}
+func newEditMessageArgs() interface{} {
+	return &EditMessageArgs{}
 }
 
-func newEditMessageV2Result() interface{} {
-	return &EditMessageV2Result{}
+func newEditMessageResult() interface{} {
+	return &EditMessageResult{}
 }
 
-type EditMessageV2Args struct {
+type EditMessageArgs struct {
 	Req *msg.TLMsgEditMessage
 }
 
-func (p *EditMessageV2Args) Marshal(out []byte) ([]byte, error) {
+func (p *EditMessageArgs) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetReq() {
-		return out, fmt.Errorf("no req in EditMessageV2Args")
+		return out, fmt.Errorf("no req in EditMessageArgs")
 	}
 	return json.Marshal(p.Req)
 }
 
-func (p *EditMessageV2Args) Unmarshal(in []byte) error {
+func (p *EditMessageArgs) Unmarshal(in []byte) error {
 	msg := new(msg.TLMsgEditMessage)
 	if err := json.Unmarshal(in, msg); err != nil {
 		return err
@@ -688,15 +688,15 @@ func (p *EditMessageV2Args) Unmarshal(in []byte) error {
 	return nil
 }
 
-func (p *EditMessageV2Args) Encode(x *bin.Encoder, layer int32) error {
+func (p *EditMessageArgs) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetReq() {
-		return fmt.Errorf("no req in EditMessageV2Args")
+		return fmt.Errorf("no req in EditMessageArgs")
 	}
 
 	return p.Req.Encode(x, layer)
 }
 
-func (p *EditMessageV2Args) Decode(d *bin.Decoder) (err error) {
+func (p *EditMessageArgs) Decode(d *bin.Decoder) (err error) {
 	msg := new(msg.TLMsgEditMessage)
 	msg.ClazzID, err = d.ClazzID()
 	if err != nil {
@@ -709,33 +709,33 @@ func (p *EditMessageV2Args) Decode(d *bin.Decoder) (err error) {
 	return nil
 }
 
-var EditMessageV2Args_Req_DEFAULT *msg.TLMsgEditMessage
+var EditMessageArgs_Req_DEFAULT *msg.TLMsgEditMessage
 
-func (p *EditMessageV2Args) GetReq() *msg.TLMsgEditMessage {
+func (p *EditMessageArgs) GetReq() *msg.TLMsgEditMessage {
 	if !p.IsSetReq() {
-		return EditMessageV2Args_Req_DEFAULT
+		return EditMessageArgs_Req_DEFAULT
 	}
 	return p.Req
 }
 
-func (p *EditMessageV2Args) IsSetReq() bool {
+func (p *EditMessageArgs) IsSetReq() bool {
 	return p.Req != nil
 }
 
-type EditMessageV2Result struct {
+type EditMessageResult struct {
 	Success *tg.Updates
 }
 
-var EditMessageV2Result_Success_DEFAULT *tg.Updates
+var EditMessageResult_Success_DEFAULT *tg.Updates
 
-func (p *EditMessageV2Result) Marshal(out []byte) ([]byte, error) {
+func (p *EditMessageResult) Marshal(out []byte) ([]byte, error) {
 	if !p.IsSetSuccess() {
-		return out, fmt.Errorf("no req in EditMessageV2Result")
+		return out, fmt.Errorf("no req in EditMessageResult")
 	}
 	return json.Marshal(p.Success)
 }
 
-func (p *EditMessageV2Result) Unmarshal(in []byte) error {
+func (p *EditMessageResult) Unmarshal(in []byte) error {
 	msg := new(tg.Updates)
 	if err := json.Unmarshal(in, msg); err != nil {
 		return err
@@ -744,15 +744,15 @@ func (p *EditMessageV2Result) Unmarshal(in []byte) error {
 	return nil
 }
 
-func (p *EditMessageV2Result) Encode(x *bin.Encoder, layer int32) error {
+func (p *EditMessageResult) Encode(x *bin.Encoder, layer int32) error {
 	if !p.IsSetSuccess() {
-		return fmt.Errorf("no req in EditMessageV2Result")
+		return fmt.Errorf("no req in EditMessageResult")
 	}
 
 	return p.Success.Encode(x, layer)
 }
 
-func (p *EditMessageV2Result) Decode(d *bin.Decoder) (err error) {
+func (p *EditMessageResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(tg.Updates)
 	if err = decodeConstructorIfPresent(d, msg); err != nil {
 		return err
@@ -764,22 +764,22 @@ func (p *EditMessageV2Result) Decode(d *bin.Decoder) (err error) {
 	return nil
 }
 
-func (p *EditMessageV2Result) GetSuccess() *tg.Updates {
+func (p *EditMessageResult) GetSuccess() *tg.Updates {
 	if !p.IsSetSuccess() {
-		return EditMessageV2Result_Success_DEFAULT
+		return EditMessageResult_Success_DEFAULT
 	}
 	return p.Success
 }
 
-func (p *EditMessageV2Result) SetSuccess(x interface{}) {
+func (p *EditMessageResult) SetSuccess(x interface{}) {
 	p.Success = x.(*tg.Updates)
 }
 
-func (p *EditMessageV2Result) IsSetSuccess() bool {
+func (p *EditMessageResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *EditMessageV2Result) GetResult() interface{} {
+func (p *EditMessageResult) GetResult() interface{} {
 	return p.Success
 }
 
@@ -1960,6 +1960,9 @@ func (p *GetUserMessageListResult) Encode(x *bin.Encoder, layer int32) error {
 
 func (p *GetUserMessageListResult) Decode(d *bin.Decoder) (err error) {
 	msg := new(msg.VectorMessageBox)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
 	if err = msg.Decode(d); err != nil {
 		return err
 	}
@@ -2557,9 +2560,9 @@ func (p *kClient) MsgReadMessageContents(ctx context.Context, req *msg.TLMsgRead
 }
 
 func (p *kClient) MsgSendMessage(ctx context.Context, req *msg.TLMsgSendMessage) (r *tg.Updates, err error) {
-	// var _args SendMessageV2Args
+	// var _args SendMessageArgs
 	// _args.Req = req
-	var _result SendMessageV2Result
+	var _result SendMessageResult
 
 	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.sendMessage", req, &_result); err != nil {
 		return
@@ -2569,9 +2572,9 @@ func (p *kClient) MsgSendMessage(ctx context.Context, req *msg.TLMsgSendMessage)
 }
 
 func (p *kClient) MsgEditMessage(ctx context.Context, req *msg.TLMsgEditMessage) (r *tg.Updates, err error) {
-	// var _args EditMessageV2Args
+	// var _args EditMessageArgs
 	// _args.Req = req
-	var _result EditMessageV2Result
+	var _result EditMessageResult
 
 	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.editMessage", req, &_result); err != nil {
 		return
@@ -2665,6 +2668,8 @@ func (p *kClient) MsgGetHistory(ctx context.Context, req *msg.TLMsgGetHistory) (
 }
 
 func (p *kClient) MsgGetUserMessage(ctx context.Context, req *msg.TLMsgGetUserMessage) (r *tg.MessageBox, err error) {
+	// var _args GetUserMessageArgs
+	// _args.Req = req
 	var _result GetUserMessageResult
 
 	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.getUserMessage", req, &_result); err != nil {
@@ -2675,6 +2680,8 @@ func (p *kClient) MsgGetUserMessage(ctx context.Context, req *msg.TLMsgGetUserMe
 }
 
 func (p *kClient) MsgGetUserMessageList(ctx context.Context, req *msg.TLMsgGetUserMessageList) (r *msg.VectorMessageBox, err error) {
+	// var _args GetUserMessageListArgs
+	// _args.Req = req
 	var _result GetUserMessageListResult
 
 	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.getUserMessageList", req, &_result); err != nil {
@@ -2697,6 +2704,8 @@ func (p *kClient) MsgSearchHashtag(ctx context.Context, req *msg.TLMsgSearchHash
 }
 
 func (p *kClient) MsgResolveDialogCursorTopMessage(ctx context.Context, req *msg.TLMsgResolveDialogCursorTopMessage) (r *msg.ResolvedDialogCursor, err error) {
+	// var _args ResolveDialogCursorTopMessageArgs
+	// _args.Req = req
 	var _result ResolveDialogCursorTopMessageResult
 
 	if err = p.c.Call(ctx, "/msg.RPCMsg/msg.resolveDialogCursorTopMessage", req, &_result); err != nil {

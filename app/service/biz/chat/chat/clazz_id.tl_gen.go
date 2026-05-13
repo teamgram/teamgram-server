@@ -24,7 +24,7 @@ const (
 	ClazzID_chat_getChatBySelfId                  = 0x49b71a48 // 49b71a48
 	ClazzID_chat_checkChatAccess                  = 0xfff473b3 // fff473b3
 	ClazzID_chat_checkMessageAction               = 0x3d9abe5b // 3d9abe5b
-	ClazzID_chat_createChat2                      = 0xed17acf5 // ed17acf5
+	ClazzID_chat_createChat2                      = 0x8d8dd577 // 8d8dd577
 	ClazzID_chat_deleteChat                       = 0x6d11ec1e // 6d11ec1e
 	ClazzID_chat_deleteChatUser                   = 0xb270fd5  // b270fd5
 	ClazzID_chat_editChatTitle                    = 0x95c59ea7 // 95c59ea7

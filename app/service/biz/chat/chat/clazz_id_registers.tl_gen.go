@@ -34,7 +34,7 @@ func init() {
 	iface.RegisterClazzID(0x49b71a48, func() iface.TLObject { return &TLChatGetChatBySelfId{ClazzID: 0x49b71a48} })                  // 0x49b71a48
 	iface.RegisterClazzID(0xfff473b3, func() iface.TLObject { return &TLChatCheckChatAccess{ClazzID: 0xfff473b3} })                  // 0xfff473b3
 	iface.RegisterClazzID(0x3d9abe5b, func() iface.TLObject { return &TLChatCheckMessageAction{ClazzID: 0x3d9abe5b} })               // 0x3d9abe5b
-	iface.RegisterClazzID(0xed17acf5, func() iface.TLObject { return &TLChatCreateChat2{ClazzID: 0xed17acf5} })                      // 0xed17acf5
+	iface.RegisterClazzID(0x8d8dd577, func() iface.TLObject { return &TLChatCreateChat2{ClazzID: 0x8d8dd577} })                      // 0x8d8dd577
 	iface.RegisterClazzID(0x6d11ec1e, func() iface.TLObject { return &TLChatDeleteChat{ClazzID: 0x6d11ec1e} })                       // 0x6d11ec1e
 	iface.RegisterClazzID(0xb270fd5, func() iface.TLObject { return &TLChatDeleteChatUser{ClazzID: 0xb270fd5} })                     // 0xb270fd5
 	iface.RegisterClazzID(0x95c59ea7, func() iface.TLObject { return &TLChatEditChatTitle{ClazzID: 0x95c59ea7} })                    // 0x95c59ea7

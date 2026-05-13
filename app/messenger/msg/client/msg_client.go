@@ -67,7 +67,7 @@ func (m *defaultMsgClient) MsgReadMessageContents(ctx context.Context, in *msg.T
 }
 
 // MsgSendMessage
-// msg.sendMessage flags:# clear_draft:flags.0?true user_id:long auth_key_id:long source_perm_auth_key_id:flags.1?long clear_draft_before_date:flags.2?int peer_type:int peer_id:long message:Vector<OutboxMessage> = Updates;
+// msg.sendMessage flags:# clear_draft:flags.0?true user_id:long auth_key_id:long source_perm_auth_key_id:flags.1?long clear_draft_before_date:flags.2?int attach_facts:flags.3?Vector<UpdateFact> peer_type:int peer_id:long message:Vector<OutboxMessage> = Updates;
 func (m *defaultMsgClient) MsgSendMessage(ctx context.Context, in *msg.TLMsgSendMessage) (*tg.Updates, error) {
 	return m.rpc.MsgSendMessage(ctx, in)
 }

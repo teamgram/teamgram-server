@@ -76,7 +76,7 @@ func init() {
 	iface.RegisterClazzName(ClazzName_chat_getChatBySelfId, 0, 0x49b71a48)                  // 49b71a48
 	iface.RegisterClazzName(ClazzName_chat_checkChatAccess, 0, 0xfff473b3)                  // fff473b3
 	iface.RegisterClazzName(ClazzName_chat_checkMessageAction, 0, 0x3d9abe5b)               // 3d9abe5b
-	iface.RegisterClazzName(ClazzName_chat_createChat2, 0, 0xed17acf5)                      // ed17acf5
+	iface.RegisterClazzName(ClazzName_chat_createChat2, 0, 0x8d8dd577)                      // 8d8dd577
 	iface.RegisterClazzName(ClazzName_chat_deleteChat, 0, 0x6d11ec1e)                       // 6d11ec1e
 	iface.RegisterClazzName(ClazzName_chat_deleteChatUser, 0, 0xb270fd5)                    // b270fd5
 	iface.RegisterClazzName(ClazzName_chat_editChatTitle, 0, 0x95c59ea7)                    // 95c59ea7
@@ -122,7 +122,7 @@ func init() {
 	iface.RegisterClazzIDName(ClazzName_chat_getChatBySelfId, 0x49b71a48)                  // 49b71a48
 	iface.RegisterClazzIDName(ClazzName_chat_checkChatAccess, 0xfff473b3)                  // fff473b3
 	iface.RegisterClazzIDName(ClazzName_chat_checkMessageAction, 0x3d9abe5b)               // 3d9abe5b
-	iface.RegisterClazzIDName(ClazzName_chat_createChat2, 0xed17acf5)                      // ed17acf5
+	iface.RegisterClazzIDName(ClazzName_chat_createChat2, 0x8d8dd577)                      // 8d8dd577
 	iface.RegisterClazzIDName(ClazzName_chat_deleteChat, 0x6d11ec1e)                       // 6d11ec1e
 	iface.RegisterClazzIDName(ClazzName_chat_deleteChatUser, 0xb270fd5)                    // b270fd5
 	iface.RegisterClazzIDName(ClazzName_chat_editChatTitle, 0x95c59ea7)                    // 95c59ea7

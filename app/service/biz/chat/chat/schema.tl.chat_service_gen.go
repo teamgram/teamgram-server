@@ -316,8 +316,8 @@ func (m *TLChatCreateChat2) String() string {
 // Encode <--
 func (m *TLChatCreateChat2) Encode(x *bin.Encoder, layer int32) error {
 	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_createChat2, int(layer)); clazzId {
-	case 0xed17acf5:
-		x.PutClazzID(0xed17acf5)
+	case 0x8d8dd577:
+		x.PutClazzID(0x8d8dd577)
 
 		// set flags
 		var getFlags = func() uint32 {
@@ -377,7 +377,7 @@ func (m *TLChatCreateChat2) Decode(d *bin.Decoder) (err error) {
 		}
 	}
 	switch m.ClazzID {
-	case 0xed17acf5:
+	case 0x8d8dd577:
 		flags, err := d.Uint32()
 		if err != nil {
 			return fmt.Errorf("unable to decode chat_createChat2: field flags: %w", err)
@@ -385,36 +385,36 @@ func (m *TLChatCreateChat2) Decode(d *bin.Decoder) (err error) {
 		_ = flags
 		m.CreatorId, err = d.Int64()
 		if err != nil {
-			return fmt.Errorf("unable to decode chat_createChat2#0xed17acf5: field creator_id: %w", err)
+			return fmt.Errorf("unable to decode chat_createChat2#0x8d8dd577: field creator_id: %w", err)
 		}
 
 		m.UserIdList, err = iface.DecodeInt64List(d)
 		if err != nil {
-			return fmt.Errorf("unable to decode chat_createChat2#0xed17acf5: field user_id_list: %w", err)
+			return fmt.Errorf("unable to decode chat_createChat2#0x8d8dd577: field user_id_list: %w", err)
 		}
 
 		m.Title, err = d.String()
 		if err != nil {
-			return fmt.Errorf("unable to decode chat_createChat2#0xed17acf5: field title: %w", err)
+			return fmt.Errorf("unable to decode chat_createChat2#0x8d8dd577: field title: %w", err)
 		}
 		if (flags & (1 << 0)) != 0 {
 			m.Bots, err = iface.DecodeInt64List(d)
 			if err != nil {
-				return fmt.Errorf("unable to decode chat_createChat2#0xed17acf5: field bots: %w", err)
+				return fmt.Errorf("unable to decode chat_createChat2#0x8d8dd577: field bots: %w", err)
 			}
 		}
 		if (flags & (1 << 1)) != 0 {
 			m.TtlPeriod = new(int32)
 			*m.TtlPeriod, err = d.Int32()
 			if err != nil {
-				return fmt.Errorf("unable to decode chat_createChat2#0xed17acf5: field ttl_period: %w", err)
+				return fmt.Errorf("unable to decode chat_createChat2#0x8d8dd577: field ttl_period: %w", err)
 			}
 		}
 		if (flags & (1 << 2)) != 0 {
 			m.ClientMsgId = new(int64)
 			*m.ClientMsgId, err = d.Int64()
 			if err != nil {
-				return fmt.Errorf("unable to decode chat_createChat2#0xed17acf5: field client_msg_id: %w", err)
+				return fmt.Errorf("unable to decode chat_createChat2#0x8d8dd577: field client_msg_id: %w", err)
 			}
 		}
 
@@ -422,7 +422,7 @@ func (m *TLChatCreateChat2) Decode(d *bin.Decoder) (err error) {
 			m.OperationId = new(string)
 			*m.OperationId, err = d.String()
 			if err != nil {
-				return fmt.Errorf("unable to decode chat_createChat2#0xed17acf5: field operation_id: %w", err)
+				return fmt.Errorf("unable to decode chat_createChat2#0x8d8dd577: field operation_id: %w", err)
 			}
 		}
 

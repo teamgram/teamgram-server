@@ -29,7 +29,7 @@ chat.getChatBySelfId self_id:long chat_id:long = MutableChat;
 chat.checkChatAccess self_id:long chat_id:long access_kind:string = ChatAccessCheckResult;
 chat.checkMessageAction self_id:long chat_id:long action:string media_kind:string = MessageActionCheckResult;
 
-chat.createChat2#ed17acf5 flags:# creator_id:long user_id_list:Vector<long> title:string bots:flags.0?Vector<long> ttl_period:flags.1?int client_msg_id:flags.2?long operation_id:flags.3?string = MutableChat;
+chat.createChat2 flags:# creator_id:long user_id_list:Vector<long> title:string bots:flags.0?Vector<long> ttl_period:flags.1?int client_msg_id:flags.2?long operation_id:flags.3?string = MutableChat;
 chat.deleteChat chat_id:long operator_id:long = MutableChat;
 chat.deleteChatUser chat_id:long operator_id:long delete_user_id:long = MutableChat;
 chat.editChatTitle chat_id:long edit_user_id:long title:string = MutableChat;

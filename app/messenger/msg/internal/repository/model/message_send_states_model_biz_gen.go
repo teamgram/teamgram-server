@@ -113,7 +113,7 @@ func (m *defaultMessageSendStatesTxModel) Insert(data *MessageSendStates) (lastI
 }
 
 // SelectBySendStateId
-// select send_state_id, sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, peer_seq, `status`, request_payload_schema_version, request_payload_hash, COALESCE(sender_operation_id, '') as sender_operation_id, sender_pts, sender_pts_count, sender_update_schema_version, sender_update_payload, sender_update_payload_hash, receiver_manifest_id, last_error_category, last_error_code, last_error_message, retry_count from message_send_states where send_state_id = :send_state_id limit 1
+// select send_state_id, sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, peer_seq, `status`, request_payload_schema_version, request_payload_hash, COALESCE(sender_operation_id, ”) as sender_operation_id, sender_pts, sender_pts_count, sender_update_schema_version, sender_update_payload, sender_update_payload_hash, receiver_manifest_id, last_error_category, last_error_code, last_error_message, retry_count from message_send_states where send_state_id = :send_state_id limit 1
 func (m *defaultMessageSendStatesModel) SelectBySendStateId(ctx context.Context, sendStateId int64) (rValue *MessageSendStates, err error) {
 
 	var (
@@ -140,7 +140,7 @@ func (m *defaultMessageSendStatesModel) SelectBySendStateId(ctx context.Context,
 }
 
 // SelectBySendStateId
-// select send_state_id, sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, peer_seq, `status`, request_payload_schema_version, request_payload_hash, COALESCE(sender_operation_id, '') as sender_operation_id, sender_pts, sender_pts_count, sender_update_schema_version, sender_update_payload, sender_update_payload_hash, receiver_manifest_id, last_error_category, last_error_code, last_error_message, retry_count from message_send_states where send_state_id = :send_state_id limit 1
+// select send_state_id, sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, peer_seq, `status`, request_payload_schema_version, request_payload_hash, COALESCE(sender_operation_id, ”) as sender_operation_id, sender_pts, sender_pts_count, sender_update_schema_version, sender_update_payload, sender_update_payload_hash, receiver_manifest_id, last_error_category, last_error_code, last_error_message, retry_count from message_send_states where send_state_id = :send_state_id limit 1
 func (m *defaultMessageSendStatesTxModel) SelectBySendStateId(sendStateId int64) (rValue *MessageSendStates, err error) {
 	var (
 		query = "select send_state_id, sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, peer_seq, `status`, request_payload_schema_version, request_payload_hash, COALESCE(sender_operation_id, '') as sender_operation_id, sender_pts, sender_pts_count, sender_update_schema_version, sender_update_payload, sender_update_payload_hash, receiver_manifest_id, last_error_category, last_error_code, last_error_message, retry_count from message_send_states where send_state_id = ? limit 1"
@@ -165,7 +165,7 @@ func (m *defaultMessageSendStatesTxModel) SelectBySendStateId(sendStateId int64)
 }
 
 // SelectByRandom
-// select send_state_id, sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, peer_seq, `status`, request_payload_schema_version, request_payload_hash, COALESCE(sender_operation_id, '') as sender_operation_id, sender_pts, sender_pts_count, sender_update_schema_version, sender_update_payload, sender_update_payload_hash, receiver_manifest_id, last_error_category, last_error_code, last_error_message, retry_count from message_send_states where sender_user_id = :sender_user_id and peer_type = :peer_type and peer_id = :peer_id and client_random_id = :client_random_id limit 1
+// select send_state_id, sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, peer_seq, `status`, request_payload_schema_version, request_payload_hash, COALESCE(sender_operation_id, ”) as sender_operation_id, sender_pts, sender_pts_count, sender_update_schema_version, sender_update_payload, sender_update_payload_hash, receiver_manifest_id, last_error_category, last_error_code, last_error_message, retry_count from message_send_states where sender_user_id = :sender_user_id and peer_type = :peer_type and peer_id = :peer_id and client_random_id = :client_random_id limit 1
 func (m *defaultMessageSendStatesModel) SelectByRandom(ctx context.Context, senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (rValue *MessageSendStates, err error) {
 
 	var (
@@ -192,7 +192,7 @@ func (m *defaultMessageSendStatesModel) SelectByRandom(ctx context.Context, send
 }
 
 // SelectByRandom
-// select send_state_id, sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, peer_seq, `status`, request_payload_schema_version, request_payload_hash, COALESCE(sender_operation_id, '') as sender_operation_id, sender_pts, sender_pts_count, sender_update_schema_version, sender_update_payload, sender_update_payload_hash, receiver_manifest_id, last_error_category, last_error_code, last_error_message, retry_count from message_send_states where sender_user_id = :sender_user_id and peer_type = :peer_type and peer_id = :peer_id and client_random_id = :client_random_id limit 1
+// select send_state_id, sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, peer_seq, `status`, request_payload_schema_version, request_payload_hash, COALESCE(sender_operation_id, ”) as sender_operation_id, sender_pts, sender_pts_count, sender_update_schema_version, sender_update_payload, sender_update_payload_hash, receiver_manifest_id, last_error_category, last_error_code, last_error_message, retry_count from message_send_states where sender_user_id = :sender_user_id and peer_type = :peer_type and peer_id = :peer_id and client_random_id = :client_random_id limit 1
 func (m *defaultMessageSendStatesTxModel) SelectByRandom(senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (rValue *MessageSendStates, err error) {
 	var (
 		query = "select send_state_id, sender_user_id, peer_type, peer_id, client_random_id, canonical_message_id, peer_seq, `status`, request_payload_schema_version, request_payload_hash, COALESCE(sender_operation_id, '') as sender_operation_id, sender_pts, sender_pts_count, sender_update_schema_version, sender_update_payload, sender_update_payload_hash, receiver_manifest_id, last_error_category, last_error_code, last_error_message, retry_count from message_send_states where sender_user_id = ? and peer_type = ? and peer_id = ? and client_random_id = ? limit 1"

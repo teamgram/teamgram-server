@@ -18,9 +18,9 @@ package repository
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/drafts/internal/config"
+	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
 	dialogclient "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/client"
 	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
-	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 

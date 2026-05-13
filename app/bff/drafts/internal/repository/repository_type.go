@@ -17,10 +17,10 @@
 package repository
 
 import (
+	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
 	dialogclient "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/client"
 	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
-	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
 )
 
 // Type aliases for convenience in the Logic layer.
