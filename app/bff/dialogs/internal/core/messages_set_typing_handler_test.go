@@ -10,6 +10,8 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/dialogs/internal/svc"
 	syncclient "github.com/teamgram/teamgram-server/v2/app/messenger/sync/client"
 	syncpb "github.com/teamgram/teamgram-server/v2/app/messenger/sync/sync"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
+	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -18,18 +20,31 @@ type fakeSyncClient struct {
 	syncclient.SyncClient
 	err              error
 	pushUpdatesCount int
-	lastUserID       int64
-	lastUpdates      tg.UpdatesClazz
+	userIDs          []int64
+	updates          []tg.UpdatesClazz
 }
 
 func (f *fakeSyncClient) SyncPushUpdates(ctx context.Context, in *syncpb.TLSyncPushUpdates) (*tg.Void, error) {
 	f.pushUpdatesCount++
-	f.lastUserID = in.UserId
-	f.lastUpdates = in.Updates
+	f.userIDs = append(f.userIDs, in.UserId)
+	f.updates = append(f.updates, in.Updates)
 	if f.err != nil {
 		return nil, f.err
 	}
 	return &tg.Void{}, nil
+}
+
+type fakeChatClient struct {
+	chatclient.ChatClient
+	participantIDs []int64
+	err            error
+}
+
+func (f *fakeChatClient) ChatGetChatParticipantIdList(context.Context, *chatpb.TLChatGetChatParticipantIdList) (*chatpb.VectorLong, error) {
+	if f.err != nil {
+		return nil, f.err
+	}
+	return &chatpb.VectorLong{Datas: f.participantIDs}, nil
 }
 
 func TestMessagesSetTypingPushesUpdateUserTypingToPeer(t *testing.T) {
@@ -48,12 +63,12 @@ func TestMessagesSetTypingPushesUpdateUserTypingToPeer(t *testing.T) {
 	if syncClient.pushUpdatesCount != 1 {
 		t.Fatalf("pushUpdatesCount = %d, want 1", syncClient.pushUpdatesCount)
 	}
-	if syncClient.lastUserID != 1002 {
-		t.Fatalf("lastUserID = %d, want peer user 1002", syncClient.lastUserID)
+	if len(syncClient.userIDs) != 1 || syncClient.userIDs[0] != 1002 {
+		t.Fatalf("pushed user ids = %v, want [1002]", syncClient.userIDs)
 	}
-	short, ok := syncClient.lastUpdates.(*tg.TLUpdateShort)
+	short, ok := syncClient.updates[0].(*tg.TLUpdateShort)
 	if !ok {
-		t.Fatalf("updates = %T, want updateShort", syncClient.lastUpdates)
+		t.Fatalf("updates = %T, want updateShort", syncClient.updates[0])
 	}
 	typing, ok := short.Update.(*tg.TLUpdateUserTyping)
 	if !ok {
@@ -64,6 +79,46 @@ func TestMessagesSetTypingPushesUpdateUserTypingToPeer(t *testing.T) {
 	}
 	if typing.Action == nil {
 		t.Fatal("typing.Action is nil")
+	}
+}
+
+func TestMessagesSetTypingPushesUpdateChatUserTypingToChatMembers(t *testing.T) {
+	syncClient := &fakeSyncClient{}
+	chatClient := &fakeChatClient{participantIDs: []int64{1001, 1002, 1003}}
+	c := newTestDialogsCoreWithChat(syncClient, chatClient, newTypingLimiter(5*time.Second), metadata.RpcMetadata{UserId: 1001})
+
+	r, err := c.MessagesSetTyping(&tg.TLMessagesSetTyping{
+		Peer:   tg.MakeTLInputPeerChat(&tg.TLInputPeerChat{ChatId: 6}),
+		Action: tg.MakeTLSendMessageTypingAction(&tg.TLSendMessageTypingAction{}),
+	})
+	if err != nil {
+		t.Fatalf("MessagesSetTyping() error = %v", err)
+	}
+	if !isBoolTrue(r) {
+		t.Fatalf("reply = %v, want BoolTrue", r)
+	}
+	if got, want := syncClient.userIDs, []int64{1002, 1003}; len(got) != len(want) || got[0] != want[0] || got[1] != want[1] {
+		t.Fatalf("pushed user ids = %v, want %v", got, want)
+	}
+	for i, updates := range syncClient.updates {
+		short, ok := updates.(*tg.TLUpdateShort)
+		if !ok {
+			t.Fatalf("updates[%d] = %T, want updateShort", i, updates)
+		}
+		typing, ok := short.Update.(*tg.TLUpdateChatUserTyping)
+		if !ok {
+			t.Fatalf("update[%d] = %T, want updateChatUserTyping", i, short.Update)
+		}
+		if typing.ChatId != 6 {
+			t.Fatalf("typing.ChatId = %d, want 6", typing.ChatId)
+		}
+		from, ok := typing.FromId.(*tg.TLPeerUser)
+		if !ok || from.UserId != 1001 {
+			t.Fatalf("typing.FromId = %#v, want peerUser 1001", typing.FromId)
+		}
+		if typing.Action == nil {
+			t.Fatal("typing.Action is nil")
+		}
 	}
 }
 
@@ -162,9 +217,14 @@ func isBoolTrue(v *tg.Bool) bool {
 }
 
 func newTestDialogsCore(syncClient syncclient.SyncClient, limiter svc.TypingLimiter, md metadata.RpcMetadata) *DialogsCore {
+	return newTestDialogsCoreWithChat(syncClient, nil, limiter, md)
+}
+
+func newTestDialogsCoreWithChat(syncClient syncclient.SyncClient, chatClient chatclient.ChatClient, limiter svc.TypingLimiter, md metadata.RpcMetadata) *DialogsCore {
 	c := New(context.Background(), &svc.ServiceContext{
 		Repo: &repository.Repository{
 			SyncClient: syncClient,
+			ChatClient: chatClient,
 		},
 		TypingLimiter: limiter,
 	})

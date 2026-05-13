@@ -19,6 +19,7 @@ package core
 import (
 	"time"
 
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -33,12 +34,22 @@ func (c *DialogsCore) MessagesSetTyping(in *tg.TLMessagesSetTyping) (*tg.Bool, e
 	}
 
 	peer := tg.FromInputPeer2(c.MD.UserId, in.Peer)
-	if peer == nil || peer.PeerType != tg.PEER_USER || peer.PeerId <= 0 {
+	if peer == nil || peer.PeerId <= 0 {
 		return nil, tg.Err400PeerIdInvalid
 	}
 
 	senderUserID := c.MD.UserId
-	targetUserID := peer.PeerId
+	switch peer.PeerType {
+	case tg.PEER_USER:
+		return c.pushUserTyping(senderUserID, peer.PeerId, in.Action)
+	case tg.PEER_CHAT:
+		return c.pushChatTyping(senderUserID, peer.PeerId, in.Action)
+	default:
+		return nil, tg.Err400PeerIdInvalid
+	}
+}
+
+func (c *DialogsCore) pushUserTyping(senderUserID, targetUserID int64, action tg.SendMessageActionClazz) (*tg.Bool, error) {
 	if c.svcCtx == nil {
 		c.logTypingPushFailure("missing service context", senderUserID, targetUserID, nil)
 		return tg.BoolTrue, nil
@@ -57,7 +68,7 @@ func (c *DialogsCore) MessagesSetTyping(in *tg.TLMessagesSetTyping) (*tg.Bool, e
 
 	update := tg.MakeTLUpdateUserTyping(&tg.TLUpdateUserTyping{
 		UserId: senderUserID,
-		Action: in.Action,
+		Action: action,
 	})
 	updates := tg.MakeTLUpdateShort(&tg.TLUpdateShort{
 		Update: update,
@@ -66,6 +77,58 @@ func (c *DialogsCore) MessagesSetTyping(in *tg.TLMessagesSetTyping) (*tg.Bool, e
 	if err := c.svcCtx.Repo.PushTypingUpdates(c.ctx, targetUserID, updates); err != nil {
 		c.logTypingPushFailure("sync push failed", senderUserID, targetUserID, err)
 		return tg.BoolTrue, nil
+	}
+	return tg.BoolTrue, nil
+}
+
+func (c *DialogsCore) pushChatTyping(senderUserID, chatID int64, action tg.SendMessageActionClazz) (*tg.Bool, error) {
+	if c.svcCtx == nil {
+		c.logTypingPushFailure("missing service context", senderUserID, chatID, nil)
+		return tg.BoolTrue, nil
+	}
+	if c.svcCtx.TypingLimiter != nil && !c.svcCtx.TypingLimiter.Allow(senderUserID, chatID, time.Now()) {
+		return tg.BoolTrue, nil
+	}
+	if c.svcCtx.Repo == nil {
+		c.logTypingPushFailure("missing repository", senderUserID, chatID, nil)
+		return tg.BoolTrue, nil
+	}
+	if c.svcCtx.Repo.ChatClient == nil {
+		c.logTypingPushFailure("missing chat client", senderUserID, chatID, nil)
+		return tg.BoolTrue, nil
+	}
+	if c.svcCtx.Repo.SyncClient == nil {
+		c.logTypingPushFailure("missing sync client", senderUserID, chatID, nil)
+		return tg.BoolTrue, nil
+	}
+
+	participants, err := c.svcCtx.Repo.ChatClient.ChatGetChatParticipantIdList(c.ctx, &chatpb.TLChatGetChatParticipantIdList{
+		ChatId: chatID,
+	})
+	if err != nil {
+		c.logTypingPushFailure("chat participants query failed", senderUserID, chatID, err)
+		return tg.BoolTrue, nil
+	}
+	if participants == nil {
+		c.logTypingPushFailure("chat participants query returned nil", senderUserID, chatID, nil)
+		return tg.BoolTrue, nil
+	}
+
+	updates := tg.MakeTLUpdateShort(&tg.TLUpdateShort{
+		Update: tg.MakeTLUpdateChatUserTyping(&tg.TLUpdateChatUserTyping{
+			ChatId: chatID,
+			FromId: tg.MakePeerUser(senderUserID),
+			Action: action,
+		}),
+		Date: int32(time.Now().Unix()),
+	})
+	for _, userID := range participants.Datas {
+		if userID == senderUserID || userID <= 0 {
+			continue
+		}
+		if err := c.svcCtx.Repo.PushTypingUpdates(c.ctx, userID, updates); err != nil {
+			c.logTypingPushFailure("sync push failed", senderUserID, userID, err)
+		}
 	}
 	return tg.BoolTrue, nil
 }
