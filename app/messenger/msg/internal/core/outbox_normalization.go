@@ -43,6 +43,7 @@ type normalizedOutboxMessage struct {
 	MediaRef                   *payload.MediaRefV1
 	Attrs                      payload.MessageAttrsV1
 	ForwardRef                 *payload.ForwardRefV1
+	ServiceAction              *payload.ServiceActionRefV1
 	ForwardSourceCanonicalID   int64
 	ForwardSourceUserMessageID int64
 }
@@ -72,9 +73,19 @@ func normalizeOutboxMessage(in normalizeOutboxInput) (normalizedOutboxMessage, e
 	if in.Outbox.RandomId == 0 {
 		return normalizedOutboxMessage{}, fmt.Errorf("%w: random_id is required", msg.ErrSendStateConflict)
 	}
-	message, ok := in.Outbox.Message.(*tg.TLMessage)
-	if !ok {
+	switch message := in.Outbox.Message.(type) {
+	case *tg.TLMessage:
+		return normalizeTLMessage(in, message)
+	case *tg.TLMessageService:
+		return normalizeTLMessageService(in, message)
+	default:
 		return normalizedOutboxMessage{}, fmt.Errorf("%w: unsupported outbox message shape", msg.ErrSendStateConflict)
+	}
+}
+
+func normalizeTLMessage(in normalizeOutboxInput, message *tg.TLMessage) (normalizedOutboxMessage, error) {
+	if message == nil {
+		return normalizedOutboxMessage{}, fmt.Errorf("%w: missing outbox message", msg.ErrSendStateConflict)
 	}
 	if message.FromScheduled || message.ScheduleRepeatPeriod != nil {
 		return normalizedOutboxMessage{}, fmt.Errorf("%w: scheduled messages are not supported", msg.ErrSendStateConflict)
@@ -122,6 +133,40 @@ func normalizeOutboxMessage(in normalizeOutboxInput) (normalizedOutboxMessage, e
 		ForwardSourceCanonicalID:   forwardSource.CanonicalMessageID,
 		ForwardSourceUserMessageID: forwardSource.UserMessageID,
 	}, nil
+}
+
+func normalizeTLMessageService(in normalizeOutboxInput, message *tg.TLMessageService) (normalizedOutboxMessage, error) {
+	if message == nil {
+		return normalizedOutboxMessage{}, fmt.Errorf("%w: missing service message", msg.ErrSendStateConflict)
+	}
+	serviceAction, err := normalizeServiceAction(message.Action)
+	if err != nil {
+		return normalizedOutboxMessage{}, err
+	}
+	return normalizedOutboxMessage{
+		SchemaVersion: NormalizedOutboxSchemaVersionV1,
+		RandomID:      in.Outbox.RandomId,
+		Background:    in.Outbox.Background,
+		FromUserID:    in.SenderUserID,
+		PeerType:      in.PeerType,
+		PeerID:        in.PeerID,
+		Out:           true,
+		ServiceAction: serviceAction,
+	}, nil
+}
+
+func normalizeServiceAction(action tg.MessageActionClazz) (*payload.ServiceActionRefV1, error) {
+	switch a := action.(type) {
+	case *tg.TLMessageActionChatCreate:
+		return &payload.ServiceActionRefV1{
+			SchemaVersion: payload.ServiceActionSchemaVersionV1,
+			Kind:          payload.ServiceActionKindChatCreate,
+			Title:         a.Title,
+			Users:         append([]int64(nil), a.Users...),
+		}, nil
+	default:
+		return nil, fmt.Errorf("%w: unsupported service action %T", msg.ErrSendStateConflict, action)
+	}
 }
 
 func normalizeReplyTo(in normalizeOutboxInput, message *tg.TLMessage) (resolvedReplyToMessage, error) {

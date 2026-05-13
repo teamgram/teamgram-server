@@ -42,6 +42,7 @@ const (
 
 	MessageKindText      int32 = 1
 	MessageKindMedia     int32 = 2
+	MessageKindService   int32 = 3
 	MessageStatusLive    int32 = 1
 	MessageStatusDeleted int32 = 2
 

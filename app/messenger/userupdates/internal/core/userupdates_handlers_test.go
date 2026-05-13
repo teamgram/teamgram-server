@@ -146,6 +146,35 @@ func TestMessageEventV3ToTLMessagePreservesEntities(t *testing.T) {
 	}
 }
 
+func TestMessageEventV3ToTLMessageProjectsChatCreateServiceAction(t *testing.T) {
+	message, err := messageEventV3ToTLMessage(payload.MessageEventV3{
+		SchemaVersion: payload.MessageEventSchemaVersionV3,
+		EventKind:     payload.EventKindNewMessage,
+		MessageID:     11,
+		PeerType:      payload.PeerTypeChat,
+		PeerID:        55,
+		FromUserID:    1001,
+		Date:          1700000000,
+		ServiceAction: &payload.ServiceActionRefV1{
+			SchemaVersion: payload.ServiceActionSchemaVersionV1,
+			Kind:          payload.ServiceActionKindChatCreate,
+			Title:         "new chat",
+			Users:         []int64{1002, 1003},
+		},
+	})
+	if err != nil {
+		t.Fatalf("messageEventV3ToTLMessage() error = %v", err)
+	}
+	service, ok := message.(*tg.TLMessageService)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessageService", message)
+	}
+	action, ok := service.Action.(*tg.TLMessageActionChatCreate)
+	if !ok || action.Title != "new chat" || len(action.Users) != 2 {
+		t.Fatalf("action = %T %+v, want chat create title/users", service.Action, service.Action)
+	}
+}
+
 func TestProcessUserOperationWithEffectsMapsAffectedOutboxes(t *testing.T) {
 	requestPayload := []byte(`{"schema_version":1,"operation_kind":"read_history","out":false}`)
 	requestHash := payload.HashBytes(requestPayload)

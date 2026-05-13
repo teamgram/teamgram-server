@@ -7,6 +7,9 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/app/bff/chats/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/bff/chats/internal/svc"
+	msgclient "github.com/teamgram/teamgram-server/v2/app/messenger/msg/client"
+	msgpb "github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
@@ -63,11 +66,25 @@ func (f *chatsFakeChatClient) ChatCreateChat2(ctx context.Context, in *chatpb.TL
 	return f.createChat(ctx, in)
 }
 
+type chatsFakeMsgClient struct {
+	msgclient.MsgClient
+
+	sendMessageV2 func(context.Context, *msgpb.TLMsgSendMessageV2) (*tg.Updates, error)
+}
+
+func (f *chatsFakeMsgClient) MsgSendMessageV2(ctx context.Context, in *msgpb.TLMsgSendMessageV2) (*tg.Updates, error) {
+	return f.sendMessageV2(ctx, in)
+}
+
 func newChatsCore(client chatclient.ChatClient, selfID int64) *ChatsCore {
+	return newChatsCoreWithRepo(&repository.Repository{ChatClient: client}, selfID)
+}
+
+func newChatsCoreWithRepo(repo *repository.Repository, selfID int64) *ChatsCore {
 	c := New(context.Background(), &svc.ServiceContext{
-		Repo: &repository.Repository{ChatClient: client},
+		Repo: repo,
 	})
-	c.MD = &metadata.RpcMetadata{UserId: selfID}
+	c.MD = &metadata.RpcMetadata{UserId: selfID, PermAuthKeyId: 9001}
 	return c
 }
 
@@ -269,10 +286,17 @@ func TestMessagesAddAndDeleteChatUserMapInputUser(t *testing.T) {
 
 func TestMessagesCreateChatMapsUsersAndTitle(t *testing.T) {
 	var got *chatpb.TLChatCreateChat2
-	c := newChatsCore(&chatsFakeChatClient{
-		createChat: func(_ context.Context, in *chatpb.TLChatCreateChat2) (*tg.MutableChat, error) {
-			got = in
-			return testMutableChat(42, in.Title), nil
+	c := newChatsCoreWithRepo(&repository.Repository{
+		ChatClient: &chatsFakeChatClient{
+			createChat: func(_ context.Context, in *chatpb.TLChatCreateChat2) (*tg.MutableChat, error) {
+				got = in
+				return testMutableChat(42, in.Title), nil
+			},
+		},
+		MsgClient: &chatsFakeMsgClient{
+			sendMessageV2: func(context.Context, *msgpb.TLMsgSendMessageV2) (*tg.Updates, error) {
+				return updatesWithChat(testMutableChat(42, "team"), 100), nil
+			},
 		},
 	}, 100)
 
@@ -291,6 +315,54 @@ func TestMessagesCreateChatMapsUsersAndTitle(t *testing.T) {
 	}
 	if got == nil || got.CreatorId != 100 || got.Title != "team" || len(got.UserIdList) != 2 || got.UserIdList[0] != 200 || got.UserIdList[1] != 300 {
 		t.Fatalf("request = %+v, want creator/title/users", got)
+	}
+}
+
+func TestMessagesCreateChatSendsChatCreateServiceMessage(t *testing.T) {
+	var sent *msgpb.TLMsgSendMessageV2
+	c := newChatsCoreWithRepo(&repository.Repository{
+		ChatClient: &chatsFakeChatClient{
+			createChat: func(_ context.Context, in *chatpb.TLChatCreateChat2) (*tg.MutableChat, error) {
+				return testMutableChat(42, in.Title), nil
+			},
+		},
+		MsgClient: &chatsFakeMsgClient{
+			sendMessageV2: func(_ context.Context, in *msgpb.TLMsgSendMessageV2) (*tg.Updates, error) {
+				sent = in
+				return updatesWithChat(testMutableChat(42, "team"), 100), nil
+			},
+		},
+	}, 100)
+
+	r, err := c.MessagesCreateChat(&tg.TLMessagesCreateChat{
+		Users: []tg.InputUserClazz{
+			tg.MakeTLInputUser(&tg.TLInputUser{UserId: 200}),
+			tg.MakeTLInputUser(&tg.TLInputUser{UserId: 300}),
+		},
+		Title: "team",
+	})
+	if err != nil {
+		t.Fatalf("MessagesCreateChat error = %v", err)
+	}
+	if r == nil || r.Updates == nil {
+		t.Fatalf("MessagesCreateChat = %+v, want sent updates", r)
+	}
+	if sent == nil || sent.UserId != 100 || sent.AuthKeyId != 9001 || sent.PeerType != payload.PeerTypeChat || sent.PeerId != 42 || len(sent.Message) != 1 {
+		t.Fatalf("send request = %+v, want one chat service message to chat 42", sent)
+	}
+	service, ok := sent.Message[0].Message.(*tg.TLMessageService)
+	if !ok {
+		t.Fatalf("outbox message = %T, want messageService", sent.Message[0].Message)
+	}
+	if peer, ok := service.PeerId.(*tg.TLPeerChat); !ok || peer.ChatId != 42 {
+		t.Fatalf("service peer = %#v, want peerChat 42", service.PeerId)
+	}
+	action, ok := service.Action.(*tg.TLMessageActionChatCreate)
+	if !ok {
+		t.Fatalf("service action = %T, want messageActionChatCreate", service.Action)
+	}
+	if action.Title != "team" || len(action.Users) != 2 || action.Users[0] != 200 || action.Users[1] != 300 {
+		t.Fatalf("chat create action = %+v, want title/users", action)
 	}
 }
 

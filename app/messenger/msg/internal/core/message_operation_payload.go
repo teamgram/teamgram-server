@@ -26,21 +26,22 @@ import (
 )
 
 type sendRequestPayloadV3 struct {
-	SchemaVersion             int                       `json:"schema_version"`
-	SenderUserID              int64                     `json:"sender_user_id"`
-	PeerType                  int32                     `json:"peer_type"`
-	PeerID                    int64                     `json:"peer_id"`
-	ClientRandomID            int64                     `json:"client_random_id"`
-	MessageText               string                    `json:"message_text,omitempty"`
-	Entities                  []payload.MessageEntityV1 `json:"entities,omitempty"`
-	ReplyToCanonicalMessageID int64                     `json:"reply_to_canonical_message_id,omitempty"`
-	MediaRef                  *payload.MediaRefV1       `json:"media_ref,omitempty"`
-	Attrs                     *payload.MessageAttrsV1   `json:"attrs,omitempty"`
-	ForwardRef                *payload.ForwardRefV1     `json:"forward_ref,omitempty"`
-	BatchSideEffectHash       string                    `json:"batch_side_effect_hash,omitempty"`
-	ClearDraft                bool                      `json:"clear_draft,omitempty"`
-	SourcePermAuthKeyID       int64                     `json:"source_perm_auth_key_id,omitempty"`
-	ClearDraftBeforeDate      int32                     `json:"clear_draft_before_date,omitempty"`
+	SchemaVersion             int                         `json:"schema_version"`
+	SenderUserID              int64                       `json:"sender_user_id"`
+	PeerType                  int32                       `json:"peer_type"`
+	PeerID                    int64                       `json:"peer_id"`
+	ClientRandomID            int64                       `json:"client_random_id"`
+	MessageText               string                      `json:"message_text,omitempty"`
+	Entities                  []payload.MessageEntityV1   `json:"entities,omitempty"`
+	ReplyToCanonicalMessageID int64                       `json:"reply_to_canonical_message_id,omitempty"`
+	MediaRef                  *payload.MediaRefV1         `json:"media_ref,omitempty"`
+	Attrs                     *payload.MessageAttrsV1     `json:"attrs,omitempty"`
+	ForwardRef                *payload.ForwardRefV1       `json:"forward_ref,omitempty"`
+	ServiceAction             *payload.ServiceActionRefV1 `json:"service_action,omitempty"`
+	BatchSideEffectHash       string                      `json:"batch_side_effect_hash,omitempty"`
+	ClearDraft                bool                        `json:"clear_draft,omitempty"`
+	SourcePermAuthKeyID       int64                       `json:"source_perm_auth_key_id,omitempty"`
+	ClearDraftBeforeDate      int32                       `json:"clear_draft_before_date,omitempty"`
 }
 
 func marshalSendRequestV3(normalized normalizedOutboxMessage, effects batchSideEffects) ([]byte, []byte, error) {
@@ -56,6 +57,7 @@ func marshalSendRequestV3(normalized normalizedOutboxMessage, effects batchSideE
 		MediaRef:                  normalized.MediaRef,
 		Attrs:                     normalized.attrsPtr(),
 		ForwardRef:                normalized.ForwardRef,
+		ServiceAction:             normalized.ServiceAction,
 		ClearDraft:                effects.ClearDraft,
 		SourcePermAuthKeyID:       effects.SourcePermAuthKeyID,
 		ClearDraftBeforeDate:      effects.ClearDraftBeforeDate,
@@ -97,6 +99,7 @@ func buildNormalizedMessageOperationPayload(normalized normalizedOutboxMessage, 
 		MediaRef:                  normalized.MediaRef,
 		Attrs:                     normalized.attrsPtr(),
 		ForwardRef:                normalized.ForwardRef,
+		ServiceAction:             normalized.ServiceAction,
 		ClearDraft:                effects.ClearDraft,
 		SourcePermAuthKeyID:       effects.SourcePermAuthKeyID,
 		ClearDraftBeforeDate:      effects.ClearDraftBeforeDate,
@@ -143,6 +146,14 @@ func normalizedCanonicalPayloads(normalized normalizedOutboxMessage) (repository
 		}
 		in.ForwardRefSchemaVersion = payload.ForwardRefSchemaVersionV1
 		in.ForwardRefPayload = body
+	}
+	if normalized.ServiceAction != nil {
+		body, err := json.Marshal(normalized.ServiceAction)
+		if err != nil {
+			return in, fmt.Errorf("%w: marshal message service action: %v", msg.ErrMsgStorage, err)
+		}
+		in.ServiceActionSchemaVersion = payload.ServiceActionSchemaVersionV1
+		in.ServiceActionPayload = body
 	}
 	return in, nil
 }

@@ -180,6 +180,21 @@ func userMessageEventV3ToTLMessage(box *repository.UserMessageBox, event payload
 	if err != nil {
 		return nil, err
 	}
+	if event.ServiceAction != nil {
+		action, err := sentMessageServiceAction(event.ServiceAction)
+		if err != nil {
+			return nil, err
+		}
+		return tg.MakeTLMessageService(&tg.TLMessageService{
+			Out:    event.Out,
+			Silent: event.Attrs != nil && event.Attrs.Silent,
+			Id:     messageID,
+			FromId: userMessageFromPeer(event.Out, event.PeerType, event.FromUserID),
+			PeerId: sentMessagePeerFromOptional(event.PeerType, event.PeerID),
+			Date:   date,
+			Action: action,
+		}), nil
+	}
 	fwdFrom, err := userMessageForwardHeader(event.ForwardRef)
 	if err != nil {
 		return nil, err

@@ -548,6 +548,53 @@ func TestProjectMessageEventV3MediaGroupedForward(t *testing.T) {
 	}
 }
 
+func TestProjectMessageEventV3ChatCreateServiceAction(t *testing.T) {
+	body := mustMarshalMessageEventV3(t, payload.MessageEventV3{
+		SchemaVersion:      payload.MessageEventSchemaVersionV3,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: 101,
+		PeerSeq:            9,
+		MessageID:          77,
+		PeerType:           payload.PeerTypeChat,
+		PeerID:             202,
+		FromUserID:         101,
+		ToUserID:           202,
+		Date:               1700000000,
+		Out:                true,
+		ServiceAction: &payload.ServiceActionRefV1{
+			SchemaVersion: payload.ServiceActionSchemaVersionV1,
+			Kind:          payload.ServiceActionKindChatCreate,
+			Title:         "new chat",
+			Users:         []int64{102, 103},
+		},
+	})
+	got, err := ProjectPushTask(&payload.PushTaskKafkaMessageV1{
+		Payload:  body,
+		Pts:      19,
+		PeerType: payload.PeerTypeChat,
+		PeerID:   202,
+	})
+	if err != nil {
+		t.Fatalf("ProjectPushTask() error = %v", err)
+	}
+	updates, ok := got.Updates.(*tg.TLUpdates)
+	if !ok || len(updates.Updates) != 1 {
+		t.Fatalf("updates = %#v, want one TLUpdates item", got.Updates)
+	}
+	update, ok := updates.Updates[0].(*tg.TLUpdateNewMessage)
+	if !ok {
+		t.Fatalf("update = %T, want *tg.TLUpdateNewMessage", updates.Updates[0])
+	}
+	service, ok := update.Message.(*tg.TLMessageService)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessageService", update.Message)
+	}
+	action, ok := service.Action.(*tg.TLMessageActionChatCreate)
+	if !ok || action.Title != "new chat" || len(action.Users) != 2 {
+		t.Fatalf("action = %T %+v, want chat create title/users", service.Action, service.Action)
+	}
+}
+
 func TestProjectMessageEventV3PhotoSizesSurviveJSONProjection(t *testing.T) {
 	body := mustMarshalMessageEventV3(t, payload.MessageEventV3{
 		SchemaVersion:      payload.MessageEventSchemaVersionV3,

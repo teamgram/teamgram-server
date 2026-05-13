@@ -260,6 +260,7 @@ type messageOperation struct {
 	MediaRef           *payload.MediaRefV1
 	Attrs              *payload.MessageAttrsV1
 	ForwardRef         *payload.ForwardRefV1
+	ServiceAction      *payload.ServiceActionRefV1
 }
 
 func decodeMessageOperation(body []byte) (messageOperation, error) {
@@ -341,6 +342,7 @@ func messageOperationFromV3(op payload.MessageOperationV3) messageOperation {
 		MediaRef:           op.MediaRef,
 		Attrs:              op.Attrs,
 		ForwardRef:         op.ForwardRef,
+		ServiceAction:      op.ServiceAction,
 	}
 }
 
@@ -526,6 +528,7 @@ func marshalMessageEvent(in ApplyUserOperationInput, op messageOperation, eventK
 			MediaRef:             op.MediaRef,
 			Attrs:                op.Attrs,
 			ForwardRef:           op.ForwardRef,
+			ServiceAction:        op.ServiceAction,
 		}
 		body, err := json.Marshal(event)
 		if err != nil {
@@ -600,6 +603,9 @@ func insertUserMessageView(txModels *model.TxModels, in ApplyUserOperationInput,
 }
 
 func messageKindForOperation(op messageOperation) int32 {
+	if op.ServiceAction != nil {
+		return MessageKindService
+	}
 	if op.MediaRef != nil {
 		return MessageKindMedia
 	}

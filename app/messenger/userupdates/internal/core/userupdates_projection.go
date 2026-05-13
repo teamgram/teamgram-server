@@ -350,6 +350,21 @@ func messageEventV3ToTLMessage(messageEvent payload.MessageEventV3) (tg.MessageC
 	if err != nil {
 		return nil, err
 	}
+	if messageEvent.ServiceAction != nil {
+		action, err := messageServiceAction(messageEvent.ServiceAction)
+		if err != nil {
+			return nil, err
+		}
+		return tg.MakeTLMessageService(&tg.TLMessageService{
+			Out:    messageEvent.Out,
+			Silent: messageAttrsSilent(messageEvent.Attrs),
+			Id:     messageID,
+			FromId: messageFromPeer(messageEvent.Out, messageEvent.PeerType, messageEvent.FromUserID),
+			PeerId: peerFromEvent(messageEvent.PeerType, messageEvent.PeerID),
+			Date:   date,
+			Action: action,
+		}), nil
+	}
 	fwdFrom, err := messageForwardHeader(messageEvent.ForwardRef)
 	if err != nil {
 		return nil, err
@@ -371,6 +386,21 @@ func messageEventV3ToTLMessage(messageEvent payload.MessageEventV3) (tg.MessageC
 		GroupedId:   messageGroupedID(messageEvent.Attrs),
 		TtlPeriod:   messageTTLPeriod(messageEvent.MediaRef),
 	}), nil
+}
+
+func messageServiceAction(ref *payload.ServiceActionRefV1) (tg.MessageActionClazz, error) {
+	if ref == nil {
+		return nil, nil
+	}
+	switch ref.Kind {
+	case payload.ServiceActionKindChatCreate:
+		return tg.MakeTLMessageActionChatCreate(&tg.TLMessageActionChatCreate{
+			Title: ref.Title,
+			Users: append([]int64(nil), ref.Users...),
+		}), nil
+	default:
+		return nil, fmt.Errorf("%w: unsupported service action kind=%s schema=%d", userupdates.ErrUserupdatesStorage, ref.Kind, ref.SchemaVersion)
+	}
 }
 
 func messageEventV3EditToTLMessage(messageEvent payload.MessageEventV3) (tg.MessageClazz, error) {

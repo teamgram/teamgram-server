@@ -114,6 +114,8 @@ func (r *Repository) CreateOrGetByClientRandom(ctx context.Context, in CreateCan
 			MessageAttrsPayload:          in.MessageAttrsPayload,
 			ForwardRefSchemaVersion:      in.ForwardRefSchemaVersion,
 			ForwardRefPayload:            in.ForwardRefPayload,
+			ServiceActionSchemaVersion:   in.ServiceActionSchemaVersion,
+			ServiceActionPayload:         in.ServiceActionPayload,
 			CreatedNew:                   true,
 		}
 		return nil
@@ -271,6 +273,8 @@ func (r *Repository) CreateOrGetCanonicalBatchByClientRandom(ctx context.Context
 					MessageAttrsPayload:          item.MessageAttrsPayload,
 					ForwardRefSchemaVersion:      item.ForwardRefSchemaVersion,
 					ForwardRefPayload:            item.ForwardRefPayload,
+					ServiceActionSchemaVersion:   item.ServiceActionSchemaVersion,
+					ServiceActionPayload:         item.ServiceActionPayload,
 					SendStateStatus:              SendStateStatusCanonical,
 					CreatedNew:                   true,
 				}
@@ -645,6 +649,8 @@ func selectCanonicalByIDOnlyTx(txModels *model.TxModels, canonicalMessageID int6
 		MessageAttrsPayload:          row.MessageAttrsPayload,
 		ForwardRefSchemaVersion:      row.ForwardRefSchemaVersion,
 		ForwardRefPayload:            row.ForwardRefPayload,
+		ServiceActionSchemaVersion:   row.ServiceActionSchemaVersion,
+		ServiceActionPayload:         row.ServiceActionPayload,
 		CreatedNew:                   false,
 	}, nil
 }
@@ -666,7 +672,7 @@ func existingCanonicalMatchesRetryTx(txModels *model.TxModels, canonicalMessageI
 func canonicalMessageMatchesRetryInput(row *model.CanonicalMessages, in CreateCanonicalMessageInput) bool {
 	if row.MessageText != in.MessageText ||
 		row.FromUserId != in.SenderUserID ||
-		row.MessageKind != MessageKindText {
+		row.MessageKind != canonicalMessageKind(in) {
 		return false
 	}
 	if canonicalRetryHasNoRichPayload(row, in) {
@@ -679,7 +685,9 @@ func canonicalMessageMatchesRetryInput(row *model.CanonicalMessages, in CreateCa
 		row.MessageAttrsSchemaVersion == in.MessageAttrsSchemaVersion &&
 		payloadBytesEqual(row.MessageAttrsPayload, in.MessageAttrsPayload) &&
 		row.ForwardRefSchemaVersion == in.ForwardRefSchemaVersion &&
-		payloadBytesEqual(row.ForwardRefPayload, in.ForwardRefPayload)
+		payloadBytesEqual(row.ForwardRefPayload, in.ForwardRefPayload) &&
+		row.ServiceActionSchemaVersion == in.ServiceActionSchemaVersion &&
+		payloadBytesEqual(row.ServiceActionPayload, in.ServiceActionPayload)
 }
 
 func canonicalRetryHasNoRichPayload(row *model.CanonicalMessages, in CreateCanonicalMessageInput) bool {
@@ -690,7 +698,9 @@ func canonicalRetryHasNoRichPayload(row *model.CanonicalMessages, in CreateCanon
 		len(row.MessageAttrsPayload) == 0 &&
 		len(in.MessageAttrsPayload) == 0 &&
 		len(row.ForwardRefPayload) == 0 &&
-		len(in.ForwardRefPayload) == 0
+		len(in.ForwardRefPayload) == 0 &&
+		len(row.ServiceActionPayload) == 0 &&
+		len(in.ServiceActionPayload) == 0
 }
 
 func payloadBytesEqual(a []byte, b []byte) bool {
@@ -749,6 +759,8 @@ func batchItemToCanonicalInput(batch CreateCanonicalBatchInput, item CreateCanon
 		MessageAttrsPayload:          item.MessageAttrsPayload,
 		ForwardRefSchemaVersion:      item.ForwardRefSchemaVersion,
 		ForwardRefPayload:            item.ForwardRefPayload,
+		ServiceActionSchemaVersion:   item.ServiceActionSchemaVersion,
+		ServiceActionPayload:         item.ServiceActionPayload,
 	}
 }
 
@@ -759,7 +771,7 @@ func insertCanonicalMessageTx(txModels *model.TxModels, canonicalID int64, canon
 		PeerId:                       canonicalPeerID,
 		PeerSeq:                      peerSeq,
 		FromUserId:                   in.SenderUserID,
-		MessageKind:                  MessageKindText,
+		MessageKind:                  canonicalMessageKind(in),
 		MessageText:                  in.MessageText,
 		EntitiesPayloadSchemaVersion: canonicalEntitiesSchemaVersion(in.EntitiesPayloadSchemaVersion),
 		EntitiesPayload:              in.EntitiesPayload,
@@ -769,8 +781,8 @@ func insertCanonicalMessageTx(txModels *model.TxModels, canonicalID int64, canon
 		MessageAttrsPayload:          in.MessageAttrsPayload,
 		ForwardRefSchemaVersion:      in.ForwardRefSchemaVersion,
 		ForwardRefPayload:            in.ForwardRefPayload,
-		ServiceActionSchemaVersion:   1,
-		ServiceActionPayload:         nil,
+		ServiceActionSchemaVersion:   in.ServiceActionSchemaVersion,
+		ServiceActionPayload:         in.ServiceActionPayload,
 		MessageStatus:                MessageStatusLive,
 		EditVersion:                  0,
 		Date:                         messageDate,
@@ -854,6 +866,8 @@ func canonicalMessageRowToResult(r *model.CanonicalMessageRow, created bool) *Ca
 		MessageAttrsPayload:          r.MessageAttrsPayload,
 		ForwardRefSchemaVersion:      r.ForwardRefSchemaVersion,
 		ForwardRefPayload:            r.ForwardRefPayload,
+		ServiceActionSchemaVersion:   r.ServiceActionSchemaVersion,
+		ServiceActionPayload:         r.ServiceActionPayload,
 		CreatedNew:                   created,
 	}
 }
@@ -893,5 +907,17 @@ func canonicalMessageModelToDTO(row *model.CanonicalMessages) *CanonicalMessage 
 		MessageAttrsPayload:          row.MessageAttrsPayload,
 		ForwardRefSchemaVersion:      row.ForwardRefSchemaVersion,
 		ForwardRefPayload:            row.ForwardRefPayload,
+		ServiceActionSchemaVersion:   row.ServiceActionSchemaVersion,
+		ServiceActionPayload:         row.ServiceActionPayload,
 	}
+}
+
+func canonicalMessageKind(in CreateCanonicalMessageInput) int32 {
+	if len(in.ServiceActionPayload) > 0 {
+		return MessageKindService
+	}
+	if len(in.MediaRefPayload) > 0 {
+		return MessageKindMedia
+	}
+	return MessageKindText
 }

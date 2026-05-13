@@ -33,6 +33,8 @@ type CanonicalMessageRow struct {
 	MessageAttrsPayload          []byte `db:"message_attrs_payload"`
 	ForwardRefSchemaVersion      int32  `db:"forward_ref_schema_version"`
 	ForwardRefPayload            []byte `db:"forward_ref_payload"`
+	ServiceActionSchemaVersion   int32  `db:"service_action_schema_version"`
+	ServiceActionPayload         []byte `db:"service_action_payload"`
 }
 
 type HistoryMessageRow struct {
@@ -155,7 +157,7 @@ func NewCanonicalQueriesTxModel(tx *sqlx.Tx) CanonicalQueriesTxModel {
 
 func (m *defaultCanonicalQueriesModel) SelectCanonicalByRandom(ctx context.Context, senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (*CanonicalMessageRow, error) {
 	var rValue CanonicalMessageRow
-	query := "select r.send_state_id, r.canonical_message_id, c.peer_seq, c.`date` as message_date, r.request_payload_hash, c.entities_payload_schema_version, c.entities_payload, c.media_ref_schema_version, c.media_ref_payload, c.message_attrs_schema_version, c.message_attrs_payload, c.forward_ref_schema_version, c.forward_ref_payload from message_client_randoms as r join canonical_messages as c on c.canonical_message_id = r.canonical_message_id where r.sender_user_id = ? and r.peer_type = ? and r.peer_id = ? and r.client_random_id = ? limit 1"
+	query := "select r.send_state_id, r.canonical_message_id, c.peer_seq, c.`date` as message_date, r.request_payload_hash, c.entities_payload_schema_version, c.entities_payload, c.media_ref_schema_version, c.media_ref_payload, c.message_attrs_schema_version, c.message_attrs_payload, c.forward_ref_schema_version, c.forward_ref_payload, c.service_action_schema_version, c.service_action_payload from message_client_randoms as r join canonical_messages as c on c.canonical_message_id = r.canonical_message_id where r.sender_user_id = ? and r.peer_type = ? and r.peer_id = ? and r.client_random_id = ? limit 1"
 
 	err := m.db.QueryRowPartial(ctx, &rValue, query, senderUserId, peerType, peerId, clientRandomId)
 	if err != nil {
@@ -166,7 +168,7 @@ func (m *defaultCanonicalQueriesModel) SelectCanonicalByRandom(ctx context.Conte
 
 func (m *defaultCanonicalQueriesTxModel) SelectCanonicalByRandom(senderUserId int64, peerType int32, peerId int64, clientRandomId int64) (*CanonicalMessageRow, error) {
 	var rValue CanonicalMessageRow
-	query := "select r.send_state_id, r.canonical_message_id, c.peer_seq, c.`date` as message_date, r.request_payload_hash, c.entities_payload_schema_version, c.entities_payload, c.media_ref_schema_version, c.media_ref_payload, c.message_attrs_schema_version, c.message_attrs_payload, c.forward_ref_schema_version, c.forward_ref_payload from message_client_randoms as r join canonical_messages as c on c.canonical_message_id = r.canonical_message_id where r.sender_user_id = ? and r.peer_type = ? and r.peer_id = ? and r.client_random_id = ? limit 1"
+	query := "select r.send_state_id, r.canonical_message_id, c.peer_seq, c.`date` as message_date, r.request_payload_hash, c.entities_payload_schema_version, c.entities_payload, c.media_ref_schema_version, c.media_ref_payload, c.message_attrs_schema_version, c.message_attrs_payload, c.forward_ref_schema_version, c.forward_ref_payload, c.service_action_schema_version, c.service_action_payload from message_client_randoms as r join canonical_messages as c on c.canonical_message_id = r.canonical_message_id where r.sender_user_id = ? and r.peer_type = ? and r.peer_id = ? and r.client_random_id = ? limit 1"
 
 	err := m.tx.QueryRowPartial(&rValue, query, senderUserId, peerType, peerId, clientRandomId)
 	if err != nil {
@@ -177,7 +179,7 @@ func (m *defaultCanonicalQueriesTxModel) SelectCanonicalByRandom(senderUserId in
 
 func (m *defaultCanonicalQueriesModel) SelectCanonicalByID(ctx context.Context, sendStateId int64, requestPayloadHash []byte, canonicalMessageId int64) (*CanonicalMessageRow, error) {
 	var rValue CanonicalMessageRow
-	query := "select ? as send_state_id, canonical_message_id, peer_seq, `date` as message_date, ? as request_payload_hash, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, message_attrs_schema_version, message_attrs_payload, forward_ref_schema_version, forward_ref_payload from canonical_messages where canonical_message_id = ? limit 1"
+	query := "select ? as send_state_id, canonical_message_id, peer_seq, `date` as message_date, ? as request_payload_hash, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, message_attrs_schema_version, message_attrs_payload, forward_ref_schema_version, forward_ref_payload, service_action_schema_version, service_action_payload from canonical_messages where canonical_message_id = ? limit 1"
 
 	err := m.db.QueryRowPartial(ctx, &rValue, query, sendStateId, requestPayloadHash, canonicalMessageId)
 	if err != nil {
@@ -188,7 +190,7 @@ func (m *defaultCanonicalQueriesModel) SelectCanonicalByID(ctx context.Context, 
 
 func (m *defaultCanonicalQueriesTxModel) SelectCanonicalByID(sendStateId int64, requestPayloadHash []byte, canonicalMessageId int64) (*CanonicalMessageRow, error) {
 	var rValue CanonicalMessageRow
-	query := "select ? as send_state_id, canonical_message_id, peer_seq, `date` as message_date, ? as request_payload_hash, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, message_attrs_schema_version, message_attrs_payload, forward_ref_schema_version, forward_ref_payload from canonical_messages where canonical_message_id = ? limit 1"
+	query := "select ? as send_state_id, canonical_message_id, peer_seq, `date` as message_date, ? as request_payload_hash, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, message_attrs_schema_version, message_attrs_payload, forward_ref_schema_version, forward_ref_payload, service_action_schema_version, service_action_payload from canonical_messages where canonical_message_id = ? limit 1"
 
 	err := m.tx.QueryRowPartial(&rValue, query, sendStateId, requestPayloadHash, canonicalMessageId)
 	if err != nil {

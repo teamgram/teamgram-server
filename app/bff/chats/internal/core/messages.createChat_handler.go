@@ -17,6 +17,11 @@
 package core
 
 import (
+	"math/rand"
+	"time"
+
+	msgpb "github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -43,6 +48,39 @@ func (c *ChatsCore) MessagesCreateChat(in *tg.TLMessagesCreateChat) (*tg.Message
 	if err != nil {
 		return nil, mapChatError(err)
 	}
+	if in.TtlPeriod != nil {
+		// TODO: send the TTL service action once default history TTL is supported for newly created chats.
+	}
+	updates, err := c.svcCtx.Repo.MsgClient.MsgSendMessageV2(c.ctx, &msgpb.TLMsgSendMessageV2{
+		UserId:    selfID,
+		AuthKeyId: c.MD.PermAuthKeyId,
+		PeerType:  payload.PeerTypeChat,
+		PeerId:    mutableChat.Chat.Id,
+		Message: []msgpb.OutboxMessageClazz{
+			msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
+				NoWebpage: true,
+				RandomId:  rand.Int63(),
+				Message: tg.MakeTLMessageService(&tg.TLMessageService{
+					Out:    true,
+					FromId: tg.MakePeerUser(selfID),
+					PeerId: tg.MakePeerChat(mutableChat.Chat.Id),
+					Date:   int32(time.Now().Unix()),
+					Action: tg.MakeTLMessageActionChatCreate(&tg.TLMessageActionChatCreate{
+						Title: in.Title,
+						Users: userIDs,
+					}),
+					TtlPeriod: in.TtlPeriod,
+				}),
+			}),
+		},
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.createChat - send create service message failed: self_user_id=%d chat_id=%d err=%v", selfID, mutableChat.Chat.Id, err)
+		return nil, tg.ErrInternalServerError
+	}
 
-	return invitedUsersWithChat(mutableChat, selfID), nil
+	return tg.MakeTLMessagesInvitedUsers(&tg.TLMessagesInvitedUsers{
+		Updates:         updates.Clazz,
+		MissingInvitees: []tg.MissingInviteeClazz{},
+	}).ToMessagesInvitedUsers(), nil
 }

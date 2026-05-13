@@ -121,6 +121,8 @@ func (c *MsgCore) MsgSendMessageV2(in *msg.TLMsgSendMessageV2) (*tg.Updates, err
 		MessageAttrsPayload:          canonicalPayloads.MessageAttrsPayload,
 		ForwardRefSchemaVersion:      canonicalPayloads.ForwardRefSchemaVersion,
 		ForwardRefPayload:            canonicalPayloads.ForwardRefPayload,
+		ServiceActionSchemaVersion:   canonicalPayloads.ServiceActionSchemaVersion,
+		ServiceActionPayload:         canonicalPayloads.ServiceActionPayload,
 	})
 	if err != nil {
 		return nil, err
@@ -313,6 +315,8 @@ func buildCanonicalBatchInput(in *msg.TLMsgSendMessageV2, normalizedBatch []norm
 			MessageAttrsPayload:          canonicalPayloads.MessageAttrsPayload,
 			ForwardRefSchemaVersion:      canonicalPayloads.ForwardRefSchemaVersion,
 			ForwardRefPayload:            canonicalPayloads.ForwardRefPayload,
+			ServiceActionSchemaVersion:   canonicalPayloads.ServiceActionSchemaVersion,
+			ServiceActionPayload:         canonicalPayloads.ServiceActionPayload,
 		})
 	}
 	return batchInput, nil
@@ -724,29 +728,45 @@ func fullSentMessageUpdates(senderUserID int64, peerType int32, peerID int64, ca
 			return nil, err
 		}
 		updatesDate = date
+		sentMessage := tg.MessageClazz(tg.MakeTLMessage(&tg.TLMessage{
+			Out:         true,
+			Silent:      normalized[i].Attrs.Silent,
+			Noforwards:  normalized[i].Attrs.Noforwards,
+			InvertMedia: normalized[i].Attrs.InvertMedia,
+			Id:          userMessageID,
+			FromId:      tg.MakePeerUser(senderUserID),
+			PeerId:      sentMessagePeerFromOptional(peerType, peerID),
+			FwdFrom:     sentMessageForwardHeader(normalized[i].ForwardRef),
+			ReplyTo:     sentMessageReplyHeader(normalized[i].ReplyToUserMessageID),
+			Date:        date,
+			Message:     normalized[i].MessageText,
+			Media:       sentMessageMedia(normalized[i].MediaRef),
+			Entities:    sentMessageEntities(normalized[i].Entities),
+			GroupedId:   sentMessageGroupedID(normalized[i].attrsPtr()),
+			TtlPeriod:   sentMessageTTLPeriod(normalized[i].MediaRef),
+		}))
+		if normalized[i].ServiceAction != nil {
+			action, err := sentMessageServiceAction(normalized[i].ServiceAction)
+			if err != nil {
+				return nil, err
+			}
+			sentMessage = tg.MakeTLMessageService(&tg.TLMessageService{
+				Out:    true,
+				Silent: normalized[i].Attrs.Silent,
+				Id:     userMessageID,
+				FromId: tg.MakePeerUser(senderUserID),
+				PeerId: sentMessagePeerFromOptional(peerType, peerID),
+				Date:   date,
+				Action: action,
+			})
+		}
 		updates = append(updates,
 			tg.MakeTLUpdateMessageID(&tg.TLUpdateMessageID{
 				Id:       userMessageID,
 				RandomId: normalized[i].RandomID,
 			}),
 			tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
-				Message: tg.MakeTLMessage(&tg.TLMessage{
-					Out:         true,
-					Silent:      normalized[i].Attrs.Silent,
-					Noforwards:  normalized[i].Attrs.Noforwards,
-					InvertMedia: normalized[i].Attrs.InvertMedia,
-					Id:          userMessageID,
-					FromId:      tg.MakePeerUser(senderUserID),
-					PeerId:      sentMessagePeerFromOptional(peerType, peerID),
-					FwdFrom:     sentMessageForwardHeader(normalized[i].ForwardRef),
-					ReplyTo:     sentMessageReplyHeader(normalized[i].ReplyToUserMessageID),
-					Date:        date,
-					Message:     normalized[i].MessageText,
-					Media:       sentMessageMedia(normalized[i].MediaRef),
-					Entities:    sentMessageEntities(normalized[i].Entities),
-					GroupedId:   sentMessageGroupedID(normalized[i].attrsPtr()),
-					TtlPeriod:   sentMessageTTLPeriod(normalized[i].MediaRef),
-				}),
+				Message:  sentMessage,
 				Pts:      pts,
 				PtsCount: response.PtsCount,
 			}),
@@ -762,10 +782,28 @@ func fullSentMessageUpdates(senderUserID int64, peerType int32, peerID int64, ca
 }
 
 func requiresFullSentUpdates(normalized normalizedOutboxMessage) bool {
+	if normalized.ServiceAction != nil {
+		return true
+	}
 	if normalized.MediaRef != nil || normalized.ForwardRef != nil || len(normalized.Entities) > 0 {
 		return true
 	}
 	return normalized.hasAttrs()
+}
+
+func sentMessageServiceAction(ref *payload.ServiceActionRefV1) (tg.MessageActionClazz, error) {
+	if ref == nil {
+		return nil, nil
+	}
+	switch ref.Kind {
+	case payload.ServiceActionKindChatCreate:
+		return tg.MakeTLMessageActionChatCreate(&tg.TLMessageActionChatCreate{
+			Title: ref.Title,
+			Users: append([]int64(nil), ref.Users...),
+		}), nil
+	default:
+		return nil, fmt.Errorf("%w: unsupported service action kind=%s schema=%d", msg.ErrMsgStorage, ref.Kind, ref.SchemaVersion)
+	}
 }
 
 func sentMessageMedia(media *payload.MediaRefV1) tg.MessageMediaClazz {

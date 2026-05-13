@@ -22,6 +22,7 @@ const (
 	MediaRefSchemaVersionV2         = 2
 	MessageAttrsSchemaVersionV1     = 1
 	ForwardRefSchemaVersionV1       = 1
+	ServiceActionSchemaVersionV1    = 1
 	MessageOperationSchemaVersionV3 = 3
 	MessageEventSchemaVersionV3     = 3
 )
@@ -42,4 +43,8 @@ const (
 	OperationKindScheduledMarker     = "scheduled_marker"
 	OperationKindMarkDialogUnread    = "mark_dialog_unread"
 	EventKindNewMessage              = "new_message"
+)
+
+const (
+	ServiceActionKindChatCreate = "chat_create"
 )

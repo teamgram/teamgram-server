@@ -27,8 +27,10 @@ const (
 	SendStateStatusCompleted       int32 = 5
 	SendStateStatusFailedRetryable int32 = 6
 
-	MessageKindText   int32 = 1
-	MessageStatusLive int32 = 1
+	MessageKindText    int32 = 1
+	MessageKindMedia   int32 = 2
+	MessageKindService int32 = 3
+	MessageStatusLive  int32 = 1
 )
 
 type KafkaAck struct {
@@ -86,6 +88,8 @@ type CreateCanonicalMessageInput struct {
 	MessageAttrsPayload          []byte
 	ForwardRefSchemaVersion      int32
 	ForwardRefPayload            []byte
+	ServiceActionSchemaVersion   int32
+	ServiceActionPayload         []byte
 }
 
 type CreateCanonicalBatchInput struct {
@@ -109,6 +113,8 @@ type CreateCanonicalBatchItem struct {
 	MessageAttrsPayload          []byte
 	ForwardRefSchemaVersion      int32
 	ForwardRefPayload            []byte
+	ServiceActionSchemaVersion   int32
+	ServiceActionPayload         []byte
 }
 
 type CanonicalMessageResult struct {
@@ -132,6 +138,8 @@ type CanonicalMessageResult struct {
 	MessageAttrsPayload          []byte
 	ForwardRefSchemaVersion      int32
 	ForwardRefPayload            []byte
+	ServiceActionSchemaVersion   int32
+	ServiceActionPayload         []byte
 	CreatedNew                   bool
 }
 
@@ -221,6 +229,8 @@ type CanonicalMessage struct {
 	MessageAttrsPayload          []byte
 	ForwardRefSchemaVersion      int32
 	ForwardRefPayload            []byte
+	ServiceActionSchemaVersion   int32
+	ServiceActionPayload         []byte
 }
 
 type EditCanonicalMessageInput struct {

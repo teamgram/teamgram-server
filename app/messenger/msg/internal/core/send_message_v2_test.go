@@ -39,6 +39,35 @@ func TestNormalizeOutboxMessageUsesAttrsGroupedID(t *testing.T) {
 	}
 }
 
+func TestNormalizeOutboxMessageSupportsChatCreateServiceAction(t *testing.T) {
+	message := tg.MakeTLMessageService(&tg.TLMessageService{
+		Out:    true,
+		FromId: tg.MakePeerUser(1001),
+		PeerId: tg.MakePeerChat(55),
+		Date:   1_778_648_899,
+		Action: tg.MakeTLMessageActionChatCreate(&tg.TLMessageActionChatCreate{
+			Title: "new chat",
+			Users: []int64{1002, 1003},
+		}),
+	})
+	outbox := msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{RandomId: 99, Message: message})
+	got, err := normalizeOutboxMessage(normalizeOutboxInput{
+		SenderUserID: 1001,
+		PeerType:     payload.PeerTypeChat,
+		PeerID:       55,
+		Outbox:       outbox,
+	})
+	if err != nil {
+		t.Fatalf("normalizeOutboxMessage() error = %v", err)
+	}
+	if got.ServiceAction == nil || got.ServiceAction.Kind != payload.ServiceActionKindChatCreate {
+		t.Fatalf("ServiceAction = %+v, want chat create", got.ServiceAction)
+	}
+	if got.ServiceAction.Title != "new chat" || len(got.ServiceAction.Users) != 2 || got.ServiceAction.Users[0] != 1002 {
+		t.Fatalf("ServiceAction = %+v, want title/users preserved", got.ServiceAction)
+	}
+}
+
 func TestNormalizeMediaRefDocumentPreservesV2DocumentPayload(t *testing.T) {
 	videoStartTs := 1.25
 	videoTimestamp := int32(7)
@@ -420,6 +449,78 @@ func TestMsgSendMessageV2PeerTypeChatUsesAffectedOutboxFanout(t *testing.T) {
 		}
 		if body.PeerType != payload.PeerTypeChat || body.PeerID != 55 || body.FromUserID != 1001 || body.ToUserID != op.UserId || body.Out {
 			t.Fatalf("receiver payload = %+v, want chat incoming from sender", body)
+		}
+	}
+}
+
+func TestMsgSendMessageV2PeerTypeChatCreateServiceActionFansOut(t *testing.T) {
+	responsePayload := []byte(`{"schema_version":2,"pts":22,"pts_count":1,"event_type":"new_message","user_message_id":43}`)
+	updatesClient := &fakeUserUpdatesClient{
+		processWithEffectsResult: testUserOperationResult(1001, payload.SenderOperationID(7004, 1001), 22, responsePayload),
+	}
+	chatClient := &fakeMsgChatClient{memberIDs: []int64{1001, 1002, 1003}}
+	repo := newFakeSendMessageRepositoryForChat(7004, 4)
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:        repo,
+		UserUpdates: updatesClient,
+		Chat:        chatClient,
+	})
+
+	got, err := core.MsgSendMessageV2(&msgpb.TLMsgSendMessageV2{
+		UserId:    1001,
+		AuthKeyId: 9001,
+		PeerType:  payload.PeerTypeChat,
+		PeerId:    55,
+		Message: []msgpb.OutboxMessageClazz{msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
+			RandomId: 12346,
+			Message: tg.MakeTLMessageService(&tg.TLMessageService{
+				Out:    true,
+				FromId: tg.MakePeerUser(1001),
+				PeerId: tg.MakePeerChat(55),
+				Date:   1778648899,
+				Action: tg.MakeTLMessageActionChatCreate(&tg.TLMessageActionChatCreate{
+					Title: "new chat",
+					Users: []int64{1002, 1003},
+				}),
+			}),
+		})},
+	})
+	if err != nil {
+		t.Fatalf("MsgSendMessageV2() error = %v", err)
+	}
+	updates, ok := got.ToUpdates()
+	if !ok || len(updates.Updates) != 2 {
+		t.Fatalf("updates = %T %+v, want updateMessageID + updateNewMessage", got, got)
+	}
+	newMessage, ok := updates.Updates[1].(*tg.TLUpdateNewMessage)
+	if !ok {
+		t.Fatalf("updates[1] = %T, want updateNewMessage", updates.Updates[1])
+	}
+	service, ok := newMessage.Message.(*tg.TLMessageService)
+	if !ok {
+		t.Fatalf("sent message = %T, want messageService", newMessage.Message)
+	}
+	action, ok := service.Action.(*tg.TLMessageActionChatCreate)
+	if !ok || action.Title != "new chat" || len(action.Users) != 2 {
+		t.Fatalf("service action = %T %+v, want chat create title/users", service.Action, service.Action)
+	}
+	if updatesClient.processWithEffects == nil || len(updatesClient.processWithEffects.AffectedEffects) != 2 {
+		t.Fatalf("affected effects = %+v, want 2 receivers", updatesClient.processWithEffects)
+	}
+	var senderOp payload.MessageOperationV3
+	if err := json.Unmarshal(updatesClient.processWithEffects.Operation.Payload, &senderOp); err != nil {
+		t.Fatalf("decode sender payload: %v", err)
+	}
+	if senderOp.ServiceAction == nil || senderOp.ServiceAction.Kind != payload.ServiceActionKindChatCreate {
+		t.Fatalf("sender service action = %+v, want chat create", senderOp.ServiceAction)
+	}
+	for _, effect := range updatesClient.processWithEffects.AffectedEffects {
+		var receiverOp payload.MessageOperationV3
+		if err := json.Unmarshal(effect.Operation.Payload, &receiverOp); err != nil {
+			t.Fatalf("decode receiver payload: %v", err)
+		}
+		if receiverOp.ServiceAction == nil || receiverOp.ServiceAction.Kind != payload.ServiceActionKindChatCreate || receiverOp.PeerID != 55 {
+			t.Fatalf("receiver payload = %+v, want chat create in peer 55", receiverOp)
 		}
 	}
 }

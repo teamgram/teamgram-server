@@ -53,6 +53,20 @@ func TestBuildBizBackedConfigSetsConcreteKitexClients(t *testing.T) {
 		t.Fatalf("expected user client service name RPCUser, got %#v", chatInvites.UserClient)
 	}
 
+	chats := buildChatsConfig(src)
+	if chats.ChatClient.DestService != "service.biz_service" {
+		t.Fatalf("expected chats chat client dest service to be forwarded, got %#v", chats.ChatClient)
+	}
+	if chats.ChatClient.ServiceName != "RPCChat" {
+		t.Fatalf("expected chats chat client service name RPCChat, got %#v", chats.ChatClient)
+	}
+	if chats.MsgClient.DestService != "messenger.msg" {
+		t.Fatalf("expected chats msg client dest service to be forwarded, got %#v", chats.MsgClient)
+	}
+	if chats.MsgClient.ServiceName != "RPCMsg" {
+		t.Fatalf("expected chats msg client service name RPCMsg, got %#v", chats.MsgClient)
+	}
+
 	messages := buildMessagesConfig(src)
 	if messages.ChatClient.DestService != "service.biz_service" {
 		t.Fatalf("expected messages chat client dest service to be forwarded, got %#v", messages.ChatClient)

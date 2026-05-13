@@ -13,6 +13,8 @@
         <field name="MessageAttrsPayload" type="[]byte" db="message_attrs_payload"/>
         <field name="ForwardRefSchemaVersion" type="int32" db="forward_ref_schema_version"/>
         <field name="ForwardRefPayload" type="[]byte" db="forward_ref_payload"/>
+        <field name="ServiceActionSchemaVersion" type="int32" db="service_action_schema_version"/>
+        <field name="ServiceActionPayload" type="[]byte" db="service_action_payload"/>
     </result>
 
     <result name="HistoryMessageRow">
@@ -99,7 +101,9 @@
                 c.message_attrs_schema_version,
                 c.message_attrs_payload,
                 c.forward_ref_schema_version,
-                c.forward_ref_payload
+                c.forward_ref_payload,
+                c.service_action_schema_version,
+                c.service_action_payload
             FROM
                 message_client_randoms r
             JOIN
@@ -133,7 +137,9 @@
                 message_attrs_schema_version,
                 message_attrs_payload,
                 forward_ref_schema_version,
-                forward_ref_payload
+                forward_ref_payload,
+                service_action_schema_version,
+                service_action_payload
             FROM
                 canonical_messages
             WHERE
