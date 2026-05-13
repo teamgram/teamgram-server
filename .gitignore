@@ -38,8 +38,6 @@ go.work.sum
 .idea
 
 *.tl
-!/app/service/biz/chat/chat/chat.tl
-!/app/messenger/msg/msg/msg.tl
 
 /app/interface/session/client/t/t
 /app/interface/session/cmd/session/session
