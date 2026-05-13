@@ -35,12 +35,12 @@ Userupdates:
     Key: messenger.userupdates
 
 Chat:
-  DestService: service.biz_service.chat
+  DestService: service.biz_service
   ServiceName: RPCChat
   Etcd:
     Hosts:
       - 127.0.0.1:2379
-    Key: service.biz_service.chat
+    Key: service.biz_service
 
 ReceiverOperations:
   Brokers:
