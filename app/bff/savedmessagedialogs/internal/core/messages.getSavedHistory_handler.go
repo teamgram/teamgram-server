@@ -24,7 +24,12 @@ import (
 // messages.getSavedHistory#998ab009 flags:# parent_peer:flags.0?InputPeer peer:InputPeer offset_id:int offset_date:int add_offset:int limit:int max_id:int min_id:int hash:long = messages.Messages;
 func (c *SavedMessageDialogsCore) MessagesGetSavedHistory(in *tg.TLMessagesGetSavedHistory) (*tg.MessagesMessages, error) {
 	// TODO: not impl
-	c.Logger.Errorf("messages.getSavedHistory - error: method MessagesGetSavedHistory not impl")
+	// c.Logger.Errorf("messages.getSavedHistory - error: method MessagesGetSavedHistory not impl")
 
-	return nil, tg.ErrMethodNotImpl
+	return tg.MakeTLMessagesMessages(&tg.TLMessagesMessages{
+		Messages: []tg.MessageClazz{},
+		Topics:   []tg.ForumTopicClazz{},
+		Chats:    []tg.ChatClazz{},
+		Users:    []tg.UserClazz{},
+	}).ToMessagesMessages(), nil
 }
