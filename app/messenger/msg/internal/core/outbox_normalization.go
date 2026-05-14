@@ -164,6 +164,12 @@ func normalizeServiceAction(action tg.MessageActionClazz) (*payload.ServiceActio
 			Title:         a.Title,
 			Users:         append([]int64(nil), a.Users...),
 		}, nil
+	case *tg.TLMessageActionChatAddUser:
+		return &payload.ServiceActionRefV1{
+			SchemaVersion: payload.ServiceActionSchemaVersionV1,
+			Kind:          payload.ServiceActionKindChatAddUser,
+			Users:         append([]int64(nil), a.Users...),
+		}, nil
 	default:
 		return nil, fmt.Errorf("%w: unsupported service action %T", msg.ErrSendStateConflict, action)
 	}

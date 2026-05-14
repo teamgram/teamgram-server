@@ -69,6 +69,34 @@ func TestNormalizeOutboxMessageSupportsChatCreateServiceAction(t *testing.T) {
 	}
 }
 
+func TestNormalizeOutboxMessageSupportsChatAddUserServiceAction(t *testing.T) {
+	message := tg.MakeTLMessageService(&tg.TLMessageService{
+		Out:    true,
+		FromId: tg.MakePeerUser(1001),
+		PeerId: tg.MakePeerChat(55),
+		Date:   1_778_648_899,
+		Action: tg.MakeTLMessageActionChatAddUser(&tg.TLMessageActionChatAddUser{
+			Users: []int64{1002},
+		}),
+	})
+	outbox := msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{RandomId: 99, Message: message})
+	got, err := normalizeOutboxMessage(normalizeOutboxInput{
+		SenderUserID: 1001,
+		PeerType:     payload.PeerTypeChat,
+		PeerID:       55,
+		Outbox:       outbox,
+	})
+	if err != nil {
+		t.Fatalf("normalizeOutboxMessage() error = %v", err)
+	}
+	if got.ServiceAction == nil || got.ServiceAction.Kind != payload.ServiceActionKindChatAddUser {
+		t.Fatalf("ServiceAction = %+v, want chat add user", got.ServiceAction)
+	}
+	if len(got.ServiceAction.Users) != 1 || got.ServiceAction.Users[0] != 1002 {
+		t.Fatalf("ServiceAction users = %+v, want [1002]", got.ServiceAction.Users)
+	}
+}
+
 func TestNormalizeMediaRefDocumentPreservesV2DocumentPayload(t *testing.T) {
 	videoStartTs := 1.25
 	videoTimestamp := int32(7)

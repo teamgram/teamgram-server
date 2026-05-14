@@ -820,6 +820,10 @@ func sentMessageServiceAction(ref *payload.ServiceActionRefV1) (tg.MessageAction
 			Title: ref.Title,
 			Users: append([]int64(nil), ref.Users...),
 		}), nil
+	case payload.ServiceActionKindChatAddUser:
+		return tg.MakeTLMessageActionChatAddUser(&tg.TLMessageActionChatAddUser{
+			Users: append([]int64(nil), ref.Users...),
+		}), nil
 	default:
 		return nil, fmt.Errorf("%w: unsupported service action kind=%s schema=%d", msg.ErrMsgStorage, ref.Kind, ref.SchemaVersion)
 	}
