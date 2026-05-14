@@ -474,14 +474,21 @@ func TestMessagesEditChatAdminRejectsInvalidUser(t *testing.T) {
 func TestMessagesAddAndDeleteChatUserMapInputUser(t *testing.T) {
 	var addReq *chatpb.TLChatAddChatUser
 	var deleteReq *chatpb.TLChatDeleteChatUser
-	c := newChatsCore(&chatsFakeChatClient{
-		addChatUser: func(_ context.Context, in *chatpb.TLChatAddChatUser) (*tg.MutableChat, error) {
-			addReq = in
-			return testMutableChat(in.ChatId, "chat"), nil
+	c := newChatsCoreWithRepo(&repository.Repository{
+		ChatClient: &chatsFakeChatClient{
+			addChatUser: func(_ context.Context, in *chatpb.TLChatAddChatUser) (*tg.MutableChat, error) {
+				addReq = in
+				return testCreatedMutableChat(in.ChatId, "chat"), nil
+			},
+			deleteChatUser: func(_ context.Context, in *chatpb.TLChatDeleteChatUser) (*tg.MutableChat, error) {
+				deleteReq = in
+				return testMutableChat(in.ChatId, "chat"), nil
+			},
 		},
-		deleteChatUser: func(_ context.Context, in *chatpb.TLChatDeleteChatUser) (*tg.MutableChat, error) {
-			deleteReq = in
-			return testMutableChat(in.ChatId, "chat"), nil
+		MsgClient: &chatsFakeMsgClient{
+			sendMessage: func(context.Context, *msgpb.TLMsgSendMessage) (*tg.Updates, error) {
+				return testMsgResponseUpdates(), nil
+			},
 		},
 	}, 100)
 
@@ -504,6 +511,90 @@ func TestMessagesAddAndDeleteChatUserMapInputUser(t *testing.T) {
 	assertUpdateChat(t, updates, 42)
 	if deleteReq == nil || deleteReq.ChatId != 42 || deleteReq.OperatorId != 100 || deleteReq.DeleteUserId != 200 {
 		t.Fatalf("delete request = %+v, want chat_id=42 operator_id=100 delete_user_id=200", deleteReq)
+	}
+}
+
+func TestMessagesAddChatUserSendsParticipantsUpdateAndServiceMessage(t *testing.T) {
+	var sent *msgpb.TLMsgSendMessage
+	msgUpdates := tg.MakeTLUpdates(&tg.TLUpdates{
+		Updates: []tg.UpdateClazz{
+			tg.MakeTLUpdateChatParticipants(&tg.TLUpdateChatParticipants{
+				Participants: tg.MakeTLChatParticipants(&tg.TLChatParticipants{
+					ChatId: 42,
+				}),
+			}),
+		},
+		Date: 1_772_000_010,
+		Seq:  1,
+	}).ToUpdates()
+	c := newChatsCoreWithRepo(&repository.Repository{
+		ChatClient: &chatsFakeChatClient{
+			addChatUser: func(_ context.Context, in *chatpb.TLChatAddChatUser) (*tg.MutableChat, error) {
+				return testCreatedMutableChat(in.ChatId, "chat"), nil
+			},
+		},
+		MsgClient: &chatsFakeMsgClient{
+			sendMessage: func(_ context.Context, in *msgpb.TLMsgSendMessage) (*tg.Updates, error) {
+				sent = in
+				return msgUpdates, nil
+			},
+		},
+	}, 100)
+
+	r, err := c.MessagesAddChatUser(&tg.TLMessagesAddChatUser{
+		ChatId: 42,
+		UserId: tg.MakeTLInputUser(&tg.TLInputUser{UserId: 300}),
+	})
+	if err != nil {
+		t.Fatalf("MessagesAddChatUser error = %v", err)
+	}
+	if r == nil || r.Updates != msgUpdates.Clazz {
+		t.Fatalf("reply updates = %#v, want msg updates envelope", r)
+	}
+	if sent == nil || sent.UserId != 100 || sent.AuthKeyId != 9001 || sent.PeerType != payload.PeerTypeChat || sent.PeerId != 42 || len(sent.Message) != 1 {
+		t.Fatalf("send request = %+v, want one chat service message to chat 42", sent)
+	}
+	service, ok := sent.Message[0].Message.(*tg.TLMessageService)
+	if !ok {
+		t.Fatalf("outbox message = %T, want messageService", sent.Message[0].Message)
+	}
+	action, ok := service.Action.(*tg.TLMessageActionChatAddUser)
+	if !ok {
+		t.Fatalf("service action = %T, want messageActionChatAddUser", service.Action)
+	}
+	if len(action.Users) != 1 || action.Users[0] != 300 {
+		t.Fatalf("chat add user action users = %+v, want [300]", action.Users)
+	}
+	assertCreateChatAttachFact(t, sent, 42)
+}
+
+func TestMessagesAddChatUserAllowsAdminActorForParticipantsFact(t *testing.T) {
+	var sent *msgpb.TLMsgSendMessage
+	c := newChatsCoreWithRepo(&repository.Repository{
+		ChatClient: &chatsFakeChatClient{
+			addChatUser: func(_ context.Context, in *chatpb.TLChatAddChatUser) (*tg.MutableChat, error) {
+				chat := testCreatedMutableChat(in.ChatId, "chat")
+				chat.ChatParticipants[1].ParticipantType = chatpb.ChatMemberAdmin
+				return chat, nil
+			},
+		},
+		MsgClient: &chatsFakeMsgClient{
+			sendMessage: func(_ context.Context, in *msgpb.TLMsgSendMessage) (*tg.Updates, error) {
+				sent = in
+				return testMsgResponseUpdates(), nil
+			},
+		},
+	}, 200)
+
+	_, err := c.MessagesAddChatUser(&tg.TLMessagesAddChatUser{
+		ChatId: 42,
+		UserId: tg.MakeTLInputUser(&tg.TLInputUser{UserId: 300}),
+	})
+	if err != nil {
+		t.Fatalf("MessagesAddChatUser error = %v", err)
+	}
+	if sent == nil {
+		t.Fatalf("send request is nil")
 	}
 }
 

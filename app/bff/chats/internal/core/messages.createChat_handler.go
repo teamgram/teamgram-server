@@ -132,6 +132,14 @@ func (c *ChatsCore) MessagesCreateChat(in *tg.TLMessagesCreateChat) (*tg.Message
 }
 
 func chatParticipantsChangedFactFromMutableChat(chat *tg.MutableChat, actorUserID int64, expectedInviteeUserIDs []int64) (payload.ChatParticipantsChangedFactV1, error) {
+	return chatParticipantsChangedFactFromMutableChatWithActorRole(chat, actorUserID, expectedInviteeUserIDs, "creator")
+}
+
+func chatParticipantsChangedFactFromMutableChatForActor(chat *tg.MutableChat, actorUserID int64, expectedInviteeUserIDs []int64) (payload.ChatParticipantsChangedFactV1, error) {
+	return chatParticipantsChangedFactFromMutableChatWithActorRole(chat, actorUserID, expectedInviteeUserIDs, "")
+}
+
+func chatParticipantsChangedFactFromMutableChatWithActorRole(chat *tg.MutableChat, actorUserID int64, expectedInviteeUserIDs []int64, requiredActorRole string) (payload.ChatParticipantsChangedFactV1, error) {
 	if chat == nil {
 		return payload.ChatParticipantsChangedFactV1{}, fmt.Errorf("mutable chat is nil")
 	}
@@ -176,8 +184,8 @@ func chatParticipantsChangedFactFromMutableChat(chat *tg.MutableChat, actorUserI
 		}
 		if participant.UserId == actorUserID {
 			actorFound = true
-			if role != "creator" {
-				return payload.ChatParticipantsChangedFactV1{}, fmt.Errorf("mutable chat actor user_id=%d has role=%s, want creator: chat_id=%d", actorUserID, role, chat.Chat.Id)
+			if requiredActorRole != "" && role != requiredActorRole {
+				return payload.ChatParticipantsChangedFactV1{}, fmt.Errorf("mutable chat actor user_id=%d has role=%s, want %s: chat_id=%d", actorUserID, role, requiredActorRole, chat.Chat.Id)
 			}
 		}
 		delete(expectedInvitees, participant.UserId)
