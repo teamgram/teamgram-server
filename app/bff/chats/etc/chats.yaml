@@ -8,6 +8,14 @@ ChatClient:
     Hosts:
       - 127.0.0.1:2379
     Key: service.biz_service.chat
+DialogClient:
+  DestService: service.biz_service.dialog
+  ServiceName: RPCDialog
+  # Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.biz_service.dialog
 MsgClient:
   DestService: messenger.msg
   ServiceName: RPCMsg
@@ -16,3 +24,11 @@ MsgClient:
     Hosts:
       - 127.0.0.1:2379
     Key: messenger.msg
+UserClient:
+  DestService: service.biz_service.user
+  ServiceName: RPCUser
+  # Codec: zrpc
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.biz_service.user

@@ -16,6 +16,10 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
+	dialogclient "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/client"
+	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
+	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
+	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -34,6 +38,7 @@ type chatsFakeChatClient struct {
 	addChatUser    func(context.Context, *chatpb.TLChatAddChatUser) (*tg.MutableChat, error)
 	deleteChatUser func(context.Context, *chatpb.TLChatDeleteChatUser) (*tg.MutableChat, error)
 	createChat     func(context.Context, *chatpb.TLChatCreateChat2) (*tg.MutableChat, error)
+	getRequesters  func(context.Context, *chatpb.TLChatGetRecentChatInviteRequesters) (*chatpb.RecentChatInviteRequesters, error)
 }
 
 func (f *chatsFakeChatClient) ChatGetMutableChat(ctx context.Context, in *chatpb.TLChatGetMutableChat) (*tg.MutableChat, error) {
@@ -72,6 +77,13 @@ func (f *chatsFakeChatClient) ChatCreateChat2(ctx context.Context, in *chatpb.TL
 	return f.createChat(ctx, in)
 }
 
+func (f *chatsFakeChatClient) ChatGetRecentChatInviteRequesters(ctx context.Context, in *chatpb.TLChatGetRecentChatInviteRequesters) (*chatpb.RecentChatInviteRequesters, error) {
+	if f.getRequesters == nil {
+		return nil, nil
+	}
+	return f.getRequesters(ctx, in)
+}
+
 type chatsFakeMsgClient struct {
 	msgclient.MsgClient
 
@@ -80,6 +92,42 @@ type chatsFakeMsgClient struct {
 
 func (f *chatsFakeMsgClient) MsgSendMessage(ctx context.Context, in *msgpb.TLMsgSendMessage) (*tg.Updates, error) {
 	return f.sendMessage(ctx, in)
+}
+
+type chatsFakeDialogClient struct {
+	dialogclient.DialogClient
+
+	getDialogsByIDList func(context.Context, *dialogpb.TLDialogGetDialogsByIdList) (*dialogpb.VectorDialogExt, error)
+}
+
+func (f *chatsFakeDialogClient) DialogGetDialogsByIdList(ctx context.Context, in *dialogpb.TLDialogGetDialogsByIdList) (*dialogpb.VectorDialogExt, error) {
+	return f.getDialogsByIDList(ctx, in)
+}
+
+type chatsFakeUserClient struct {
+	userclient.UserClient
+
+	getNotifySettings       func(context.Context, *userpb.TLUserGetNotifySettings) (*tg.PeerNotifySettings, error)
+	getUserProjectionBundle func(context.Context, *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error)
+	getBotInfo              func(context.Context, *userpb.TLUserGetBotInfo) (*tg.BotInfo, error)
+}
+
+func (f *chatsFakeUserClient) UserGetNotifySettings(ctx context.Context, in *userpb.TLUserGetNotifySettings) (*tg.PeerNotifySettings, error) {
+	if f.getNotifySettings == nil {
+		return nil, nil
+	}
+	return f.getNotifySettings(ctx, in)
+}
+
+func (f *chatsFakeUserClient) UserGetUserProjectionBundle(ctx context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+	return f.getUserProjectionBundle(ctx, in)
+}
+
+func (f *chatsFakeUserClient) UserGetBotInfo(ctx context.Context, in *userpb.TLUserGetBotInfo) (*tg.BotInfo, error) {
+	if f.getBotInfo == nil {
+		return nil, nil
+	}
+	return f.getBotInfo(ctx, in)
 }
 
 func newChatsCore(client chatclient.ChatClient, selfID int64) *ChatsCore {
@@ -247,6 +295,118 @@ func TestMessagesGetChatsSkipsMissingAndErrors(t *testing.T) {
 	}
 	if len(calls) != 3 || calls[0] != 1 || calls[1] != 2 || calls[2] != 3 {
 		t.Fatalf("calls = %v, want [1 2 3]", calls)
+	}
+}
+
+func TestMessagesGetFullChatMapsChatNotFound(t *testing.T) {
+	c := newChatsCore(&chatsFakeChatClient{
+		getMutable: func(_ context.Context, in *chatpb.TLChatGetMutableChat) (*tg.MutableChat, error) {
+			if in.ChatId != 42 {
+				t.Fatalf("chat_id = %d, want 42", in.ChatId)
+			}
+			return nil, chatpb.ErrChatNotFound
+		},
+	}, 100)
+
+	_, err := c.MessagesGetFullChat(&tg.TLMessagesGetFullChat{ChatId: 42})
+	if err != tg.ErrChatIdInvalid {
+		t.Fatalf("MessagesGetFullChat error = %v, want %v", err, tg.ErrChatIdInvalid)
+	}
+}
+
+func TestMessagesGetFullChatBuildsFullChat(t *testing.T) {
+	chat := testCreatedMutableChat(42, "team")
+	folderID := int32(7)
+	c := newChatsCoreWithRepo(&repository.Repository{
+		ChatClient: &chatsFakeChatClient{
+			getMutable: func(_ context.Context, in *chatpb.TLChatGetMutableChat) (*tg.MutableChat, error) {
+				return chat, nil
+			},
+		},
+		DialogClient: &chatsFakeDialogClient{
+			getDialogsByIDList: func(_ context.Context, in *dialogpb.TLDialogGetDialogsByIdList) (*dialogpb.VectorDialogExt, error) {
+				if in.UserId != 100 || len(in.IdList) != 1 || in.IdList[0] != tg.MakePeerDialogId(tg.PEER_CHAT, 42) {
+					t.Fatalf("dialog request = %+v", in)
+				}
+				return &dialogpb.VectorDialogExt{Datas: []dialogpb.DialogExtClazz{
+					dialogpb.MakeTLDialogExt(&dialogpb.TLDialogExt{
+						Dialog: tg.MakeTLDialog(&tg.TLDialog{FolderId: &folderID}),
+					}),
+				}}, nil
+			},
+		},
+		UserClient: &chatsFakeUserClient{
+			getUserProjectionBundle: func(_ context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+				if len(in.ViewerUserIds) != 1 || in.ViewerUserIds[0] != 100 {
+					t.Fatalf("viewer ids = %v, want [100]", in.ViewerUserIds)
+				}
+				return userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+					ViewerUsers: []userpb.ViewerUsersClazz{
+						userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 100, Users: []tg.UserClazz{
+							tg.MakeTLUser(&tg.TLUser{Id: 100, Self: true}),
+							tg.MakeTLUser(&tg.TLUser{Id: 200}),
+							tg.MakeTLUser(&tg.TLUser{Id: 300}),
+						}}),
+					},
+				}).ToUserProjectionBundle(), nil
+			},
+		},
+	}, 100)
+
+	r, err := c.MessagesGetFullChat(&tg.TLMessagesGetFullChat{ChatId: 42})
+	if err != nil {
+		t.Fatalf("MessagesGetFullChat error = %v", err)
+	}
+	full, ok := r.FullChat.(*tg.TLChatFull)
+	if !ok {
+		t.Fatalf("full_chat = %T, want *tg.TLChatFull", r.FullChat)
+	}
+	if full.Id != 42 || full.About != chat.Chat.About || full.FolderId == nil || *full.FolderId != folderID {
+		t.Fatalf("full_chat = %+v", full)
+	}
+	participants, ok := full.Participants.(*tg.TLChatParticipants)
+	if !ok || len(participants.Participants) != 3 {
+		t.Fatalf("participants = %#v, ok=%v", full.Participants, ok)
+	}
+	if len(r.Chats) != 1 || len(r.Users) != 3 {
+		t.Fatalf("chat/user vectors = %d/%d, want 1/3", len(r.Chats), len(r.Users))
+	}
+}
+
+func TestMessagesGetFullChatIgnoresDialogLookupFailure(t *testing.T) {
+	chat := testCreatedMutableChat(42, "team")
+	c := newChatsCoreWithRepo(&repository.Repository{
+		ChatClient: &chatsFakeChatClient{
+			getMutable: func(_ context.Context, in *chatpb.TLChatGetMutableChat) (*tg.MutableChat, error) {
+				return chat, nil
+			},
+		},
+		DialogClient: &chatsFakeDialogClient{
+			getDialogsByIDList: func(context.Context, *dialogpb.TLDialogGetDialogsByIdList) (*dialogpb.VectorDialogExt, error) {
+				return nil, dialogpb.ErrDeprecatedMethod
+			},
+		},
+		UserClient: &chatsFakeUserClient{
+			getUserProjectionBundle: func(_ context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error) {
+				return userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+					ViewerUsers: []userpb.ViewerUsersClazz{
+						userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 100, Users: []tg.UserClazz{}}),
+					},
+				}).ToUserProjectionBundle(), nil
+			},
+		},
+	}, 100)
+
+	r, err := c.MessagesGetFullChat(&tg.TLMessagesGetFullChat{ChatId: 42})
+	if err != nil {
+		t.Fatalf("MessagesGetFullChat error = %v", err)
+	}
+	full, ok := r.FullChat.(*tg.TLChatFull)
+	if !ok {
+		t.Fatalf("full_chat = %T, want *tg.TLChatFull", r.FullChat)
+	}
+	if full.FolderId != nil {
+		t.Fatalf("folder_id = %v, want nil", *full.FolderId)
 	}
 }
 
