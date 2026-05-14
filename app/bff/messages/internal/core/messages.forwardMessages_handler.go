@@ -346,10 +346,14 @@ func forwardHeaderForSource(source *tg.TLMessage, sourcePeer tg.PeerClazz, sourc
 		fromID = sourcePeer
 	}
 	sourcePeerHint := forwardSourcePeerHint(sourcePeer, fromID)
+	savedFromPeer = firstPeer(savedFromPeer, sourcePeerHint)
+	if savedFromPeer != nil && savedFromMessageID == nil {
+		savedFromMessageID = &sourceMessageID
+	}
 	return tg.MakeTLMessageFwdHeader(&tg.TLMessageFwdHeader{
 		FromId:         fromID,
 		Date:           date,
-		SavedFromPeer:  firstPeer(savedFromPeer, sourcePeerHint),
+		SavedFromPeer:  savedFromPeer,
 		SavedFromMsgId: savedFromMessageID,
 	})
 }

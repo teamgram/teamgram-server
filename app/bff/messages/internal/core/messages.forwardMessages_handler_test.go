@@ -10,6 +10,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -201,8 +202,16 @@ func TestMessagesForwardMessagesAllowsChatSourceAndTarget(t *testing.T) {
 	if peer, ok := message.FwdFrom.SavedFromPeer.(*tg.TLPeerChat); !ok || peer.ChatId != 44 {
 		t.Fatalf("fwd_from.saved_from_peer = %#v, want source peerChat 44 hint", message.FwdFrom.SavedFromPeer)
 	}
-	if message.FwdFrom.SavedFromMsgId != nil {
-		t.Fatalf("fwd_from.saved_from_msg_id = %v, want nil for source peer hint", message.FwdFrom.SavedFromMsgId)
+	if message.FwdFrom.SavedFromMsgId == nil || *message.FwdFrom.SavedFromMsgId != 1 {
+		t.Fatalf("fwd_from.saved_from_msg_id = %v, want source message id 1", message.FwdFrom.SavedFromMsgId)
+	}
+	enc := bin.NewEncoder()
+	if err := got.Encode(enc, 223); err != nil {
+		t.Fatalf("encoded msg_sendMessage = %v", err)
+	}
+	var decoded msg.TLMsgSendMessage
+	if err := decoded.Decode(bin.NewDecoder(enc.Bytes())); err != nil {
+		t.Fatalf("decoded msg_sendMessage = %v", err)
 	}
 }
 
