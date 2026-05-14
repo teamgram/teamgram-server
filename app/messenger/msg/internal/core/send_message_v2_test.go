@@ -2399,6 +2399,79 @@ func TestMsgGetHistoryReturnsMediaFromViewPayload(t *testing.T) {
 	}
 }
 
+func TestMsgGetHistoryReturnsV4MessageFromViewPayload(t *testing.T) {
+	viewPayload, err := json.Marshal(payload.MessageEventV4{
+		SchemaVersion: payload.MessageEventSchemaVersionV4,
+		EventKind:     payload.EventKindNewMessage,
+		MessageFact: payload.NewMessageFactV1{
+			SchemaVersion:      payload.MessageOperationSchemaVersionV4,
+			CanonicalMessageID: 9004,
+			PeerSeq:            4,
+			PeerType:           payload.PeerTypeChat,
+			PeerID:             6,
+			SenderUserID:       1571266964,
+			Date:               1_772_000_040,
+			MessageText:        "v4 history",
+		},
+		MessageID: 104,
+		Pts:       41,
+		PtsCount:  1,
+	})
+	if err != nil {
+		t.Fatalf("marshal view payload: %v", err)
+	}
+	repo := &fakeMsgRepository{
+		history: []repository.HistoryMessage{
+			{
+				CanonicalMessageID: 9004,
+				PeerSeq:            4,
+				UserMessageID:      104,
+				FromUserID:         1571266964,
+				Outgoing:           false,
+				PeerType:           payload.PeerTypeChat,
+				PeerID:             6,
+				MessageKind:        repository.MessageKindText,
+				MessageText:        "v4 history",
+				MessageDate:        1_772_000_040,
+				ViewPayload:        viewPayload,
+			},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.MsgGetHistory(&msgpb.TLMsgGetHistory{
+		UserId:   1571266963,
+		PeerType: payload.PeerTypeChat,
+		PeerId:   6,
+		Limit:    20,
+	})
+	if err != nil {
+		t.Fatalf("MsgGetHistory() error = %v", err)
+	}
+	messages, ok := got.ToMessagesMessages()
+	if !ok {
+		t.Fatalf("expected messages.messages, got %s", got.ClazzName())
+	}
+	if len(messages.Messages) != 1 {
+		t.Fatalf("messages len = %d, want 1", len(messages.Messages))
+	}
+	message, ok := messages.Messages[0].(*tg.TLMessage)
+	if !ok {
+		t.Fatalf("message[0] = %T, want *tg.TLMessage", messages.Messages[0])
+	}
+	if message.Id != 104 || message.Message != "v4 history" || message.Out {
+		t.Fatalf("history message = %+v", message)
+	}
+	peer, ok := message.PeerId.(*tg.TLPeerChat)
+	if !ok || peer.ChatId != 6 {
+		t.Fatalf("peer = %#v, want peerChat(6)", message.PeerId)
+	}
+	from, ok := message.FromId.(*tg.TLPeerUser)
+	if !ok || from.UserId != 1571266964 {
+		t.Fatalf("from = %#v, want peerUser(1571266964)", message.FromId)
+	}
+}
+
 func TestMsgGetHistoryUsesViewerScopedOutgoingFlag(t *testing.T) {
 	repo := &fakeMsgRepository{
 		history: []repository.HistoryMessage{

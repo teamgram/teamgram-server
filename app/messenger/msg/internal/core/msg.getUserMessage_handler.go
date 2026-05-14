@@ -88,6 +88,12 @@ func userMessageBoxTLMessage(box *repository.UserMessageBox, messageID int32, da
 			return nil, fmt.Errorf("%w: decode user message view payload v3: %v", msg.ErrMsgStorage, err)
 		}
 		return userMessageEventV3ToTLMessage(box, event)
+	case payload.MessageEventSchemaVersionV4:
+		var event payload.MessageEventV4
+		if err := json.Unmarshal(box.ViewPayload, &event); err != nil {
+			return nil, fmt.Errorf("%w: decode user message view payload v4: %v", msg.ErrMsgStorage, err)
+		}
+		return userMessageEventV4ToTLMessage(box, event)
 	default:
 		return nil, fmt.Errorf("%w: unsupported user message view schema=%d", msg.ErrMsgStorage, envelope.SchemaVersion)
 	}
@@ -216,6 +222,65 @@ func userMessageEventV3ToTLMessage(box *repository.UserMessageBox, event payload
 		GroupedId:   sentMessageGroupedID(event.Attrs),
 		TtlPeriod:   sentMessageTTLPeriod(event.MediaRef),
 		EditDate:    editDatePtr,
+	}), nil
+}
+
+func userMessageEventV4ToTLMessage(box *repository.UserMessageBox, event payload.MessageEventV4) (tg.MessageClazz, error) {
+	fact := event.MessageFact
+	if event.SchemaVersion != payload.MessageEventSchemaVersionV4 ||
+		event.EventKind != payload.EventKindNewMessage ||
+		event.MessageID != box.UserMessageID ||
+		fact.CanonicalMessageID != box.CanonicalMessageID ||
+		fact.PeerType != box.PeerType ||
+		fact.PeerID != box.PeerID ||
+		fact.PeerSeq != box.PeerSeq ||
+		fact.SenderUserID != box.FromUserID {
+		return nil, fmt.Errorf("%w: user message view payload v4 mismatch", msg.ErrMsgStorage)
+	}
+	messageID, err := historyIDInt32(event.MessageID, "user message view id")
+	if err != nil {
+		return nil, err
+	}
+	date, err := msgDateInt32FromUnixSeconds(int64(fact.Date), "user message view date")
+	if err != nil {
+		return nil, err
+	}
+	if fact.ServiceAction != nil {
+		action, err := sentMessageServiceAction(fact.ServiceAction)
+		if err != nil {
+			return nil, err
+		}
+		return tg.MakeTLMessageService(&tg.TLMessageService{
+			Out:     box.Outgoing,
+			Silent:  fact.Attrs != nil && fact.Attrs.Silent,
+			Id:      messageID,
+			FromId:  userMessageFromPeer(box.Outgoing, fact.PeerType, fact.SenderUserID),
+			PeerId:  sentMessagePeerFromOptional(fact.PeerType, fact.PeerID),
+			ReplyTo: sentMessageReplyHeader(fact.ReplyToUserMessageID),
+			Date:    date,
+			Action:  action,
+		}), nil
+	}
+	fwdFrom, err := userMessageForwardHeader(fact.ForwardRef)
+	if err != nil {
+		return nil, err
+	}
+	return tg.MakeTLMessage(&tg.TLMessage{
+		Out:         box.Outgoing,
+		Silent:      fact.Attrs != nil && fact.Attrs.Silent,
+		Noforwards:  fact.Attrs != nil && fact.Attrs.Noforwards,
+		InvertMedia: fact.Attrs != nil && fact.Attrs.InvertMedia,
+		Id:          messageID,
+		FromId:      userMessageFromPeer(box.Outgoing, fact.PeerType, fact.SenderUserID),
+		PeerId:      sentMessagePeerFromOptional(fact.PeerType, fact.PeerID),
+		FwdFrom:     fwdFrom,
+		ReplyTo:     sentMessageReplyHeader(fact.ReplyToUserMessageID),
+		Date:        date,
+		Message:     fact.MessageText,
+		Media:       sentMessageMedia(fact.MediaRef),
+		Entities:    sentMessageEntities(fact.Entities),
+		GroupedId:   sentMessageGroupedID(fact.Attrs),
+		TtlPeriod:   sentMessageTTLPeriod(fact.MediaRef),
 	}), nil
 }
 
