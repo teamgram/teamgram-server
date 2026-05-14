@@ -1298,14 +1298,39 @@ func TestMsgSendMessageBatchRetryResumesReceiverAckWithoutSenderDuplicate(t *tes
 	if fakeUpdates.batchApplyCalls != 0 || fakeRepo.markSenderCalls != 0 {
 		t.Fatalf("sender projection duplicated: batchApplyCalls=%d markSenderCalls=%d", fakeUpdates.batchApplyCalls, fakeRepo.markSenderCalls)
 	}
-	if len(fakeUpdates.receiverPublished) != 2 {
-		t.Fatalf("receiver published len = %d, want 2", len(fakeUpdates.receiverPublished))
+	if len(fakeUpdates.receiverPublished) != 1 {
+		t.Fatalf("receiver published len = %d, want 1", len(fakeUpdates.receiverPublished))
 	}
 	if fakeRepo.markReceiverAckedCalls != 2 || fakeRepo.markCompletedCalls != 2 {
 		t.Fatalf("unexpected retry completion calls: repo=%+v", fakeRepo)
 	}
 	if _, ok := got.Clazz.(*tg.TLUpdates); !ok {
 		t.Fatalf("updates = %T, want *tg.TLUpdates", got.Clazz)
+	}
+}
+
+func TestMsgSendMessageBatchPublishesOneReceiverBatchOperation(t *testing.T) {
+	core, _, fakeUpdates := newBatchMsgCoreForTest(t)
+
+	if _, err := core.MsgSendMessage(buildBatchSendRequestForTest(100, 200, 9001, []int64{11, 12})); err != nil {
+		t.Fatalf("MsgSendMessage() error = %v", err)
+	}
+	if len(fakeUpdates.receiverPublished) != 1 {
+		t.Fatalf("receiver published len = %d, want 1", len(fakeUpdates.receiverPublished))
+	}
+	receiver := fakeUpdates.receiverPublished[0]
+	if receiver.OperationID != payload.ReceiverBatchOperationID(200, []int64{9001, 9002}) {
+		t.Fatalf("receiver operation_id = %q, want batch id", receiver.OperationID)
+	}
+	batch := mustDecodeMessageOperationBatchV1(t, receiver.Payload)
+	if len(batch.Messages) != 2 {
+		t.Fatalf("batch messages len = %d, want 2", len(batch.Messages))
+	}
+	if batch.Messages[0].CanonicalMessageID != 9001 || batch.Messages[0].ClientRandomID != 11 || batch.Messages[0].MessageText != "a" {
+		t.Fatalf("first batch message = %+v, want canonical 9001 random 11 text a", batch.Messages[0])
+	}
+	if batch.Messages[1].CanonicalMessageID != 9002 || batch.Messages[1].ClientRandomID != 12 || batch.Messages[1].MessageText != "b" {
+		t.Fatalf("second batch message = %+v, want canonical 9002 random 12 text b", batch.Messages[1])
 	}
 }
 
@@ -1350,33 +1375,37 @@ func TestMsgSendMessageBatchReceiverPayloadIncludesRichFields(t *testing.T) {
 	if _, ok := got.Clazz.(*tg.TLUpdates); !ok {
 		t.Fatalf("updates = %T, want *tg.TLUpdates", got.Clazz)
 	}
-	if len(fakeUpdates.receiverPublished) != 2 {
-		t.Fatalf("receiver published len = %d, want 2", len(fakeUpdates.receiverPublished))
+	if len(fakeUpdates.receiverPublished) != 1 {
+		t.Fatalf("receiver published len = %d, want 1", len(fakeUpdates.receiverPublished))
 	}
-	receiverOp := mustDecodeMessageOperationV4(t, fakeUpdates.receiverPublished[0].Payload)
-	if receiverOp.MessageFact.PeerID != 100 || receiverOp.MessageFact.ToUserID != 200 || receiverOp.MessageFact.MessageText != "caption" {
-		t.Fatalf("unexpected receiver viewer fields: %+v", receiverOp)
+	receiverBatch := mustDecodeMessageOperationBatchV1(t, fakeUpdates.receiverPublished[0].Payload)
+	if len(receiverBatch.Messages) != 2 {
+		t.Fatalf("receiver batch len = %d, want 2", len(receiverBatch.Messages))
 	}
-	if receiverOp.MessageFact.MediaRef == nil || receiverOp.MessageFact.MediaRef.Kind != "photo" || receiverOp.MessageFact.MediaRef.ID != 333 {
-		t.Fatalf("receiver media ref = %+v, want photo 333", receiverOp.MessageFact.MediaRef)
+	receiverMessage := receiverBatch.Messages[0]
+	if receiverMessage.PeerID != 100 || receiverMessage.ToUserID != 200 || receiverMessage.MessageText != "caption" {
+		t.Fatalf("unexpected receiver viewer fields: %+v", receiverMessage)
 	}
-	if receiverOp.MessageFact.Attrs == nil || receiverOp.MessageFact.Attrs.GroupedID != groupedID {
-		t.Fatalf("receiver attrs = %+v, want grouped_id %d", receiverOp.MessageFact.Attrs, groupedID)
+	if receiverMessage.MediaRef == nil || receiverMessage.MediaRef.Kind != "photo" || receiverMessage.MediaRef.ID != 333 {
+		t.Fatalf("receiver media ref = %+v, want photo 333", receiverMessage.MediaRef)
 	}
-	if receiverOp.MessageFact.ForwardRef == nil || receiverOp.MessageFact.ForwardRef.FromUserID != 300 {
-		t.Fatalf("receiver forward ref = %+v, want from user 300", receiverOp.MessageFact.ForwardRef)
+	if receiverMessage.Attrs == nil || receiverMessage.Attrs.GroupedID != groupedID {
+		t.Fatalf("receiver attrs = %+v, want grouped_id %d", receiverMessage.Attrs, groupedID)
 	}
-	if receiverOp.MessageFact.ForwardRef.SourceMessageID != 0 {
-		t.Fatalf("receiver source_message_id = %d, want empty for non-channel user forward", receiverOp.MessageFact.ForwardRef.SourceMessageID)
+	if receiverMessage.ForwardRef == nil || receiverMessage.ForwardRef.FromUserID != 300 {
+		t.Fatalf("receiver forward ref = %+v, want from user 300", receiverMessage.ForwardRef)
 	}
-	if receiverOp.MessageFact.ForwardRef.SavedFromPeerType != 0 || receiverOp.MessageFact.ForwardRef.SavedFromPeerID != 0 || receiverOp.MessageFact.ForwardRef.SavedFromMessageID != 0 {
-		t.Fatalf("receiver saved forward fields = %+v, want empty for non-saved forward", receiverOp.MessageFact.ForwardRef)
+	if receiverMessage.ForwardRef.SourceMessageID != 0 {
+		t.Fatalf("receiver source_message_id = %d, want empty for non-channel user forward", receiverMessage.ForwardRef.SourceMessageID)
 	}
-	if len(receiverOp.MessageFact.Entities) != 1 || receiverOp.MessageFact.Entities[0].Kind != "bold" {
-		t.Fatalf("receiver entities = %+v, want bold entity", receiverOp.MessageFact.Entities)
+	if receiverMessage.ForwardRef.SavedFromPeerType != 0 || receiverMessage.ForwardRef.SavedFromPeerID != 0 || receiverMessage.ForwardRef.SavedFromMessageID != 0 {
+		t.Fatalf("receiver saved forward fields = %+v, want empty for non-saved forward", receiverMessage.ForwardRef)
 	}
-	if receiverOp.MessageFact.ReplyToCanonicalMessageID != 7001 {
-		t.Fatalf("reply_to_canonical_message_id = %d, want 7001", receiverOp.MessageFact.ReplyToCanonicalMessageID)
+	if len(receiverMessage.Entities) != 1 || receiverMessage.Entities[0].Kind != "bold" {
+		t.Fatalf("receiver entities = %+v, want bold entity", receiverMessage.Entities)
+	}
+	if receiverMessage.ReplyToCanonicalMessageID != 7001 {
+		t.Fatalf("reply_to_canonical_message_id = %d, want 7001", receiverMessage.ReplyToCanonicalMessageID)
 	}
 	tlUpdates, ok := got.Clazz.(*tg.TLUpdates)
 	if !ok {
@@ -4224,6 +4253,18 @@ func mustDecodeMessageOperationV4(t *testing.T, body []byte) payload.MessageOper
 	}
 	if op.SchemaVersion != payload.MessageOperationSchemaVersionV4 {
 		t.Fatalf("message operation schema = %d, want v4; payload=%s", op.SchemaVersion, string(body))
+	}
+	return op
+}
+
+func mustDecodeMessageOperationBatchV1(t *testing.T, body []byte) payload.MessageOperationBatchV1 {
+	t.Helper()
+	var op payload.MessageOperationBatchV1
+	if err := json.Unmarshal(body, &op); err != nil {
+		t.Fatalf("decode message operation batch: %v", err)
+	}
+	if op.SchemaVersion != payload.MessageOperationSchemaVersionBatchV1 {
+		t.Fatalf("message operation batch schema = %d, want batch v1; payload=%s", op.SchemaVersion, string(body))
 	}
 	return op
 }

@@ -133,7 +133,9 @@ func differenceToTL(in *repository.GetDifferenceResult) (*userupdates.UserDiffer
 		if err != nil {
 			return nil, err
 		}
-		if projected.Message != nil {
+		if len(projected.Messages) > 0 {
+			newMessages = append(newMessages, projected.Messages...)
+		} else if projected.Message != nil {
 			newMessages = append(newMessages, projected.Message)
 		}
 		if len(projected.OtherUpdates) > 0 {

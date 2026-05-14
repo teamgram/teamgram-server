@@ -380,6 +380,96 @@ func TestV4CreateChatPushOmitsUpdateMessageID(t *testing.T) {
 	}
 }
 
+func TestBatchMessagePushRoutesOneUpdatesEnvelope(t *testing.T) {
+	eventPayload, err := json.Marshal(payload.MessageEventBatchV1{
+		SchemaVersion: payload.MessageEventSchemaVersionBatchV1,
+		EventKind:     payload.EventKindNewMessage,
+		Messages: []payload.MessageEventBatchItemV1{
+			{
+				MessageFact: payload.NewMessageFactV1{
+					SchemaVersion:      1,
+					CanonicalMessageID: 8001,
+					PeerType:           payload.PeerTypeUser,
+					PeerID:             1001,
+					SenderUserID:       1001,
+					ToUserID:           2002,
+					Date:               1777781234,
+					MessageText:        "first",
+				},
+				MessageID: 10,
+				Pts:       41,
+				PtsCount:  1,
+			},
+			{
+				MessageFact: payload.NewMessageFactV1{
+					SchemaVersion:      1,
+					CanonicalMessageID: 8002,
+					PeerType:           payload.PeerTypeUser,
+					PeerID:             1001,
+					SenderUserID:       1001,
+					ToUserID:           2002,
+					Date:               1777781235,
+					MessageText:        "second",
+				},
+				MessageID: 11,
+				Pts:       42,
+				PtsCount:  1,
+			},
+		},
+	})
+	if err != nil {
+		t.Fatalf("marshal batch event payload: %v", err)
+	}
+	body, err := payload.MarshalPushTaskKafkaMessage(payload.PushTaskKafkaMessageV1{
+		SchemaVersion: payload.PushTaskKafkaMessageSchemaVersion,
+		TaskID:        5,
+		UserID:        2002,
+		Pts:           42,
+		PushType:      1,
+		PeerType:      payload.PeerTypeUser,
+		PeerID:        1001,
+		OperationID:   "v1:msgbatch:receiver:2002:in:8001:8002",
+		Payload:       eventPayload,
+	})
+	if err != nil {
+		t.Fatalf("marshal push task: %v", err)
+	}
+	auth := &fakePushAuthsession{keys: []int64{555}}
+	gatewayClient := &fakePushGateway{}
+	userClient := &fakePushUserProjector{out: userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+		ViewerUsers: []userpb.ViewerUsersClazz{
+			userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 2002, Users: []tg.UserClazz{
+				tg.MakeTLUser(&tg.TLUser{Id: 1001}),
+				tg.MakeTLUser(&tg.TLUser{Id: 2002}),
+			}}),
+		},
+	}).ToUserProjectionBundle()}
+	dispatcher := NewPushTaskDispatcher(auth, gatewayClient, userClient)
+
+	if err := dispatcher.HandlePushTaskKafkaRecord(context.Background(), PushTaskKafkaRecord{Value: body}); err != nil {
+		t.Fatalf("HandlePushTaskKafkaRecord() error = %v", err)
+	}
+	if len(gatewayClient.requests) != 1 {
+		t.Fatalf("gateway push count = %d, want 1", len(gatewayClient.requests))
+	}
+	updates, ok := gatewayClient.requests[0].Updates.(*tg.TLUpdates)
+	if !ok {
+		t.Fatalf("updates = %T, want *tg.TLUpdates", gatewayClient.requests[0].Updates)
+	}
+	if len(updates.Updates) != 2 {
+		t.Fatalf("updates len = %d, want 2", len(updates.Updates))
+	}
+	for i, update := range updates.Updates {
+		newMessage, ok := update.(*tg.TLUpdateNewMessage)
+		if !ok {
+			t.Fatalf("updates[%d] = %T, want *tg.TLUpdateNewMessage", i, update)
+		}
+		if newMessage.Pts != int32(41+i) || newMessage.PtsCount != 1 {
+			t.Fatalf("updates[%d] pts/count = %d/%d, want %d/1", i, newMessage.Pts, newMessage.PtsCount, 41+i)
+		}
+	}
+}
+
 func TestPushTaskDispatcherV4RejectsChannelDependencies(t *testing.T) {
 	eventPayload, err := json.Marshal(payload.MessageEventV4{
 		SchemaVersion: payload.MessageEventSchemaVersionV4,

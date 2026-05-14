@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"strconv"
 )
 
 type MessageOperationV1 struct {
@@ -286,6 +287,13 @@ type MessageOperationV4 struct {
 	AttachFacts   []UpdateFactV1   `json:"attach_facts,omitempty"`
 }
 
+type MessageOperationBatchV1 struct {
+	SchemaVersion int                `json:"schema_version"`
+	OperationKind string             `json:"operation_kind"`
+	Messages      []NewMessageFactV1 `json:"messages"`
+	AttachFacts   []UpdateFactV1     `json:"attach_facts,omitempty"`
+}
+
 type OperationResponseV1 struct {
 	SchemaVersion int    `json:"schema_version"`
 	OperationID   string `json:"operation_id,omitempty"`
@@ -396,6 +404,21 @@ type MessageEventV4 struct {
 	AuthKeyIdExclude *int64           `json:"auth_key_id_exclude,omitempty"`
 }
 
+type MessageEventBatchItemV1 struct {
+	MessageFact NewMessageFactV1 `json:"message_fact"`
+	MessageID   int64            `json:"message_id"`
+	Pts         int64            `json:"pts"`
+	PtsCount    int32            `json:"pts_count"`
+}
+
+type MessageEventBatchV1 struct {
+	SchemaVersion    int                       `json:"schema_version"`
+	EventKind        string                    `json:"event_kind"`
+	Messages         []MessageEventBatchItemV1 `json:"messages"`
+	AttachFacts      []UpdateFactV1            `json:"attach_facts,omitempty"`
+	AuthKeyIdExclude *int64                    `json:"auth_key_id_exclude,omitempty"`
+}
+
 func WrapFact(kind string, value any) (UpdateFactV1, error) {
 	if kind == "" {
 		return UpdateFactV1{}, fmt.Errorf("update fact kind is empty")
@@ -467,4 +490,13 @@ func SenderOperationID(canonicalMessageID, senderUserID int64) string {
 
 func ReceiverOperationID(canonicalMessageID, receiverUserID int64) string {
 	return fmt.Sprintf("v1:msg:%d:receiver:%d:in", canonicalMessageID, receiverUserID)
+}
+
+func ReceiverBatchOperationID(receiverUserID int64, canonicalMessageIDs []int64) string {
+	seed := strconv.FormatInt(receiverUserID, 10)
+	for _, id := range canonicalMessageIDs {
+		seed += ":" + strconv.FormatInt(id, 10)
+	}
+	sum := sha256.Sum256([]byte(seed))
+	return fmt.Sprintf("v1:msgbatch:receiver:%d:in:%s", receiverUserID, hex.EncodeToString(sum[:8]))
 }

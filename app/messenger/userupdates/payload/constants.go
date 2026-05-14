@@ -19,15 +19,17 @@ const (
 	MessageEventSchemaVersion        = 2
 	OperationResponseSchemaVersionV3 = 3
 
-	MediaRefSchemaVersionV1         = 1
-	MediaRefSchemaVersionV2         = 2
-	MessageAttrsSchemaVersionV1     = 1
-	ForwardRefSchemaVersionV1       = 1
-	ServiceActionSchemaVersionV1    = 1
-	MessageOperationSchemaVersionV3 = 3
-	MessageEventSchemaVersionV3     = 3
-	MessageOperationSchemaVersionV4 = 4
-	MessageEventSchemaVersionV4     = 4
+	MediaRefSchemaVersionV1              = 1
+	MediaRefSchemaVersionV2              = 2
+	MessageAttrsSchemaVersionV1          = 1
+	ForwardRefSchemaVersionV1            = 1
+	ServiceActionSchemaVersionV1         = 1
+	MessageOperationSchemaVersionV3      = 3
+	MessageEventSchemaVersionV3          = 3
+	MessageOperationSchemaVersionV4      = 4
+	MessageEventSchemaVersionV4          = 4
+	MessageOperationSchemaVersionBatchV1 = 5
+	MessageEventSchemaVersionBatchV1     = 5
 
 	ReplyEnvelopeCodecTLBinary int32 = 1
 	ReplyEnvelopeSchemaV1      int32 = 1
@@ -41,6 +43,7 @@ const (
 
 const (
 	OperationKindSendMessage         = "send_message"
+	OperationKindSendMessageBatch    = "send_message_batch"
 	OperationKindReadHistory         = "read_history"
 	OperationKindDeleteMessages      = "delete_messages"
 	OperationKindDeleteHistory       = "delete_history"

@@ -1606,6 +1606,84 @@ func TestApplyMessageOperationV4ComputesOutFromViewer(t *testing.T) {
 	}
 }
 
+func TestApplyMessageOperationBatchV1StoresViewsAndOnePushTask(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	senderID := base + 2851
+	receiverID := base + 2852
+	chatID := base + 2853
+	repo := newV4ApplyTestRepository(db, base, senderID, receiverID, chatID)
+	date := int32(time.Now().Unix())
+	op := payload.MessageOperationBatchV1{
+		SchemaVersion: payload.MessageOperationSchemaVersionBatchV1,
+		OperationKind: payload.OperationKindSendMessageBatch,
+		Messages: []payload.NewMessageFactV1{
+			{
+				SchemaVersion:      1,
+				CanonicalMessageID: base + 2854,
+				PeerType:           payload.PeerTypeUser,
+				PeerID:             senderID,
+				PeerSeq:            1,
+				SenderUserID:       senderID,
+				ToUserID:           receiverID,
+				ClientRandomID:     11,
+				Date:               date,
+				MessageText:        "first",
+			},
+			{
+				SchemaVersion:      1,
+				CanonicalMessageID: base + 2855,
+				PeerType:           payload.PeerTypeUser,
+				PeerID:             senderID,
+				PeerSeq:            2,
+				SenderUserID:       senderID,
+				ToUserID:           receiverID,
+				ClientRandomID:     12,
+				Date:               date + 1,
+				MessageText:        "second",
+			},
+		},
+	}
+	in := buildOperationApplyInputBatchV1(t, receiverID, op, "receiver-batch")
+	if _, err := repo.ClaimPartitionOwner(ctx, in.PartitionID); err != nil {
+		t.Fatalf("ClaimPartitionOwner() error = %v", err)
+	}
+
+	result, err := repo.ApplyUserOperation(ctx, in)
+	if err != nil {
+		t.Fatalf("ApplyUserOperation(batch) error = %v", err)
+	}
+	if result.Pts != 2 || result.PtsCount != 2 {
+		t.Fatalf("result pts/count = %d/%d, want 2/2", result.Pts, result.PtsCount)
+	}
+	firstView, err := repo.models.UserMessageViewsModel.SelectByUserCanonical(ctx, receiverID, op.Messages[0].CanonicalMessageID)
+	if err != nil {
+		t.Fatalf("SelectByUserCanonical(first) error = %v", err)
+	}
+	secondView, err := repo.models.UserMessageViewsModel.SelectByUserCanonical(ctx, receiverID, op.Messages[1].CanonicalMessageID)
+	if err != nil {
+		t.Fatalf("SelectByUserCanonical(second) error = %v", err)
+	}
+	if firstView.UserMessageId != 1 || secondView.UserMessageId != 2 {
+		t.Fatalf("user message ids = %d/%d, want 1/2", firstView.UserMessageId, secondView.UserMessageId)
+	}
+	tasks, err := repo.models.PushTaskOutboxModel.SelectPending(ctx, PushTaskStatusPending, unixNow()+10, 10)
+	if err != nil {
+		t.Fatalf("ListPending push tasks error = %v", err)
+	}
+	if len(tasks) != 1 {
+		t.Fatalf("push task count = %d, want 1", len(tasks))
+	}
+	var event payload.MessageEventBatchV1
+	if err := json.Unmarshal(tasks[0].TaskPayload, &event); err != nil {
+		t.Fatalf("unmarshal push batch event: %v", err)
+	}
+	if len(event.Messages) != 2 || event.Messages[0].Pts != 1 || event.Messages[1].Pts != 2 {
+		t.Fatalf("batch event messages = %+v, want two consecutive pts", event.Messages)
+	}
+}
+
 func TestApplyMessageOperationV4StoresAttachFacts(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)
@@ -2153,6 +2231,33 @@ func buildOperationApplyInputV4(t *testing.T, userID int64, op payload.MessageOp
 		OpType:       OpTypeSendMessage,
 		PeerType:     op.MessageFact.PeerType,
 		PeerID:       op.MessageFact.PeerID,
+		PayloadCodec: PayloadCodecJSON,
+		Payload:      body,
+		PayloadHash:  payload.HashBytes(body),
+		BucketID:     int32(route.BucketID),
+		PartitionID:  int32(route.ReceiverPartitionID),
+	}
+}
+
+func buildOperationApplyInputBatchV1(t *testing.T, userID int64, op payload.MessageOperationBatchV1, suffix string) ApplyUserOperationInput {
+	t.Helper()
+	route := payload.RouteUser(userID)
+	body, err := json.Marshal(op)
+	if err != nil {
+		t.Fatalf("marshal batch operation: %v", err)
+	}
+	peerType := int32(0)
+	peerID := int64(0)
+	if len(op.Messages) > 0 {
+		peerType = op.Messages[0].PeerType
+		peerID = op.Messages[0].PeerID
+	}
+	return ApplyUserOperationInput{
+		UserID:       userID,
+		OperationID:  fmt.Sprintf("batch:%s:user:%d:%s:%d", op.OperationKind, userID, suffix, time.Now().UnixNano()),
+		OpType:       OpTypeSendMessage,
+		PeerType:     peerType,
+		PeerID:       peerID,
 		PayloadCodec: PayloadCodecJSON,
 		Payload:      body,
 		PayloadHash:  payload.HashBytes(body),

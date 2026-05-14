@@ -580,6 +580,97 @@ func TestV4CreateChatDifferenceOmitsUpdateMessageID(t *testing.T) {
 	}
 }
 
+func TestBatchMessageDifferenceReturnsAllNewMessages(t *testing.T) {
+	eventPayload := mustMarshalMessageEventBatchV1(t, payload.MessageEventBatchV1{
+		SchemaVersion: payload.MessageEventSchemaVersionBatchV1,
+		EventKind:     payload.EventKindNewMessage,
+		Messages: []payload.MessageEventBatchItemV1{
+			{
+				MessageFact: payload.NewMessageFactV1{
+					SchemaVersion:      1,
+					CanonicalMessageID: 8001,
+					PeerType:           payload.PeerTypeUser,
+					PeerID:             1002,
+					SenderUserID:       1002,
+					ToUserID:           1001,
+					Date:               1_772_000_000,
+					MessageText:        "first",
+				},
+				MessageID: 51,
+				Pts:       18,
+				PtsCount:  1,
+			},
+			{
+				MessageFact: payload.NewMessageFactV1{
+					SchemaVersion:      1,
+					CanonicalMessageID: 8002,
+					PeerType:           payload.PeerTypeUser,
+					PeerID:             1002,
+					SenderUserID:       1002,
+					ToUserID:           1001,
+					Date:               1_772_000_001,
+					MessageText:        "second",
+				},
+				MessageID: 52,
+				Pts:       19,
+				PtsCount:  1,
+			},
+		},
+	})
+	repo := &fakeUserUpdatesRepository{
+		difference: &repository.GetDifferenceResult{
+			State: repository.UserState{UserID: 1001, Pts: 19},
+			Events: []repository.UserEvent{
+				{
+					UserID:             1001,
+					Pts:                19,
+					PtsCount:           2,
+					OperationID:        "v1:msgbatch:receiver:1001:in:8001:8002",
+					EventType:          repository.EventTypeNewMessage,
+					PeerType:           payload.PeerTypeUser,
+					PeerID:             1002,
+					CanonicalMessageID: 8001,
+					PeerSeq:            1,
+					ActorUserID:        1002,
+					EventSchemaVersion: payload.MessageEventSchemaVersionBatchV1,
+					EventCodec:         repository.PayloadCodecJSON,
+					EventPayload:       eventPayload,
+					EventPayloadHash:   payload.HashBytes(eventPayload),
+				},
+			},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.UserupdatesGetDifference(&userupdates.TLUserupdatesGetDifference{
+		UserId:        1001,
+		AuthKeyId:     9001,
+		Pts:           17,
+		PtsTotalLimit: int32Ptr(10),
+	})
+	if err != nil {
+		t.Fatalf("GetDifference returned error: %v", err)
+	}
+	diff, ok := got.ToUserDifference()
+	if !ok {
+		t.Fatalf("expected userDifference, got %s", got.ClazzName())
+	}
+	if len(diff.NewMessages) != 2 {
+		t.Fatalf("new message count = %d, want 2", len(diff.NewMessages))
+	}
+	first, ok := diff.NewMessages[0].(*tg.TLMessage)
+	if !ok || first.Id != 51 || first.Message != "first" {
+		t.Fatalf("first new message = %#v", diff.NewMessages[0])
+	}
+	second, ok := diff.NewMessages[1].(*tg.TLMessage)
+	if !ok || second.Id != 52 || second.Message != "second" {
+		t.Fatalf("second new message = %#v", diff.NewMessages[1])
+	}
+	if len(diff.OtherUpdates) != 0 {
+		t.Fatalf("other update count = %d, want no duplicate updateNewMessage", len(diff.OtherUpdates))
+	}
+}
+
 func TestGetDifferenceBuildsReadHistoryOutboxUpdate(t *testing.T) {
 	eventPayload := mustMarshalMessageEvent(t, payload.MessageEventV1{
 		SchemaVersion: payload.MessageEventSchemaVersion,
@@ -1559,6 +1650,15 @@ func mustMarshalMessageEventV4(t *testing.T, event payload.MessageEventV4) []byt
 	b, err := json.Marshal(event)
 	if err != nil {
 		t.Fatalf("marshal message event v4: %v", err)
+	}
+	return b
+}
+
+func mustMarshalMessageEventBatchV1(t *testing.T, event payload.MessageEventBatchV1) []byte {
+	t.Helper()
+	b, err := json.Marshal(event)
+	if err != nil {
+		t.Fatalf("marshal message event batch v1: %v", err)
 	}
 	return b
 }

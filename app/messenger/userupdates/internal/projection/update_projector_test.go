@@ -345,6 +345,81 @@ func TestProjectPushTaskV4UpdatesProjectsRawFactUpdatesWithoutPushEnvelope(t *te
 	}
 }
 
+func TestProjectMessageBatchEventUsesConsecutivePts(t *testing.T) {
+	body := mustMarshalMessageEventBatchV1(t, payload.MessageEventBatchV1{
+		SchemaVersion: payload.MessageEventSchemaVersionBatchV1,
+		EventKind:     payload.EventKindNewMessage,
+		Messages: []payload.MessageEventBatchItemV1{
+			{
+				MessageFact: payload.NewMessageFactV1{
+					SchemaVersion:      1,
+					CanonicalMessageID: 7001,
+					PeerType:           payload.PeerTypeUser,
+					PeerID:             1001,
+					SenderUserID:       1001,
+					ToUserID:           1002,
+					ClientRandomID:     11,
+					Date:               1_772_000_000,
+					MessageText:        "first",
+				},
+				MessageID: 101,
+				Pts:       31,
+				PtsCount:  1,
+			},
+			{
+				MessageFact: payload.NewMessageFactV1{
+					SchemaVersion:      1,
+					CanonicalMessageID: 7002,
+					PeerType:           payload.PeerTypeUser,
+					PeerID:             1001,
+					SenderUserID:       1001,
+					ToUserID:           1002,
+					ClientRandomID:     12,
+					Date:               1_772_000_001,
+					MessageText:        "second",
+				},
+				MessageID: 102,
+				Pts:       32,
+				PtsCount:  1,
+			},
+		},
+	})
+
+	got, err := ProjectUserEvent(eventtypes.UserEvent{
+		UserID:             1002,
+		Pts:                32,
+		PtsCount:           2,
+		EventType:          eventtypes.EventTypeNewMessage,
+		EventSchemaVersion: payload.MessageEventSchemaVersionBatchV1,
+		EventCodec:         eventtypes.PayloadCodecJSON,
+		EventPayload:       body,
+		EventPayloadHash:   payload.HashBytes(body),
+	}, ModePush)
+	if err != nil {
+		t.Fatalf("ProjectUserEvent(batch) error = %v", err)
+	}
+	if len(got.OtherUpdates) != 2 {
+		t.Fatalf("other updates len = %d, want 2", len(got.OtherUpdates))
+	}
+	for i, update := range got.OtherUpdates {
+		newMessage, ok := update.(*tg.TLUpdateNewMessage)
+		if !ok {
+			t.Fatalf("update[%d] = %T, want *tg.TLUpdateNewMessage", i, update)
+		}
+		wantPTS := int32(31 + i)
+		if newMessage.Pts != wantPTS || newMessage.PtsCount != 1 {
+			t.Fatalf("update[%d] pts/count = %d/%d, want %d/1", i, newMessage.Pts, newMessage.PtsCount, wantPTS)
+		}
+		message, ok := newMessage.Message.(*tg.TLMessage)
+		if !ok {
+			t.Fatalf("update[%d] message = %T, want *tg.TLMessage", i, newMessage.Message)
+		}
+		if message.Id != int32(101+i) {
+			t.Fatalf("update[%d] message id = %d, want %d", i, message.Id, 101+i)
+		}
+	}
+}
+
 func TestProjectNewMessageFactRejectsInvalidSenderID(t *testing.T) {
 	_, err := ProjectNewMessageFact(payload.NewMessageFactV1{
 		SchemaVersion: payload.MessageOperationSchemaVersionV4,
@@ -1591,6 +1666,15 @@ func mustMarshalMessageEventV4(t *testing.T, event payload.MessageEventV4) []byt
 	body, err := json.Marshal(event)
 	if err != nil {
 		t.Fatalf("marshal MessageEventV4: %v", err)
+	}
+	return body
+}
+
+func mustMarshalMessageEventBatchV1(t *testing.T, event payload.MessageEventBatchV1) []byte {
+	t.Helper()
+	body, err := json.Marshal(event)
+	if err != nil {
+		t.Fatalf("marshal MessageEventBatchV1: %v", err)
 	}
 	return body
 }

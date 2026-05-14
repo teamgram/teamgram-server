@@ -22,6 +22,7 @@ const (
 
 type Result struct {
 	Message          tg.MessageClazz
+	Messages         []tg.MessageClazz
 	Update           tg.UpdateClazz
 	OtherUpdates     []tg.UpdateClazz
 	Updates          tg.UpdatesClazz
@@ -29,6 +30,9 @@ type Result struct {
 }
 
 func ProjectUserEvent(event eventtypes.UserEvent, mode Mode) (Result, error) {
+	if event.EventSchemaVersion == payload.MessageEventSchemaVersionBatchV1 {
+		return projectMessageBatchEventV1(event, mode)
+	}
 	if event.EventSchemaVersion == payload.MessageEventSchemaVersionV4 {
 		return projectMessageEventV4(event, mode)
 	}
@@ -94,10 +98,86 @@ func projectMessageEventV4(event eventtypes.UserEvent, mode Mode) (Result, error
 	}
 	return Result{
 		Message:          message,
+		Messages:         singleMessageSlice(message),
 		Update:           firstUpdate,
 		OtherUpdates:     updates,
 		AuthKeyIDExclude: messageEvent.AuthKeyIdExclude,
 	}, nil
+}
+
+func projectMessageBatchEventV1(event eventtypes.UserEvent, mode Mode) (Result, error) {
+	var messageEvent payload.MessageEventBatchV1
+	if err := json.Unmarshal(event.EventPayload, &messageEvent); err != nil {
+		return Result{}, fmt.Errorf("%w: decode batch message event: %v", userupdates.ErrUserupdatesStorage, err)
+	}
+	if messageEvent.SchemaVersion != payload.MessageEventSchemaVersionBatchV1 {
+		return Result{}, fmt.Errorf("%w: unsupported batch message event schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.SchemaVersion)
+	}
+	if messageEvent.EventKind != payload.EventKindNewMessage {
+		return Result{}, fmt.Errorf("%w: unsupported batch event kind=%s", userupdates.ErrUserupdatesStorage, messageEvent.EventKind)
+	}
+	updates := make([]tg.UpdateClazz, 0, len(messageEvent.AttachFacts)+len(messageEvent.Messages))
+	messages := make([]tg.MessageClazz, 0, len(messageEvent.Messages))
+	for _, fact := range messageEvent.AttachFacts {
+		projected, err := ProjectFacts([]payload.UpdateFactV1{fact}, ViewerContext{
+			UserID:           event.UserID,
+			AuthKeyIDExclude: messageEvent.AuthKeyIdExclude,
+		}, factProjectionMode(mode), event.Pts, event.PtsCount, 0)
+		if err != nil {
+			return Result{}, err
+		}
+		for _, item := range projected {
+			if item.Update != nil {
+				updates = append(updates, item.Update)
+			}
+		}
+	}
+	var firstMessage tg.MessageClazz
+	for _, item := range messageEvent.Messages {
+		fact, err := payload.WrapFact(payload.FactKindNewMessage, item.MessageFact)
+		if err != nil {
+			return Result{}, fmt.Errorf("%w: wrap batch message fact: %v", userupdates.ErrUserupdatesStorage, err)
+		}
+		projected, err := ProjectFacts([]payload.UpdateFactV1{fact}, ViewerContext{
+			UserID:           event.UserID,
+			AuthKeyIDExclude: messageEvent.AuthKeyIdExclude,
+		}, factProjectionMode(mode), item.Pts, item.PtsCount, item.MessageID)
+		if err != nil {
+			return Result{}, err
+		}
+		for _, update := range projected {
+			if update.Update == nil {
+				continue
+			}
+			updates = append(updates, update.Update)
+			if firstMessage == nil {
+				if newMessage, ok := update.Update.(*tg.TLUpdateNewMessage); ok {
+					firstMessage = newMessage.Message
+				}
+			}
+			if newMessage, ok := update.Update.(*tg.TLUpdateNewMessage); ok && newMessage.Message != nil {
+				messages = append(messages, newMessage.Message)
+			}
+		}
+	}
+	var firstUpdate tg.UpdateClazz
+	if len(updates) > 0 {
+		firstUpdate = updates[0]
+	}
+	return Result{
+		Message:          firstMessage,
+		Messages:         messages,
+		Update:           firstUpdate,
+		OtherUpdates:     updates,
+		AuthKeyIDExclude: messageEvent.AuthKeyIdExclude,
+	}, nil
+}
+
+func singleMessageSlice(message tg.MessageClazz) []tg.MessageClazz {
+	if message == nil {
+		return nil
+	}
+	return []tg.MessageClazz{message}
 }
 
 func factProjectionMode(mode Mode) envelope.Mode {
@@ -111,8 +191,11 @@ func ProjectPushTask(msg *payload.PushTaskKafkaMessageV1) (Result, error) {
 	if msg == nil {
 		return Result{}, fmt.Errorf("%w: push task is nil", userupdates.ErrUserupdatesStorage)
 	}
-	if detectMessageEventSchemaVersion(msg.Payload) == payload.MessageEventSchemaVersionV4 {
+	switch detectMessageEventSchemaVersion(msg.Payload) {
+	case payload.MessageEventSchemaVersionV4:
 		return projectPushTaskV4(msg)
+	case payload.MessageEventSchemaVersionBatchV1:
+		return projectPushTaskBatchV1(msg)
 	}
 	messageEvent, err := decodeMessageEventPayloadBytes(detectMessageEventSchemaVersion(msg.Payload), msg.Payload)
 	if err != nil {
@@ -131,6 +214,22 @@ func ProjectPushTask(msg *payload.PushTaskKafkaMessageV1) (Result, error) {
 
 func projectPushTaskV4(msg *payload.PushTaskKafkaMessageV1) (Result, error) {
 	return ProjectPushTaskV4Updates(msg)
+}
+
+func projectPushTaskBatchV1(msg *payload.PushTaskKafkaMessageV1) (Result, error) {
+	return ProjectUserEvent(eventtypes.UserEvent{
+		UserID:             msg.UserID,
+		Pts:                msg.Pts,
+		PtsCount:           1,
+		OperationID:        msg.OperationID,
+		EventType:          eventtypes.EventTypeNewMessage,
+		PeerType:           msg.PeerType,
+		PeerID:             msg.PeerID,
+		EventSchemaVersion: payload.MessageEventSchemaVersionBatchV1,
+		EventCodec:         eventtypes.PayloadCodecJSON,
+		EventPayload:       msg.Payload,
+		EventPayloadHash:   payload.HashBytes(msg.Payload),
+	}, ModePush)
 }
 
 func ProjectPushTaskV4Updates(msg *payload.PushTaskKafkaMessageV1) (Result, error) {

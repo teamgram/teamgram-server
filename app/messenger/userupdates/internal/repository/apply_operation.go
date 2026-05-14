@@ -148,6 +148,14 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 		}, nil
 	}
 
+	batch, ok, err := decodeMessageOperationBatch(in.Payload)
+	if err != nil {
+		return nil, err
+	}
+	if ok {
+		return r.applyMessageBatchOperationTx(ctx, txModels, fence.OwnerEpoch, state.Pts, in, batch)
+	}
+
 	op, err := decodeMessageOperation(in.Payload)
 	if err != nil {
 		return nil, err
@@ -261,6 +269,102 @@ func (r *Repository) applyUserOperationTx(ctx context.Context, tx *sqlx.Tx, in A
 	}, nil
 }
 
+func (r *Repository) applyMessageBatchOperationTx(ctx context.Context, txModels *model.TxModels, ownerEpoch int64, currentPTS int64, in ApplyUserOperationInput, batch messageBatchOperation) (*ApplyUserOperationResult, error) {
+	if len(in.DependencyPts) != 0 {
+		return nil, userupdates.ErrOperationTerminal
+	}
+	ptsCount := int32(len(batch.Messages))
+	nextPTS := currentPTS + int64(ptsCount)
+	items := make([]payload.MessageEventBatchItemV1, 0, len(batch.Messages))
+	var eventOp messageOperation
+	for i := range batch.Messages {
+		op := batch.Messages[i]
+		if op.MessageFact == nil {
+			return nil, fmt.Errorf("%w: batch message fact is nil", userupdates.ErrUserupdatesStorage)
+		}
+		op.Out = in.UserID == op.MessageFact.SenderUserID
+		if len(op.DependencyPts) != 0 {
+			return nil, userupdates.ErrOperationTerminal
+		}
+		if op.ClearDraft || op.SourcePermAuthKeyID != 0 || op.ClearDraftBeforeDate != 0 {
+			return nil, fmt.Errorf("%w: batch message operation does not support clear draft side effects", userupdates.ErrOperationTerminal)
+		}
+		if op.ReplyToCanonicalMessageID != 0 {
+			row, err := txModels.UserMessageViewsModel.SelectByUserCanonical(in.UserID, op.ReplyToCanonicalMessageID)
+			if err != nil {
+				if errors.Is(err, model.ErrNotFound) {
+					return nil, fmt.Errorf("%w: reply target canonical_message_id=%d not visible to user_id=%d", userupdates.ErrOperationTerminal, op.ReplyToCanonicalMessageID, in.UserID)
+				}
+				return nil, storageError("select batch reply target view", err)
+			}
+			op.ReplyToPeerSeq = row.PeerSeq
+			op.ReplyToUserMessageID = row.UserMessageId
+		}
+		if err := resolvePublicIDsForOperation(txModels, in.UserID, &op); err != nil {
+			return nil, err
+		}
+		itemPTS := currentPTS + int64(i) + 1
+		viewPayload, err := marshalMessageEvent(in, op, payload.EventKindNewMessage, itemPTS, 1)
+		if err != nil {
+			return nil, err
+		}
+		if err := insertUserMessageView(txModels, in, op, viewPayload); err != nil {
+			return nil, err
+		}
+		if err := upsertUserDialog(txModels, in, op.MessageOperationV1, itemPTS, viewPayload); err != nil {
+			return nil, err
+		}
+		if err := insertDialogSideEffects(ctx, txModels, r, in, op.MessageOperationV1); err != nil {
+			return nil, err
+		}
+		messageFact := *op.MessageFact
+		messageFact.ReplyToUserMessageID = op.ReplyToUserMessageID
+		items = append(items, payload.MessageEventBatchItemV1{
+			MessageFact: messageFact,
+			MessageID:   op.UserMessageID,
+			Pts:         itemPTS,
+			PtsCount:    1,
+		})
+		if i == 0 {
+			eventOp = op
+			eventOp.EventSchemaVersion = payload.MessageEventSchemaVersionBatchV1
+			eventOp.OperationKind = payload.OperationKindSendMessage
+		}
+	}
+	eventPayload, eventPayloadHash, responsePayload, responsePayloadHash, err := buildMessageBatchEventAndResponse(in, batch, items, nextPTS, ptsCount)
+	if err != nil {
+		return nil, err
+	}
+	if err := insertPTSEvent(txModels, in, eventOp, nextPTS, ptsCount, eventPayload, eventPayloadHash); err != nil {
+		return nil, err
+	}
+	if err := insertPushTask(ctx, txModels, r, in, eventOp.MessageOperationV1, nextPTS, eventPayload); err != nil {
+		return nil, err
+	}
+	if err := insertOperationResult(txModels, in, nextPTS, ptsCount, payload.OperationResponseSchemaVersionV3, responsePayload, responsePayloadHash); err != nil {
+		return nil, err
+	}
+	if err := r.insertAffectedOutboxesTx(ctx, txModels, in.AffectedOutboxes); err != nil {
+		return nil, err
+	}
+	affected, err := txModels.UserPtsStateModel.UpdatePts(nextPTS, unixNow(), in.PartitionID, ownerEpoch, in.UserID)
+	if err != nil {
+		return nil, storageError("update user pts state", err)
+	}
+	if affected == 0 {
+		return nil, userupdates.ErrPtsContinuityViolation
+	}
+	return &ApplyUserOperationResult{
+		UserID:                in.UserID,
+		OperationID:           in.OperationID,
+		Pts:                   nextPTS,
+		PtsCount:              ptsCount,
+		ResponseSchemaVersion: payload.OperationResponseSchemaVersionV3,
+		ResponsePayload:       responsePayload,
+		ResponseHash:          responsePayloadHash,
+	}, nil
+}
+
 type messageOperation struct {
 	payload.MessageOperationV1
 	EventSchemaVersion int
@@ -270,6 +374,52 @@ type messageOperation struct {
 	ServiceAction      *payload.ServiceActionRefV1
 	MessageFact        *payload.NewMessageFactV1
 	AttachFacts        []payload.UpdateFactV1
+}
+
+type messageBatchOperation struct {
+	OperationKind      string
+	EventSchemaVersion int
+	Messages           []messageOperation
+	AttachFacts        []payload.UpdateFactV1
+}
+
+func decodeMessageOperationBatch(body []byte) (messageBatchOperation, bool, error) {
+	var envelope struct {
+		SchemaVersion int    `json:"schema_version"`
+		OperationKind string `json:"operation_kind"`
+	}
+	if err := json.Unmarshal(body, &envelope); err != nil {
+		return messageBatchOperation{}, false, fmt.Errorf("%w: decode message operation envelope: %v", userupdates.ErrOperationTerminal, err)
+	}
+	if envelope.SchemaVersion != payload.MessageOperationSchemaVersionBatchV1 {
+		return messageBatchOperation{}, false, nil
+	}
+	var op payload.MessageOperationBatchV1
+	if err := json.Unmarshal(body, &op); err != nil {
+		return messageBatchOperation{}, true, fmt.Errorf("%w: decode batch message operation: %v", userupdates.ErrOperationTerminal, err)
+	}
+	if op.OperationKind != payload.OperationKindSendMessageBatch {
+		return messageBatchOperation{}, true, fmt.Errorf("%w: unsupported batch operation kind=%s", userupdates.ErrOperationTerminal, op.OperationKind)
+	}
+	if len(op.Messages) == 0 {
+		return messageBatchOperation{}, true, fmt.Errorf("%w: empty message batch", userupdates.ErrOperationTerminal)
+	}
+	out := messageBatchOperation{
+		OperationKind:      op.OperationKind,
+		EventSchemaVersion: payload.MessageEventSchemaVersionBatchV1,
+		Messages:           make([]messageOperation, 0, len(op.Messages)),
+		AttachFacts:        append([]payload.UpdateFactV1(nil), op.AttachFacts...),
+	}
+	for _, fact := range op.Messages {
+		messageOp := messageOperationFromV4(payload.MessageOperationV4{
+			SchemaVersion: payload.MessageOperationSchemaVersionV4,
+			OperationKind: payload.OperationKindSendMessage,
+			MessageFact:   fact,
+			AttachFacts:   op.AttachFacts,
+		})
+		out.Messages = append(out.Messages, messageOp)
+	}
+	return out, true, nil
 }
 
 func decodeMessageOperation(body []byte) (messageOperation, error) {
@@ -562,6 +712,32 @@ func buildEventAndResponsePayloads(ctx context.Context, r *Repository, in ApplyU
 		return nil, nil, 0, nil, nil, storageError("marshal operation response", err)
 	}
 	return eventPayload, payload.HashBytes(eventPayload), payload.OperationResponseSchemaVersion, responsePayload, payload.HashBytes(responsePayload), nil
+}
+
+func buildMessageBatchEventAndResponse(in ApplyUserOperationInput, batch messageBatchOperation, items []payload.MessageEventBatchItemV1, pts int64, ptsCount int32) ([]byte, []byte, []byte, []byte, error) {
+	event := payload.MessageEventBatchV1{
+		SchemaVersion:    payload.MessageEventSchemaVersionBatchV1,
+		EventKind:        payload.EventKindNewMessage,
+		Messages:         append([]payload.MessageEventBatchItemV1(nil), items...),
+		AttachFacts:      append([]payload.UpdateFactV1(nil), batch.AttachFacts...),
+		AuthKeyIdExclude: in.AuthKeyIDExclude,
+	}
+	eventPayload, err := json.Marshal(event)
+	if err != nil {
+		return nil, nil, nil, nil, storageError("marshal batch message event", err)
+	}
+	response := payload.OperationResponseV3{
+		SchemaVersion: payload.OperationResponseSchemaVersionV3,
+		OperationID:   in.OperationID,
+		Pts:           pts,
+		PtsCount:      ptsCount,
+		EventType:     payload.EventKindNewMessage,
+	}
+	responsePayload, err := json.Marshal(response)
+	if err != nil {
+		return nil, nil, nil, nil, storageError("marshal batch operation response", err)
+	}
+	return eventPayload, payload.HashBytes(eventPayload), responsePayload, payload.HashBytes(responsePayload), nil
 }
 
 func buildOperationResponseV3(ctx context.Context, r *Repository, in ApplyUserOperationInput, op messageOperation, pts int64, ptsCount int32, eventKind string) ([]byte, []byte, error) {

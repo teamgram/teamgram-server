@@ -383,27 +383,30 @@ func (c *MsgCore) dispatchBatchReceiverOps(in *msg.TLMsgSendMessage, canonicals 
 	if in.UserId == in.PeerId {
 		return nil
 	}
-	envelopes := make([]OperationEnvelope, 0, len(canonicals))
 	sendStateIDs := make([]int64, 0, len(canonicals))
+	receiverCanonicals := make([]repository.CanonicalMessageResult, 0, len(canonicals))
+	receiverMessages := make([]normalizedOutboxMessage, 0, len(canonicals))
 	for i := range canonicals {
 		canonical := &canonicals[i]
 		if !needsReceiverAck(canonical.SendStateStatus) {
 			continue
 		}
-		envelope, err := buildReceiverOperationEnvelope(in, canonical, normalizedBatch[i], attachFacts)
-		if err != nil {
-			return err
-		}
-		envelopes = append(envelopes, envelope)
 		sendStateIDs = append(sendStateIDs, canonical.SendStateID)
+		receiverCanonicals = append(receiverCanonicals, *canonical)
+		receiverMessages = append(receiverMessages, normalizedBatch[i])
 	}
-	for _, envelope := range envelopes {
-		if _, err := c.dispatchBrokerDurableAck(envelope); err != nil {
-			for _, sendStateID := range sendStateIDs {
-				_ = c.svcCtx.Repo.MarkRetryableFailure(c.ctx, repository.MarkRetryableFailureInput{SendStateID: sendStateID, LastErrorCode: "receiver_batch_ack_failed", LastErrorMessage: "receiver batch durable ack failed"})
-			}
-			return fmt.Errorf("%w: %w", msg.ErrSenderSyncFailed, err)
+	if len(receiverCanonicals) == 0 {
+		return nil
+	}
+	envelope, err := buildReceiverBatchOperationEnvelope(in, receiverCanonicals, receiverMessages, attachFacts)
+	if err != nil {
+		return err
+	}
+	if _, err := c.dispatchBrokerDurableAck(envelope); err != nil {
+		for _, sendStateID := range sendStateIDs {
+			_ = c.svcCtx.Repo.MarkRetryableFailure(c.ctx, repository.MarkRetryableFailureInput{SendStateID: sendStateID, LastErrorCode: "receiver_batch_ack_failed", LastErrorMessage: "receiver batch durable ack failed"})
 		}
+		return fmt.Errorf("%w: %w", msg.ErrSenderSyncFailed, err)
 	}
 	return nil
 }
@@ -651,6 +654,49 @@ func buildReceiverOperationEnvelope(in *msg.TLMsgSendMessage, canonical *reposit
 		CanonicalPeerSeq:     &canonical.PeerSeq,
 		CanonicalDate:        int64Ptr(canonical.MessageDate),
 		PayloadSchemaVersion: payload.MessageOperationSchemaVersionV4,
+		PayloadCodec:         payload.PayloadCodecJSON,
+		Payload:              body,
+		PayloadHash:          hashBytes,
+		DeliveryPolicy:       DeliveryPolicyBrokerDurableAck,
+	}, nil
+}
+
+func buildReceiverBatchOperationEnvelope(in *msg.TLMsgSendMessage, canonicals []repository.CanonicalMessageResult, normalizedBatch []normalizedOutboxMessage, attachFacts []payload.UpdateFactV1) (OperationEnvelope, error) {
+	if len(canonicals) == 0 || len(canonicals) != len(normalizedBatch) {
+		return OperationEnvelope{}, msg.ErrMsgStorage
+	}
+	messages := make([]payload.NewMessageFactV1, 0, len(canonicals))
+	canonicalMessageIDs := make([]int64, 0, len(canonicals))
+	var firstCanonical *repository.CanonicalMessageResult
+	for i := range canonicals {
+		canonical := &canonicals[i]
+		if firstCanonical == nil {
+			firstCanonical = canonical
+		}
+		messageFact, err := newMessageFactForOperation(normalizedBatch[i], in.PeerId, in.UserId, canonical, batchSideEffects{})
+		if err != nil {
+			return OperationEnvelope{}, err
+		}
+		messages = append(messages, messageFact)
+		canonicalMessageIDs = append(canonicalMessageIDs, canonical.CanonicalMessageID)
+	}
+	body, hashBytes, err := buildMessageOperationBatchV1Payload(messages, attachFacts)
+	if err != nil {
+		return OperationEnvelope{}, err
+	}
+	operationID := payload.ReceiverBatchOperationID(in.PeerId, canonicalMessageIDs)
+	return OperationEnvelope{
+		UserID:               in.PeerId,
+		OperationID:          operationID,
+		OpType:               payload.OpTypeSendMessage,
+		OperationKind:        payload.OperationKindSendMessageBatch,
+		ActorUserID:          in.UserId,
+		PeerType:             in.PeerType,
+		PeerID:               in.UserId,
+		CanonicalMessageID:   &firstCanonical.CanonicalMessageID,
+		CanonicalPeerSeq:     &firstCanonical.PeerSeq,
+		CanonicalDate:        int64Ptr(firstCanonical.MessageDate),
+		PayloadSchemaVersion: payload.MessageOperationSchemaVersionBatchV1,
 		PayloadCodec:         payload.PayloadCodecJSON,
 		Payload:              body,
 		PayloadHash:          hashBytes,

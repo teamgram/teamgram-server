@@ -71,7 +71,7 @@ func (d *PushTaskDispatcher) HandlePushTaskKafkaRecord(ctx context.Context, reco
 		logx.WithContext(ctx).Errorf("push task terminal: task_id=%d user_id=%d code=payload_projection_failed err=%v", msg.TaskID, msg.UserID, err)
 		return nil
 	}
-	if !isV4PushTaskPayload(msg.Payload) {
+	if !isFullFactPushTaskPayload(msg.Payload) {
 		if err := d.projectPushUsers(ctx, msg, updates); err != nil {
 			return err
 		}
@@ -172,13 +172,16 @@ func pushProjectionTargetIDs(viewerUserID int64, updates *tg.Updates) []int64 {
 }
 
 func (d *PushTaskDispatcher) pushTaskUpdates(ctx context.Context, msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, *int64, error) {
-	if isV4PushTaskPayload(msg.Payload) {
+	if isFullFactPushTaskPayload(msg.Payload) {
 		return d.pushTaskUpdatesV4(ctx, msg)
 	}
 	return pushTaskUpdates(msg)
 }
 
 func (d *PushTaskDispatcher) pushTaskUpdatesV4(ctx context.Context, msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, *int64, error) {
+	if isBatchPushTaskPayload(msg.Payload) {
+		return d.pushTaskUpdatesBatch(ctx, msg)
+	}
 	var messageEvent payload.MessageEventV4
 	if err := json.Unmarshal(msg.Payload, &messageEvent); err != nil {
 		return nil, nil, fmt.Errorf("%w: decode v4 push message event: %v", userupdates.ErrUserupdatesStorage, err)
@@ -209,14 +212,58 @@ func (d *PushTaskDispatcher) pushTaskUpdatesV4(ctx context.Context, msg *payload
 	return full, projected.AuthKeyIDExclude, nil
 }
 
-func isV4PushTaskPayload(body []byte) bool {
+func (d *PushTaskDispatcher) pushTaskUpdatesBatch(ctx context.Context, msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, *int64, error) {
+	var messageEvent payload.MessageEventBatchV1
+	if err := json.Unmarshal(msg.Payload, &messageEvent); err != nil {
+		return nil, nil, fmt.Errorf("%w: decode batch push message event: %v", userupdates.ErrUserupdatesStorage, err)
+	}
+	if messageEvent.SchemaVersion != payload.MessageEventSchemaVersionBatchV1 {
+		return nil, nil, fmt.Errorf("%w: unsupported batch push message event schema=%d", userupdates.ErrUserupdatesStorage, messageEvent.SchemaVersion)
+	}
+	projected, err := projection.ProjectPushTask(msg)
+	if err != nil {
+		return nil, nil, err
+	}
+	mode := envelope.ModeReceiverStream
+	if len(messageEvent.Messages) > 0 && messageEvent.Messages[0].MessageFact.SenderUserID == msg.UserID {
+		mode = envelope.ModeSenderStream
+	}
+	date := int32(0)
+	if len(messageEvent.Messages) > 0 {
+		date = messageEvent.Messages[0].MessageFact.Date
+	}
+	wrapper, err := d.buildPushEnvelopeWithDependencies(ctx, msg.UserID, envelope.Input{
+		Mode:    mode,
+		Updates: projected.OtherUpdates,
+		Date:    date,
+	})
+	if err != nil {
+		return nil, nil, err
+	}
+	full, ok := wrapper.ToUpdates()
+	if !ok {
+		return nil, nil, fmt.Errorf("%w: batch push envelope is %s, want updates", userupdates.ErrUserupdatesStorage, wrapper.ClazzName())
+	}
+	return full, projected.AuthKeyIDExclude, nil
+}
+
+func isFullFactPushTaskPayload(body []byte) bool {
+	schemaVersion := pushTaskPayloadSchemaVersion(body)
+	return schemaVersion == payload.MessageEventSchemaVersionV4 || schemaVersion == payload.MessageEventSchemaVersionBatchV1
+}
+
+func isBatchPushTaskPayload(body []byte) bool {
+	return pushTaskPayloadSchemaVersion(body) == payload.MessageEventSchemaVersionBatchV1
+}
+
+func pushTaskPayloadSchemaVersion(body []byte) int {
 	var header struct {
 		SchemaVersion int `json:"schema_version"`
 	}
 	if err := json.Unmarshal(body, &header); err != nil {
-		return false
+		return 0
 	}
-	return header.SchemaVersion == payload.MessageEventSchemaVersionV4
+	return header.SchemaVersion
 }
 
 func (d *PushTaskDispatcher) buildPushEnvelopeWithDependencies(ctx context.Context, viewerUserID int64, in envelope.Input) (*tg.Updates, error) {
