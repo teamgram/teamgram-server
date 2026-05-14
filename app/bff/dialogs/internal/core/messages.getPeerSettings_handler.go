@@ -18,6 +18,7 @@ package core
 
 import (
 	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -30,10 +31,35 @@ func (c *DialogsCore) MessagesGetPeerSettings(in *tg.TLMessagesGetPeerSettings) 
 	if in == nil {
 		return nil, tg.ErrInputRequestInvalid
 	}
-	peerUserID, ok := resolveDialogUserPeerID(in.Peer, c.MD.UserId)
-	if !ok {
+	peer := tg.FromInputPeer2(c.MD.UserId, in.Peer)
+	switch peer.PeerType {
+	case tg.PEER_SELF:
+		peer.PeerType = tg.PEER_USER
+		peer.PeerId = c.MD.UserId
+	case tg.PEER_USER, tg.PEER_CHAT:
+	default:
 		return nil, tg.Err400PeerIdInvalid
 	}
+	if peer.PeerId <= 0 {
+		return nil, tg.Err400PeerIdInvalid
+	}
+
+	if peer.PeerType == tg.PEER_CHAT {
+		chat, err := c.svcCtx.Repo.ChatClient.ChatGetChatBySelfId(c.ctx, &chatpb.TLChatGetChatBySelfId{
+			SelfId: c.MD.UserId,
+			ChatId: peer.PeerId,
+		})
+		if err != nil {
+			return nil, mapChatError(err)
+		}
+		return tg.MakeTLMessagesPeerSettings(&tg.TLMessagesPeerSettings{
+			Settings: tg.MakeTLPeerSettings(&tg.TLPeerSettings{}).ToPeerSettings(),
+			Chats:    []tg.ChatClazz{projectMutableChat(chat, c.MD.UserId)},
+			Users:    []tg.UserClazz{},
+		}).ToMessagesPeerSettings(), nil
+	}
+
+	peerUserID := peer.PeerId
 	users, err := userprojection.ProjectUsers(c.ctx, c.svcCtx.Repo.UserClient, c.MD.UserId, []int64{peerUserID}, userprojection.MissingExplicitInput)
 	if err != nil {
 		return nil, err

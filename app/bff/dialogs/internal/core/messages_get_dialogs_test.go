@@ -613,6 +613,38 @@ func TestMessagesGetPeerSettingsReturnsDefaultSettings(t *testing.T) {
 	}
 }
 
+func TestMessagesGetPeerSettingsReturnsChatProjection(t *testing.T) {
+	var gotChat *chatpb.TLChatGetChatBySelfId
+	c := newDialogsGetDialogsCore(&repository.Repository{
+		ChatClient: &dialogsFakeChatClient{
+			getChatBySelfID: func(_ context.Context, in *chatpb.TLChatGetChatBySelfId) (*tg.MutableChat, error) {
+				gotChat = in
+				return testDialogsMutableChat(in.ChatId), nil
+			},
+		},
+	}, 100)
+
+	r, err := c.MessagesGetPeerSettings(&tg.TLMessagesGetPeerSettings{
+		Peer: tg.MakeTLInputPeerChat(&tg.TLInputPeerChat{ChatId: 42}),
+	})
+	if err != nil {
+		t.Fatalf("MessagesGetPeerSettings error = %v", err)
+	}
+	if gotChat == nil || gotChat.SelfId != 100 || gotChat.ChatId != 42 {
+		t.Fatalf("chat request = %+v, want self_id=100 chat_id=42", gotChat)
+	}
+	if r == nil || r.Settings == nil {
+		t.Fatalf("MessagesGetPeerSettings reply = %+v, want settings", r)
+	}
+	if len(r.Users) != 0 || len(r.Chats) != 1 {
+		t.Fatalf("MessagesGetPeerSettings reply = %+v, want one chat and no users", r)
+	}
+	chat, ok := (&tg.Chat{Clazz: r.Chats[0]}).ToChat()
+	if !ok || chat.Id != 42 {
+		t.Fatalf("chat projection = %+v, ok=%v, want chat 42", chat, ok)
+	}
+}
+
 func TestMessagesGetDialogsMapsUserDialogAndTopMessage(t *testing.T) {
 	const selfID int64 = 100
 	var gotMessageViews *userupdates.TLUserupdatesGetMessageViewsByPeerSeqs
