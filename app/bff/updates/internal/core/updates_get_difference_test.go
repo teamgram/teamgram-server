@@ -10,6 +10,8 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/updates/internal/svc"
 	userupdatesclient "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/client"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
+	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
 	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
@@ -47,13 +49,30 @@ func (f *fakeDifferenceUserClient) UserGetUserProjectionBundle(_ context.Context
 	return f.out, nil
 }
 
+type fakeDifferenceChatClient struct {
+	chatclient.ChatClient
+	in    *chatpb.TLChatGetChatListByIdList
+	out   *chatpb.VectorMutableChat
+	calls int
+}
+
+func (f *fakeDifferenceChatClient) ChatGetChatListByIdList(_ context.Context, in *chatpb.TLChatGetChatListByIdList) (*chatpb.VectorMutableChat, error) {
+	f.calls++
+	f.in = in
+	return f.out, nil
+}
+
 func newUpdatesCore(client userupdatesclient.UserupdatesClient) *UpdatesCore {
-	return newUpdatesCoreWithUser(client, nil)
+	return newUpdatesCoreWithDeps(client, nil, nil)
 }
 
 func newUpdatesCoreWithUser(client userupdatesclient.UserupdatesClient, userClient userclient.UserClient) *UpdatesCore {
+	return newUpdatesCoreWithDeps(client, userClient, nil)
+}
+
+func newUpdatesCoreWithDeps(client userupdatesclient.UserupdatesClient, userClient userclient.UserClient, chatClient chatclient.ChatClient) *UpdatesCore {
 	c := New(context.Background(), &svc.ServiceContext{
-		Repo: &repository.Repository{UserupdatesClient: client, UserClient: userClient},
+		Repo: &repository.Repository{UserupdatesClient: client, UserClient: userClient, ChatClient: chatClient},
 	})
 	c.MD = &metadata.RpcMetadata{UserId: 1001, PermAuthKeyId: 2002}
 	return c
@@ -106,6 +125,11 @@ func TestUpdatesGetDifferenceReturnsNonEmptyDifference(t *testing.T) {
 		},
 		OtherUpdates: []tg.UpdateClazz{
 			tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
+				Message:  tg.MakeTLMessage(&tg.TLMessage{Id: 9, Message: "hello duplicate"}),
+				Pts:      18,
+				PtsCount: 1,
+			}),
+			tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
 				Message:  tg.MakeTLMessage(&tg.TLMessage{Id: 10, Message: "from update"}),
 				Pts:      18,
 				PtsCount: 1,
@@ -120,7 +144,14 @@ func TestUpdatesGetDifferenceReturnsNonEmptyDifference(t *testing.T) {
 		},
 		State: userupdates.MakeTLUserState(&userupdates.TLUserState{Pts: 18, Qts: -1, Date: 123, Seq: 0, UnreadCount: 0}),
 	}).ToUserDifference()}
-	core := newUpdatesCore(client)
+	userClient := &fakeDifferenceUserClient{out: userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+		ViewerUsers: []userpb.ViewerUsersClazz{
+			userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 1001, Users: []tg.UserClazz{
+				tg.MakeTLUser(&tg.TLUser{Id: 1002}),
+			}}),
+		},
+	}).ToUserProjectionBundle()}
+	core := newUpdatesCoreWithUser(client, userClient)
 
 	got, err := core.UpdatesGetDifference(&tg.TLUpdatesGetDifference{Pts: 17, PtsTotalLimit: int32Ptr(50), Date: 1, Qts: -1})
 	if err != nil {
@@ -141,6 +172,9 @@ func TestUpdatesGetDifferenceReturnsNonEmptyDifference(t *testing.T) {
 	}
 	if _, ok := diff.OtherUpdates[0].(*tg.TLUpdateReadHistoryInbox); !ok {
 		t.Fatalf("other update = %T, want TLUpdateReadHistoryInbox", diff.OtherUpdates[0])
+	}
+	if len(diff.Users) != 1 {
+		t.Fatalf("users = %#v", diff.Users)
 	}
 }
 
@@ -193,6 +227,74 @@ func TestUpdatesGetDifferenceProjectsUsers(t *testing.T) {
 	}
 }
 
+func TestUpdatesGetDifferenceProjectsUsersAndChatsFromMessagesAndUpdates(t *testing.T) {
+	client := &fakeUserupdatesClient{difference: userupdates.MakeTLUserDifference(&userupdates.TLUserDifference{
+		NewMessages: []tg.MessageClazz{
+			tg.MakeTLMessage(&tg.TLMessage{
+				Id:      9,
+				FromId:  tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 1002}),
+				PeerId:  tg.MakeTLPeerChat(&tg.TLPeerChat{ChatId: 6}),
+				Message: "hello group",
+			}),
+		},
+		OtherUpdates: []tg.UpdateClazz{
+			tg.MakeTLUpdateReadHistoryInbox(&tg.TLUpdateReadHistoryInbox{
+				Peer:             tg.MakeTLPeerChat(&tg.TLPeerChat{ChatId: 6}),
+				MaxId:            9,
+				StillUnreadCount: 0,
+				Pts:              18,
+				PtsCount:         1,
+			}),
+			tg.MakeTLUpdateChatParticipantAdd(&tg.TLUpdateChatParticipantAdd{
+				ChatId:    7,
+				UserId:    1003,
+				InviterId: 1002,
+				Date:      123,
+				Version:   1,
+			}),
+		},
+		State: userupdates.MakeTLUserState(&userupdates.TLUserState{Pts: 18, Qts: -1, Date: 123, Seq: 0}),
+	}).ToUserDifference()}
+	userClient := &fakeDifferenceUserClient{out: userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+		ViewerUsers: []userpb.ViewerUsersClazz{
+			userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 1001, Users: []tg.UserClazz{
+				tg.MakeTLUser(&tg.TLUser{Id: 1002}),
+				tg.MakeTLUser(&tg.TLUser{Id: 1003}),
+			}}),
+		},
+	}).ToUserProjectionBundle()}
+	chatClient := &fakeDifferenceChatClient{out: &chatpb.VectorMutableChat{Datas: []tg.MutableChatClazz{
+		testUpdatesMutableChat(6, "chat 6"),
+		testUpdatesMutableChat(7, "chat 7"),
+	}}}
+	core := newUpdatesCoreWithDeps(client, userClient, chatClient)
+
+	got, err := core.UpdatesGetDifference(&tg.TLUpdatesGetDifference{Pts: 17, Date: 1, Qts: -1})
+	if err != nil {
+		t.Fatalf("UpdatesGetDifference() error = %v", err)
+	}
+	diff, ok := got.ToUpdatesDifference()
+	if !ok {
+		t.Fatalf("got %s, want updates.difference", got.ClazzName())
+	}
+	if userClient.in == nil || len(userClient.in.TargetUserIds) != 2 || userClient.in.TargetUserIds[0] != 1002 || userClient.in.TargetUserIds[1] != 1003 {
+		t.Fatalf("projection target users = %#v, want [1002 1003]", userClient.in)
+	}
+	if chatClient.in == nil || chatClient.in.SelfId != 1001 || len(chatClient.in.IdList) != 2 || chatClient.in.IdList[0] != 6 || chatClient.in.IdList[1] != 7 {
+		t.Fatalf("chat projection request = %#v, want chats [6 7]", chatClient.in)
+	}
+	if len(diff.Users) != 2 {
+		t.Fatalf("users = %#v", diff.Users)
+	}
+	if len(diff.Chats) != 2 {
+		t.Fatalf("chats = %#v", diff.Chats)
+	}
+	firstChat, ok := diff.Chats[0].(*tg.TLChat)
+	if !ok || firstChat.Id != 6 || firstChat.Title != "chat 6" {
+		t.Fatalf("first chat = %#v", diff.Chats[0])
+	}
+}
+
 func TestUpdatesGetDifferenceReturnsEmptyDifference(t *testing.T) {
 	client := &fakeUserupdatesClient{difference: userupdates.MakeTLUserDifferenceEmpty(&userupdates.TLUserDifferenceEmpty{
 		State: userupdates.MakeTLUserState(&userupdates.TLUserState{Pts: 17, Qts: -1, Date: 123, Seq: 0}),
@@ -237,6 +339,11 @@ func TestUpdatesGetDifferenceReturnsSlice(t *testing.T) {
 			tg.MakeTLMessage(&tg.TLMessage{Id: 9, Message: "hello"}),
 		},
 		OtherUpdates: []tg.UpdateClazz{
+			tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
+				Message:  tg.MakeTLMessage(&tg.TLMessage{Id: 9, Message: "hello duplicate"}),
+				Pts:      18,
+				PtsCount: 1,
+			}),
 			tg.MakeTLUpdateNewMessage(&tg.TLUpdateNewMessage{
 				Message:  tg.MakeTLMessage(&tg.TLMessage{Id: 10, Message: "from slice update"}),
 				Pts:      18,
@@ -351,4 +458,18 @@ func TestUpdatesGetDifferenceRejectsMissingPermAuthKeyID(t *testing.T) {
 
 func int32Ptr(v int32) *int32 {
 	return &v
+}
+
+func testUpdatesMutableChat(id int64, title string) *tg.TLMutableChat {
+	return tg.MakeTLMutableChat(&tg.TLMutableChat{
+		Chat: tg.MakeTLImmutableChat(&tg.TLImmutableChat{
+			Id:                id,
+			Creator:           1001,
+			Title:             title,
+			Photo:             tg.MakeTLPhotoEmpty(&tg.TLPhotoEmpty{}),
+			ParticipantsCount: 2,
+			Date:              123,
+			Version:           1,
+		}),
+	})
 }

@@ -209,4 +209,10 @@ func TestBuildUpdatesConfigUsesUserupdatesClient(t *testing.T) {
 	if got.UserClient.DestService != "service.biz_service" {
 		t.Fatalf("UserClient.DestService = %q, want service.biz_service", got.UserClient.DestService)
 	}
+	if got.ChatClient.ServiceName != "RPCChat" {
+		t.Fatalf("ChatClient.ServiceName = %q, want RPCChat", got.ChatClient.ServiceName)
+	}
+	if got.ChatClient.DestService != "service.biz_service" {
+		t.Fatalf("ChatClient.DestService = %q, want service.biz_service", got.ChatClient.DestService)
+	}
 }

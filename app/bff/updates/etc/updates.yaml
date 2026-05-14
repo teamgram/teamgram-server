@@ -16,3 +16,11 @@ UserClient:
     Hosts:
       - 127.0.0.1:2379
     Key: service.biz_service.user
+
+ChatClient:
+  DestService: service.biz_service.chat
+  ServiceName: RPCChat
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: service.biz_service.chat

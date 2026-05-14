@@ -47,18 +47,52 @@ func TestCollectUserIDsFromDifferenceCollectsMessagesAndOtherUpdates(t *testing.
 			FromId: MakeTLPeerUser(&TLPeerUser{UserId: 1001}),
 			PeerId: MakeTLPeerUser(&TLPeerUser{UserId: 1002}),
 		})},
-		OtherUpdates: []UpdateClazz{MakeTLUpdateEditMessage(&TLUpdateEditMessage{
-			Message: MakeTLMessage(&TLMessage{
-				FromId: MakeTLPeerUser(&TLPeerUser{UserId: 1002}),
-				PeerId: MakeTLPeerUser(&TLPeerUser{UserId: 1003}),
+		OtherUpdates: []UpdateClazz{
+			MakeTLUpdateEditMessage(&TLUpdateEditMessage{
+				Message: MakeTLMessage(&TLMessage{
+					FromId: MakeTLPeerUser(&TLPeerUser{UserId: 1002}),
+					PeerId: MakeTLPeerUser(&TLPeerUser{UserId: 1003}),
+				}),
 			}),
-		})},
+			MakeTLUpdateReadHistoryInbox(&TLUpdateReadHistoryInbox{
+				Peer: MakeTLPeerUser(&TLPeerUser{UserId: 1004}),
+			}),
+			MakeTLUpdateChatParticipantAdd(&TLUpdateChatParticipantAdd{
+				ChatId:    6,
+				UserId:    1005,
+				InviterId: 1001,
+			}),
+		},
 	})
 
 	got := CollectUserIDsFromDifference(diff.ToUpdatesDifference())
-	want := []int64{1001, 1002, 1003}
+	want := []int64{1001, 1002, 1003, 1004, 1005}
 	if !sameInt64s(got, want) {
 		t.Fatalf("ids = %v, want %v", got, want)
+	}
+}
+
+func TestCollectChatIDsFromDifferenceCollectsMessagesAndOtherUpdates(t *testing.T) {
+	diff := MakeTLUpdatesDifference(&TLUpdatesDifference{
+		NewMessages: []MessageClazz{MakeTLMessage(&TLMessage{
+			FromId: MakeTLPeerUser(&TLPeerUser{UserId: 1001}),
+			PeerId: MakeTLPeerChat(&TLPeerChat{ChatId: 6}),
+		})},
+		OtherUpdates: []UpdateClazz{
+			MakeTLUpdateReadHistoryInbox(&TLUpdateReadHistoryInbox{
+				Peer: MakeTLPeerChat(&TLPeerChat{ChatId: 6}),
+			}),
+			MakeTLUpdateChatParticipantAdd(&TLUpdateChatParticipantAdd{
+				ChatId: 7,
+				UserId: 1005,
+			}),
+		},
+	})
+
+	got := CollectChatIDsFromDifference(diff.ToUpdatesDifference())
+	want := []int64{6, 7}
+	if !sameInt64s(got, want) {
+		t.Fatalf("chat ids = %v, want %v", got, want)
 	}
 }
 

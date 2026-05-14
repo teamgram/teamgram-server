@@ -19,6 +19,7 @@ package repository
 import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/updates/internal/config"
 	userupdatesclient "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/client"
+	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
 	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
 )
 
@@ -26,6 +27,7 @@ import (
 type Repository struct {
 	UserupdatesClient userupdatesclient.UserupdatesClient
 	UserClient        userclient.UserClient
+	ChatClient        chatclient.ChatClient
 }
 
 // NewRepository creates a new Repository.
@@ -33,5 +35,6 @@ func NewRepository(c config.Config) *Repository {
 	return &Repository{
 		UserupdatesClient: userupdatesclient.NewUserupdatesClient(userupdatesclient.MustNewKitexClient(c.UserupdatesClient)),
 		UserClient:        userclient.NewUserClient(userclient.MustNewKitexClient(c.UserClient)),
+		ChatClient:        chatclient.NewChatClient(chatclient.MustNewKitexClient(c.ChatClient)),
 	}
 }

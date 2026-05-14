@@ -106,16 +106,17 @@ func TestProjectNewMessageFactComputesOutFromViewer(t *testing.T) {
 }
 
 func TestProjectNewMessageFactPrivatePeerFromIDParity(t *testing.T) {
-	fact := payload.NewMessageFactV1{
+	inboundFact := payload.NewMessageFactV1{
 		SchemaVersion: payload.MessageOperationSchemaVersionV4,
 		PeerType:      payload.PeerTypeUser,
-		PeerID:        2002,
+		PeerID:        1001,
 		SenderUserID:  1001,
+		ToUserID:      2002,
 		Date:          1_772_000_000,
 		MessageText:   "hello private",
 	}
 
-	inbound, err := ProjectNewMessageFact(fact, ViewerContext{UserID: 2002}, envelope.ModeDifference, 18, 1, 101)
+	inbound, err := ProjectNewMessageFact(inboundFact, ViewerContext{UserID: 2002}, envelope.ModeDifference, 18, 1, 101)
 	if err != nil {
 		t.Fatalf("ProjectNewMessageFact(inbound) error = %v", err)
 	}
@@ -126,8 +127,14 @@ func TestProjectNewMessageFactPrivatePeerFromIDParity(t *testing.T) {
 	if inboundMessage.FromId != nil {
 		t.Fatalf("inbound message.FromId = %#v, want nil for private receiver projection", inboundMessage.FromId)
 	}
+	inboundPeer, ok := inboundMessage.PeerId.(*tg.TLPeerUser)
+	if !ok || inboundPeer.UserId != 1001 {
+		t.Fatalf("inbound message.PeerId = %#v, want peerUser(1001)", inboundMessage.PeerId)
+	}
 
-	outbound, err := ProjectNewMessageFact(fact, ViewerContext{UserID: 1001}, envelope.ModeDifference, 19, 1, 102)
+	outboundFact := inboundFact
+	outboundFact.PeerID = 2002
+	outbound, err := ProjectNewMessageFact(outboundFact, ViewerContext{UserID: 1001}, envelope.ModeDifference, 19, 1, 102)
 	if err != nil {
 		t.Fatalf("ProjectNewMessageFact(outbound) error = %v", err)
 	}

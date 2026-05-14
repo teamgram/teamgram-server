@@ -474,15 +474,8 @@ func TestGetDifferenceBuildsVisibleMessageFromEventPayload(t *testing.T) {
 	if reply.ReplyToMsgId == nil || *reply.ReplyToMsgId != 55 {
 		t.Fatalf("reply_to_msg_id = %v, want receiver-local 55", reply.ReplyToMsgId)
 	}
-	if len(diff.OtherUpdates) != 1 {
-		t.Fatalf("expected one update, got %d", len(diff.OtherUpdates))
-	}
-	update, ok := diff.OtherUpdates[0].(*tg.TLUpdateNewMessage)
-	if !ok {
-		t.Fatalf("expected TLUpdateNewMessage, got %T", diff.OtherUpdates[0])
-	}
-	if update.Pts != 18 || update.PtsCount != 1 {
-		t.Fatalf("unexpected update pts: %+v", update)
+	if len(diff.OtherUpdates) != 0 {
+		t.Fatalf("other update count = %d, want no duplicate updateNewMessage", len(diff.OtherUpdates))
 	}
 }
 
@@ -571,23 +564,19 @@ func TestV4CreateChatDifferenceOmitsUpdateMessageID(t *testing.T) {
 	if _, ok := service.Action.(*tg.TLMessageActionChatCreate); !ok {
 		t.Fatalf("service action = %T, want *tg.TLMessageActionChatCreate", service.Action)
 	}
-	if len(diff.OtherUpdates) != 2 {
-		t.Fatalf("other update count = %d, want 2", len(diff.OtherUpdates))
+	if len(diff.OtherUpdates) != 1 {
+		t.Fatalf("other update count = %d, want only non-message companion updates", len(diff.OtherUpdates))
 	}
 	for i, update := range diff.OtherUpdates {
 		if _, ok := update.(*tg.TLUpdateMessageID); ok {
 			t.Fatalf("other_updates[%d] = *tg.TLUpdateMessageID, want difference to omit reply-only update", i)
 		}
+		if _, ok := update.(*tg.TLUpdateNewMessage); ok {
+			t.Fatalf("other_updates[%d] = *tg.TLUpdateNewMessage, want message only in new_messages", i)
+		}
 	}
 	if _, ok := diff.OtherUpdates[0].(*tg.TLUpdateChatParticipants); !ok {
 		t.Fatalf("first update = %T, want *tg.TLUpdateChatParticipants", diff.OtherUpdates[0])
-	}
-	newMessage, ok := diff.OtherUpdates[1].(*tg.TLUpdateNewMessage)
-	if !ok {
-		t.Fatalf("second update = %T, want *tg.TLUpdateNewMessage", diff.OtherUpdates[1])
-	}
-	if newMessage.Message != diff.NewMessages[0] {
-		t.Fatalf("update new message does not match NewMessages entry")
 	}
 }
 
@@ -1073,6 +1062,27 @@ func TestGetStateReturnsRepositoryState(t *testing.T) {
 	}
 	if got.Pts != 55 || got.UnreadCount != 3 {
 		t.Fatalf("unexpected state: %+v", got)
+	}
+}
+
+func TestGetDifferenceStateUnreadCountIsZero(t *testing.T) {
+	repo := &fakeUserUpdatesRepository{
+		difference: &repository.GetDifferenceResult{
+			State: repository.UserState{UserID: 1001, Pts: 55, Date: 1_772_000_030, UnreadCount: 3},
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+
+	got, err := core.UserupdatesGetDifference(&userupdates.TLUserupdatesGetDifference{UserId: 1001, AuthKeyId: 9001})
+	if err != nil {
+		t.Fatalf("GetDifference returned error: %v", err)
+	}
+	diff, ok := got.ToUserDifferenceEmpty()
+	if !ok {
+		t.Fatalf("expected empty difference, got %s", got.ClazzName())
+	}
+	if diff.State.Date != 1_772_000_030 || diff.State.UnreadCount != 0 {
+		t.Fatalf("difference state = %+v, want date carried and unread_count 0", diff.State)
 	}
 }
 

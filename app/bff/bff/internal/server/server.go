@@ -163,6 +163,7 @@ func buildUpdatesConfig(c config.Config) updateshelper.Config {
 		RpcServerConf:     c.RpcServerConf,
 		UserupdatesClient: withServiceName(c.UserupdatesClient, "RPCUserupdates"),
 		UserClient:        withServiceName(c.BizServiceClient, "RPCUser"),
+		ChatClient:        withServiceName(c.BizServiceClient, "RPCChat"),
 	}
 }
 

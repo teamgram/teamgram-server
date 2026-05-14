@@ -117,7 +117,9 @@ func differenceToTL(in *repository.GetDifferenceResult) (*userupdates.UserDiffer
 			State: stateToTL(repository.UserState{}),
 		}).ToUserDifference(), nil
 	}
-	state := stateToTL(in.State)
+	stateSource := in.State
+	stateSource.UnreadCount = 0
+	state := stateToTL(stateSource)
 	if len(in.Events) == 0 && len(in.AuthSeqEvents) == 0 {
 		return userupdates.MakeTLUserDifferenceEmpty(&userupdates.TLUserDifferenceEmpty{
 			State: state,
@@ -135,9 +137,9 @@ func differenceToTL(in *repository.GetDifferenceResult) (*userupdates.UserDiffer
 			newMessages = append(newMessages, projected.Message)
 		}
 		if len(projected.OtherUpdates) > 0 {
-			otherUpdates = append(otherUpdates, projected.OtherUpdates...)
+			otherUpdates = appendDifferenceOtherUpdates(otherUpdates, projected.OtherUpdates)
 		} else if projected.Update != nil {
-			otherUpdates = append(otherUpdates, projected.Update)
+			otherUpdates = appendDifferenceOtherUpdates(otherUpdates, []tg.UpdateClazz{projected.Update})
 		}
 	}
 	for _, event := range in.AuthSeqEvents {
@@ -152,6 +154,16 @@ func differenceToTL(in *repository.GetDifferenceResult) (*userupdates.UserDiffer
 		OtherUpdates: otherUpdates,
 		State:        state,
 	}).ToUserDifference(), nil
+}
+
+func appendDifferenceOtherUpdates(out []tg.UpdateClazz, updates []tg.UpdateClazz) []tg.UpdateClazz {
+	for _, update := range updates {
+		if _, ok := update.(*tg.TLUpdateNewMessage); ok {
+			continue
+		}
+		out = append(out, update)
+	}
+	return out
 }
 
 func messageViewToTLMessage(view repository.MessageView) (tg.MessageClazz, error) {
