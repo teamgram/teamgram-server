@@ -3,6 +3,7 @@ package sessionstate
 import (
 	"bytes"
 	"context"
+	"errors"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -53,7 +54,7 @@ func TestSessionDispatchesRawRPCWithMetadata(t *testing.T) {
 	store := &fakeAuthKeyStore{key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)}
 	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
 	processor := NewProcessor(store, dispatch)
-	requestBody := encodeTL(t, &mt.TLGetFutureSalts{Num: 1})
+	requestBody := encodeTL(t, &tg.TLHelpGetConfig{})
 
 	resp := handleEncryptedForTest(t, processor, clientKey, serverKey, 100, requestBody)
 	decoded := decodeEncryptedForTest(t, clientKey, resp)
@@ -115,7 +116,7 @@ func TestSessionUnwrapsInitConnectionMetadata(t *testing.T) {
 	store := &fakeAuthKeyStore{key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)}
 	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
 	processor := NewProcessor(store, dispatch)
-	inner := encodeTL(t, &mt.TLGetFutureSalts{Num: 1})
+	inner := encodeTL(t, &tg.TLHelpGetConfig{})
 	initConn := encodeTL(t, &tg.TLInitConnection{
 		ApiId:          1,
 		DeviceModel:    "tdesktop",
@@ -142,7 +143,7 @@ func TestSessionReusesClientLayerAfterInitConnection(t *testing.T) {
 	store := &fakeAuthKeyStore{key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)}
 	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
 	processor := NewProcessor(store, dispatch)
-	inner := encodeTL(t, &mt.TLGetFutureSalts{Num: 1})
+	inner := encodeTL(t, &tg.TLHelpGetConfig{})
 	initConn := encodeTL(t, &tg.TLInitConnection{
 		ApiId:          1,
 		DeviceModel:    "tdesktop",
@@ -173,7 +174,7 @@ func TestSessionObserverReceivesPermAuthKeyAndLayer(t *testing.T) {
 	store := &fakeAuthKeyStore{key: keyInfo, userID: 12345}
 	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
 	processor := NewProcessor(store, dispatch)
-	inner := encodeTL(t, &mt.TLGetFutureSalts{Num: 1})
+	inner := encodeTL(t, &tg.TLHelpGetConfig{})
 	wrapped := encodeTL(t, &tg.TLInvokeWithLayer{Layer: 223, Query: encodeTL(t, &tg.TLInitConnection{
 		ApiId:       2040,
 		DeviceModel: "tdesktop",
@@ -202,6 +203,489 @@ func TestSessionObserverReceivesPermAuthKeyAndLayer(t *testing.T) {
 	}
 	if active.UserId != 12345 || active.PermAuthKeyId != 4242 || active.Layer != 223 || active.Client != "tdesktop" {
 		t.Fatalf("active session = %#v", active)
+	}
+}
+
+func TestSessionSelectorPromotesMainUpdatesOnlyAfterDispatchSuccess(t *testing.T) {
+	tests := []struct {
+		name string
+		body []byte
+	}{
+		{name: "getState", body: encodeTL(t, &tg.TLUpdatesGetState{})},
+		{name: "getDifference", body: encodeTL(t, &tg.TLUpdatesGetDifference{Pts: 1, Date: 2, Qts: 3})},
+		{name: "getChannelDifference", body: encodeTL(t, &tg.TLUpdatesGetChannelDifference{
+			Channel: tg.MakeTLInputChannelEmpty(&tg.TLInputChannelEmpty{}),
+			Filter:  tg.MakeTLChannelMessagesFilterEmpty(&tg.TLChannelMessagesFilterEmpty{}),
+			Pts:     1,
+			Limit:   10,
+		})},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			serverKey, clientKey := sessionTestKeys()
+			keyInfo := tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypeTemp)
+			keyInfo.PermAuthKeyId = 4242
+			store := &fakeAuthKeyStore{key: keyInfo}
+			dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
+			processor := NewProcessor(store, dispatch)
+
+			var duringSelector ActiveSession
+			handleEncryptedWithObserverForTest(t, processor, clientKey, serverKey, 120, 77, tt.body, func(session ActiveSession) SeqNoAllocator {
+				duringSelector = session
+				return nil
+			})
+			if duringSelector.MainUpdates {
+				t.Fatalf("selector observer MainUpdates = true, want false until dispatch succeeds")
+			}
+
+			var afterSelector ActiveSession
+			handleEncryptedWithObserverForTest(t, processor, clientKey, serverKey, 121, 77, encodeTL(t, &tg.TLHelpGetConfig{}), func(session ActiveSession) SeqNoAllocator {
+				afterSelector = session
+				return nil
+			})
+			if !afterSelector.MainUpdates {
+				t.Fatalf("post-selector observer MainUpdates = false, want true after dispatch succeeds")
+			}
+		})
+	}
+}
+
+func TestSessionUpdateStatusMarksMainUpdatesImmediately(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	keyInfo := tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypeTemp)
+	keyInfo.PermAuthKeyId = 4242
+	store := &fakeAuthKeyStore{key: keyInfo}
+	dispatch := &fakeDispatcher{result: encodeTL(t, tg.BoolTrueClazz)}
+	processor := NewProcessor(store, dispatch)
+
+	var active ActiveSession
+	handleEncryptedWithObserverForTest(t, processor, clientKey, serverKey, 130, 77, encodeTL(t, &tg.TLAccountUpdateStatus{Offline: tg.BoolFalseClazz}), func(session ActiveSession) SeqNoAllocator {
+		active = session
+		return nil
+	})
+	if !active.MainUpdates {
+		t.Fatalf("account.updateStatus observer MainUpdates = false, want immediate promotion")
+	}
+}
+
+func TestSessionMediaTempCannotBePromotedToMainUpdates(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	keyInfo := tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypeMediaTemp)
+	keyInfo.PermAuthKeyId = 4242
+	store := &fakeAuthKeyStore{key: keyInfo}
+	dispatch := &fakeDispatcher{result: encodeTL(t, tg.BoolTrueClazz)}
+	processor := NewProcessor(store, dispatch)
+
+	var active ActiveSession
+	handleEncryptedWithObserverForTest(t, processor, clientKey, serverKey, 140, 77, encodeTL(t, &tg.TLAccountUpdateStatus{Offline: tg.BoolFalseClazz}), func(session ActiveSession) SeqNoAllocator {
+		active = session
+		return nil
+	})
+	if active.MainUpdates {
+		t.Fatalf("media temp account.updateStatus MainUpdates = true, want false")
+	}
+
+	handleEncryptedWithObserverForTest(t, processor, clientKey, serverKey, 141, 77, encodeTL(t, &tg.TLUpdatesGetState{}), func(session ActiveSession) SeqNoAllocator {
+		active = session
+		return nil
+	})
+	if active.MainUpdates {
+		t.Fatalf("media temp updates.getState MainUpdates = true, want false")
+	}
+}
+
+func TestSessionSelectorStaleCompletionDoesNotMutateRegistryQueueOrPendingTooLong(t *testing.T) {
+	tests := []struct {
+		name        string
+		queueWrites int
+		wantQueued  int
+		wantTooLong bool
+		completeOK  bool
+	}{
+		{name: "queued", queueWrites: 1, wantQueued: 1, completeOK: true},
+		{name: "pendingTooLong", queueWrites: 65, wantTooLong: true, completeOK: false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			registry := newRoleRegistry()
+			first := roleSessionKey{permAuthKeyId: 4242, authKeyId: 1001, authKeyType: tg.AuthKeyTypeTemp, sessionId: 10}
+			second := roleSessionKey{permAuthKeyId: 4242, authKeyId: 1002, authKeyType: tg.AuthKeyTypeTemp, sessionId: 20}
+
+			oldTransition, ok := registry.beginTransition(tg.ClazzName_updates_getState, first)
+			if !ok {
+				t.Fatal("first selector did not create transition")
+			}
+			for i := 0; i < tt.queueWrites; i++ {
+				registry.enqueueSelectorUpdate(first.permAuthKeyId)
+			}
+			newTransition, ok := registry.beginTransition(tg.ClazzName_updates_getDifference, second)
+			if !ok {
+				t.Fatal("second selector did not create transition")
+			}
+
+			result := registry.completeSelector(oldTransition.token, tt.completeOK)
+			if !result.stale {
+				t.Fatalf("old completion stale = false, want true")
+			}
+			if registry.isMain(first) || registry.isMain(second) {
+				t.Fatalf("stale completion promoted main target: first=%t second=%t", registry.isMain(first), registry.isMain(second))
+			}
+			snapshot := registry.snapshot(first.permAuthKeyId)
+			if snapshot.candidateToken != newTransition.token || snapshot.candidateKey != second {
+				t.Fatalf("candidate snapshot = %#v, want token %d key %#v", snapshot, newTransition.token, second)
+			}
+			if snapshot.queued != tt.wantQueued || snapshot.pendingTooLong != tt.wantTooLong {
+				t.Fatalf("queue snapshot queued=%d tooLong=%t, want queued=%d tooLong=%t", snapshot.queued, snapshot.pendingTooLong, tt.wantQueued, tt.wantTooLong)
+			}
+		})
+	}
+}
+
+func TestSessionSelectorQueueBuffersGenericUpdatesUntilSuccess(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	keyInfo := tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypeTemp)
+	keyInfo.PermAuthKeyId = 4242
+	store := &fakeAuthKeyStore{key: keyInfo}
+	queuedUpdate := tg.MakeTLUpdates(&tg.TLUpdates{Seq: 10})
+	var flushed []tg.UpdatesClazz
+	var processor *Processor
+	processor = NewProcessor(store, &fakeDispatcher{
+		result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2}),
+		onInvoke: func(md *metadata.RpcMetadata, payload []byte) {
+			count, err := processor.HandleGenericUpdates(context.Background(), 4242, queuedUpdate)
+			if err != nil {
+				t.Fatalf("HandleGenericUpdates() error = %v", err)
+			}
+			if count != 0 {
+				t.Fatalf("HandleGenericUpdates() count = %d while selector in flight, want 0", count)
+			}
+		},
+	})
+	processor.SetGenericUpdatesWriter(func(ctx context.Context, permAuthKeyId int64, updates tg.UpdatesClazz) (int, error) {
+		flushed = append(flushed, updates)
+		return 1, nil
+	})
+
+	_ = handleEncryptedWithObserverForTest(t, processor, clientKey, serverKey, 320, 77, encodeTL(t, &tg.TLUpdatesGetState{}), nil)
+	if len(flushed) != 1 || flushed[0] != queuedUpdate {
+		t.Fatalf("flushed updates = %#v, want queued update", flushed)
+	}
+}
+
+func TestSessionSelectorQueueLimitCoalescesToUpdatesTooLong(t *testing.T) {
+	processor := NewProcessor(&fakeAuthKeyStore{}, &fakeDispatcher{})
+	key := roleSessionKey{permAuthKeyId: 4242, authKeyId: 1001, authKeyType: tg.AuthKeyTypeTemp, sessionId: 10}
+	processor.roles.beginSelector(tg.ClazzName_updates_getState, key)
+
+	for i := 0; i < selectorQueueLimit; i++ {
+		if count, err := processor.HandleGenericUpdates(context.Background(), 4242, tg.MakeTLUpdates(&tg.TLUpdates{Seq: int32(i)})); err != nil || count != 0 {
+			t.Fatalf("HandleGenericUpdates(%d) count=%d err=%v, want queued", i, count, err)
+		}
+	}
+	snapshot := processor.roles.snapshot(4242)
+	if snapshot.queued != selectorQueueLimit || snapshot.pendingTooLong {
+		t.Fatalf("snapshot after limit = %#v, want %d queued and no updatesTooLong", snapshot, selectorQueueLimit)
+	}
+	if count, err := processor.HandleGenericUpdates(context.Background(), 4242, tg.MakeTLUpdates(&tg.TLUpdates{Seq: 65})); err != nil || count != 0 {
+		t.Fatalf("overflow HandleGenericUpdates() count=%d err=%v, want coalesced", count, err)
+	}
+	snapshot = processor.roles.snapshot(4242)
+	if snapshot.queued != 0 || !snapshot.pendingTooLong {
+		t.Fatalf("snapshot after overflow = %#v, want pending updatesTooLong only", snapshot)
+	}
+}
+
+func TestSessionSelectorQueueFlushesUpdatesTooLongAfterOverflow(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	keyInfo := tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypeTemp)
+	keyInfo.PermAuthKeyId = 4242
+	store := &fakeAuthKeyStore{key: keyInfo}
+	var flushed []tg.UpdatesClazz
+	var processor *Processor
+	processor = NewProcessor(store, &fakeDispatcher{
+		result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2}),
+		onInvoke: func(md *metadata.RpcMetadata, payload []byte) {
+			for i := 0; i <= selectorQueueLimit; i++ {
+				if _, err := processor.HandleGenericUpdates(context.Background(), 4242, tg.MakeTLUpdates(&tg.TLUpdates{Seq: int32(i)})); err != nil {
+					t.Fatalf("HandleGenericUpdates(%d) error = %v", i, err)
+				}
+			}
+		},
+	})
+	processor.SetGenericUpdatesWriter(func(ctx context.Context, permAuthKeyId int64, updates tg.UpdatesClazz) (int, error) {
+		flushed = append(flushed, updates)
+		return 1, nil
+	})
+
+	_ = handleEncryptedWithObserverForTest(t, processor, clientKey, serverKey, 321, 77, encodeTL(t, &tg.TLUpdatesGetState{}), nil)
+	if len(flushed) != 1 || flushed[0].UpdatesClazzName() != tg.ClazzName_updatesTooLong {
+		t.Fatalf("flushed updates = %#v, want one updatesTooLong", flushed)
+	}
+}
+
+func TestSessionSelectorFailureAndCloseCreatePendingUpdatesTooLong(t *testing.T) {
+	tests := []struct {
+		name string
+		done func(*Processor, roleTransition, roleSessionKey)
+	}{
+		{name: "failure", done: func(p *Processor, transition roleTransition, key roleSessionKey) {
+			_ = p.roles.completeSelector(transition.token, false)
+		}},
+		{name: "close", done: func(p *Processor, transition roleTransition, key roleSessionKey) {
+			p.UnregisterSession(ActiveSession{PermAuthKeyId: key.permAuthKeyId, AuthKeyId: key.authKeyId, AuthKeyType: key.authKeyType, SessionId: key.sessionId})
+		}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			processor := NewProcessor(&fakeAuthKeyStore{}, &fakeDispatcher{})
+			key := roleSessionKey{permAuthKeyId: 4242, authKeyId: 1001, authKeyType: tg.AuthKeyTypeTemp, sessionId: 10}
+			transition := processor.roles.beginSelector(tg.ClazzName_updates_getState, key)
+			_, _ = processor.HandleGenericUpdates(context.Background(), 4242, tg.MakeTLUpdates(&tg.TLUpdates{Seq: 1}))
+
+			tt.done(processor, transition, key)
+			snapshot := processor.roles.snapshot(4242)
+			if snapshot.candidateToken != 0 || snapshot.queued != 0 || !snapshot.pendingTooLong {
+				t.Fatalf("snapshot = %#v, want candidate cleared with pending updatesTooLong", snapshot)
+			}
+		})
+	}
+}
+
+func TestSessionSelectorTimeoutCreatesPendingUpdatesTooLongWithoutQueuedPayloads(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	keyInfo := tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypeTemp)
+	keyInfo.PermAuthKeyId = 4242
+	store := &fakeAuthKeyStore{key: keyInfo}
+	dispatch := &fakeDispatcher{err: context.DeadlineExceeded}
+	processor := NewProcessor(store, dispatch)
+	var flushed []tg.UpdatesClazz
+	processor.SetGenericUpdatesWriter(func(ctx context.Context, permAuthKeyId int64, updates tg.UpdatesClazz) (int, error) {
+		flushed = append(flushed, updates)
+		return 1, nil
+	})
+
+	_, err := handleEncryptedErrorForTest(t, processor, clientKey, serverKey, 323, 77, encodeTL(t, &tg.TLUpdatesGetState{}))
+	if !errors.Is(err, context.DeadlineExceeded) {
+		t.Fatalf("selector error = %v, want context deadline exceeded", err)
+	}
+	snapshot := processor.roles.snapshot(4242)
+	if snapshot.candidateToken != 0 || snapshot.queued != 0 || !snapshot.pendingTooLong {
+		t.Fatalf("snapshot after timeout = %#v, want candidate cleared with pending updatesTooLong", snapshot)
+	}
+	if len(flushed) != 0 {
+		t.Fatalf("flushed after timeout = %#v, want no immediate flush", flushed)
+	}
+
+	dispatch.err = nil
+	dispatch.result = encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})
+	_ = handleEncryptedWithObserverForTest(t, processor, clientKey, serverKey, 324, 77, encodeTL(t, &tg.TLUpdatesGetState{}), nil)
+	if len(flushed) != 1 || flushed[0].UpdatesClazzName() != tg.ClazzName_updatesTooLong {
+		t.Fatalf("flushed after next selector = %#v, want one updatesTooLong", flushed)
+	}
+}
+
+func TestSessionSelectorFailureWithoutQueuedPayloadsFlushesUpdatesTooLongOnNextSuccess(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	keyInfo := tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypeTemp)
+	keyInfo.PermAuthKeyId = 4242
+	store := &fakeAuthKeyStore{key: keyInfo}
+	dispatch := &fakeDispatcher{err: context.Canceled}
+	processor := NewProcessor(store, dispatch)
+	var flushed []tg.UpdatesClazz
+	processor.SetGenericUpdatesWriter(func(ctx context.Context, permAuthKeyId int64, updates tg.UpdatesClazz) (int, error) {
+		flushed = append(flushed, updates)
+		return 1, nil
+	})
+
+	_, err := handleEncryptedErrorForTest(t, processor, clientKey, serverKey, 325, 77, encodeTL(t, &tg.TLUpdatesGetState{}))
+	if !errors.Is(err, context.Canceled) {
+		t.Fatalf("selector error = %v, want context canceled", err)
+	}
+	snapshot := processor.roles.snapshot(4242)
+	if snapshot.candidateToken != 0 || snapshot.queued != 0 || !snapshot.pendingTooLong {
+		t.Fatalf("snapshot after failure = %#v, want candidate cleared with pending updatesTooLong", snapshot)
+	}
+
+	dispatch.err = nil
+	dispatch.result = encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})
+	_ = handleEncryptedWithObserverForTest(t, processor, clientKey, serverKey, 326, 77, encodeTL(t, &tg.TLUpdatesGetDifference{Pts: 1, Date: 2, Qts: 3}), nil)
+	if len(flushed) != 1 || flushed[0].UpdatesClazzName() != tg.ClazzName_updatesTooLong {
+		t.Fatalf("flushed after next selector = %#v, want one updatesTooLong", flushed)
+	}
+}
+
+func TestSessionSelectorCloseWithoutQueuedPayloadsFlushesUpdatesTooLongOnNextSuccess(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	keyInfo := tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypeTemp)
+	keyInfo.PermAuthKeyId = 4242
+	store := &fakeAuthKeyStore{key: keyInfo}
+	processor := NewProcessor(store, &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})})
+	first := roleSessionKey{permAuthKeyId: 4242, authKeyId: 1001, authKeyType: tg.AuthKeyTypeTemp, sessionId: 10}
+	processor.roles.beginSelector(tg.ClazzName_updates_getState, first)
+	var flushed []tg.UpdatesClazz
+	processor.SetGenericUpdatesWriter(func(ctx context.Context, permAuthKeyId int64, updates tg.UpdatesClazz) (int, error) {
+		flushed = append(flushed, updates)
+		return 1, nil
+	})
+
+	processor.UnregisterSession(ActiveSession{PermAuthKeyId: first.permAuthKeyId, AuthKeyId: first.authKeyId, AuthKeyType: first.authKeyType, SessionId: first.sessionId})
+	snapshot := processor.roles.snapshot(4242)
+	if snapshot.candidateToken != 0 || snapshot.queued != 0 || !snapshot.pendingTooLong {
+		t.Fatalf("snapshot after close = %#v, want candidate cleared with pending updatesTooLong", snapshot)
+	}
+
+	_ = handleEncryptedWithObserverForTest(t, processor, clientKey, serverKey, 327, 77, encodeTL(t, &tg.TLUpdatesGetState{}), nil)
+	if len(flushed) != 1 || flushed[0].UpdatesClazzName() != tg.ClazzName_updatesTooLong {
+		t.Fatalf("flushed after next selector = %#v, want one updatesTooLong", flushed)
+	}
+}
+
+func TestSessionGenericUpdatesNoMainNoSelectorColdStartDoesNotWriteOrQueue(t *testing.T) {
+	processor := NewProcessor(&fakeAuthKeyStore{}, &fakeDispatcher{})
+	processor.SetGenericUpdatesWriter(func(ctx context.Context, permAuthKeyId int64, updates tg.UpdatesClazz) (int, error) {
+		t.Fatal("generic update writer called without main or selector")
+		return 0, nil
+	})
+
+	count, err := processor.HandleGenericUpdates(context.Background(), 4242, tg.MakeTLUpdates(&tg.TLUpdates{Seq: 1}))
+	if err != nil {
+		t.Fatalf("HandleGenericUpdates() error = %v", err)
+	}
+	if count != 0 {
+		t.Fatalf("HandleGenericUpdates() count = %d, want 0", count)
+	}
+	if snapshot := processor.roles.snapshot(4242); snapshot.queued != 0 || snapshot.pendingTooLong || snapshot.candidateToken != 0 {
+		t.Fatalf("snapshot = %#v, want no cold-start queue", snapshot)
+	}
+}
+
+func TestSessionUpdateStatusDrainsQueuedUpdatesImmediately(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	keyInfo := tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypeTemp)
+	keyInfo.PermAuthKeyId = 4242
+	store := &fakeAuthKeyStore{key: keyInfo}
+	processor := NewProcessor(store, &fakeDispatcher{result: encodeTL(t, tg.BoolTrueClazz)})
+	key := roleSessionKey{permAuthKeyId: 4242, authKeyId: 1001, authKeyType: tg.AuthKeyTypeTemp, sessionId: 10}
+	processor.roles.beginSelector(tg.ClazzName_updates_getState, key)
+	queuedUpdate := tg.MakeTLUpdates(&tg.TLUpdates{Seq: 99})
+	_, _ = processor.HandleGenericUpdates(context.Background(), 4242, queuedUpdate)
+	var flushed []tg.UpdatesClazz
+	processor.SetGenericUpdatesWriter(func(ctx context.Context, permAuthKeyId int64, updates tg.UpdatesClazz) (int, error) {
+		flushed = append(flushed, updates)
+		return 1, nil
+	})
+
+	_ = handleEncryptedWithObserverForTest(t, processor, clientKey, serverKey, 322, 77, encodeTL(t, &tg.TLAccountUpdateStatus{Offline: tg.BoolFalseClazz}), nil)
+	if len(flushed) != 1 || flushed[0] != queuedUpdate {
+		t.Fatalf("flushed updates = %#v, want queued update", flushed)
+	}
+	snapshot := processor.roles.snapshot(4242)
+	if snapshot.queued != 0 || snapshot.pendingTooLong || snapshot.candidateToken != 0 {
+		t.Fatalf("snapshot = %#v, want drained queue and cleared candidate", snapshot)
+	}
+}
+
+func TestSessionUpdateStatusFlushErrorDoesNotFailRPCAndLeavesUpdatesTooLong(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	keyInfo := tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypeTemp)
+	keyInfo.PermAuthKeyId = 4242
+	store := &fakeAuthKeyStore{key: keyInfo}
+	dispatch := &fakeDispatcher{result: encodeTL(t, tg.BoolTrueClazz)}
+	processor := NewProcessor(store, dispatch)
+	key := roleSessionKey{permAuthKeyId: 4242, authKeyId: 1001, authKeyType: tg.AuthKeyTypeTemp, sessionId: 10}
+	processor.roles.beginSelector(tg.ClazzName_updates_getState, key)
+	_, _ = processor.HandleGenericUpdates(context.Background(), 4242, tg.MakeTLUpdates(&tg.TLUpdates{Seq: 99}))
+	errFlush := errors.New("flush failed")
+	failFlush := true
+	var flushed []tg.UpdatesClazz
+	processor.SetGenericUpdatesWriter(func(ctx context.Context, permAuthKeyId int64, updates tg.UpdatesClazz) (int, error) {
+		if failFlush {
+			failFlush = false
+			return 0, errFlush
+		}
+		flushed = append(flushed, updates)
+		return 1, nil
+	})
+
+	resp, err := handleEncryptedErrorForTest(t, processor, clientKey, serverKey, 328, 77, encodeTL(t, &tg.TLAccountUpdateStatus{Offline: tg.BoolFalseClazz}))
+	if err != nil {
+		t.Fatalf("account.updateStatus returned error = %v, want nil", err)
+	}
+	if resp == nil || len(dispatch.payloads) != 1 {
+		t.Fatalf("account.updateStatus resp nil=%t dispatches=%d, want reply and dispatch", resp == nil, len(dispatch.payloads))
+	}
+	if snapshot := processor.roles.snapshot(4242); !snapshot.pendingTooLong {
+		t.Fatalf("snapshot after failed drain = %#v, want pending updatesTooLong", snapshot)
+	}
+
+	dispatch.result = encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})
+	_ = handleEncryptedWithObserverForTest(t, processor, clientKey, serverKey, 329, 77, encodeTL(t, &tg.TLUpdatesGetState{}), nil)
+	if len(flushed) != 1 || flushed[0].UpdatesClazzName() != tg.ClazzName_updatesTooLong {
+		t.Fatalf("flushed after recovery selector = %#v, want one updatesTooLong", flushed)
+	}
+}
+
+func TestSessionSelectorSuccessFlushErrorDoesNotFailRPCAndLeavesUpdatesTooLong(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	keyInfo := tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypeTemp)
+	keyInfo.PermAuthKeyId = 4242
+	store := &fakeAuthKeyStore{key: keyInfo}
+	var processor *Processor
+	queuedOnce := false
+	dispatch := &fakeDispatcher{
+		result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2}),
+		onInvoke: func(md *metadata.RpcMetadata, payload []byte) {
+			if rawRPCMethodName(payload) == tg.ClazzName_updates_getState && !queuedOnce {
+				queuedOnce = true
+				_, _ = processor.HandleGenericUpdates(context.Background(), 4242, tg.MakeTLUpdates(&tg.TLUpdates{Seq: 100}))
+			}
+		},
+	}
+	processor = NewProcessor(store, dispatch)
+	errFlush := errors.New("selector flush failed")
+	failFlush := true
+	var flushed []tg.UpdatesClazz
+	processor.SetGenericUpdatesWriter(func(ctx context.Context, permAuthKeyId int64, updates tg.UpdatesClazz) (int, error) {
+		if failFlush {
+			failFlush = false
+			return 0, errFlush
+		}
+		flushed = append(flushed, updates)
+		return 1, nil
+	})
+
+	resp, err := handleEncryptedErrorForTest(t, processor, clientKey, serverKey, 330, 77, encodeTL(t, &tg.TLUpdatesGetState{}))
+	if err != nil {
+		t.Fatalf("selector returned error = %v, want nil", err)
+	}
+	if resp == nil {
+		t.Fatal("selector response is nil, want foreground RPC reply")
+	}
+	if snapshot := processor.roles.snapshot(4242); !snapshot.pendingTooLong {
+		t.Fatalf("snapshot after failed selector flush = %#v, want pending updatesTooLong", snapshot)
+	}
+
+	_ = handleEncryptedWithObserverForTest(t, processor, clientKey, serverKey, 331, 77, encodeTL(t, &tg.TLUpdatesGetDifference{Pts: 1, Date: 2, Qts: 3}), nil)
+	if len(flushed) != 1 || flushed[0].UpdatesClazzName() != tg.ClazzName_updatesTooLong {
+		t.Fatalf("flushed after recovery selector = %#v, want one updatesTooLong", flushed)
+	}
+}
+
+func TestSessionCandidateReplacementPreservesPendingUpdatesTooLong(t *testing.T) {
+	processor := NewProcessor(&fakeAuthKeyStore{}, &fakeDispatcher{})
+	first := roleSessionKey{permAuthKeyId: 4242, authKeyId: 1001, authKeyType: tg.AuthKeyTypeTemp, sessionId: 10}
+	second := roleSessionKey{permAuthKeyId: 4242, authKeyId: 1002, authKeyType: tg.AuthKeyTypeTemp, sessionId: 20}
+	processor.roles.beginSelector(tg.ClazzName_updates_getState, first)
+	for i := 0; i <= selectorQueueLimit; i++ {
+		_, _ = processor.HandleGenericUpdates(context.Background(), 4242, tg.MakeTLUpdates(&tg.TLUpdates{Seq: int32(i)}))
+	}
+
+	processor.roles.beginSelector(tg.ClazzName_updates_getDifference, second)
+	snapshot := processor.roles.snapshot(4242)
+	if snapshot.candidateKey != second || !snapshot.pendingTooLong || snapshot.queued != 0 {
+		t.Fatalf("snapshot = %#v, want replacement candidate with pending updatesTooLong preserved", snapshot)
 	}
 }
 
@@ -243,7 +727,7 @@ func TestSessionPersistsClientMetadataFromInitConnection(t *testing.T) {
 	store := &fakeAuthKeyStore{key: keyInfo}
 	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
 	processor := NewProcessor(store, dispatch)
-	inner := encodeTL(t, &mt.TLGetFutureSalts{Num: 1})
+	inner := encodeTL(t, &tg.TLHelpGetConfig{})
 	wrapped := encodeTL(t, &tg.TLInvokeWithLayer{Layer: 223, Query: encodeTL(t, &tg.TLInitConnection{
 		ApiId:          2040,
 		DeviceModel:    "tdesktop",
@@ -300,7 +784,7 @@ func TestSessionSkipsDuplicateClientMetadataWrites(t *testing.T) {
 	store := &fakeAuthKeyStore{key: keyInfo}
 	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
 	processor := NewProcessor(store, dispatch)
-	inner := encodeTL(t, &mt.TLGetFutureSalts{Num: 1})
+	inner := encodeTL(t, &tg.TLHelpGetConfig{})
 	wrapped := encodeTL(t, &tg.TLInvokeWithLayer{Layer: 223, Query: encodeTL(t, &tg.TLInitConnection{
 		ApiId:       2040,
 		DeviceModel: "tdesktop",
@@ -359,7 +843,7 @@ func TestSessionKeepsCachedAuthKeyInfoMetadata(t *testing.T) {
 	store := &fakeAuthKeyStore{key: keyInfo}
 	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
 	processor := NewProcessor(store, dispatch)
-	requestBody := encodeTL(t, &mt.TLGetFutureSalts{Num: 1})
+	requestBody := encodeTL(t, &tg.TLHelpGetConfig{})
 
 	_ = handleEncryptedForTest(t, processor, clientKey, serverKey, 103, requestBody)
 	_ = handleEncryptedForTest(t, processor, clientKey, serverKey, 104, requestBody)
@@ -418,7 +902,7 @@ func TestSessionDispatchesBoundUserMetadata(t *testing.T) {
 	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
 	processor := NewProcessor(store, dispatch)
 
-	_ = handleEncryptedForTest(t, processor, clientKey, serverKey, 105, encodeTL(t, &mt.TLGetFutureSalts{Num: 1}))
+	_ = handleEncryptedForTest(t, processor, clientKey, serverKey, 105, encodeTL(t, &tg.TLHelpGetConfig{}))
 	if len(dispatch.md) != 1 {
 		t.Fatalf("dispatch count = %d, want 1", len(dispatch.md))
 	}
@@ -483,7 +967,7 @@ func TestSessionWrapsDispatchRPCError(t *testing.T) {
 	})}}
 	processor := NewProcessor(store, dispatch)
 
-	resp := handleEncryptedForTest(t, processor, clientKey, serverKey, 102, encodeTL(t, &mt.TLGetFutureSalts{Num: 1}))
+	resp := handleEncryptedForTest(t, processor, clientKey, serverKey, 102, encodeTL(t, &tg.TLHelpGetConfig{}))
 	decoded := decodeEncryptedForTest(t, clientKey, resp)
 	rpcResult := decodeBodyAs[*mt.TLRpcResult](t, decoded.Body)
 	errObj, ok := rpcResult.Result.(*mt.TLRpcError)
@@ -501,8 +985,8 @@ func TestSessionContainerReturnsAllRPCResponses(t *testing.T) {
 	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
 	processor := NewProcessor(store, dispatch)
 	container := &mt.TLMsgContainer{Messages: []*mt.TLMessage2{
-		{MsgId: 201, Seqno: 1, Object: &mt.TLGetFutureSalts{Num: 1}},
-		{MsgId: 202, Seqno: 3, Object: &mt.TLGetFutureSalts{Num: 2}},
+		{MsgId: 201, Seqno: 1, Object: &tg.TLHelpGetConfig{}},
+		{MsgId: 202, Seqno: 3, Object: &tg.TLUsersGetFullUser{Id: tg.InputUserSelfClazz}},
 	}}
 
 	resp := handleEncryptedForTest(t, processor, clientKey, serverKey, 200, encodeTL(t, container))
@@ -548,10 +1032,15 @@ func TestSessionContainerPreservesRawLayeredRPCPayload(t *testing.T) {
 
 func handleEncryptedForTest(t *testing.T, processor *Processor, clientKey, serverKey *crypto.AuthKey, msgID int64, body []byte) []byte {
 	t.Helper()
+	return handleEncryptedWithObserverForTest(t, processor, clientKey, serverKey, msgID, 77, body, nil)
+}
+
+func handleEncryptedWithObserverForTest(t *testing.T, processor *Processor, clientKey, serverKey *crypto.AuthKey, msgID int64, sessionID int64, body []byte, observe SessionObserver) []byte {
+	t.Helper()
 	payload, err := gmtproto.EncodeEncryptedMessage(gmtproto.EncryptedMessage{
 		AuthKeyId: clientKey.AuthKeyId(),
 		Salt:      55,
-		SessionId: 77,
+		SessionId: sessionID,
 		MsgId:     msgID,
 		SeqNo:     1,
 		Body:      body,
@@ -559,11 +1048,27 @@ func handleEncryptedForTest(t *testing.T, processor *Processor, clientKey, serve
 	if err != nil {
 		t.Fatalf("EncodeEncryptedMessage() error = %v", err)
 	}
-	resp, err := processor.HandleEncrypted(context.Background(), ConnInfo{GatewayId: "gateway-test", ClientAddr: "127.0.0.1:1"}, payload)
+	resp, err := processor.HandleEncryptedWithSession(context.Background(), ConnInfo{GatewayId: "gateway-test", ClientAddr: "127.0.0.1:1"}, payload, observe)
 	if err != nil {
-		t.Fatalf("HandleEncrypted() error = %v", err)
+		t.Fatalf("HandleEncryptedWithSession() error = %v", err)
 	}
 	return resp
+}
+
+func handleEncryptedErrorForTest(t *testing.T, processor *Processor, clientKey, serverKey *crypto.AuthKey, msgID int64, sessionID int64, body []byte) ([]byte, error) {
+	t.Helper()
+	payload, err := gmtproto.EncodeEncryptedMessage(gmtproto.EncryptedMessage{
+		AuthKeyId: clientKey.AuthKeyId(),
+		Salt:      55,
+		SessionId: sessionID,
+		MsgId:     msgID,
+		SeqNo:     1,
+		Body:      body,
+	}, clientKey)
+	if err != nil {
+		t.Fatalf("EncodeEncryptedMessage() error = %v", err)
+	}
+	return processor.HandleEncrypted(context.Background(), ConnInfo{GatewayId: "gateway-test", ClientAddr: "127.0.0.1:1"}, payload)
 }
 
 func decodeEncryptedForTest(t *testing.T, clientKey *crypto.AuthKey, payload []byte) gmtproto.EncryptedMessage {

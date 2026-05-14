@@ -65,13 +65,15 @@ func (s *Server) Initialize() error {
 		func(s server.Server) error {
 			return gatewayservice.RegisterService(s, service.New(ctx))
 		})
+	processor := sessionstate.NewProcessor(ctx.Repo, dispatch.NewRawDispatcher(ctx.BFF))
+	ctx.Push.SetGenericUpdatesPolicy(processor)
 	s.tcpSrv = gttransport.NewServer(
 		c.Transport.TCPListenOn,
 		c.GatewayId,
 		c.AdvertiseRpcAddr,
 		ctx.GatewayGeneration,
 		sessionstate.NewHandshakeManager(ctx.Repo),
-		sessionstate.NewProcessor(ctx.Repo, dispatch.NewRawDispatcher(ctx.BFF)),
+		processor,
 		ctx.Push,
 		ctx.Presence)
 

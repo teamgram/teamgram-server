@@ -29,12 +29,17 @@ func (c *GatewayCore) GatewayPushSessionUpdatesData(in *gateway.TLGatewayPushSes
 		c.Logger.Debugf("gateway.pushSessionUpdatesData - no local writer")
 		return tg.BoolTrue, nil
 	}
-	ok, err := c.svcCtx.Push.WriteSessionUpdates(c.ctx, in.AuthKeyId, in.SessionId, in.Updates)
+	result, err := c.svcCtx.Push.WriteSessionUpdatesDetailed(c.ctx, in.AuthKeyId, in.SessionId, in.Updates)
 	if err != nil {
 		return nil, err
 	}
-	if !ok {
-		c.Logger.Debugf("gateway.pushSessionUpdatesData - no local session: auth_key_id=%d session_id=%d", in.AuthKeyId, in.SessionId)
+	if !result.OK {
+		if result.Reason == "no_local_session" {
+			c.Logger.Debugf("gateway.pushSessionUpdatesData - no local session: auth_key_id=%d session_id=%d", in.AuthKeyId, in.SessionId)
+		} else {
+			c.Logger.Debugf("gateway.pushSessionUpdatesData - exact session update rejected: reason=%s perm_auth_key_id=%d auth_key_id=%d auth_key_type=%d session_id=%d updates=%s",
+				result.Reason, result.PermAuthKeyId, result.AuthKeyId, result.AuthKeyType, result.SessionId, result.UpdatesClass)
+		}
 	}
 	return tg.BoolTrue, nil
 }

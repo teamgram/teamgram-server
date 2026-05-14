@@ -1,7 +1,6 @@
 package transport
 
 import (
-	"bufio"
 	"context"
 	"encoding/binary"
 	"errors"
@@ -105,50 +104,92 @@ func (s *Server) ServeConn(ctx context.Context, conn net.Conn) error {
 
 func (s *Server) serveTrackedConn(ctx context.Context, conn net.Conn, untrack func()) error {
 	defer untrack()
-	defer conn.Close()
-	reader := bufio.NewReader(conn)
-	codec, err := DetectCodec(reader)
-	if err != nil {
-		s.reportConnError(conn, "detect_codec", err)
-		return fmt.Errorf("gateway transport detect codec: %w", err)
+	handler := newGatewayHandler(s, conn)
+	err := newNetDriver(conn, handler).Serve(ctx)
+	if err != nil && !handler.wasClosed() {
+		phase := "connection"
+		if errors.Is(err, ErrUnsupportedTransport) {
+			phase = "detect_codec"
+		}
+		s.reportConnError(conn, phase, err)
 	}
-	var writeMu sync.Mutex
-	writers := make(map[sessionKey]*connSessionWriter)
-	defer func() {
-		for key := range writers {
-			if s.push != nil {
-				s.push.Unregister(key.authKeyId, key.authKeyType, key.sessionId)
-			}
-			if s.presence != nil {
-				s.presence.Unregister(context.Background(), key.authKeyId, key.sessionId)
-			}
-		}
-	}()
-	for {
-		frame, err := codec.ReadFrame(reader)
-		if err != nil {
-			s.reportConnError(conn, "read_frame", err)
-			return err
-		}
-		resp, err := s.handleFrame(ctx, conn, codec, &writeMu, writers, frame)
-		if err != nil {
-			s.reportConnError(conn, "handle_frame", err)
-			return err
-		}
-		if resp == nil {
-			continue
-		}
-		writeMu.Lock()
-		if err := codec.WriteFrame(conn, resp); err != nil {
-			writeMu.Unlock()
-			s.reportConnError(conn, "write_frame", err)
-			return err
-		}
-		writeMu.Unlock()
+	return err
+}
+
+type gatewayHandler struct {
+	server         *Server
+	rawConn        net.Conn
+	writers        map[sessionKey]*sessionWriter
+	activeSessions map[sessionKey]sessionstate.ActiveSession
+	closeMu        sync.Mutex
+	closed         bool
+	reported       bool
+}
+
+func newGatewayHandler(server *Server, rawConn net.Conn) *gatewayHandler {
+	return &gatewayHandler{
+		server:         server,
+		rawConn:        rawConn,
+		writers:        make(map[sessionKey]*sessionWriter),
+		activeSessions: make(map[sessionKey]sessionstate.ActiveSession),
 	}
 }
 
-func (s *Server) handleFrame(ctx context.Context, conn net.Conn, codec Codec, writeMu *sync.Mutex, writers map[sessionKey]*connSessionWriter, frame []byte) ([]byte, error) {
+func (h *gatewayHandler) OnOpen(ctx context.Context, conn Connection) {
+}
+
+func (h *gatewayHandler) OnFrame(ctx context.Context, conn Connection, frame []byte) error {
+	resp, err := h.server.handleFrame(ctx, conn, h.writers, h.activeSessions, frame)
+	if err != nil {
+		h.server.reportConnError(h.rawConn, "handle_frame", err)
+		h.markReported()
+		return err
+	}
+	if resp == nil {
+		return nil
+	}
+	if err := conn.WriteFrame(ctx, resp); err != nil {
+		h.server.reportConnError(h.rawConn, "write_frame", err)
+		h.markReported()
+		return err
+	}
+	return nil
+}
+
+func (h *gatewayHandler) OnClose(ctx context.Context, conn Connection, err error) {
+	h.closeMu.Lock()
+	h.closed = true
+	shouldReport := !h.reported
+	h.closeMu.Unlock()
+	if shouldReport {
+		h.server.reportConnError(h.rawConn, "connection", err)
+	}
+	for key := range h.writers {
+		if h.server.push != nil {
+			h.server.push.Unregister(key.authKeyId, key.authKeyType, key.sessionId)
+		}
+		if h.server.presence != nil {
+			h.server.presence.Unregister(context.Background(), key.authKeyId, key.sessionId)
+		}
+		if h.server.processor != nil {
+			h.server.processor.UnregisterSession(h.activeSessions[key])
+		}
+	}
+}
+
+func (h *gatewayHandler) wasClosed() bool {
+	h.closeMu.Lock()
+	defer h.closeMu.Unlock()
+	return h.closed
+}
+
+func (h *gatewayHandler) markReported() {
+	h.closeMu.Lock()
+	defer h.closeMu.Unlock()
+	h.reported = true
+}
+
+func (s *Server) handleFrame(ctx context.Context, conn Connection, writers map[sessionKey]*sessionWriter, activeSessions map[sessionKey]sessionstate.ActiveSession, frame []byte) ([]byte, error) {
 	if len(frame) < 8 {
 		return nil, fmt.Errorf("gateway transport: frame too short")
 	}
@@ -166,22 +207,19 @@ func (s *Server) handleFrame(ctx context.Context, conn net.Conn, codec Codec, wr
 	if s.processor == nil {
 		return nil, fmt.Errorf("gateway transport: session processor is nil")
 	}
-	return s.processor.HandleEncryptedWithSession(ctx, sessionstate.ConnInfo{GatewayId: s.gatewayID, GatewayRpcAddr: s.gatewayRPCAddr, GatewayGeneration: s.gatewayGeneration, ClientAddr: conn.RemoteAddr().String()}, frame, func(active sessionstate.ActiveSession) sessionstate.SeqNoAllocator {
+	register := func(active sessionstate.ActiveSession, registerPresence bool) sessionstate.SeqNoAllocator {
 		if active.AuthKey == nil {
 			return nil
 		}
 		key := sessionKey{authKeyId: active.AuthKeyId, authKeyType: active.AuthKeyType, sessionId: active.SessionId}
 		writer := writers[key]
 		if s.push != nil && writer == nil {
-			writer = &connSessionWriter{
-				conn:    conn,
-				codec:   codec,
-				writeMu: writeMu,
-			}
+			writer = &sessionWriter{conn: conn}
 		}
 		if _, ok := writers[key]; !ok {
 			writers[key] = writer
 		}
+		activeSessions[key] = active
 		if s.push != nil && writer != nil {
 			writer.Update(active.AuthKey, active.Salt)
 			s.push.Register(push.LocalTarget{
@@ -192,9 +230,10 @@ func (s *Server) handleFrame(ctx context.Context, conn net.Conn, codec Codec, wr
 				Layer:         active.Layer,
 				AuthKey:       active.AuthKey,
 				Writer:        writer,
+				MainUpdates:   active.MainUpdates,
 			})
 		}
-		if s.presence != nil && active.UserId > 0 {
+		if registerPresence && s.presence != nil && active.UserId > 0 {
 			s.presence.Register(ctx, gatewaypresence.ActiveSession{
 				UserID:        active.UserId,
 				PermAuthKeyID: active.PermAuthKeyId,
@@ -209,7 +248,18 @@ func (s *Server) handleFrame(ctx context.Context, conn net.Conn, codec Codec, wr
 			return nil
 		}
 		return writer
-	})
+	}
+	return s.processor.HandleEncryptedWithSessionRefresh(
+		ctx,
+		sessionstate.ConnInfo{GatewayId: s.gatewayID, GatewayRpcAddr: s.gatewayRPCAddr, GatewayGeneration: s.gatewayGeneration, ClientAddr: conn.RemoteAddr()},
+		frame,
+		func(active sessionstate.ActiveSession) sessionstate.SeqNoAllocator {
+			return register(active, true)
+		},
+		func(active sessionstate.ActiveSession) {
+			_ = register(active, false)
+		},
+	)
 }
 
 func (s *Server) trackConn(conn net.Conn) (func(), bool) {
@@ -267,10 +317,8 @@ type sessionKey struct {
 	sessionId   int64
 }
 
-type connSessionWriter struct {
-	conn    net.Conn
-	codec   Codec
-	writeMu *sync.Mutex
+type sessionWriter struct {
+	conn Connection
 
 	mu      sync.Mutex
 	authKey *crypto.AuthKey
@@ -278,14 +326,14 @@ type connSessionWriter struct {
 	seq     int32
 }
 
-func (w *connSessionWriter) Update(authKey *crypto.AuthKey, salt int64) {
+func (w *sessionWriter) Update(authKey *crypto.AuthKey, salt int64) {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	w.authKey = authKey
 	w.salt = salt
 }
 
-func (w *connSessionWriter) NextSeqNo(contentRelated bool) int32 {
+func (w *sessionWriter) NextSeqNo(contentRelated bool) int32 {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 	seq := w.seq * 2
@@ -296,7 +344,7 @@ func (w *connSessionWriter) NextSeqNo(contentRelated bool) int32 {
 	return seq
 }
 
-func (w *connSessionWriter) WriteEncrypted(ctx context.Context, msg gmtproto.EncryptedMessage) error {
+func (w *sessionWriter) WriteEncrypted(ctx context.Context, msg gmtproto.EncryptedMessage) error {
 	w.mu.Lock()
 	authKey := w.authKey
 	if msg.Salt == 0 {
@@ -310,7 +358,5 @@ func (w *connSessionWriter) WriteEncrypted(ctx context.Context, msg gmtproto.Enc
 	if err != nil {
 		return err
 	}
-	w.writeMu.Lock()
-	defer w.writeMu.Unlock()
-	return w.codec.WriteFrame(w.conn, payload)
+	return w.conn.WriteFrame(ctx, payload)
 }

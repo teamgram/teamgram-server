@@ -68,9 +68,6 @@ func FilterTargets(targets []SessionRoute, filter TargetFilter) []SessionRoute {
 	excludes := int64Set(filter.Excludes)
 	out := make([]SessionRoute, 0, len(targets))
 	for _, target := range targets {
-		if !isNormalAuthKeyType(target.AuthKeyType) {
-			continue
-		}
 		if filter.PermAuthKeyID > 0 && target.PermAuthKeyID != filter.PermAuthKeyID {
 			continue
 		}
@@ -78,6 +75,9 @@ func FilterTargets(targets []SessionRoute, filter TargetFilter) []SessionRoute {
 			continue
 		}
 		if filter.PreciseSession && (target.AuthKeyID != filter.AuthKeyID || target.SessionID != filter.SessionID) {
+			continue
+		}
+		if !filter.PreciseSession && !isNormalAuthKeyType(target.AuthKeyType) {
 			continue
 		}
 		if filter.IncludesSet && !includes[target.PermAuthKeyID] {

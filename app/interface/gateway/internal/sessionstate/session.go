@@ -43,6 +43,7 @@ type ActiveSession struct {
 	Client        string
 	Salt          int64
 	AuthKey       *crypto.AuthKey
+	MainUpdates   bool
 }
 
 type SeqNoAllocator interface {
@@ -50,6 +51,8 @@ type SeqNoAllocator interface {
 }
 
 type SessionObserver func(ActiveSession) SeqNoAllocator
+type SessionRefreshObserver func(ActiveSession)
+type GenericUpdatesWriter = func(ctx context.Context, permAuthKeyId int64, updates tg.UpdatesClazz) (int, error)
 
 type Processor struct {
 	store        repository.AuthKeyStore
@@ -61,6 +64,10 @@ type Processor struct {
 	clientMeta   map[clientMetadataKey]gmtproto.WrapperMetadata
 	seqMu        sync.Mutex
 	seq          map[activeSessionKey]int32
+	roles        *roleRegistry
+	runtime      *runtimeState
+	genericMu    sync.RWMutex
+	genericWrite GenericUpdatesWriter
 }
 
 type sessionKey struct {
@@ -86,6 +93,8 @@ func NewProcessor(store repository.AuthKeyStore, dispatch Dispatcher) *Processor
 		authKeyInfos: make(map[int64]*tg.AuthKeyInfo),
 		clientMeta:   make(map[clientMetadataKey]gmtproto.WrapperMetadata),
 		seq:          make(map[activeSessionKey]int32),
+		roles:        newRoleRegistry(),
+		runtime:      newRuntimeState(),
 	}
 }
 
@@ -94,6 +103,10 @@ func (p *Processor) HandleEncrypted(ctx context.Context, conn ConnInfo, payload 
 }
 
 func (p *Processor) HandleEncryptedWithSession(ctx context.Context, conn ConnInfo, payload []byte, observe SessionObserver) ([]byte, error) {
+	return p.HandleEncryptedWithSessionRefresh(ctx, conn, payload, observe, nil)
+}
+
+func (p *Processor) HandleEncryptedWithSessionRefresh(ctx context.Context, conn ConnInfo, payload []byte, observe SessionObserver, refresh SessionRefreshObserver) ([]byte, error) {
 	authKeyId, err := readAuthKeyID(payload)
 	if err != nil {
 		return nil, err
@@ -106,6 +119,9 @@ func (p *Processor) HandleEncryptedWithSession(ctx context.Context, conn ConnInf
 	msg, err := gmtproto.DecodeEncryptedMessage(payload, key)
 	if err != nil {
 		return nil, err
+	}
+	if p.isDestroyedSession(msg.AuthKeyId, authKeyType(keyInfo), msg.SessionId) {
+		return nil, nil
 	}
 	salt, valid, err := p.requestSalt(ctx, msg.AuthKeyId, msg.Salt)
 	if err != nil {
@@ -127,18 +143,91 @@ func (p *Processor) HandleEncryptedWithSession(ctx context.Context, conn ConnInf
 			Body:      body,
 		}, key)
 	}
-	body, seq, err := p.handleMessageBody(ctx, conn, key, keyInfo, msg, observe)
+	body, seq, err := p.handleMessageBody(ctx, conn, key, keyInfo, msg, observe, refresh)
 	if err != nil || body == nil {
 		return nil, err
 	}
+	serverMsgID := gmtproto.NextServerMsgId(msg.MsgId)
+	p.recordOutbound(msg.AuthKeyId, authKeyType(keyInfo), msg.SessionId, serverMsgID)
 	return gmtproto.EncodeEncryptedMessage(gmtproto.EncryptedMessage{
 		AuthKeyId: msg.AuthKeyId,
 		Salt:      salt,
 		SessionId: msg.SessionId,
-		MsgId:     gmtproto.NextServerMsgId(msg.MsgId),
+		MsgId:     serverMsgID,
 		SeqNo:     p.nextSeqNo(msg.AuthKeyId, authKeyType(keyInfo), msg.SessionId, true, seq),
 		Body:      body,
 	}, key)
+}
+
+func (p *Processor) UnregisterSession(active ActiveSession) {
+	if p == nil || p.roles == nil {
+		return
+	}
+	p.roles.unregisterSession(roleSessionKey{
+		permAuthKeyId: active.PermAuthKeyId,
+		authKeyId:     active.AuthKeyId,
+		authKeyType:   active.AuthKeyType,
+		sessionId:     active.SessionId,
+	})
+}
+
+func (p *Processor) SetGenericUpdatesWriter(write GenericUpdatesWriter) {
+	if p == nil {
+		return
+	}
+	p.genericMu.Lock()
+	p.genericWrite = write
+	p.genericMu.Unlock()
+}
+
+func (p *Processor) HandleGenericUpdates(ctx context.Context, permAuthKeyId int64, updates tg.UpdatesClazz) (int, error) {
+	if p == nil || p.roles == nil || updates == nil {
+		return 0, nil
+	}
+	if !p.roles.shouldWriteGenericUpdate(permAuthKeyId, updates) {
+		return 0, nil
+	}
+	return p.writeGenericUpdate(ctx, permAuthKeyId, updates)
+}
+
+func (p *Processor) HandleGenericUpdatesWithWriter(ctx context.Context, permAuthKeyId int64, updates tg.UpdatesClazz, write GenericUpdatesWriter) (int, error) {
+	p.SetGenericUpdatesWriter(write)
+	return p.HandleGenericUpdates(ctx, permAuthKeyId, updates)
+}
+
+func (p *Processor) writeGenericUpdate(ctx context.Context, permAuthKeyId int64, updates tg.UpdatesClazz) (int, error) {
+	p.genericMu.RLock()
+	write := p.genericWrite
+	p.genericMu.RUnlock()
+	if write == nil || updates == nil {
+		return 0, nil
+	}
+	return write(ctx, permAuthKeyId, updates)
+}
+
+func (p *Processor) flushGenericUpdates(ctx context.Context, permAuthKeyId int64, pending pendingUpdatesState) (int, error) {
+	if p == nil {
+		return 0, nil
+	}
+	if pending.tooLongPending {
+		return p.writeGenericUpdate(ctx, permAuthKeyId, tg.MakeTLUpdatesTooLong(&tg.TLUpdatesTooLong{}))
+	}
+	written := 0
+	for _, updates := range pending.payloads {
+		count, err := p.writeGenericUpdate(ctx, permAuthKeyId, updates)
+		written += count
+		if err != nil {
+			return written, err
+		}
+	}
+	return written, nil
+}
+
+func (p *Processor) flushGenericUpdatesBestEffort(ctx context.Context, permAuthKeyId int64, pending pendingUpdatesState) {
+	if _, err := p.flushGenericUpdates(ctx, permAuthKeyId, pending); err != nil && p != nil && p.roles != nil {
+		logx.WithContext(ctx).Errorf("gateway generic updates flush failed: perm_auth_key_id=%d err=%v", permAuthKeyId, err)
+		p.roles.markPendingTooLong(permAuthKeyId)
+	}
 }
 
 func (p *Processor) authKey(ctx context.Context, authKeyId int64) (*crypto.AuthKey, *tg.AuthKeyInfo, error) {
@@ -245,26 +334,35 @@ func (p *Processor) refreshAuthKeyInfo(ctx context.Context, authKeyId int64, cur
 	return keyInfo, nil
 }
 
-func (p *Processor) handleMessageBody(ctx context.Context, conn ConnInfo, key *crypto.AuthKey, keyInfo *tg.AuthKeyInfo, msg gmtproto.EncryptedMessage, observe SessionObserver) ([]byte, SeqNoAllocator, error) {
+func (p *Processor) handleMessageBody(ctx context.Context, conn ConnInfo, key *crypto.AuthKey, keyInfo *tg.AuthKeyInfo, msg gmtproto.EncryptedMessage, observe SessionObserver, refresh SessionRefreshObserver) ([]byte, SeqNoAllocator, error) {
 	obj, err := iface.DecodeObject(bin.NewDecoder(msg.Body))
 	if err != nil {
 		return nil, nil, fmt.Errorf("session processor: decode body: %w", err)
 	}
+	return p.handleDecodedObject(ctx, conn, key, keyInfo, msg, obj, msg.Body, observe, refresh)
+}
 
-	if body, handled, err := p.handleServiceMessage(obj, msg); handled || err != nil {
+func (p *Processor) handleDecodedObject(ctx context.Context, conn ConnInfo, key *crypto.AuthKey, keyInfo *tg.AuthKeyInfo, msg gmtproto.EncryptedMessage, obj iface.TLObject, payload []byte, observe SessionObserver, refresh SessionRefreshObserver) ([]byte, SeqNoAllocator, error) {
+	if packed, ok := obj.(*mt.TLGzipPacked); ok {
+		if packed.Obj == nil {
+			return nil, nil, fmt.Errorf("session processor: gzip_packed object is nil")
+		}
+		return p.handleDecodedObject(ctx, conn, key, keyInfo, msg, packed.Obj, packed.PackedData, observe, refresh)
+	}
+	if body, handled, err := p.handleServiceMessage(ctx, keyInfo, obj, msg); handled || err != nil {
 		return body, nil, err
 	}
 	if container, ok := obj.(*mt.TLMsgContainer); ok {
-		rawContainer, err := decodeRawContainer(msg.Body)
+		rawContainer, err := decodeRawContainer(payload)
 		if err != nil {
 			return nil, nil, err
 		}
-		return p.handleContainer(ctx, conn, key, keyInfo, msg, container, rawContainer, observe)
+		return p.handleContainer(ctx, conn, key, keyInfo, msg, container, rawContainer, observe, refresh)
 	}
-	return p.dispatchRPC(ctx, conn, key, keyInfo, msg, msg.Body, observe)
+	return p.dispatchRPC(ctx, conn, key, keyInfo, msg, payload, observe, refresh)
 }
 
-func (p *Processor) handleContainer(ctx context.Context, conn ConnInfo, key *crypto.AuthKey, keyInfo *tg.AuthKeyInfo, parent gmtproto.EncryptedMessage, container *mt.TLMsgContainer, rawContainer *mt.TLMsgRawDataContainer, observe SessionObserver) ([]byte, SeqNoAllocator, error) {
+func (p *Processor) handleContainer(ctx context.Context, conn ConnInfo, key *crypto.AuthKey, keyInfo *tg.AuthKeyInfo, parent gmtproto.EncryptedMessage, container *mt.TLMsgContainer, rawContainer *mt.TLMsgRawDataContainer, observe SessionObserver, refresh SessionRefreshObserver) ([]byte, SeqNoAllocator, error) {
 	if len(container.Messages) != len(rawContainer.Messages) {
 		return nil, nil, fmt.Errorf("session processor: container raw message count %d does not match decoded count %d", len(rawContainer.Messages), len(container.Messages))
 	}
@@ -283,19 +381,7 @@ func (p *Processor) handleContainer(ctx context.Context, conn ConnInfo, key *cry
 			SeqNo:     child.Seqno,
 			Body:      rawMessageBody(rawChild),
 		}
-		if body, handled, err := p.handleServiceMessage(child.Object, childMsg); err != nil {
-			return nil, nil, err
-		} else if handled {
-			if body != nil {
-				responses = append(responses, &mt.TLMessage2{
-					MsgId:  gmtproto.NextServerMsgId(childMsg.MsgId),
-					Seqno:  p.nextSeqNo(parent.AuthKeyId, authKeyType(keyInfo), parent.SessionId, true, seq),
-					Object: codec.NewRawTLObject(body),
-				})
-			}
-			continue
-		}
-		body, childSeq, err := p.dispatchRPC(ctx, conn, key, keyInfo, childMsg, childMsg.Body, observe)
+		body, childSeq, err := p.handleDecodedObject(ctx, conn, key, keyInfo, childMsg, child.Object, childMsg.Body, observe, refresh)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -305,8 +391,10 @@ func (p *Processor) handleContainer(ctx context.Context, conn ConnInfo, key *cry
 		if body == nil {
 			continue
 		}
+		responseMsgID := gmtproto.NextServerMsgId(childMsg.MsgId)
+		p.recordOutbound(parent.AuthKeyId, authKeyType(keyInfo), parent.SessionId, responseMsgID)
 		responses = append(responses, &mt.TLMessage2{
-			MsgId:  gmtproto.NextServerMsgId(childMsg.MsgId),
+			MsgId:  responseMsgID,
 			Seqno:  p.nextSeqNo(parent.AuthKeyId, authKeyType(keyInfo), parent.SessionId, true, seq),
 			Object: codec.NewRawTLObject(body),
 		})
@@ -317,6 +405,28 @@ func (p *Processor) handleContainer(ctx context.Context, conn ConnInfo, key *cry
 	default:
 		return encodeObject(&mt.TLMsgContainer{Messages: responses}), seq, nil
 	}
+}
+
+func (p *Processor) recordOutbound(authKeyID int64, authKeyType int32, sessionID int64, msgID int64) {
+	if p == nil || p.runtime == nil {
+		return
+	}
+	p.runtime.recordOutbound(runtimeSessionKey{
+		authKeyId:   authKeyID,
+		authKeyType: authKeyType,
+		sessionId:   sessionID,
+	}, msgID)
+}
+
+func (p *Processor) isDestroyedSession(authKeyID int64, authKeyType int32, sessionID int64) bool {
+	if p == nil || p.runtime == nil {
+		return false
+	}
+	return p.runtime.isDestroyed(runtimeSessionKey{
+		authKeyId:   authKeyID,
+		authKeyType: authKeyType,
+		sessionId:   sessionID,
+	})
 }
 
 func decodeRawContainer(payload []byte) (*mt.TLMsgRawDataContainer, error) {
@@ -346,7 +456,7 @@ func rawMessageBody(msg *mt.TLMessageRawData) []byte {
 	return append([]byte(nil), x.Bytes()...)
 }
 
-func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, key *crypto.AuthKey, keyInfo *tg.AuthKeyInfo, msg gmtproto.EncryptedMessage, payload []byte, observe SessionObserver) ([]byte, SeqNoAllocator, error) {
+func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, key *crypto.AuthKey, keyInfo *tg.AuthKeyInfo, msg gmtproto.EncryptedMessage, payload []byte, observe SessionObserver, refresh SessionRefreshObserver) ([]byte, SeqNoAllocator, error) {
 	if p.dispatch == nil {
 		return nil, nil, fmt.Errorf("session processor: dispatcher is nil")
 	}
@@ -409,23 +519,38 @@ func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, key *crypto.
 		}
 		md.UserId = userID
 	}
+	method := rawRPCMethodName(inner)
+	roleKey := roleSessionKey{
+		permAuthKeyId: md.PermAuthKeyId,
+		authKeyId:     msg.AuthKeyId,
+		authKeyType:   authKeyType(keyInfo),
+		sessionId:     msg.SessionId,
+	}
+	transition, hasTransition := p.roles.beginTransition(method, roleKey)
+	active := ActiveSession{
+		UserId:        md.UserId,
+		PermAuthKeyId: md.PermAuthKeyId,
+		AuthKeyId:     msg.AuthKeyId,
+		AuthKeyType:   authKeyType(keyInfo),
+		SessionId:     msg.SessionId,
+		Layer:         md.Layer,
+		Client:        md.Client,
+		Salt:          msg.Salt,
+		AuthKey:       key,
+		MainUpdates:   p.roles.isMain(roleKey),
+	}
 	var seq SeqNoAllocator
 	if observe != nil {
-		seq = observe(ActiveSession{
-			UserId:        md.UserId,
-			PermAuthKeyId: md.PermAuthKeyId,
-			AuthKeyId:     msg.AuthKeyId,
-			AuthKeyType:   authKeyType(keyInfo),
-			SessionId:     msg.SessionId,
-			Layer:         md.Layer,
-			Client:        md.Client,
-			Salt:          msg.Salt,
-			AuthKey:       key,
-		})
+		seq = observe(active)
 	}
-	method := rawRPCMethodName(inner)
+	if hasTransition && transition.kind == selectorImmediate {
+		p.flushGenericUpdatesBestEffort(ctx, md.PermAuthKeyId, p.roles.drainPending(md.PermAuthKeyId))
+	}
 	result, err := p.dispatch.Invoke(ctx, md, inner)
 	if err != nil {
+		if hasTransition && transition.kind == selectorGated {
+			_ = p.roles.completeSelector(transition.token, false)
+		}
 		var rpcErr interface {
 			RPCError() *tg.TLRpcError
 		}
@@ -458,6 +583,16 @@ func (p *Processor) dispatchRPC(ctx context.Context, conn ConnInfo, key *crypto.
 			err,
 		)
 		return nil, nil, err
+	}
+	if hasTransition && transition.kind == selectorGated {
+		completion := p.roles.completeSelector(transition.token, true)
+		if refresh != nil && !completion.stale && p.roles.isMain(roleKey) {
+			active.MainUpdates = true
+			refresh(active)
+		}
+		if !completion.stale {
+			p.flushGenericUpdatesBestEffort(ctx, md.PermAuthKeyId, completion.flush)
+		}
 	}
 	if method == tg.ClazzName_auth_bindTempAuthKey {
 		if _, err := p.refreshAuthKeyInfo(ctx, msg.AuthKeyId, keyInfo); err != nil {

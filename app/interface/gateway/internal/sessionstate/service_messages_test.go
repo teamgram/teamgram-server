@@ -1,6 +1,7 @@
 package sessionstate
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"sync"
@@ -129,6 +130,210 @@ func TestServiceMessageMsgsAckNoDispatch(t *testing.T) {
 	}
 }
 
+func TestServiceMessageMsgsAckRecordsOutboundAckState(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	store := &fakeAuthKeyStore{key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)}
+	processor := NewProcessor(store, &fakeDispatcher{})
+	key := runtimeSessionKey{authKeyId: serverKey.AuthKeyId(), authKeyType: tg.AuthKeyTypePerm, sessionId: 77}
+	processor.runtime.recordOutbound(key, 9001)
+
+	resp := handleEncryptedForTest(t, processor, clientKey, serverKey, 1004, encodeTL(t, &mt.TLMsgsAck{MsgIds: []int64{9001}}))
+	if resp != nil {
+		t.Fatalf("HandleEncrypted() response = %x, want nil", resp)
+	}
+	if processor.runtime.hasOutboundUnacked(key, 9001) {
+		t.Fatal("outbound msg_id 9001 is still unacked after msgs_ack")
+	}
+}
+
+func TestServiceMessageGetFutureSaltsNoDispatch(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	store := &recordingFutureSaltsStore{
+		fakeAuthKeyStore: fakeAuthKeyStore{
+			key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm),
+			futureSalts: tg.MakeTLFutureSalts(&tg.TLFutureSalts{
+				Now: 123,
+				Salts: []*tg.TLFutureSalt{
+					tg.MakeTLFutureSalt(&tg.TLFutureSalt{ValidSince: 1, ValidUntil: 200, Salt: 555}),
+				},
+			}),
+		},
+	}
+	dispatch := &fakeDispatcher{}
+	processor := NewProcessor(store, dispatch)
+
+	resp := handleEncryptedForTest(t, processor, clientKey, serverKey, 1005, encodeTL(t, &mt.TLGetFutureSalts{Num: 3}))
+	decoded := decodeEncryptedForTest(t, clientKey, resp)
+	salts := decodeBodyAs[*mt.TLFutureSalts](t, decoded.Body)
+	if store.futureSaltsAuthKeyId != serverKey.AuthKeyId() || store.futureSaltsNum != 3 {
+		t.Fatalf("GetFutureSalts auth_key_id=%d num=%d, want %d/3", store.futureSaltsAuthKeyId, store.futureSaltsNum, serverKey.AuthKeyId())
+	}
+	if salts.ReqMsgId != 1005 || salts.Now != 123 || len(salts.Salts) != 1 || salts.Salts[0].Salt != 555 {
+		t.Fatalf("future_salts = %#v", salts)
+	}
+	if len(dispatch.payloads) != 0 {
+		t.Fatalf("dispatch calls = %d, want 0", len(dispatch.payloads))
+	}
+}
+
+func TestServiceMessageGetFutureSaltsNormalizesCount(t *testing.T) {
+	tests := []struct {
+		name string
+		num  int32
+		want int32
+	}{
+		{name: "zero defaults", num: 0, want: defaultFutureSaltsCount},
+		{name: "negative defaults", num: -1, want: defaultFutureSaltsCount},
+		{name: "too large clamps", num: maxFutureSaltsCount + 1, want: maxFutureSaltsCount},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			serverKey, clientKey := sessionTestKeys()
+			store := &recordingFutureSaltsStore{
+				fakeAuthKeyStore: fakeAuthKeyStore{
+					key:         tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm),
+					futureSalts: tg.MakeTLFutureSalts(&tg.TLFutureSalts{Now: 123}),
+				},
+			}
+			processor := NewProcessor(store, &fakeDispatcher{})
+
+			_ = handleEncryptedForTest(t, processor, clientKey, serverKey, 1005, encodeTL(t, &mt.TLGetFutureSalts{Num: tt.num}))
+			if store.futureSaltsNum != tt.want {
+				t.Fatalf("GetFutureSalts num = %d, want %d", store.futureSaltsNum, tt.want)
+			}
+		})
+	}
+}
+
+func TestServiceMessageDestroySessionMarksRuntimeAndReturnsResult(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	store := &fakeAuthKeyStore{key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)}
+	processor := NewProcessor(store, &fakeDispatcher{})
+	target := runtimeSessionKey{authKeyId: serverKey.AuthKeyId(), authKeyType: tg.AuthKeyTypePerm, sessionId: 88}
+
+	resp := handleEncryptedForTest(t, processor, clientKey, serverKey, 1006, encodeTL(t, &mt.TLDestroySession{SessionId: 88}))
+	decoded := decodeEncryptedForTest(t, clientKey, resp)
+	ok := decodeBodyAs[*mt.TLDestroySessionOk](t, decoded.Body)
+	if ok.SessionId != 88 {
+		t.Fatalf("destroy_session_ok = %#v", ok)
+	}
+	if !processor.runtime.isDestroyed(target) {
+		t.Fatal("destroy_session did not mark target session destroyed")
+	}
+
+	resp = handleEncryptedForTest(t, processor, clientKey, serverKey, 1007, encodeTL(t, &mt.TLDestroySession{SessionId: 88}))
+	decoded = decodeEncryptedForTest(t, clientKey, resp)
+	none := decodeBodyAs[*mt.TLDestroySessionNone](t, decoded.Body)
+	if none.SessionId != 88 {
+		t.Fatalf("destroy_session_none = %#v", none)
+	}
+}
+
+func TestServiceMessageDestroyedSessionDoesNotDispatchLaterMessages(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	store := &fakeAuthKeyStore{key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)}
+	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
+	processor := NewProcessor(store, dispatch)
+
+	_ = handleEncryptedForTest(t, processor, clientKey, serverKey, 1006, encodeTL(t, &mt.TLDestroySession{SessionId: 88}))
+	resp, err := handleEncryptedErrorForTest(t, processor, clientKey, serverKey, 1007, 88, encodeTL(t, &tg.TLHelpGetConfig{}))
+	if err != nil {
+		t.Fatalf("HandleEncrypted() error = %v", err)
+	}
+	if resp != nil {
+		t.Fatalf("destroyed session response = %x, want nil", resp)
+	}
+	if len(dispatch.payloads) != 0 {
+		t.Fatalf("dispatch calls = %d, want 0", len(dispatch.payloads))
+	}
+}
+
+func TestServiceMessageContainerStaysInSessionstate(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	store := &fakeAuthKeyStore{key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)}
+	dispatch := &fakeDispatcher{}
+	processor := NewProcessor(store, dispatch)
+	container := &mt.TLMsgContainer{Messages: []*mt.TLMessage2{
+		{MsgId: 301, Seqno: 1, Object: &mt.TLPing{PingId: 12}},
+		{MsgId: 302, Seqno: 1, Object: &mt.TLMsgsAck{MsgIds: []int64{9002}}},
+	}}
+
+	resp := handleEncryptedForTest(t, processor, clientKey, serverKey, 300, encodeTL(t, container))
+	decoded := decodeEncryptedForTest(t, clientKey, resp)
+	respContainer := decodeBodyAs[*mt.TLMsgContainer](t, decoded.Body)
+	if len(respContainer.Messages) != 1 {
+		t.Fatalf("response count = %d, want 1", len(respContainer.Messages))
+	}
+	pong, ok := respContainer.Messages[0].Object.(*mt.TLPong)
+	if !ok || pong.MsgId != 301 || pong.PingId != 12 {
+		t.Fatalf("container response = %#v", respContainer.Messages[0].Object)
+	}
+	if len(dispatch.payloads) != 0 {
+		t.Fatalf("dispatch calls = %d, want 0", len(dispatch.payloads))
+	}
+}
+
+func TestServiceMessageGzipPackedReentersNormalHandling(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	store := &fakeAuthKeyStore{key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)}
+	processor := NewProcessor(store, &fakeDispatcher{})
+	unpackedBody := encodeTL(t, &mt.TLPing{PingId: 15})
+	packedBody := encodeTL(t, &mt.TLGzipPacked{PackedData: unpackedBody})
+
+	unpackedResp := handleEncryptedForTest(t, processor, clientKey, serverKey, 1008, unpackedBody)
+	packedResp := handleEncryptedForTest(t, processor, clientKey, serverKey, 1008, packedBody)
+	unpacked := decodeEncryptedForTest(t, clientKey, unpackedResp)
+	packed := decodeEncryptedForTest(t, clientKey, packedResp)
+	if string(unpacked.Body) != string(packed.Body) {
+		t.Fatalf("gzip response body = %x, want %x", packed.Body, unpacked.Body)
+	}
+}
+
+func TestServiceMessageGzipPackedDispatchesNestedRPCPayload(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	store := &fakeAuthKeyStore{key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)}
+	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
+	processor := NewProcessor(store, dispatch)
+	rpcBody := encodeTL(t, &tg.TLHelpGetConfig{})
+	packedBody := encodeTL(t, &mt.TLGzipPacked{PackedData: rpcBody})
+
+	resp := handleEncryptedForTest(t, processor, clientKey, serverKey, 1009, packedBody)
+	if resp == nil {
+		t.Fatal("gzip nested RPC response is nil")
+	}
+	if len(dispatch.payloads) != 1 || !bytes.Equal(dispatch.payloads[0], rpcBody) {
+		t.Fatalf("dispatch payloads = %x, want %x", dispatch.payloads, rpcBody)
+	}
+}
+
+func TestServiceMessageGzipPackedContainerPreservesRawMetadata(t *testing.T) {
+	serverKey, clientKey := sessionTestKeys()
+	store := &fakeAuthKeyStore{key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)}
+	dispatch := &fakeDispatcher{result: encodeTL(t, &mt.TLPong{MsgId: 1, PingId: 2})}
+	processor := NewProcessor(store, dispatch)
+	container := &mt.TLMsgContainer{Messages: []*mt.TLMessage2{
+		{MsgId: 401, Seqno: 1, Object: &tg.TLHelpGetConfig{}},
+		{MsgId: 402, Seqno: 1, Object: &mt.TLPing{PingId: 40}},
+	}}
+	containerBody := encodeTL(t, container)
+	packedBody := encodeTL(t, &mt.TLGzipPacked{PackedData: containerBody})
+
+	resp := handleEncryptedForTest(t, processor, clientKey, serverKey, 400, packedBody)
+	decoded := decodeEncryptedForTest(t, clientKey, resp)
+	respContainer := decodeBodyAs[*mt.TLMsgContainer](t, decoded.Body)
+	if len(respContainer.Messages) != 2 {
+		t.Fatalf("response count = %d, want 2", len(respContainer.Messages))
+	}
+	rpcResult, ok := respContainer.Messages[0].Object.(*mt.TLRpcResult)
+	if !ok || rpcResult.ReqMsgId != 401 {
+		t.Fatalf("first response = %#v, want rpc_result for 401", respContainer.Messages[0].Object)
+	}
+	pong, ok := respContainer.Messages[1].Object.(*mt.TLPong)
+	if !ok || pong.MsgId != 402 || pong.PingId != 40 {
+		t.Fatalf("second response = %#v, want pong for 402/40", respContainer.Messages[1].Object)
+	}
+}
+
 func TestServiceMessageMsgsStateReqReturnsMsgsStateInfo(t *testing.T) {
 	serverKey, clientKey := sessionTestKeys()
 	store := &fakeAuthKeyStore{key: tg.NewAuthKeyInfo(serverKey.AuthKeyId(), serverKey.AuthKey(), tg.AuthKeyTypePerm)}
@@ -143,4 +348,16 @@ func TestServiceMessageMsgsStateReqReturnsMsgsStateInfo(t *testing.T) {
 	if len(info.Info) != 3 {
 		t.Fatalf("Info length = %d, want 3", len(info.Info))
 	}
+}
+
+type recordingFutureSaltsStore struct {
+	fakeAuthKeyStore
+	futureSaltsAuthKeyId int64
+	futureSaltsNum       int32
+}
+
+func (s *recordingFutureSaltsStore) GetFutureSalts(ctx context.Context, authKeyId int64, num int32) (*tg.FutureSalts, error) {
+	s.futureSaltsAuthKeyId = authKeyId
+	s.futureSaltsNum = num
+	return s.fakeAuthKeyStore.GetFutureSalts(ctx, authKeyId, num)
 }

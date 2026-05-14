@@ -34,7 +34,7 @@ func TestGatewayPushUpdatesDataWritesLocalUpdate(t *testing.T) {
 	permKey := crypto.CreateAuthKey()
 	tempKey := crypto.CreateAuthKey()
 	writer := &coreFakeSessionWriter{}
-	local.Register(push.LocalTarget{PermAuthKeyId: permKey.AuthKeyId(), AuthKeyId: tempKey.AuthKeyId(), AuthKeyType: tg.AuthKeyTypeTemp, SessionId: 22, Layer: 223, AuthKey: tempKey, Writer: writer})
+	local.Register(push.LocalTarget{PermAuthKeyId: permKey.AuthKeyId(), AuthKeyId: tempKey.AuthKeyId(), AuthKeyType: tg.AuthKeyTypeTemp, SessionId: 22, Layer: 223, AuthKey: tempKey, Writer: writer, MainUpdates: true})
 	core := New(context.Background(), &svc.ServiceContext{Push: local})
 	updates := tg.MakeTLUpdatesTooLong(&tg.TLUpdatesTooLong{})
 
@@ -60,7 +60,10 @@ func TestGatewayPushSessionUpdatesDataWritesLocalUpdate(t *testing.T) {
 	writer := &coreFakeSessionWriter{}
 	local.Register(push.LocalTarget{AuthKeyId: key.AuthKeyId(), AuthKeyType: tg.AuthKeyTypeTemp, SessionId: 22, Layer: 223, AuthKey: key, Writer: writer})
 	core := New(context.Background(), &svc.ServiceContext{Push: local})
-	updates := tg.MakeTLUpdatesTooLong(&tg.TLUpdatesTooLong{})
+	updates := tg.MakeTLUpdateShort(&tg.TLUpdateShort{
+		Update: tg.MakeTLUpdateLoginToken(&tg.TLUpdateLoginToken{}),
+		Date:   1,
+	})
 
 	ok, err := core.GatewayPushSessionUpdatesData(&gateway.TLGatewayPushSessionUpdatesData{AuthKeyId: key.AuthKeyId(), SessionId: 22, Updates: updates})
 	if err != nil {

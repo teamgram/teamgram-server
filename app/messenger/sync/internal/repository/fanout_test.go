@@ -52,6 +52,78 @@ func TestFilterTargetsOnlyNormalAuthSessions(t *testing.T) {
 	}
 }
 
+func TestPushUpdatesExcludesMediaTempPresenceRoutes(t *testing.T) {
+	presence := &fakePresenceClient{routes: []SessionRoute{
+		{
+			UserID:         42,
+			PermAuthKeyID:  1,
+			AuthKeyID:      10,
+			SessionID:      100,
+			AuthKeyType:    int32(tg.AuthKeyTypePerm),
+			GatewayID:      "gw-perm",
+			GatewayRPCAddr: "127.0.0.1:20110",
+		},
+		{
+			UserID:         42,
+			PermAuthKeyID:  1,
+			AuthKeyID:      20,
+			SessionID:      200,
+			AuthKeyType:    int32(tg.AuthKeyTypeMediaTemp),
+			GatewayID:      "gw-media",
+			GatewayRPCAddr: "127.0.0.1:20110",
+		},
+	}}
+	gateway := &fakeGatewayPusher{}
+	repo := NewTestRepository(presence, gateway, allowLocalhostPolicy())
+
+	err := repo.PushUpdates(context.Background(), 42, tg.MakeTLUpdatesTooLong(&tg.TLUpdatesTooLong{}))
+	if err != nil {
+		t.Fatalf("PushUpdates() error = %v", err)
+	}
+	if gateway.pushSessionUpdatesCount != 1 {
+		t.Fatalf("pushSessionUpdatesCount = %d, want 1", gateway.pushSessionUpdatesCount)
+	}
+	if gateway.lastSessionRoute.GatewayID != "gw-perm" {
+		t.Fatalf("lastSessionRoute.GatewayID = %q, want gw-perm", gateway.lastSessionRoute.GatewayID)
+	}
+}
+
+func TestUpdatesMePreciseSessionCanRouteMediaTemp(t *testing.T) {
+	presence := &fakePresenceClient{routes: []SessionRoute{
+		{
+			UserID:         42,
+			PermAuthKeyID:  1,
+			AuthKeyID:      10,
+			SessionID:      100,
+			AuthKeyType:    int32(tg.AuthKeyTypePerm),
+			GatewayID:      "gw-perm",
+			GatewayRPCAddr: "127.0.0.1:20110",
+		},
+		{
+			UserID:         42,
+			PermAuthKeyID:  1,
+			AuthKeyID:      20,
+			SessionID:      200,
+			AuthKeyType:    int32(tg.AuthKeyTypeMediaTemp),
+			GatewayID:      "gw-media",
+			GatewayRPCAddr: "127.0.0.1:20110",
+		},
+	}}
+	gateway := &fakeGatewayPusher{}
+	repo := NewTestRepository(presence, gateway, allowLocalhostPolicy())
+
+	err := repo.UpdatesMe(context.Background(), 42, 1, 20, 200, true, tg.MakeTLUpdatesTooLong(&tg.TLUpdatesTooLong{}))
+	if err != nil {
+		t.Fatalf("UpdatesMe() error = %v", err)
+	}
+	if gateway.pushSessionUpdatesCount != 1 {
+		t.Fatalf("pushSessionUpdatesCount = %d, want 1", gateway.pushSessionUpdatesCount)
+	}
+	if gateway.lastSessionRoute.GatewayID != "gw-media" {
+		t.Fatalf("lastSessionRoute.GatewayID = %q, want gw-media", gateway.lastSessionRoute.GatewayID)
+	}
+}
+
 func TestPushRpcResultUsesExplicitRouteWithoutPresence(t *testing.T) {
 	presence := &fakePresenceClient{}
 	gateway := &fakeGatewayPusher{}
@@ -91,10 +163,12 @@ func (f *fakePresenceClient) GetUserOnlineSessions(ctx context.Context, userID i
 type fakeGatewayPusher struct {
 	pushSessionUpdatesCount int
 	pushRpcResultCount      int
+	lastSessionRoute        SessionRoute
 }
 
 func (f *fakeGatewayPusher) PushSessionUpdates(ctx context.Context, route SessionRoute, updates tg.UpdatesClazz) error {
 	f.pushSessionUpdatesCount++
+	f.lastSessionRoute = route
 	return nil
 }
 
