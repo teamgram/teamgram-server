@@ -14,13 +14,25 @@ import (
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-func TestMsgReadHistoryV2AllowsPeerTypeChat(t *testing.T) {
-	chatClient := &fakeMsgChatClient{}
+func TestMsgReadHistoryV2PeerTypeChatFansOutOutboxReadState(t *testing.T) {
+	chatClient := &fakeMsgChatClient{memberIDs: []int64{1001, 1002, 1003}}
 	updatesClient := &fakeUserUpdatesClient{
-		processResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{Pts: 31, PtsCount: 1}),
+		processResult:            userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{Pts: 31, PtsCount: 1}),
+		processWithEffectsResult: userupdates.MakeTLUserOperationResult(&userupdates.TLUserOperationResult{Pts: 31, PtsCount: 1}),
+	}
+	repo := &fakeMsgRepository{
+		resolveByUserMessageID: map[resolveMessageKey]*repository.ResolvedMessageID{
+			{userID: 1001, peerType: payload.PeerTypeChat, peerID: 55, userMessageID: 10}: {
+				UserID:        1001,
+				PeerType:      payload.PeerTypeChat,
+				PeerID:        55,
+				UserMessageID: 10,
+				PeerSeq:       4,
+			},
+		},
 	}
 	core := New(context.Background(), &svc.ServiceContext{
-		Repo:        &fakeMsgRepository{},
+		Repo:        repo,
 		UserUpdates: updatesClient,
 		Chat:        chatClient,
 	})
@@ -30,7 +42,7 @@ func TestMsgReadHistoryV2AllowsPeerTypeChat(t *testing.T) {
 		AuthKeyId: 9001,
 		PeerType:  payload.PeerTypeChat,
 		PeerId:    55,
-		MaxId:     0,
+		MaxId:     10,
 	})
 	if err != nil {
 		t.Fatalf("MsgReadHistoryV2() error = %v", err)
@@ -41,8 +53,40 @@ func TestMsgReadHistoryV2AllowsPeerTypeChat(t *testing.T) {
 	if len(chatClient.accesses) != 1 || chatClient.accesses[0].AccessKind != chatpb.ChatAccessReadHistory {
 		t.Fatalf("chat access checks = %+v", chatClient.accesses)
 	}
-	if updatesClient.processWithEffects != nil {
-		t.Fatalf("chat read history should not create peer outbox effect: %+v", updatesClient.processWithEffects)
+	if updatesClient.processWithEffects == nil || len(updatesClient.processWithEffects.AffectedEffects) != 2 {
+		t.Fatalf("chat read history affected effects = %+v, want two peer outbox effects", updatesClient.processWithEffects)
+	}
+	gotUsers := map[int64]bool{}
+	for _, effect := range updatesClient.processWithEffects.AffectedEffects {
+		affected := effect.ToAffectedUserOperation()
+		operation := affected.Operation.ToUserOperation()
+		gotUsers[operation.UserId] = true
+		var op payload.MessageOperationV1
+		if err := json.Unmarshal(operation.Payload, &op); err != nil {
+			t.Fatalf("decode read history effect: %v", err)
+		}
+		if op.OperationKind != payload.OperationKindReadHistory || op.PeerType != payload.PeerTypeChat ||
+			op.PeerID != 55 || op.FromUserID != 1001 || op.ToUserID != operation.UserId ||
+			op.ReadOutboxMaxPeerSeq != 4 || !op.Out {
+			t.Fatalf("read history effect = %+v for user %d, want chat outbox read state", op, operation.UserId)
+		}
+	}
+	if !gotUsers[1002] || !gotUsers[1003] || gotUsers[1001] {
+		t.Fatalf("affected users = %+v, want 1002 and 1003 only", gotUsers)
+	}
+}
+
+func TestReadHistoryOutboxEffectOperationIDIncludesChatReader(t *testing.T) {
+	first, err := readHistoryOutboxEffect(1002, 55, 1001, 1002, payload.PeerTypeChat, 4, 1778722672)
+	if err != nil {
+		t.Fatalf("readHistoryOutboxEffect(first) error = %v", err)
+	}
+	second, err := readHistoryOutboxEffect(1002, 55, 1003, 1002, payload.PeerTypeChat, 4, 1778722672)
+	if err != nil {
+		t.Fatalf("readHistoryOutboxEffect(second) error = %v", err)
+	}
+	if first.OperationID == second.OperationID {
+		t.Fatalf("chat read outbox operation ids collide: %q", first.OperationID)
 	}
 }
 

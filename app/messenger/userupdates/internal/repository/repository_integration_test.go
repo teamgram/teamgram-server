@@ -752,6 +752,60 @@ func TestApplyReadOutboxPreservesIncomingUnreadCount(t *testing.T) {
 	}
 }
 
+func TestApplyChatReadOutboxStoresReaderUserID(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	senderID := base + 2161
+	readerID := base + 2162
+	chatID := base + 2163
+	repo := NewForTest(db, &testIDGenerator{next: base + 21600}, "local-userupdates")
+	send := buildOperationApplyInput(t, senderID, payload.MessageOperationV1{
+		SchemaVersion:      payload.MessageOperationSchemaVersion,
+		OperationKind:      payload.OperationKindSendMessage,
+		CanonicalMessageID: senderID*10 + 1,
+		PeerType:           payload.PeerTypeChat,
+		PeerID:             chatID,
+		PeerSeq:            1,
+		FromUserID:         senderID,
+		ToUserID:           senderID,
+		Date:               int32(time.Now().Unix()),
+		Out:                true,
+		MessageText:        "chat outgoing",
+	}, "chat-send")
+	if _, err := repo.ClaimPartitionOwner(ctx, send.PartitionID); err != nil {
+		t.Fatalf("ClaimPartitionOwner() error = %v", err)
+	}
+	if _, err := repo.ApplyUserOperation(ctx, send); err != nil {
+		t.Fatalf("ApplyUserOperation(send) error = %v", err)
+	}
+
+	readDate := int32(time.Now().Unix())
+	readOutbox := buildOperationApplyInput(t, senderID, payload.MessageOperationV1{
+		SchemaVersion:        payload.MessageOperationSchemaVersion,
+		OperationKind:        payload.OperationKindReadHistory,
+		PeerType:             payload.PeerTypeChat,
+		PeerID:               chatID,
+		PeerSeq:              1,
+		ReadOutboxMaxPeerSeq: 1,
+		FromUserID:           readerID,
+		ToUserID:             senderID,
+		Date:                 readDate,
+		Out:                  true,
+	}, "chat-read-outbox")
+	if _, err := repo.ApplyUserOperation(ctx, readOutbox); err != nil {
+		t.Fatalf("ApplyUserOperation(read outbox) error = %v", err)
+	}
+
+	rows, err := repo.models.MessageReadOutboxModel.SelectFirstReadDate(ctx, senderID, payload.PeerTypeChat, chatID, readerID, 1, 1)
+	if err != nil {
+		t.Fatalf("SelectFirstReadDate() error = %v", err)
+	}
+	if len(rows) != 1 || rows[0].ReadOutboxMaxDate != int64(readDate) {
+		t.Fatalf("read outbox rows = %+v, want reader %d date %d", rows, readerID, readDate)
+	}
+}
+
 func TestApplyDeleteMessagesMaterializesPublicIDsAndDialogTop(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)

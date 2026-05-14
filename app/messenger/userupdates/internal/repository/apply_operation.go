@@ -860,7 +860,11 @@ func applyReadHistory(txModels *model.TxModels, in ApplyUserOperationInput, op p
 		return storageError("apply read history", err)
 	}
 	if op.Out && readOutbox > 0 {
-		if err := insertOutboxReadDateTx(txModels, in.UserID, op.PeerType, op.PeerID, op.PeerID, readOutbox, op.Date); err != nil {
+		readUserID := op.PeerID
+		if op.PeerType == payload.PeerTypeChat && op.FromUserID > 0 {
+			readUserID = op.FromUserID
+		}
+		if err := insertOutboxReadDateTx(txModels, in.UserID, op.PeerType, op.PeerID, readUserID, readOutbox, op.Date); err != nil {
 			return err
 		}
 	}

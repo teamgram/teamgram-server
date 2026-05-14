@@ -2708,7 +2708,7 @@ func TestMsgReadHistoryV2ReturnsAffectedMessagesAck(t *testing.T) {
 	if peerOperation.UserId != 1002 || peerOperation.PeerId != 1001 {
 		t.Fatalf("unexpected peer operation routing: %+v", peerOperation)
 	}
-	if peerOperation.OperationId != readHistoryOutboxOperationID(1002, 1001, 2) {
+	if peerOperation.OperationId != readHistoryOutboxOperationID(1002, 1001, 1001, 2) {
 		t.Fatalf("peer read outbox operation_id = %q, want peer-seq scoped id", peerOperation.OperationId)
 	}
 	if peerOperation.OperationId == readHistoryOperationID(1002, 1001, 102, 0) {
@@ -3542,7 +3542,7 @@ func TestTask6DialogOperationIDsUseV2ResolvedIdentity(t *testing.T) {
 	if got := readHistoryOperationID(1001, 1002, 102, 9001); got != "v2:dialog:read_history:user:1001:peer:1002:max_user:102:auth:9001" {
 		t.Fatalf("readHistoryOperationID() = %q", got)
 	}
-	if got := readHistoryOutboxOperationID(1002, 1001, 2); got != "v2:dialog:read_history_outbox:user:1002:peer:1001:max_peer_seq:2" {
+	if got := readHistoryOutboxOperationID(1002, 1001, 1001, 2); got != "v2:dialog:read_history_outbox:user:1002:peer:1001:reader:1001:max_peer_seq:2" {
 		t.Fatalf("readHistoryOutboxOperationID() = %q", got)
 	}
 	if got := deleteMessagesOperationID(1001, 1002, []int32{107, 108}, true, 9001); got != "v2:dialog:delete_messages:user:1001:peer:1002:ids:[107 108]:revoke:true:auth:9001" {
