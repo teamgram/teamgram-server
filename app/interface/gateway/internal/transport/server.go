@@ -223,6 +223,7 @@ func (s *Server) handleFrame(ctx context.Context, conn Connection, writers map[s
 		if s.push != nil && writer != nil {
 			writer.Update(active.AuthKey, active.Salt)
 			s.push.Register(push.LocalTarget{
+				UserId:        active.UserId,
 				PermAuthKeyId: active.PermAuthKeyId,
 				AuthKeyId:     active.AuthKeyId,
 				AuthKeyType:   active.AuthKeyType,

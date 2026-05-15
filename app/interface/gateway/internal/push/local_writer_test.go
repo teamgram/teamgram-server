@@ -408,6 +408,82 @@ func TestGatewayPushLocalWriterExactSessionUpdatesWhitelistRequiresEveryNestedUp
 	}
 }
 
+func TestGatewayPushLocalWriterExactSessionAllowsAllUpdatesForLoggedInSession(t *testing.T) {
+	writer, key, sw := newExactSessionLocalWriter(t, tg.AuthKeyTypeTemp)
+	writer.Register(LocalTarget{
+		UserId:        1001,
+		PermAuthKeyId: key.AuthKeyId(),
+		AuthKeyId:     key.AuthKeyId(),
+		AuthKeyType:   tg.AuthKeyTypeTemp,
+		SessionId:     22,
+		AuthKey:       key,
+		Layer:         223,
+		Writer:        sw,
+	})
+	updates := tg.MakeTLUpdates(&tg.TLUpdates{
+		Updates: []tg.UpdateClazz{
+			tg.MakeTLUpdateContactsReset(&tg.TLUpdateContactsReset{}),
+		},
+		Users: []tg.UserClazz{},
+		Chats: []tg.ChatClazz{},
+		Date:  1,
+	})
+
+	ok, err := writer.WriteSessionUpdates(context.Background(), key.AuthKeyId(), 22, updates)
+	if err != nil {
+		t.Fatalf("WriteSessionUpdates() error = %v", err)
+	}
+	if !ok {
+		t.Fatal("WriteSessionUpdates() ok = false, want true")
+	}
+	if sw.seq != 1 {
+		t.Fatalf("seq = %d, want one exact-session write", sw.seq)
+	}
+}
+
+func TestGatewayPushLocalWriterExactSessionRejectsPhoneCallUpdatesBeforeLogin(t *testing.T) {
+	tests := []struct {
+		name   string
+		update tg.UpdateClazz
+	}{
+		{
+			name: "phone call",
+			update: tg.MakeTLUpdatePhoneCall(&tg.TLUpdatePhoneCall{
+				PhoneCall: tg.MakeTLPhoneCallDiscarded(&tg.TLPhoneCallDiscarded{Id: 100}),
+			}),
+		},
+		{
+			name: "phone call signaling",
+			update: tg.MakeTLUpdatePhoneCallSignalingData(&tg.TLUpdatePhoneCallSignalingData{
+				PhoneCallId: 100,
+				Data:        []byte("signal"),
+			}),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			writer, key, sw := newExactSessionLocalWriter(t, tg.AuthKeyTypeTemp)
+			updates := tg.MakeTLUpdates(&tg.TLUpdates{
+				Updates: []tg.UpdateClazz{tt.update},
+				Users:   []tg.UserClazz{},
+				Chats:   []tg.ChatClazz{},
+				Date:    1,
+			})
+
+			ok, err := writer.WriteSessionUpdates(context.Background(), key.AuthKeyId(), 22, updates)
+			if err != nil {
+				t.Fatalf("WriteSessionUpdates() error = %v", err)
+			}
+			if ok {
+				t.Fatal("WriteSessionUpdates() ok = true, want false")
+			}
+			if sw.seq != 0 {
+				t.Fatalf("seq = %d, want no exact-session write", sw.seq)
+			}
+		})
+	}
+}
+
 func TestGatewayPushLocalWriterExactSessionRejectsNonWhitelistedUpdates(t *testing.T) {
 	tests := []struct {
 		name    string

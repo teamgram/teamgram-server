@@ -16,6 +16,7 @@ type SessionWriter interface {
 }
 
 type LocalTarget struct {
+	UserId        int64
 	PermAuthKeyId int64
 	AuthKeyId     int64
 	AuthKeyType   int32
@@ -201,7 +202,7 @@ func (w *LocalWriter) WriteSessionUpdatesDetailed(ctx context.Context, authKeyId
 		result.Reason = "media_temp_exact_session_update_rejected"
 		return result, nil
 	}
-	if !isAllowedExactSessionUpdates(updates) {
+	if target.UserId <= 0 && !isAllowedExactSessionUpdates(updates) {
 		result.Reason = "exact_session_update_not_allowed"
 		return result, nil
 	}
