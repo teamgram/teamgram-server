@@ -1,4 +1,4 @@
-VERSION=v0.224.0-teamgooo-server
+VERSION=v2.224.0-teamgooo-server
 BUILD=`date +%F`
 SHELL := /bin/bash
 BASEDIR = $(shell pwd)
