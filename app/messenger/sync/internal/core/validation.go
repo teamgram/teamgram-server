@@ -22,6 +22,13 @@ func validatePositiveID(method, field string, value int64) error {
 	return nil
 }
 
+func validateNonZeroID(method, field string, value int64) error {
+	if value == 0 {
+		return fmt.Errorf("%w: %s invalid %s %d", syncpb.ErrSyncInvalidArgument, method, field, value)
+	}
+	return nil
+}
+
 func validateUpdates(method string, updates tg.UpdatesClazz) error {
 	if updates == nil {
 		return fmt.Errorf("%w: %s updates is nil", syncpb.ErrSyncInvalidArgument, method)
@@ -34,7 +41,7 @@ func validatePermKeyVector(method, field string, values []int64, max int) error 
 		return fmt.Errorf("%w: %s %s length %d exceeds %d", syncpb.ErrSyncInvalidArgument, method, field, len(values), max)
 	}
 	for i, value := range values {
-		if value <= 0 {
+		if value == 0 {
 			return fmt.Errorf("%w: %s %s[%d] invalid %d", syncpb.ErrSyncInvalidArgument, method, field, i, value)
 		}
 	}

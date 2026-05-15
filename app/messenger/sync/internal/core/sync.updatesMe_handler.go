@@ -36,7 +36,7 @@ func (c *SyncCore) SyncUpdatesMe(in *sync.TLSyncUpdatesMe) (*sync.Void, error) {
 	if err := validateUserID(method, in.UserId); err != nil {
 		return nil, err
 	}
-	if err := validatePositiveID(method, "perm_auth_key_id", in.PermAuthKeyId); err != nil {
+	if err := validateNonZeroID(method, "perm_auth_key_id", in.PermAuthKeyId); err != nil {
 		return nil, err
 	}
 	if (in.AuthKeyId == nil) != (in.SessionId == nil) {
@@ -50,10 +50,10 @@ func (c *SyncCore) SyncUpdatesMe(in *sync.TLSyncUpdatesMe) (*sync.Void, error) {
 	if precise {
 		authKeyID = *in.AuthKeyId
 		sessionID = *in.SessionId
-		if err := validatePositiveID(method, "auth_key_id", authKeyID); err != nil {
+		if err := validateNonZeroID(method, "auth_key_id", authKeyID); err != nil {
 			return nil, err
 		}
-		if err := validatePositiveID(method, "session_id", sessionID); err != nil {
+		if err := validateNonZeroID(method, "session_id", sessionID); err != nil {
 			return nil, err
 		}
 	}

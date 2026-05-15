@@ -34,16 +34,20 @@ func (c *SyncCore) SyncPushRpcResult(in *sync.TLSyncPushRpcResult) (*sync.Void, 
 	if err := c.requireCaller(method); err != nil {
 		return nil, err
 	}
+	if err := validateUserID(method, in.UserId); err != nil {
+		return nil, err
+	}
 	for field, value := range map[string]int64{
-		"user_id":           in.UserId,
-		"perm_auth_key_id":  in.PermAuthKeyId,
-		"auth_key_id":       in.AuthKeyId,
-		"session_id":        in.SessionId,
-		"client_req_msg_id": in.ClientReqMsgId,
+		"perm_auth_key_id": in.PermAuthKeyId,
+		"auth_key_id":      in.AuthKeyId,
+		"session_id":       in.SessionId,
 	} {
-		if err := validatePositiveID(method, field, value); err != nil {
+		if err := validateNonZeroID(method, field, value); err != nil {
 			return nil, err
 		}
+	}
+	if err := validatePositiveID(method, "client_req_msg_id", in.ClientReqMsgId); err != nil {
+		return nil, err
 	}
 	if in.GatewayId == "" || in.GatewayGeneration == "" || in.GatewayRpcAddr == "" {
 		return nil, fmt.Errorf("%w: %s gateway route is incomplete", sync.ErrSyncInvalidArgument, method)

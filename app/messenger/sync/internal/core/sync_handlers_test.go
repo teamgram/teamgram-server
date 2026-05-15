@@ -43,6 +43,56 @@ func TestSyncUpdatesMeRejectsHalfSpecifiedPreciseSession(t *testing.T) {
 	}
 }
 
+func TestSyncUpdatesMeAcceptsSignedAuthKeyIDs(t *testing.T) {
+	repo := &fakeRepo{}
+	c := newTestSyncCore(t, context.Background(), repo, config.Config{})
+	authKeyID := int64(-3459294212176088652)
+	sessionID := int64(-6891367086746952790)
+	_, err := c.SyncUpdatesMe(&syncpb.TLSyncUpdatesMe{
+		UserId:        42,
+		PermAuthKeyId: -6314280374083284457,
+		AuthKeyId:     &authKeyID,
+		SessionId:     &sessionID,
+		Updates:       emptyUpdates(),
+	})
+	if err != nil {
+		t.Fatalf("SyncUpdatesMe() error = %v", err)
+	}
+	if repo.updatesMeCount != 1 || repo.updatesMePermAuthKeyID != -6314280374083284457 ||
+		repo.updatesMeAuthKeyID != authKeyID || repo.updatesMeSessionID != sessionID {
+		t.Fatalf("updatesMe call = count:%d perm:%d auth:%d session:%d",
+			repo.updatesMeCount, repo.updatesMePermAuthKeyID, repo.updatesMeAuthKeyID, repo.updatesMeSessionID)
+	}
+}
+
+func TestSyncUpdatesNotMeAcceptsSignedPermAuthKeyID(t *testing.T) {
+	repo := &fakeRepo{}
+	c := newTestSyncCore(t, context.Background(), repo, config.Config{})
+	_, err := c.SyncUpdatesNotMe(&syncpb.TLSyncUpdatesNotMe{
+		UserId:        42,
+		PermAuthKeyId: -6314280374083284457,
+		Updates:       emptyUpdates(),
+	})
+	if err != nil {
+		t.Fatalf("SyncUpdatesNotMe() error = %v", err)
+	}
+	if repo.updatesNotMeCount != 1 || repo.updatesNotMePermAuthKeyID != -6314280374083284457 {
+		t.Fatalf("updatesNotMe call = count:%d perm:%d", repo.updatesNotMeCount, repo.updatesNotMePermAuthKeyID)
+	}
+}
+
+func TestSyncUpdatesMeRejectsZeroAuthKeyIDs(t *testing.T) {
+	c := newTestSyncCore(t, context.Background(), &fakeRepo{}, config.Config{})
+	_, err := c.SyncUpdatesMe(&syncpb.TLSyncUpdatesMe{
+		UserId:        42,
+		PermAuthKeyId: 0,
+		Updates:       emptyUpdates(),
+	})
+	if !errors.Is(err, syncpb.ErrSyncInvalidArgument) {
+		t.Fatalf("error = %v, want ErrSyncInvalidArgument", err)
+	}
+}
+
 func TestSyncPushRpcResultRejectsMissingGatewayRoute(t *testing.T) {
 	c := newTestSyncCore(t, context.Background(), &fakeRepo{}, config.Config{})
 	_, err := c.SyncPushRpcResult(&syncpb.TLSyncPushRpcResult{
@@ -96,7 +146,13 @@ func emptyUpdates() tg.UpdatesClazz {
 }
 
 type fakeRepo struct {
-	pushUpdatesCount int
+	pushUpdatesCount          int
+	updatesMeCount            int
+	updatesMePermAuthKeyID    int64
+	updatesMeAuthKeyID        int64
+	updatesMeSessionID        int64
+	updatesNotMeCount         int
+	updatesNotMePermAuthKeyID int64
 }
 
 func (f *fakeRepo) PushUpdates(ctx context.Context, userID int64, updates tg.UpdatesClazz) error {
@@ -105,6 +161,8 @@ func (f *fakeRepo) PushUpdates(ctx context.Context, userID int64, updates tg.Upd
 }
 
 func (f *fakeRepo) UpdatesNotMe(ctx context.Context, userID, permAuthKeyID int64, updates tg.UpdatesClazz) error {
+	f.updatesNotMeCount++
+	f.updatesNotMePermAuthKeyID = permAuthKeyID
 	return nil
 }
 
@@ -113,6 +171,10 @@ func (f *fakeRepo) PushUpdatesIfNot(ctx context.Context, userID int64, includesS
 }
 
 func (f *fakeRepo) UpdatesMe(ctx context.Context, userID, permAuthKeyID int64, authKeyID, sessionID int64, precise bool, updates tg.UpdatesClazz) error {
+	f.updatesMeCount++
+	f.updatesMePermAuthKeyID = permAuthKeyID
+	f.updatesMeAuthKeyID = authKeyID
+	f.updatesMeSessionID = sessionID
 	return nil
 }
 

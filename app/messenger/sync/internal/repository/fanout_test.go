@@ -29,6 +29,17 @@ func TestFilterUpdatesNotMeExcludesSourcePermKey(t *testing.T) {
 	}
 }
 
+func TestFilterUpdatesNotMeExcludesSignedSourcePermKey(t *testing.T) {
+	targets := []SessionRoute{
+		{PermAuthKeyID: -1, AuthKeyID: 10, SessionID: 100, AuthKeyType: int32(tg.AuthKeyTypePerm)},
+		{PermAuthKeyID: -2, AuthKeyID: 20, SessionID: 200, AuthKeyType: int32(tg.AuthKeyTypePerm)},
+	}
+	got := FilterTargets(targets, TargetFilter{ExcludePermAuthKeyID: -1})
+	if len(got) != 1 || got[0].PermAuthKeyID != -2 {
+		t.Fatalf("got = %+v, want only perm key -2", got)
+	}
+}
+
 func TestFilterUpdatesMeCanTargetSingleSession(t *testing.T) {
 	targets := []SessionRoute{
 		{PermAuthKeyID: 1, AuthKeyID: 10, SessionID: 100, AuthKeyType: int32(tg.AuthKeyTypePerm)},
@@ -37,6 +48,17 @@ func TestFilterUpdatesMeCanTargetSingleSession(t *testing.T) {
 	got := FilterTargets(targets, TargetFilter{PermAuthKeyID: 1, AuthKeyID: 10, SessionID: 101, PreciseSession: true})
 	if len(got) != 1 || got[0].SessionID != 101 {
 		t.Fatalf("got = %+v, want precise session", got)
+	}
+}
+
+func TestFilterUpdatesMeCanTargetSignedPermKey(t *testing.T) {
+	targets := []SessionRoute{
+		{PermAuthKeyID: -1, AuthKeyID: 10, SessionID: 100, AuthKeyType: int32(tg.AuthKeyTypePerm)},
+		{PermAuthKeyID: -2, AuthKeyID: 20, SessionID: 200, AuthKeyType: int32(tg.AuthKeyTypePerm)},
+	}
+	got := FilterTargets(targets, TargetFilter{PermAuthKeyID: -2})
+	if len(got) != 1 || got[0].PermAuthKeyID != -2 {
+		t.Fatalf("got = %+v, want only perm key -2", got)
 	}
 }
 

@@ -34,7 +34,7 @@ func (c *SyncCore) SyncUpdatesNotMe(in *sync.TLSyncUpdatesNotMe) (*sync.Void, er
 	if err := validateUserID(method, in.UserId); err != nil {
 		return nil, err
 	}
-	if err := validatePositiveID(method, "perm_auth_key_id", in.PermAuthKeyId); err != nil {
+	if err := validateNonZeroID(method, "perm_auth_key_id", in.PermAuthKeyId); err != nil {
 		return nil, err
 	}
 	if err := validateUpdates(method, in.Updates); err != nil {
