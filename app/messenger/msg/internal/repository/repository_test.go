@@ -372,6 +372,14 @@ func (fakeCanonicalQueriesModel) SelectHistoryMessagesPage(context.Context, int6
 	return nil, nil
 }
 
+func (fakeCanonicalQueriesModel) SelectHistoryMessagesBackwardByUserMessageID(context.Context, int64, int32, int64, int32, int64, int32) ([]model.HistoryMessageRow, error) {
+	return nil, nil
+}
+
+func (fakeCanonicalQueriesModel) SelectHistoryMessagesForwardByUserMessageID(context.Context, int64, int32, int64, int32, int64, int32) ([]model.HistoryMessageRow, error) {
+	return nil, nil
+}
+
 func (fakeCanonicalQueriesModel) SelectConversationViewPeerSeqFloor(context.Context, int32, int64, int64, int64, int64) (*model.PeerSeqFloorRow, error) {
 	return &model.PeerSeqFloorRow{}, nil
 }

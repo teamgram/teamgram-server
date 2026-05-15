@@ -118,6 +118,8 @@ type CanonicalQueriesModel interface {
 	SelectEditableMessageForUpdate(ctx context.Context, actorUserId int64, peerType int32, peerId int64, peerSeq int64, messageStatus int32) (*EditableMessageRow, error)
 	CountHistoryOffset(ctx context.Context, curUserId int64, curPeerType int64, curPeerId int64, curPeerSeq int64, userId int64, peerType int32, peerId int64, messageStatus int32) (*HistoryOffsetRow, error)
 	SelectHistoryMessagesPage(ctx context.Context, userId int64, peerType int32, peerId int64, messageStatus int32, offset int64, limit int32) ([]HistoryMessageRow, error)
+	SelectHistoryMessagesBackwardByUserMessageID(ctx context.Context, userId int64, peerType int32, peerId int64, messageStatus int32, offsetId int64, limit int32) ([]HistoryMessageRow, error)
+	SelectHistoryMessagesForwardByUserMessageID(ctx context.Context, userId int64, peerType int32, peerId int64, messageStatus int32, offsetId int64, limit int32) ([]HistoryMessageRow, error)
 	SelectConversationViewPeerSeqFloor(ctx context.Context, peerType int32, userId int64, peerId int64, otherUserId int64, otherPeerId int64) (*PeerSeqFloorRow, error)
 }
 
@@ -136,6 +138,8 @@ type CanonicalQueriesTxModel interface {
 	SelectEditableMessageForUpdate(actorUserId int64, peerType int32, peerId int64, peerSeq int64, messageStatus int32) (*EditableMessageRow, error)
 	CountHistoryOffset(curUserId int64, curPeerType int64, curPeerId int64, curPeerSeq int64, userId int64, peerType int32, peerId int64, messageStatus int32) (*HistoryOffsetRow, error)
 	SelectHistoryMessagesPage(userId int64, peerType int32, peerId int64, messageStatus int32, offset int64, limit int32) ([]HistoryMessageRow, error)
+	SelectHistoryMessagesBackwardByUserMessageID(userId int64, peerType int32, peerId int64, messageStatus int32, offsetId int64, limit int32) ([]HistoryMessageRow, error)
+	SelectHistoryMessagesForwardByUserMessageID(userId int64, peerType int32, peerId int64, messageStatus int32, offsetId int64, limit int32) ([]HistoryMessageRow, error)
 	SelectConversationViewPeerSeqFloor(peerType int32, userId int64, peerId int64, otherUserId int64, otherPeerId int64) (*PeerSeqFloorRow, error)
 }
 
@@ -457,6 +461,50 @@ func (m *defaultCanonicalQueriesTxModel) SelectHistoryMessagesPage(userId int64,
 	query := "select v.canonical_message_id, v.peer_seq, v.user_message_id, c.from_user_id, v.outgoing, v.peer_type, v.peer_id, v.message_kind, c.message_text, v.`date` as message_date, v.view_payload from user_message_views as v join canonical_messages as c on c.canonical_message_id = v.canonical_message_id where v.user_id = ? and v.peer_type = ? and v.peer_id = ? and v.message_status = ? order by v.`date` desc, v.peer_seq desc limit ?, ?"
 
 	err := m.tx.QueryRowsPartial(&rList, query, userId, peerType, peerId, messageStatus, offset, limit)
+	if err != nil {
+		return nil, err
+	}
+	return rList, nil
+}
+
+func (m *defaultCanonicalQueriesModel) SelectHistoryMessagesBackwardByUserMessageID(ctx context.Context, userId int64, peerType int32, peerId int64, messageStatus int32, offsetId int64, limit int32) ([]HistoryMessageRow, error) {
+	var rList []HistoryMessageRow
+	query := "select v.canonical_message_id, v.peer_seq, v.user_message_id, c.from_user_id, v.outgoing, v.peer_type, v.peer_id, v.message_kind, c.message_text, v.`date` as message_date, v.view_payload from user_message_views as v join canonical_messages as c on c.canonical_message_id = v.canonical_message_id where v.user_id = ? and v.peer_type = ? and v.peer_id = ? and v.message_status = ? and v.user_message_id < ? order by v.user_message_id desc limit ?"
+
+	err := m.db.QueryRowsPartial(ctx, &rList, query, userId, peerType, peerId, messageStatus, offsetId, limit)
+	if err != nil {
+		return nil, err
+	}
+	return rList, nil
+}
+
+func (m *defaultCanonicalQueriesTxModel) SelectHistoryMessagesBackwardByUserMessageID(userId int64, peerType int32, peerId int64, messageStatus int32, offsetId int64, limit int32) ([]HistoryMessageRow, error) {
+	var rList []HistoryMessageRow
+	query := "select v.canonical_message_id, v.peer_seq, v.user_message_id, c.from_user_id, v.outgoing, v.peer_type, v.peer_id, v.message_kind, c.message_text, v.`date` as message_date, v.view_payload from user_message_views as v join canonical_messages as c on c.canonical_message_id = v.canonical_message_id where v.user_id = ? and v.peer_type = ? and v.peer_id = ? and v.message_status = ? and v.user_message_id < ? order by v.user_message_id desc limit ?"
+
+	err := m.tx.QueryRowsPartial(&rList, query, userId, peerType, peerId, messageStatus, offsetId, limit)
+	if err != nil {
+		return nil, err
+	}
+	return rList, nil
+}
+
+func (m *defaultCanonicalQueriesModel) SelectHistoryMessagesForwardByUserMessageID(ctx context.Context, userId int64, peerType int32, peerId int64, messageStatus int32, offsetId int64, limit int32) ([]HistoryMessageRow, error) {
+	var rList []HistoryMessageRow
+	query := "select v.canonical_message_id, v.peer_seq, v.user_message_id, c.from_user_id, v.outgoing, v.peer_type, v.peer_id, v.message_kind, c.message_text, v.`date` as message_date, v.view_payload from user_message_views as v join canonical_messages as c on c.canonical_message_id = v.canonical_message_id where v.user_id = ? and v.peer_type = ? and v.peer_id = ? and v.message_status = ? and v.user_message_id >= ? order by v.user_message_id asc limit ?"
+
+	err := m.db.QueryRowsPartial(ctx, &rList, query, userId, peerType, peerId, messageStatus, offsetId, limit)
+	if err != nil {
+		return nil, err
+	}
+	return rList, nil
+}
+
+func (m *defaultCanonicalQueriesTxModel) SelectHistoryMessagesForwardByUserMessageID(userId int64, peerType int32, peerId int64, messageStatus int32, offsetId int64, limit int32) ([]HistoryMessageRow, error) {
+	var rList []HistoryMessageRow
+	query := "select v.canonical_message_id, v.peer_seq, v.user_message_id, c.from_user_id, v.outgoing, v.peer_type, v.peer_id, v.message_kind, c.message_text, v.`date` as message_date, v.view_payload from user_message_views as v join canonical_messages as c on c.canonical_message_id = v.canonical_message_id where v.user_id = ? and v.peer_type = ? and v.peer_id = ? and v.message_status = ? and v.user_message_id >= ? order by v.user_message_id asc limit ?"
+
+	err := m.tx.QueryRowsPartial(&rList, query, userId, peerType, peerId, messageStatus, offsetId, limit)
 	if err != nil {
 		return nil, err
 	}

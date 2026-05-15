@@ -31,6 +31,24 @@
         </sql>
     </operation>
 
+    <operation name="SelectRecentBeforePeerSeq" result_set="list">
+        <params>
+            <param name="message_status" type="int32"/>
+            <param name="limit" type="int32"/>
+        </params>
+        <sql>
+            SELECT
+                canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, message_attrs_schema_version, message_attrs_payload, forward_ref_schema_version, forward_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, date, storage_schema_version
+            FROM
+                canonical_messages
+            WHERE
+                peer_type = :peer_type AND peer_id = :peer_id AND peer_seq &lt; :peer_seq AND message_status = :message_status
+            ORDER BY
+                peer_seq DESC
+            LIMIT :limit
+        </sql>
+    </operation>
+
     <operation name="UpdateMessageEdit">
         <params>
             <param name="old_edit_version" type="int32"/>

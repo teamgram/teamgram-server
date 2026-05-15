@@ -115,7 +115,6 @@ func (r *Repository) ResolveHistoryCursorIDs(ctx context.Context, userID int64, 
 			return out, err
 		}
 		if row == nil {
-			out.NoMatch = true
 			return out, nil
 		}
 		out.OffsetPeerSeq = row.PeerSeq

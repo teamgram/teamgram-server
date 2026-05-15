@@ -34,18 +34,15 @@ func (c *MsgCore) MsgGetHistory(in *msg.TLMsgGetHistory) (*tg.MessagesMessages, 
 		return nil, tg.ErrInputRequestInvalid
 	}
 
-	bounds, err := c.svcCtx.Repo.ResolveHistoryCursorIDs(c.ctx, in.UserId, in.PeerType, in.PeerId, in.OffsetId, in.MaxId, in.MinId)
-	if err != nil {
-		return nil, err
-	}
 	history, err := c.svcCtx.Repo.ListHistoryMessages(c.ctx, repository.ListHistoryMessagesInput{
-		UserID:               in.UserId,
-		PeerType:             in.PeerType,
-		PeerID:               in.PeerId,
-		AddOffset:            in.AddOffset,
-		Limit:                in.Limit,
-		CursorsResolved:      true,
-		ResolvedCursorBounds: bounds,
+		UserID:    in.UserId,
+		PeerType:  in.PeerType,
+		PeerID:    in.PeerId,
+		OffsetID:  in.OffsetId,
+		AddOffset: in.AddOffset,
+		Limit:     in.Limit,
+		MaxID:     in.MaxId,
+		MinID:     in.MinId,
 	})
 	if err != nil {
 		return nil, err

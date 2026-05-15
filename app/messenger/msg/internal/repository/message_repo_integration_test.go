@@ -700,6 +700,38 @@ func TestMessageRepositoryListHistoryMessagesUsesOffsetIDPositionBeforeFilters(t
 	}
 }
 
+func TestMessageRepositoryListHistoryMessagesMissingOffsetIDStillReturnsVisibleHistory(t *testing.T) {
+	ctx := context.Background()
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	repo := NewForTest(db, &testIDGenerator{next: base + 48_000})
+
+	senderID := base + 481
+	receiverID := base + 482
+	now := time.Now().Unix()
+	first := createCanonicalMessageOnlyForTest(t, ctx, repo, senderID, receiverID, base+483, "first", now)
+	second := createCanonicalMessageOnlyForTest(t, ctx, repo, senderID, receiverID, base+484, "second", now+1)
+	insertUserMessageViewWithUserMessageIDForTest(t, ctx, db, senderID, payload.PeerTypeUser, receiverID, 394, first, senderID, true)
+	insertUserMessageViewWithUserMessageIDForTest(t, ctx, db, senderID, payload.PeerTypeUser, receiverID, 395, second, senderID, true)
+
+	history, err := repo.ListHistoryMessages(ctx, ListHistoryMessagesInput{
+		UserID:    senderID,
+		PeerType:  payload.PeerTypeUser,
+		PeerID:    receiverID,
+		OffsetID:  1,
+		AddOffset: -25,
+		Limit:     50,
+	})
+	if err != nil {
+		t.Fatalf("ListHistoryMessages() missing offset error = %v", err)
+	}
+	if len(history) != 2 ||
+		history[0].CanonicalMessageID != second.CanonicalMessageID ||
+		history[1].CanonicalMessageID != first.CanonicalMessageID {
+		t.Fatalf("ListHistoryMessages() missing offset = %+v, want second/first", history)
+	}
+}
+
 func TestMessageRepositoryListHistoryMessagesUsesViewerScopedViews(t *testing.T) {
 	ctx := context.Background()
 	db := openIntegrationDB(t)
@@ -962,12 +994,13 @@ func insertUserMessageViewWithSeqForTest(
 	}
 	_, err := db.Exec(ctx, `
 INSERT INTO user_message_views
-	(user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload)
+	(user_id, peer_type, peer_id, user_message_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload)
 VALUES
-	(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+	(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		userID,
 		peerType,
 		peerID,
+		peerSeq,
 		peerSeq,
 		canonical.CanonicalMessageID,
 		fromUserID,
@@ -1004,12 +1037,13 @@ func insertUserMessageViewWithPayloadForTest(
 	}
 	_, err = db.Exec(ctx, `
 INSERT INTO user_message_views
-	(user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload)
+	(user_id, peer_type, peer_id, user_message_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload)
 VALUES
-	(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+	(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		userID,
 		peerType,
 		peerID,
+		peerSeq,
 		peerSeq,
 		canonical.CanonicalMessageID,
 		fromUserID,
@@ -1098,6 +1132,45 @@ func createCanonicalMessageForTest(
 	return canonical
 }
 
+func createCanonicalMessageOnlyForTest(
+	t *testing.T,
+	ctx context.Context,
+	repo *Repository,
+	senderID int64,
+	receiverID int64,
+	randomID int64,
+	text string,
+	date int64,
+) *CanonicalMessageResult {
+	t.Helper()
+	requestHash := payload.HashBytes([]byte(text))
+	state, err := repo.CreateOrLoadSendState(ctx, CreateSendStateInput{
+		SenderUserID:                senderID,
+		PeerType:                    payload.PeerTypeUser,
+		PeerID:                      receiverID,
+		ClientRandomID:              randomID,
+		RequestPayloadSchemaVersion: 1,
+		RequestPayloadHash:          requestHash,
+	})
+	if err != nil {
+		t.Fatalf("CreateOrLoadSendState(%q) error = %v", text, err)
+	}
+	canonical, err := repo.CreateOrGetByClientRandom(ctx, CreateCanonicalMessageInput{
+		SendStateID:        state.SendStateID,
+		SenderUserID:       senderID,
+		PeerType:           payload.PeerTypeUser,
+		PeerID:             receiverID,
+		ClientRandomID:     randomID,
+		RequestPayloadHash: requestHash,
+		MessageText:        text,
+		MessageDate:        date,
+	})
+	if err != nil {
+		t.Fatalf("CreateOrGetByClientRandom(%q) error = %v", text, err)
+	}
+	return canonical
+}
+
 func newIntegrationRepository(t *testing.T) (*Repository, context.Context) {
 	t.Helper()
 	ctx := context.Background()
@@ -1160,12 +1233,13 @@ func insertUserMessageViewForTest(
 	}
 	_, err := db.Exec(ctx, `
 INSERT INTO user_message_views
-	(user_id, peer_type, peer_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload)
+	(user_id, peer_type, peer_id, user_message_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload)
 VALUES
-	(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+	(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 		userID,
 		peerType,
 		peerID,
+		canonical.PeerSeq,
 		canonical.PeerSeq,
 		canonical.CanonicalMessageID,
 		fromUserID,
@@ -1179,6 +1253,50 @@ VALUES
 	)
 	if err != nil {
 		t.Fatalf("insert user_message_views user_id=%d peer_id=%d canonical=%d: %v", userID, peerID, canonical.CanonicalMessageID, err)
+	}
+}
+
+func insertUserMessageViewWithUserMessageIDForTest(
+	t *testing.T,
+	ctx context.Context,
+	db *sqlx.DB,
+	userID int64,
+	peerType int32,
+	peerID int64,
+	userMessageID int64,
+	canonical *CanonicalMessageResult,
+	fromUserID int64,
+	outgoing bool,
+) {
+	t.Helper()
+	if db == nil {
+		t.Fatal("test db is nil")
+	}
+	if canonical == nil {
+		t.Fatal("canonical is nil")
+	}
+	_, err := db.Exec(ctx, `
+INSERT INTO user_message_views
+	(user_id, peer_type, peer_id, user_message_id, peer_seq, canonical_message_id, from_user_id, outgoing, message_kind, message_status, edit_version, date, view_schema_version, view_payload)
+VALUES
+	(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		userID,
+		peerType,
+		peerID,
+		userMessageID,
+		canonical.PeerSeq,
+		canonical.CanonicalMessageID,
+		fromUserID,
+		outgoing,
+		MessageKindText,
+		MessageStatusLive,
+		0,
+		canonical.MessageDate,
+		1,
+		nil,
+	)
+	if err != nil {
+		t.Fatalf("insert user_message_views user_id=%d peer_id=%d user_message_id=%d canonical=%d: %v", userID, peerID, userMessageID, canonical.CanonicalMessageID, err)
 	}
 }
 

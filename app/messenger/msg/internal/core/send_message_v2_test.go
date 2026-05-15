@@ -565,6 +565,75 @@ func TestMsgSendMessagePropagatesAttachFactsToChatReceivers(t *testing.T) {
 	}
 }
 
+func TestMsgSendMessageChatAddUserBackfillsFwdLimitHistoryToInvitee(t *testing.T) {
+	responsePayload := mustOperationResponseV3Payload(t, payload.SenderOperationID(7103, 1001), 22, 1, 43, 12348, replyUpdatesForChatService(t, 43, 12348, 22, 1))
+	updatesClient := &fakeUserUpdatesClient{
+		processWithEffectsResult: testUserOperationResult(1001, payload.SenderOperationID(7103, 1001), 22, responsePayload),
+	}
+	chatClient := &fakeMsgChatClient{memberIDs: []int64{1001, 1002, 1003}}
+	repo := newFakeSendMessageRepositoryForChat(7103, 3)
+	repo.recentCanonicalMessages = []repository.CanonicalMessage{
+		{
+			CanonicalMessageID: 7001,
+			PeerSeq:            1,
+			FromUserID:         1001,
+			PeerType:           payload.PeerTypeChat,
+			PeerID:             55,
+			MessageKind:        repository.MessageKindText,
+			MessageText:        "before one",
+			MessageDate:        1_771_999_998,
+		},
+		{
+			CanonicalMessageID: 7002,
+			PeerSeq:            2,
+			FromUserID:         1002,
+			PeerType:           payload.PeerTypeChat,
+			PeerID:             55,
+			MessageKind:        repository.MessageKindText,
+			MessageText:        "before two",
+			MessageDate:        1_771_999_999,
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:        repo,
+		UserUpdates: updatesClient,
+		Chat:        chatClient,
+	})
+	req := chatAddUserServiceSendRequest(1001, 55, 9001, 12348, 1003)
+	req.AttachFacts = []msgpb.UpdateFactClazz{chatParticipantsChangedTLFactWithFwdLimit(t, 55, 1001, []int64{1001, 1002, 1003}, 2)}
+
+	if _, err := core.MsgSendMessage(req); err != nil {
+		t.Fatalf("MsgSendMessage() error = %v", err)
+	}
+	if repo.recentCanonicalInput.peerType != payload.PeerTypeChat || repo.recentCanonicalInput.peerID != 55 || repo.recentCanonicalInput.beforePeerSeq != 3 || repo.recentCanonicalInput.limit != 2 {
+		t.Fatalf("recent canonical input = %+v, want chat 55 before seq 3 limit 2", repo.recentCanonicalInput)
+	}
+	if updatesClient.processWithEffects == nil || len(updatesClient.processWithEffects.AffectedEffects) != 2 {
+		t.Fatalf("affected effects = %+v, want existing member plus invitee", updatesClient.processWithEffects)
+	}
+	var inviteeBatch *payload.MessageOperationBatchV1
+	for _, effect := range updatesClient.processWithEffects.AffectedEffects {
+		if effect.Operation.UserId != 1003 {
+			continue
+		}
+		batch := mustDecodeMessageOperationBatchV1(t, effect.Operation.Payload)
+		inviteeBatch = &batch
+	}
+	if inviteeBatch == nil {
+		t.Fatalf("invitee receiver operation was not a batch")
+	}
+	if len(inviteeBatch.Messages) != 3 {
+		t.Fatalf("invitee batch messages = %+v, want 2 history messages plus add-user service message", inviteeBatch.Messages)
+	}
+	if inviteeBatch.Messages[0].CanonicalMessageID != 7001 || inviteeBatch.Messages[1].CanonicalMessageID != 7002 || inviteeBatch.Messages[2].CanonicalMessageID != 7103 {
+		t.Fatalf("invitee batch canonical ids = [%d %d %d], want [7001 7002 7103]",
+			inviteeBatch.Messages[0].CanonicalMessageID, inviteeBatch.Messages[1].CanonicalMessageID, inviteeBatch.Messages[2].CanonicalMessageID)
+	}
+	if inviteeBatch.Messages[2].ServiceAction == nil || inviteeBatch.Messages[2].ServiceAction.Kind != payload.ServiceActionKindChatAddUser {
+		t.Fatalf("invitee batch last action = %+v, want chat_add_user", inviteeBatch.Messages[2].ServiceAction)
+	}
+}
+
 func TestMsgSendMessageReplyUsesUserupdatesEnvelope(t *testing.T) {
 	responsePayload := mustOperationResponseV3Payload(t, payload.SenderOperationID(7201, 1001), 33, 1, 44, 12347, replyUpdatesForChatService(t, 44, 12347, 33, 1))
 	updatesClient := &fakeUserUpdatesClient{
@@ -2343,16 +2412,13 @@ func TestMsgGetHistoryReturnsCanonicalTextMessages(t *testing.T) {
 	if repo.historyInput.PeerType != payload.PeerTypeUser ||
 		repo.historyInput.UserID != 1001 ||
 		repo.historyInput.PeerID != 1002 ||
+		repo.historyInput.OffsetID != 103 ||
 		repo.historyInput.AddOffset != -2 ||
 		repo.historyInput.Limit != 20 ||
-		!repo.historyInput.CursorsResolved ||
-		repo.historyInput.ResolvedCursorBounds.OffsetPeerSeq != 13 ||
-		repo.historyInput.ResolvedCursorBounds.MaxPeerSeq != 12 ||
-		repo.historyInput.ResolvedCursorBounds.MinPeerSeq != 11 {
+		repo.historyInput.MaxID != 102 ||
+		repo.historyInput.MinID != 101 ||
+		repo.historyInput.CursorsResolved {
 		t.Fatalf("unexpected history input: %+v", repo.historyInput)
-	}
-	if repo.resolveHistoryInput.offsetID != 103 || repo.resolveHistoryInput.maxID != 102 || repo.resolveHistoryInput.minID != 101 {
-		t.Fatalf("history cursors were not resolved from public ids: %+v", repo.resolveHistoryInput)
 	}
 }
 
@@ -2580,22 +2646,9 @@ func TestMsgGetHistoryUsesViewerScopedOutgoingFlag(t *testing.T) {
 	}
 }
 
-func TestMsgGetHistoryMissingPublicCursorReturnsEmpty(t *testing.T) {
+func TestMsgGetHistoryPassesMaxCursorToRepository(t *testing.T) {
 	repo := &fakeMsgRepository{
-		historyCursorBounds: repository.HistoryCursorBounds{NoMatch: true},
-		history: []repository.HistoryMessage{
-			{
-				CanonicalMessageID: 9202,
-				PeerSeq:            4,
-				UserMessageID:      104,
-				FromUserID:         1002,
-				PeerType:           payload.PeerTypeUser,
-				PeerID:             1001,
-				MessageKind:        repository.MessageKindText,
-				MessageText:        "must not leak across unresolved cursor",
-				MessageDate:        1_772_000_040,
-			},
-		},
+		history: []repository.HistoryMessage{},
 	}
 	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
 
@@ -2614,10 +2667,10 @@ func TestMsgGetHistoryMissingPublicCursorReturnsEmpty(t *testing.T) {
 		t.Fatalf("expected messages.messages, got %s", got.ClazzName())
 	}
 	if len(messages.Messages) != 0 {
-		t.Fatalf("messages len = %d, want empty for unresolved positive public cursor", len(messages.Messages))
+		t.Fatalf("messages len = %d, want empty fixture", len(messages.Messages))
 	}
-	if !repo.historyInput.ResolvedCursorBounds.NoMatch || repo.resolveHistoryInput.maxID != 999 {
-		t.Fatalf("history no-match bounds not propagated: input=%+v resolved=%+v", repo.historyInput, repo.resolveHistoryInput)
+	if repo.historyInput.MaxID != 999 || repo.historyInput.CursorsResolved {
+		t.Fatalf("max cursor not propagated to repository: input=%+v", repo.historyInput)
 	}
 }
 
@@ -3874,10 +3927,17 @@ func TestMsgEditMessageRejectsNonAuthor(t *testing.T) {
 }
 
 type fakeMsgRepository struct {
-	sendState           *repository.SendState
-	canonical           *repository.CanonicalMessageResult
-	batchResult         *repository.CanonicalBatchResult
-	canonicalByPeerSeq  *repository.CanonicalMessage
+	sendState               *repository.SendState
+	canonical               *repository.CanonicalMessageResult
+	batchResult             *repository.CanonicalBatchResult
+	canonicalByPeerSeq      *repository.CanonicalMessage
+	recentCanonicalMessages []repository.CanonicalMessage
+	recentCanonicalInput    struct {
+		peerType      int32
+		peerID        int64
+		beforePeerSeq int64
+		limit         int32
+	}
 	editResult          *repository.EditMessageResult
 	editErr             error
 	editInput           repository.EditCanonicalMessageInput
@@ -3948,6 +4008,14 @@ func (f *fakeMsgRepository) GetCanonicalMessageByPeerSeq(context.Context, int64,
 		return nil, msgpb.ErrSendStateConflict
 	}
 	return f.canonicalByPeerSeq, nil
+}
+
+func (f *fakeMsgRepository) ListRecentCanonicalMessagesBeforePeerSeq(_ context.Context, peerType int32, peerID int64, beforePeerSeq int64, limit int32) ([]repository.CanonicalMessage, error) {
+	f.recentCanonicalInput.peerType = peerType
+	f.recentCanonicalInput.peerID = peerID
+	f.recentCanonicalInput.beforePeerSeq = beforePeerSeq
+	f.recentCanonicalInput.limit = limit
+	return append([]repository.CanonicalMessage(nil), f.recentCanonicalMessages...), nil
 }
 
 func (f *fakeMsgRepository) ListHistoryMessages(_ context.Context, in repository.ListHistoryMessagesInput) ([]repository.HistoryMessage, error) {
@@ -4465,28 +4533,56 @@ func chatCreateServiceSendRequest(senderID, chatID, authKeyID, randomID int64) *
 	}
 }
 
+func chatAddUserServiceSendRequest(senderID, chatID, authKeyID, randomID, inviteeUserID int64) *msgpb.TLMsgSendMessage {
+	return &msgpb.TLMsgSendMessage{
+		UserId:    senderID,
+		AuthKeyId: authKeyID,
+		PeerType:  payload.PeerTypeChat,
+		PeerId:    chatID,
+		Message: []msgpb.OutboxMessageClazz{msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
+			RandomId: randomID,
+			Message: tg.MakeTLMessageService(&tg.TLMessageService{
+				Out:    true,
+				FromId: tg.MakePeerUser(senderID),
+				PeerId: tg.MakePeerChat(chatID),
+				Date:   1778648899,
+				Action: tg.MakeTLMessageActionChatAddUser(&tg.TLMessageActionChatAddUser{
+					Users: []int64{inviteeUserID},
+				}),
+			}),
+		})},
+	}
+}
+
 func chatParticipantsChangedTLFact(t *testing.T, chatID, actorUserID int64, participantIDs []int64) msgpb.UpdateFactClazz {
+	t.Helper()
+	return chatParticipantsChangedTLFactWithFwdLimit(t, chatID, actorUserID, participantIDs, 0)
+}
+
+func chatParticipantsChangedTLFactWithFwdLimit(t *testing.T, chatID, actorUserID int64, participantIDs []int64, fwdLimit int32) msgpb.UpdateFactClazz {
 	t.Helper()
 	participants := make([]payload.ChatParticipantFactV1, 0, len(participantIDs))
 	for _, userID := range participantIDs {
 		participants = append(participants, payload.ChatParticipantFactV1{UserID: userID, Role: "member", InviterUserID: actorUserID, Date: 1_772_000_000})
 	}
-	fact, err := payload.WrapFact(payload.FactKindChatParticipantsChanged, payload.ChatParticipantsChangedFactV1{
+	fact := payload.ChatParticipantsChangedFactV1{
 		SchemaVersion: 1,
 		ChatID:        chatID,
 		ActorUserID:   actorUserID,
 		Version:       1,
 		Participants:  participants,
-	})
+		FwdLimit:      fwdLimit,
+	}
+	wrapped, err := payload.WrapFact(payload.FactKindChatParticipantsChanged, fact)
 	if err != nil {
 		t.Fatalf("wrap chat participants fact: %v", err)
 	}
-	body, err := json.Marshal(fact)
+	body, err := json.Marshal(wrapped)
 	if err != nil {
 		t.Fatalf("marshal update fact envelope: %v", err)
 	}
 	return msgpb.MakeTLUpdateFact(&msgpb.TLUpdateFact{
-		Kind:    fact.Kind,
+		Kind:    wrapped.Kind,
 		Payload: body,
 	})
 }

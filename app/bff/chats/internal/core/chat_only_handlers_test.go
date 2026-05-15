@@ -542,8 +542,9 @@ func TestMessagesAddChatUserSendsParticipantsUpdateAndServiceMessage(t *testing.
 	}, 100)
 
 	r, err := c.MessagesAddChatUser(&tg.TLMessagesAddChatUser{
-		ChatId: 42,
-		UserId: tg.MakeTLInputUser(&tg.TLInputUser{UserId: 300}),
+		ChatId:   42,
+		UserId:   tg.MakeTLInputUser(&tg.TLInputUser{UserId: 300}),
+		FwdLimit: 100,
 	})
 	if err != nil {
 		t.Fatalf("MessagesAddChatUser error = %v", err)
@@ -566,6 +567,18 @@ func TestMessagesAddChatUserSendsParticipantsUpdateAndServiceMessage(t *testing.
 		t.Fatalf("chat add user action users = %+v, want [300]", action.Users)
 	}
 	assertCreateChatAttachFact(t, sent, 42)
+	var envelope payload.UpdateFactV1
+	if err := json.Unmarshal(sent.AttachFacts[0].Payload, &envelope); err != nil {
+		t.Fatalf("Unmarshal attach payload error = %v", err)
+	}
+	decoded, err := payload.DecodeUpdateFact(envelope)
+	if err != nil {
+		t.Fatalf("DecodeUpdateFact error = %v", err)
+	}
+	fact := decoded.(payload.ChatParticipantsChangedFactV1)
+	if fact.FwdLimit != 100 {
+		t.Fatalf("chat add user fwd_limit = %d, want 100", fact.FwdLimit)
+	}
 }
 
 func TestMessagesAddChatUserAllowsAdminActorForParticipantsFact(t *testing.T) {

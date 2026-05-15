@@ -712,15 +712,193 @@ func (c *MsgCore) buildSendMessageChatReceiverEffects(in *msg.TLMsgSendMessage, 
 	if err != nil {
 		return nil, err
 	}
+	addedUserIDs, fwdLimit := chatAddUserHistoryBackfillSpec(normalized, attachFacts)
+	addedUsers := int64Set(addedUserIDs)
+	var history []repository.CanonicalMessage
+	if fwdLimit > 0 && len(addedUsers) > 0 {
+		history, err = c.svcCtx.Repo.ListRecentCanonicalMessagesBeforePeerSeq(c.ctx, payload.PeerTypeChat, in.PeerId, canonical.PeerSeq, fwdLimit)
+		if err != nil {
+			return nil, err
+		}
+	}
 	effects := make([]OperationEnvelope, 0, len(memberIDs))
 	for _, receiverUserID := range memberIDs {
-		effect, err := buildChatReceiverEffectEnvelope(in, canonical, normalized, receiverUserID, attachFacts)
+		var effect OperationEnvelope
+		var err error
+		if _, ok := addedUsers[receiverUserID]; ok && len(history) > 0 {
+			effect, err = buildChatAddUserBackfillEffectEnvelope(in, canonical, normalized, receiverUserID, history, attachFacts)
+		} else {
+			effect, err = buildChatReceiverEffectEnvelope(in, canonical, normalized, receiverUserID, attachFacts)
+		}
 		if err != nil {
 			return nil, err
 		}
 		effects = append(effects, effect)
 	}
 	return effects, nil
+}
+
+func chatAddUserHistoryBackfillSpec(normalized normalizedOutboxMessage, attachFacts []payload.UpdateFactV1) ([]int64, int32) {
+	if normalized.ServiceAction == nil || normalized.ServiceAction.Kind != payload.ServiceActionKindChatAddUser || len(normalized.ServiceAction.Users) == 0 {
+		return nil, 0
+	}
+	var fwdLimit int32
+	for _, fact := range attachFacts {
+		if fact.Kind != payload.FactKindChatParticipantsChanged {
+			continue
+		}
+		decoded, err := payload.DecodeUpdateFact(fact)
+		if err != nil {
+			continue
+		}
+		participants, ok := decoded.(payload.ChatParticipantsChangedFactV1)
+		if !ok {
+			continue
+		}
+		if participants.FwdLimit > fwdLimit {
+			fwdLimit = participants.FwdLimit
+		}
+	}
+	if fwdLimit <= 0 {
+		return nil, 0
+	}
+	return append([]int64(nil), normalized.ServiceAction.Users...), fwdLimit
+}
+
+func int64Set(values []int64) map[int64]struct{} {
+	out := make(map[int64]struct{}, len(values))
+	for _, value := range values {
+		if value > 0 {
+			out[value] = struct{}{}
+		}
+	}
+	return out
+}
+
+func buildChatAddUserBackfillEffectEnvelope(in *msg.TLMsgSendMessage, canonical *repository.CanonicalMessageResult, normalized normalizedOutboxMessage, receiverUserID int64, history []repository.CanonicalMessage, attachFacts []payload.UpdateFactV1) (OperationEnvelope, error) {
+	canonicals := make([]repository.CanonicalMessageResult, 0, len(history)+1)
+	normalizedBatch := make([]normalizedOutboxMessage, 0, len(history)+1)
+	for _, item := range history {
+		historyCanonical := canonicalMessageToResult(item)
+		historyNormalized, err := canonicalMessageToNormalized(item)
+		if err != nil {
+			return OperationEnvelope{}, err
+		}
+		canonicals = append(canonicals, historyCanonical)
+		normalizedBatch = append(normalizedBatch, historyNormalized)
+	}
+	canonicals = append(canonicals, *canonical)
+	normalizedBatch = append(normalizedBatch, normalized)
+	return buildChatReceiverBatchEffectEnvelope(in, canonicals, normalizedBatch, receiverUserID, attachFacts)
+}
+
+func buildChatReceiverBatchEffectEnvelope(in *msg.TLMsgSendMessage, canonicals []repository.CanonicalMessageResult, normalizedBatch []normalizedOutboxMessage, receiverUserID int64, attachFacts []payload.UpdateFactV1) (OperationEnvelope, error) {
+	if len(canonicals) == 0 || len(canonicals) != len(normalizedBatch) {
+		return OperationEnvelope{}, msg.ErrMsgStorage
+	}
+	messages := make([]payload.NewMessageFactV1, 0, len(canonicals))
+	canonicalMessageIDs := make([]int64, 0, len(canonicals))
+	var firstCanonical *repository.CanonicalMessageResult
+	for i := range canonicals {
+		canonical := &canonicals[i]
+		if firstCanonical == nil {
+			firstCanonical = canonical
+		}
+		messageFact, err := newMessageFactForOperation(normalizedBatch[i], receiverUserID, in.PeerId, canonical, batchSideEffects{})
+		if err != nil {
+			return OperationEnvelope{}, err
+		}
+		messages = append(messages, messageFact)
+		canonicalMessageIDs = append(canonicalMessageIDs, canonical.CanonicalMessageID)
+	}
+	body, hashBytes, err := buildMessageOperationBatchV1Payload(messages, attachFacts)
+	if err != nil {
+		return OperationEnvelope{}, err
+	}
+	operationID := payload.ReceiverBatchOperationID(receiverUserID, canonicalMessageIDs)
+	return OperationEnvelope{
+		UserID:               receiverUserID,
+		OperationID:          operationID,
+		OpType:               payload.OpTypeSendMessage,
+		OperationKind:        payload.OperationKindSendMessageBatch,
+		ActorUserID:          in.UserId,
+		PeerType:             payload.PeerTypeChat,
+		PeerID:               in.PeerId,
+		CanonicalMessageID:   &firstCanonical.CanonicalMessageID,
+		CanonicalPeerSeq:     &firstCanonical.PeerSeq,
+		CanonicalDate:        int64Ptr(firstCanonical.MessageDate),
+		PayloadSchemaVersion: payload.MessageOperationSchemaVersionBatchV1,
+		PayloadCodec:         payload.PayloadCodecJSON,
+		Payload:              body,
+		PayloadHash:          hashBytes,
+		DeliveryPolicy:       DeliveryPolicyDurableAsync,
+	}, nil
+}
+
+func canonicalMessageToResult(item repository.CanonicalMessage) repository.CanonicalMessageResult {
+	return repository.CanonicalMessageResult{
+		CanonicalMessageID:           item.CanonicalMessageID,
+		PeerSeq:                      item.PeerSeq,
+		MessageDate:                  item.MessageDate,
+		EntitiesPayloadSchemaVersion: item.EntitiesPayloadSchemaVersion,
+		EntitiesPayload:              item.EntitiesPayload,
+		MediaRefSchemaVersion:        item.MediaRefSchemaVersion,
+		MediaRefPayload:              item.MediaRefPayload,
+		MessageAttrsSchemaVersion:    item.MessageAttrsSchemaVersion,
+		MessageAttrsPayload:          item.MessageAttrsPayload,
+		ForwardRefSchemaVersion:      item.ForwardRefSchemaVersion,
+		ForwardRefPayload:            item.ForwardRefPayload,
+		ServiceActionSchemaVersion:   item.ServiceActionSchemaVersion,
+		ServiceActionPayload:         item.ServiceActionPayload,
+	}
+}
+
+func canonicalMessageToNormalized(item repository.CanonicalMessage) (normalizedOutboxMessage, error) {
+	normalized := normalizedOutboxMessage{
+		SchemaVersion: NormalizedOutboxSchemaVersionV1,
+		FromUserID:    item.FromUserID,
+		PeerType:      item.PeerType,
+		PeerID:        item.PeerID,
+		Out:           true,
+		Date:          item.MessageDate,
+		MessageText:   item.MessageText,
+	}
+	if len(item.EntitiesPayload) > 0 {
+		var entities []payload.MessageEntityV1
+		if err := json.Unmarshal(item.EntitiesPayload, &entities); err != nil {
+			return normalizedOutboxMessage{}, fmt.Errorf("%w: decode canonical message entities canonical_message_id=%d: %v", msg.ErrMsgStorage, item.CanonicalMessageID, err)
+		}
+		normalized.Entities = entities
+	}
+	if len(item.MediaRefPayload) > 0 {
+		var media payload.MediaRefV1
+		if err := json.Unmarshal(item.MediaRefPayload, &media); err != nil {
+			return normalizedOutboxMessage{}, fmt.Errorf("%w: decode canonical message media canonical_message_id=%d: %v", msg.ErrMsgStorage, item.CanonicalMessageID, err)
+		}
+		normalized.MediaRef = &media
+	}
+	if len(item.MessageAttrsPayload) > 0 {
+		var attrs payload.MessageAttrsV1
+		if err := json.Unmarshal(item.MessageAttrsPayload, &attrs); err != nil {
+			return normalizedOutboxMessage{}, fmt.Errorf("%w: decode canonical message attrs canonical_message_id=%d: %v", msg.ErrMsgStorage, item.CanonicalMessageID, err)
+		}
+		normalized.Attrs = attrs
+	}
+	if len(item.ForwardRefPayload) > 0 {
+		var forward payload.ForwardRefV1
+		if err := json.Unmarshal(item.ForwardRefPayload, &forward); err != nil {
+			return normalizedOutboxMessage{}, fmt.Errorf("%w: decode canonical message forward canonical_message_id=%d: %v", msg.ErrMsgStorage, item.CanonicalMessageID, err)
+		}
+		normalized.ForwardRef = &forward
+	}
+	if len(item.ServiceActionPayload) > 0 {
+		var serviceAction payload.ServiceActionRefV1
+		if err := json.Unmarshal(item.ServiceActionPayload, &serviceAction); err != nil {
+			return normalizedOutboxMessage{}, fmt.Errorf("%w: decode canonical message service action canonical_message_id=%d: %v", msg.ErrMsgStorage, item.CanonicalMessageID, err)
+		}
+		normalized.ServiceAction = &serviceAction
+	}
+	return normalized, nil
 }
 
 func buildChatReceiverEffectEnvelope(in *msg.TLMsgSendMessage, canonical *repository.CanonicalMessageResult, normalized normalizedOutboxMessage, receiverUserID int64, attachFacts []payload.UpdateFactV1) (OperationEnvelope, error) {

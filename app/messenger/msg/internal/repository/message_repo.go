@@ -297,7 +297,7 @@ func (r *Repository) ListHistoryMessages(ctx context.Context, in ListHistoryMess
 	bounds := in.ResolvedCursorBounds
 	if !in.CursorsResolved {
 		var err error
-		bounds, err = r.ResolveHistoryCursorIDs(ctx, in.UserID, in.PeerType, in.PeerID, in.OffsetID, in.MaxID, in.MinID)
+		bounds, err = r.ResolveHistoryCursorIDs(ctx, in.UserID, in.PeerType, in.PeerID, 0, in.MaxID, in.MinID)
 		if err != nil {
 			return nil, err
 		}
@@ -307,12 +307,7 @@ func (r *Repository) ListHistoryMessages(ctx context.Context, in ListHistoryMess
 	}
 
 	limit := pagination.NormalizeLimit(in.Limit)
-	offset, err := r.historySliceOffset(ctx, in, bounds.OffsetPeerSeq)
-	if err != nil {
-		return nil, err
-	}
-
-	rows, err := r.selectHistoryMessagesSlice(ctx, in, offset, limit)
+	rows, err := r.selectHistoryMessagesByUserMessageID(ctx, in, limit)
 	if err != nil {
 		return nil, storageError("list history messages", err)
 	}
@@ -326,6 +321,57 @@ func (r *Repository) ListHistoryMessages(ctx context.Context, in ListHistoryMess
 			return nil, err
 		}
 		out = append(out, item)
+	}
+	return out, nil
+}
+
+func (r *Repository) selectHistoryMessagesByUserMessageID(ctx context.Context, in ListHistoryMessagesInput, limit int32) ([]model.HistoryMessageRow, error) {
+	offsetID := int64(in.OffsetID)
+	if offsetID <= 0 {
+		offsetID = math.MaxInt32
+	}
+
+	switch historyLoadType(in.AddOffset, limit) {
+	case loadTypeHistoryBackward:
+		return r.selectHistoryMessagesBackwardByUserMessageID(ctx, in, offsetID, limit+in.AddOffset)
+	case loadTypeHistoryAround:
+		forwardRows, err := r.selectHistoryMessagesForwardByUserMessageID(ctx, in, offsetID, -in.AddOffset)
+		if err != nil {
+			return nil, err
+		}
+		reverseHistoryRows(forwardRows)
+		backwardRows, err := r.selectHistoryMessagesBackwardByUserMessageID(ctx, in, offsetID, limit+in.AddOffset)
+		if err != nil {
+			return nil, err
+		}
+		return append(forwardRows, backwardRows...), nil
+	default:
+		rows, err := r.selectHistoryMessagesForwardByUserMessageID(ctx, in, offsetID, -in.AddOffset)
+		if err != nil {
+			return nil, err
+		}
+		reverseHistoryRows(rows)
+		return rows, nil
+	}
+}
+
+func (r *Repository) ListRecentCanonicalMessagesBeforePeerSeq(ctx context.Context, peerType int32, peerID int64, beforePeerSeq int64, limit int32) ([]CanonicalMessage, error) {
+	if _, err := r.requireDB(); err != nil {
+		return nil, err
+	}
+	if peerType <= 0 || peerID <= 0 || beforePeerSeq <= 1 || limit <= 0 {
+		return []CanonicalMessage{}, nil
+	}
+	rows, err := r.models.CanonicalMessagesModel.SelectRecentBeforePeerSeq(ctx, peerType, peerID, beforePeerSeq, MessageStatusLive, limit)
+	if err != nil {
+		return nil, storageError("list recent canonical messages before peer seq", err)
+	}
+	out := make([]CanonicalMessage, 0, len(rows))
+	for i := len(rows) - 1; i >= 0; i-- {
+		item := canonicalMessageModelToDTO(&rows[i])
+		if item != nil {
+			out = append(out, *item)
+		}
 	}
 	return out, nil
 }
@@ -527,6 +573,42 @@ func (r *Repository) historySliceOffset(ctx context.Context, in ListHistoryMessa
 
 func (r *Repository) selectHistoryMessagesSlice(ctx context.Context, in ListHistoryMessagesInput, offset int64, limit int32) ([]model.HistoryMessageRow, error) {
 	return r.models.CanonicalQueries.SelectHistoryMessagesPage(ctx, in.UserID, in.PeerType, in.PeerID, MessageStatusLive, offset, limit)
+}
+
+const (
+	loadTypeHistoryBackward = iota
+	loadTypeHistoryAround
+	loadTypeHistoryForward
+)
+
+func historyLoadType(addOffset int32, limit int32) int {
+	if addOffset >= 0 {
+		return loadTypeHistoryBackward
+	}
+	if addOffset+limit > 0 {
+		return loadTypeHistoryAround
+	}
+	return loadTypeHistoryForward
+}
+
+func (r *Repository) selectHistoryMessagesBackwardByUserMessageID(ctx context.Context, in ListHistoryMessagesInput, offsetID int64, limit int32) ([]model.HistoryMessageRow, error) {
+	if limit <= 0 {
+		return []model.HistoryMessageRow{}, nil
+	}
+	return r.models.CanonicalQueries.SelectHistoryMessagesBackwardByUserMessageID(ctx, in.UserID, in.PeerType, in.PeerID, MessageStatusLive, offsetID, limit)
+}
+
+func (r *Repository) selectHistoryMessagesForwardByUserMessageID(ctx context.Context, in ListHistoryMessagesInput, offsetID int64, limit int32) ([]model.HistoryMessageRow, error) {
+	if limit <= 0 {
+		return []model.HistoryMessageRow{}, nil
+	}
+	return r.models.CanonicalQueries.SelectHistoryMessagesForwardByUserMessageID(ctx, in.UserID, in.PeerType, in.PeerID, MessageStatusLive, offsetID, limit)
+}
+
+func reverseHistoryRows(rows []model.HistoryMessageRow) {
+	for i, j := 0, len(rows)-1; i < j; i, j = i+1, j-1 {
+		rows[i], rows[j] = rows[j], rows[i]
+	}
 }
 
 func (r *Repository) historyMessageRowToMessage(ctx context.Context, userID int64, peerType int32, peerID int64, row model.HistoryMessageRow) (HistoryMessage, error) {

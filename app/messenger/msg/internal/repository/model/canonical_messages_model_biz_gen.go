@@ -31,6 +31,8 @@ type bizCanonicalMessagesModel interface {
 	Insert(ctx context.Context, data *CanonicalMessages) (lastInsertId, rowsAffected int64, err error)
 	SelectByCanonicalMessageId(ctx context.Context, canonicalMessageId int64) (*CanonicalMessages, error)
 	SelectByPeerSeq(ctx context.Context, peerType int32, peerId int64, peerSeq int64) (*CanonicalMessages, error)
+	SelectRecentBeforePeerSeq(ctx context.Context, peerType int32, peerId int64, peerSeq int64, messageStatus int32, limit int32) ([]CanonicalMessages, error)
+	SelectRecentBeforePeerSeqWithCB(ctx context.Context, peerType int32, peerId int64, peerSeq int64, messageStatus int32, limit int32, cb func(sz, i int, v *CanonicalMessages)) ([]CanonicalMessages, error)
 	UpdateMessageEdit(ctx context.Context, messageText string, editVersion int32, editDate int64, canonicalMessageId int64, oldEditVersion int32) (rowsAffected int64, err error)
 }
 
@@ -38,6 +40,7 @@ type CanonicalMessagesTxModel interface {
 	Insert(data *CanonicalMessages) (lastInsertId, rowsAffected int64, err error)
 	SelectByCanonicalMessageId(canonicalMessageId int64) (*CanonicalMessages, error)
 	SelectByPeerSeq(peerType int32, peerId int64, peerSeq int64) (*CanonicalMessages, error)
+	SelectRecentBeforePeerSeq(peerType int32, peerId int64, peerSeq int64, messageStatus int32, limit int32) ([]CanonicalMessages, error)
 	UpdateMessageEdit(messageText string, editVersion int32, editDate int64, canonicalMessageId int64, oldEditVersion int32) (rowsAffected int64, err error)
 }
 
@@ -204,6 +207,85 @@ func (m *defaultCanonicalMessagesTxModel) SelectByPeerSeq(peerType int32, peerId
 		return
 	}
 	rValue = do
+
+	return
+}
+
+// SelectRecentBeforePeerSeq
+// select canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, message_attrs_schema_version, message_attrs_payload, forward_ref_schema_version, forward_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version from canonical_messages where peer_type = :peer_type and peer_id = :peer_id and peer_seq < :peer_seq and message_status = :message_status order by peer_seq desc limit :limit
+func (m *defaultCanonicalMessagesModel) SelectRecentBeforePeerSeq(ctx context.Context, peerType int32, peerId int64, peerSeq int64, messageStatus int32, limit int32) (rList []CanonicalMessages, err error) {
+	var (
+		query  = "select canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, message_attrs_schema_version, message_attrs_payload, forward_ref_schema_version, forward_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version from canonical_messages where peer_type = ? and peer_id = ? and peer_seq < ? and message_status = ? order by peer_seq desc limit ?"
+		values []CanonicalMessages
+	)
+	err = m.db.QueryRowsPartial(ctx, &values, query, peerType, peerId, peerSeq, messageStatus, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []CanonicalMessages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("canonical_messages.SelectRecentBeforePeerSeq: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectRecentBeforePeerSeq
+// select canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, message_attrs_schema_version, message_attrs_payload, forward_ref_schema_version, forward_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version from canonical_messages where peer_type = :peer_type and peer_id = :peer_id and peer_seq < :peer_seq and message_status = :message_status order by peer_seq desc limit :limit
+func (m *defaultCanonicalMessagesTxModel) SelectRecentBeforePeerSeq(peerType int32, peerId int64, peerSeq int64, messageStatus int32, limit int32) (rList []CanonicalMessages, err error) {
+	var (
+		query  = "select canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, message_attrs_schema_version, message_attrs_payload, forward_ref_schema_version, forward_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version from canonical_messages where peer_type = ? and peer_id = ? and peer_seq < ? and message_status = ? order by peer_seq desc limit ?"
+		values []CanonicalMessages
+	)
+	err = m.tx.QueryRowsPartial(&values, query, peerType, peerId, peerSeq, messageStatus, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []CanonicalMessages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("canonical_messages.SelectRecentBeforePeerSeq: %w", err)
+		return
+	}
+
+	rList = values
+
+	return
+}
+
+// SelectRecentBeforePeerSeqWithCB
+// select canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, message_attrs_schema_version, message_attrs_payload, forward_ref_schema_version, forward_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version from canonical_messages where peer_type = :peer_type and peer_id = :peer_id and peer_seq < :peer_seq and message_status = :message_status order by peer_seq desc limit :limit
+func (m *defaultCanonicalMessagesModel) SelectRecentBeforePeerSeqWithCB(ctx context.Context, peerType int32, peerId int64, peerSeq int64, messageStatus int32, limit int32, cb func(sz, i int, v *CanonicalMessages)) (rList []CanonicalMessages, err error) {
+	var (
+		query  = "select canonical_message_id, peer_type, peer_id, peer_seq, from_user_id, message_kind, message_text, entities_payload_schema_version, entities_payload, media_ref_schema_version, media_ref_payload, message_attrs_schema_version, message_attrs_payload, forward_ref_schema_version, forward_ref_payload, service_action_schema_version, service_action_payload, message_status, edit_version, `date`, storage_schema_version from canonical_messages where peer_type = ? and peer_id = ? and peer_seq < ? and message_status = ? order by peer_seq desc limit ?"
+		values []CanonicalMessages
+	)
+	err = m.db.QueryRowsPartial(ctx, &values, query, peerType, peerId, peerSeq, messageStatus, limit)
+
+	if err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			rList = []CanonicalMessages{}
+			err = nil
+			return
+		}
+		err = fmt.Errorf("canonical_messages.SelectRecentBeforePeerSeqWithCB: %w", err)
+		return
+	}
+
+	rList = values
+
+	if cb != nil {
+		sz := len(rList)
+		for i := 0; i < sz; i++ {
+			cb(sz, i, &rList[i])
+		}
+	}
 
 	return
 }

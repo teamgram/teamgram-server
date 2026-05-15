@@ -276,6 +276,7 @@ type MessageRepository interface {
 	CreateOrGetByClientRandom(ctx context.Context, in CreateCanonicalMessageInput) (*CanonicalMessageResult, error)
 	CreateOrGetCanonicalBatchByClientRandom(ctx context.Context, in CreateCanonicalBatchInput) (*CanonicalBatchResult, error)
 	GetCanonicalMessageByPeerSeq(ctx context.Context, userID int64, peerType int32, peerID int64, peerSeq int64) (*CanonicalMessage, error)
+	ListRecentCanonicalMessagesBeforePeerSeq(ctx context.Context, peerType int32, peerID int64, beforePeerSeq int64, limit int32) ([]CanonicalMessage, error)
 	EditCanonicalMessage(ctx context.Context, in EditCanonicalMessageInput) (*EditMessageResult, error)
 	ListHistoryMessages(ctx context.Context, in ListHistoryMessagesInput) ([]HistoryMessage, error)
 	GetUserMessage(ctx context.Context, userID int64, userMessageID int64) (*UserMessageBox, error)

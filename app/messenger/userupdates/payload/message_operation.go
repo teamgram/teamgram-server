@@ -277,6 +277,7 @@ type ChatParticipantsChangedFactV1 struct {
 	ChatID        int64                   `json:"chat_id"`
 	ActorUserID   int64                   `json:"actor_user_id"`
 	Version       int32                   `json:"version"`
+	FwdLimit      int32                   `json:"fwd_limit,omitempty"`
 	Participants  []ChatParticipantFactV1 `json:"participants"`
 }
 

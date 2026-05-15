@@ -57,6 +57,9 @@ func (c *ChatsCore) MessagesAddChatUser(in *tg.TLMessagesAddChatUser) (*tg.Messa
 		c.Logger.Errorf("messages.addChatUser - malformed mutable chat: self_user_id=%d chat_id=%d invitee_user_id=%d err=%v", selfID, in.ChatId, user.PeerId, err)
 		return nil, tg.ErrInternalServerError
 	}
+	if in.FwdLimit > 0 {
+		participantsFact.FwdLimit = in.FwdLimit
+	}
 	attachFact, err := payload.WrapFact(payload.FactKindChatParticipantsChanged, participantsFact)
 	if err != nil {
 		c.Logger.Errorf("messages.addChatUser - wrap chat participants fact failed: self_user_id=%d chat_id=%d invitee_user_id=%d err=%v", selfID, in.ChatId, user.PeerId, err)
