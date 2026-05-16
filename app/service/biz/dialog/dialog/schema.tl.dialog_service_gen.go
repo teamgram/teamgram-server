@@ -584,308 +584,6 @@ func (m *TLDialogGetDialogUnreadMarkList) Decode(d *bin.Decoder) (err error) {
 	}
 }
 
-// TLDialogGetDialogsByOffsetDate <--
-type TLDialogGetDialogsByOffsetDate struct {
-	ClazzID       uint32       `json:"_id"`
-	UserId        int64        `json:"user_id"`
-	ExcludePinned tg.BoolClazz `json:"exclude_pinned"`
-	OffsetDate    int32        `json:"offset_date"`
-	Limit         int32        `json:"limit"`
-}
-
-func (m *TLDialogGetDialogsByOffsetDate) String() string {
-	return iface.DebugStringWithName(ClazzName_dialog_getDialogsByOffsetDate, m)
-}
-
-// Encode <--
-func (m *TLDialogGetDialogsByOffsetDate) Encode(x *bin.Encoder, layer int32) error {
-	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogsByOffsetDate, int(layer)); clazzId {
-	case 0x9d7e8604:
-		x.PutClazzID(0x9d7e8604)
-
-		x.PutInt64(m.UserId)
-		if m.ExcludePinned == nil {
-			return fmt.Errorf("unable to encode dialog_getDialogsByOffsetDate#0x9d7e8604: field exclude_pinned is nil")
-		}
-		if err := m.ExcludePinned.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to encode dialog_getDialogsByOffsetDate#0x9d7e8604: field exclude_pinned: %w", err)
-		}
-		x.PutInt32(m.OffsetDate)
-		x.PutInt32(m.Limit)
-
-		return nil
-	default:
-		return fmt.Errorf("unable to encode dialog_getDialogsByOffsetDate: unsupported layer %d", layer)
-	}
-}
-
-// Decode <--
-func (m *TLDialogGetDialogsByOffsetDate) Decode(d *bin.Decoder) (err error) {
-	if m.ClazzID == 0 {
-		m.ClazzID, err = d.ClazzID()
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getDialogsByOffsetDate: constructor: %w", err)
-		}
-	}
-	switch m.ClazzID {
-	case 0x9d7e8604:
-		m.UserId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getDialogsByOffsetDate#0x9d7e8604: field user_id: %w", err)
-		}
-
-		m.ExcludePinned, err = tg.DecodeBoolClazz(d)
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getDialogsByOffsetDate#0x9d7e8604: field exclude_pinned: %w", err)
-		}
-
-		m.OffsetDate, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getDialogsByOffsetDate#0x9d7e8604: field offset_date: %w", err)
-		}
-		m.Limit, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getDialogsByOffsetDate#0x9d7e8604: field limit: %w", err)
-		}
-
-		return nil
-	default:
-		return fmt.Errorf("unable to decode dialog_getDialogsByOffsetDate: invalid constructor %x", m.ClazzID)
-	}
-}
-
-// TLDialogGetDialogs <--
-type TLDialogGetDialogs struct {
-	ClazzID       uint32       `json:"_id"`
-	UserId        int64        `json:"user_id"`
-	ExcludePinned tg.BoolClazz `json:"exclude_pinned"`
-	FolderId      int32        `json:"folder_id"`
-}
-
-func (m *TLDialogGetDialogs) String() string {
-	return iface.DebugStringWithName(ClazzName_dialog_getDialogs, m)
-}
-
-// Encode <--
-func (m *TLDialogGetDialogs) Encode(x *bin.Encoder, layer int32) error {
-	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogs, int(layer)); clazzId {
-	case 0x860b1e16:
-		x.PutClazzID(0x860b1e16)
-
-		x.PutInt64(m.UserId)
-		if m.ExcludePinned == nil {
-			return fmt.Errorf("unable to encode dialog_getDialogs#0x860b1e16: field exclude_pinned is nil")
-		}
-		if err := m.ExcludePinned.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to encode dialog_getDialogs#0x860b1e16: field exclude_pinned: %w", err)
-		}
-		x.PutInt32(m.FolderId)
-
-		return nil
-	default:
-		return fmt.Errorf("unable to encode dialog_getDialogs: unsupported layer %d", layer)
-	}
-}
-
-// Decode <--
-func (m *TLDialogGetDialogs) Decode(d *bin.Decoder) (err error) {
-	if m.ClazzID == 0 {
-		m.ClazzID, err = d.ClazzID()
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getDialogs: constructor: %w", err)
-		}
-	}
-	switch m.ClazzID {
-	case 0x860b1e16:
-		m.UserId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getDialogs#0x860b1e16: field user_id: %w", err)
-		}
-
-		m.ExcludePinned, err = tg.DecodeBoolClazz(d)
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getDialogs#0x860b1e16: field exclude_pinned: %w", err)
-		}
-
-		m.FolderId, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getDialogs#0x860b1e16: field folder_id: %w", err)
-		}
-
-		return nil
-	default:
-		return fmt.Errorf("unable to decode dialog_getDialogs: invalid constructor %x", m.ClazzID)
-	}
-}
-
-// TLDialogGetDialogsByIdList <--
-type TLDialogGetDialogsByIdList struct {
-	ClazzID uint32  `json:"_id"`
-	UserId  int64   `json:"user_id"`
-	IdList  []int64 `json:"id_list"`
-}
-
-func (m *TLDialogGetDialogsByIdList) String() string {
-	return iface.DebugStringWithName(ClazzName_dialog_getDialogsByIdList, m)
-}
-
-// Encode <--
-func (m *TLDialogGetDialogsByIdList) Encode(x *bin.Encoder, layer int32) error {
-	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogsByIdList, int(layer)); clazzId {
-	case 0xad258871:
-		x.PutClazzID(0xad258871)
-
-		x.PutInt64(m.UserId)
-
-		iface.EncodeInt64List(x, m.IdList)
-
-		return nil
-	default:
-		return fmt.Errorf("unable to encode dialog_getDialogsByIdList: unsupported layer %d", layer)
-	}
-}
-
-// Decode <--
-func (m *TLDialogGetDialogsByIdList) Decode(d *bin.Decoder) (err error) {
-	if m.ClazzID == 0 {
-		m.ClazzID, err = d.ClazzID()
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getDialogsByIdList: constructor: %w", err)
-		}
-	}
-	switch m.ClazzID {
-	case 0xad258871:
-		m.UserId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getDialogsByIdList#0xad258871: field user_id: %w", err)
-		}
-
-		m.IdList, err = iface.DecodeInt64List(d)
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getDialogsByIdList#0xad258871: field id_list: %w", err)
-		}
-
-		return nil
-	default:
-		return fmt.Errorf("unable to decode dialog_getDialogsByIdList: invalid constructor %x", m.ClazzID)
-	}
-}
-
-// TLDialogGetDialogsCount <--
-type TLDialogGetDialogsCount struct {
-	ClazzID       uint32       `json:"_id"`
-	UserId        int64        `json:"user_id"`
-	ExcludePinned tg.BoolClazz `json:"exclude_pinned"`
-	FolderId      int32        `json:"folder_id"`
-}
-
-func (m *TLDialogGetDialogsCount) String() string {
-	return iface.DebugStringWithName(ClazzName_dialog_getDialogsCount, m)
-}
-
-// Encode <--
-func (m *TLDialogGetDialogsCount) Encode(x *bin.Encoder, layer int32) error {
-	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogsCount, int(layer)); clazzId {
-	case 0xe039b465:
-		x.PutClazzID(0xe039b465)
-
-		x.PutInt64(m.UserId)
-		if m.ExcludePinned == nil {
-			return fmt.Errorf("unable to encode dialog_getDialogsCount#0xe039b465: field exclude_pinned is nil")
-		}
-		if err := m.ExcludePinned.Encode(x, layer); err != nil {
-			return fmt.Errorf("unable to encode dialog_getDialogsCount#0xe039b465: field exclude_pinned: %w", err)
-		}
-		x.PutInt32(m.FolderId)
-
-		return nil
-	default:
-		return fmt.Errorf("unable to encode dialog_getDialogsCount: unsupported layer %d", layer)
-	}
-}
-
-// Decode <--
-func (m *TLDialogGetDialogsCount) Decode(d *bin.Decoder) (err error) {
-	if m.ClazzID == 0 {
-		m.ClazzID, err = d.ClazzID()
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getDialogsCount: constructor: %w", err)
-		}
-	}
-	switch m.ClazzID {
-	case 0xe039b465:
-		m.UserId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getDialogsCount#0xe039b465: field user_id: %w", err)
-		}
-
-		m.ExcludePinned, err = tg.DecodeBoolClazz(d)
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getDialogsCount#0xe039b465: field exclude_pinned: %w", err)
-		}
-
-		m.FolderId, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getDialogsCount#0xe039b465: field folder_id: %w", err)
-		}
-
-		return nil
-	default:
-		return fmt.Errorf("unable to decode dialog_getDialogsCount: invalid constructor %x", m.ClazzID)
-	}
-}
-
-// TLDialogGetPinnedDialogs <--
-type TLDialogGetPinnedDialogs struct {
-	ClazzID  uint32 `json:"_id"`
-	UserId   int64  `json:"user_id"`
-	FolderId int32  `json:"folder_id"`
-}
-
-func (m *TLDialogGetPinnedDialogs) String() string {
-	return iface.DebugStringWithName(ClazzName_dialog_getPinnedDialogs, m)
-}
-
-// Encode <--
-func (m *TLDialogGetPinnedDialogs) Encode(x *bin.Encoder, layer int32) error {
-	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getPinnedDialogs, int(layer)); clazzId {
-	case 0xa8c21bb5:
-		x.PutClazzID(0xa8c21bb5)
-
-		x.PutInt64(m.UserId)
-		x.PutInt32(m.FolderId)
-
-		return nil
-	default:
-		return fmt.Errorf("unable to encode dialog_getPinnedDialogs: unsupported layer %d", layer)
-	}
-}
-
-// Decode <--
-func (m *TLDialogGetPinnedDialogs) Decode(d *bin.Decoder) (err error) {
-	if m.ClazzID == 0 {
-		m.ClazzID, err = d.ClazzID()
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getPinnedDialogs: constructor: %w", err)
-		}
-	}
-	switch m.ClazzID {
-	case 0xa8c21bb5:
-		m.UserId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getPinnedDialogs#0xa8c21bb5: field user_id: %w", err)
-		}
-		m.FolderId, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getPinnedDialogs#0xa8c21bb5: field folder_id: %w", err)
-		}
-
-		return nil
-	default:
-		return fmt.Errorf("unable to decode dialog_getPinnedDialogs: invalid constructor %x", m.ClazzID)
-	}
-}
-
 // TLDialogReorderPinnedDialogs <--
 type TLDialogReorderPinnedDialogs struct {
 	ClazzID             uint32       `json:"_id"`
@@ -975,63 +673,6 @@ func (m *TLDialogReorderPinnedDialogs) Decode(d *bin.Decoder) (err error) {
 		return nil
 	default:
 		return fmt.Errorf("unable to decode dialog_reorderPinnedDialogs: invalid constructor %x", m.ClazzID)
-	}
-}
-
-// TLDialogGetDialogById <--
-type TLDialogGetDialogById struct {
-	ClazzID  uint32 `json:"_id"`
-	UserId   int64  `json:"user_id"`
-	PeerType int32  `json:"peer_type"`
-	PeerId   int64  `json:"peer_id"`
-}
-
-func (m *TLDialogGetDialogById) String() string {
-	return iface.DebugStringWithName(ClazzName_dialog_getDialogById, m)
-}
-
-// Encode <--
-func (m *TLDialogGetDialogById) Encode(x *bin.Encoder, layer int32) error {
-	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getDialogById, int(layer)); clazzId {
-	case 0xa15f3bf5:
-		x.PutClazzID(0xa15f3bf5)
-
-		x.PutInt64(m.UserId)
-		x.PutInt32(m.PeerType)
-		x.PutInt64(m.PeerId)
-
-		return nil
-	default:
-		return fmt.Errorf("unable to encode dialog_getDialogById: unsupported layer %d", layer)
-	}
-}
-
-// Decode <--
-func (m *TLDialogGetDialogById) Decode(d *bin.Decoder) (err error) {
-	if m.ClazzID == 0 {
-		m.ClazzID, err = d.ClazzID()
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getDialogById: constructor: %w", err)
-		}
-	}
-	switch m.ClazzID {
-	case 0xa15f3bf5:
-		m.UserId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getDialogById#0xa15f3bf5: field user_id: %w", err)
-		}
-		m.PeerType, err = d.Int32()
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getDialogById#0xa15f3bf5: field peer_type: %w", err)
-		}
-		m.PeerId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getDialogById#0xa15f3bf5: field peer_id: %w", err)
-		}
-
-		return nil
-	default:
-		return fmt.Errorf("unable to decode dialog_getDialogById: invalid constructor %x", m.ClazzID)
 	}
 }
 
@@ -2296,88 +1937,6 @@ func (m *TLDialogSetHistoryTTL) Decode(d *bin.Decoder) (err error) {
 	}
 }
 
-// TLDialogGetMyDialogsData <--
-type TLDialogGetMyDialogsData struct {
-	ClazzID uint32 `json:"_id"`
-	UserId  int64  `json:"user_id"`
-	User    bool   `json:"user"`
-	Chat    bool   `json:"chat"`
-	Channel bool   `json:"channel"`
-}
-
-func (m *TLDialogGetMyDialogsData) String() string {
-	return iface.DebugStringWithName(ClazzName_dialog_getMyDialogsData, m)
-}
-
-// Encode <--
-func (m *TLDialogGetMyDialogsData) Encode(x *bin.Encoder, layer int32) error {
-	switch clazzId := iface.GetClazzIDByName(ClazzName_dialog_getMyDialogsData, int(layer)); clazzId {
-	case 0x7ee08f03:
-		x.PutClazzID(0x7ee08f03)
-
-		// set flags
-		var getFlags = func() uint32 {
-			var flags uint32 = 0
-
-			if m.User == true {
-				flags |= 1 << 0
-			}
-			if m.Chat == true {
-				flags |= 1 << 1
-			}
-			if m.Channel == true {
-				flags |= 1 << 2
-			}
-
-			return flags
-		}
-
-		// set flags
-		var flags = getFlags()
-		x.PutUint32(flags)
-		x.PutInt64(m.UserId)
-
-		return nil
-	default:
-		return fmt.Errorf("unable to encode dialog_getMyDialogsData: unsupported layer %d", layer)
-	}
-}
-
-// Decode <--
-func (m *TLDialogGetMyDialogsData) Decode(d *bin.Decoder) (err error) {
-	if m.ClazzID == 0 {
-		m.ClazzID, err = d.ClazzID()
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getMyDialogsData: constructor: %w", err)
-		}
-	}
-	switch m.ClazzID {
-	case 0x7ee08f03:
-		flags, err := d.Uint32()
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getMyDialogsData: field flags: %w", err)
-		}
-		_ = flags
-		m.UserId, err = d.Int64()
-		if err != nil {
-			return fmt.Errorf("unable to decode dialog_getMyDialogsData#0x7ee08f03: field user_id: %w", err)
-		}
-		if (flags & (1 << 0)) != 0 {
-			m.User = true
-		}
-		if (flags & (1 << 1)) != 0 {
-			m.Chat = true
-		}
-		if (flags & (1 << 2)) != 0 {
-			m.Channel = true
-		}
-
-		return nil
-	default:
-		return fmt.Errorf("unable to decode dialog_getMyDialogsData: invalid constructor %x", m.ClazzID)
-	}
-}
-
 // TLDialogGetSavedDialogs <--
 type TLDialogGetSavedDialogs struct {
 	ClazzID       uint32           `json:"_id"`
@@ -3261,30 +2820,6 @@ func (m *VectorDialogPeer) Decode(d *bin.Decoder) (err error) {
 	return err
 }
 
-// VectorDialogExt <--
-type VectorDialogExt struct {
-	Datas []DialogExtClazz `json:"_datas"`
-}
-
-func (m *VectorDialogExt) String() string {
-	data, _ := json.Marshal(m)
-	return string(data)
-}
-
-// Encode <--
-func (m *VectorDialogExt) Encode(x *bin.Encoder, layer int32) error {
-	_ = iface.EncodeObjectList(x, m.Datas, layer)
-
-	return nil
-}
-
-// Decode <--
-func (m *VectorDialogExt) Decode(d *bin.Decoder) (err error) {
-	m.Datas, err = iface.DecodeObjectList[DialogExtClazz](d)
-
-	return err
-}
-
 // VectorDialogFilterExt <--
 type VectorDialogFilterExt struct {
 	Datas []DialogFilterExtClazz `json:"_datas"`
@@ -3305,6 +2840,30 @@ func (m *VectorDialogFilterExt) Encode(x *bin.Encoder, layer int32) error {
 // Decode <--
 func (m *VectorDialogFilterExt) Decode(d *bin.Decoder) (err error) {
 	m.Datas, err = iface.DecodeObjectList[DialogFilterExtClazz](d)
+
+	return err
+}
+
+// VectorDialogExt <--
+type VectorDialogExt struct {
+	Datas []DialogExtClazz `json:"_datas"`
+}
+
+func (m *VectorDialogExt) String() string {
+	data, _ := json.Marshal(m)
+	return string(data)
+}
+
+// Encode <--
+func (m *VectorDialogExt) Encode(x *bin.Encoder, layer int32) error {
+	_ = iface.EncodeObjectList(x, m.Datas, layer)
+
+	return nil
+}
+
+// Decode <--
+func (m *VectorDialogExt) Decode(d *bin.Decoder) (err error) {
+	m.Datas, err = iface.DecodeObjectList[DialogExtClazz](d)
 
 	return err
 }
@@ -3417,13 +2976,7 @@ type RPCDialog interface {
 	DialogMarkDialogUnread(ctx context.Context, in *TLDialogMarkDialogUnread) (*tg.Bool, error)
 	DialogToggleDialogPin(ctx context.Context, in *TLDialogToggleDialogPin) (*tg.Int32, error)
 	DialogGetDialogUnreadMarkList(ctx context.Context, in *TLDialogGetDialogUnreadMarkList) (*VectorDialogPeer, error)
-	DialogGetDialogsByOffsetDate(ctx context.Context, in *TLDialogGetDialogsByOffsetDate) (*VectorDialogExt, error)
-	DialogGetDialogs(ctx context.Context, in *TLDialogGetDialogs) (*VectorDialogExt, error)
-	DialogGetDialogsByIdList(ctx context.Context, in *TLDialogGetDialogsByIdList) (*VectorDialogExt, error)
-	DialogGetDialogsCount(ctx context.Context, in *TLDialogGetDialogsCount) (*tg.Int32, error)
-	DialogGetPinnedDialogs(ctx context.Context, in *TLDialogGetPinnedDialogs) (*VectorDialogExt, error)
 	DialogReorderPinnedDialogs(ctx context.Context, in *TLDialogReorderPinnedDialogs) (*tg.Bool, error)
-	DialogGetDialogById(ctx context.Context, in *TLDialogGetDialogById) (*DialogExt, error)
 	DialogGetTopMessage(ctx context.Context, in *TLDialogGetTopMessage) (*tg.Int32, error)
 	DialogInsertOrUpdateDialog(ctx context.Context, in *TLDialogInsertOrUpdateDialog) (*tg.Bool, error)
 	DialogDeleteDialog(ctx context.Context, in *TLDialogDeleteDialog) (*tg.Bool, error)
@@ -3443,7 +2996,6 @@ type RPCDialog interface {
 	DialogGetChannelMessageReadParticipants(ctx context.Context, in *TLDialogGetChannelMessageReadParticipants) (*VectorLong, error)
 	DialogSetChatTheme(ctx context.Context, in *TLDialogSetChatTheme) (*tg.Bool, error)
 	DialogSetHistoryTTL(ctx context.Context, in *TLDialogSetHistoryTTL) (*tg.Bool, error)
-	DialogGetMyDialogsData(ctx context.Context, in *TLDialogGetMyDialogsData) (*DialogsData, error)
 	DialogGetSavedDialogs(ctx context.Context, in *TLDialogGetSavedDialogs) (*SavedDialogList, error)
 	DialogGetPinnedSavedDialogs(ctx context.Context, in *TLDialogGetPinnedSavedDialogs) (*SavedDialogList, error)
 	DialogUpsertSavedDialogFromMessage(ctx context.Context, in *TLDialogUpsertSavedDialogFromMessage) (*tg.Bool, error)

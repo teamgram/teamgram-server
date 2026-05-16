@@ -30,13 +30,7 @@ const (
 	ClazzID_dialog_markDialogUnread                  = 0x4532910e // 4532910e
 	ClazzID_dialog_toggleDialogPin                   = 0x6ad45bb4 // 6ad45bb4
 	ClazzID_dialog_getDialogUnreadMarkList           = 0xcabc38f4 // cabc38f4
-	ClazzID_dialog_getDialogsByOffsetDate            = 0x9d7e8604 // 9d7e8604
-	ClazzID_dialog_getDialogs                        = 0x860b1e16 // 860b1e16
-	ClazzID_dialog_getDialogsByIdList                = 0xad258871 // ad258871
-	ClazzID_dialog_getDialogsCount                   = 0xe039b465 // e039b465
-	ClazzID_dialog_getPinnedDialogs                  = 0xa8c21bb5 // a8c21bb5
 	ClazzID_dialog_reorderPinnedDialogs              = 0x3aff2348 // 3aff2348
-	ClazzID_dialog_getDialogById                     = 0xa15f3bf5 // a15f3bf5
 	ClazzID_dialog_getTopMessage                     = 0xfa7db272 // fa7db272
 	ClazzID_dialog_insertOrUpdateDialog              = 0x5d2b8822 // 5d2b8822
 	ClazzID_dialog_deleteDialog                      = 0x1b31de3  // 1b31de3
@@ -56,7 +50,6 @@ const (
 	ClazzID_dialog_getChannelMessageReadParticipants = 0x28bd4d3b // 28bd4d3b
 	ClazzID_dialog_setChatTheme                      = 0xe9aea22a // e9aea22a
 	ClazzID_dialog_setHistoryTTL                     = 0x9d9b8ac  // 9d9b8ac
-	ClazzID_dialog_getMyDialogsData                  = 0x7ee08f03 // 7ee08f03
 	ClazzID_dialog_getSavedDialogs                   = 0x38c1d668 // 38c1d668
 	ClazzID_dialog_getPinnedSavedDialogs             = 0x40a3b7e7 // 40a3b7e7
 	ClazzID_dialog_upsertSavedDialogFromMessage      = 0x9e3ab43c // 9e3ab43c

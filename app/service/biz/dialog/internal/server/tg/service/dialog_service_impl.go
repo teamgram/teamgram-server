@@ -148,86 +148,6 @@ func (s *Service) DialogGetDialogUnreadMarkList(ctx context.Context, request *di
 	return r, err
 }
 
-// DialogGetDialogsByOffsetDate
-// dialog.getDialogsByOffsetDate user_id:long exclude_pinned:Bool offset_date:int limit:int = Vector<DialogExt>;
-func (s *Service) DialogGetDialogsByOffsetDate(ctx context.Context, request *dialog.TLDialogGetDialogsByOffsetDate) (*dialog.VectorDialogExt, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getDialogsByOffsetDate - request: %s", request)
-
-	r, err := c.DialogGetDialogsByOffsetDate(request)
-	if err != nil {
-		c.Logger.Errorf("dialog.getDialogsByOffsetDate - error: request: %s, err: %v", request, err)
-		return nil, err
-	}
-
-	c.Logger.Debugf("dialog.getDialogsByOffsetDate - reply: %s", r)
-	return r, err
-}
-
-// DialogGetDialogs
-// dialog.getDialogs user_id:long exclude_pinned:Bool folder_id:int = Vector<DialogExt>;
-func (s *Service) DialogGetDialogs(ctx context.Context, request *dialog.TLDialogGetDialogs) (*dialog.VectorDialogExt, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getDialogs - request: %s", request)
-
-	r, err := c.DialogGetDialogs(request)
-	if err != nil {
-		c.Logger.Errorf("dialog.getDialogs - error: request: %s, err: %v", request, err)
-		return nil, err
-	}
-
-	c.Logger.Debugf("dialog.getDialogs - reply: %s", r)
-	return r, err
-}
-
-// DialogGetDialogsByIdList
-// dialog.getDialogsByIdList user_id:long id_list:Vector<long> = Vector<DialogExt>;
-func (s *Service) DialogGetDialogsByIdList(ctx context.Context, request *dialog.TLDialogGetDialogsByIdList) (*dialog.VectorDialogExt, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getDialogsByIdList - request: %s", request)
-
-	r, err := c.DialogGetDialogsByIdList(request)
-	if err != nil {
-		c.Logger.Errorf("dialog.getDialogsByIdList - error: request: %s, err: %v", request, err)
-		return nil, err
-	}
-
-	c.Logger.Debugf("dialog.getDialogsByIdList - reply: %s", r)
-	return r, err
-}
-
-// DialogGetDialogsCount
-// dialog.getDialogsCount user_id:long exclude_pinned:Bool folder_id:int = Int32;
-func (s *Service) DialogGetDialogsCount(ctx context.Context, request *dialog.TLDialogGetDialogsCount) (*tg.Int32, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getDialogsCount - request: %s", request)
-
-	r, err := c.DialogGetDialogsCount(request)
-	if err != nil {
-		c.Logger.Errorf("dialog.getDialogsCount - error: request: %s, err: %v", request, err)
-		return nil, err
-	}
-
-	c.Logger.Debugf("dialog.getDialogsCount - reply: %s", r)
-	return r, err
-}
-
-// DialogGetPinnedDialogs
-// dialog.getPinnedDialogs  user_id:long folder_id:int = Vector<DialogExt>;
-func (s *Service) DialogGetPinnedDialogs(ctx context.Context, request *dialog.TLDialogGetPinnedDialogs) (*dialog.VectorDialogExt, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getPinnedDialogs - request: %s", request)
-
-	r, err := c.DialogGetPinnedDialogs(request)
-	if err != nil {
-		c.Logger.Errorf("dialog.getPinnedDialogs - error: request: %s, err: %v", request, err)
-		return nil, err
-	}
-
-	c.Logger.Debugf("dialog.getPinnedDialogs - reply: %s", r)
-	return r, err
-}
-
 // DialogReorderPinnedDialogs
 // dialog.reorderPinnedDialogs user_id:long force:Bool folder_id:int id_list:Vector<long> source_perm_auth_key_id:long operation_id:string outbox_id:long = Bool;
 func (s *Service) DialogReorderPinnedDialogs(ctx context.Context, request *dialog.TLDialogReorderPinnedDialogs) (*tg.Bool, error) {
@@ -241,22 +161,6 @@ func (s *Service) DialogReorderPinnedDialogs(ctx context.Context, request *dialo
 	}
 
 	c.Logger.Debugf("dialog.reorderPinnedDialogs - reply: %s", r)
-	return r, err
-}
-
-// DialogGetDialogById
-// dialog.getDialogById user_id:long peer_type:int peer_id:long = DialogExt;
-func (s *Service) DialogGetDialogById(ctx context.Context, request *dialog.TLDialogGetDialogById) (*dialog.DialogExt, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getDialogById - request: %s", request)
-
-	r, err := c.DialogGetDialogById(request)
-	if err != nil {
-		c.Logger.Errorf("dialog.getDialogById - error: request: %s, err: %v", request, err)
-		return nil, err
-	}
-
-	c.Logger.Debugf("dialog.getDialogById - reply: %s", r)
 	return r, err
 }
 
@@ -561,22 +465,6 @@ func (s *Service) DialogSetHistoryTTL(ctx context.Context, request *dialog.TLDia
 	}
 
 	c.Logger.Debugf("dialog.setHistoryTTL - reply: %s", r)
-	return r, err
-}
-
-// DialogGetMyDialogsData
-// dialog.getMyDialogsData flags:# user_id:long user:flags.0?true chat:flags.1?true channel:flags.2?true = DialogsData;
-func (s *Service) DialogGetMyDialogsData(ctx context.Context, request *dialog.TLDialogGetMyDialogsData) (*dialog.DialogsData, error) {
-	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("dialog.getMyDialogsData - request: %s", request)
-
-	r, err := c.DialogGetMyDialogsData(request)
-	if err != nil {
-		c.Logger.Errorf("dialog.getMyDialogsData - error: request: %s, err: %v", request, err)
-		return nil, err
-	}
-
-	c.Logger.Debugf("dialog.getMyDialogsData - reply: %s", r)
 	return r, err
 }
 

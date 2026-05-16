@@ -31,13 +31,7 @@ type DialogClient interface {
 	DialogMarkDialogUnread(ctx context.Context, in *dialog.TLDialogMarkDialogUnread) (*tg.Bool, error)
 	DialogToggleDialogPin(ctx context.Context, in *dialog.TLDialogToggleDialogPin) (*tg.Int32, error)
 	DialogGetDialogUnreadMarkList(ctx context.Context, in *dialog.TLDialogGetDialogUnreadMarkList) (*dialog.VectorDialogPeer, error)
-	DialogGetDialogsByOffsetDate(ctx context.Context, in *dialog.TLDialogGetDialogsByOffsetDate) (*dialog.VectorDialogExt, error)
-	DialogGetDialogs(ctx context.Context, in *dialog.TLDialogGetDialogs) (*dialog.VectorDialogExt, error)
-	DialogGetDialogsByIdList(ctx context.Context, in *dialog.TLDialogGetDialogsByIdList) (*dialog.VectorDialogExt, error)
-	DialogGetDialogsCount(ctx context.Context, in *dialog.TLDialogGetDialogsCount) (*tg.Int32, error)
-	DialogGetPinnedDialogs(ctx context.Context, in *dialog.TLDialogGetPinnedDialogs) (*dialog.VectorDialogExt, error)
 	DialogReorderPinnedDialogs(ctx context.Context, in *dialog.TLDialogReorderPinnedDialogs) (*tg.Bool, error)
-	DialogGetDialogById(ctx context.Context, in *dialog.TLDialogGetDialogById) (*dialog.DialogExt, error)
 	DialogGetTopMessage(ctx context.Context, in *dialog.TLDialogGetTopMessage) (*tg.Int32, error)
 	DialogInsertOrUpdateDialog(ctx context.Context, in *dialog.TLDialogInsertOrUpdateDialog) (*tg.Bool, error)
 	DialogDeleteDialog(ctx context.Context, in *dialog.TLDialogDeleteDialog) (*tg.Bool, error)
@@ -57,7 +51,6 @@ type DialogClient interface {
 	DialogGetChannelMessageReadParticipants(ctx context.Context, in *dialog.TLDialogGetChannelMessageReadParticipants) (*dialog.VectorLong, error)
 	DialogSetChatTheme(ctx context.Context, in *dialog.TLDialogSetChatTheme) (*tg.Bool, error)
 	DialogSetHistoryTTL(ctx context.Context, in *dialog.TLDialogSetHistoryTTL) (*tg.Bool, error)
-	DialogGetMyDialogsData(ctx context.Context, in *dialog.TLDialogGetMyDialogsData) (*dialog.DialogsData, error)
 	DialogGetSavedDialogs(ctx context.Context, in *dialog.TLDialogGetSavedDialogs) (*dialog.SavedDialogList, error)
 	DialogGetPinnedSavedDialogs(ctx context.Context, in *dialog.TLDialogGetPinnedSavedDialogs) (*dialog.SavedDialogList, error)
 	DialogUpsertSavedDialogFromMessage(ctx context.Context, in *dialog.TLDialogUpsertSavedDialogFromMessage) (*tg.Bool, error)
@@ -132,46 +125,10 @@ func (m *defaultDialogClient) DialogGetDialogUnreadMarkList(ctx context.Context,
 	return m.rpc.DialogGetDialogUnreadMarkList(ctx, in)
 }
 
-// DialogGetDialogsByOffsetDate
-// dialog.getDialogsByOffsetDate user_id:long exclude_pinned:Bool offset_date:int limit:int = Vector<DialogExt>;
-func (m *defaultDialogClient) DialogGetDialogsByOffsetDate(ctx context.Context, in *dialog.TLDialogGetDialogsByOffsetDate) (*dialog.VectorDialogExt, error) {
-	return m.rpc.DialogGetDialogsByOffsetDate(ctx, in)
-}
-
-// DialogGetDialogs
-// dialog.getDialogs user_id:long exclude_pinned:Bool folder_id:int = Vector<DialogExt>;
-func (m *defaultDialogClient) DialogGetDialogs(ctx context.Context, in *dialog.TLDialogGetDialogs) (*dialog.VectorDialogExt, error) {
-	return m.rpc.DialogGetDialogs(ctx, in)
-}
-
-// DialogGetDialogsByIdList
-// dialog.getDialogsByIdList user_id:long id_list:Vector<long> = Vector<DialogExt>;
-func (m *defaultDialogClient) DialogGetDialogsByIdList(ctx context.Context, in *dialog.TLDialogGetDialogsByIdList) (*dialog.VectorDialogExt, error) {
-	return m.rpc.DialogGetDialogsByIdList(ctx, in)
-}
-
-// DialogGetDialogsCount
-// dialog.getDialogsCount user_id:long exclude_pinned:Bool folder_id:int = Int32;
-func (m *defaultDialogClient) DialogGetDialogsCount(ctx context.Context, in *dialog.TLDialogGetDialogsCount) (*tg.Int32, error) {
-	return m.rpc.DialogGetDialogsCount(ctx, in)
-}
-
-// DialogGetPinnedDialogs
-// dialog.getPinnedDialogs  user_id:long folder_id:int = Vector<DialogExt>;
-func (m *defaultDialogClient) DialogGetPinnedDialogs(ctx context.Context, in *dialog.TLDialogGetPinnedDialogs) (*dialog.VectorDialogExt, error) {
-	return m.rpc.DialogGetPinnedDialogs(ctx, in)
-}
-
 // DialogReorderPinnedDialogs
 // dialog.reorderPinnedDialogs user_id:long force:Bool folder_id:int id_list:Vector<long> source_perm_auth_key_id:long operation_id:string outbox_id:long = Bool;
 func (m *defaultDialogClient) DialogReorderPinnedDialogs(ctx context.Context, in *dialog.TLDialogReorderPinnedDialogs) (*tg.Bool, error) {
 	return m.rpc.DialogReorderPinnedDialogs(ctx, in)
-}
-
-// DialogGetDialogById
-// dialog.getDialogById user_id:long peer_type:int peer_id:long = DialogExt;
-func (m *defaultDialogClient) DialogGetDialogById(ctx context.Context, in *dialog.TLDialogGetDialogById) (*dialog.DialogExt, error) {
-	return m.rpc.DialogGetDialogById(ctx, in)
 }
 
 // DialogGetTopMessage
@@ -286,12 +243,6 @@ func (m *defaultDialogClient) DialogSetChatTheme(ctx context.Context, in *dialog
 // dialog.setHistoryTTL user_id:long peer_type:int peer_id:long ttl_period:int = Bool;
 func (m *defaultDialogClient) DialogSetHistoryTTL(ctx context.Context, in *dialog.TLDialogSetHistoryTTL) (*tg.Bool, error) {
 	return m.rpc.DialogSetHistoryTTL(ctx, in)
-}
-
-// DialogGetMyDialogsData
-// dialog.getMyDialogsData flags:# user_id:long user:flags.0?true chat:flags.1?true channel:flags.2?true = DialogsData;
-func (m *defaultDialogClient) DialogGetMyDialogsData(ctx context.Context, in *dialog.TLDialogGetMyDialogsData) (*dialog.DialogsData, error) {
-	return m.rpc.DialogGetMyDialogsData(ctx, in)
 }
 
 // DialogGetSavedDialogs

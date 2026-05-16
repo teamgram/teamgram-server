@@ -33,13 +33,7 @@ type Client interface {
 	DialogMarkDialogUnread(ctx context.Context, req *dialog.TLDialogMarkDialogUnread, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	DialogToggleDialogPin(ctx context.Context, req *dialog.TLDialogToggleDialogPin, callOptions ...callopt.Option) (r *tg.Int32, err error)
 	DialogGetDialogUnreadMarkList(ctx context.Context, req *dialog.TLDialogGetDialogUnreadMarkList, callOptions ...callopt.Option) (r *dialog.VectorDialogPeer, err error)
-	DialogGetDialogsByOffsetDate(ctx context.Context, req *dialog.TLDialogGetDialogsByOffsetDate, callOptions ...callopt.Option) (r *dialog.VectorDialogExt, err error)
-	DialogGetDialogs(ctx context.Context, req *dialog.TLDialogGetDialogs, callOptions ...callopt.Option) (r *dialog.VectorDialogExt, err error)
-	DialogGetDialogsByIdList(ctx context.Context, req *dialog.TLDialogGetDialogsByIdList, callOptions ...callopt.Option) (r *dialog.VectorDialogExt, err error)
-	DialogGetDialogsCount(ctx context.Context, req *dialog.TLDialogGetDialogsCount, callOptions ...callopt.Option) (r *tg.Int32, err error)
-	DialogGetPinnedDialogs(ctx context.Context, req *dialog.TLDialogGetPinnedDialogs, callOptions ...callopt.Option) (r *dialog.VectorDialogExt, err error)
 	DialogReorderPinnedDialogs(ctx context.Context, req *dialog.TLDialogReorderPinnedDialogs, callOptions ...callopt.Option) (r *tg.Bool, err error)
-	DialogGetDialogById(ctx context.Context, req *dialog.TLDialogGetDialogById, callOptions ...callopt.Option) (r *dialog.DialogExt, err error)
 	DialogGetTopMessage(ctx context.Context, req *dialog.TLDialogGetTopMessage, callOptions ...callopt.Option) (r *tg.Int32, err error)
 	DialogInsertOrUpdateDialog(ctx context.Context, req *dialog.TLDialogInsertOrUpdateDialog, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	DialogDeleteDialog(ctx context.Context, req *dialog.TLDialogDeleteDialog, callOptions ...callopt.Option) (r *tg.Bool, err error)
@@ -59,7 +53,6 @@ type Client interface {
 	DialogGetChannelMessageReadParticipants(ctx context.Context, req *dialog.TLDialogGetChannelMessageReadParticipants, callOptions ...callopt.Option) (r *dialog.VectorLong, err error)
 	DialogSetChatTheme(ctx context.Context, req *dialog.TLDialogSetChatTheme, callOptions ...callopt.Option) (r *tg.Bool, err error)
 	DialogSetHistoryTTL(ctx context.Context, req *dialog.TLDialogSetHistoryTTL, callOptions ...callopt.Option) (r *tg.Bool, err error)
-	DialogGetMyDialogsData(ctx context.Context, req *dialog.TLDialogGetMyDialogsData, callOptions ...callopt.Option) (r *dialog.DialogsData, err error)
 	DialogGetSavedDialogs(ctx context.Context, req *dialog.TLDialogGetSavedDialogs, callOptions ...callopt.Option) (r *dialog.SavedDialogList, err error)
 	DialogGetPinnedSavedDialogs(ctx context.Context, req *dialog.TLDialogGetPinnedSavedDialogs, callOptions ...callopt.Option) (r *dialog.SavedDialogList, err error)
 	DialogUpsertSavedDialogFromMessage(ctx context.Context, req *dialog.TLDialogUpsertSavedDialogFromMessage, callOptions ...callopt.Option) (r *tg.Bool, err error)
@@ -151,39 +144,9 @@ func (p *kDialogClient) DialogGetDialogUnreadMarkList(ctx context.Context, req *
 	return p.kClient.DialogGetDialogUnreadMarkList(ctx, req)
 }
 
-func (p *kDialogClient) DialogGetDialogsByOffsetDate(ctx context.Context, req *dialog.TLDialogGetDialogsByOffsetDate, callOptions ...callopt.Option) (r *dialog.VectorDialogExt, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.DialogGetDialogsByOffsetDate(ctx, req)
-}
-
-func (p *kDialogClient) DialogGetDialogs(ctx context.Context, req *dialog.TLDialogGetDialogs, callOptions ...callopt.Option) (r *dialog.VectorDialogExt, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.DialogGetDialogs(ctx, req)
-}
-
-func (p *kDialogClient) DialogGetDialogsByIdList(ctx context.Context, req *dialog.TLDialogGetDialogsByIdList, callOptions ...callopt.Option) (r *dialog.VectorDialogExt, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.DialogGetDialogsByIdList(ctx, req)
-}
-
-func (p *kDialogClient) DialogGetDialogsCount(ctx context.Context, req *dialog.TLDialogGetDialogsCount, callOptions ...callopt.Option) (r *tg.Int32, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.DialogGetDialogsCount(ctx, req)
-}
-
-func (p *kDialogClient) DialogGetPinnedDialogs(ctx context.Context, req *dialog.TLDialogGetPinnedDialogs, callOptions ...callopt.Option) (r *dialog.VectorDialogExt, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.DialogGetPinnedDialogs(ctx, req)
-}
-
 func (p *kDialogClient) DialogReorderPinnedDialogs(ctx context.Context, req *dialog.TLDialogReorderPinnedDialogs, callOptions ...callopt.Option) (r *tg.Bool, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.DialogReorderPinnedDialogs(ctx, req)
-}
-
-func (p *kDialogClient) DialogGetDialogById(ctx context.Context, req *dialog.TLDialogGetDialogById, callOptions ...callopt.Option) (r *dialog.DialogExt, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.DialogGetDialogById(ctx, req)
 }
 
 func (p *kDialogClient) DialogGetTopMessage(ctx context.Context, req *dialog.TLDialogGetTopMessage, callOptions ...callopt.Option) (r *tg.Int32, err error) {
@@ -279,11 +242,6 @@ func (p *kDialogClient) DialogSetChatTheme(ctx context.Context, req *dialog.TLDi
 func (p *kDialogClient) DialogSetHistoryTTL(ctx context.Context, req *dialog.TLDialogSetHistoryTTL, callOptions ...callopt.Option) (r *tg.Bool, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.DialogSetHistoryTTL(ctx, req)
-}
-
-func (p *kDialogClient) DialogGetMyDialogsData(ctx context.Context, req *dialog.TLDialogGetMyDialogsData, callOptions ...callopt.Option) (r *dialog.DialogsData, err error) {
-	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
-	return p.kClient.DialogGetMyDialogsData(ctx, req)
 }
 
 func (p *kDialogClient) DialogGetSavedDialogs(ctx context.Context, req *dialog.TLDialogGetSavedDialogs, callOptions ...callopt.Option) (r *dialog.SavedDialogList, err error) {
