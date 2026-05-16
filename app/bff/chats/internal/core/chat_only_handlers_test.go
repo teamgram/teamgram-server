@@ -97,11 +97,11 @@ func (f *chatsFakeMsgClient) MsgSendMessage(ctx context.Context, in *msgpb.TLMsg
 type chatsFakeDialogClient struct {
 	dialogclient.DialogClient
 
-	getDialogsByIDList func(context.Context, *dialogpb.TLDialogGetDialogsByIdList) (*dialogpb.VectorDialogExt, error)
+	getPeerDialogsV2 func(context.Context, *dialogpb.TLDialogGetPeerDialogsV2) (*dialogpb.VectorDialogExtV2, error)
 }
 
-func (f *chatsFakeDialogClient) DialogGetDialogsByIdList(ctx context.Context, in *dialogpb.TLDialogGetDialogsByIdList) (*dialogpb.VectorDialogExt, error) {
-	return f.getDialogsByIDList(ctx, in)
+func (f *chatsFakeDialogClient) DialogGetPeerDialogsV2(ctx context.Context, in *dialogpb.TLDialogGetPeerDialogsV2) (*dialogpb.VectorDialogExtV2, error) {
+	return f.getPeerDialogsV2(ctx, in)
 }
 
 type chatsFakeUserClient struct {
@@ -324,13 +324,13 @@ func TestMessagesGetFullChatBuildsFullChat(t *testing.T) {
 			},
 		},
 		DialogClient: &chatsFakeDialogClient{
-			getDialogsByIDList: func(_ context.Context, in *dialogpb.TLDialogGetDialogsByIdList) (*dialogpb.VectorDialogExt, error) {
-				if in.UserId != 100 || len(in.IdList) != 1 || in.IdList[0] != tg.MakePeerDialogId(tg.PEER_CHAT, 42) {
+			getPeerDialogsV2: func(_ context.Context, in *dialogpb.TLDialogGetPeerDialogsV2) (*dialogpb.VectorDialogExtV2, error) {
+				if in.UserId != 100 || len(in.Peers) != 1 || in.Peers[0].PeerType != 2 || in.Peers[0].PeerId != 42 {
 					t.Fatalf("dialog request = %+v", in)
 				}
-				return &dialogpb.VectorDialogExt{Datas: []dialogpb.DialogExtClazz{
-					dialogpb.MakeTLDialogExt(&dialogpb.TLDialogExt{
-						Dialog: tg.MakeTLDialog(&tg.TLDialog{FolderId: &folderID}),
+				return &dialogpb.VectorDialogExtV2{Datas: []dialogpb.DialogExtV2Clazz{
+					dialogpb.MakeTLDialogExtV2(&dialogpb.TLDialogExtV2{
+						FolderId: folderID,
 					}),
 				}}, nil
 			},
@@ -373,7 +373,7 @@ func TestMessagesGetFullChatBuildsFullChat(t *testing.T) {
 	}
 }
 
-func TestMessagesGetFullChatIgnoresDialogLookupFailure(t *testing.T) {
+func TestMessagesGetFullChatIgnoresFolderLookupFailure(t *testing.T) {
 	chat := testCreatedMutableChat(42, "team")
 	c := newChatsCoreWithRepo(&repository.Repository{
 		ChatClient: &chatsFakeChatClient{
@@ -382,8 +382,8 @@ func TestMessagesGetFullChatIgnoresDialogLookupFailure(t *testing.T) {
 			},
 		},
 		DialogClient: &chatsFakeDialogClient{
-			getDialogsByIDList: func(context.Context, *dialogpb.TLDialogGetDialogsByIdList) (*dialogpb.VectorDialogExt, error) {
-				return nil, dialogpb.ErrDeprecatedMethod
+			getPeerDialogsV2: func(context.Context, *dialogpb.TLDialogGetPeerDialogsV2) (*dialogpb.VectorDialogExtV2, error) {
+				return nil, errors.New("dialog lookup unavailable")
 			},
 		},
 		UserClient: &chatsFakeUserClient{

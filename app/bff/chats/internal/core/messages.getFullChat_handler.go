@@ -121,9 +121,14 @@ func (c *ChatsCore) getChatFolderID(chatID, selfID int64) *int32 {
 	if c.svcCtx.Repo.DialogClient == nil {
 		return nil
 	}
-	dialogs, err := c.svcCtx.Repo.DialogClient.DialogGetDialogsByIdList(c.ctx, &dialogpb.TLDialogGetDialogsByIdList{
+	dialogs, err := c.svcCtx.Repo.DialogClient.DialogGetPeerDialogsV2(c.ctx, &dialogpb.TLDialogGetPeerDialogsV2{
 		UserId: selfID,
-		IdList: []int64{tg.MakePeerDialogId(tg.PEER_CHAT, chatID)},
+		Peers: []dialogpb.DialogPeerClazz{
+			dialogpb.MakeTLDialogPeer(&dialogpb.TLDialogPeer{
+				PeerType: dialogPeerTypeChat,
+				PeerId:   chatID,
+			}),
+		},
 	})
 	if err != nil || dialogs == nil || len(dialogs.Datas) == 0 {
 		return nil
@@ -132,12 +137,13 @@ func (c *ChatsCore) getChatFolderID(chatID, selfID int64) *int32 {
 	if dialogExt == nil {
 		return nil
 	}
-	dialog, ok := dialogExt.Dialog.(*tg.TLDialog)
-	if !ok || dialog == nil {
+	if dialogExt.FolderId == 0 {
 		return nil
 	}
-	return dialog.FolderId
+	return &dialogExt.FolderId
 }
+
+const dialogPeerTypeChat int32 = 2
 
 func projectChatParticipants(chat *tg.MutableChat) tg.ChatParticipantsClazz {
 	if chat == nil || chat.Chat == nil {
