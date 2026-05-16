@@ -203,6 +203,47 @@ func TestMessageEventV3ToTLMessageProjectsChatAddUserServiceAction(t *testing.T)
 	}
 }
 
+func TestMessageEventV3ToTLMessageProjectsGroupCallServiceAction(t *testing.T) {
+	duration := int32(42)
+	message, err := messageEventV3ToTLMessage(payload.MessageEventV3{
+		SchemaVersion: payload.MessageEventSchemaVersionV3,
+		EventKind:     payload.EventKindNewMessage,
+		MessageID:     11,
+		PeerType:      payload.PeerTypeChat,
+		PeerID:        55,
+		FromUserID:    1001,
+		Date:          1700000000,
+		ServiceAction: &payload.ServiceActionRefV1{
+			SchemaVersion:  payload.ServiceActionSchemaVersionV1,
+			Kind:           payload.ServiceActionKindGroupCall,
+			CallID:         7001,
+			CallAccessHash: 8002,
+			Duration:       &duration,
+		},
+	})
+	if err != nil {
+		t.Fatalf("messageEventV3ToTLMessage() error = %v", err)
+	}
+	service, ok := message.(*tg.TLMessageService)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessageService", message)
+	}
+	action, ok := service.Action.(*tg.TLMessageActionGroupCall)
+	if !ok {
+		t.Fatalf("action = %T, want *tg.TLMessageActionGroupCall", service.Action)
+	}
+	call, ok := action.Call.(*tg.TLInputGroupCall)
+	if !ok {
+		t.Fatalf("call = %T, want *tg.TLInputGroupCall", action.Call)
+	}
+	if call.Id != 7001 || call.AccessHash != 8002 {
+		t.Fatalf("call = %+v, want 7001/8002", call)
+	}
+	if action.Duration == nil || *action.Duration != 42 {
+		t.Fatalf("duration = %v, want 42", action.Duration)
+	}
+}
+
 func TestProcessUserOperationWithEffectsMapsAffectedOutboxes(t *testing.T) {
 	requestPayload := []byte(`{"schema_version":1,"operation_kind":"read_history","out":false}`)
 	requestHash := payload.HashBytes(requestPayload)

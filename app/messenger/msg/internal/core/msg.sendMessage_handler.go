@@ -1002,6 +1002,14 @@ func sentMessageServiceAction(ref *payload.ServiceActionRefV1) (tg.MessageAction
 		return tg.MakeTLMessageActionChatAddUser(&tg.TLMessageActionChatAddUser{
 			Users: append([]int64(nil), ref.Users...),
 		}), nil
+	case payload.ServiceActionKindGroupCall:
+		return tg.MakeTLMessageActionGroupCall(&tg.TLMessageActionGroupCall{
+			Call: tg.MakeTLInputGroupCall(&tg.TLInputGroupCall{
+				Id:         ref.CallID,
+				AccessHash: ref.CallAccessHash,
+			}),
+			Duration: cloneInt32Ptr(ref.Duration),
+		}), nil
 	default:
 		return nil, fmt.Errorf("%w: unsupported service action kind=%s schema=%d", msg.ErrMsgStorage, ref.Kind, ref.SchemaVersion)
 	}

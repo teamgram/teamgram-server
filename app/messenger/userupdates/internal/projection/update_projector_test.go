@@ -1036,6 +1036,65 @@ func TestProjectMessageEventV3ChatAddUserServiceAction(t *testing.T) {
 	}
 }
 
+func TestProjectMessageEventV3GroupCallServiceAction(t *testing.T) {
+	duration := int32(42)
+	body := mustMarshalMessageEventV3(t, payload.MessageEventV3{
+		SchemaVersion:      payload.MessageEventSchemaVersionV3,
+		EventKind:          payload.EventKindNewMessage,
+		CanonicalMessageID: 101,
+		PeerSeq:            9,
+		MessageID:          77,
+		PeerType:           payload.PeerTypeChat,
+		PeerID:             202,
+		FromUserID:         101,
+		ToUserID:           202,
+		Date:               1700000000,
+		Out:                true,
+		ServiceAction: &payload.ServiceActionRefV1{
+			SchemaVersion:  payload.ServiceActionSchemaVersionV1,
+			Kind:           payload.ServiceActionKindGroupCall,
+			CallID:         7001,
+			CallAccessHash: 8002,
+			Duration:       &duration,
+		},
+	})
+	got, err := ProjectPushTask(&payload.PushTaskKafkaMessageV1{
+		Payload:  body,
+		Pts:      19,
+		PeerType: payload.PeerTypeChat,
+		PeerID:   202,
+	})
+	if err != nil {
+		t.Fatalf("ProjectPushTask() error = %v", err)
+	}
+	updates, ok := got.Updates.(*tg.TLUpdates)
+	if !ok || len(updates.Updates) != 1 {
+		t.Fatalf("updates = %#v, want one TLUpdates item", got.Updates)
+	}
+	update, ok := updates.Updates[0].(*tg.TLUpdateNewMessage)
+	if !ok {
+		t.Fatalf("update = %T, want *tg.TLUpdateNewMessage", updates.Updates[0])
+	}
+	service, ok := update.Message.(*tg.TLMessageService)
+	if !ok {
+		t.Fatalf("message = %T, want *tg.TLMessageService", update.Message)
+	}
+	action, ok := service.Action.(*tg.TLMessageActionGroupCall)
+	if !ok {
+		t.Fatalf("action = %T, want *tg.TLMessageActionGroupCall", service.Action)
+	}
+	call, ok := action.Call.(*tg.TLInputGroupCall)
+	if !ok {
+		t.Fatalf("call = %T, want *tg.TLInputGroupCall", action.Call)
+	}
+	if call.Id != 7001 || call.AccessHash != 8002 {
+		t.Fatalf("call = %+v, want 7001/8002", call)
+	}
+	if action.Duration == nil || *action.Duration != 42 {
+		t.Fatalf("duration = %v, want 42", action.Duration)
+	}
+}
+
 func TestProjectMessageEventV3PhotoSizesSurviveJSONProjection(t *testing.T) {
 	body := mustMarshalMessageEventV3(t, payload.MessageEventV3{
 		SchemaVersion:      payload.MessageEventSchemaVersionV3,

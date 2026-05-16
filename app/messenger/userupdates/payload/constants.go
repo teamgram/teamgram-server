@@ -60,4 +60,5 @@ const (
 const (
 	ServiceActionKindChatCreate  = "chat_create"
 	ServiceActionKindChatAddUser = "chat_add_user"
+	ServiceActionKindGroupCall   = "group_call"
 )

@@ -185,10 +185,13 @@ type ForwardRefV1 struct {
 }
 
 type ServiceActionRefV1 struct {
-	SchemaVersion int     `json:"schema_version"`
-	Kind          string  `json:"kind"`
-	Title         string  `json:"title,omitempty"`
-	Users         []int64 `json:"users,omitempty"`
+	SchemaVersion  int     `json:"schema_version"`
+	Kind           string  `json:"kind"`
+	Title          string  `json:"title,omitempty"`
+	Users          []int64 `json:"users,omitempty"`
+	CallID         int64   `json:"call_id,omitempty"`
+	CallAccessHash int64   `json:"call_access_hash,omitempty"`
+	Duration       *int32  `json:"duration,omitempty"`
 }
 
 type MessageOperationV3 struct {

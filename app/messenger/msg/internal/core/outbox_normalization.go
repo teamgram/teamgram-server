@@ -170,6 +170,18 @@ func normalizeServiceAction(action tg.MessageActionClazz) (*payload.ServiceActio
 			Kind:          payload.ServiceActionKindChatAddUser,
 			Users:         append([]int64(nil), a.Users...),
 		}, nil
+	case *tg.TLMessageActionGroupCall:
+		call, ok := a.Call.(*tg.TLInputGroupCall)
+		if !ok || call == nil {
+			return nil, fmt.Errorf("%w: unsupported group call service action call %T", msg.ErrSendStateConflict, a.Call)
+		}
+		return &payload.ServiceActionRefV1{
+			SchemaVersion:  payload.ServiceActionSchemaVersionV1,
+			Kind:           payload.ServiceActionKindGroupCall,
+			CallID:         call.Id,
+			CallAccessHash: call.AccessHash,
+			Duration:       cloneInt32Ptr(a.Duration),
+		}, nil
 	default:
 		return nil, fmt.Errorf("%w: unsupported service action %T", msg.ErrSendStateConflict, action)
 	}

@@ -97,6 +97,62 @@ func TestNormalizeOutboxMessageSupportsChatAddUserServiceAction(t *testing.T) {
 	}
 }
 
+func TestNormalizeOutboxMessageSupportsGroupCallServiceAction(t *testing.T) {
+	message := tg.MakeTLMessageService(&tg.TLMessageService{
+		Out:    true,
+		FromId: tg.MakePeerUser(1001),
+		PeerId: tg.MakePeerChat(55),
+		Date:   1_778_648_899,
+		Action: tg.MakeTLMessageActionGroupCall(&tg.TLMessageActionGroupCall{
+			Call: tg.MakeTLInputGroupCall(&tg.TLInputGroupCall{Id: 7001, AccessHash: 8002}),
+		}),
+	})
+	outbox := msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{RandomId: 99, Message: message})
+	got, err := normalizeOutboxMessage(normalizeOutboxInput{
+		SenderUserID: 1001,
+		PeerType:     payload.PeerTypeChat,
+		PeerID:       55,
+		Outbox:       outbox,
+	})
+	if err != nil {
+		t.Fatalf("normalizeOutboxMessage() error = %v", err)
+	}
+	if got.ServiceAction == nil || got.ServiceAction.Kind != payload.ServiceActionKindGroupCall {
+		t.Fatalf("ServiceAction = %+v, want group call", got.ServiceAction)
+	}
+	if got.ServiceAction.CallID != 7001 || got.ServiceAction.CallAccessHash != 8002 {
+		t.Fatalf("ServiceAction call = %+v, want 7001/8002", got.ServiceAction)
+	}
+}
+
+func TestSentMessageServiceActionSupportsGroupCall(t *testing.T) {
+	duration := int32(42)
+	action, err := sentMessageServiceAction(&payload.ServiceActionRefV1{
+		SchemaVersion:  payload.ServiceActionSchemaVersionV1,
+		Kind:           payload.ServiceActionKindGroupCall,
+		CallID:         7001,
+		CallAccessHash: 8002,
+		Duration:       &duration,
+	})
+	if err != nil {
+		t.Fatalf("sentMessageServiceAction() error = %v", err)
+	}
+	groupCall, ok := action.(*tg.TLMessageActionGroupCall)
+	if !ok {
+		t.Fatalf("action = %T, want *tg.TLMessageActionGroupCall", action)
+	}
+	call, ok := groupCall.Call.(*tg.TLInputGroupCall)
+	if !ok {
+		t.Fatalf("call = %T, want *tg.TLInputGroupCall", groupCall.Call)
+	}
+	if call.Id != 7001 || call.AccessHash != 8002 {
+		t.Fatalf("call = %+v, want 7001/8002", call)
+	}
+	if groupCall.Duration == nil || *groupCall.Duration != 42 {
+		t.Fatalf("duration = %v, want 42", groupCall.Duration)
+	}
+}
+
 func TestNormalizeMediaRefDocumentPreservesV2DocumentPayload(t *testing.T) {
 	videoStartTs := 1.25
 	videoTimestamp := int32(7)
