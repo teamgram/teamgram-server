@@ -35,7 +35,7 @@ import (
 const maxSendMessageBatchSize = 100
 
 // MsgSendMessage
-// msg.sendMessage user_id:long auth_key_id:long peer_type:int peer_id:long message:Vector<OutboxMessage> = Updates;
+// msg.sendMessage flags:# clear_draft:flags.0?true user_id:long auth_key_id:long source_perm_auth_key_id:flags.1?long clear_draft_before_date:flags.2?int attach_facts:flags.3?Vector<UpdateFact> peer_type:int peer_id:long message:Vector<OutboxMessage> = Updates;
 func (c *MsgCore) MsgSendMessage(in *msg.TLMsgSendMessage) (*tg.Updates, error) {
 	if in == nil || len(in.Message) == 0 {
 		return nil, fmt.Errorf("%w: first slice requires at least one message", msg.ErrSendStateConflict)
