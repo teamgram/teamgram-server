@@ -19,6 +19,7 @@ package core
 import (
 	"time"
 
+	chatprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/chatprojection"
 	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/app/bff/notification/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -72,19 +73,10 @@ func (c *NotificationCore) AccountGetNotifyExceptions(in *tg.TLAccountGetNotifyE
 	// Fetch chats
 	var chats []tg.ChatClazz
 	if len(chatIdList) > 0 {
-		mChats, err := c.svcCtx.Repo.ChatClient.ChatGetChatListByIdList(c.ctx, &repository.GetChatListByIdList{
-			SelfId: c.MD.UserId,
-			IdList: chatIdList,
-		})
+		chats, err = chatprojection.ProjectChats(c.ctx, c.svcCtx.Repo.ChatClient, c.MD.UserId, chatIdList, chatprojection.MissingStoredReference)
 		if err != nil {
 			c.Logger.Errorf("account.getNotifyExceptions - error fetching chats: %v", err)
 			return nil, err
-		}
-		for _, ch := range mChats.Datas {
-			chat := projectMutableChat(ch, c.MD.UserId)
-			if chat != nil {
-				chats = append(chats, chat)
-			}
 		}
 	}
 

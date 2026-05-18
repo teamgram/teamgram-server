@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"reflect"
 	"testing"
 
 	"github.com/teamgram/teamgram-server/v2/app/bff/chats/internal/repository"
@@ -30,6 +31,7 @@ type chatsFakeChatClient struct {
 	chatclient.ChatClient
 
 	getMutable     func(context.Context, *chatpb.TLChatGetMutableChat) (*tg.MutableChat, error)
+	getProjection  func(context.Context, *chatpb.TLChatGetChatProjectionBundle) (*chatpb.ChatProjectionBundle, error)
 	editAbout      func(context.Context, *chatpb.TLChatEditChatAbout) (*tg.MutableChat, error)
 	editTitle      func(context.Context, *chatpb.TLChatEditChatTitle) (*tg.MutableChat, error)
 	editDefault    func(context.Context, *chatpb.TLChatEditChatDefaultBannedRights) (*tg.MutableChat, error)
@@ -43,6 +45,10 @@ type chatsFakeChatClient struct {
 
 func (f *chatsFakeChatClient) ChatGetMutableChat(ctx context.Context, in *chatpb.TLChatGetMutableChat) (*tg.MutableChat, error) {
 	return f.getMutable(ctx, in)
+}
+
+func (f *chatsFakeChatClient) ChatGetChatProjectionBundle(ctx context.Context, in *chatpb.TLChatGetChatProjectionBundle) (*chatpb.ChatProjectionBundle, error) {
+	return f.getProjection(ctx, in)
 }
 
 func (f *chatsFakeChatClient) ChatEditChatAbout(ctx context.Context, in *chatpb.TLChatEditChatAbout) (*tg.MutableChat, error) {
@@ -263,19 +269,22 @@ func TestMessagesEditChatAboutMapsRequestFields(t *testing.T) {
 	}
 }
 
-func TestMessagesGetChatsSkipsMissingAndErrors(t *testing.T) {
-	calls := make([]int64, 0, 3)
+func TestMessagesGetChatsUsesProjectionBundle(t *testing.T) {
+	var got *chatpb.TLChatGetChatProjectionBundle
 	c := newChatsCore(&chatsFakeChatClient{
-		getMutable: func(_ context.Context, in *chatpb.TLChatGetMutableChat) (*tg.MutableChat, error) {
-			calls = append(calls, in.ChatId)
-			switch in.ChatId {
-			case 1:
-				return testMutableChat(1, "one"), nil
-			case 2:
-				return nil, errors.New("boom")
-			default:
-				return nil, nil
-			}
+		getProjection: func(_ context.Context, in *chatpb.TLChatGetChatProjectionBundle) (*chatpb.ChatProjectionBundle, error) {
+			got = in
+			return chatpb.MakeTLChatProjectionBundle(&chatpb.TLChatProjectionBundle{
+				ViewerChats: []chatpb.ViewerChatsClazz{
+					chatpb.MakeTLViewerChats(&chatpb.TLViewerChats{
+						ViewerUserId: in.ViewerUserIds[0],
+						Chats: []tg.ChatClazz{
+							tg.MakeTLChat(&tg.TLChat{Id: 1, Title: "one"}),
+						},
+					}),
+				},
+				MissingChatIds: []int64{2, 3},
+			}).ToChatProjectionBundle(), nil
 		},
 	}, 100)
 
@@ -293,8 +302,11 @@ func TestMessagesGetChatsSkipsMissingAndErrors(t *testing.T) {
 	if chat, ok := (&tg.Chat{Clazz: chats.Chats[0]}).ToChat(); !ok || chat.Id != 1 || chat.Title != "one" {
 		t.Fatalf("projected chat = %+v, ok=%v", chat, ok)
 	}
-	if len(calls) != 3 || calls[0] != 1 || calls[1] != 2 || calls[2] != 3 {
-		t.Fatalf("calls = %v, want [1 2 3]", calls)
+	if got == nil || len(got.ViewerUserIds) != 1 || got.ViewerUserIds[0] != 100 {
+		t.Fatalf("ChatGetChatProjectionBundle viewer request = %+v, want [100]", got)
+	}
+	if !reflect.DeepEqual(got.TargetChatIds, []int64{1, 2, 3}) {
+		t.Fatalf("ChatGetChatProjectionBundle target ids = %v, want [1 2 3]", got.TargetChatIds)
 	}
 }
 

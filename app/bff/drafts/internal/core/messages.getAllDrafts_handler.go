@@ -18,8 +18,8 @@ package core
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/drafts/internal/repository"
+	chatprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/chatprojection"
 	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
-	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -54,13 +54,12 @@ func (c *DraftsCore) MessagesGetAllDrafts(in *tg.TLMessagesGetAllDrafts) (*tg.Up
 			Draft: v.Draft,
 		}))
 
-		peerUtil := tg.FromPeer(v.Peer)
-		switch peerUtil.PeerType {
-		case tg.PEER_SELF, tg.PEER_USER:
-			userIdList = append(userIdList, peerUtil.PeerId)
-		case tg.PEER_CHAT:
-			chatIdList = append(chatIdList, peerUtil.PeerId)
-		case tg.PEER_CHANNEL:
+		switch peer := v.Peer.(type) {
+		case *tg.TLPeerUser:
+			userIdList = append(userIdList, peer.UserId)
+		case *tg.TLPeerChat:
+			chatIdList = append(chatIdList, peer.ChatId)
+		case *tg.TLPeerChannel:
 			// TODO: channel plugin required (enterprise feature)
 		}
 	}
@@ -74,20 +73,11 @@ func (c *DraftsCore) MessagesGetAllDrafts(in *tg.TLMessagesGetAllDrafts) (*tg.Up
 	}
 
 	if len(chatIdList) > 0 {
-		chats, err := c.svcCtx.Repo.ChatClient.ChatGetChatListByIdList(c.ctx,
-			&chatpb.TLChatGetChatListByIdList{
-				SelfId: c.MD.UserId,
-				IdList: chatIdList,
-			})
+		chats, err := chatprojection.ProjectChats(c.ctx, c.svcCtx.Repo.ChatClient, c.MD.UserId, chatIdList, chatprojection.MissingStoredReference)
 		if err != nil {
-			c.Logger.Errorf("messages.getAllDrafts - chat.getChatListByIdList error: %v", err)
-		}
-		if chats != nil {
-			for _, ch := range chats.Datas {
-				if chat := projectMutableChat(ch, c.MD.UserId); chat != nil {
-					rUpdates.Chats = append(rUpdates.Chats, chat)
-				}
-			}
+			c.Logger.Errorf("messages.getAllDrafts - chat.getChatProjectionBundle error: %v", err)
+		} else {
+			rUpdates.Chats = append(rUpdates.Chats, chats...)
 		}
 	}
 

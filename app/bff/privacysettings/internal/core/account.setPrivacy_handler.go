@@ -17,8 +17,8 @@
 package core
 
 import (
+	chatprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/chatprojection"
 	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -90,17 +90,11 @@ func (c *PrivacySettingsCore) AccountSetPrivacy(in *tg.TLAccountSetPrivacy) (*tg
 	}
 
 	if len(chatIds) > 0 {
-		chats, err := c.svcCtx.Repo.ChatClient.ChatGetChatListByIdList(c.ctx,
-			&chat.TLChatGetChatListByIdList{
-				SelfId: c.MD.UserId,
-				IdList: chatIds,
-			})
+		chats, err := chatprojection.ProjectChats(c.ctx, c.svcCtx.Repo.ChatClient, c.MD.UserId, chatIds, chatprojection.MissingStoredReference)
 		if err != nil {
 			c.Logger.Errorf("account.setPrivacy - resolve chats error: %v", err)
 		} else {
-			for _, ch := range chats.Datas {
-				rVal.Chats = append(rVal.Chats, projectMutableChat(ch, c.MD.UserId))
-			}
+			rVal.Chats = append(rVal.Chats, chats...)
 		}
 	}
 

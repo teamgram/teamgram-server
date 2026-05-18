@@ -282,7 +282,7 @@ func TestMessagesGetPeerDialogsHydratesTopMessagesUsersChats(t *testing.T) {
 	var gotPeerDialogs *dialogpb.TLDialogGetPeerDialogsV2
 	var gotMessageViews *userupdates.TLUserupdatesGetMessageViewsByPeerSeqs
 	var gotUsers *userpb.TLUserGetUserProjectionBundle
-	var gotChats *chatpb.TLChatGetChatListByIdList
+	var gotChats *chatpb.TLChatGetChatProjectionBundle
 
 	c := newDialogsGetDialogsCore(&repository.Repository{
 		DialogClient: &dialogsFakeDialogClient{
@@ -328,9 +328,18 @@ func TestMessagesGetPeerDialogsHydratesTopMessagesUsersChats(t *testing.T) {
 			},
 		},
 		ChatClient: &dialogsFakeChatClient{
-			getChatListByIDList: func(_ context.Context, in *chatpb.TLChatGetChatListByIdList) (*chatpb.VectorMutableChat, error) {
+			getProjection: func(_ context.Context, in *chatpb.TLChatGetChatProjectionBundle) (*chatpb.ChatProjectionBundle, error) {
 				gotChats = in
-				return &chatpb.VectorMutableChat{Datas: []tg.MutableChatClazz{testDialogsMutableChat(300)}}, nil
+				return chatpb.MakeTLChatProjectionBundle(&chatpb.TLChatProjectionBundle{
+					ViewerChats: []chatpb.ViewerChatsClazz{
+						chatpb.MakeTLViewerChats(&chatpb.TLViewerChats{
+							ViewerUserId: selfID,
+							Chats: []tg.ChatClazz{
+								tg.MakeTLChat(&tg.TLChat{Id: 300, Title: "chat"}),
+							},
+						}),
+					},
+				}).ToChatProjectionBundle(), nil
 			},
 		},
 	}, selfID)
@@ -355,8 +364,8 @@ func TestMessagesGetPeerDialogsHydratesTopMessagesUsersChats(t *testing.T) {
 	if gotUsers == nil || len(gotUsers.ViewerUserIds) != 1 || gotUsers.ViewerUserIds[0] != selfID || len(gotUsers.TargetUserIds) != 1 || gotUsers.TargetUserIds[0] != 200 {
 		t.Fatalf("UserGetUserProjectionBundle request = %+v", gotUsers)
 	}
-	if gotChats == nil || len(gotChats.IdList) != 1 || gotChats.IdList[0] != 300 {
-		t.Fatalf("ChatGetChatListByIdList request = %+v", gotChats)
+	if gotChats == nil || len(gotChats.ViewerUserIds) != 1 || gotChats.ViewerUserIds[0] != selfID || len(gotChats.TargetChatIds) != 1 || gotChats.TargetChatIds[0] != 300 {
+		t.Fatalf("ChatGetChatProjectionBundle request = %+v", gotChats)
 	}
 	if len(r.Dialogs) != 2 || len(r.Messages) != 2 || len(r.Users) != 1 || len(r.Chats) != 1 {
 		t.Fatalf("reply lens = dialogs:%d messages:%d users:%d chats:%d", len(r.Dialogs), len(r.Messages), len(r.Users), len(r.Chats))

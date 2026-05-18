@@ -21,10 +21,10 @@ import (
 	"math"
 	"strconv"
 
+	chatprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/chatprojection"
 	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	msgpb "github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
-	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -601,25 +601,12 @@ func (c *DialogsCore) fetchDialogChats(ids []int64) ([]tg.ChatClazz, error) {
 		return []tg.ChatClazz{}, nil
 	}
 
-	chats, err := c.svcCtx.Repo.ChatClient.ChatGetChatListByIdList(c.ctx, &chatpb.TLChatGetChatListByIdList{
-		SelfId: c.MD.UserId,
-		IdList: ids,
-	})
+	chats, err := chatprojection.ProjectChats(c.ctx, c.svcCtx.Repo.ChatClient, c.MD.UserId, ids, chatprojection.MissingStoredReference)
 	if err != nil {
-		c.Logger.Errorf("messages.getDialogs - chat.getChatListByIdList failed: user_id: %d, id_list: %v, err: %v", c.MD.UserId, ids, err)
+		c.Logger.Errorf("messages.getDialogs - chat.getChatProjectionBundle failed: user_id: %d, id_list: %v, err: %v", c.MD.UserId, ids, err)
 		return nil, tg.ErrInternalServerError
 	}
-
-	out := make([]tg.ChatClazz, 0, len(ids))
-	if chats == nil {
-		return out, nil
-	}
-	for _, mutableChat := range chats.Datas {
-		if chat := projectMutableChat(mutableChat, c.MD.UserId); chat != nil {
-			out = append(out, chat)
-		}
-	}
-	return out, nil
+	return chats, nil
 }
 
 func uniqueDialogTopMessageRefs(refs []dialogTopMessageRef) []dialogTopMessageRef {

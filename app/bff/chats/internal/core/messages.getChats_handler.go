@@ -17,25 +17,16 @@
 package core
 
 import (
-	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
+	chatprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/chatprojection"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 // MessagesGetChats
 // messages.getChats#49e9528f id:Vector<long> = messages.Chats;
 func (c *ChatsCore) MessagesGetChats(in *tg.TLMessagesGetChats) (*tg.MessagesChats, error) {
-	chats := make([]tg.ChatClazz, 0, len(in.Id))
-
-	for _, id := range in.Id {
-		mutableChat, err := c.svcCtx.Repo.ChatClient.ChatGetMutableChat(c.ctx, &chatpb.TLChatGetMutableChat{
-			ChatId: id,
-		})
-		if err != nil || mutableChat == nil {
-			continue
-		}
-		if chat := projectMutableChat(mutableChat, selfID(c.MD)); chat != nil {
-			chats = append(chats, chat)
-		}
+	chats, err := chatprojection.ProjectChats(c.ctx, c.svcCtx.Repo.ChatClient, selfID(c.MD), in.Id, chatprojection.MissingStoredReference)
+	if err != nil {
+		return nil, err
 	}
 
 	return tg.MakeTLMessagesChats(&tg.TLMessagesChats{
