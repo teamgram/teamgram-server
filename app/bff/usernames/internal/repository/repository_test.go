@@ -21,6 +21,8 @@ import (
 	"errors"
 	"testing"
 
+	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
+	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
 	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -144,6 +146,19 @@ func (s *stubUserClient) UserGetUserProjectionBundle(ctx context.Context, in *us
 	return nil, nil
 }
 
+type stubChatClient struct {
+	chatclient.ChatClient
+
+	projectionFn func(ctx context.Context, in *chatpb.TLChatGetChatProjectionBundle) (*chatpb.ChatProjectionBundle, error)
+}
+
+func (s *stubChatClient) ChatGetChatProjectionBundle(ctx context.Context, in *chatpb.TLChatGetChatProjectionBundle) (*chatpb.ChatProjectionBundle, error) {
+	if s.projectionFn != nil {
+		return s.projectionFn(ctx, in)
+	}
+	return nil, nil
+}
+
 func TestResolveUsernameProjectsUser(t *testing.T) {
 	var gotProjection *userpb.TLUserGetUserProjectionBundle
 	repo := &Repository{
@@ -186,6 +201,55 @@ func TestResolveUsernameProjectsUser(t *testing.T) {
 	target, ok := got.Users[1].(*tg.TLUser)
 	if !ok || target.Id != 2002 || !target.Contact {
 		t.Fatalf("target user = %#v", got.Users[1])
+	}
+}
+
+func TestResolveUsernameProjectsChatWithPhoto(t *testing.T) {
+	var gotProjection *chatpb.TLChatGetChatProjectionBundle
+	repo := &Repository{
+		UserClient: &stubUserClient{
+			resolveUsernameFn: func(_ context.Context, in *userpb.TLUserResolveUsername) (*tg.Peer, error) {
+				if in.Username != "teamchat" {
+					t.Fatalf("resolve username = %q, want teamchat", in.Username)
+				}
+				return tg.MakeTLPeerChat(&tg.TLPeerChat{ChatId: 3001}).ToPeer(), nil
+			},
+		},
+		ChatClient: &stubChatClient{
+			projectionFn: func(_ context.Context, in *chatpb.TLChatGetChatProjectionBundle) (*chatpb.ChatProjectionBundle, error) {
+				gotProjection = in
+				return chatpb.MakeTLChatProjectionBundle(&chatpb.TLChatProjectionBundle{
+					ViewerChats: []chatpb.ViewerChatsClazz{
+						chatpb.MakeTLViewerChats(&chatpb.TLViewerChats{ViewerUserId: 1001, Chats: []tg.ChatClazz{
+							tg.MakeTLChat(&tg.TLChat{
+								Id:    3001,
+								Title: "chat",
+								Photo: tg.MakeTLChatPhoto(&tg.TLChatPhoto{PhotoId: 7001, DcId: 4}),
+							}),
+						}}),
+					},
+				}).ToChatProjectionBundle(), nil
+			},
+		},
+	}
+
+	got, err := repo.ResolveUsername(context.Background(), 1001, "teamchat")
+	if err != nil {
+		t.Fatalf("ResolveUsername error = %v", err)
+	}
+	if gotProjection == nil || len(gotProjection.ViewerUserIds) != 1 || gotProjection.ViewerUserIds[0] != 1001 ||
+		len(gotProjection.TargetChatIds) != 1 || gotProjection.TargetChatIds[0] != 3001 {
+		t.Fatalf("chat projection request = %+v, want viewer [1001] target [3001]", gotProjection)
+	}
+	if len(got.Chats) != 1 {
+		t.Fatalf("chats = %#v, want one chat", got.Chats)
+	}
+	chat, ok := got.Chats[0].(*tg.TLChat)
+	if !ok {
+		t.Fatalf("resolved chat = %T, want *tg.TLChat", got.Chats[0])
+	}
+	if _, ok := chat.Photo.(*tg.TLChatPhoto); !ok {
+		t.Fatalf("resolved chat photo = %T, want *tg.TLChatPhoto", chat.Photo)
 	}
 }
 

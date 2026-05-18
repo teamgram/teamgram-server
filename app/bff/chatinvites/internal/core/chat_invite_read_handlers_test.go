@@ -88,14 +88,14 @@ func TestMessagesCheckChatInviteProjectsAlreadyAndPeek(t *testing.T) {
 		{
 			name: "already",
 			ext: chatpb.MakeTLChatInviteAlready(&chatpb.TLChatInviteAlready{
-				Chat: mutableChatForTest(42, 100, "chat"),
+				Chat: mutableChatWithPhotoForTest(42, 100, "chat"),
 			}).ToChatInviteExt(),
 			want: tg.ClazzName_chatInviteAlready,
 		},
 		{
 			name: "peek",
 			ext: chatpb.MakeTLChatInvitePeek(&chatpb.TLChatInvitePeek{
-				Chat:    mutableChatForTest(42, 100, "chat"),
+				Chat:    mutableChatWithPhotoForTest(42, 100, "chat"),
 				Expires: 123,
 			}).ToChatInviteExt(),
 			want: tg.ClazzName_chatInvitePeek,
@@ -117,7 +117,28 @@ func TestMessagesCheckChatInviteProjectsAlreadyAndPeek(t *testing.T) {
 			if r.ClazzName() != tt.want {
 				t.Fatalf("MessagesCheckChatInvite clazz = %s, want %s", r.ClazzName(), tt.want)
 			}
+			chat := projectedInviteChat(t, r)
+			if _, ok := chat.Photo.(*tg.TLChatPhoto); !ok {
+				t.Fatalf("projected invite chat photo = %T, want *tg.TLChatPhoto", chat.Photo)
+			}
 		})
+	}
+}
+
+func TestMessagesCheckChatInviteMapsEmbeddedProjectionError(t *testing.T) {
+	c := newChatInvitesCoreWithClients(&chatInvitesFakeChatClient{
+		checkChatInvite: func(context.Context, *chatpb.TLChatCheckChatInvite) (*chatpb.ChatInviteExt, error) {
+			chat := mutableChatForTest(42, 100, "chat")
+			chat.Chat.Date = int64(1) << 40
+			return chatpb.MakeTLChatInviteAlready(&chatpb.TLChatInviteAlready{
+				Chat: chat,
+			}).ToChatInviteExt(), nil
+		},
+	}, &chatInvitesFakeUserClient{}, 100)
+
+	_, err := c.MessagesCheckChatInvite(&tg.TLMessagesCheckChatInvite{Hash: "abcdefghijklmnopqrst"})
+	if err != tg.ErrInternalServerError {
+		t.Fatalf("MessagesCheckChatInvite error = %v, want %v", err, tg.ErrInternalServerError)
 	}
 }
 
@@ -347,6 +368,32 @@ func mutableChatForTest(chatID, creatorID int64, title string) *tg.MutableChat {
 			ParticipantsCount: 1,
 		}),
 	}).ToMutableChat()
+}
+
+func mutableChatWithPhotoForTest(chatID, creatorID int64, title string) *tg.MutableChat {
+	chat := mutableChatForTest(chatID, creatorID, title)
+	chat.Chat.Photo = tg.MakeTLPhoto(&tg.TLPhoto{Id: 7001, DcId: 4})
+	return chat
+}
+
+func projectedInviteChat(t *testing.T, invite *tg.ChatInvite) *tg.TLChat {
+	t.Helper()
+	if already, ok := invite.ToChatInviteAlready(); ok {
+		chat, ok := already.Chat.(*tg.TLChat)
+		if !ok {
+			t.Fatalf("already chat = %T, want *tg.TLChat", already.Chat)
+		}
+		return chat
+	}
+	if peek, ok := invite.ToChatInvitePeek(); ok {
+		chat, ok := peek.Chat.(*tg.TLChat)
+		if !ok {
+			t.Fatalf("peek chat = %T, want *tg.TLChat", peek.Chat)
+		}
+		return chat
+	}
+	t.Fatalf("invite = %s, want already or peek", invite.ClazzName())
+	return nil
 }
 
 func sameInt64s(got, want []int64) bool {

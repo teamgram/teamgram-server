@@ -28,7 +28,7 @@ import (
 	userprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/userprojection"
 	"github.com/teamgram/teamgram-server/v2/app/bff/usernames/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/bff/usernames/plugin"
-	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
+	chatprojection "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chatprojection"
 	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
 	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
@@ -210,18 +210,14 @@ func (r *Repository) ResolveUsername(ctx context.Context, selfId int64, username
 		}
 		resolvedPeer.Users = append(resolvedPeer.Users, users...)
 	case *tg.TLPeerChat:
-		chat, err := r.ChatClient.ChatGetChatBySelfId(ctx, &chatpb.TLChatGetChatBySelfId{
-			SelfId: selfId,
-			ChatId: p.ChatId,
+		chats, err := chatprojection.ProjectChats(ctx, r.ChatClient, selfId, []int64{p.ChatId}, chatprojection.Options{
+			Missing:         chatprojection.MissingExplicitInput,
+			RequireNonEmpty: true,
 		})
 		if err != nil {
-			return nil, fmt.Errorf("usernames repository: resolve username: get chat: %w", err)
+			return nil, fmt.Errorf("usernames repository: resolve username: project chat: %w", err)
 		}
-		if chat != nil && chat.Chat != nil {
-			resolvedPeer.Chats = []tg.ChatClazz{
-				projectMutableChat(chat, selfId),
-			}
-		}
+		resolvedPeer.Chats = append(resolvedPeer.Chats, chats...)
 	case *tg.TLPeerChannel:
 		if r.Plugin != nil {
 			resolvedPeer.Chats = r.Plugin.GetChannelListByIdList(ctx, selfId, p.ChannelId)
@@ -277,26 +273,4 @@ func (r *Repository) projectSelfUser(ctx context.Context, userId int64) (*tg.Use
 		return nil, fmt.Errorf("usernames repository: project self user: returned empty users")
 	}
 	return &tg.User{Clazz: users[0]}, nil
-}
-
-// projectMutableChat converts a MutableChat to a ChatClazz suitable for
-// inclusion in a ContactsResolvedPeer response.
-func projectMutableChat(chat *tg.MutableChat, selfID int64) tg.ChatClazz {
-	if chat == nil || chat.Chat == nil {
-		return nil
-	}
-	return tg.MakeTLChat(&tg.TLChat{
-		Creator:             chat.Chat.Creator == selfID,
-		Deactivated:         chat.Chat.Deactivated,
-		CallActive:          chat.Chat.CallActive,
-		CallNotEmpty:        chat.Chat.CallNotEmpty,
-		Noforwards:          chat.Chat.Noforwards,
-		Id:                  chat.Chat.Id,
-		Title:               chat.Chat.Title,
-		ParticipantsCount:   chat.Chat.ParticipantsCount,
-		Date:                int32(chat.Chat.Date),
-		Version:             chat.Chat.Version,
-		MigratedTo:          chat.Chat.MigratedTo,
-		DefaultBannedRights: chat.Chat.DefaultBannedRights,
-	})
 }

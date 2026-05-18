@@ -3,6 +3,7 @@ package core
 import (
 	"regexp"
 
+	chatprojection "github.com/teamgram/teamgram-server/v2/app/bff/internal/chatprojection"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -13,43 +14,14 @@ func validChatInviteHash(hash string) bool {
 	return len(hash) == 20 && chatInviteHashRE.MatchString(hash)
 }
 
-func projectMutableChat(chat *tg.MutableChat, selfID int64) tg.ChatClazz {
-	if chat == nil || chat.Chat == nil {
-		return nil
-	}
-
-	return tg.MakeTLChat(&tg.TLChat{
-		Creator:             chat.Chat.Creator == selfID,
-		Deactivated:         chat.Chat.Deactivated,
-		CallActive:          chat.Chat.CallActive,
-		CallNotEmpty:        chat.Chat.CallNotEmpty,
-		Noforwards:          chat.Chat.Noforwards,
-		Id:                  chat.Chat.Id,
-		Title:               chat.Chat.Title,
-		Photo:               projectChatPhoto(chat.Chat.Photo),
-		ParticipantsCount:   chat.Chat.ParticipantsCount,
-		Date:                int32(chat.Chat.Date),
-		Version:             chat.Chat.Version,
-		MigratedTo:          chat.Chat.MigratedTo,
-		DefaultBannedRights: chat.Chat.DefaultBannedRights,
-	})
-}
-
-func projectChatPhoto(photo tg.PhotoClazz) tg.ChatPhotoClazz {
-	if p, ok := photo.(*tg.TLPhoto); ok {
-		return tg.MakeTLChatPhoto(&tg.TLChatPhoto{
-			PhotoId: p.Id,
-			DcId:    p.DcId,
-		})
-	}
-
-	return tg.MakeTLChatPhotoEmpty(&tg.TLChatPhotoEmpty{})
-}
-
 func (c *ChatInvitesCore) projectChatInviteExt(invite *chatpb.ChatInviteExt, selfID int64) (*tg.ChatInvite, error) {
 	if already, ok := invite.ToChatInviteAlready(); ok {
+		chat, err := chatprojection.ProjectMutableChat(already.Chat, selfID)
+		if err != nil {
+			return nil, tg.ErrInternalServerError
+		}
 		return tg.MakeTLChatInviteAlready(&tg.TLChatInviteAlready{
-			Chat: projectMutableChat(already.Chat, selfID),
+			Chat: chat,
 		}).ToChatInvite(), nil
 	}
 
@@ -69,8 +41,12 @@ func (c *ChatInvitesCore) projectChatInviteExt(invite *chatpb.ChatInviteExt, sel
 	}
 
 	if peek, ok := invite.ToChatInvitePeek(); ok {
+		chat, err := chatprojection.ProjectMutableChat(peek.Chat, selfID)
+		if err != nil {
+			return nil, tg.ErrInternalServerError
+		}
 		return tg.MakeTLChatInvitePeek(&tg.TLChatInvitePeek{
-			Chat:    projectMutableChat(peek.Chat, selfID),
+			Chat:    chat,
 			Expires: peek.Expires,
 		}).ToChatInvite(), nil
 	}
