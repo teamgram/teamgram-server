@@ -12,6 +12,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
+	chatprojection "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chatprojection"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -49,13 +50,13 @@ func (f *fakePushUserProjector) UserGetUserProjectionBundle(_ context.Context, i
 }
 
 type fakePushChatProjector struct {
-	in    *chatpb.TLChatGetChatListByIdList
-	out   *chatpb.VectorMutableChat
+	in    *chatpb.TLChatGetChatProjectionBundle
+	out   *chatpb.ChatProjectionBundle
 	err   error
 	calls int
 }
 
-func (f *fakePushChatProjector) ChatGetChatListByIdList(_ context.Context, in *chatpb.TLChatGetChatListByIdList) (*chatpb.VectorMutableChat, error) {
+func (f *fakePushChatProjector) ChatGetChatProjectionBundle(_ context.Context, in *chatpb.TLChatGetChatProjectionBundle) (*chatpb.ChatProjectionBundle, error) {
 	f.calls++
 	f.in = in
 	return f.out, f.err
@@ -317,18 +318,19 @@ func TestV4CreateChatPushOmitsUpdateMessageID(t *testing.T) {
 			}}),
 		},
 	}).ToUserProjectionBundle()}
-	chatClient := &fakePushChatProjector{out: &chatpb.VectorMutableChat{
-		Datas: []tg.MutableChatClazz{
-			tg.MakeTLMutableChat(&tg.TLMutableChat{Chat: tg.MakeTLImmutableChat(&tg.TLImmutableChat{
-				Id:                3001,
-				Creator:           1001,
-				Title:             "v4 chat",
-				ParticipantsCount: 2,
-				Date:              1777781234,
-				Version:           1,
-			})}),
+	chatClient := &fakePushChatProjector{out: chatpb.MakeTLChatProjectionBundle(&chatpb.TLChatProjectionBundle{
+		ViewerChats: []chatpb.ViewerChatsClazz{
+			chatpb.MakeTLViewerChats(&chatpb.TLViewerChats{ViewerUserId: 1001, Chats: []tg.ChatClazz{
+				tg.MakeTLChat(&tg.TLChat{
+					Id:                3001,
+					Title:             "v4 chat",
+					ParticipantsCount: 2,
+					Date:              1777781234,
+					Version:           1,
+				}),
+			}}),
 		},
-	}}
+	}).ToChatProjectionBundle()}
 	dispatcher := NewPushTaskDispatcher(auth, gatewayClient, userClient, chatClient)
 
 	if err := dispatcher.HandlePushTaskKafkaRecord(context.Background(), PushTaskKafkaRecord{Value: body}); err != nil {
@@ -369,14 +371,87 @@ func TestV4CreateChatPushOmitsUpdateMessageID(t *testing.T) {
 	if userClient.calls != 1 || userClient.in == nil || len(userClient.in.TargetUserIds) != 2 {
 		t.Fatalf("user projection request = calls:%d in:%#v", userClient.calls, userClient.in)
 	}
-	if chatClient.calls != 1 || chatClient.in == nil || len(chatClient.in.IdList) != 1 || chatClient.in.IdList[0] != 3001 {
-		t.Fatalf("chat projection request = calls:%d in:%#v", chatClient.calls, chatClient.in)
+	if chatClient.calls != 1 || chatClient.in == nil || len(chatClient.in.ViewerUserIds) != 1 || chatClient.in.ViewerUserIds[0] != 1001 {
+		t.Fatalf("chat projection viewers = calls:%d in:%#v, want [1001]", chatClient.calls, chatClient.in)
+	}
+	if len(chatClient.in.TargetChatIds) != 1 || chatClient.in.TargetChatIds[0] != 3001 {
+		t.Fatalf("chat projection targets = %#v, want [3001]", chatClient.in.TargetChatIds)
 	}
 	if !hasPushUserID(updates.Users, 1001) || !hasPushUserID(updates.Users, 2002) {
 		t.Fatalf("push users = %#v, want creator and invitee", updates.Users)
 	}
 	if !hasPushChatID(updates.Chats, 3001) {
 		t.Fatalf("push chats = %#v, want chat 3001", updates.Chats)
+	}
+}
+
+func TestPushTaskDispatcherProjectChatsUsesProjectionBundle(t *testing.T) {
+	chatClient := &fakePushChatProjector{out: chatpb.MakeTLChatProjectionBundle(&chatpb.TLChatProjectionBundle{
+		ViewerChats: []chatpb.ViewerChatsClazz{
+			chatpb.MakeTLViewerChats(&chatpb.TLViewerChats{ViewerUserId: 1001, Chats: []tg.ChatClazz{
+				tg.MakeTLChat(&tg.TLChat{Id: 3001, Title: "v4 chat"}),
+			}}),
+		},
+	}).ToChatProjectionBundle()}
+	dispatcher := NewPushTaskDispatcher(nil, nil, nil, chatClient)
+
+	chats, err := dispatcher.ProjectChats(context.Background(), 1001, []int64{3001})
+	if err != nil {
+		t.Fatalf("ProjectChats() error = %v", err)
+	}
+	if len(chats) != 1 || chats[0].(*tg.TLChat).Id != 3001 {
+		t.Fatalf("ProjectChats() = %#v, want chat 3001", chats)
+	}
+	if chatClient.calls != 1 || chatClient.in == nil || len(chatClient.in.ViewerUserIds) != 1 || chatClient.in.ViewerUserIds[0] != 1001 {
+		t.Fatalf("chat projection viewers = calls:%d in:%#v, want [1001]", chatClient.calls, chatClient.in)
+	}
+	if len(chatClient.in.TargetChatIds) != 1 || chatClient.in.TargetChatIds[0] != 3001 {
+		t.Fatalf("chat projection targets = %#v, want [3001]", chatClient.in.TargetChatIds)
+	}
+}
+
+func TestPushTaskDispatcherProjectChatsWrapsProjectionError(t *testing.T) {
+	dispatcher := NewPushTaskDispatcher(nil, nil, nil, &fakePushChatProjector{err: chatprojection.ErrNilBundle})
+
+	_, err := dispatcher.ProjectChats(context.Background(), 1001, []int64{3001})
+	if !errors.Is(err, userupdates.ErrUserupdatesStorage) {
+		t.Fatalf("ProjectChats() error = %v, want ErrUserupdatesStorage", err)
+	}
+	if !errors.Is(err, chatprojection.ErrNilBundle) {
+		t.Fatalf("ProjectChats() error = %v, want ErrNilBundle preserved", err)
+	}
+}
+
+func TestPushTaskDispatcherProjectChatsAllowsEmptyStoredReferenceProjection(t *testing.T) {
+	dispatcher := NewPushTaskDispatcher(nil, nil, nil, &fakePushChatProjector{out: chatpb.MakeTLChatProjectionBundle(&chatpb.TLChatProjectionBundle{
+		ViewerChats: []chatpb.ViewerChatsClazz{
+			chatpb.MakeTLViewerChats(&chatpb.TLViewerChats{ViewerUserId: 1001}),
+		},
+		MissingChatIds: []int64{3001},
+	}).ToChatProjectionBundle()})
+
+	chats, err := dispatcher.ProjectChats(context.Background(), 1001, []int64{3001})
+	if err != nil {
+		t.Fatalf("ProjectChats() error = %v", err)
+	}
+	if len(chats) != 0 {
+		t.Fatalf("ProjectChats() = %#v, want empty projection", chats)
+	}
+}
+
+func TestPushTaskDispatcherProjectChatsWrapsMissingViewer(t *testing.T) {
+	dispatcher := NewPushTaskDispatcher(nil, nil, nil, &fakePushChatProjector{out: chatpb.MakeTLChatProjectionBundle(&chatpb.TLChatProjectionBundle{
+		ViewerChats: []chatpb.ViewerChatsClazz{
+			chatpb.MakeTLViewerChats(&chatpb.TLViewerChats{ViewerUserId: 2002}),
+		},
+	}).ToChatProjectionBundle()})
+
+	_, err := dispatcher.ProjectChats(context.Background(), 1001, []int64{3001})
+	if !errors.Is(err, userupdates.ErrUserupdatesStorage) {
+		t.Fatalf("ProjectChats() error = %v, want ErrUserupdatesStorage", err)
+	}
+	if !errors.Is(err, chatprojection.ErrViewerProjectionMissing) {
+		t.Fatalf("ProjectChats() error = %v, want ErrViewerProjectionMissing preserved", err)
 	}
 }
 

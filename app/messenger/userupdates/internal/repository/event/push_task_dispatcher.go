@@ -11,7 +11,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
-	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
+	chatprojection "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chatprojection"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -37,9 +37,7 @@ type PushTaskUserProjector interface {
 	UserGetUserProjectionBundle(ctx context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error)
 }
 
-type PushTaskChatProjector interface {
-	ChatGetChatListByIdList(ctx context.Context, in *chatpb.TLChatGetChatListByIdList) (*chatpb.VectorMutableChat, error)
-}
+type PushTaskChatProjector = chatprojection.Client
 
 type PushTaskDispatcher struct {
 	authsession PushTaskAuthKeyRouter
@@ -296,73 +294,18 @@ func (d *PushTaskDispatcher) ProjectUsers(ctx context.Context, viewerUserID int6
 }
 
 func (d *PushTaskDispatcher) ProjectChats(ctx context.Context, viewerUserID int64, ids []int64) ([]tg.ChatClazz, error) {
-	if len(ids) == 0 {
-		return nil, nil
+	var client PushTaskChatProjector
+	if d != nil {
+		client = d.chat
 	}
-	if d == nil || d.chat == nil {
-		return nil, fmt.Errorf("%w: project v4 push chats: chat client is not configured", userupdates.ErrUserupdatesStorage)
-	}
-	mutableChats, err := d.chat.ChatGetChatListByIdList(ctx, &chatpb.TLChatGetChatListByIdList{
-		SelfId: viewerUserID,
-		IdList: ids,
+	chats, err := chatprojection.ProjectChats(ctx, client, viewerUserID, ids, chatprojection.Options{
+		Missing:         chatprojection.MissingStoredReference,
+		RequireNonEmpty: false,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("%w: project v4 push chats: %v", userupdates.ErrUserupdatesStorage, err)
-	}
-	if mutableChats == nil {
-		return nil, fmt.Errorf("%w: project v4 push chats: nil mutable chat list", userupdates.ErrUserupdatesStorage)
-	}
-	chats := make([]tg.ChatClazz, 0, len(mutableChats.Datas))
-	for _, mutableChat := range mutableChats.Datas {
-		chat, err := projectPushMutableChat(mutableChat, viewerUserID)
-		if err != nil {
-			return nil, fmt.Errorf("%w: project v4 push chats: %v", userupdates.ErrUserupdatesStorage, err)
-		}
-		if chat != nil {
-			chats = append(chats, chat)
-		}
+		return nil, fmt.Errorf("%w: project v4 push chats: %w", userupdates.ErrUserupdatesStorage, err)
 	}
 	return chats, nil
-}
-
-func projectPushMutableChat(mutableChat tg.MutableChatClazz, viewerUserID int64) (tg.ChatClazz, error) {
-	if mutableChat == nil || mutableChat.Chat == nil {
-		return nil, nil
-	}
-	chat := mutableChat.Chat
-	if chat.Date < pushMinInt32 || chat.Date > pushMaxInt32 {
-		return nil, fmt.Errorf("chat date overflows int32: chat_id %d date %d", chat.Id, chat.Date)
-	}
-	return tg.MakeTLChat(&tg.TLChat{
-		Creator:             chat.Creator == viewerUserID,
-		Deactivated:         chat.Deactivated,
-		CallActive:          chat.CallActive,
-		CallNotEmpty:        chat.CallNotEmpty,
-		Noforwards:          chat.Noforwards,
-		Id:                  chat.Id,
-		Title:               chat.Title,
-		Photo:               projectPushChatPhoto(chat.Photo),
-		ParticipantsCount:   chat.ParticipantsCount,
-		Date:                int32(chat.Date),
-		Version:             chat.Version,
-		MigratedTo:          chat.MigratedTo,
-		DefaultBannedRights: chat.DefaultBannedRights,
-	}), nil
-}
-
-const (
-	pushMinInt32 = -1 << 31
-	pushMaxInt32 = 1<<31 - 1
-)
-
-func projectPushChatPhoto(photo tg.PhotoClazz) tg.ChatPhotoClazz {
-	if p, ok := photo.(*tg.TLPhoto); ok {
-		return tg.MakeTLChatPhoto(&tg.TLChatPhoto{
-			PhotoId: p.Id,
-			DcId:    p.DcId,
-		})
-	}
-	return tg.MakeTLChatPhotoEmpty(&tg.TLChatPhotoEmpty{})
 }
 
 func pushTaskUpdates(msg *payload.PushTaskKafkaMessageV1) (tg.UpdatesClazz, *int64, error) {

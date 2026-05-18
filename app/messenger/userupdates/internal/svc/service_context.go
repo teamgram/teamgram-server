@@ -72,12 +72,10 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	repo := repository.NewRepository(c)
 	var userProjectionClient repository.UserProjectionClient
 	var chatProjectionClient repository.ChatProjectionClient
-	var pushChatProjectionClient receiverevent.PushTaskChatProjector
 	if hasRPCClientConfig(c.BizServiceClient) {
 		userProjectionClient = userclient.NewUserClient(userclient.MustNewKitexClient(c.BizServiceClient))
 		bizChatClient := chatclient.NewChatClient(chatclient.MustNewKitexClient(c.BizServiceClient))
 		chatProjectionClient = bizChatClient
-		pushChatProjectionClient = bizChatClient
 		repo.SetPeerProjectionClients(userProjectionClient, chatProjectionClient)
 	}
 	sc := &ServiceContext{
@@ -126,13 +124,12 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		if userProjectionClient == nil {
 			userProjectionClient = userclient.NewUserClient(userclient.MustNewKitexClient(c.BizServiceClient))
 		}
-		if pushChatProjectionClient == nil {
+		if chatProjectionClient == nil {
 			bizChatClient := chatclient.NewChatClient(chatclient.MustNewKitexClient(c.BizServiceClient))
 			chatProjectionClient = bizChatClient
-			pushChatProjectionClient = bizChatClient
 			repo.SetPeerProjectionClients(userProjectionClient, chatProjectionClient)
 		}
-		consumer, err := receiverevent.NewPushTaskConsumer(c.PushTaskConsumer, receiverevent.NewPushTaskDispatcher(authsessionClient, gatewayClient, userProjectionClient, pushChatProjectionClient))
+		consumer, err := receiverevent.NewPushTaskConsumer(c.PushTaskConsumer, receiverevent.NewPushTaskDispatcher(authsessionClient, gatewayClient, userProjectionClient, chatProjectionClient))
 		if err != nil {
 			panic(err)
 		}
