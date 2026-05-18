@@ -51,12 +51,12 @@ func (f *fakeDifferenceUserClient) UserGetUserProjectionBundle(_ context.Context
 
 type fakeDifferenceChatClient struct {
 	chatclient.ChatClient
-	in    *chatpb.TLChatGetChatListByIdList
-	out   *chatpb.VectorMutableChat
+	in    *chatpb.TLChatGetChatProjectionBundle
+	out   *chatpb.ChatProjectionBundle
 	calls int
 }
 
-func (f *fakeDifferenceChatClient) ChatGetChatListByIdList(_ context.Context, in *chatpb.TLChatGetChatListByIdList) (*chatpb.VectorMutableChat, error) {
+func (f *fakeDifferenceChatClient) ChatGetChatProjectionBundle(_ context.Context, in *chatpb.TLChatGetChatProjectionBundle) (*chatpb.ChatProjectionBundle, error) {
 	f.calls++
 	f.in = in
 	return f.out, nil
@@ -263,10 +263,14 @@ func TestUpdatesGetDifferenceProjectsUsersAndChatsFromMessagesAndUpdates(t *test
 			}}),
 		},
 	}).ToUserProjectionBundle()}
-	chatClient := &fakeDifferenceChatClient{out: &chatpb.VectorMutableChat{Datas: []tg.MutableChatClazz{
-		testUpdatesMutableChat(6, "chat 6"),
-		testUpdatesMutableChat(7, "chat 7"),
-	}}}
+	chatClient := &fakeDifferenceChatClient{out: chatpb.MakeTLChatProjectionBundle(&chatpb.TLChatProjectionBundle{
+		ViewerChats: []chatpb.ViewerChatsClazz{
+			chatpb.MakeTLViewerChats(&chatpb.TLViewerChats{ViewerUserId: 1001, Chats: []tg.ChatClazz{
+				tg.MakeTLChat(&tg.TLChat{Id: 6, Title: "chat 6"}),
+				tg.MakeTLChat(&tg.TLChat{Id: 7, Title: "chat 7"}),
+			}}),
+		},
+	}).ToChatProjectionBundle()}
 	core := newUpdatesCoreWithDeps(client, userClient, chatClient)
 
 	got, err := core.UpdatesGetDifference(&tg.TLUpdatesGetDifference{Pts: 17, Date: 1, Qts: -1})
@@ -280,8 +284,9 @@ func TestUpdatesGetDifferenceProjectsUsersAndChatsFromMessagesAndUpdates(t *test
 	if userClient.in == nil || len(userClient.in.TargetUserIds) != 2 || userClient.in.TargetUserIds[0] != 1002 || userClient.in.TargetUserIds[1] != 1003 {
 		t.Fatalf("projection target users = %#v, want [1002 1003]", userClient.in)
 	}
-	if chatClient.in == nil || chatClient.in.SelfId != 1001 || len(chatClient.in.IdList) != 2 || chatClient.in.IdList[0] != 6 || chatClient.in.IdList[1] != 7 {
-		t.Fatalf("chat projection request = %#v, want chats [6 7]", chatClient.in)
+	if chatClient.in == nil || len(chatClient.in.ViewerUserIds) != 1 || chatClient.in.ViewerUserIds[0] != 1001 ||
+		len(chatClient.in.TargetChatIds) != 2 || chatClient.in.TargetChatIds[0] != 6 || chatClient.in.TargetChatIds[1] != 7 {
+		t.Fatalf("chat projection request = %#v, want viewer 1001 chats [6 7]", chatClient.in)
 	}
 	if len(diff.Users) != 2 {
 		t.Fatalf("users = %#v", diff.Users)
@@ -458,18 +463,4 @@ func TestUpdatesGetDifferenceRejectsMissingPermAuthKeyID(t *testing.T) {
 
 func int32Ptr(v int32) *int32 {
 	return &v
-}
-
-func testUpdatesMutableChat(id int64, title string) *tg.TLMutableChat {
-	return tg.MakeTLMutableChat(&tg.TLMutableChat{
-		Chat: tg.MakeTLImmutableChat(&tg.TLImmutableChat{
-			Id:                id,
-			Creator:           1001,
-			Title:             title,
-			Photo:             tg.MakeTLPhotoEmpty(&tg.TLPhotoEmpty{}),
-			ParticipantsCount: 2,
-			Date:              123,
-			Version:           1,
-		}),
-	})
 }
