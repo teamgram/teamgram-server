@@ -7,6 +7,7 @@ import (
 
 var (
 	ErrChatNotFound               = errors.New("chat: chat not found")
+	ErrChatInvalidArgument        = errors.New("chat: invalid argument")
 	ErrChatMigrated               = errors.New("chat: chat migrated")
 	ErrChatDeactivated            = errors.New("chat: chat deactivated")
 	ErrChatAdminRequired          = errors.New("chat: chat admin required")
