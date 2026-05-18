@@ -24,13 +24,16 @@ func init() {
 	iface.RegisterClazzID(0xdb75d1a7, func() iface.TLObject { return &TLChatInvite{ClazzID: 0xdb75d1a7} })                 // 0xdb75d1a7
 	iface.RegisterClazzID(0xace3e26e, func() iface.TLObject { return &TLChatInvitePeek{ClazzID: 0xace3e26e} })             // 0xace3e26e
 	iface.RegisterClazzID(0x721051f6, func() iface.TLObject { return &TLChatInviteImported{ClazzID: 0x721051f6} })         // 0x721051f6
+	iface.RegisterClazzID(0xff3f1aa4, func() iface.TLObject { return &TLChatProjectionBundle{ClazzID: 0xff3f1aa4} })       // 0xff3f1aa4
 	iface.RegisterClazzID(0x667011da, func() iface.TLObject { return &TLMessageActionCheckResult{ClazzID: 0x667011da} })   // 0x667011da
 	iface.RegisterClazzID(0x1c6e3c54, func() iface.TLObject { return &TLRecentChatInviteRequesters{ClazzID: 0x1c6e3c54} }) // 0x1c6e3c54
 	iface.RegisterClazzID(0x50067224, func() iface.TLObject { return &TLUserChatIdList{ClazzID: 0x50067224} })             // 0x50067224
+	iface.RegisterClazzID(0x689a4cf, func() iface.TLObject { return &TLViewerChats{ClazzID: 0x689a4cf} })                  // 0x689a4cf
 
 	// Method
 	iface.RegisterClazzID(0x2c2c25d2, func() iface.TLObject { return &TLChatGetMutableChat{ClazzID: 0x2c2c25d2} })                   // 0x2c2c25d2
 	iface.RegisterClazzID(0xe740f539, func() iface.TLObject { return &TLChatGetChatListByIdList{ClazzID: 0xe740f539} })              // 0xe740f539
+	iface.RegisterClazzID(0x45ec3ea5, func() iface.TLObject { return &TLChatGetChatProjectionBundle{ClazzID: 0x45ec3ea5} })          // 0x45ec3ea5
 	iface.RegisterClazzID(0x49b71a48, func() iface.TLObject { return &TLChatGetChatBySelfId{ClazzID: 0x49b71a48} })                  // 0x49b71a48
 	iface.RegisterClazzID(0xfff473b3, func() iface.TLObject { return &TLChatCheckChatAccess{ClazzID: 0xfff473b3} })                  // 0xfff473b3
 	iface.RegisterClazzID(0x3d9abe5b, func() iface.TLObject { return &TLChatCheckMessageAction{ClazzID: 0x3d9abe5b} })               // 0x3d9abe5b

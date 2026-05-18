@@ -25,6 +25,7 @@ var _ *tg.Bool
 type ChatClient interface {
 	ChatGetMutableChat(ctx context.Context, in *chat.TLChatGetMutableChat) (*tg.MutableChat, error)
 	ChatGetChatListByIdList(ctx context.Context, in *chat.TLChatGetChatListByIdList) (*chat.VectorMutableChat, error)
+	ChatGetChatProjectionBundle(ctx context.Context, in *chat.TLChatGetChatProjectionBundle) (*chat.ChatProjectionBundle, error)
 	ChatGetChatBySelfId(ctx context.Context, in *chat.TLChatGetChatBySelfId) (*tg.MutableChat, error)
 	ChatCheckChatAccess(ctx context.Context, in *chat.TLChatCheckChatAccess) (*chat.ChatAccessCheckResult, error)
 	ChatCheckMessageAction(ctx context.Context, in *chat.TLChatCheckMessageAction) (*chat.MessageActionCheckResult, error)
@@ -83,6 +84,12 @@ func (m *defaultChatClient) ChatGetMutableChat(ctx context.Context, in *chat.TLC
 // chat.getChatListByIdList self_id:long id_list:Vector<long> = Vector<MutableChat>;
 func (m *defaultChatClient) ChatGetChatListByIdList(ctx context.Context, in *chat.TLChatGetChatListByIdList) (*chat.VectorMutableChat, error) {
 	return m.rpc.ChatGetChatListByIdList(ctx, in)
+}
+
+// ChatGetChatProjectionBundle
+// chat.getChatProjectionBundle viewer_user_ids:Vector<long> target_chat_ids:Vector<long> = ChatProjectionBundle;
+func (m *defaultChatClient) ChatGetChatProjectionBundle(ctx context.Context, in *chat.TLChatGetChatProjectionBundle) (*chat.ChatProjectionBundle, error) {
+	return m.rpc.ChatGetChatProjectionBundle(ctx, in)
 }
 
 // ChatGetChatBySelfId

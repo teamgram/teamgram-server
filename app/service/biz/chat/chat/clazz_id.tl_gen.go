@@ -19,8 +19,11 @@ const (
 	ClazzID_chatAccessCheckResult                 = 0xc9b5daa6 // c9b5daa6
 	ClazzID_messageActionCheckResult              = 0x667011da // 667011da
 	ClazzID_chatInviteImported                    = 0x721051f6 // 721051f6
+	ClazzID_viewerChats                           = 0x689a4cf  // 689a4cf
+	ClazzID_chatProjectionBundle                  = 0xff3f1aa4 // ff3f1aa4
 	ClazzID_chat_getMutableChat                   = 0x2c2c25d2 // 2c2c25d2
 	ClazzID_chat_getChatListByIdList              = 0xe740f539 // e740f539
+	ClazzID_chat_getChatProjectionBundle          = 0x45ec3ea5 // 45ec3ea5
 	ClazzID_chat_getChatBySelfId                  = 0x49b71a48 // 49b71a48
 	ClazzID_chat_checkChatAccess                  = 0xfff473b3 // fff473b3
 	ClazzID_chat_checkMessageAction               = 0x3d9abe5b // 3d9abe5b

@@ -27,6 +27,7 @@ var _ *tg.Bool
 type Client interface {
 	ChatGetMutableChat(ctx context.Context, req *chat.TLChatGetMutableChat, callOptions ...callopt.Option) (r *tg.MutableChat, err error)
 	ChatGetChatListByIdList(ctx context.Context, req *chat.TLChatGetChatListByIdList, callOptions ...callopt.Option) (r *chat.VectorMutableChat, err error)
+	ChatGetChatProjectionBundle(ctx context.Context, req *chat.TLChatGetChatProjectionBundle, callOptions ...callopt.Option) (r *chat.ChatProjectionBundle, err error)
 	ChatGetChatBySelfId(ctx context.Context, req *chat.TLChatGetChatBySelfId, callOptions ...callopt.Option) (r *tg.MutableChat, err error)
 	ChatCheckChatAccess(ctx context.Context, req *chat.TLChatCheckChatAccess, callOptions ...callopt.Option) (r *chat.ChatAccessCheckResult, err error)
 	ChatCheckMessageAction(ctx context.Context, req *chat.TLChatCheckMessageAction, callOptions ...callopt.Option) (r *chat.MessageActionCheckResult, err error)
@@ -108,6 +109,11 @@ func (p *kChatClient) ChatGetMutableChat(ctx context.Context, req *chat.TLChatGe
 func (p *kChatClient) ChatGetChatListByIdList(ctx context.Context, req *chat.TLChatGetChatListByIdList, callOptions ...callopt.Option) (r *chat.VectorMutableChat, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.ChatGetChatListByIdList(ctx, req)
+}
+
+func (p *kChatClient) ChatGetChatProjectionBundle(ctx context.Context, req *chat.TLChatGetChatProjectionBundle, callOptions ...callopt.Option) (r *chat.ChatProjectionBundle, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.ChatGetChatProjectionBundle(ctx, req)
 }
 
 func (p *kChatClient) ChatGetChatBySelfId(ctx context.Context, req *chat.TLChatGetChatBySelfId, callOptions ...callopt.Option) (r *tg.MutableChat, err error) {

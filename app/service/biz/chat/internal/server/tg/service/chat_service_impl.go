@@ -52,6 +52,22 @@ func (s *Service) ChatGetChatListByIdList(ctx context.Context, request *chat.TLC
 	return r, err
 }
 
+// ChatGetChatProjectionBundle
+// chat.getChatProjectionBundle viewer_user_ids:Vector<long> target_chat_ids:Vector<long> = ChatProjectionBundle;
+func (s *Service) ChatGetChatProjectionBundle(ctx context.Context, request *chat.TLChatGetChatProjectionBundle) (*chat.ChatProjectionBundle, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("chat.getChatProjectionBundle - request: %s", request)
+
+	r, err := c.ChatGetChatProjectionBundle(request)
+	if err != nil {
+		c.Logger.Errorf("chat.getChatProjectionBundle - error: request: %s, err: %v", request, err)
+		return nil, err
+	}
+
+	c.Logger.Debugf("chat.getChatProjectionBundle - reply: %s", r)
+	return r, err
+}
+
 // ChatGetChatBySelfId
 // chat.getChatBySelfId self_id:long chat_id:long = MutableChat;
 func (s *Service) ChatGetChatBySelfId(ctx context.Context, request *chat.TLChatGetChatBySelfId) (*tg.MutableChat, error) {

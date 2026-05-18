@@ -906,6 +906,165 @@ func (m *TLChatInviteImported) Decode(d *bin.Decoder) (err error) {
 // ChatInviteImported <--
 type ChatInviteImported = TLChatInviteImported
 
+// ChatProjectionBundleClazz <--
+//   - TL_ChatProjectionBundle
+type ChatProjectionBundleClazz = *TLChatProjectionBundle
+
+func DecodeChatProjectionBundleClazz(d *bin.Decoder) (ChatProjectionBundleClazz, error) {
+	// id, err := d.PeekClazzID()
+	id, err := d.ClazzID()
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode ChatProjectionBundle: constructor: %w", err)
+	}
+
+	switch id {
+	case 0xff3f1aa4:
+		x := &TLChatProjectionBundle{ClazzID: id, ClazzName2: ClazzName_chatProjectionBundle}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
+		return x, nil
+	default:
+		return nil, fmt.Errorf("unable to decode ChatProjectionBundle: invalid constructor %x", id)
+	}
+
+}
+
+// TLChatProjectionBundle <--
+type TLChatProjectionBundle struct {
+	ClazzID        uint32             `json:"_id"`
+	ClazzName2     string             `json:"_name"`
+	ViewerChats    []ViewerChatsClazz `json:"viewer_chats"`
+	MissingChatIds []int64            `json:"missing_chat_ids"`
+}
+
+func MakeTLChatProjectionBundle(m *TLChatProjectionBundle) *TLChatProjectionBundle {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_chatProjectionBundle
+
+	return m
+}
+
+func (m *TLChatProjectionBundle) String() string {
+	return iface.DebugStringWithName("chatProjectionBundle", m)
+}
+
+func (m *TLChatProjectionBundle) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("chatProjectionBundle", m)
+}
+
+// ChatProjectionBundleClazzName <--
+func (m *TLChatProjectionBundle) ChatProjectionBundleClazzName() string {
+	return ClazzName_chatProjectionBundle
+}
+
+// ClazzName <--
+func (m *TLChatProjectionBundle) ClazzName() string {
+	return m.ClazzName2
+}
+
+// ToChatProjectionBundle <--
+func (m *TLChatProjectionBundle) ToChatProjectionBundle() *ChatProjectionBundle {
+	if m == nil {
+		return nil
+	}
+
+	return m
+
+}
+
+func (m *TLChatProjectionBundle) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatProjectionBundle, int(layer)); clazzId {
+	case 0xff3f1aa4:
+		size := 4
+		size += iface.CalcObjectListSize(m.ViewerChats, layer)
+		size += iface.CalcInt64ListSize(m.MissingChatIds)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLChatProjectionBundle) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatProjectionBundle, int(layer)); clazzId {
+	case 0xff3f1aa4:
+		if err := iface.ValidateRequiredSlice("viewer_chats", m.ViewerChats); err != nil {
+			return err
+		}
+
+		if err := iface.ValidateRequiredSlice("missing_chat_ids", m.MissingChatIds); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode chatProjectionBundle: unsupported layer %d", layer)
+	}
+}
+
+// Encode <--
+func (m *TLChatProjectionBundle) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chatProjectionBundle, int(layer)); clazzId {
+	case 0xff3f1aa4:
+		x.PutClazzID(0xff3f1aa4)
+
+		if err := iface.EncodeObjectList(x, m.ViewerChats, layer); err != nil {
+			return fmt.Errorf("unable to encode chatProjectionBundle#0xff3f1aa4: field viewer_chats: %w", err)
+		}
+
+		iface.EncodeInt64List(x, m.MissingChatIds)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode chatProjectionBundle: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLChatProjectionBundle) Decode(d *bin.Decoder) (err error) {
+	switch m.ClazzID {
+	case 0xff3f1aa4:
+		l0, err3 := d.VectorHeader()
+		if err3 != nil {
+			return fmt.Errorf("unable to decode chatProjectionBundle#0xff3f1aa4: field viewer_chats: %w", err3)
+		}
+		if l0 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode chatProjectionBundle#0xff3f1aa4: field viewer_chats: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l0)})
+		}
+		prealloc0 := int(l0)
+		if prealloc0 > bin.PreallocateLimit {
+			prealloc0 = bin.PreallocateLimit
+		}
+		v0 := make([]ViewerChatsClazz, 0, prealloc0)
+		for i := int32(0); i < l0; i++ {
+			vv0, err3 := DecodeViewerChatsClazz(d)
+			if err3 != nil {
+				return fmt.Errorf("unable to decode chatProjectionBundle#0xff3f1aa4: field viewer_chats: %w", err3)
+			}
+			v0 = append(v0, vv0)
+		}
+		m.ViewerChats = v0
+
+		m.MissingChatIds, err = iface.DecodeInt64List(d)
+		if err != nil {
+			return fmt.Errorf("unable to decode chatProjectionBundle#0xff3f1aa4: field missing_chat_ids: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode chatProjectionBundle: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// ChatProjectionBundle <--
+type ChatProjectionBundle = TLChatProjectionBundle
+
 // MessageActionCheckResultClazz <--
 //   - TL_MessageActionCheckResult
 type MessageActionCheckResultClazz = *TLMessageActionCheckResult
@@ -1332,3 +1491,157 @@ func (m *TLUserChatIdList) Decode(d *bin.Decoder) (err error) {
 
 // UserChatIdList <--
 type UserChatIdList = TLUserChatIdList
+
+// ViewerChatsClazz <--
+//   - TL_ViewerChats
+type ViewerChatsClazz = *TLViewerChats
+
+func DecodeViewerChatsClazz(d *bin.Decoder) (ViewerChatsClazz, error) {
+	// id, err := d.PeekClazzID()
+	id, err := d.ClazzID()
+	if err != nil {
+		return nil, fmt.Errorf("unable to decode ViewerChats: constructor: %w", err)
+	}
+
+	switch id {
+	case 0x689a4cf:
+		x := &TLViewerChats{ClazzID: id, ClazzName2: ClazzName_viewerChats}
+		if err := x.Decode(d); err != nil {
+			return nil, err
+		}
+		return x, nil
+	default:
+		return nil, fmt.Errorf("unable to decode ViewerChats: invalid constructor %x", id)
+	}
+
+}
+
+// TLViewerChats <--
+type TLViewerChats struct {
+	ClazzID      uint32         `json:"_id"`
+	ClazzName2   string         `json:"_name"`
+	ViewerUserId int64          `json:"viewer_user_id"`
+	Chats        []tg.ChatClazz `json:"chats"`
+}
+
+func MakeTLViewerChats(m *TLViewerChats) *TLViewerChats {
+	if m == nil {
+		return nil
+	}
+	m.ClazzName2 = ClazzName_viewerChats
+
+	return m
+}
+
+func (m *TLViewerChats) String() string {
+	return iface.DebugStringWithName("viewerChats", m)
+}
+
+func (m *TLViewerChats) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return iface.MarshalWithName("viewerChats", m)
+}
+
+// ViewerChatsClazzName <--
+func (m *TLViewerChats) ViewerChatsClazzName() string {
+	return ClazzName_viewerChats
+}
+
+// ClazzName <--
+func (m *TLViewerChats) ClazzName() string {
+	return m.ClazzName2
+}
+
+// ToViewerChats <--
+func (m *TLViewerChats) ToViewerChats() *ViewerChats {
+	if m == nil {
+		return nil
+	}
+
+	return m
+
+}
+
+func (m *TLViewerChats) CalcSize(layer int32) int {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_viewerChats, int(layer)); clazzId {
+	case 0x689a4cf:
+		size := 4
+		size += 8
+		size += iface.CalcObjectListSize(m.Chats, layer)
+
+		return size
+	default:
+		return 0
+	}
+}
+
+func (m *TLViewerChats) Validate(layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_viewerChats, int(layer)); clazzId {
+	case 0x689a4cf:
+		if err := iface.ValidateRequiredSlice("chats", m.Chats); err != nil {
+			return err
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode viewerChats: unsupported layer %d", layer)
+	}
+}
+
+// Encode <--
+func (m *TLViewerChats) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_viewerChats, int(layer)); clazzId {
+	case 0x689a4cf:
+		x.PutClazzID(0x689a4cf)
+
+		x.PutInt64(m.ViewerUserId)
+
+		if err := iface.EncodeObjectList(x, m.Chats, layer); err != nil {
+			return fmt.Errorf("unable to encode viewerChats#0x689a4cf: field chats: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode viewerChats: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLViewerChats) Decode(d *bin.Decoder) (err error) {
+	switch m.ClazzID {
+	case 0x689a4cf:
+		m.ViewerUserId, err = d.Int64()
+		if err != nil {
+			return fmt.Errorf("unable to decode viewerChats#0x689a4cf: field viewer_user_id: %w", err)
+		}
+		l1, err3 := d.VectorHeader()
+		if err3 != nil {
+			return fmt.Errorf("unable to decode viewerChats#0x689a4cf: field chats: %w", err3)
+		}
+		if l1 > bin.MaxVectorLen {
+			return fmt.Errorf("unable to decode viewerChats#0x689a4cf: field chats: %w", &bin.InvalidLengthError{Type: "vector", Length: int(l1)})
+		}
+		prealloc1 := int(l1)
+		if prealloc1 > bin.PreallocateLimit {
+			prealloc1 = bin.PreallocateLimit
+		}
+		v1 := make([]tg.ChatClazz, 0, prealloc1)
+		for i := int32(0); i < l1; i++ {
+			vv1, err3 := tg.DecodeChatClazz(d)
+			if err3 != nil {
+				return fmt.Errorf("unable to decode viewerChats#0x689a4cf: field chats: %w", err3)
+			}
+			v1 = append(v1, vv1)
+		}
+		m.Chats = v1
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode viewerChats: invalid constructor %x", m.ClazzID)
+	}
+}
+
+// ViewerChats <--
+type ViewerChats = TLViewerChats

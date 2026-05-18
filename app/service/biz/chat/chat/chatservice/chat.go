@@ -69,6 +69,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"/chat.RPCChat/chat.getChatProjectionBundle": kitex.NewMethodInfo(
+		getChatProjectionBundleHandler,
+		newGetChatProjectionBundleArgs,
+		newGetChatProjectionBundleResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 	"/chat.RPCChat/chat.getChatBySelfId": kitex.NewMethodInfo(
 		getChatBySelfIdHandler,
 		newGetChatBySelfIdArgs,
@@ -645,6 +652,140 @@ func (p *GetChatListByIdListResult) IsSetSuccess() bool {
 }
 
 func (p *GetChatListByIdListResult) GetResult() interface{} {
+	return p.Success
+}
+
+func getChatProjectionBundleHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*GetChatProjectionBundleArgs)
+	realResult := result.(*GetChatProjectionBundleResult)
+	success, err := handler.(chat.RPCChat).ChatGetChatProjectionBundle(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+
+func newGetChatProjectionBundleArgs() interface{} {
+	return &GetChatProjectionBundleArgs{}
+}
+
+func newGetChatProjectionBundleResult() interface{} {
+	return &GetChatProjectionBundleResult{}
+}
+
+type GetChatProjectionBundleArgs struct {
+	Req *chat.TLChatGetChatProjectionBundle
+}
+
+func (p *GetChatProjectionBundleArgs) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetReq() {
+		return out, fmt.Errorf("no req in GetChatProjectionBundleArgs")
+	}
+	return json.Marshal(p.Req)
+}
+
+func (p *GetChatProjectionBundleArgs) Unmarshal(in []byte) error {
+	msg := new(chat.TLChatGetChatProjectionBundle)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+func (p *GetChatProjectionBundleArgs) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetReq() {
+		return fmt.Errorf("no req in GetChatProjectionBundleArgs")
+	}
+
+	return p.Req.Encode(x, layer)
+}
+
+func (p *GetChatProjectionBundleArgs) Decode(d *bin.Decoder) (err error) {
+	msg := new(chat.TLChatGetChatProjectionBundle)
+	msg.ClazzID, err = d.ClazzID()
+	if err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Req = msg
+	return nil
+}
+
+var GetChatProjectionBundleArgs_Req_DEFAULT *chat.TLChatGetChatProjectionBundle
+
+func (p *GetChatProjectionBundleArgs) GetReq() *chat.TLChatGetChatProjectionBundle {
+	if !p.IsSetReq() {
+		return GetChatProjectionBundleArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+
+func (p *GetChatProjectionBundleArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+type GetChatProjectionBundleResult struct {
+	Success *chat.ChatProjectionBundle
+}
+
+var GetChatProjectionBundleResult_Success_DEFAULT *chat.ChatProjectionBundle
+
+func (p *GetChatProjectionBundleResult) Marshal(out []byte) ([]byte, error) {
+	if !p.IsSetSuccess() {
+		return out, fmt.Errorf("no req in GetChatProjectionBundleResult")
+	}
+	return json.Marshal(p.Success)
+}
+
+func (p *GetChatProjectionBundleResult) Unmarshal(in []byte) error {
+	msg := new(chat.ChatProjectionBundle)
+	if err := json.Unmarshal(in, msg); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetChatProjectionBundleResult) Encode(x *bin.Encoder, layer int32) error {
+	if !p.IsSetSuccess() {
+		return fmt.Errorf("no req in GetChatProjectionBundleResult")
+	}
+
+	return p.Success.Encode(x, layer)
+}
+
+func (p *GetChatProjectionBundleResult) Decode(d *bin.Decoder) (err error) {
+	msg := new(chat.ChatProjectionBundle)
+	if err = decodeConstructorIfPresent(d, msg); err != nil {
+		return err
+	}
+	if err = msg.Decode(d); err != nil {
+		return err
+	}
+	p.Success = msg
+	return nil
+}
+
+func (p *GetChatProjectionBundleResult) GetSuccess() *chat.ChatProjectionBundle {
+	if !p.IsSetSuccess() {
+		return GetChatProjectionBundleResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+func (p *GetChatProjectionBundleResult) SetSuccess(x interface{}) {
+	p.Success = x.(*chat.ChatProjectionBundle)
+}
+
+func (p *GetChatProjectionBundleResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *GetChatProjectionBundleResult) GetResult() interface{} {
 	return p.Success
 }
 
@@ -5232,6 +5373,18 @@ func (p *kClient) ChatGetChatListByIdList(ctx context.Context, req *chat.TLChatG
 	var _result GetChatListByIdListResult
 
 	if err = p.c.Call(ctx, "/chat.RPCChat/chat.getChatListByIdList", req, &_result); err != nil {
+		return
+	}
+
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) ChatGetChatProjectionBundle(ctx context.Context, req *chat.TLChatGetChatProjectionBundle) (r *chat.ChatProjectionBundle, err error) {
+	// var _args GetChatProjectionBundleArgs
+	// _args.Req = req
+	var _result GetChatProjectionBundleResult
+
+	if err = p.c.Call(ctx, "/chat.RPCChat/chat.getChatProjectionBundle", req, &_result); err != nil {
 		return
 	}
 

@@ -23,8 +23,11 @@ const (
 	ClazzName_chatAccessCheckResult                 = "chatAccessCheckResult"
 	ClazzName_messageActionCheckResult              = "messageActionCheckResult"
 	ClazzName_chatInviteImported                    = "chatInviteImported"
+	ClazzName_viewerChats                           = "viewerChats"
+	ClazzName_chatProjectionBundle                  = "chatProjectionBundle"
 	ClazzName_chat_getMutableChat                   = "chat_getMutableChat"
 	ClazzName_chat_getChatListByIdList              = "chat_getChatListByIdList"
+	ClazzName_chat_getChatProjectionBundle          = "chat_getChatProjectionBundle"
 	ClazzName_chat_getChatBySelfId                  = "chat_getChatBySelfId"
 	ClazzName_chat_checkChatAccess                  = "chat_checkChatAccess"
 	ClazzName_chat_checkMessageAction               = "chat_checkMessageAction"
@@ -71,8 +74,11 @@ func init() {
 	iface.RegisterClazzName(ClazzName_chatAccessCheckResult, 0, 0xc9b5daa6)                 // c9b5daa6
 	iface.RegisterClazzName(ClazzName_messageActionCheckResult, 0, 0x667011da)              // 667011da
 	iface.RegisterClazzName(ClazzName_chatInviteImported, 0, 0x721051f6)                    // 721051f6
+	iface.RegisterClazzName(ClazzName_viewerChats, 0, 0x689a4cf)                            // 689a4cf
+	iface.RegisterClazzName(ClazzName_chatProjectionBundle, 0, 0xff3f1aa4)                  // ff3f1aa4
 	iface.RegisterClazzName(ClazzName_chat_getMutableChat, 0, 0x2c2c25d2)                   // 2c2c25d2
 	iface.RegisterClazzName(ClazzName_chat_getChatListByIdList, 0, 0xe740f539)              // e740f539
+	iface.RegisterClazzName(ClazzName_chat_getChatProjectionBundle, 0, 0x45ec3ea5)          // 45ec3ea5
 	iface.RegisterClazzName(ClazzName_chat_getChatBySelfId, 0, 0x49b71a48)                  // 49b71a48
 	iface.RegisterClazzName(ClazzName_chat_checkChatAccess, 0, 0xfff473b3)                  // fff473b3
 	iface.RegisterClazzName(ClazzName_chat_checkMessageAction, 0, 0x3d9abe5b)               // 3d9abe5b
@@ -117,8 +123,11 @@ func init() {
 	iface.RegisterClazzIDName(ClazzName_chatAccessCheckResult, 0xc9b5daa6)                 // c9b5daa6
 	iface.RegisterClazzIDName(ClazzName_messageActionCheckResult, 0x667011da)              // 667011da
 	iface.RegisterClazzIDName(ClazzName_chatInviteImported, 0x721051f6)                    // 721051f6
+	iface.RegisterClazzIDName(ClazzName_viewerChats, 0x689a4cf)                            // 689a4cf
+	iface.RegisterClazzIDName(ClazzName_chatProjectionBundle, 0xff3f1aa4)                  // ff3f1aa4
 	iface.RegisterClazzIDName(ClazzName_chat_getMutableChat, 0x2c2c25d2)                   // 2c2c25d2
 	iface.RegisterClazzIDName(ClazzName_chat_getChatListByIdList, 0xe740f539)              // e740f539
+	iface.RegisterClazzIDName(ClazzName_chat_getChatProjectionBundle, 0x45ec3ea5)          // 45ec3ea5
 	iface.RegisterClazzIDName(ClazzName_chat_getChatBySelfId, 0x49b71a48)                  // 49b71a48
 	iface.RegisterClazzIDName(ClazzName_chat_checkChatAccess, 0xfff473b3)                  // fff473b3
 	iface.RegisterClazzIDName(ClazzName_chat_checkMessageAction, 0x3d9abe5b)               // 3d9abe5b

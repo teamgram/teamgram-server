@@ -126,6 +126,60 @@ func (m *TLChatGetChatListByIdList) Decode(d *bin.Decoder) (err error) {
 	}
 }
 
+// TLChatGetChatProjectionBundle <--
+type TLChatGetChatProjectionBundle struct {
+	ClazzID       uint32  `json:"_id"`
+	ViewerUserIds []int64 `json:"viewer_user_ids"`
+	TargetChatIds []int64 `json:"target_chat_ids"`
+}
+
+func (m *TLChatGetChatProjectionBundle) String() string {
+	return iface.DebugStringWithName(ClazzName_chat_getChatProjectionBundle, m)
+}
+
+// Encode <--
+func (m *TLChatGetChatProjectionBundle) Encode(x *bin.Encoder, layer int32) error {
+	switch clazzId := iface.GetClazzIDByName(ClazzName_chat_getChatProjectionBundle, int(layer)); clazzId {
+	case 0x45ec3ea5:
+		x.PutClazzID(0x45ec3ea5)
+
+		iface.EncodeInt64List(x, m.ViewerUserIds)
+
+		iface.EncodeInt64List(x, m.TargetChatIds)
+
+		return nil
+	default:
+		return fmt.Errorf("unable to encode chat_getChatProjectionBundle: unsupported layer %d", layer)
+	}
+}
+
+// Decode <--
+func (m *TLChatGetChatProjectionBundle) Decode(d *bin.Decoder) (err error) {
+	if m.ClazzID == 0 {
+		m.ClazzID, err = d.ClazzID()
+		if err != nil {
+			return fmt.Errorf("unable to decode chat_getChatProjectionBundle: constructor: %w", err)
+		}
+	}
+	switch m.ClazzID {
+	case 0x45ec3ea5:
+
+		m.ViewerUserIds, err = iface.DecodeInt64List(d)
+		if err != nil {
+			return fmt.Errorf("unable to decode chat_getChatProjectionBundle#0x45ec3ea5: field viewer_user_ids: %w", err)
+		}
+
+		m.TargetChatIds, err = iface.DecodeInt64List(d)
+		if err != nil {
+			return fmt.Errorf("unable to decode chat_getChatProjectionBundle#0x45ec3ea5: field target_chat_ids: %w", err)
+		}
+
+		return nil
+	default:
+		return fmt.Errorf("unable to decode chat_getChatProjectionBundle: invalid constructor %x", m.ClazzID)
+	}
+}
+
 // TLChatGetChatBySelfId <--
 type TLChatGetChatBySelfId struct {
 	ClazzID uint32 `json:"_id"`
@@ -2613,6 +2667,7 @@ func (m *VectorChatInviteImporter) Decode(d *bin.Decoder) (err error) {
 type RPCChat interface {
 	ChatGetMutableChat(ctx context.Context, in *TLChatGetMutableChat) (*tg.MutableChat, error)
 	ChatGetChatListByIdList(ctx context.Context, in *TLChatGetChatListByIdList) (*VectorMutableChat, error)
+	ChatGetChatProjectionBundle(ctx context.Context, in *TLChatGetChatProjectionBundle) (*ChatProjectionBundle, error)
 	ChatGetChatBySelfId(ctx context.Context, in *TLChatGetChatBySelfId) (*tg.MutableChat, error)
 	ChatCheckChatAccess(ctx context.Context, in *TLChatCheckChatAccess) (*ChatAccessCheckResult, error)
 	ChatCheckMessageAction(ctx context.Context, in *TLChatCheckMessageAction) (*MessageActionCheckResult, error)
