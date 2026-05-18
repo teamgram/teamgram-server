@@ -6,8 +6,8 @@ import (
 	"reflect"
 	"testing"
 
-	public "github.com/teamgram/teamgram-server/v2/app/bff/projection/chatprojection"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
+	bizchatproj "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chatprojection"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -23,11 +23,11 @@ func (f *fakeChatClient) ChatGetChatProjectionBundle(_ context.Context, in *chat
 }
 
 func TestMissingPolicyMapsToPublicProjectionPolicy(t *testing.T) {
-	if MissingExplicitInput != public.MissingExplicitInput {
-		t.Fatalf("MissingExplicitInput did not alias public explicit policy")
+	if publicMissingPolicy(MissingExplicitInput) != bizchatproj.MissingExplicitInput {
+		t.Fatalf("MissingExplicitInput did not map to public explicit policy")
 	}
-	if MissingStoredReference != public.MissingStoredReference {
-		t.Fatalf("MissingStoredReference did not alias public stored-reference policy")
+	if publicMissingPolicy(MissingStoredReference) != bizchatproj.MissingStoredReference {
+		t.Fatalf("MissingStoredReference did not map to public stored-reference policy")
 	}
 }
 
@@ -55,6 +55,15 @@ func TestProjectChatsMapsExplicitMissingToChatIdInvalid(t *testing.T) {
 	}
 }
 
+func TestProjectChatsWrapsInvalidRequest(t *testing.T) {
+	client := &fakeChatClient{err: chatpb.ErrChatInvalidArgument}
+
+	_, err := ProjectChats(context.Background(), client, 1001, []int64{3001}, MissingExplicitInput)
+	if !errors.Is(err, bizchatproj.ErrInvalidRequest) {
+		t.Fatalf("ProjectChats() error = %v, want wrapped invalid request", err)
+	}
+}
+
 func TestProjectChatsMissingViewerPreservesBFFEmptySlice(t *testing.T) {
 	client := &fakeChatClient{out: chatpb.MakeTLChatProjectionBundle(&chatpb.TLChatProjectionBundle{
 		ViewerChats: []chatpb.ViewerChatsClazz{
@@ -70,7 +79,7 @@ func TestProjectChatsMissingViewerPreservesBFFEmptySlice(t *testing.T) {
 	}
 }
 
-func TestFillUpdatesChatsDelegatesToPublicProjection(t *testing.T) {
+func TestFillUpdatesChatsReplacesGroupCallPeerChat(t *testing.T) {
 	projected := tg.MakeTLChat(&tg.TLChat{Id: 7001})
 	client := &fakeChatClient{out: chatpb.MakeTLChatProjectionBundle(&chatpb.TLChatProjectionBundle{
 		ViewerChats: []chatpb.ViewerChatsClazz{
@@ -98,5 +107,40 @@ func TestFillUpdatesChatsDelegatesToPublicProjection(t *testing.T) {
 	}
 	if len(updates.Chats) != 1 || updates.Chats[0] != projected {
 		t.Fatalf("updates.Chats = %#v, want projected chat", updates.Chats)
+	}
+}
+
+func TestFillUpdatesChatsReplacesCombinedChats(t *testing.T) {
+	projected := tg.MakeTLChat(&tg.TLChat{Id: 7002})
+	client := &fakeChatClient{out: chatpb.MakeTLChatProjectionBundle(&chatpb.TLChatProjectionBundle{
+		ViewerChats: []chatpb.ViewerChatsClazz{
+			chatpb.MakeTLViewerChats(&chatpb.TLViewerChats{
+				ViewerUserId: 1001,
+				Chats:        []tg.ChatClazz{projected},
+			}),
+		},
+	}).ToChatProjectionBundle()}
+	updates := tg.MakeTLUpdatesCombined(&tg.TLUpdatesCombined{
+		Updates: []tg.UpdateClazz{
+			tg.MakeTLUpdateGroupCallParticipants(&tg.TLUpdateGroupCallParticipants{
+				Participants: []tg.GroupCallParticipantClazz{
+					tg.MakeTLGroupCallParticipant(&tg.TLGroupCallParticipant{
+						Peer: tg.MakeTLPeerChat(&tg.TLPeerChat{ChatId: 7002}),
+					}),
+				},
+			}),
+		},
+		Chats: []tg.ChatClazz{tg.MakeTLChat(&tg.TLChat{Id: 9999})},
+	})
+
+	err := FillUpdatesChats(context.Background(), client, 1001, updates.ToUpdates(), MissingStoredReference)
+	if err != nil {
+		t.Fatalf("FillUpdatesChats(combined) error = %v", err)
+	}
+	if !reflect.DeepEqual(client.in.TargetChatIds, []int64{7002}) {
+		t.Fatalf("TargetChatIds = %#v, want [7002]", client.in.TargetChatIds)
+	}
+	if len(updates.Chats) != 1 || updates.Chats[0] != projected {
+		t.Fatalf("updatesCombined.Chats = %#v, want projected chat", updates.Chats)
 	}
 }

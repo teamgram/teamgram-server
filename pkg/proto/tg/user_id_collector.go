@@ -51,6 +51,20 @@ func CollectChatIDsFromDifference(diff *UpdatesDifference) []int64 {
 	return c.ids
 }
 
+func CollectChatIDsFromUpdates(updates *Updates) []int64 {
+	c := newChatIDCollector()
+	if updates == nil {
+		return c.ids
+	}
+	if full, ok := updates.ToUpdates(); ok {
+		c.collectUpdates(full.Updates)
+	}
+	if combined, ok := updates.ToUpdatesCombined(); ok {
+		c.collectUpdates(combined.Updates)
+	}
+	return c.ids
+}
+
 func CollectUserIDsFromMessagesMessages(messages *MessagesMessages) []int64 {
 	c := newUserIDCollector()
 	if messages == nil {
@@ -366,6 +380,18 @@ func (c *ChatIDCollector) collectUpdate(update UpdateClazz) {
 	case *TLUpdateChatParticipants:
 		if p, ok := u.Participants.(*TLChatParticipants); ok {
 			c.add(p.ChatId)
+		}
+	case *TLUpdateGroupCall:
+		c.collectPeer(u.Peer)
+	case *TLUpdateGroupCallParticipants:
+		c.collectGroupCallParticipants(u.Participants)
+	}
+}
+
+func (c *ChatIDCollector) collectGroupCallParticipants(participants []GroupCallParticipantClazz) {
+	for _, participant := range participants {
+		if participant != nil {
+			c.collectPeer(participant.Peer)
 		}
 	}
 }

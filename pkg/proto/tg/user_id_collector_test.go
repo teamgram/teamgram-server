@@ -96,6 +96,42 @@ func TestCollectChatIDsFromDifferenceCollectsMessagesAndOtherUpdates(t *testing.
 	}
 }
 
+func TestCollectChatIDsFromUpdatesCollectsGroupCallPeer(t *testing.T) {
+	updates := MakeTLUpdates(&TLUpdates{
+		Updates: []UpdateClazz{
+			MakeTLUpdateGroupCall(&TLUpdateGroupCall{
+				Peer: MakeTLPeerChat(&TLPeerChat{ChatId: 7001}),
+			}),
+		},
+	})
+
+	got := CollectChatIDsFromUpdates(updates.ToUpdates())
+	want := []int64{7001}
+	if !sameInt64s(got, want) {
+		t.Fatalf("chat ids = %v, want %v", got, want)
+	}
+}
+
+func TestCollectChatIDsFromUpdatesCollectsParticipantPeerChat(t *testing.T) {
+	updates := MakeTLUpdates(&TLUpdates{
+		Updates: []UpdateClazz{
+			MakeTLUpdateGroupCallParticipants(&TLUpdateGroupCallParticipants{
+				Participants: []GroupCallParticipantClazz{
+					MakeTLGroupCallParticipant(&TLGroupCallParticipant{
+						Peer: MakeTLPeerChat(&TLPeerChat{ChatId: 7002}),
+					}),
+				},
+			}),
+		},
+	})
+
+	got := CollectChatIDsFromUpdates(updates.ToUpdates())
+	want := []int64{7002}
+	if !sameInt64s(got, want) {
+		t.Fatalf("chat ids = %v, want %v", got, want)
+	}
+}
+
 func TestCollectUserIDsFromMessagesMessagesCollectsMessages(t *testing.T) {
 	messages := MakeTLMessagesMessages(&TLMessagesMessages{
 		Messages: []MessageClazz{MakeTLMessage(&TLMessage{
