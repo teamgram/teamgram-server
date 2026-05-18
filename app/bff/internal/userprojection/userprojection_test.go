@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
+	bizuserproj "github.com/teamgram/teamgram-server/v2/app/service/biz/user/userprojection"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -136,6 +137,63 @@ func TestFillMessagesMessagesUsersReplacesLegacyUsers(t *testing.T) {
 	}
 	if len(messages.Users) != 2 || messages.Users[0].(*tg.TLUser).Id != 1001 || messages.Users[1].(*tg.TLUser).Id != 1002 {
 		t.Fatalf("users = %#v", messages.Users)
+	}
+}
+
+func TestMissingPolicyMapsToPublicProjectionPolicy(t *testing.T) {
+	tests := []struct {
+		name string
+		in   MissingPolicy
+		want bizuserproj.MissingPolicy
+	}{
+		{name: "explicit input", in: MissingExplicitInput, want: bizuserproj.MissingExplicitInput},
+		{name: "stored reference", in: MissingStoredReference, want: bizuserproj.MissingStoredReference},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := publicMissingPolicy(tt.in)
+			if got != tt.want {
+				t.Fatalf("publicMissingPolicy(%d) = %d, want %d", tt.in, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestProjectUsersEmptyInputPreservesBFFEmptySlice(t *testing.T) {
+	client := &fakeUserClient{}
+
+	got, err := ProjectUsers(context.Background(), client, 1001, nil, MissingExplicitInput)
+	if err != nil {
+		t.Fatalf("ProjectUsers(empty) error = %v", err)
+	}
+	if got == nil {
+		t.Fatalf("ProjectUsers(empty) = nil, want empty non-nil slice")
+	}
+	if len(got) != 0 {
+		t.Fatalf("ProjectUsers(empty) = %#v, want empty slice", got)
+	}
+	if client.in != nil {
+		t.Fatalf("client called for empty input: %#v", client.in)
+	}
+}
+
+func TestProjectUsersMissingViewerPreservesBFFEmptySlice(t *testing.T) {
+	client := &fakeUserClient{out: userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+		ViewerUsers: []userpb.ViewerUsersClazz{
+			userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 9999}),
+		},
+	}).ToUserProjectionBundle()}
+
+	got, err := ProjectUsers(context.Background(), client, 1001, []int64{1002}, MissingStoredReference)
+	if err != nil {
+		t.Fatalf("ProjectUsers(missing viewer) error = %v", err)
+	}
+	if got == nil {
+		t.Fatalf("ProjectUsers(missing viewer) = nil, want empty non-nil slice")
+	}
+	if len(got) != 0 {
+		t.Fatalf("ProjectUsers(missing viewer) = %#v, want empty slice", got)
 	}
 }
 

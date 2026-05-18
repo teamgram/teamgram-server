@@ -5,13 +5,15 @@ import (
 	"errors"
 	"fmt"
 
-	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
+	bizuserproj "github.com/teamgram/teamgram-server/v2/app/service/biz/user/userprojection"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-type UserClient interface {
-	UserGetUserProjectionBundle(ctx context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error)
-}
+// UserClient is the BFF compatibility alias for the public user projection client.
+//
+// New cross-service callers should import
+// app/service/biz/user/userprojection directly instead of this package.
+type UserClient = bizuserproj.Client
 
 type MissingPolicy int
 
@@ -20,35 +22,42 @@ const (
 	MissingStoredReference
 )
 
+func publicMissingPolicy(missing MissingPolicy) bizuserproj.MissingPolicy {
+	switch missing {
+	case MissingExplicitInput:
+		return bizuserproj.MissingExplicitInput
+	case MissingStoredReference:
+		return bizuserproj.MissingStoredReference
+	default:
+		return bizuserproj.MissingStoredReference
+	}
+}
+
+// ProjectUsers adapts the public user projection helper to BFF legacy semantics.
+//
+// New cross-service callers should import
+// app/service/biz/user/userprojection directly instead of this package.
 func ProjectUsers(ctx context.Context, client UserClient, viewerUserId int64, targetUserIds []int64, missing MissingPolicy) ([]tg.UserClazz, error) {
-	if len(targetUserIds) == 0 {
-		return []tg.UserClazz{}, nil
-	}
-	if client == nil {
-		return nil, fmt.Errorf("user projection client is nil")
-	}
-	bundle, err := client.UserGetUserProjectionBundle(ctx, &userpb.TLUserGetUserProjectionBundle{
-		ViewerUserIds: []int64{viewerUserId},
-		TargetUserIds: targetUserIds,
+	users, err := bizuserproj.ProjectUsers(ctx, client, viewerUserId, targetUserIds, bizuserproj.Options{
+		Missing:         publicMissingPolicy(missing),
+		RequireNonEmpty: false,
 	})
 	if err != nil {
-		if errors.Is(err, userpb.ErrUserInvalidArgument) {
+		switch {
+		case errors.Is(err, bizuserproj.ErrExplicitUserMissing):
+			return nil, tg.ErrUserIdInvalid
+		case errors.Is(err, bizuserproj.ErrInvalidRequest):
 			return nil, fmt.Errorf("user projection invalid request: %w", err)
-		}
-		return nil, err
-	}
-	if bundle == nil {
-		return nil, fmt.Errorf("user projection bundle is nil")
-	}
-	if len(bundle.MissingUserIds) > 0 && missing == MissingExplicitInput {
-		return nil, tg.ErrUserIdInvalid
-	}
-	for _, viewer := range bundle.ViewerUsers {
-		if viewer != nil && viewer.ViewerUserId == viewerUserId {
-			return viewer.Users, nil
+		case errors.Is(err, bizuserproj.ErrViewerProjectionMissing):
+			return []tg.UserClazz{}, nil
+		default:
+			return nil, err
 		}
 	}
-	return []tg.UserClazz{}, nil
+	if users == nil {
+		return []tg.UserClazz{}, nil
+	}
+	return users, nil
 }
 
 func FillUpdatesUsers(ctx context.Context, client UserClient, viewerUserId int64, updates *tg.Updates, missing MissingPolicy) error {
