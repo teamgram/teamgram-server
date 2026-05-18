@@ -10,6 +10,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
+	userprojection "github.com/teamgram/teamgram-server/v2/app/service/biz/user/userprojection"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -256,6 +257,26 @@ func TestRepositoryProjectUsersRejectsEmptyViewerUsers(t *testing.T) {
 
 	if _, err := repo.ProjectUsers(context.Background(), 111, []int64{222}); !errors.Is(err, userupdates.ErrUserupdatesStorage) {
 		t.Fatalf("ProjectUsers() error = %v, want ErrUserupdatesStorage", err)
+	}
+}
+
+func TestRepositoryProjectUsersWrapsPublicProjectionSentinel(t *testing.T) {
+	repo := NewForTest(nil, nil, "")
+	userClient := &fakeUserProjectionClient{
+		bundle: userpb.MakeTLUserProjectionBundle(&userpb.TLUserProjectionBundle{
+			ViewerUsers: []userpb.ViewerUsersClazz{
+				userpb.MakeTLViewerUsers(&userpb.TLViewerUsers{ViewerUserId: 9999}),
+			},
+		}),
+	}
+	repo.SetPeerProjectionClients(userClient, nil)
+
+	_, err := repo.ProjectUsers(context.Background(), 111, []int64{222})
+	if !errors.Is(err, userupdates.ErrUserupdatesStorage) {
+		t.Fatalf("ProjectUsers() error = %v, want ErrUserupdatesStorage", err)
+	}
+	if !errors.Is(err, userprojection.ErrViewerProjectionMissing) {
+		t.Fatalf("ProjectUsers() error = %v, want ErrViewerProjectionMissing preserved", err)
 	}
 }
 

@@ -8,13 +8,11 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/envelope"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
-	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
+	userprojection "github.com/teamgram/teamgram-server/v2/app/service/biz/user/userprojection"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
-type UserProjectionClient interface {
-	UserGetUserProjectionBundle(ctx context.Context, in *userpb.TLUserGetUserProjectionBundle) (*userpb.UserProjectionBundle, error)
-}
+type UserProjectionClient = userprojection.Client
 
 type ChatProjectionClient interface {
 	ChatGetChatListByIdList(ctx context.Context, in *chatpb.TLChatGetChatListByIdList) (*chatpb.VectorMutableChat, error)
@@ -37,31 +35,18 @@ func BuildUpdatesWithDependencies(ctx context.Context, projector envelope.PeerOb
 }
 
 func (r *Repository) ProjectUsers(ctx context.Context, viewerUserID int64, ids []int64) ([]tg.UserClazz, error) {
-	if len(ids) == 0 {
-		return nil, nil
+	var client UserProjectionClient
+	if r != nil {
+		client = r.userProjector
 	}
-	if r == nil || r.userProjector == nil {
-		return nil, fmt.Errorf("%w: project users: user client is not configured", userupdates.ErrUserupdatesStorage)
-	}
-	bundle, err := r.userProjector.UserGetUserProjectionBundle(ctx, &userpb.TLUserGetUserProjectionBundle{
-		ViewerUserIds: []int64{viewerUserID},
-		TargetUserIds: ids,
+	users, err := userprojection.ProjectUsers(ctx, client, viewerUserID, ids, userprojection.Options{
+		Missing:         userprojection.MissingStoredReference,
+		RequireNonEmpty: true,
 	})
 	if err != nil {
 		return nil, storageError("project users", err)
 	}
-	if bundle == nil {
-		return nil, storageError("project users", errors.New("nil projection bundle"))
-	}
-	for _, viewer := range bundle.ViewerUsers {
-		if viewer != nil && viewer.ViewerUserId == viewerUserID {
-			if len(viewer.Users) == 0 {
-				return nil, storageError("project users", fmt.Errorf("empty viewer projection for user_id %d", viewerUserID))
-			}
-			return viewer.Users, nil
-		}
-	}
-	return nil, storageError("project users", fmt.Errorf("missing viewer projection for user_id %d", viewerUserID))
+	return users, nil
 }
 
 func (r *Repository) ProjectChats(ctx context.Context, viewerUserID int64, ids []int64) ([]tg.ChatClazz, error) {
