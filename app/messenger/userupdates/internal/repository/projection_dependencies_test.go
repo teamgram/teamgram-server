@@ -9,6 +9,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/envelope"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
+	chatprojection "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chatprojection"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	userprojection "github.com/teamgram/teamgram-server/v2/app/service/biz/user/userprojection"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
@@ -282,32 +283,26 @@ func TestRepositoryProjectUsersWrapsPublicProjectionSentinel(t *testing.T) {
 
 func TestRepositoryProjectChatsRejectsEmptyDownstreamList(t *testing.T) {
 	repo := NewForTest(nil, nil, "")
-	repo.SetPeerProjectionClients(nil, &fakeChatProjectionClient{chats: &chatpb.VectorMutableChat{}})
+	repo.SetPeerProjectionClients(nil, &fakeChatProjectionClient{
+		bundle: chatProjectionBundle(111),
+	})
 
 	if _, err := repo.ProjectChats(context.Background(), 111, []int64{333}); !errors.Is(err, userupdates.ErrUserupdatesStorage) {
 		t.Fatalf("ProjectChats() error = %v, want ErrUserupdatesStorage", err)
 	}
 }
 
-func TestRepositoryProjectChatsRejectsDateOverflow(t *testing.T) {
-	chatClient := &fakeChatProjectionClient{
-		chats: &chatpb.VectorMutableChat{
-			Datas: []tg.MutableChatClazz{
-				tg.MakeTLMutableChat(&tg.TLMutableChat{
-					Chat: tg.MakeTLImmutableChat(&tg.TLImmutableChat{
-						Id:      333,
-						Creator: 111,
-						Date:    int64(1 << 31),
-					}),
-				}),
-			},
-		},
-	}
+func TestRepositoryProjectChatsWrapsDateOverflowSentinel(t *testing.T) {
+	chatClient := &fakeChatProjectionClient{err: chatprojection.ErrChatDateOverflow}
 	repo := NewForTest(nil, nil, "")
 	repo.SetPeerProjectionClients(nil, chatClient)
 
-	if _, err := repo.ProjectChats(context.Background(), 111, []int64{333}); !errors.Is(err, userupdates.ErrUserupdatesStorage) {
+	_, err := repo.ProjectChats(context.Background(), 111, []int64{333})
+	if !errors.Is(err, userupdates.ErrUserupdatesStorage) {
 		t.Fatalf("ProjectChats() error = %v, want ErrUserupdatesStorage", err)
+	}
+	if !errors.Is(err, chatprojection.ErrChatDateOverflow) {
+		t.Fatalf("ProjectChats() error = %v, want ErrChatDateOverflow preserved", err)
 	}
 }
 
@@ -342,22 +337,10 @@ func TestRepositoryProjectUsersCallsProjectionBundleForViewer(t *testing.T) {
 	}
 }
 
-func TestRepositoryProjectChatsCallsChatListAndConvertsMutableChat(t *testing.T) {
+func TestRepositoryProjectChatsCallsProjectionBundle(t *testing.T) {
+	projected := tg.MakeTLChat(&tg.TLChat{Id: 333, Title: "chat"})
 	chatClient := &fakeChatProjectionClient{
-		chats: &chatpb.VectorMutableChat{
-			Datas: []tg.MutableChatClazz{
-				tg.MakeTLMutableChat(&tg.TLMutableChat{
-					Chat: tg.MakeTLImmutableChat(&tg.TLImmutableChat{
-						Id:                333,
-						Creator:           111,
-						Title:             "chat",
-						ParticipantsCount: 2,
-						Date:              1234,
-						Version:           5,
-					}),
-				}),
-			},
-		},
+		bundle: chatProjectionBundle(111, projected),
 	}
 	repo := NewForTest(nil, nil, "")
 	repo.SetPeerProjectionClients(nil, chatClient)
@@ -367,21 +350,30 @@ func TestRepositoryProjectChatsCallsChatListAndConvertsMutableChat(t *testing.T)
 		t.Fatalf("ProjectChats() error = %v", err)
 	}
 
-	if chatClient.selfID != 111 {
-		t.Fatalf("SelfId = %d, want 111", chatClient.selfID)
+	if !reflect.DeepEqual(chatClient.viewerUserIDs, []int64{111}) {
+		t.Fatalf("ViewerUserIds = %#v, want [111]", chatClient.viewerUserIDs)
 	}
-	if !reflect.DeepEqual(chatClient.idList, []int64{333}) {
-		t.Fatalf("IdList = %#v, want [333]", chatClient.idList)
+	if !reflect.DeepEqual(chatClient.targetChatIDs, []int64{333}) {
+		t.Fatalf("TargetChatIds = %#v, want [333]", chatClient.targetChatIDs)
 	}
-	if len(got) != 1 {
-		t.Fatalf("len(ProjectChats()) = %d, want 1", len(got))
+	if !reflect.DeepEqual(got, []tg.ChatClazz{projected}) {
+		t.Fatalf("ProjectChats() = %#v, want projected chat", got)
 	}
-	chat, ok := got[0].(*tg.TLChat)
-	if !ok {
-		t.Fatalf("ProjectChats()[0] = %T, want *tg.TLChat", got[0])
+}
+
+func TestRepositoryProjectChatsWrapsPublicProjectionSentinel(t *testing.T) {
+	repo := NewForTest(nil, nil, "")
+	chatClient := &fakeChatProjectionClient{
+		bundle: chatProjectionBundle(9999),
 	}
-	if !chat.Creator || chat.Id != 333 || chat.Title != "chat" || chat.ParticipantsCount != 2 || chat.Date != 1234 || chat.Version != 5 {
-		t.Fatalf("projected chat = %+v, want converted mutable chat", chat)
+	repo.SetPeerProjectionClients(nil, chatClient)
+
+	_, err := repo.ProjectChats(context.Background(), 111, []int64{333})
+	if !errors.Is(err, userupdates.ErrUserupdatesStorage) {
+		t.Fatalf("ProjectChats() error = %v, want ErrUserupdatesStorage", err)
+	}
+	if !errors.Is(err, chatprojection.ErrViewerProjectionMissing) {
+		t.Fatalf("ProjectChats() error = %v, want ErrViewerProjectionMissing preserved", err)
 	}
 }
 
@@ -418,18 +410,29 @@ func (c *fakeUserProjectionClient) UserGetUserProjectionBundle(_ context.Context
 }
 
 type fakeChatProjectionClient struct {
-	selfID int64
-	idList []int64
-	chats  *chatpb.VectorMutableChat
-	err    error
+	viewerUserIDs []int64
+	targetChatIDs []int64
+	bundle        *chatpb.ChatProjectionBundle
+	err           error
 }
 
-func (c *fakeChatProjectionClient) ChatGetChatListByIdList(_ context.Context, in *chatpb.TLChatGetChatListByIdList) (*chatpb.VectorMutableChat, error) {
+func (c *fakeChatProjectionClient) ChatGetChatProjectionBundle(_ context.Context, in *chatpb.TLChatGetChatProjectionBundle) (*chatpb.ChatProjectionBundle, error) {
 	if in != nil {
-		c.selfID = in.SelfId
-		c.idList = append([]int64(nil), in.IdList...)
+		c.viewerUserIDs = append([]int64(nil), in.ViewerUserIds...)
+		c.targetChatIDs = append([]int64(nil), in.TargetChatIds...)
 	}
-	return c.chats, c.err
+	return c.bundle, c.err
+}
+
+func chatProjectionBundle(viewerUserID int64, chats ...tg.ChatClazz) *chatpb.ChatProjectionBundle {
+	return chatpb.MakeTLChatProjectionBundle(&chatpb.TLChatProjectionBundle{
+		ViewerChats: []chatpb.ViewerChatsClazz{
+			chatpb.MakeTLViewerChats(&chatpb.TLViewerChats{
+				ViewerUserId: viewerUserID,
+				Chats:        chats,
+			}),
+		},
+	}).ToChatProjectionBundle()
 }
 
 func hasUserID(users []tg.UserClazz, id int64) bool {

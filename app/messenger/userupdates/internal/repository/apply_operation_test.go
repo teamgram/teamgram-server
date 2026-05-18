@@ -9,7 +9,6 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
-	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -213,20 +212,15 @@ func TestV4CreateChatReplyProjectsParticipantsMessageAndUsersChats(t *testing.T)
 				}),
 			},
 		})},
-		&fakeChatProjectionClient{chats: &chatpb.VectorMutableChat{
-			Datas: []tg.MutableChatClazz{
-				tg.MakeTLMutableChat(&tg.TLMutableChat{
-					Chat: tg.MakeTLImmutableChat(&tg.TLImmutableChat{
-						Id:                chatID,
-						Creator:           senderID,
-						Title:             "team",
-						ParticipantsCount: 2,
-						Date:              1_772_000_000,
-						Version:           1,
-					}),
-				}),
-			},
-		}},
+		&fakeChatProjectionClient{bundle: chatProjectionBundle(senderID, tg.MakeTLChat(&tg.TLChat{
+			Creator:           true,
+			Id:                chatID,
+			Title:             "team",
+			Photo:             tg.MakeTLChatPhotoEmpty(&tg.TLChatPhotoEmpty{}),
+			ParticipantsCount: 2,
+			Date:              1_772_000_000,
+			Version:           1,
+		}))},
 	)
 
 	_, _, responseSchemaVersion, responsePayload, _, err := buildEventAndResponsePayloads(context.Background(), repo, ApplyUserOperationInput{

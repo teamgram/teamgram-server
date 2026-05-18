@@ -18,7 +18,6 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
-	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -2343,20 +2342,15 @@ func newV4ApplyTestRepository(db *sqlx.DB, base, senderID, receiverID, chatID in
 		}),
 	}
 	chatClient := &fakeChatProjectionClient{
-		chats: &chatpb.VectorMutableChat{
-			Datas: []tg.MutableChatClazz{
-				tg.MakeTLMutableChat(&tg.TLMutableChat{
-					Chat: tg.MakeTLImmutableChat(&tg.TLImmutableChat{
-						Id:                chatID,
-						Creator:           senderID,
-						Title:             "v4 chat",
-						ParticipantsCount: 2,
-						Date:              time.Now().Unix(),
-						Version:           1,
-					}),
-				}),
-			},
-		},
+		bundle: chatProjectionBundle(senderID, tg.MakeTLChat(&tg.TLChat{
+			Creator:           true,
+			Id:                chatID,
+			Title:             "v4 chat",
+			Photo:             tg.MakeTLChatPhotoEmpty(&tg.TLChatPhotoEmpty{}),
+			ParticipantsCount: 2,
+			Date:              int32(time.Now().Unix()),
+			Version:           1,
+		})),
 	}
 	repo.SetPeerProjectionClients(userClient, chatClient)
 	return repo
