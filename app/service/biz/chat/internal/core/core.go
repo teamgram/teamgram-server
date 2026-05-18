@@ -34,6 +34,7 @@ type chatReadRepository interface {
 	GetMutableChatByLink(ctx context.Context, link string) (*tg.MutableChat, error)
 	GetChatBySelfID(ctx context.Context, chatID, selfID int64) (*tg.MutableChat, error)
 	GetChatListByIDList(ctx context.Context, ids []int64) ([]*tg.MutableChat, error)
+	GetChatProjectionBundle(ctx context.Context, viewerUserIds []int64, targetChatIds []int64) (*repository.ChatProjectionBundle, error)
 	GetChatParticipantIDList(ctx context.Context, chatID int64) ([]int64, error)
 	GetUsersChatIDList(ctx context.Context, userIDs []int64) ([]repository.UserChatIDList, error)
 	GetMyChatList(ctx context.Context, userID int64, isCreator bool) ([]*tg.MutableChat, error)

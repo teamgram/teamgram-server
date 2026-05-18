@@ -17,6 +17,9 @@ import (
 type fakeReadRepo struct {
 	mutableChat       *tg.MutableChat
 	mutableChats      []*tg.MutableChat
+	projectionBundle  *repository.ChatProjectionBundle
+	projectionViewers []int64
+	projectionTargets []int64
 	participantIDs    []int64
 	userChatRows      []repository.UserChatIDList
 	err               error
@@ -42,6 +45,12 @@ func (f *fakeReadRepo) GetChatBySelfID(ctx context.Context, chatID, selfID int64
 
 func (f *fakeReadRepo) GetChatListByIDList(ctx context.Context, ids []int64) ([]*tg.MutableChat, error) {
 	return f.mutableChats, f.err
+}
+
+func (f *fakeReadRepo) GetChatProjectionBundle(ctx context.Context, viewerUserIds []int64, targetChatIds []int64) (*repository.ChatProjectionBundle, error) {
+	f.projectionViewers = append([]int64(nil), viewerUserIds...)
+	f.projectionTargets = append([]int64(nil), targetChatIds...)
+	return f.projectionBundle, f.err
 }
 
 func (f *fakeReadRepo) GetChatParticipantIDList(ctx context.Context, chatID int64) ([]int64, error) {
@@ -79,6 +88,13 @@ func testMutableChat(id int64) *tg.MutableChat {
 	}).ToMutableChat()
 }
 
+func projectedChatID(chat tg.ChatClazz) int64 {
+	if x, ok := chat.(*tg.TLChat); ok && x != nil {
+		return x.Id
+	}
+	return 0
+}
+
 func TestChatGetMutableChatWrapsRepositoryResult(t *testing.T) {
 	want := testMutableChat(10)
 	repo := &fakeReadRepo{mutableChat: want}
@@ -113,6 +129,80 @@ func TestChatGetChatListByIdListPropagatesRepositoryError(t *testing.T) {
 	_, err := newTestCore(repo).ChatGetChatListByIdList(&chat.TLChatGetChatListByIdList{IdList: []int64{10}})
 	if !errors.Is(err, chat.ErrChatStorage) {
 		t.Fatalf("ChatGetChatListByIdList error = %v, want ErrChatStorage", err)
+	}
+}
+
+func TestChatGetChatProjectionBundleWrapsRepositoryBundle(t *testing.T) {
+	repo := &fakeReadRepo{
+		projectionBundle: &repository.ChatProjectionBundle{
+			ViewerChats: []repository.ViewerChats{
+				{ViewerUserId: 1001, Chats: []tg.ChatClazz{tg.MakeTLChat(&tg.TLChat{Id: 3001})}},
+				{ViewerUserId: 2002, Chats: []tg.ChatClazz{tg.MakeTLChat(&tg.TLChat{Id: 3001})}},
+			},
+			MissingChatIds: []int64{9999},
+		},
+	}
+	got, err := newTestCore(repo).ChatGetChatProjectionBundle(&chat.TLChatGetChatProjectionBundle{
+		ViewerUserIds: []int64{1001, 2002},
+		TargetChatIds: []int64{3001, 9999},
+	})
+	if err != nil {
+		t.Fatalf("ChatGetChatProjectionBundle error = %v", err)
+	}
+	if !reflect.DeepEqual(repo.projectionViewers, []int64{1001, 2002}) {
+		t.Fatalf("repository viewers = %#v, want [1001 2002]", repo.projectionViewers)
+	}
+	if !reflect.DeepEqual(repo.projectionTargets, []int64{3001, 9999}) {
+		t.Fatalf("repository targets = %#v, want [3001 9999]", repo.projectionTargets)
+	}
+	if len(got.ViewerChats) != 2 || got.ViewerChats[0].ViewerUserId != 1001 || got.ViewerChats[1].ViewerUserId != 2002 {
+		t.Fatalf("ViewerChats = %#v, want viewers 1001 and 2002", got.ViewerChats)
+	}
+	if len(got.ViewerChats[0].Chats) != 1 || projectedChatID(got.ViewerChats[0].Chats[0]) != 3001 {
+		t.Fatalf("first viewer chats = %#v, want chat 3001", got.ViewerChats[0].Chats)
+	}
+	if len(got.MissingChatIds) != 1 || got.MissingChatIds[0] != 9999 {
+		t.Fatalf("MissingChatIds = %#v, want [9999]", got.MissingChatIds)
+	}
+}
+
+func TestChatGetChatProjectionBundleEmptyInputReturnsEmptyBundle(t *testing.T) {
+	got, err := newTestCore(&fakeReadRepo{}).ChatGetChatProjectionBundle(&chat.TLChatGetChatProjectionBundle{
+		ViewerUserIds: []int64{1001},
+	})
+	if err != nil {
+		t.Fatalf("ChatGetChatProjectionBundle empty error = %v", err)
+	}
+	if len(got.ViewerChats) != 0 || len(got.MissingChatIds) != 0 {
+		t.Fatalf("empty bundle = %#v, want no viewers and no missing", got)
+	}
+}
+
+func TestChatGetChatProjectionBundleInvalidArgument(t *testing.T) {
+	_, err := newTestCore(&fakeReadRepo{}).ChatGetChatProjectionBundle(nil)
+	if !errors.Is(err, chat.ErrChatInvalidArgument) {
+		t.Fatalf("ChatGetChatProjectionBundle nil error = %v, want ErrChatInvalidArgument", err)
+	}
+}
+
+func TestChatGetChatProjectionBundlePropagatesProjectionError(t *testing.T) {
+	repo := &fakeReadRepo{err: chat.ErrChatStorage}
+	_, err := newTestCore(repo).ChatGetChatProjectionBundle(&chat.TLChatGetChatProjectionBundle{
+		ViewerUserIds: []int64{1001},
+		TargetChatIds: []int64{3001},
+	})
+	if !errors.Is(err, chat.ErrChatStorage) {
+		t.Fatalf("ChatGetChatProjectionBundle error = %v, want ErrChatStorage", err)
+	}
+}
+
+func TestChatGetChatProjectionBundleNilRepositoryBundleIsStorageError(t *testing.T) {
+	_, err := newTestCore(&fakeReadRepo{}).ChatGetChatProjectionBundle(&chat.TLChatGetChatProjectionBundle{
+		ViewerUserIds: []int64{1001},
+		TargetChatIds: []int64{3001},
+	})
+	if !errors.Is(err, chat.ErrChatStorage) {
+		t.Fatalf("ChatGetChatProjectionBundle nil repository bundle error = %v, want ErrChatStorage", err)
 	}
 }
 
@@ -178,6 +268,7 @@ func TestChatReadHandlersDoNotReturnMethodNotImplOrTGErrors(t *testing.T) {
 		"chat.getUsersChatIdList_handler.go",
 		"chat.getMyChatList_handler.go",
 		"chat.search_handler.go",
+		"chat.getChatProjectionBundle_handler.go",
 	}
 
 	for _, name := range files {
