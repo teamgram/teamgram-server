@@ -28,5 +28,4 @@ type (
 	SetNotifySettings     = userpb.TLUserSetNotifySettings
 	ResetNotifySettings   = userpb.TLUserResetNotifySettings
 	GetMutableChat        = chatpb.TLChatGetMutableChat
-	GetChatListByIdList   = chatpb.TLChatGetChatListByIdList
 )
