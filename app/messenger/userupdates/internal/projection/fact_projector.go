@@ -6,6 +6,8 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/envelope"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -40,6 +42,12 @@ func ProjectFacts(facts []payload.UpdateFactV1, viewer ViewerContext, mode Proje
 				return nil, err
 			}
 			out = append(out, projected...)
+		case payload.TLUpdateFactV1:
+			projected, err := ProjectTLUpdateFact(f)
+			if err != nil {
+				return nil, err
+			}
+			out = append(out, projected)
 		default:
 			return nil, fmt.Errorf("%w: unsupported update fact kind=%s", userupdates.ErrUserupdatesStorage, fact.Kind)
 		}
@@ -63,6 +71,22 @@ func ProjectNewMessageFact(f payload.NewMessageFactV1, viewer ViewerContext, mod
 			PtsCount: ptsCount,
 		}),
 	}}, nil
+}
+
+func ProjectTLUpdateFact(f payload.TLUpdateFactV1) (ProjectedUpdate, error) {
+	d := bin.NewDecoder(f.Update)
+	obj, err := iface.DecodeObject(d)
+	if err != nil {
+		return ProjectedUpdate{}, fmt.Errorf("%w: decode tl_update: %v", userupdates.ErrUserupdatesStorage, err)
+	}
+	if d.Remaining() != 0 {
+		return ProjectedUpdate{}, fmt.Errorf("%w: decode tl_update: %d trailing bytes", userupdates.ErrUserupdatesStorage, d.Remaining())
+	}
+	update, ok := obj.(tg.UpdateClazz)
+	if !ok {
+		return ProjectedUpdate{}, fmt.Errorf("%w: tl_update object is %T", userupdates.ErrUserupdatesStorage, obj)
+	}
+	return ProjectedUpdate{Update: update}, nil
 }
 
 func ProjectChatParticipantsChangedFact(f payload.ChatParticipantsChangedFactV1) (ProjectedUpdate, error) {

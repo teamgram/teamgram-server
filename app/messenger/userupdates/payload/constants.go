@@ -57,4 +57,5 @@ const (
 	EventKindChatParticipantsChanged = "chat_participants_changed"
 	FactKindNewMessage               = "new_message"
 	FactKindChatParticipantsChanged  = "chat_participants_changed"
+	FactKindTLUpdate                 = "tl_update"
 )

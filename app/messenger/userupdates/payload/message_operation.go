@@ -281,6 +281,11 @@ type ChatParticipantsChangedFactV1 struct {
 	Participants  []ChatParticipantFactV1 `json:"participants"`
 }
 
+type TLUpdateFactV1 struct {
+	SchemaVersion int    `json:"schema_version"`
+	Update        []byte `json:"update"`
+}
+
 type MessageOperationV4 struct {
 	SchemaVersion int              `json:"schema_version"`
 	OperationKind string           `json:"operation_kind"`
@@ -456,6 +461,15 @@ func DecodeUpdateFact(f UpdateFactV1) (any, error) {
 		var fact NewMessageFactV1
 		if err := json.Unmarshal(f.Payload, &fact); err != nil {
 			return nil, fmt.Errorf("decode update fact %s: %w", f.Kind, err)
+		}
+		return fact, nil
+	case FactKindTLUpdate:
+		var fact TLUpdateFactV1
+		if err := json.Unmarshal(f.Payload, &fact); err != nil {
+			return nil, fmt.Errorf("decode update fact %s: %w", f.Kind, err)
+		}
+		if len(fact.Update) == 0 {
+			return nil, fmt.Errorf("update fact %s update is empty", f.Kind)
 		}
 		return fact, nil
 	default:

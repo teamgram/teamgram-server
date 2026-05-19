@@ -12,6 +12,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload/serviceaction"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -103,6 +104,47 @@ func TestDecodeUpdateFactCarriesTLBinaryServiceActionRef(t *testing.T) {
 	chatCreate, ok := action.(*tg.TLMessageActionChatCreate)
 	if !ok || chatCreate.Title != "fact chat" {
 		t.Fatalf("decoded action = %T %+v, want chat create", action, action)
+	}
+}
+
+func TestProjectFactsProjectsTLUpdateFact(t *testing.T) {
+	updatePayload, err := iface.EncodeObject(tg.MakeTLUpdateGroupCall(&tg.TLUpdateGroupCall{
+		Peer: tg.MakeTLPeerChat(&tg.TLPeerChat{ChatId: 55}),
+		Call: tg.MakeTLGroupCall(&tg.TLGroupCall{
+			Id:         7001,
+			AccessHash: 8001,
+			Version:    3,
+		}),
+	}), 223)
+	if err != nil {
+		t.Fatalf("EncodeObject(updateGroupCall) error = %v", err)
+	}
+	wrapped, err := payload.WrapFact(payload.FactKindTLUpdate, payload.TLUpdateFactV1{
+		SchemaVersion: payload.MessageOperationSchemaVersionV4,
+		Update:        updatePayload,
+	})
+	if err != nil {
+		t.Fatalf("WrapFact(tl_update) error = %v", err)
+	}
+
+	got, err := ProjectFacts([]payload.UpdateFactV1{wrapped}, ViewerContext{UserID: 1001}, envelope.ModeDifference, 21, 1, 101)
+	if err != nil {
+		t.Fatalf("ProjectFacts() error = %v", err)
+	}
+	if len(got) != 1 {
+		t.Fatalf("projected update count = %d, want 1", len(got))
+	}
+	update, ok := got[0].Update.(*tg.TLUpdateGroupCall)
+	if !ok {
+		t.Fatalf("update = %T, want *tg.TLUpdateGroupCall", got[0].Update)
+	}
+	peer, ok := update.Peer.(*tg.TLPeerChat)
+	if !ok || peer.ChatId != 55 {
+		t.Fatalf("peer = %#v, want peerChat 55", update.Peer)
+	}
+	call, ok := update.Call.(*tg.TLGroupCall)
+	if !ok || call.Id != 7001 || call.AccessHash != 8001 || call.Version != 3 {
+		t.Fatalf("call = %#v, want groupCall id/access_hash/version", update.Call)
 	}
 }
 
