@@ -26,6 +26,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload/serviceaction"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
@@ -70,6 +71,9 @@ func (c *MsgCore) MsgSendMessage(in *msg.TLMsgSendMessage) (*tg.Updates, error) 
 	sideEffects := batchSideEffectsFromRequest(in)
 	attachFacts, err := attachFactsFromRequest(in)
 	if err != nil {
+		return nil, err
+	}
+	if err := validateNormalizedServiceActionPolicies(normalizedBatch, in.PeerType, in.PeerId, in.UserId, attachFacts); err != nil {
 		return nil, err
 	}
 	if len(normalizedBatch) > 1 {
@@ -525,6 +529,22 @@ func attachFactsFromRequest(in *msg.TLMsgSendMessage) ([]payload.UpdateFactV1, e
 	return out, nil
 }
 
+func validateNormalizedServiceActionPolicies(normalizedBatch []normalizedOutboxMessage, peerType int32, peerID, actorUserID int64, attachFacts []payload.UpdateFactV1) error {
+	for i := range normalizedBatch {
+		if normalizedBatch[i].ServiceAction == nil {
+			continue
+		}
+		action, err := serviceaction.Decode(normalizedBatch[i].ServiceAction)
+		if err != nil {
+			return fmt.Errorf("%w: decode service action for policy: %v", msg.ErrSendStateConflict, err)
+		}
+		if err := validateServiceActionPolicy(action, peerType, peerID, actorUserID, attachFacts); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 type sendRequestPayloadV1 struct {
 	SchemaVersion             int    `json:"schema_version"`
 	SenderUserID              int64  `json:"sender_user_id"`
@@ -712,7 +732,7 @@ func (c *MsgCore) buildSendMessageChatReceiverEffects(in *msg.TLMsgSendMessage, 
 	if err != nil {
 		return nil, err
 	}
-	addedUserIDs, fwdLimit := chatAddUserHistoryBackfillSpec(normalized, attachFacts)
+	addedUserIDs, fwdLimit := chatAddUserHistoryBackfillSpec(normalized, in.PeerId, in.UserId, attachFacts)
 	addedUsers := int64Set(addedUserIDs)
 	var history []repository.CanonicalMessage
 	if fwdLimit > 0 && len(addedUsers) > 0 {
@@ -738,31 +758,26 @@ func (c *MsgCore) buildSendMessageChatReceiverEffects(in *msg.TLMsgSendMessage, 
 	return effects, nil
 }
 
-func chatAddUserHistoryBackfillSpec(normalized normalizedOutboxMessage, attachFacts []payload.UpdateFactV1) ([]int64, int32) {
-	if normalized.ServiceAction == nil || normalized.ServiceAction.Kind != payload.ServiceActionKindChatAddUser || len(normalized.ServiceAction.Users) == 0 {
+func chatAddUserHistoryBackfillSpec(normalized normalizedOutboxMessage, chatID, actorUserID int64, attachFacts []payload.UpdateFactV1) ([]int64, int32) {
+	if normalized.ServiceAction == nil {
 		return nil, 0
 	}
-	var fwdLimit int32
-	for _, fact := range attachFacts {
-		if fact.Kind != payload.FactKindChatParticipantsChanged {
-			continue
-		}
-		decoded, err := payload.DecodeUpdateFact(fact)
-		if err != nil {
-			continue
-		}
-		participants, ok := decoded.(payload.ChatParticipantsChangedFactV1)
-		if !ok {
-			continue
-		}
-		if participants.FwdLimit > fwdLimit {
-			fwdLimit = participants.FwdLimit
-		}
-	}
-	if fwdLimit <= 0 {
+	action, err := serviceaction.Decode(normalized.ServiceAction)
+	if err != nil {
 		return nil, 0
 	}
-	return append([]int64(nil), normalized.ServiceAction.Users...), fwdLimit
+	addUser, ok := action.(*tg.TLMessageActionChatAddUser)
+	if !ok || len(addUser.Users) == 0 {
+		return nil, 0
+	}
+	participants, ok, err := chatParticipantsChangedFactFromAttachFacts(attachFacts, chatID, actorUserID)
+	if err != nil || !ok || participants.FwdLimit <= 0 {
+		return nil, 0
+	}
+	if !allUserIDsPresent(chatParticipantIDSet(participants.Participants), addUser.Users) {
+		return nil, 0
+	}
+	return append([]int64(nil), addUser.Users...), participants.FwdLimit
 }
 
 func int64Set(values []int64) map[int64]struct{} {
@@ -992,27 +1007,11 @@ func sentMessageServiceAction(ref *payload.ServiceActionRefV1) (tg.MessageAction
 	if ref == nil {
 		return nil, nil
 	}
-	switch ref.Kind {
-	case payload.ServiceActionKindChatCreate:
-		return tg.MakeTLMessageActionChatCreate(&tg.TLMessageActionChatCreate{
-			Title: ref.Title,
-			Users: append([]int64(nil), ref.Users...),
-		}), nil
-	case payload.ServiceActionKindChatAddUser:
-		return tg.MakeTLMessageActionChatAddUser(&tg.TLMessageActionChatAddUser{
-			Users: append([]int64(nil), ref.Users...),
-		}), nil
-	case payload.ServiceActionKindGroupCall:
-		return tg.MakeTLMessageActionGroupCall(&tg.TLMessageActionGroupCall{
-			Call: tg.MakeTLInputGroupCall(&tg.TLInputGroupCall{
-				Id:         ref.CallID,
-				AccessHash: ref.CallAccessHash,
-			}),
-			Duration: cloneInt32Ptr(ref.Duration),
-		}), nil
-	default:
-		return nil, fmt.Errorf("%w: unsupported service action kind=%s schema=%d", msg.ErrMsgStorage, ref.Kind, ref.SchemaVersion)
+	action, err := serviceaction.Decode(ref)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", msg.ErrMsgStorage, err)
 	}
+	return action, nil
 }
 
 func sentMessageMedia(media *payload.MediaRefV1) tg.MessageMediaClazz {

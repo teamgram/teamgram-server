@@ -8,12 +8,22 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload/serviceaction"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
+
+func mustServiceActionRef(t *testing.T, action tg.MessageActionClazz) *payload.ServiceActionRefV1 {
+	t.Helper()
+	ref, err := serviceaction.Encode(action)
+	if err != nil {
+		t.Fatalf("serviceaction.Encode() error = %v", err)
+	}
+	return ref
+}
 
 func TestApplyUserOperationBatchEmptyReturnsEmptyResult(t *testing.T) {
 	repo := &Repository{}
@@ -188,12 +198,10 @@ func TestV4CreateChatReplyProjectsParticipantsMessageAndUsersChats(t *testing.T)
 			ToUserID:           receiverID,
 			ClientRandomID:     clientRandomID,
 			Date:               1_772_000_000,
-			ServiceAction: &payload.ServiceActionRefV1{
-				SchemaVersion: payload.ServiceActionSchemaVersionV1,
-				Kind:          payload.ServiceActionKindChatCreate,
-				Title:         "team",
-				Users:         []int64{senderID, receiverID},
-			},
+			ServiceAction: mustServiceActionRef(t, tg.MakeTLMessageActionChatCreate(&tg.TLMessageActionChatCreate{
+				Title: "team",
+				Users: []int64{senderID, receiverID},
+			})),
 		},
 		AttachFacts: []payload.UpdateFactV1{chatFact},
 	})

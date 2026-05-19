@@ -12,9 +12,40 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/svc"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload/serviceaction"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
+
+func mustServiceActionRef(t *testing.T, action tg.MessageActionClazz) *payload.ServiceActionRefV1 {
+	t.Helper()
+	ref, err := serviceaction.Encode(action)
+	if err != nil {
+		t.Fatalf("serviceaction.Encode() error = %v", err)
+	}
+	return ref
+}
+
+func TestMessageServiceActionNilRefReturnsNil(t *testing.T) {
+	action, err := messageServiceAction(nil)
+	if err != nil {
+		t.Fatalf("messageServiceAction(nil) error = %v", err)
+	}
+	if action != nil {
+		t.Fatalf("messageServiceAction(nil) action = %T, want nil", action)
+	}
+}
+
+func TestMessageServiceActionDecodeFailureWrapsStorage(t *testing.T) {
+	_, err := messageServiceAction(&payload.ServiceActionRefV1{
+		SchemaVersion: payload.ServiceActionSchemaVersionV1,
+		Codec:         payload.ServiceActionCodecTLBinary,
+		Layer:         payload.ServiceActionLayer,
+	})
+	if !errors.Is(err, userupdates.ErrUserupdatesStorage) {
+		t.Fatalf("messageServiceAction() error = %v, want ErrUserupdatesStorage", err)
+	}
+}
 
 func TestProcessUserOperationMapsTLToRepository(t *testing.T) {
 	operationPayload := []byte(`{"schema_version":1,"operation_kind":"send_message"}`)
@@ -155,12 +186,10 @@ func TestMessageEventV3ToTLMessageProjectsChatCreateServiceAction(t *testing.T) 
 		PeerID:        55,
 		FromUserID:    1001,
 		Date:          1700000000,
-		ServiceAction: &payload.ServiceActionRefV1{
-			SchemaVersion: payload.ServiceActionSchemaVersionV1,
-			Kind:          payload.ServiceActionKindChatCreate,
-			Title:         "new chat",
-			Users:         []int64{1002, 1003},
-		},
+		ServiceAction: mustServiceActionRef(t, tg.MakeTLMessageActionChatCreate(&tg.TLMessageActionChatCreate{
+			Title: "new chat",
+			Users: []int64{1002, 1003},
+		})),
 	})
 	if err != nil {
 		t.Fatalf("messageEventV3ToTLMessage() error = %v", err)
@@ -184,11 +213,9 @@ func TestMessageEventV3ToTLMessageProjectsChatAddUserServiceAction(t *testing.T)
 		PeerID:        55,
 		FromUserID:    1001,
 		Date:          1700000000,
-		ServiceAction: &payload.ServiceActionRefV1{
-			SchemaVersion: payload.ServiceActionSchemaVersionV1,
-			Kind:          payload.ServiceActionKindChatAddUser,
-			Users:         []int64{1002},
-		},
+		ServiceAction: mustServiceActionRef(t, tg.MakeTLMessageActionChatAddUser(&tg.TLMessageActionChatAddUser{
+			Users: []int64{1002},
+		})),
 	})
 	if err != nil {
 		t.Fatalf("messageEventV3ToTLMessage() error = %v", err)
@@ -213,13 +240,13 @@ func TestMessageEventV3ToTLMessageProjectsGroupCallServiceAction(t *testing.T) {
 		PeerID:        55,
 		FromUserID:    1001,
 		Date:          1700000000,
-		ServiceAction: &payload.ServiceActionRefV1{
-			SchemaVersion:  payload.ServiceActionSchemaVersionV1,
-			Kind:           payload.ServiceActionKindGroupCall,
-			CallID:         7001,
-			CallAccessHash: 8002,
-			Duration:       &duration,
-		},
+		ServiceAction: mustServiceActionRef(t, tg.MakeTLMessageActionGroupCall(&tg.TLMessageActionGroupCall{
+			Call: tg.MakeTLInputGroupCall(&tg.TLInputGroupCall{
+				Id:         7001,
+				AccessHash: 8002,
+			}),
+			Duration: &duration,
+		})),
 	})
 	if err != nil {
 		t.Fatalf("messageEventV3ToTLMessage() error = %v", err)
@@ -573,12 +600,10 @@ func TestV4CreateChatDifferenceOmitsUpdateMessageID(t *testing.T) {
 			PeerSeq:            1,
 			SenderUserID:       1001,
 			Date:               1_772_000_000,
-			ServiceAction: &payload.ServiceActionRefV1{
-				SchemaVersion: payload.ServiceActionSchemaVersionV1,
-				Kind:          payload.ServiceActionKindChatCreate,
-				Title:         "v4 chat",
-				Users:         []int64{1001, 1002},
-			},
+			ServiceAction: mustServiceActionRef(t, tg.MakeTLMessageActionChatCreate(&tg.TLMessageActionChatCreate{
+				Title: "v4 chat",
+				Users: []int64{1001, 1002},
+			})),
 		},
 		AttachFacts: []payload.UpdateFactV1{chatFact},
 		MessageID:   101,
@@ -1123,12 +1148,10 @@ func TestMessageViewToTLMessageSupportsV4SharedProjection(t *testing.T) {
 			SenderUserID:         1001,
 			Date:                 1_772_000_000,
 			ReplyToUserMessageID: 77,
-			ServiceAction: &payload.ServiceActionRefV1{
-				SchemaVersion: payload.ServiceActionSchemaVersionV1,
-				Kind:          payload.ServiceActionKindChatCreate,
-				Title:         "v4 chat",
-				Users:         []int64{1001, 1002},
-			},
+			ServiceAction: mustServiceActionRef(t, tg.MakeTLMessageActionChatCreate(&tg.TLMessageActionChatCreate{
+				Title: "v4 chat",
+				Users: []int64{1001, 1002},
+			})),
 		},
 		MessageID: 104,
 	})

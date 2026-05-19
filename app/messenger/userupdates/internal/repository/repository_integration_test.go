@@ -2295,12 +2295,10 @@ func buildV4ApplyTestOperation(t *testing.T, senderID, receiverID, chatID, canon
 			ClientRandomID:     canonicalMessageID + 900000,
 			Date:               date,
 			MessageText:        "v4 hello",
-			ServiceAction: &payload.ServiceActionRefV1{
-				SchemaVersion: payload.ServiceActionSchemaVersionV1,
-				Kind:          payload.ServiceActionKindChatCreate,
-				Title:         "v4 chat",
-				Users:         []int64{senderID, receiverID},
-			},
+			ServiceAction: mustServiceActionRef(t, tg.MakeTLMessageActionChatCreate(&tg.TLMessageActionChatCreate{
+				Title: "v4 chat",
+				Users: []int64{senderID, receiverID},
+			})),
 		},
 		AttachFacts: []payload.UpdateFactV1{chatFact},
 	}

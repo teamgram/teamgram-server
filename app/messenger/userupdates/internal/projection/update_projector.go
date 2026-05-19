@@ -9,6 +9,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/envelope"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/eventtypes"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload/serviceaction"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -705,27 +706,11 @@ func messageServiceAction(ref *payload.ServiceActionRefV1) (tg.MessageActionClaz
 	if ref == nil {
 		return nil, nil
 	}
-	switch ref.Kind {
-	case payload.ServiceActionKindChatCreate:
-		return tg.MakeTLMessageActionChatCreate(&tg.TLMessageActionChatCreate{
-			Title: ref.Title,
-			Users: append([]int64(nil), ref.Users...),
-		}), nil
-	case payload.ServiceActionKindChatAddUser:
-		return tg.MakeTLMessageActionChatAddUser(&tg.TLMessageActionChatAddUser{
-			Users: append([]int64(nil), ref.Users...),
-		}), nil
-	case payload.ServiceActionKindGroupCall:
-		return tg.MakeTLMessageActionGroupCall(&tg.TLMessageActionGroupCall{
-			Call: tg.MakeTLInputGroupCall(&tg.TLInputGroupCall{
-				Id:         ref.CallID,
-				AccessHash: ref.CallAccessHash,
-			}),
-			Duration: cloneInt32Ptr(ref.Duration),
-		}), nil
-	default:
-		return nil, fmt.Errorf("%w: unsupported service action kind=%s schema=%d", userupdates.ErrUserupdatesStorage, ref.Kind, ref.SchemaVersion)
+	action, err := serviceaction.Decode(ref)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", userupdates.ErrUserupdatesStorage, err)
 	}
+	return action, nil
 }
 
 func editMessageEventToTLMessage(messageEvent decodedMessageEvent) (tg.MessageClazz, error) {
