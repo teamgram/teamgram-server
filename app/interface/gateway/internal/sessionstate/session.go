@@ -402,6 +402,8 @@ func (p *Processor) handleContainer(ctx context.Context, conn ConnInfo, key *cry
 	switch len(responses) {
 	case 0:
 		return nil, seq, nil
+	case 1:
+		return encodeObject(responses[0].Object), seq, nil
 	default:
 		return encodeObject(&mt.TLMsgContainer{Messages: responses}), seq, nil
 	}

@@ -260,13 +260,9 @@ func TestServiceMessageContainerStaysInSessionstate(t *testing.T) {
 
 	resp := handleEncryptedForTest(t, processor, clientKey, serverKey, 300, encodeTL(t, container))
 	decoded := decodeEncryptedForTest(t, clientKey, resp)
-	respContainer := decodeBodyAs[*mt.TLMsgContainer](t, decoded.Body)
-	if len(respContainer.Messages) != 1 {
-		t.Fatalf("response count = %d, want 1", len(respContainer.Messages))
-	}
-	pong, ok := respContainer.Messages[0].Object.(*mt.TLPong)
-	if !ok || pong.MsgId != 301 || pong.PingId != 12 {
-		t.Fatalf("container response = %#v", respContainer.Messages[0].Object)
+	pong := decodeBodyAs[*mt.TLPong](t, decoded.Body)
+	if pong.MsgId != 301 || pong.PingId != 12 {
+		t.Fatalf("response = %#v, want pong for 301/12", pong)
 	}
 	if len(dispatch.payloads) != 0 {
 		t.Fatalf("dispatch calls = %d, want 0", len(dispatch.payloads))

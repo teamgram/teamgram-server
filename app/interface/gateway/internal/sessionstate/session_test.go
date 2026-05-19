@@ -1018,9 +1018,9 @@ func TestSessionContainerPreservesRawLayeredRPCPayload(t *testing.T) {
 
 	resp := handleEncryptedForTest(t, processor, clientKey, serverKey, 200, encodeTL(t, container))
 	decoded := decodeEncryptedForTest(t, clientKey, resp)
-	respContainer := decodeBodyAs[*mt.TLMsgContainer](t, decoded.Body)
-	if len(respContainer.Messages) != 1 {
-		t.Fatalf("response count = %d, want 1", len(respContainer.Messages))
+	rpcResult := decodeBodyAs[*mt.TLRpcResult](t, decoded.Body)
+	if rpcResult.ReqMsgId != 203 {
+		t.Fatalf("rpc_result req_msg_id = %d, want 203", rpcResult.ReqMsgId)
 	}
 	if len(dispatch.payloads) != 1 || !bytes.Equal(dispatch.payloads[0], wantPayload) {
 		t.Fatalf("dispatch payloads = %x, want %x", dispatch.payloads, wantPayload)
