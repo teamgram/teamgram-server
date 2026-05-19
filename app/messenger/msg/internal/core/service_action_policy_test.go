@@ -49,6 +49,13 @@ func TestValidateServiceActionPolicyAllowsDisplayOnly(t *testing.T) {
 	}
 }
 
+func TestValidateServiceActionPolicyAllowsChatEditTitleAfterOwnerMutation(t *testing.T) {
+	err := validateServiceActionPolicy(tg.MakeTLMessageActionChatEditTitle(&tg.TLMessageActionChatEditTitle{Title: "new"}), payload.PeerTypeChat, 55, 1001, nil)
+	if err != nil {
+		t.Fatalf("validateServiceActionPolicy() error = %v", err)
+	}
+}
+
 func TestValidateServiceActionPolicyRejectsStateClaim(t *testing.T) {
 	err := validateServiceActionPolicy(tg.MakeTLMessageActionPinMessage(&tg.TLMessageActionPinMessage{}), payload.PeerTypeChat, 55, 1001, nil)
 	if err == nil {

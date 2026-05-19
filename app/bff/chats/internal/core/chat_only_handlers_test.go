@@ -424,10 +424,20 @@ func TestMessagesGetFullChatIgnoresFolderLookupFailure(t *testing.T) {
 
 func TestMessagesEditChatTitleMapsRequestAndUpdates(t *testing.T) {
 	var got *chatpb.TLChatEditChatTitle
-	c := newChatsCore(&chatsFakeChatClient{
-		editTitle: func(_ context.Context, in *chatpb.TLChatEditChatTitle) (*tg.MutableChat, error) {
-			got = in
-			return testMutableChat(in.ChatId, in.Title), nil
+	var sent *msgpb.TLMsgSendMessage
+	msgUpdates := testMsgResponseUpdates()
+	c := newChatsCoreWithRepo(&repository.Repository{
+		ChatClient: &chatsFakeChatClient{
+			editTitle: func(_ context.Context, in *chatpb.TLChatEditChatTitle) (*tg.MutableChat, error) {
+				got = in
+				return testMutableChat(in.ChatId, in.Title), nil
+			},
+		},
+		MsgClient: &chatsFakeMsgClient{
+			sendMessage: func(_ context.Context, in *msgpb.TLMsgSendMessage) (*tg.Updates, error) {
+				sent = in
+				return msgUpdates, nil
+			},
 		},
 	}, 100)
 
@@ -438,7 +448,23 @@ func TestMessagesEditChatTitleMapsRequestAndUpdates(t *testing.T) {
 	if got == nil || got.ChatId != 42 || got.EditUserId != 100 || got.Title != "new" {
 		t.Fatalf("request = %+v, want chat_id=42 edit_user_id=100 title=new", got)
 	}
-	assertUpdateChat(t, r, 42)
+	if r != msgUpdates {
+		t.Fatalf("reply updates = %#v, want msg updates envelope %#v", r, msgUpdates)
+	}
+	if sent == nil || sent.UserId != 100 || sent.AuthKeyId != 9001 || sent.PeerType != payload.PeerTypeChat || sent.PeerId != 42 || len(sent.Message) != 1 {
+		t.Fatalf("send request = %+v, want one chat service message to chat 42", sent)
+	}
+	service, ok := sent.Message[0].Message.(*tg.TLMessageService)
+	if !ok {
+		t.Fatalf("outbox message = %T, want messageService", sent.Message[0].Message)
+	}
+	action, ok := service.Action.(*tg.TLMessageActionChatEditTitle)
+	if !ok {
+		t.Fatalf("service action = %T, want messageActionChatEditTitle", service.Action)
+	}
+	if action.Title != "new" {
+		t.Fatalf("chat edit title action title = %q, want new", action.Title)
+	}
 }
 
 func TestMessagesEditChatDefaultBannedRightsRejectsNonChatPeer(t *testing.T) {

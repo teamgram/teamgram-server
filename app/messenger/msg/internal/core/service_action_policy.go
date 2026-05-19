@@ -19,7 +19,7 @@ const (
 var serviceActionPolicyByClazzName = map[string]serviceActionPolicy{
 	tg.ClazzName_messageActionEmpty:                         serviceActionDisplayOnly,
 	tg.ClazzName_messageActionChatCreate:                    serviceActionRequiresOwnerFact,
-	tg.ClazzName_messageActionChatEditTitle:                 serviceActionRejectFromGenericSend,
+	tg.ClazzName_messageActionChatEditTitle:                 serviceActionDisplayOnly,
 	tg.ClazzName_messageActionChatEditPhoto:                 serviceActionRejectFromGenericSend,
 	tg.ClazzName_messageActionChatDeletePhoto:               serviceActionRejectFromGenericSend,
 	tg.ClazzName_messageActionChatAddUser:                   serviceActionRequiresOwnerFact,

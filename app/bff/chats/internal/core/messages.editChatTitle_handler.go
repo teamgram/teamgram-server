@@ -17,6 +17,11 @@
 package core
 
 import (
+	"math/rand"
+	"time"
+
+	msgpb "github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -34,5 +39,35 @@ func (c *ChatsCore) MessagesEditChatTitle(in *tg.TLMessagesEditChatTitle) (*tg.U
 		return nil, mapChatError(err)
 	}
 
-	return updatesWithChat(mutableChat, selfID), nil
+	updates, err := c.svcCtx.Repo.MsgClient.MsgSendMessage(c.ctx, &msgpb.TLMsgSendMessage{
+		UserId:    selfID,
+		AuthKeyId: c.MD.PermAuthKeyId,
+		PeerType:  payload.PeerTypeChat,
+		PeerId:    mutableChat.Chat.Id,
+		Message: []msgpb.OutboxMessageClazz{
+			msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
+				NoWebpage: true,
+				RandomId:  normalizeCreateChatServiceMessageRandomID(rand.Int63()),
+				Message: tg.MakeTLMessageService(&tg.TLMessageService{
+					Out:    true,
+					FromId: tg.MakePeerUser(selfID),
+					PeerId: tg.MakePeerChat(mutableChat.Chat.Id),
+					Date:   int32(time.Now().Unix()),
+					Action: tg.MakeTLMessageActionChatEditTitle(&tg.TLMessageActionChatEditTitle{
+						Title: in.Title,
+					}),
+				}),
+			}),
+		},
+	})
+	if err != nil {
+		c.Logger.Errorf("messages.editChatTitle - send edit title service message failed: self_user_id=%d chat_id=%d err=%v", selfID, mutableChat.Chat.Id, err)
+		return nil, tg.ErrInternalServerError
+	}
+	if updates == nil {
+		c.Logger.Errorf("messages.editChatTitle - send edit title service message returned nil updates: self_user_id=%d chat_id=%d", selfID, mutableChat.Chat.Id)
+		return nil, tg.ErrInternalServerError
+	}
+
+	return updates, nil
 }
