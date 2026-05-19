@@ -9,6 +9,7 @@ import (
 
 	"github.com/teamgram/teamgram-server/v2/app/interface/gateway/gateway"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload/serviceaction"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
@@ -16,6 +17,15 @@ import (
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
+
+func mustServiceActionRef(t *testing.T, action tg.MessageActionClazz) *payload.ServiceActionRefV1 {
+	t.Helper()
+	ref, err := serviceaction.Encode(action)
+	if err != nil {
+		t.Fatalf("serviceaction.Encode() error = %v", err)
+	}
+	return ref
+}
 
 type fakePushAuthsession struct {
 	userID int64
@@ -279,12 +289,10 @@ func TestV4CreateChatPushOmitsUpdateMessageID(t *testing.T) {
 			SenderUserID:       1001,
 			ToUserID:           2002,
 			Date:               1777781234,
-			ServiceAction: &payload.ServiceActionRefV1{
-				SchemaVersion: payload.ServiceActionSchemaVersionV1,
-				Kind:          payload.ServiceActionKindChatCreate,
-				Title:         "v4 chat",
-				Users:         []int64{1001, 2002},
-			},
+			ServiceAction: mustServiceActionRef(t, tg.MakeTLMessageActionChatCreate(&tg.TLMessageActionChatCreate{
+				Title: "v4 chat",
+				Users: []int64{1001, 2002},
+			})),
 		},
 		AttachFacts: []payload.UpdateFactV1{chatFact},
 		MessageID:   10,

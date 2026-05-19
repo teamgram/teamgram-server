@@ -19,17 +19,19 @@ const (
 	MessageEventSchemaVersion        = 2
 	OperationResponseSchemaVersionV3 = 3
 
-	MediaRefSchemaVersionV1              = 1
-	MediaRefSchemaVersionV2              = 2
-	MessageAttrsSchemaVersionV1          = 1
-	ForwardRefSchemaVersionV1            = 1
-	ServiceActionSchemaVersionV1         = 1
-	MessageOperationSchemaVersionV3      = 3
-	MessageEventSchemaVersionV3          = 3
-	MessageOperationSchemaVersionV4      = 4
-	MessageEventSchemaVersionV4          = 4
-	MessageOperationSchemaVersionBatchV1 = 5
-	MessageEventSchemaVersionBatchV1     = 5
+	MediaRefSchemaVersionV1                    = 1
+	MediaRefSchemaVersionV2                    = 2
+	MessageAttrsSchemaVersionV1                = 1
+	ForwardRefSchemaVersionV1                  = 1
+	ServiceActionSchemaVersionV1         int32 = 1
+	ServiceActionCodecTLBinary           int32 = 1
+	ServiceActionLayer                   int32 = 224
+	MessageOperationSchemaVersionV3            = 3
+	MessageEventSchemaVersionV3                = 3
+	MessageOperationSchemaVersionV4            = 4
+	MessageEventSchemaVersionV4                = 4
+	MessageOperationSchemaVersionBatchV1       = 5
+	MessageEventSchemaVersionBatchV1           = 5
 
 	ReplyEnvelopeCodecTLBinary int32 = 1
 	ReplyEnvelopeSchemaV1      int32 = 1
@@ -55,10 +57,4 @@ const (
 	EventKindChatParticipantsChanged = "chat_participants_changed"
 	FactKindNewMessage               = "new_message"
 	FactKindChatParticipantsChanged  = "chat_participants_changed"
-)
-
-const (
-	ServiceActionKindChatCreate  = "chat_create"
-	ServiceActionKindChatAddUser = "chat_add_user"
-	ServiceActionKindGroupCall   = "group_call"
 )

@@ -22,6 +22,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload/serviceaction"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -156,35 +157,11 @@ func normalizeTLMessageService(in normalizeOutboxInput, message *tg.TLMessageSer
 }
 
 func normalizeServiceAction(action tg.MessageActionClazz) (*payload.ServiceActionRefV1, error) {
-	switch a := action.(type) {
-	case *tg.TLMessageActionChatCreate:
-		return &payload.ServiceActionRefV1{
-			SchemaVersion: payload.ServiceActionSchemaVersionV1,
-			Kind:          payload.ServiceActionKindChatCreate,
-			Title:         a.Title,
-			Users:         append([]int64(nil), a.Users...),
-		}, nil
-	case *tg.TLMessageActionChatAddUser:
-		return &payload.ServiceActionRefV1{
-			SchemaVersion: payload.ServiceActionSchemaVersionV1,
-			Kind:          payload.ServiceActionKindChatAddUser,
-			Users:         append([]int64(nil), a.Users...),
-		}, nil
-	case *tg.TLMessageActionGroupCall:
-		call, ok := a.Call.(*tg.TLInputGroupCall)
-		if !ok || call == nil {
-			return nil, fmt.Errorf("%w: unsupported group call service action call %T", msg.ErrSendStateConflict, a.Call)
-		}
-		return &payload.ServiceActionRefV1{
-			SchemaVersion:  payload.ServiceActionSchemaVersionV1,
-			Kind:           payload.ServiceActionKindGroupCall,
-			CallID:         call.Id,
-			CallAccessHash: call.AccessHash,
-			Duration:       cloneInt32Ptr(a.Duration),
-		}, nil
-	default:
-		return nil, fmt.Errorf("%w: unsupported service action %T", msg.ErrSendStateConflict, action)
+	ref, err := serviceaction.Encode(action)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", msg.ErrSendStateConflict, err)
 	}
+	return ref, nil
 }
 
 func normalizeReplyTo(in normalizeOutboxInput, message *tg.TLMessage) (resolvedReplyToMessage, error) {

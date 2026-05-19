@@ -69,12 +69,10 @@ func TestProjectCreateChatFactOrder(t *testing.T) {
 		SenderUserID:   1001,
 		ClientRandomID: 999,
 		Date:           1_772_000_000,
-		ServiceAction: &payload.ServiceActionRefV1{
-			SchemaVersion: payload.ServiceActionSchemaVersionV1,
-			Kind:          payload.ServiceActionKindChatCreate,
-			Title:         "team",
-			Users:         []int64{1001, 1002},
-		},
+		ServiceAction: mustServiceActionRef(t, tg.MakeTLMessageActionChatCreate(&tg.TLMessageActionChatCreate{
+			Title: "team",
+			Users: []int64{1001, 1002},
+		})),
 	})
 	if err != nil {
 		t.Fatal(err)

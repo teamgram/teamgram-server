@@ -11,6 +11,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/msg/internal/svc"
 	msgpb "github.com/teamgram/teamgram-server/v2/app/messenger/msg/msg"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload/serviceaction"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	chatpb "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat"
 	"github.com/teamgram/teamgram-server/v2/pkg/pagination"
@@ -61,11 +62,9 @@ func TestNormalizeOutboxMessageSupportsChatCreateServiceAction(t *testing.T) {
 	if err != nil {
 		t.Fatalf("normalizeOutboxMessage() error = %v", err)
 	}
-	if got.ServiceAction == nil || got.ServiceAction.Kind != payload.ServiceActionKindChatCreate {
-		t.Fatalf("ServiceAction = %+v, want chat create", got.ServiceAction)
-	}
-	if got.ServiceAction.Title != "new chat" || len(got.ServiceAction.Users) != 2 || got.ServiceAction.Users[0] != 1002 {
-		t.Fatalf("ServiceAction = %+v, want title/users preserved", got.ServiceAction)
+	action := requireDecodedServiceAction[*tg.TLMessageActionChatCreate](t, got.ServiceAction)
+	if action.Title != "new chat" || len(action.Users) != 2 || action.Users[0] != 1002 {
+		t.Fatalf("decoded action = %+v, want title/users preserved", action)
 	}
 }
 
@@ -89,11 +88,9 @@ func TestNormalizeOutboxMessageSupportsChatAddUserServiceAction(t *testing.T) {
 	if err != nil {
 		t.Fatalf("normalizeOutboxMessage() error = %v", err)
 	}
-	if got.ServiceAction == nil || got.ServiceAction.Kind != payload.ServiceActionKindChatAddUser {
-		t.Fatalf("ServiceAction = %+v, want chat add user", got.ServiceAction)
-	}
-	if len(got.ServiceAction.Users) != 1 || got.ServiceAction.Users[0] != 1002 {
-		t.Fatalf("ServiceAction users = %+v, want [1002]", got.ServiceAction.Users)
+	action := requireDecodedServiceAction[*tg.TLMessageActionChatAddUser](t, got.ServiceAction)
+	if len(action.Users) != 1 || action.Users[0] != 1002 {
+		t.Fatalf("decoded action users = %+v, want [1002]", action.Users)
 	}
 }
 
@@ -104,7 +101,8 @@ func TestNormalizeOutboxMessageSupportsGroupCallServiceAction(t *testing.T) {
 		PeerId: tg.MakePeerChat(55),
 		Date:   1_778_648_899,
 		Action: tg.MakeTLMessageActionGroupCall(&tg.TLMessageActionGroupCall{
-			Call: tg.MakeTLInputGroupCall(&tg.TLInputGroupCall{Id: 7001, AccessHash: 8002}),
+			Call:     tg.MakeTLInputGroupCall(&tg.TLInputGroupCall{Id: 7001, AccessHash: 8002}),
+			Duration: testInt32Ptr(42),
 		}),
 	})
 	outbox := msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{RandomId: 99, Message: message})
@@ -117,23 +115,67 @@ func TestNormalizeOutboxMessageSupportsGroupCallServiceAction(t *testing.T) {
 	if err != nil {
 		t.Fatalf("normalizeOutboxMessage() error = %v", err)
 	}
-	if got.ServiceAction == nil || got.ServiceAction.Kind != payload.ServiceActionKindGroupCall {
-		t.Fatalf("ServiceAction = %+v, want group call", got.ServiceAction)
+	action := requireDecodedServiceAction[*tg.TLMessageActionGroupCall](t, got.ServiceAction)
+	call, ok := action.Call.(*tg.TLInputGroupCall)
+	if !ok {
+		t.Fatalf("call = %T, want *tg.TLInputGroupCall", action.Call)
 	}
-	if got.ServiceAction.CallID != 7001 || got.ServiceAction.CallAccessHash != 8002 {
-		t.Fatalf("ServiceAction call = %+v, want 7001/8002", got.ServiceAction)
+	if call.Id != 7001 || call.AccessHash != 8002 || action.Duration == nil || *action.Duration != 42 {
+		t.Fatalf("decoded group call = %+v call=%+v, want 7001/8002 duration 42", action, call)
+	}
+}
+
+func TestNormalizeOutboxMessageSupportsCustomServiceAction(t *testing.T) {
+	message := tg.MakeTLMessageService(&tg.TLMessageService{
+		Out:    true,
+		FromId: tg.MakePeerUser(1001),
+		PeerId: tg.MakePeerChat(55),
+		Date:   1_778_648_899,
+		Action: tg.MakeTLMessageActionCustomAction(&tg.TLMessageActionCustomAction{Message: "custom notice"}),
+	})
+	outbox := msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{RandomId: 99, Message: message})
+	got, err := normalizeOutboxMessage(normalizeOutboxInput{
+		SenderUserID: 1001,
+		PeerType:     payload.PeerTypeChat,
+		PeerID:       55,
+		Outbox:       outbox,
+	})
+	if err != nil {
+		t.Fatalf("normalizeOutboxMessage() error = %v", err)
+	}
+	action := requireDecodedServiceAction[*tg.TLMessageActionCustomAction](t, got.ServiceAction)
+	if action.Message != "custom notice" {
+		t.Fatalf("decoded custom action = %+v, want custom notice", action)
+	}
+}
+
+func TestNormalizeServiceActionRoundTripsGroupCall(t *testing.T) {
+	ref, err := normalizeServiceAction(tg.MakeTLMessageActionGroupCall(&tg.TLMessageActionGroupCall{
+		Call:     tg.MakeTLInputGroupCall(&tg.TLInputGroupCall{Id: 7001, AccessHash: 8002}),
+		Duration: testInt32Ptr(42),
+	}))
+	if err != nil {
+		t.Fatalf("normalizeServiceAction() error = %v", err)
+	}
+	action := requireDecodedServiceAction[*tg.TLMessageActionGroupCall](t, ref)
+	call, ok := action.Call.(*tg.TLInputGroupCall)
+	if !ok {
+		t.Fatalf("call = %T, want *tg.TLInputGroupCall", action.Call)
+	}
+	if call.Id != 7001 || call.AccessHash != 8002 || action.Duration == nil || *action.Duration != 42 {
+		t.Fatalf("decoded group call = %+v call=%+v, want 7001/8002 duration 42", action, call)
 	}
 }
 
 func TestSentMessageServiceActionSupportsGroupCall(t *testing.T) {
-	duration := int32(42)
-	action, err := sentMessageServiceAction(&payload.ServiceActionRefV1{
-		SchemaVersion:  payload.ServiceActionSchemaVersionV1,
-		Kind:           payload.ServiceActionKindGroupCall,
-		CallID:         7001,
-		CallAccessHash: 8002,
-		Duration:       &duration,
-	})
+	ref, err := serviceaction.Encode(tg.MakeTLMessageActionGroupCall(&tg.TLMessageActionGroupCall{
+		Call:     tg.MakeTLInputGroupCall(&tg.TLInputGroupCall{Id: 7001, AccessHash: 8002}),
+		Duration: testInt32Ptr(42),
+	}))
+	if err != nil {
+		t.Fatalf("serviceaction.Encode() error = %v", err)
+	}
+	action, err := sentMessageServiceAction(ref)
 	if err != nil {
 		t.Fatalf("sentMessageServiceAction() error = %v", err)
 	}
@@ -151,6 +193,23 @@ func TestSentMessageServiceActionSupportsGroupCall(t *testing.T) {
 	if groupCall.Duration == nil || *groupCall.Duration != 42 {
 		t.Fatalf("duration = %v, want 42", groupCall.Duration)
 	}
+}
+
+func requireDecodedServiceAction[T tg.MessageActionClazz](t *testing.T, ref *payload.ServiceActionRefV1) T {
+	t.Helper()
+	action, err := sentMessageServiceAction(ref)
+	if err != nil {
+		t.Fatalf("sentMessageServiceAction() error = %v", err)
+	}
+	got, ok := action.(T)
+	if !ok {
+		t.Fatalf("decoded action = %T, want requested type", action)
+	}
+	return got
+}
+
+func testInt32Ptr(v int32) *int32 {
+	return &v
 }
 
 func TestNormalizeMediaRefDocumentPreservesV2DocumentPayload(t *testing.T) {
@@ -685,8 +744,86 @@ func TestMsgSendMessageChatAddUserBackfillsFwdLimitHistoryToInvitee(t *testing.T
 		t.Fatalf("invitee batch canonical ids = [%d %d %d], want [7001 7002 7103]",
 			inviteeBatch.Messages[0].CanonicalMessageID, inviteeBatch.Messages[1].CanonicalMessageID, inviteeBatch.Messages[2].CanonicalMessageID)
 	}
-	if inviteeBatch.Messages[2].ServiceAction == nil || inviteeBatch.Messages[2].ServiceAction.Kind != payload.ServiceActionKindChatAddUser {
-		t.Fatalf("invitee batch last action = %+v, want chat_add_user", inviteeBatch.Messages[2].ServiceAction)
+	action := requireDecodedServiceAction[*tg.TLMessageActionChatAddUser](t, inviteeBatch.Messages[2].ServiceAction)
+	if len(action.Users) != 1 || action.Users[0] != 1003 {
+		t.Fatalf("invitee batch last action = %+v, want chat_add_user 1003", action)
+	}
+}
+
+func TestChatAddUserHistoryBackfillSpec(t *testing.T) {
+	normalized := normalizedOutboxMessage{
+		ServiceAction: mustServiceActionRef(t, tg.MakeTLMessageActionChatAddUser(&tg.TLMessageActionChatAddUser{
+			Users: []int64{1002, 1003},
+		})),
+	}
+	users, fwdLimit := chatAddUserHistoryBackfillSpec(normalized, 55, 1001, []payload.UpdateFactV1{
+		mustChatParticipantsChangedFact(t, 55, 1001, []int64{1001, 1002, 1003}, 2),
+	})
+	if fwdLimit != 2 || len(users) != 2 || users[0] != 1002 || users[1] != 1003 {
+		t.Fatalf("backfill spec users=%v fwdLimit=%d, want [1002 1003] limit 2", users, fwdLimit)
+	}
+}
+
+func TestMsgSendMessageRejectsStateClaimServiceActionBeforePersistence(t *testing.T) {
+	repo := &fakeMsgRepository{}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:              repo,
+		UserUpdates:       &fakeUserUpdatesClient{},
+		ReceiverPublisher: &fakeReceiverPublisher{},
+	})
+	req := sendMessageRequest(1001, 55, 9001, "")
+	req.PeerType = payload.PeerTypeChat
+	req.Message = []msgpb.OutboxMessageClazz{
+		msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
+			RandomId: 99,
+			Message: tg.MakeTLMessageService(&tg.TLMessageService{
+				Out:    true,
+				FromId: tg.MakePeerUser(1001),
+				PeerId: tg.MakePeerChat(55),
+				Date:   1_772_000_000,
+				Action: tg.MakeTLMessageActionPinMessage(&tg.TLMessageActionPinMessage{}),
+			}),
+		}),
+	}
+	_, err := core.MsgSendMessage(req)
+	if err == nil || !errors.Is(err, msgpb.ErrSendStateConflict) {
+		t.Fatalf("MsgSendMessage error = %v, want ErrSendStateConflict", err)
+	}
+	if repo.createCanonicalCalls != 0 {
+		t.Fatalf("CreateOrGetByClientRandom calls = %d, want 0 before persistence", repo.createCanonicalCalls)
+	}
+}
+
+func TestMsgSendMessageChatCreateRequiresParticipantsFactBeforePersistence(t *testing.T) {
+	repo := &fakeMsgRepository{}
+	core := New(context.Background(), &svc.ServiceContext{
+		Repo:              repo,
+		UserUpdates:       &fakeUserUpdatesClient{},
+		ReceiverPublisher: &fakeReceiverPublisher{},
+	})
+	req := sendMessageRequest(1001, 55, 9001, "")
+	req.PeerType = payload.PeerTypeChat
+	req.Message = []msgpb.OutboxMessageClazz{
+		msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
+			RandomId: 99,
+			Message: tg.MakeTLMessageService(&tg.TLMessageService{
+				Out:    true,
+				FromId: tg.MakePeerUser(1001),
+				PeerId: tg.MakePeerChat(55),
+				Date:   1_772_000_000,
+				Action: tg.MakeTLMessageActionChatCreate(&tg.TLMessageActionChatCreate{
+					Title: "team",
+					Users: []int64{1002},
+				}),
+			}),
+		}),
+	}
+	_, err := core.MsgSendMessage(req)
+	if err == nil || !errors.Is(err, msgpb.ErrSendStateConflict) {
+		t.Fatalf("MsgSendMessage error = %v, want ErrSendStateConflict", err)
+	}
+	if repo.createCanonicalCalls != 0 {
+		t.Fatalf("CreateOrGetByClientRandom calls = %d, want 0 before persistence", repo.createCanonicalCalls)
 	}
 }
 
@@ -703,7 +840,9 @@ func TestMsgSendMessageReplyUsesUserupdatesEnvelope(t *testing.T) {
 		Chat:        chatClient,
 	})
 
-	got, err := core.MsgSendMessage(chatCreateServiceSendRequest(1001, 55, 9001, 12347))
+	req := chatCreateServiceSendRequest(1001, 55, 9001, 12347)
+	req.AttachFacts = []msgpb.UpdateFactClazz{chatParticipantsChangedTLFact(t, 55, 1001, []int64{1001, 1002, 1003})}
+	got, err := core.MsgSendMessage(req)
 	if err != nil {
 		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
@@ -775,11 +914,14 @@ func TestMsgSendMessagePeerTypeChatCreateServiceActionFansOut(t *testing.T) {
 		Chat:        chatClient,
 	})
 
-	got, err := core.MsgSendMessage(&msgpb.TLMsgSendMessage{
+	req := &msgpb.TLMsgSendMessage{
 		UserId:    1001,
 		AuthKeyId: 9001,
 		PeerType:  payload.PeerTypeChat,
 		PeerId:    55,
+		AttachFacts: []msgpb.UpdateFactClazz{
+			chatParticipantsChangedTLFact(t, 55, 1001, []int64{1001, 1002, 1003}),
+		},
 		Message: []msgpb.OutboxMessageClazz{msgpb.MakeTLOutboxMessage(&msgpb.TLOutboxMessage{
 			RandomId: 12346,
 			Message: tg.MakeTLMessageService(&tg.TLMessageService{
@@ -793,7 +935,8 @@ func TestMsgSendMessagePeerTypeChatCreateServiceActionFansOut(t *testing.T) {
 				}),
 			}),
 		})},
-	})
+	}
+	got, err := core.MsgSendMessage(req)
 	if err != nil {
 		t.Fatalf("MsgSendMessage() error = %v", err)
 	}
@@ -817,12 +960,11 @@ func TestMsgSendMessagePeerTypeChatCreateServiceActionFansOut(t *testing.T) {
 		t.Fatalf("affected effects = %+v, want 2 receivers", updatesClient.processWithEffects)
 	}
 	senderOp := mustDecodeMessageOperationV4(t, updatesClient.processWithEffects.Operation.Payload)
-	if senderOp.MessageFact.ServiceAction == nil || senderOp.MessageFact.ServiceAction.Kind != payload.ServiceActionKindChatCreate {
-		t.Fatalf("sender service action = %+v, want chat create", senderOp.MessageFact.ServiceAction)
-	}
+	requireDecodedServiceAction[*tg.TLMessageActionChatCreate](t, senderOp.MessageFact.ServiceAction)
 	for _, effect := range updatesClient.processWithEffects.AffectedEffects {
 		receiverOp := mustDecodeMessageOperationV4(t, effect.Operation.Payload)
-		if receiverOp.MessageFact.ServiceAction == nil || receiverOp.MessageFact.ServiceAction.Kind != payload.ServiceActionKindChatCreate || receiverOp.MessageFact.PeerID != 55 {
+		requireDecodedServiceAction[*tg.TLMessageActionChatCreate](t, receiverOp.MessageFact.ServiceAction)
+		if receiverOp.MessageFact.PeerID != 55 {
 			t.Fatalf("receiver payload = %+v, want chat create in peer 55", receiverOp)
 		}
 	}
@@ -4031,6 +4173,7 @@ type fakeMsgRepository struct {
 	revalidateForwardCallCount int
 	markCanonicalErr           error
 	markSenderErrs             []error
+	createCanonicalCalls       int
 	batchCreateCalls           int
 	markCanonicalCalls         int
 	markSenderCalls            int
@@ -4051,6 +4194,7 @@ func (f *fakeMsgRepository) CreateOrLoadSendState(context.Context, repository.Cr
 }
 
 func (f *fakeMsgRepository) CreateOrGetByClientRandom(context.Context, repository.CreateCanonicalMessageInput) (*repository.CanonicalMessageResult, error) {
+	f.createCanonicalCalls++
 	return f.canonical, nil
 }
 
@@ -4613,6 +4757,35 @@ func chatAddUserServiceSendRequest(senderID, chatID, authKeyID, randomID, invite
 func chatParticipantsChangedTLFact(t *testing.T, chatID, actorUserID int64, participantIDs []int64) msgpb.UpdateFactClazz {
 	t.Helper()
 	return chatParticipantsChangedTLFactWithFwdLimit(t, chatID, actorUserID, participantIDs, 0)
+}
+
+func mustChatParticipantsChangedFact(t *testing.T, chatID, actorUserID int64, participantIDs []int64, fwdLimit int32) payload.UpdateFactV1 {
+	t.Helper()
+	participants := make([]payload.ChatParticipantFactV1, 0, len(participantIDs))
+	for _, userID := range participantIDs {
+		participants = append(participants, payload.ChatParticipantFactV1{UserID: userID, Role: "member", InviterUserID: actorUserID, Date: 1_772_000_000})
+	}
+	fact, err := payload.WrapFact(payload.FactKindChatParticipantsChanged, payload.ChatParticipantsChangedFactV1{
+		SchemaVersion: 1,
+		ChatID:        chatID,
+		ActorUserID:   actorUserID,
+		Version:       1,
+		Participants:  participants,
+		FwdLimit:      fwdLimit,
+	})
+	if err != nil {
+		t.Fatalf("wrap chat participants fact: %v", err)
+	}
+	return fact
+}
+
+func mustServiceActionRef(t *testing.T, action tg.MessageActionClazz) *payload.ServiceActionRefV1 {
+	t.Helper()
+	ref, err := serviceaction.Encode(action)
+	if err != nil {
+		t.Fatalf("serviceaction.Encode() error = %v", err)
+	}
+	return ref
 }
 
 func chatParticipantsChangedTLFactWithFwdLimit(t *testing.T, chatID, actorUserID int64, participantIDs []int64, fwdLimit int32) msgpb.UpdateFactClazz {
