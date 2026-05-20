@@ -54,6 +54,21 @@ const (
 )
 
 const (
+	AuthSeqReplayPolicyDurableReplay = "durable_replay"
+	AuthSeqReplayPolicyTTLReplay     = "ttl_replay"
+	AuthSeqReplayPolicyRealtimeOnly  = "realtime_only"
+
+	AuthSeqVisibilityAllUserAuthKeys        = "all_user_auth_keys"
+	AuthSeqVisibilityNotSourcePermAuthKey   = "not_source_perm_auth_key"
+	AuthSeqVisibilityExplicitPermAuthKeySet = "explicit_perm_auth_key_set"
+
+	AuthSeqCodecTLBinary        int32 = 1
+	AuthSeqLayer                int32 = 224
+	AuthSeqMaxFutureSkewSeconds int64 = 86400
+	AuthSeqPhoneCallTTLSeconds  int64 = 60
+)
+
+const (
 	PushTaskStatusPublishing      int32 = 2
 	PushTaskStatusPublished       int32 = 3
 	PushTaskStatusFailedRetryable int32 = 4
@@ -254,6 +269,36 @@ type DialogSideEffectAppendInput struct {
 	PayloadSchemaVersion int32
 	Payload              []byte
 	PayloadHash          []byte
+}
+
+type AuthSeqUpdateAppendInput struct {
+	UserID               int64
+	SourcePermAuthKeyID  int64
+	TargetPermAuthKeyIDs []int64
+	OperationID          string
+	UpdateType           string
+	ReplayPolicy         string
+	VisibilityPolicy     string
+	Layer                int32
+	TLBytes              []byte
+	PayloadHash          []byte
+	ExpireAt             int64
+	Now                  int64
+}
+
+type AuthSeqDeliveryEvent struct {
+	UserID              int64
+	PermAuthKeyID       int64
+	Seq                 int64
+	Date                int32
+	PayloadID           string
+	ReplayPolicy        string
+	OperationID         string
+	SourcePermAuthKeyID int64
+	VisibilityPolicy    string
+	TLBytes             []byte
+	PayloadHash         []byte
+	Layer               int32
 }
 
 type AuthSeqAppendResult struct {
