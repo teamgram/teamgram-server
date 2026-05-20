@@ -301,6 +301,13 @@ type AuthSeqDeliveryEvent struct {
 	Layer               int32
 }
 
+type AuthSeqUpdateAppendResult struct {
+	UserID         int64
+	OperationID    string
+	Deliveries     []AuthSeqDeliveryEvent
+	AlreadyApplied bool
+}
+
 type AuthSeqAppendResult struct {
 	UserID         int64
 	OperationID    string

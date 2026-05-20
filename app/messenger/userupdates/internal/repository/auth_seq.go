@@ -7,10 +7,152 @@ import (
 	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/cursor"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 )
+
+func (r *Repository) AppendAuthSeqUpdate(ctx context.Context, in AuthSeqUpdateAppendInput) (*AuthSeqUpdateAppendResult, error) {
+	db, err := r.requireDB()
+	if err != nil {
+		return nil, err
+	}
+	if len(in.TargetPermAuthKeyIDs) == 0 {
+		return &AuthSeqUpdateAppendResult{UserID: in.UserID, OperationID: in.OperationID}, nil
+	}
+	if !bytes.Equal(in.PayloadHash, payload.HashBytes(in.TLBytes)) {
+		return nil, userupdates.ErrOperationPayloadConflict
+	}
+	payloadID := AuthSeqPayloadID(in.PayloadHash)
+	if payloadID == "" {
+		return nil, userupdates.ErrOperationPayloadConflict
+	}
+	now := in.Now
+	if now == 0 {
+		now = time.Now().UTC().Unix()
+	}
+	var out *AuthSeqUpdateAppendResult
+	err = db.Transact(ctx, func(tx *sqlx.Tx) error {
+		result, err := r.appendAuthSeqUpdateTx(r.models.WithTx(tx), in, payloadID, now)
+		if err != nil {
+			return err
+		}
+		out = result
+		return nil
+	})
+	return out, err
+}
+
+func (r *Repository) appendAuthSeqUpdateTx(txModels *model.TxModels, in AuthSeqUpdateAppendInput, payloadID string, now int64) (*AuthSeqUpdateAppendResult, error) {
+	if _, _, err := txModels.AuthUpdatePayloadsModel.InsertIgnore(&model.AuthUpdatePayloads{
+		PayloadId:   payloadID,
+		UpdateType:  in.UpdateType,
+		Codec:       AuthSeqCodecTLBinary,
+		Layer:       in.Layer,
+		TlBytes:     in.TLBytes,
+		PayloadHash: in.PayloadHash,
+		ExpireAt:    in.ExpireAt,
+	}); err != nil {
+		return nil, storageError("insert auth update payload", err)
+	}
+	result := &AuthSeqUpdateAppendResult{UserID: in.UserID, OperationID: in.OperationID}
+	for _, authKeyID := range in.TargetPermAuthKeyIDs {
+		existing, err := txModels.AuthSeqDeliveriesModel.SelectByOperation(in.UserID, authKeyID, in.OperationID)
+		if err == nil {
+			date, err := cursor.CheckedInt32(existing.Date, "auth seq date")
+			if err != nil {
+				return nil, storageError("auth seq date", err)
+			}
+			result.AlreadyApplied = true
+			result.Deliveries = append(result.Deliveries, AuthSeqDeliveryEvent{
+				UserID:              existing.UserId,
+				PermAuthKeyID:       existing.PermAuthKeyId,
+				Seq:                 existing.Seq,
+				Date:                date,
+				PayloadID:           existing.PayloadId,
+				ReplayPolicy:        existing.ReplayPolicy,
+				OperationID:         existing.OperationId,
+				SourcePermAuthKeyID: existing.SourcePermAuthKeyId,
+				VisibilityPolicy:    existing.VisibilityPolicy,
+				TLBytes:             in.TLBytes,
+				PayloadHash:         in.PayloadHash,
+				Layer:               in.Layer,
+			})
+			continue
+		}
+		if !errors.Is(err, model.ErrNotFound) {
+			return nil, storageError("select auth seq delivery", err)
+		}
+		delivery, err := r.appendOneAuthSeqDeliveryTx(txModels, in, authKeyID, payloadID, now)
+		if err != nil {
+			return nil, err
+		}
+		result.Deliveries = append(result.Deliveries, delivery)
+	}
+	return result, nil
+}
+
+func (r *Repository) appendOneAuthSeqDeliveryTx(txModels *model.TxModels, in AuthSeqUpdateAppendInput, authKeyID int64, payloadID string, now int64) (AuthSeqDeliveryEvent, error) {
+	if _, _, err := txModels.AuthSeqStateModel.InsertIgnore(&model.AuthSeqState{
+		UserId:        in.UserID,
+		PermAuthKeyId: authKeyID,
+		Seq:           0,
+		Date:          0,
+		RowVersion:    0,
+	}); err != nil {
+		return AuthSeqDeliveryEvent{}, storageError("init auth seq state", err)
+	}
+	state, err := txModels.AuthSeqStateModel.SelectForUpdate(in.UserID, authKeyID)
+	if err != nil {
+		return AuthSeqDeliveryEvent{}, storageError("lock auth seq state", err)
+	}
+	nextSeq := state.Seq + 1
+	nextDate64 := now
+	if nextDate64 <= state.Date {
+		nextDate64 = state.Date + 1
+	}
+	if nextDate64 > now+AuthSeqMaxFutureSkewSeconds {
+		return AuthSeqDeliveryEvent{}, storageError("auth seq clock skew", userupdates.ErrPtsContinuityViolation)
+	}
+	nextDate, err := cursor.CheckedInt32(nextDate64, "auth seq date")
+	if err != nil {
+		return AuthSeqDeliveryEvent{}, storageError("auth seq date", err)
+	}
+	if _, _, err := txModels.AuthSeqDeliveriesModel.InsertIgnore(&model.AuthSeqDeliveries{
+		UserId:              in.UserID,
+		PermAuthKeyId:       authKeyID,
+		Seq:                 nextSeq,
+		Date:                int64(nextDate),
+		PayloadId:           payloadID,
+		ReplayPolicy:        in.ReplayPolicy,
+		SourcePermAuthKeyId: in.SourcePermAuthKeyID,
+		VisibilityPolicy:    in.VisibilityPolicy,
+		OperationId:         in.OperationID,
+		ExpireAt:            in.ExpireAt,
+	}); err != nil {
+		return AuthSeqDeliveryEvent{}, storageError("insert auth seq delivery", err)
+	}
+	if affected, err := txModels.AuthSeqStateModel.UpdateSeqDate(nextSeq, int64(nextDate), in.UserID, authKeyID); err != nil {
+		return AuthSeqDeliveryEvent{}, storageError("update auth seq state", err)
+	} else if affected == 0 {
+		return AuthSeqDeliveryEvent{}, userupdates.ErrPtsContinuityViolation
+	}
+	return AuthSeqDeliveryEvent{
+		UserID:              in.UserID,
+		PermAuthKeyID:       authKeyID,
+		Seq:                 nextSeq,
+		Date:                nextDate,
+		PayloadID:           payloadID,
+		ReplayPolicy:        in.ReplayPolicy,
+		OperationID:         in.OperationID,
+		SourcePermAuthKeyID: in.SourcePermAuthKeyID,
+		VisibilityPolicy:    in.VisibilityPolicy,
+		TLBytes:             in.TLBytes,
+		PayloadHash:         in.PayloadHash,
+		Layer:               in.Layer,
+	}, nil
+}
 
 func (r *Repository) AppendDialogAuthSeqSideEffect(ctx context.Context, in DialogSideEffectAppendInput) (*AuthSeqAppendResult, error) {
 	db, err := r.requireDB()
