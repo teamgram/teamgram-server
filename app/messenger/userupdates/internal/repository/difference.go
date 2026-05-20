@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -145,83 +144,13 @@ func (r *Repository) GetDifference(ctx context.Context, in GetDifferenceInput) (
 				EventPayloadHash:    payloadRow.PayloadHash,
 			})
 		}
+		if len(authSeqEvents) > 0 {
+			last := authSeqEvents[len(authSeqEvents)-1]
+			state.Seq = last.Seq
+			state.Date = last.Date
+		}
 	}
 	return &GetDifferenceResult{State: *state, Events: events, AuthSeqEvents: authSeqEvents}, nil
-}
-
-func latestDifferenceDate(events []UserEvent, authSeqEvents []AuthSeqEvent, fallback int32) (int32, error) {
-	latest := fallback
-	for _, event := range events {
-		date, err := userEventDate(event)
-		if err != nil {
-			return 0, err
-		}
-		if date > latest {
-			latest = date
-		}
-	}
-	for _, event := range authSeqEvents {
-		if event.Date > latest {
-			latest = event.Date
-		}
-	}
-	return latest, nil
-}
-
-func userEventDate(event UserEvent) (int32, error) {
-	if !isMessageDateEvent(event.EventType) {
-		return 0, nil
-	}
-	if event.EventCodec != PayloadCodecJSON {
-		return 0, storageError("decode difference event date", userupdates.ErrOperationTerminal)
-	}
-	if len(event.EventPayloadHash) > 0 && !bytes.Equal(payload.HashBytes(event.EventPayload), event.EventPayloadHash) {
-		return 0, storageError("decode difference event date", userupdates.ErrOperationTerminal)
-	}
-	switch event.EventSchemaVersion {
-	case payload.MessageEventSchemaVersionV1:
-		var decoded payload.MessageEventV1
-		if err := json.Unmarshal(event.EventPayload, &decoded); err != nil {
-			return 0, storageError("decode legacy difference event date", err)
-		}
-		return maxDateInt32(decoded.Date, decoded.EditDate), nil
-	case payload.MessageEventSchemaVersion:
-		var decoded payload.MessageEventV2
-		if err := json.Unmarshal(event.EventPayload, &decoded); err != nil {
-			return 0, storageError("decode difference event date", err)
-		}
-		return maxDateInt32(decoded.Date, decoded.EditDate), nil
-	case payload.MessageEventSchemaVersionV3:
-		var decoded payload.MessageEventV3
-		if err := json.Unmarshal(event.EventPayload, &decoded); err != nil {
-			return 0, storageError("decode v3 difference event date", err)
-		}
-		return maxDateInt32(decoded.Date, decoded.EditDate), nil
-	case payload.MessageEventSchemaVersionV4:
-		var decoded payload.MessageEventV4
-		if err := json.Unmarshal(event.EventPayload, &decoded); err != nil {
-			return 0, storageError("decode v4 difference event date", err)
-		}
-		return decoded.MessageFact.Date, nil
-	default:
-		return 0, storageError("decode difference event date", userupdates.ErrOperationTerminal)
-	}
-}
-
-func isMessageDateEvent(eventType int32) bool {
-	switch eventType {
-	case EventTypeNewMessage, EventTypeReadHistory, EventTypeUpdatePinnedMessage, EventTypeDeleteMessages, EventTypeDeleteHistory, EventTypeEditMessage, EventTypeChatParticipantsChanged:
-		return true
-	default:
-		return false
-	}
-}
-
-func maxDateInt32(a, b int32) int32 {
-	if b > a {
-		return b
-	}
-	return a
 }
 
 func operationResultFromModel(r *model.UserOperationResults) *OperationResult {
