@@ -9,6 +9,9 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/svc"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 func TestAppendDialogAuthSeqExpandsNotSourceAuthKey(t *testing.T) {
@@ -57,8 +60,34 @@ func TestAppendDialogAuthSeqExpandsAllPolicy(t *testing.T) {
 	}
 }
 
+func TestDialogAuthSeqTLUpdateBuildsUpdate(t *testing.T) {
+	body := []byte(`{"schema_version":1,"event_kind":"draft_saved","peer_type":1,"peer_id":1002}`)
+	got, err := dialogAuthSeqTLUpdate(&userupdates.TLUserupdatesAppendDialogAuthSeqSideEffect{
+		UserId:           1001,
+		OperationId:      "op-dialog-tl",
+		PublicUpdateType: "draft_saved",
+		PeerType:         1,
+		PeerId:           1002,
+		Payload:          body,
+		PayloadHash:      payload.HashBytes(body),
+	})
+	if err != nil {
+		t.Fatalf("dialogAuthSeqTLUpdate() error = %v", err)
+	}
+	if _, ok := got.(*tg.TLUpdateDraftMessage); !ok {
+		t.Fatalf("update = %T, want *tg.TLUpdateDraftMessage", got)
+	}
+	encoded, err := iface.EncodeObject(got, repository.AuthSeqLayer)
+	if err != nil {
+		t.Fatalf("EncodeObject() error = %v", err)
+	}
+	if len(encoded) == 0 {
+		t.Fatalf("encoded TL update is empty")
+	}
+}
+
 func TestAppendDialogAuthSeqSideEffectPassesExpandedTargetsToRepository(t *testing.T) {
-	body := []byte("encoded-tl-update")
+	body := []byte(`{"schema_version":1,"event_kind":"draft_saved","peer_type":1,"peer_id":2002}`)
 	hash := payload.HashBytes(body)
 	repo := &fakeUserUpdatesRepository{
 		appendAuthSeqUpdateResult: &repository.AuthSeqUpdateAppendResult{
@@ -77,7 +106,7 @@ func TestAppendDialogAuthSeqSideEffectPassesExpandedTargetsToRepository(t *testi
 		SourcePermAuthKeyId:  22,
 		OperationId:          "op-auth-seq",
 		TargetAuthPolicy:     repository.AuthSeqVisibilityNotSourcePermAuthKey,
-		PublicUpdateType:     "updatePeerSettings",
+		PublicUpdateType:     "draft_saved",
 		PeerType:             payload.PeerTypeUser,
 		PeerId:               2002,
 		PayloadSchemaVersion: repository.AuthSeqLayer,
@@ -91,13 +120,41 @@ func TestAppendDialogAuthSeqSideEffectPassesExpandedTargetsToRepository(t *testi
 	if in.UserID != 1001 ||
 		in.SourcePermAuthKeyID != 22 ||
 		in.OperationID != "op-auth-seq" ||
-		in.UpdateType != "updatePeerSettings" ||
+		in.UpdateType != "draft_saved" ||
 		in.ReplayPolicy != repository.AuthSeqReplayPolicyDurableReplay ||
 		in.VisibilityPolicy != repository.AuthSeqVisibilityNotSourcePermAuthKey ||
-		in.Layer != repository.AuthSeqLayer ||
-		!bytes.Equal(in.TLBytes, body) ||
-		!bytes.Equal(in.PayloadHash, hash) {
+		in.Layer != repository.AuthSeqLayer {
 		t.Fatalf("unexpected auth seq append input: %+v", in)
+	}
+	wantUpdate, err := dialogAuthSeqTLUpdate(&userupdates.TLUserupdatesAppendDialogAuthSeqSideEffect{
+		PublicUpdateType: "draft_saved",
+		PeerType:         payload.PeerTypeUser,
+		PeerId:           2002,
+		Payload:          body,
+		PayloadHash:      hash,
+	})
+	if err != nil {
+		t.Fatalf("dialogAuthSeqTLUpdate() error = %v", err)
+	}
+	wantTLBytes, err := iface.EncodeObject(wantUpdate, repository.AuthSeqLayer)
+	if err != nil {
+		t.Fatalf("EncodeObject() error = %v", err)
+	}
+	if !bytes.Equal(in.TLBytes, wantTLBytes) {
+		t.Fatalf("TLBytes = %x, want %x", in.TLBytes, wantTLBytes)
+	}
+	if !bytes.Equal(in.PayloadHash, payload.HashBytes(wantTLBytes)) {
+		t.Fatalf("PayloadHash = %x, want %x", in.PayloadHash, payload.HashBytes(wantTLBytes))
+	}
+	if bytes.Equal(in.TLBytes, body) || bytes.Equal(in.PayloadHash, hash) {
+		t.Fatalf("auth seq append input used original JSON payload: %+v", in)
+	}
+	decoded, err := iface.DecodeObject(bin.NewDecoder(in.TLBytes))
+	if err != nil {
+		t.Fatalf("DecodeObject(TLBytes) error = %v", err)
+	}
+	if _, ok := decoded.(*tg.TLUpdateDraftMessage); !ok {
+		t.Fatalf("decoded TLBytes = %T, want *tg.TLUpdateDraftMessage", decoded)
 	}
 	wantTargets := []int64{11, 33}
 	if len(in.TargetPermAuthKeyIDs) != len(wantTargets) {

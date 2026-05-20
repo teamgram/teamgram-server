@@ -19,12 +19,14 @@ package core
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -49,6 +51,15 @@ func (c *UserupdatesCore) UserupdatesAppendDialogAuthSeqSideEffect(in *userupdat
 	if err != nil {
 		return nil, err
 	}
+	tlUpdate, err := dialogAuthSeqTLUpdate(in)
+	if err != nil {
+		return nil, err
+	}
+	tlBytes, err := iface.EncodeObject(tlUpdate, repository.AuthSeqLayer)
+	if err != nil {
+		return nil, fmt.Errorf("%w: encode auth seq update: %v", userupdates.ErrOperationTerminal, err)
+	}
+	tlHash := payload.HashBytes(tlBytes)
 	result, err := c.svcCtx.Repo.AppendAuthSeqUpdate(c.ctx, repository.AuthSeqUpdateAppendInput{
 		UserID:               in.UserId,
 		SourcePermAuthKeyID:  in.SourcePermAuthKeyId,
@@ -57,9 +68,9 @@ func (c *UserupdatesCore) UserupdatesAppendDialogAuthSeqSideEffect(in *userupdat
 		UpdateType:           in.PublicUpdateType,
 		ReplayPolicy:         repository.AuthSeqReplayPolicyDurableReplay,
 		VisibilityPolicy:     visibilityPolicy,
-		Layer:                in.PayloadSchemaVersion,
-		TLBytes:              in.Payload,
-		PayloadHash:          in.PayloadHash,
+		Layer:                repository.AuthSeqLayer,
+		TLBytes:              tlBytes,
+		PayloadHash:          tlHash,
 	})
 	if err != nil {
 		return nil, err
@@ -149,4 +160,30 @@ func validateDialogSideEffectAppend(in dialogSideEffectAppendInput) error {
 		return fmt.Errorf("%w: missing source_perm_auth_key_id", userupdates.ErrOperationTerminal)
 	}
 	return nil
+}
+
+func dialogAuthSeqTLUpdate(in *userupdates.TLUserupdatesAppendDialogAuthSeqSideEffect) (tg.UpdateClazz, error) {
+	var event payload.DialogEventV1
+	if len(in.Payload) != 0 {
+		if err := json.Unmarshal(in.Payload, &event); err != nil {
+			return nil, fmt.Errorf("%w: decode dialog auth seq payload: %v", userupdates.ErrOperationTerminal, err)
+		}
+	}
+	if event.EventKind == "" {
+		event.EventKind = in.PublicUpdateType
+	}
+	if event.EventKind == "draft_saved" {
+		event.EventKind = payload.DialogEventDraftSaved
+	}
+	if event.PeerType == 0 {
+		event.PeerType = in.PeerType
+	}
+	if event.PeerID == 0 {
+		event.PeerID = in.PeerId
+	}
+	update, err := dialogEventToTLUpdate(event, 0, 0)
+	if err != nil {
+		return nil, fmt.Errorf("%w: build dialog auth seq update: %v", userupdates.ErrOperationTerminal, err)
+	}
+	return update, nil
 }
