@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="auth_update_payloads">
+    <operation name="InsertIgnore">
+        <sql>
+            INSERT IGNORE INTO auth_update_payloads
+                (payload_id, update_type, codec, layer, tl_bytes, payload_hash, expire_at)
+            VALUES
+                (:payload_id, :update_type, :codec, :layer, :tl_bytes, :payload_hash, :expire_at)
+        </sql>
+    </operation>
+
+    <operation name="SelectByPayloadId">
+        <sql>
+            SELECT
+                payload_id, update_type, codec, layer, tl_bytes, payload_hash, expire_at
+            FROM
+                auth_update_payloads
+            WHERE
+                payload_id = :payload_id LIMIT 1
+        </sql>
+    </operation>
+</table>

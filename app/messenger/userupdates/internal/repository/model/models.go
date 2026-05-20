@@ -16,6 +16,9 @@ import (
 
 type Models struct {
 	AffectedOperationOutboxModel    AffectedOperationOutboxModel
+	AuthSeqDeliveriesModel          AuthSeqDeliveriesModel
+	AuthSeqStateModel               AuthSeqStateModel
+	AuthUpdatePayloadsModel         AuthUpdatePayloadsModel
 	DeliveryFailedOperationsModel   DeliveryFailedOperationsModel
 	DialogSideEffectOutboxModel     DialogSideEffectOutboxModel
 	HashTagsModel                   HashTagsModel
@@ -35,6 +38,9 @@ type Models struct {
 
 type TxModels struct {
 	AffectedOperationOutboxModel    AffectedOperationOutboxTxModel
+	AuthSeqDeliveriesModel          AuthSeqDeliveriesTxModel
+	AuthSeqStateModel               AuthSeqStateTxModel
+	AuthUpdatePayloadsModel         AuthUpdatePayloadsTxModel
 	DeliveryFailedOperationsModel   DeliveryFailedOperationsTxModel
 	DialogSideEffectOutboxModel     DialogSideEffectOutboxTxModel
 	HashTagsModel                   HashTagsTxModel
@@ -55,6 +61,9 @@ type TxModels struct {
 func NewModels(db *sqlx.DB) *Models {
 	return &Models{
 		AffectedOperationOutboxModel:    NewAffectedOperationOutboxModel(db),
+		AuthSeqDeliveriesModel:          NewAuthSeqDeliveriesModel(db),
+		AuthSeqStateModel:               NewAuthSeqStateModel(db),
+		AuthUpdatePayloadsModel:         NewAuthUpdatePayloadsModel(db),
 		DeliveryFailedOperationsModel:   NewDeliveryFailedOperationsModel(db),
 		DialogSideEffectOutboxModel:     NewDialogSideEffectOutboxModel(db),
 		HashTagsModel:                   NewHashTagsModel(db),
@@ -76,6 +85,9 @@ func NewModels(db *sqlx.DB) *Models {
 func (m *Models) WithTx(tx *sqlx.Tx) *TxModels {
 	return &TxModels{
 		AffectedOperationOutboxModel:    NewAffectedOperationOutboxTxModel(tx),
+		AuthSeqDeliveriesModel:          NewAuthSeqDeliveriesTxModel(tx),
+		AuthSeqStateModel:               NewAuthSeqStateTxModel(tx),
+		AuthUpdatePayloadsModel:         NewAuthUpdatePayloadsTxModel(tx),
 		DeliveryFailedOperationsModel:   NewDeliveryFailedOperationsTxModel(tx),
 		DialogSideEffectOutboxModel:     NewDialogSideEffectOutboxTxModel(tx),
 		HashTagsModel:                   NewHashTagsTxModel(tx),

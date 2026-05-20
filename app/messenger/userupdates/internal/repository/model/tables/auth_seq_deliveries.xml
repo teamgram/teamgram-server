@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="auth_seq_deliveries">
+    <operation name="InsertIgnore">
+        <sql>
+            INSERT IGNORE INTO auth_seq_deliveries
+                (user_id, perm_auth_key_id, seq, date, payload_id, replay_policy, source_perm_auth_key_id, visibility_policy, operation_id, expire_at)
+            VALUES
+                (:user_id, :perm_auth_key_id, :seq, :date, :payload_id, :replay_policy, :source_perm_auth_key_id, :visibility_policy, :operation_id, :expire_at)
+        </sql>
+    </operation>
+
+    <operation name="SelectByOperation">
+        <sql>
+            SELECT
+                user_id, perm_auth_key_id, seq, date, payload_id, replay_policy, source_perm_auth_key_id, visibility_policy, operation_id, expire_at
+            FROM
+                auth_seq_deliveries
+            WHERE
+                user_id = :user_id AND perm_auth_key_id = :perm_auth_key_id AND operation_id = :operation_id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectReplayableAfterDate" result_set="list">
+        <params>
+            <param name="limit" type="int32" />
+            <param name="now" type="int64" />
+        </params>
+        <sql>
+            SELECT
+                d.user_id, d.perm_auth_key_id, d.seq, d.date, d.payload_id, d.replay_policy, d.source_perm_auth_key_id, d.visibility_policy, d.operation_id, d.expire_at
+            FROM
+                auth_seq_deliveries d
+            WHERE
+                d.user_id = :user_id AND d.perm_auth_key_id = :perm_auth_key_id AND d.date &gt; :date AND (d.expire_at = 0 OR d.expire_at &gt; :now)
+            ORDER BY
+                d.date ASC, d.seq ASC
+            LIMIT :limit
+        </sql>
+    </operation>
+</table>

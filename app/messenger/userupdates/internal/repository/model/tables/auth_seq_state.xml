@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="auth_seq_state">
+    <operation name="InsertIgnore">
+        <sql>
+            INSERT IGNORE INTO auth_seq_state
+                (user_id, perm_auth_key_id, seq, date, row_version)
+            VALUES
+                (:user_id, :perm_auth_key_id, :seq, :date, :row_version)
+        </sql>
+    </operation>
+
+    <operation name="SelectByUserAuthKey">
+        <sql>
+            SELECT
+                user_id, perm_auth_key_id, seq, date, row_version
+            FROM
+                auth_seq_state
+            WHERE
+                user_id = :user_id AND perm_auth_key_id = :perm_auth_key_id LIMIT 1
+        </sql>
+    </operation>
+
+    <operation name="SelectForUpdate">
+        <sql>
+            SELECT
+                user_id, perm_auth_key_id, seq, date, row_version
+            FROM
+                auth_seq_state
+            WHERE
+                user_id = :user_id AND perm_auth_key_id = :perm_auth_key_id LIMIT 1 FOR UPDATE
+        </sql>
+    </operation>
+
+    <operation name="UpdateSeqDate">
+        <sql>
+            UPDATE
+                auth_seq_state
+            SET
+                seq = :seq,
+                date = :date,
+                row_version = row_version + 1
+            WHERE
+                user_id = :user_id AND perm_auth_key_id = :perm_auth_key_id
+        </sql>
+    </operation>
+</table>
