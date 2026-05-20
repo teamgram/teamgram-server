@@ -60,40 +60,30 @@ func (r *Repository) appendAuthSeqUpdateTx(txModels *model.TxModels, in AuthSeqU
 	for _, authKeyID := range in.TargetPermAuthKeyIDs {
 		existing, err := txModels.AuthSeqDeliveriesModel.SelectByOperation(in.UserID, authKeyID, in.OperationID)
 		if err == nil {
-			date, err := cursor.CheckedInt32(existing.Date, "auth seq date")
+			event, err := authSeqDeliveryEventFromRow(existing, in, payloadID)
 			if err != nil {
-				return nil, storageError("auth seq date", err)
+				return nil, err
 			}
 			result.AlreadyApplied = true
-			result.Deliveries = append(result.Deliveries, AuthSeqDeliveryEvent{
-				UserID:              existing.UserId,
-				PermAuthKeyID:       existing.PermAuthKeyId,
-				Seq:                 existing.Seq,
-				Date:                date,
-				PayloadID:           existing.PayloadId,
-				ReplayPolicy:        existing.ReplayPolicy,
-				OperationID:         existing.OperationId,
-				SourcePermAuthKeyID: existing.SourcePermAuthKeyId,
-				VisibilityPolicy:    existing.VisibilityPolicy,
-				TLBytes:             in.TLBytes,
-				PayloadHash:         in.PayloadHash,
-				Layer:               in.Layer,
-			})
+			result.Deliveries = append(result.Deliveries, event)
 			continue
 		}
 		if !errors.Is(err, model.ErrNotFound) {
 			return nil, storageError("select auth seq delivery", err)
 		}
-		delivery, err := r.appendOneAuthSeqDeliveryTx(txModels, in, authKeyID, payloadID, now)
+		delivery, alreadyApplied, err := r.appendOneAuthSeqDeliveryTx(txModels, in, authKeyID, payloadID, now)
 		if err != nil {
 			return nil, err
+		}
+		if alreadyApplied {
+			result.AlreadyApplied = true
 		}
 		result.Deliveries = append(result.Deliveries, delivery)
 	}
 	return result, nil
 }
 
-func (r *Repository) appendOneAuthSeqDeliveryTx(txModels *model.TxModels, in AuthSeqUpdateAppendInput, authKeyID int64, payloadID string, now int64) (AuthSeqDeliveryEvent, error) {
+func (r *Repository) appendOneAuthSeqDeliveryTx(txModels *model.TxModels, in AuthSeqUpdateAppendInput, authKeyID int64, payloadID string, now int64) (AuthSeqDeliveryEvent, bool, error) {
 	if _, _, err := txModels.AuthSeqStateModel.InsertIgnore(&model.AuthSeqState{
 		UserId:        in.UserID,
 		PermAuthKeyId: authKeyID,
@@ -101,11 +91,11 @@ func (r *Repository) appendOneAuthSeqDeliveryTx(txModels *model.TxModels, in Aut
 		Date:          0,
 		RowVersion:    0,
 	}); err != nil {
-		return AuthSeqDeliveryEvent{}, storageError("init auth seq state", err)
+		return AuthSeqDeliveryEvent{}, false, storageError("init auth seq state", err)
 	}
 	state, err := txModels.AuthSeqStateModel.SelectForUpdate(in.UserID, authKeyID)
 	if err != nil {
-		return AuthSeqDeliveryEvent{}, storageError("lock auth seq state", err)
+		return AuthSeqDeliveryEvent{}, false, storageError("lock auth seq state", err)
 	}
 	nextSeq := state.Seq + 1
 	nextDate64 := now
@@ -113,13 +103,13 @@ func (r *Repository) appendOneAuthSeqDeliveryTx(txModels *model.TxModels, in Aut
 		nextDate64 = state.Date + 1
 	}
 	if nextDate64 > now+AuthSeqMaxFutureSkewSeconds {
-		return AuthSeqDeliveryEvent{}, storageError("auth seq clock skew", userupdates.ErrPtsContinuityViolation)
+		return AuthSeqDeliveryEvent{}, false, userupdates.ErrPtsContinuityViolation
 	}
 	nextDate, err := cursor.CheckedInt32(nextDate64, "auth seq date")
 	if err != nil {
-		return AuthSeqDeliveryEvent{}, storageError("auth seq date", err)
+		return AuthSeqDeliveryEvent{}, false, storageError("auth seq date", err)
 	}
-	if _, _, err := txModels.AuthSeqDeliveriesModel.InsertIgnore(&model.AuthSeqDeliveries{
+	if _, rowsAffected, err := txModels.AuthSeqDeliveriesModel.InsertIgnore(&model.AuthSeqDeliveries{
 		UserId:              in.UserID,
 		PermAuthKeyId:       authKeyID,
 		Seq:                 nextSeq,
@@ -131,12 +121,22 @@ func (r *Repository) appendOneAuthSeqDeliveryTx(txModels *model.TxModels, in Aut
 		OperationId:         in.OperationID,
 		ExpireAt:            in.ExpireAt,
 	}); err != nil {
-		return AuthSeqDeliveryEvent{}, storageError("insert auth seq delivery", err)
+		return AuthSeqDeliveryEvent{}, false, storageError("insert auth seq delivery", err)
+	} else if rowsAffected == 0 {
+		existing, err := txModels.AuthSeqDeliveriesModel.SelectByOperation(in.UserID, authKeyID, in.OperationID)
+		if err != nil {
+			return AuthSeqDeliveryEvent{}, false, storageError("select ignored auth seq delivery", err)
+		}
+		event, err := authSeqDeliveryEventFromRow(existing, in, payloadID)
+		if err != nil {
+			return AuthSeqDeliveryEvent{}, false, err
+		}
+		return event, true, nil
 	}
 	if affected, err := txModels.AuthSeqStateModel.UpdateSeqDate(nextSeq, int64(nextDate), in.UserID, authKeyID); err != nil {
-		return AuthSeqDeliveryEvent{}, storageError("update auth seq state", err)
+		return AuthSeqDeliveryEvent{}, false, storageError("update auth seq state", err)
 	} else if affected == 0 {
-		return AuthSeqDeliveryEvent{}, userupdates.ErrPtsContinuityViolation
+		return AuthSeqDeliveryEvent{}, false, userupdates.ErrPtsContinuityViolation
 	}
 	return AuthSeqDeliveryEvent{
 		UserID:              in.UserID,
@@ -148,6 +148,30 @@ func (r *Repository) appendOneAuthSeqDeliveryTx(txModels *model.TxModels, in Aut
 		OperationID:         in.OperationID,
 		SourcePermAuthKeyID: in.SourcePermAuthKeyID,
 		VisibilityPolicy:    in.VisibilityPolicy,
+		TLBytes:             in.TLBytes,
+		PayloadHash:         in.PayloadHash,
+		Layer:               in.Layer,
+	}, false, nil
+}
+
+func authSeqDeliveryEventFromRow(row *model.AuthSeqDeliveries, in AuthSeqUpdateAppendInput, payloadID string) (AuthSeqDeliveryEvent, error) {
+	if row.PayloadId != payloadID {
+		return AuthSeqDeliveryEvent{}, userupdates.ErrOperationPayloadConflict
+	}
+	date, err := cursor.CheckedInt32(row.Date, "auth seq date")
+	if err != nil {
+		return AuthSeqDeliveryEvent{}, storageError("auth seq date", err)
+	}
+	return AuthSeqDeliveryEvent{
+		UserID:              row.UserId,
+		PermAuthKeyID:       row.PermAuthKeyId,
+		Seq:                 row.Seq,
+		Date:                date,
+		PayloadID:           row.PayloadId,
+		ReplayPolicy:        row.ReplayPolicy,
+		OperationID:         row.OperationId,
+		SourcePermAuthKeyID: row.SourcePermAuthKeyId,
+		VisibilityPolicy:    row.VisibilityPolicy,
 		TLBytes:             in.TLBytes,
 		PayloadHash:         in.PayloadHash,
 		Layer:               in.Layer,
