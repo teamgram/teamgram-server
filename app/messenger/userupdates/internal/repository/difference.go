@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/cursor"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
@@ -33,7 +34,7 @@ func (r *Repository) GetState(ctx context.Context, userID int64, permAuthKeyID i
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
 			state := &UserState{UserID: userID}
-			if err := r.fillAuthSeqState(ctx, state); err != nil {
+			if err := r.fillAuthSeqState(ctx, state, permAuthKeyID); err != nil {
 				return nil, err
 			}
 			if err := r.fillUnreadCount(ctx, state); err != nil {
@@ -50,7 +51,7 @@ func (r *Repository) GetState(ctx context.Context, userID int64, permAuthKeyID i
 		OwnerEpoch:  row.OwnerEpoch,
 		RowVersion:  row.RowVersion,
 	}
-	if err := r.fillAuthSeqState(ctx, state); err != nil {
+	if err := r.fillAuthSeqState(ctx, state, permAuthKeyID); err != nil {
 		return nil, err
 	}
 	if err := r.fillUnreadCount(ctx, state); err != nil {
@@ -59,8 +60,11 @@ func (r *Repository) GetState(ctx context.Context, userID int64, permAuthKeyID i
 	return state, nil
 }
 
-func (r *Repository) fillAuthSeqState(ctx context.Context, state *UserState) error {
-	authState, err := r.models.UserAuthSeqStateModel.SelectByUserId(ctx, state.UserID)
+func (r *Repository) fillAuthSeqState(ctx context.Context, state *UserState, permAuthKeyID int64) error {
+	if permAuthKeyID == 0 {
+		return nil
+	}
+	authState, err := r.models.AuthSeqStateModel.SelectByUserAuthKey(ctx, state.UserID, permAuthKeyID)
 	if err != nil {
 		if errors.Is(err, model.ErrNotFound) {
 			return nil
@@ -68,7 +72,11 @@ func (r *Repository) fillAuthSeqState(ctx context.Context, state *UserState) err
 		return storageError("get auth seq state", err)
 	}
 	state.Seq = authState.Seq
-	state.Date = authState.Date
+	date, err := cursor.CheckedInt32(authState.Date, "auth seq state date")
+	if err != nil {
+		return storageError("auth seq state date", err)
+	}
+	state.Date = date
 	return nil
 }
 
@@ -106,22 +114,37 @@ func (r *Repository) GetDifference(ctx context.Context, in GetDifferenceInput) (
 		events = append(events, event)
 	}
 	var authSeqEvents []AuthSeqEvent
-	if in.Date != nil {
-		authRows, err := r.models.UserAuthSeqEventsModel.SelectAfterDate(ctx, in.UserID, int32(*in.Date), limit)
+	if in.Date != nil && in.PermAuthKeyID != 0 {
+		authRows, err := r.models.AuthSeqDeliveriesModel.SelectReplayableAfterDate(ctx, in.UserID, in.PermAuthKeyID, int64(*in.Date), unixNow(), limit)
 		if err != nil && !errors.Is(err, model.ErrNotFound) {
-			return nil, storageError("get auth seq events", err)
+			return nil, storageError("get auth seq deliveries", err)
 		}
 		authSeqEvents = make([]AuthSeqEvent, 0, len(authRows))
 		for _, row := range authRows {
-			if row.TargetAuthPolicy == "not_source_perm_auth_key" && row.SourcePermAuthKeyId == in.PermAuthKeyID {
-				continue
+			eventDate, err := cursor.CheckedInt32(row.Date, "auth seq event date")
+			if err != nil {
+				return nil, storageError("auth seq event date", err)
 			}
-			authSeqEvents = append(authSeqEvents, authSeqEventFromModel(row))
+			payloadRow, err := r.models.AuthUpdatePayloadsModel.SelectByPayloadId(ctx, row.PayloadId)
+			if err != nil {
+				return nil, storageError("get auth seq payload", err)
+			}
+			authSeqEvents = append(authSeqEvents, AuthSeqEvent{
+				UserID:              row.UserId,
+				PermAuthKeyID:       row.PermAuthKeyId,
+				Seq:                 row.Seq,
+				Date:                eventDate,
+				OperationID:         row.OperationId,
+				PayloadID:           row.PayloadId,
+				ReplayPolicy:        row.ReplayPolicy,
+				SourcePermAuthKeyID: row.SourcePermAuthKeyId,
+				VisibilityPolicy:    row.VisibilityPolicy,
+				EventSchemaVersion:  payloadRow.Layer,
+				EventCodec:          payloadRow.Codec,
+				EventPayload:        payloadRow.TlBytes,
+				EventPayloadHash:    payloadRow.PayloadHash,
+			})
 		}
-	}
-	state.Date, err = latestDifferenceDate(events, authSeqEvents, state.Date)
-	if err != nil {
-		return nil, err
 	}
 	return &GetDifferenceResult{State: *state, Events: events, AuthSeqEvents: authSeqEvents}, nil
 }

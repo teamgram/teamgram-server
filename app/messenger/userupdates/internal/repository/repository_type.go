@@ -326,10 +326,14 @@ type PtsAppendResult struct {
 
 type AuthSeqEvent struct {
 	UserID              int64
+	PermAuthKeyID       int64
 	Seq                 int64
 	Date                int32
 	OperationID         string
+	PayloadID           string
+	ReplayPolicy        string
 	SourcePermAuthKeyID int64
+	VisibilityPolicy    string
 	TargetAuthPolicy    string
 	PublicUpdateType    string
 	PeerType            int32
