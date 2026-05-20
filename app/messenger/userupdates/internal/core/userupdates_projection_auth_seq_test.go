@@ -35,6 +35,25 @@ func TestAuthSeqEventToTLUpdateDecodesTLBinary(t *testing.T) {
 	}
 }
 
+func TestAuthSeqEventToTLUpdateRejectsEmptyPayloadHash(t *testing.T) {
+	update := tg.MakeTLUpdatePeerSettings(&tg.TLUpdatePeerSettings{
+		Peer:     tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 42}),
+		Settings: tg.MakeTLPeerSettings(&tg.TLPeerSettings{}),
+	})
+	body, err := iface.EncodeObject(update, repository.AuthSeqLayer)
+	if err != nil {
+		t.Fatalf("EncodeObject() error = %v", err)
+	}
+	_, err = authSeqEventToTLUpdate(repository.AuthSeqEvent{
+		EventCodec:         repository.AuthSeqCodecTLBinary,
+		EventSchemaVersion: repository.AuthSeqLayer,
+		EventPayload:       body,
+	})
+	if !errors.Is(err, userupdates.ErrUserupdatesStorage) {
+		t.Fatalf("authSeqEventToTLUpdate() error = %v, want ErrUserupdatesStorage", err)
+	}
+}
+
 func TestDifferenceToTLRejectsStateSeqOverflow(t *testing.T) {
 	_, err := differenceToTL(&repository.GetDifferenceResult{
 		State: repository.UserState{Seq: int64(math.MaxInt32) + 1},

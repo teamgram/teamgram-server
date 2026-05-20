@@ -980,7 +980,10 @@ func authSeqEventToTLUpdate(event repository.AuthSeqEvent) (tg.UpdateClazz, erro
 	if event.EventCodec != repository.AuthSeqCodecTLBinary || event.EventSchemaVersion <= 0 {
 		return nil, fmt.Errorf("%w: unsupported auth seq event codec=%d schema=%d", userupdates.ErrUserupdatesStorage, event.EventCodec, event.EventSchemaVersion)
 	}
-	if len(event.EventPayloadHash) != 0 && !bytes.Equal(payload.HashBytes(event.EventPayload), event.EventPayloadHash) {
+	if len(event.EventPayloadHash) == 0 {
+		return nil, fmt.Errorf("%w: auth seq event payload hash is empty", userupdates.ErrUserupdatesStorage)
+	}
+	if !bytes.Equal(payload.HashBytes(event.EventPayload), event.EventPayloadHash) {
 		return nil, fmt.Errorf("%w: auth seq event payload hash mismatch", userupdates.ErrUserupdatesStorage)
 	}
 	obj, err := iface.DecodeObject(bin.NewDecoder(event.EventPayload))
