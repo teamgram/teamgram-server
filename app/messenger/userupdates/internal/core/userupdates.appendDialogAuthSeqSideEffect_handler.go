@@ -81,7 +81,7 @@ func (c *UserupdatesCore) UserupdatesAppendDialogAuthSeqSideEffect(in *userupdat
 
 func (c *UserupdatesCore) expandAuthSeqTargets(userID, sourcePermAuthKeyID int64, policy string) ([]int64, string, error) {
 	switch policy {
-	case "", repository.AuthSeqVisibilityAllUserAuthKeys:
+	case "", "all", repository.AuthSeqVisibilityAllUserAuthKeys:
 		if c == nil || c.svcCtx == nil || c.svcCtx.AuthsessionClient == nil {
 			return nil, "", fmt.Errorf("%w: authsession client is nil", userupdates.ErrAuthSeqLedgerUnavailable)
 		}
