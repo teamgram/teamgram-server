@@ -41,7 +41,7 @@ func (c *DialogCore) DialogSetChatTheme(in *dialog.TLDialogSetChatTheme) (*tg.Bo
 		OperationID:         operationID,
 		ActorOutboxID:       deterministicOutboxID(operationID, "actor"),
 		PeerOutboxID:        deterministicOutboxID(operationID, "peer"),
-		DeliveryPath:        repository.DeliveryPathUserupdatesPTS,
+		DeliveryPath:        repository.DeliveryPathUserupdatesAuthSeq,
 		PublicUpdateType:    "messageActionSetChatTheme",
 		Payload:             []byte(`{"schema_version":1}`),
 	}); err != nil {

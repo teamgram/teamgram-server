@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
@@ -18,9 +19,6 @@ func (r *Repository) AppendAuthSeqUpdate(ctx context.Context, in AuthSeqUpdateAp
 	if err != nil {
 		return nil, err
 	}
-	if len(in.TargetPermAuthKeyIDs) == 0 {
-		return &AuthSeqUpdateAppendResult{UserID: in.UserID, OperationID: in.OperationID}, nil
-	}
 	if !bytes.Equal(in.PayloadHash, payload.HashBytes(in.TLBytes)) {
 		return nil, userupdates.ErrOperationPayloadConflict
 	}
@@ -34,7 +32,7 @@ func (r *Repository) AppendAuthSeqUpdate(ctx context.Context, in AuthSeqUpdateAp
 	}
 	var out *AuthSeqUpdateAppendResult
 	err = db.Transact(ctx, func(tx *sqlx.Tx) error {
-		result, err := r.appendAuthSeqUpdateTx(r.models.WithTx(tx), in, payloadID, now)
+		result, err := r.appendAuthSeqUpdateTx(tx, r.models.WithTx(tx), in, payloadID, now)
 		if err != nil {
 			return err
 		}
@@ -44,7 +42,7 @@ func (r *Repository) AppendAuthSeqUpdate(ctx context.Context, in AuthSeqUpdateAp
 	return out, err
 }
 
-func (r *Repository) appendAuthSeqUpdateTx(txModels *model.TxModels, in AuthSeqUpdateAppendInput, payloadID string, now int64) (*AuthSeqUpdateAppendResult, error) {
+func (r *Repository) appendAuthSeqUpdateTx(tx *sqlx.Tx, txModels *model.TxModels, in AuthSeqUpdateAppendInput, payloadID string, now int64) (*AuthSeqUpdateAppendResult, error) {
 	if _, _, err := txModels.AuthUpdatePayloadsModel.InsertIgnore(&model.AuthUpdatePayloads{
 		PayloadId:   payloadID,
 		UpdateType:  in.UpdateType,
@@ -57,6 +55,24 @@ func (r *Repository) appendAuthSeqUpdateTx(txModels *model.TxModels, in AuthSeqU
 		return nil, storageError("insert auth update payload", err)
 	}
 	result := &AuthSeqUpdateAppendResult{UserID: in.UserID, OperationID: in.OperationID}
+	existingRows, err := selectAuthSeqDeliveriesByUserOperationTx(tx, in.UserID, in.OperationID)
+	if err != nil {
+		return nil, storageError("select auth seq deliveries by operation", err)
+	}
+	if len(existingRows) > 0 {
+		result.AlreadyApplied = true
+		for i := range existingRows {
+			event, err := authSeqDeliveryEventFromRow(&existingRows[i], in, payloadID)
+			if err != nil {
+				return nil, err
+			}
+			result.Deliveries = append(result.Deliveries, event)
+		}
+		return result, nil
+	}
+	if len(in.TargetPermAuthKeyIDs) == 0 {
+		return result, nil
+	}
 	for _, authKeyID := range in.TargetPermAuthKeyIDs {
 		existing, err := txModels.AuthSeqDeliveriesModel.SelectByOperation(in.UserID, authKeyID, in.OperationID)
 		if err == nil {
@@ -81,6 +97,18 @@ func (r *Repository) appendAuthSeqUpdateTx(txModels *model.TxModels, in AuthSeqU
 		result.Deliveries = append(result.Deliveries, delivery)
 	}
 	return result, nil
+}
+
+func selectAuthSeqDeliveriesByUserOperationTx(tx *sqlx.Tx, userID int64, operationID string) ([]model.AuthSeqDeliveries, error) {
+	var rows []model.AuthSeqDeliveries
+	query := "select user_id, perm_auth_key_id, seq, date, payload_id, replay_policy, source_perm_auth_key_id, visibility_policy, operation_id, expire_at from auth_seq_deliveries where user_id = ? and operation_id = ? order by date asc, seq asc, perm_auth_key_id asc"
+	if err := tx.QueryRowsPartial(&rows, query, userID, operationID); err != nil {
+		if errors.Is(err, sqlx.ErrNotFound) {
+			return []model.AuthSeqDeliveries{}, nil
+		}
+		return nil, err
+	}
+	return rows, nil
 }
 
 func (r *Repository) appendOneAuthSeqDeliveryTx(txModels *model.TxModels, in AuthSeqUpdateAppendInput, authKeyID int64, payloadID string, now int64) (AuthSeqDeliveryEvent, bool, error) {
@@ -247,6 +275,9 @@ func (r *Repository) appendDialogAuthSeqSideEffectTx(txModels *model.TxModels, i
 }
 
 func (r *Repository) AppendDialogPtsSideEffect(ctx context.Context, in DialogSideEffectAppendInput) (*PtsAppendResult, error) {
+	if in.PublicUpdateType != payload.DialogEventFolderPeersChanged {
+		return nil, fmt.Errorf("%w: unsupported pts dialog public update type=%s", userupdates.ErrOperationTerminal, in.PublicUpdateType)
+	}
 	db, err := r.requireDB()
 	if err != nil {
 		return nil, err

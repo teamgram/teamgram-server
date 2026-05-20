@@ -698,14 +698,14 @@ func TestDialogPublicUpdateOutboxPrivatePairTargets(t *testing.T) {
 		OperationID:         op,
 		ActorOutboxID:       base%1_000_000_000 + 1304,
 		PeerOutboxID:        base%1_000_000_000 + 1305,
-		DeliveryPath:        "userupdates_pts",
+		DeliveryPath:        "userupdates_auth_seq",
 		PublicUpdateType:    "messageActionSetChatTheme",
 		Payload:             []byte(`{"schema_version":1}`),
 	}); err != nil {
 		t.Fatalf("SetPrivatePeerPolicy() error = %v", err)
 	}
 	for _, target := range []int64{userID, peerID} {
-		if _, err := repo.model.DialogPublicUpdateOutboxModel.SelectByTargetOperation(ctx, target, fmt.Sprintf("%s:target:%d", op, target), "userupdates_pts", "messageActionSetChatTheme"); err != nil {
+		if _, err := repo.model.DialogPublicUpdateOutboxModel.SelectByTargetOperation(ctx, target, fmt.Sprintf("%s:target:%d", op, target), "userupdates_auth_seq", "messageActionSetChatTheme"); err != nil {
 			t.Fatalf("SelectByTargetOperation(target=%d) error = %v", target, err)
 		}
 	}
@@ -723,7 +723,7 @@ func TestDialogPublicUpdateOutboxRetriesAreIdempotentAndDetectConflict(t *testin
 		OperationID:         fmt.Sprintf("policy-idempotent-%d", base),
 		ActorOutboxID:       base%1_000_000_000 + 1354,
 		PeerOutboxID:        base%1_000_000_000 + 1355,
-		DeliveryPath:        "userupdates_pts",
+		DeliveryPath:        "userupdates_auth_seq",
 		PublicUpdateType:    "messageActionSetChatTheme",
 		Payload:             []byte(`{"schema_version":1}`),
 	}

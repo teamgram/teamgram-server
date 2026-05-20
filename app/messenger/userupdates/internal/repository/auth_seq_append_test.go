@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/model"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 )
@@ -82,6 +83,54 @@ func TestAppendAuthSeqUpdateIdempotentPerAuthKey(t *testing.T) {
 	}
 	if first.Deliveries[0].Seq != second.Deliveries[0].Seq {
 		t.Fatalf("seq changed from %d to %d", first.Deliveries[0].Seq, second.Deliveries[0].Seq)
+	}
+}
+
+func TestAppendAuthSeqUpdateRetryDoesNotExpandTargets(t *testing.T) {
+	db := openIntegrationDB(t)
+	ctx := context.Background()
+	base := time.Now().UnixNano() % 1_000_000_000
+	repo := NewForTest(db, &testIDGenerator{next: base + 301_500}, "local-userupdates")
+	userID := base + 1004
+	operationID := fmt.Sprintf("op-auth-seq-freeze-targets-%d", base)
+	body := []byte{0x04, 0x05, 0x06}
+	hash := payload.HashBytes(body)
+	in := AuthSeqUpdateAppendInput{
+		UserID:               userID,
+		TargetPermAuthKeyIDs: []int64{44},
+		OperationID:          operationID,
+		UpdateType:           "updatePeerSettings",
+		ReplayPolicy:         AuthSeqReplayPolicyDurableReplay,
+		VisibilityPolicy:     AuthSeqVisibilityAllUserAuthKeys,
+		Layer:                AuthSeqLayer,
+		TLBytes:              body,
+		PayloadHash:          hash,
+		Now:                  1779234420,
+	}
+	first, err := repo.AppendAuthSeqUpdate(ctx, in)
+	if err != nil {
+		t.Fatalf("first append error = %v", err)
+	}
+	retry := in
+	retry.TargetPermAuthKeyIDs = []int64{44, 66}
+	retry.Now++
+	second, err := repo.AppendAuthSeqUpdate(ctx, retry)
+	if err != nil {
+		t.Fatalf("retry append error = %v", err)
+	}
+	if !second.AlreadyApplied {
+		t.Fatalf("AlreadyApplied = false, want true")
+	}
+	if len(second.Deliveries) != 1 || second.Deliveries[0].PermAuthKeyID != 44 {
+		t.Fatalf("retry deliveries = %+v, want only original auth key 44", second.Deliveries)
+	}
+	if first.Deliveries[0].Seq != second.Deliveries[0].Seq {
+		t.Fatalf("seq changed from %d to %d", first.Deliveries[0].Seq, second.Deliveries[0].Seq)
+	}
+	if _, err := repo.models.AuthSeqStateModel.SelectByUserAuthKey(ctx, userID, 66); err == nil {
+		t.Fatalf("new auth key 66 received state for retried operation")
+	} else if !errors.Is(err, model.ErrNotFound) {
+		t.Fatalf("SelectByUserAuthKey(66) error = %v", err)
 	}
 }
 

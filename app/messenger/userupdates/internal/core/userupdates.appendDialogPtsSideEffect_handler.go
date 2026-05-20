@@ -21,6 +21,7 @@ import (
 	"fmt"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -40,6 +41,9 @@ func (c *UserupdatesCore) UserupdatesAppendDialogPtsSideEffect(in *userupdates.T
 		PayloadHash:         in.PayloadHash,
 	}); err != nil {
 		return nil, err
+	}
+	if in.PublicUpdateType != payload.DialogEventFolderPeersChanged {
+		return nil, fmt.Errorf("%w: unsupported pts dialog public update type=%s", userupdates.ErrOperationTerminal, in.PublicUpdateType)
 	}
 
 	result, err := c.svcCtx.Repo.AppendDialogPtsSideEffect(c.ctx, repository.DialogSideEffectAppendInput{

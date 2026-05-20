@@ -1382,6 +1382,11 @@ func TestDifferenceMapsDialogAuthSeqEvents(t *testing.T) {
 			wantType:  &tg.TLUpdatePeerHistoryTTL{},
 		},
 		{
+			name:      "private theme",
+			eventKind: payload.DialogEventPrivateThemeChanged,
+			wantType:  &tg.TLUpdatePeerSettings{},
+		},
+		{
 			name:      "saved dialog pinned",
 			eventKind: payload.DialogEventSavedDialogPinned,
 			event:     payload.DialogEventV1{Pinned: &pinned},
@@ -1477,6 +1482,10 @@ func TestDifferenceMapsDialogAuthSeqEvents(t *testing.T) {
 				if update.TtlPeriod == nil || *update.TtlPeriod != ttl {
 					t.Fatalf("unexpected ttl update: %+v", update)
 				}
+			case *tg.TLUpdatePeerSettings:
+				if _, ok := diff.OtherUpdates[0].(*tg.TLUpdatePeerSettings); !ok {
+					t.Fatalf("expected TLUpdatePeerSettings, got %T", diff.OtherUpdates[0])
+				}
 			case *tg.TLUpdateSavedDialogPinned:
 				if _, ok := diff.OtherUpdates[0].(*tg.TLUpdateSavedDialogPinned); !ok {
 					t.Fatalf("expected TLUpdateSavedDialogPinned, got %T", diff.OtherUpdates[0])
@@ -1539,6 +1548,69 @@ func TestDifferenceMapsFolderPeersAsPTSEvent(t *testing.T) {
 	fp := update.FolderPeers[0]
 	if fp.FolderId != 0 && fp.FolderId != folderID {
 		t.Fatalf("unexpected folder peer: %+v", fp)
+	}
+}
+
+func TestAppendDialogPtsSideEffectRejectsNonPTSDialogUpdate(t *testing.T) {
+	repo := &fakeUserUpdatesRepository{}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+	body := []byte(`{"schema_version":1}`)
+
+	_, err := core.UserupdatesAppendDialogPtsSideEffect(&userupdates.TLUserupdatesAppendDialogPtsSideEffect{
+		UserId:               1001,
+		SourcePermAuthKeyId:  2001,
+		OperationId:          "v1:dialog:theme",
+		TargetAuthPolicy:     repository.AuthSeqVisibilityNotSourcePermAuthKey,
+		PublicUpdateType:     payload.DialogEventPrivateThemeChanged,
+		PeerType:             payload.PeerTypeUser,
+		PeerId:               1002,
+		PayloadSchemaVersion: payload.MessageEventSchemaVersion,
+		Payload:              body,
+		PayloadHash:          payload.HashBytes(body),
+	})
+	if !errors.Is(err, userupdates.ErrOperationTerminal) {
+		t.Fatalf("error = %v, want ErrOperationTerminal", err)
+	}
+	if repo.appendDialogPtsCalled {
+		t.Fatalf("AppendDialogPtsSideEffect was called for non-PTS update")
+	}
+}
+
+func TestAppendDialogPtsSideEffectAcceptsFolderPeers(t *testing.T) {
+	repo := &fakeUserUpdatesRepository{
+		appendDialogPtsResult: &repository.PtsAppendResult{
+			UserID:      1001,
+			OperationID: "v1:dialog:folder",
+			Pts:         8,
+			PtsCount:    1,
+		},
+	}
+	core := New(context.Background(), &svc.ServiceContext{Repo: repo})
+	body := []byte(`{"schema_version":1}`)
+
+	got, err := core.UserupdatesAppendDialogPtsSideEffect(&userupdates.TLUserupdatesAppendDialogPtsSideEffect{
+		UserId:               1001,
+		SourcePermAuthKeyId:  2001,
+		OperationId:          "v1:dialog:folder",
+		TargetAuthPolicy:     repository.AuthSeqVisibilityNotSourcePermAuthKey,
+		PublicUpdateType:     payload.DialogEventFolderPeersChanged,
+		PeerType:             payload.PeerTypeUser,
+		PeerId:               1002,
+		PayloadSchemaVersion: payload.MessageEventSchemaVersion,
+		Payload:              body,
+		PayloadHash:          payload.HashBytes(body),
+	})
+	if err != nil {
+		t.Fatalf("UserupdatesAppendDialogPtsSideEffect() error = %v", err)
+	}
+	if !repo.appendDialogPtsCalled {
+		t.Fatalf("AppendDialogPtsSideEffect was not called")
+	}
+	if repo.appendDialogPtsInput.PublicUpdateType != payload.DialogEventFolderPeersChanged {
+		t.Fatalf("append input update type = %q", repo.appendDialogPtsInput.PublicUpdateType)
+	}
+	if got.Pts != 8 || got.PtsCount != 1 {
+		t.Fatalf("result pts = %d/%d, want 8/1", got.Pts, got.PtsCount)
 	}
 }
 
@@ -1630,6 +1702,10 @@ type fakeUserUpdatesRepository struct {
 	appendAuthSeqUpdateInput  repository.AuthSeqUpdateAppendInput
 	appendAuthSeqUpdateResult *repository.AuthSeqUpdateAppendResult
 	appendAuthSeqUpdateErr    error
+	appendDialogPtsCalled     bool
+	appendDialogPtsInput      repository.DialogSideEffectAppendInput
+	appendDialogPtsResult     *repository.PtsAppendResult
+	appendDialogPtsErr        error
 	dialogListUserID          int64
 	dialogListCursor          repository.DialogProjectionCursor
 	dialogListLimit           int32
@@ -1680,8 +1756,13 @@ func (f *fakeUserUpdatesRepository) AppendAuthSeqUpdate(_ context.Context, in re
 	return &repository.AuthSeqUpdateAppendResult{UserID: in.UserID, OperationID: in.OperationID}, nil
 }
 
-func (f *fakeUserUpdatesRepository) AppendDialogPtsSideEffect(context.Context, repository.DialogSideEffectAppendInput) (*repository.PtsAppendResult, error) {
-	return nil, nil
+func (f *fakeUserUpdatesRepository) AppendDialogPtsSideEffect(_ context.Context, in repository.DialogSideEffectAppendInput) (*repository.PtsAppendResult, error) {
+	f.appendDialogPtsCalled = true
+	f.appendDialogPtsInput = in
+	if f.appendDialogPtsResult != nil || f.appendDialogPtsErr != nil {
+		return f.appendDialogPtsResult, f.appendDialogPtsErr
+	}
+	return &repository.PtsAppendResult{UserID: in.UserID, OperationID: in.OperationID, Pts: 1, PtsCount: 1}, nil
 }
 
 func (f *fakeUserUpdatesRepository) ListDialogProjections(_ context.Context, userID int64, cursor repository.DialogProjectionCursor, limit int32) ([]repository.DialogProjection, error) {

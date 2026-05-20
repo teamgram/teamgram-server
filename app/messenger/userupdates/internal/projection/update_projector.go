@@ -1306,6 +1306,8 @@ func dialogEventToTLUpdate(event payload.DialogEventV1, pts int64, ptsCount int3
 		return tg.MakeTLUpdatePeerWallpaper(&tg.TLUpdatePeerWallpaper{Peer: peer}), nil
 	case payload.DialogEventPrivatePeerHistoryTTL:
 		return tg.MakeTLUpdatePeerHistoryTTL(&tg.TLUpdatePeerHistoryTTL{Peer: peer, TtlPeriod: event.TTLPeriod}), nil
+	case payload.DialogEventPrivateThemeChanged:
+		return tg.MakeTLUpdatePeerSettings(&tg.TLUpdatePeerSettings{Peer: peer, Settings: tg.MakeTLPeerSettings(&tg.TLPeerSettings{})}), nil
 	case payload.DialogEventSavedDialogPinned:
 		pinned := true
 		if event.Pinned != nil {
