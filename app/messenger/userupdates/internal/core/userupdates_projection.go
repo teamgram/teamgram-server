@@ -167,7 +167,7 @@ func differenceToTL(in *repository.GetDifferenceResult) (*userupdates.UserDiffer
 		otherUpdates = append(otherUpdates, update)
 	}
 	if in.HasMore {
-		intermediateSource := stateSource
+		intermediateSource := in.StartState
 		if len(in.Events) > 0 {
 			last := in.Events[len(in.Events)-1]
 			intermediateSource.Pts = last.Pts

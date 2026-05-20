@@ -254,6 +254,7 @@ type OutboxReadDateInput struct {
 
 type GetDifferenceResult struct {
 	State         UserState
+	StartState    UserState
 	Events        []UserEvent
 	AuthSeqEvents []AuthSeqEvent
 	HasMore       bool

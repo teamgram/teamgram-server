@@ -97,6 +97,14 @@ func (r *Repository) GetDifference(ctx context.Context, in GetDifferenceInput) (
 	if limit <= 0 {
 		limit = 100
 	}
+	startState := UserState{UserID: in.UserID, Pts: in.Pts}
+	if in.Date != nil {
+		date, err := cursor.CheckedInt32(*in.Date, "difference start date")
+		if err != nil {
+			return nil, storageError("difference start date", err)
+		}
+		startState.Date = date
+	}
 	queryLimit := differenceQueryLimit(limit)
 	rows, err := r.models.UserPtsEventsModel.SelectByGtPts(ctx, in.UserID, in.Pts, queryLimit)
 	if err != nil && !errors.Is(err, model.ErrNotFound) {
@@ -160,7 +168,13 @@ func (r *Repository) GetDifference(ctx context.Context, in GetDifferenceInput) (
 			state.Date = last.Date
 		}
 	}
-	return &GetDifferenceResult{State: *state, Events: events, AuthSeqEvents: authSeqEvents, HasMore: hasMore}, nil
+	return &GetDifferenceResult{
+		State:         *state,
+		StartState:    startState,
+		Events:        events,
+		AuthSeqEvents: authSeqEvents,
+		HasMore:       hasMore,
+	}, nil
 }
 
 func differenceQueryLimit(limit int32) int32 {

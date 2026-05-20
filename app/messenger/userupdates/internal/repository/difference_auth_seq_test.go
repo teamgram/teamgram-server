@@ -149,6 +149,41 @@ func TestGetDifferenceLimitedAuthSeqRowsReturnsDeliveredCursor(t *testing.T) {
 	}
 }
 
+func TestGetDifferenceCursorForPtsOnlyRequestDoesNotUseLatestAuthState(t *testing.T) {
+	db := openIntegrationDB(t)
+	base := time.Now().UnixNano() % 1_000_000_000
+	repo := NewForTest(db, &testIDGenerator{next: base + 305_000}, "local-userupdates")
+	userID := base + 13_000
+	body := []byte{5, byte(base)}
+	hash := payload.HashBytes(body)
+	cleanupAuthSeqDifferenceRows(t, context.Background(), db, userID, AuthSeqPayloadID(hash))
+
+	if _, err := repo.AppendAuthSeqUpdate(context.Background(), AuthSeqUpdateAppendInput{
+		UserID:               userID,
+		TargetPermAuthKeyIDs: []int64{100},
+		OperationID:          fmt.Sprintf("op-auth-cursor-pts-only-%d", base),
+		UpdateType:           "updatePeerSettings",
+		ReplayPolicy:         AuthSeqReplayPolicyDurableReplay,
+		VisibilityPolicy:     AuthSeqVisibilityAllUserAuthKeys,
+		Layer:                AuthSeqLayer,
+		TLBytes:              body,
+		PayloadHash:          hash,
+		Now:                  1779234440,
+	}); err != nil {
+		t.Fatalf("append auth seq error = %v", err)
+	}
+	diff, err := repo.GetDifference(context.Background(), GetDifferenceInput{UserID: userID, PermAuthKeyID: 100, Pts: 7})
+	if err != nil {
+		t.Fatalf("GetDifference() error = %v", err)
+	}
+	if diff.State.Seq != 1 || diff.State.Date != 1779234440 {
+		t.Fatalf("latest state seq/date = %d/%d, want 1/1779234440", diff.State.Seq, diff.State.Date)
+	}
+	if diff.StartState.Pts != 7 || diff.StartState.Seq != 0 || diff.StartState.Date != 0 {
+		t.Fatalf("start state pts/seq/date = %d/%d/%d, want 7/0/0", diff.StartState.Pts, diff.StartState.Seq, diff.StartState.Date)
+	}
+}
+
 func cleanupAuthSeqDifferenceRows(t *testing.T, ctx context.Context, db interface {
 	Exec(context.Context, string, ...interface{}) (sql.Result, error)
 }, userID int64, payloadIDs ...string) {
