@@ -35,10 +35,10 @@ func (c *UserupdatesCore) UserupdatesGetState(in *userupdates.TLUserupdatesGetSt
 		return nil, err
 	}
 	if state == nil {
-		return stateToTL(repositoryZeroState(in.UserId)), nil
+		return stateToTL(repositoryZeroState(in.UserId))
 	}
 
-	return stateToTL(*state), nil
+	return stateToTL(*state)
 }
 
 func repositoryZeroState(userID int64) repository.UserState {

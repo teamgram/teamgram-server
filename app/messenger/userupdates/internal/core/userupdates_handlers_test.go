@@ -14,6 +14,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload/serviceaction"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -1400,7 +1401,14 @@ func TestDifferenceMapsDialogAuthSeqEvents(t *testing.T) {
 			dialogEvent.PublicUpdateType = tt.eventKind
 			dialogEvent.PeerType = payload.PeerTypeUser
 			dialogEvent.PeerID = 1002
-			eventPayload := mustMarshalDialogEvent(t, dialogEvent)
+			update, err := dialogEventToTLUpdate(dialogEvent, 0, 0)
+			if err != nil {
+				t.Fatalf("dialogEventToTLUpdate() error = %v", err)
+			}
+			eventPayload, err := iface.EncodeObject(update, repository.AuthSeqLayer)
+			if err != nil {
+				t.Fatalf("EncodeObject() error = %v", err)
+			}
 			got, err := differenceToTL(&repository.GetDifferenceResult{
 				State: repository.UserState{UserID: 1001, Pts: 18, Seq: 7, Date: 1_772_000_001},
 				AuthSeqEvents: []repository.AuthSeqEvent{
@@ -1412,8 +1420,8 @@ func TestDifferenceMapsDialogAuthSeqEvents(t *testing.T) {
 						PublicUpdateType:   tt.eventKind,
 						PeerType:           payload.PeerTypeUser,
 						PeerID:             1002,
-						EventSchemaVersion: payload.DialogEventSchemaVersion,
-						EventCodec:         repository.PayloadCodecJSON,
+						EventSchemaVersion: repository.AuthSeqLayer,
+						EventCodec:         repository.AuthSeqCodecTLBinary,
 						EventPayload:       eventPayload,
 						EventPayloadHash:   payload.HashBytes(eventPayload),
 					},
@@ -1534,14 +1542,11 @@ func TestDifferenceMapsFolderPeersAsPTSEvent(t *testing.T) {
 	}
 }
 
-func TestDifferenceRejectsUnknownDialogAuthSeqEvent(t *testing.T) {
-	eventPayload := mustMarshalDialogEvent(t, payload.DialogEventV1{
-		SchemaVersion:    payload.DialogEventSchemaVersion,
-		EventKind:        "dialog.unknown",
-		PublicUpdateType: "dialog.unknown",
-		PeerType:         payload.PeerTypeUser,
-		PeerID:           1002,
-	})
+func TestDifferenceRejectsNonUpdateAuthSeqPayload(t *testing.T) {
+	eventPayload, encodeErr := iface.EncodeObject(tg.MakeTLPeerUser(&tg.TLPeerUser{UserId: 1002}), repository.AuthSeqLayer)
+	if encodeErr != nil {
+		t.Fatalf("EncodeObject() error = %v", encodeErr)
+	}
 	_, err := differenceToTL(&repository.GetDifferenceResult{
 		State: repository.UserState{UserID: 1001, Pts: 18, Seq: 7, Date: 1_772_000_001},
 		AuthSeqEvents: []repository.AuthSeqEvent{
@@ -1553,8 +1558,8 @@ func TestDifferenceRejectsUnknownDialogAuthSeqEvent(t *testing.T) {
 				PublicUpdateType:   "dialog.unknown",
 				PeerType:           payload.PeerTypeUser,
 				PeerID:             1002,
-				EventSchemaVersion: payload.DialogEventSchemaVersion,
-				EventCodec:         repository.PayloadCodecJSON,
+				EventSchemaVersion: repository.AuthSeqLayer,
+				EventCodec:         repository.AuthSeqCodecTLBinary,
 				EventPayload:       eventPayload,
 				EventPayloadHash:   payload.HashBytes(eventPayload),
 			},

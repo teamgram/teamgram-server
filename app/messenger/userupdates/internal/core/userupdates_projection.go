@@ -6,12 +6,15 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/cursor"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/envelope"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/projection"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload/serviceaction"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -103,24 +106,35 @@ func operationResponseSchemaVersion(storedSchemaVersion int32, responsePayload [
 	return &v, nil
 }
 
-func stateToTL(in repository.UserState) *userupdates.UserState {
+func stateToTL(in repository.UserState) (*userupdates.UserState, error) {
+	seq, err := cursor.CheckedInt32(in.Seq, "state seq")
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", userupdates.ErrUserupdatesStorage, err)
+	}
 	return userupdates.MakeTLUserState(&userupdates.TLUserState{
 		Pts:         in.Pts,
-		Seq:         int32(in.Seq),
+		Seq:         seq,
 		Date:        in.Date,
 		UnreadCount: in.UnreadCount,
-	}).ToUserState()
+	}).ToUserState(), nil
 }
 
 func differenceToTL(in *repository.GetDifferenceResult) (*userupdates.UserDifference, error) {
 	if in == nil {
+		state, err := stateToTL(repository.UserState{})
+		if err != nil {
+			return nil, err
+		}
 		return userupdates.MakeTLUserDifferenceEmpty(&userupdates.TLUserDifferenceEmpty{
-			State: stateToTL(repository.UserState{}),
+			State: state,
 		}).ToUserDifference(), nil
 	}
 	stateSource := in.State
 	stateSource.UnreadCount = 0
-	state := stateToTL(stateSource)
+	state, err := stateToTL(stateSource)
+	if err != nil {
+		return nil, err
+	}
 	if len(in.Events) == 0 && len(in.AuthSeqEvents) == 0 {
 		return userupdates.MakeTLUserDifferenceEmpty(&userupdates.TLUserDifferenceEmpty{
 			State: state,
@@ -963,38 +977,21 @@ func replyHeaderFromUserMessageID(userMessageID int64) (tg.MessageReplyHeaderCla
 }
 
 func authSeqEventToTLUpdate(event repository.AuthSeqEvent) (tg.UpdateClazz, error) {
-	if event.EventCodec != repository.PayloadCodecJSON || event.EventSchemaVersion <= 0 {
+	if event.EventCodec != repository.AuthSeqCodecTLBinary || event.EventSchemaVersion <= 0 {
 		return nil, fmt.Errorf("%w: unsupported auth seq event codec=%d schema=%d", userupdates.ErrUserupdatesStorage, event.EventCodec, event.EventSchemaVersion)
 	}
 	if len(event.EventPayloadHash) != 0 && !bytes.Equal(payload.HashBytes(event.EventPayload), event.EventPayloadHash) {
 		return nil, fmt.Errorf("%w: auth seq event payload hash mismatch", userupdates.ErrUserupdatesStorage)
 	}
-	dialogEvent := payload.DialogEventV1{
-		SchemaVersion:    payload.DialogEventSchemaVersion,
-		EventKind:        event.PublicUpdateType,
-		PublicUpdateType: event.PublicUpdateType,
-		PeerType:         event.PeerType,
-		PeerID:           event.PeerID,
+	obj, err := iface.DecodeObject(bin.NewDecoder(event.EventPayload))
+	if err != nil {
+		return nil, fmt.Errorf("%w: decode auth seq tl update: %v", userupdates.ErrUserupdatesStorage, err)
 	}
-	var decoded payload.DialogEventV1
-	if len(event.EventPayload) != 0 && json.Unmarshal(event.EventPayload, &decoded) == nil && decoded.SchemaVersion != 0 {
-		if decoded.EventKind != "" {
-			dialogEvent.EventKind = decoded.EventKind
-		}
-		if decoded.PublicUpdateType != "" {
-			dialogEvent.PublicUpdateType = decoded.PublicUpdateType
-		}
-		if decoded.PeerType != 0 {
-			dialogEvent.PeerType = decoded.PeerType
-		}
-		if decoded.PeerID != 0 {
-			dialogEvent.PeerID = decoded.PeerID
-		}
-		dialogEvent.FolderID = decoded.FolderID
-		dialogEvent.Pinned = decoded.Pinned
-		dialogEvent.TTLPeriod = decoded.TTLPeriod
+	update, ok := obj.(tg.UpdateClazz)
+	if !ok {
+		return nil, fmt.Errorf("%w: auth seq payload is %T, want tg.UpdateClazz", userupdates.ErrUserupdatesStorage, obj)
 	}
-	return dialogEventToTLUpdate(dialogEvent, 0, 0)
+	return update, nil
 }
 
 func dialogEventFromMessageEvent(event repository.UserEvent, messageEvent payload.MessageEventV1) payload.DialogEventV1 {
