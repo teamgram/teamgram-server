@@ -134,7 +134,7 @@ func (f *fakeReceiverProcessorRepository) GetDifference(context.Context, reposit
 	return nil, nil
 }
 
-func (f *fakeReceiverProcessorRepository) AppendDialogAuthSeqSideEffect(context.Context, repository.DialogSideEffectAppendInput) (*repository.AuthSeqAppendResult, error) {
+func (f *fakeReceiverProcessorRepository) AppendAuthSeqUpdate(context.Context, repository.AuthSeqUpdateAppendInput) (*repository.AuthSeqUpdateAppendResult, error) {
 	return nil, nil
 }
 

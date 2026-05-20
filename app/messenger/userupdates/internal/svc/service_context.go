@@ -39,7 +39,7 @@ type UserUpdatesRepository interface {
 	GetOperationResult(ctx context.Context, userID int64, operationID string) (*repository.OperationResult, error)
 	GetState(ctx context.Context, userID int64, permAuthKeyID int64) (*repository.UserState, error)
 	GetDifference(ctx context.Context, in repository.GetDifferenceInput) (*repository.GetDifferenceResult, error)
-	AppendDialogAuthSeqSideEffect(ctx context.Context, in repository.DialogSideEffectAppendInput) (*repository.AuthSeqAppendResult, error)
+	AppendAuthSeqUpdate(ctx context.Context, in repository.AuthSeqUpdateAppendInput) (*repository.AuthSeqUpdateAppendResult, error)
 	AppendDialogPtsSideEffect(ctx context.Context, in repository.DialogSideEffectAppendInput) (*repository.PtsAppendResult, error)
 	ListDialogProjections(ctx context.Context, userID int64, cursor repository.DialogProjectionCursor, limit int32) ([]repository.DialogProjection, error)
 	GetDialogProjectionsByPeers(ctx context.Context, userID int64, peers []repository.DialogProjectionPeer) (map[repository.DialogProjectionPeer]repository.DialogProjection, error)

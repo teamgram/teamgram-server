@@ -1611,31 +1611,34 @@ func (f *fakePushOutboxNotifier) Wake() {
 }
 
 type fakeUserUpdatesRepository struct {
-	applyInput          repository.ApplyUserOperationInput
-	applyResult         *repository.ApplyUserOperationResult
-	applyBatchInputs    []repository.ApplyUserOperationInput
-	applyBatchResults   []repository.ApplyUserOperationResult
-	applyBatchCalled    bool
-	operationResult     *repository.OperationResult
-	stateUserID         int64
-	statePermAuthKeyID  int64
-	state               *repository.UserState
-	differenceInput     repository.GetDifferenceInput
-	difference          *repository.GetDifferenceResult
-	dialogListUserID    int64
-	dialogListCursor    repository.DialogProjectionCursor
-	dialogListLimit     int32
-	dialogProjections   []repository.DialogProjection
-	dialogPeerUserID    int64
-	dialogPeers         []repository.DialogProjectionPeer
-	dialogPeerMap       map[repository.DialogProjectionPeer]repository.DialogProjection
-	messageViewUserID   int64
-	messageViewPeers    []repository.MessageViewPeerSeq
-	messageViews        map[repository.MessageViewPeerSeq]repository.MessageView
-	dialogCountUserID   int64
-	dialogCount         int32
-	outboxReadDate      int64
-	outboxReadDateInput repository.OutboxReadDateInput
+	applyInput                repository.ApplyUserOperationInput
+	applyResult               *repository.ApplyUserOperationResult
+	applyBatchInputs          []repository.ApplyUserOperationInput
+	applyBatchResults         []repository.ApplyUserOperationResult
+	applyBatchCalled          bool
+	operationResult           *repository.OperationResult
+	stateUserID               int64
+	statePermAuthKeyID        int64
+	state                     *repository.UserState
+	differenceInput           repository.GetDifferenceInput
+	difference                *repository.GetDifferenceResult
+	appendAuthSeqUpdateInput  repository.AuthSeqUpdateAppendInput
+	appendAuthSeqUpdateResult *repository.AuthSeqUpdateAppendResult
+	appendAuthSeqUpdateErr    error
+	dialogListUserID          int64
+	dialogListCursor          repository.DialogProjectionCursor
+	dialogListLimit           int32
+	dialogProjections         []repository.DialogProjection
+	dialogPeerUserID          int64
+	dialogPeers               []repository.DialogProjectionPeer
+	dialogPeerMap             map[repository.DialogProjectionPeer]repository.DialogProjection
+	messageViewUserID         int64
+	messageViewPeers          []repository.MessageViewPeerSeq
+	messageViews              map[repository.MessageViewPeerSeq]repository.MessageView
+	dialogCountUserID         int64
+	dialogCount               int32
+	outboxReadDate            int64
+	outboxReadDateInput       repository.OutboxReadDateInput
 }
 
 func (f *fakeUserUpdatesRepository) ApplyUserOperation(_ context.Context, in repository.ApplyUserOperationInput) (*repository.ApplyUserOperationResult, error) {
@@ -1664,8 +1667,12 @@ func (f *fakeUserUpdatesRepository) GetDifference(_ context.Context, in reposito
 	return f.difference, nil
 }
 
-func (f *fakeUserUpdatesRepository) AppendDialogAuthSeqSideEffect(context.Context, repository.DialogSideEffectAppendInput) (*repository.AuthSeqAppendResult, error) {
-	return nil, nil
+func (f *fakeUserUpdatesRepository) AppendAuthSeqUpdate(_ context.Context, in repository.AuthSeqUpdateAppendInput) (*repository.AuthSeqUpdateAppendResult, error) {
+	f.appendAuthSeqUpdateInput = in
+	if f.appendAuthSeqUpdateResult != nil || f.appendAuthSeqUpdateErr != nil {
+		return f.appendAuthSeqUpdateResult, f.appendAuthSeqUpdateErr
+	}
+	return &repository.AuthSeqUpdateAppendResult{UserID: in.UserID, OperationID: in.OperationID}, nil
 }
 
 func (f *fakeUserUpdatesRepository) AppendDialogPtsSideEffect(context.Context, repository.DialogSideEffectAppendInput) (*repository.PtsAppendResult, error) {

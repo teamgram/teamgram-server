@@ -19,7 +19,6 @@ package core
 
 import (
 	"bytes"
-	"context"
 	"fmt"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
@@ -50,11 +49,7 @@ func (c *UserupdatesCore) UserupdatesAppendDialogAuthSeqSideEffect(in *userupdat
 	if err != nil {
 		return nil, err
 	}
-	appender, ok := c.svcCtx.Repo.(authSeqUpdateAppender)
-	if !ok {
-		return nil, fmt.Errorf("%w: auth seq repository append is unavailable", userupdates.ErrAuthSeqLedgerUnavailable)
-	}
-	result, err := appender.AppendAuthSeqUpdate(c.ctx, repository.AuthSeqUpdateAppendInput{
+	result, err := c.svcCtx.Repo.AppendAuthSeqUpdate(c.ctx, repository.AuthSeqUpdateAppendInput{
 		UserID:               in.UserId,
 		SourcePermAuthKeyID:  in.SourcePermAuthKeyId,
 		TargetPermAuthKeyIDs: targetPermAuthKeyIDs,
@@ -82,10 +77,6 @@ func (c *UserupdatesCore) UserupdatesAppendDialogAuthSeqSideEffect(in *userupdat
 		Date:           date,
 		AlreadyApplied: tg.ToBoolClazz(result.AlreadyApplied),
 	}).ToUserAuthSeqAppendResult(), nil
-}
-
-type authSeqUpdateAppender interface {
-	AppendAuthSeqUpdate(ctx context.Context, in repository.AuthSeqUpdateAppendInput) (*repository.AuthSeqUpdateAppendResult, error)
 }
 
 func (c *UserupdatesCore) expandAuthSeqTargets(userID, sourcePermAuthKeyID int64, policy string) ([]int64, string, error) {
