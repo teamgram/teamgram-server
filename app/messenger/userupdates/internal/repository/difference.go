@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"math"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/cursor"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/model"
@@ -96,9 +97,14 @@ func (r *Repository) GetDifference(ctx context.Context, in GetDifferenceInput) (
 	if limit <= 0 {
 		limit = 100
 	}
-	rows, err := r.models.UserPtsEventsModel.SelectByGtPts(ctx, in.UserID, in.Pts, limit)
+	queryLimit := differenceQueryLimit(limit)
+	rows, err := r.models.UserPtsEventsModel.SelectByGtPts(ctx, in.UserID, in.Pts, queryLimit)
 	if err != nil && !errors.Is(err, model.ErrNotFound) {
 		return nil, storageError("get difference events", err)
+	}
+	hasMore := len(rows) > int(limit)
+	if hasMore {
+		rows = rows[:limit]
 	}
 	state, err := r.GetState(ctx, in.UserID, in.PermAuthKeyID)
 	if err != nil {
@@ -114,9 +120,13 @@ func (r *Repository) GetDifference(ctx context.Context, in GetDifferenceInput) (
 	}
 	var authSeqEvents []AuthSeqEvent
 	if in.Date != nil && in.PermAuthKeyID != 0 {
-		authRows, err := r.models.AuthSeqDeliveriesModel.SelectReplayableAfterDate(ctx, in.UserID, in.PermAuthKeyID, int64(*in.Date), unixNow(), limit)
+		authRows, err := r.models.AuthSeqDeliveriesModel.SelectReplayableAfterDate(ctx, in.UserID, in.PermAuthKeyID, int64(*in.Date), unixNow(), queryLimit)
 		if err != nil && !errors.Is(err, model.ErrNotFound) {
 			return nil, storageError("get auth seq deliveries", err)
+		}
+		if len(authRows) > int(limit) {
+			authRows = authRows[:limit]
+			hasMore = true
 		}
 		authSeqEvents = make([]AuthSeqEvent, 0, len(authRows))
 		for _, row := range authRows {
@@ -150,7 +160,17 @@ func (r *Repository) GetDifference(ctx context.Context, in GetDifferenceInput) (
 			state.Date = last.Date
 		}
 	}
-	return &GetDifferenceResult{State: *state, Events: events, AuthSeqEvents: authSeqEvents}, nil
+	return &GetDifferenceResult{State: *state, Events: events, AuthSeqEvents: authSeqEvents, HasMore: hasMore}, nil
+}
+
+func differenceQueryLimit(limit int32) int32 {
+	if limit <= 0 {
+		return 101
+	}
+	if limit >= math.MaxInt32 {
+		return math.MaxInt32
+	}
+	return limit + 1
 }
 
 func operationResultFromModel(r *model.UserOperationResults) *OperationResult {

@@ -166,6 +166,27 @@ func differenceToTL(in *repository.GetDifferenceResult) (*userupdates.UserDiffer
 		}
 		otherUpdates = append(otherUpdates, update)
 	}
+	if in.HasMore {
+		intermediateSource := stateSource
+		if len(in.Events) > 0 {
+			last := in.Events[len(in.Events)-1]
+			intermediateSource.Pts = last.Pts
+		}
+		if len(in.AuthSeqEvents) > 0 {
+			last := in.AuthSeqEvents[len(in.AuthSeqEvents)-1]
+			intermediateSource.Seq = last.Seq
+			intermediateSource.Date = last.Date
+		}
+		intermediateState, err := stateToTL(intermediateSource)
+		if err != nil {
+			return nil, err
+		}
+		return userupdates.MakeTLUserDifferenceSlice(&userupdates.TLUserDifferenceSlice{
+			NewMessages:       newMessages,
+			OtherUpdates:      otherUpdates,
+			IntermediateState: intermediateState,
+		}).ToUserDifference(), nil
+	}
 	return userupdates.MakeTLUserDifference(&userupdates.TLUserDifference{
 		NewMessages:  newMessages,
 		OtherUpdates: otherUpdates,

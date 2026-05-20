@@ -137,6 +137,9 @@ func TestGetDifferenceLimitedAuthSeqRowsReturnsDeliveredCursor(t *testing.T) {
 	if len(diff.AuthSeqEvents) != 1 {
 		t.Fatalf("auth seq events = %d, want 1", len(diff.AuthSeqEvents))
 	}
+	if !diff.HasMore {
+		t.Fatalf("HasMore = false, want true")
+	}
 	event := diff.AuthSeqEvents[0]
 	if event.Seq != 1 || event.Date != 1779234430 {
 		t.Fatalf("delivered event seq/date = %d/%d, want 1/1779234430", event.Seq, event.Date)

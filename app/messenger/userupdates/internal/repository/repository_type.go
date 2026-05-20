@@ -256,6 +256,7 @@ type GetDifferenceResult struct {
 	State         UserState
 	Events        []UserEvent
 	AuthSeqEvents []AuthSeqEvent
+	HasMore       bool
 }
 
 type DialogSideEffectAppendInput struct {
