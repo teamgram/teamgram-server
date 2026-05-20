@@ -475,6 +475,47 @@ func TestProjectPushTaskV4UpdatesProjectsRawFactUpdatesWithoutPushEnvelope(t *te
 	}
 }
 
+func TestProjectPushTaskPTSUpdateHasZeroTopLevelSeq(t *testing.T) {
+	body := mustMarshalMessageEventV4(t, payload.MessageEventV4{
+		SchemaVersion: payload.MessageEventSchemaVersionV4,
+		EventKind:     payload.EventKindNewMessage,
+		MessageFact: payload.NewMessageFactV1{
+			SchemaVersion:      payload.MessageOperationSchemaVersionV4,
+			CanonicalMessageID: 7001,
+			PeerType:           payload.PeerTypeUser,
+			PeerID:             1002,
+			PeerSeq:            9,
+			SenderUserID:       1002,
+			ToUserID:           1001,
+			Date:               1_772_000_000,
+			MessageText:        "hello",
+		},
+		MessageID: 101,
+		Pts:       123,
+		PtsCount:  1,
+	})
+	msg := &payload.PushTaskKafkaMessageV1{
+		SchemaVersion: payload.PushTaskKafkaMessageSchemaVersion,
+		UserID:        1001,
+		Pts:           123,
+		PushType:      1,
+		PeerType:      payload.PeerTypeUser,
+		PeerID:        1002,
+		Payload:       body,
+	}
+	got, err := ProjectPushTask(msg)
+	if err != nil {
+		t.Fatalf("ProjectPushTask() error = %v", err)
+	}
+	updates, ok := got.Updates.(*tg.TLUpdates)
+	if !ok {
+		t.Fatalf("Updates = %T, want *tg.TLUpdates", got.Updates)
+	}
+	if updates.Seq != 0 {
+		t.Fatalf("top-level Seq = %d, want 0", updates.Seq)
+	}
+}
+
 func TestProjectMessageBatchEventUsesConsecutivePts(t *testing.T) {
 	body := mustMarshalMessageEventBatchV1(t, payload.MessageEventBatchV1{
 		SchemaVersion: payload.MessageEventSchemaVersionBatchV1,

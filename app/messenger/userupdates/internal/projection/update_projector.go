@@ -214,7 +214,20 @@ func ProjectPushTask(msg *payload.PushTaskKafkaMessageV1) (Result, error) {
 }
 
 func projectPushTaskV4(msg *payload.PushTaskKafkaMessageV1) (Result, error) {
-	return ProjectPushTaskV4Updates(msg)
+	projected, err := ProjectPushTaskV4Updates(msg)
+	if err != nil {
+		return Result{}, err
+	}
+	var messageEvent payload.MessageEventV4
+	if err := json.Unmarshal(msg.Payload, &messageEvent); err != nil {
+		return Result{}, fmt.Errorf("%w: decode v4 push message event: %v", userupdates.ErrUserupdatesStorage, err)
+	}
+	updates, err := wrapPushUpdates(projected.OtherUpdates, messageEvent.MessageFact.Date)
+	if err != nil {
+		return Result{}, err
+	}
+	projected.Updates = updates
+	return projected, nil
 }
 
 func projectPushTaskBatchV1(msg *payload.PushTaskKafkaMessageV1) (Result, error) {
