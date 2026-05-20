@@ -19,11 +19,13 @@ package core
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/payload"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/userupdates"
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -44,28 +46,93 @@ func (c *UserupdatesCore) UserupdatesAppendDialogAuthSeqSideEffect(in *userupdat
 		return nil, err
 	}
 
-	result, err := c.svcCtx.Repo.AppendDialogAuthSeqSideEffect(c.ctx, repository.DialogSideEffectAppendInput{
+	targetPermAuthKeyIDs, visibilityPolicy, err := c.expandAuthSeqTargets(in.UserId, in.SourcePermAuthKeyId, in.TargetAuthPolicy)
+	if err != nil {
+		return nil, err
+	}
+	appender, ok := c.svcCtx.Repo.(authSeqUpdateAppender)
+	if !ok {
+		return nil, fmt.Errorf("%w: auth seq repository append is unavailable", userupdates.ErrAuthSeqLedgerUnavailable)
+	}
+	result, err := appender.AppendAuthSeqUpdate(c.ctx, repository.AuthSeqUpdateAppendInput{
 		UserID:               in.UserId,
 		SourcePermAuthKeyID:  in.SourcePermAuthKeyId,
+		TargetPermAuthKeyIDs: targetPermAuthKeyIDs,
 		OperationID:          in.OperationId,
-		TargetAuthPolicy:     in.TargetAuthPolicy,
-		PublicUpdateType:     in.PublicUpdateType,
-		PeerType:             in.PeerType,
-		PeerID:               in.PeerId,
-		PayloadSchemaVersion: in.PayloadSchemaVersion,
-		Payload:              in.Payload,
+		UpdateType:           in.PublicUpdateType,
+		ReplayPolicy:         repository.AuthSeqReplayPolicyDurableReplay,
+		VisibilityPolicy:     visibilityPolicy,
+		Layer:                in.PayloadSchemaVersion,
+		TLBytes:              in.Payload,
 		PayloadHash:          in.PayloadHash,
 	})
 	if err != nil {
 		return nil, err
 	}
+	var seq int64
+	var date int32
+	if len(result.Deliveries) > 0 {
+		seq = result.Deliveries[0].Seq
+		date = result.Deliveries[0].Date
+	}
 	return userupdates.MakeTLUserAuthSeqAppendResult(&userupdates.TLUserAuthSeqAppendResult{
 		UserId:         result.UserID,
 		OperationId:    result.OperationID,
-		Seq:            result.Seq,
-		Date:           result.Date,
+		Seq:            seq,
+		Date:           date,
 		AlreadyApplied: tg.ToBoolClazz(result.AlreadyApplied),
 	}).ToUserAuthSeqAppendResult(), nil
+}
+
+type authSeqUpdateAppender interface {
+	AppendAuthSeqUpdate(ctx context.Context, in repository.AuthSeqUpdateAppendInput) (*repository.AuthSeqUpdateAppendResult, error)
+}
+
+func (c *UserupdatesCore) expandAuthSeqTargets(userID, sourcePermAuthKeyID int64, policy string) ([]int64, string, error) {
+	switch policy {
+	case "", repository.AuthSeqVisibilityAllUserAuthKeys:
+		if c == nil || c.svcCtx == nil || c.svcCtx.AuthsessionClient == nil {
+			return nil, "", fmt.Errorf("%w: authsession client is nil", userupdates.ErrAuthSeqLedgerUnavailable)
+		}
+		keys, err := c.svcCtx.AuthsessionClient.AuthsessionGetPermAuthKeyIds(c.ctx, &authsession.TLAuthsessionGetPermAuthKeyIds{UserId: userID})
+		if err != nil {
+			return nil, "", fmt.Errorf("%w: get auth seq targets: %v", userupdates.ErrAuthSeqLedgerUnavailable, err)
+		}
+		if keys == nil {
+			return []int64{}, repository.AuthSeqVisibilityAllUserAuthKeys, nil
+		}
+		return uniqueActivePermAuthKeyIDs(keys.Datas), repository.AuthSeqVisibilityAllUserAuthKeys, nil
+	case repository.AuthSeqVisibilityNotSourcePermAuthKey:
+		if c == nil || c.svcCtx == nil || c.svcCtx.AuthsessionClient == nil {
+			return nil, "", fmt.Errorf("%w: authsession client is nil", userupdates.ErrAuthSeqLedgerUnavailable)
+		}
+		targets, err := resolveAuthSeqNotMeTargets(c.ctx, c.svcCtx.AuthsessionClient, userID, sourcePermAuthKeyID)
+		if err != nil {
+			return nil, "", fmt.Errorf("%w: get auth seq targets: %v", userupdates.ErrAuthSeqLedgerUnavailable, err)
+		}
+		return targets, repository.AuthSeqVisibilityNotSourcePermAuthKey, nil
+	default:
+		return nil, "", fmt.Errorf("%w: unsupported target auth policy=%s", userupdates.ErrOperationTerminal, policy)
+	}
+}
+
+func uniqueActivePermAuthKeyIDs(keys []int64) []int64 {
+	if len(keys) == 0 {
+		return []int64{}
+	}
+	seen := make(map[int64]struct{}, len(keys))
+	out := make([]int64, 0, len(keys))
+	for _, keyID := range keys {
+		if keyID == 0 {
+			continue
+		}
+		if _, ok := seen[keyID]; ok {
+			continue
+		}
+		seen[keyID] = struct{}{}
+		out = append(out, keyID)
+	}
+	return out
 }
 
 type dialogSideEffectAppendInput struct {

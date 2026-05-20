@@ -25,6 +25,7 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository"
 	receiverevent "github.com/teamgram/teamgram-server/v2/app/messenger/userupdates/internal/repository/event"
+	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 	authsessionclient "github.com/teamgram/teamgram-server/v2/app/service/authsession/client"
 	chatclient "github.com/teamgram/teamgram-server/v2/app/service/biz/chat/client"
 	dialogclient "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/client"
@@ -59,9 +60,14 @@ type PushOutboxNotifier interface {
 	Wake()
 }
 
+type AuthsessionClient interface {
+	AuthsessionGetPermAuthKeyIds(ctx context.Context, in *authsession.TLAuthsessionGetPermAuthKeyIds) (*authsession.VectorLong, error)
+}
+
 type ServiceContext struct {
 	Config             config.Config
 	Repo               UserUpdatesRepository
+	AuthsessionClient  AuthsessionClient
 	PushOutboxNotifier PushOutboxNotifier
 	workers            []backgroundWorker
 	closers            []interface{ Close() error }
@@ -81,6 +87,9 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	sc := &ServiceContext{
 		Config: c,
 		Repo:   repo,
+	}
+	if hasRPCClientConfig(c.Authsession) {
+		sc.AuthsessionClient = authsessionclient.NewAuthsessionClient(authsessionclient.MustNewKitexClient(c.Authsession))
 	}
 	if closer, ok := any(repo).(interface{ Close() error }); ok {
 		sc.closers = append(sc.closers, closer)
