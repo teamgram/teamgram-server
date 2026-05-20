@@ -986,9 +986,13 @@ func authSeqEventToTLUpdate(event repository.AuthSeqEvent) (tg.UpdateClazz, erro
 	if !bytes.Equal(payload.HashBytes(event.EventPayload), event.EventPayloadHash) {
 		return nil, fmt.Errorf("%w: auth seq event payload hash mismatch", userupdates.ErrUserupdatesStorage)
 	}
-	obj, err := iface.DecodeObject(bin.NewDecoder(event.EventPayload))
+	decoder := bin.NewDecoder(event.EventPayload)
+	obj, err := iface.DecodeObject(decoder)
 	if err != nil {
 		return nil, fmt.Errorf("%w: decode auth seq tl update: %v", userupdates.ErrUserupdatesStorage, err)
+	}
+	if remaining := decoder.Remaining(); remaining != 0 {
+		return nil, fmt.Errorf("%w: auth seq event payload has trailing bytes=%d", userupdates.ErrUserupdatesStorage, remaining)
 	}
 	update, ok := obj.(tg.UpdateClazz)
 	if !ok {
