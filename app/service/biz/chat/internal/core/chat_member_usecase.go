@@ -29,11 +29,7 @@ type deleteChatUserArg struct {
 }
 
 func (c *ChatCore) addChatUser(ctx context.Context, arg addChatUserArg) (*tg.MutableChat, error) {
-	participantIDs := []int64{arg.userID}
-	if arg.inviterID != 0 {
-		participantIDs = append(participantIDs, arg.inviterID)
-	}
-	mChat, err := c.repo().GetMutableChat(ctx, arg.chatID, participantIDs...)
+	mChat, err := c.repo().GetMutableChat(ctx, arg.chatID)
 	if err != nil {
 		return nil, err
 	}
