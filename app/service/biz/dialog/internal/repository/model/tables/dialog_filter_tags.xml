@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table sqlname="dialog_filter_tags">
+    <operation name="InsertOrUpdate">
+        <sql>
+            INSERT INTO dialog_filter_tags
+                (user_id, enabled)
+            values
+                (:user_id, :enabled)
+            ON DUPLICATE KEY UPDATE
+                enabled = VALUES(enabled)
+        </sql>
+    </operation>
+
+    <operation name="Select">
+        <sql>
+            SELECT
+                id, user_id, enabled
+            FROM
+                dialog_filter_tags
+            WHERE
+                user_id = :user_id
+        </sql>
+    </operation>
+
+    <operation name="Update">
+        <sql>
+            UPDATE
+                dialog_filter_tags
+            SET
+                enabled = :enabled
+            WHERE
+                user_id = :user_id
+        </sql>
+    </operation>
+</table>
