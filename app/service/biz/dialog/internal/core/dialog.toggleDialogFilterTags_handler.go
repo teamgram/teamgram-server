@@ -24,8 +24,8 @@ import (
 // DialogToggleDialogFilterTags
 // dialog.toggleDialogFilterTags user_id:long enabled:Bool = Bool;
 func (c *DialogCore) DialogToggleDialogFilterTags(in *dialog.TLDialogToggleDialogFilterTags) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.toggleDialogFilterTags - error: method DialogToggleDialogFilterTags not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.SetDialogFilterTagsEnabled(c.ctx, in.UserId, tg.FromBoolClazz(in.Enabled)); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

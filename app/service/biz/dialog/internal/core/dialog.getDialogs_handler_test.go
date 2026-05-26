@@ -19,6 +19,8 @@ type fakeDialogRepo struct {
 	idsFn          func(context.Context, int64, []int64) ([]repository.DialogRecord, error)
 	extrasFn       func(context.Context, int64, []repository.PeerRef) ([]repository.DialogExtrasRecord, error)
 	filterListFn   func(context.Context, int64) ([]repository.DialogFilterRecord, error)
+	filterTagsGet  func(context.Context, int64) (bool, error)
+	filterTagsSet  func(context.Context, int64, bool) error
 	filterGetFn    func(context.Context, int64, int32) (*repository.DialogFilterRecord, error)
 	filterSlugFn   func(context.Context, int64, string) (*repository.DialogFilterRecord, error)
 	filterSaveFn   func(context.Context, repository.SaveDialogFilterInput) (*repository.DialogFilterRecord, error)
@@ -77,6 +79,20 @@ func (f fakeDialogRepo) ListDialogFilters(ctx context.Context, userID int64) ([]
 		return f.filterListFn(ctx, userID)
 	}
 	return []repository.DialogFilterRecord{}, nil
+}
+
+func (f fakeDialogRepo) GetDialogFilterTagsEnabled(ctx context.Context, userID int64) (bool, error) {
+	if f.filterTagsGet != nil {
+		return f.filterTagsGet(ctx, userID)
+	}
+	return false, nil
+}
+
+func (f fakeDialogRepo) SetDialogFilterTagsEnabled(ctx context.Context, userID int64, enabled bool) error {
+	if f.filterTagsSet != nil {
+		return f.filterTagsSet(ctx, userID, enabled)
+	}
+	return nil
 }
 
 func (f fakeDialogRepo) GetDialogFilter(ctx context.Context, userID int64, filterID int32) (*repository.DialogFilterRecord, error) {

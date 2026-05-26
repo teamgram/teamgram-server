@@ -24,8 +24,9 @@ import (
 // DialogGetDialogFilterTags
 // dialog.getDialogFilterTags user_id:long = Bool;
 func (c *DialogCore) DialogGetDialogFilterTags(in *dialog.TLDialogGetDialogFilterTags) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("dialog.getDialogFilterTags - error: method DialogGetDialogFilterTags not impl")
-
-	return nil, tg.ErrMethodNotImpl
+	enabled, err := c.svcCtx.Repo.GetDialogFilterTagsEnabled(c.ctx, in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	return tg.ToBool(enabled), nil
 }

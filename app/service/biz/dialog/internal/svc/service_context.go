@@ -36,6 +36,8 @@ type DialogRepository interface {
 	ListDialogsByPeerDialogIDs(ctx context.Context, userID int64, ids []int64) ([]repository.DialogRecord, error)
 	BatchGetDialogExtras(ctx context.Context, userID int64, peers []repository.PeerRef) ([]repository.DialogExtrasRecord, error)
 	ListDialogFilters(ctx context.Context, userID int64) ([]repository.DialogFilterRecord, error)
+	GetDialogFilterTagsEnabled(ctx context.Context, userID int64) (bool, error)
+	SetDialogFilterTagsEnabled(ctx context.Context, userID int64, enabled bool) error
 	GetDialogFilter(ctx context.Context, userID int64, filterID int32) (*repository.DialogFilterRecord, error)
 	GetDialogFilterBySlug(ctx context.Context, userID int64, slug string) (*repository.DialogFilterRecord, error)
 	SaveDialogFilter(ctx context.Context, in repository.SaveDialogFilterInput) (*repository.DialogFilterRecord, error)
