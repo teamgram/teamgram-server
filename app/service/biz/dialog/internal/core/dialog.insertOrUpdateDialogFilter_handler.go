@@ -17,7 +17,9 @@
 package core
 
 import (
+	"crypto/sha256"
 	"encoding/json"
+	"fmt"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/internal/repository"
@@ -36,7 +38,7 @@ func (c *DialogCore) DialogInsertOrUpdateDialogFilter(in *dialog.TLDialogInsertO
 	if f, ok := in.DialogFilter.(*tg.TLDialogFilter); ok && f.Title != nil {
 		title = f.Title.Text
 	}
-	operationID := deterministicOperationID("upsert_filter", in.UserId, in.Id)
+	operationID := deterministicOperationID("upsert_filter", in.UserId, in.Id, payloadDigest(payload))
 	if _, err := c.svcCtx.Repo.SaveDialogFilter(c.ctx, repository.SaveDialogFilterInput{
 		UserID:              in.UserId,
 		DialogFilterID:      in.Id,
@@ -53,4 +55,9 @@ func (c *DialogCore) DialogInsertOrUpdateDialogFilter(in *dialog.TLDialogInsertO
 		return nil, err
 	}
 	return tg.BoolTrue, nil
+}
+
+func payloadDigest(payload []byte) string {
+	sum := sha256.Sum256(payload)
+	return fmt.Sprintf("%x", sum[:])
 }
