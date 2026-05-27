@@ -18,19 +18,13 @@ package config
 
 import (
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	"github.com/teamgram/teamgram-server/v2/pkg/conf"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 )
 
 type Config struct {
 	kitex.RpcServerConf
-	Mysql               sqlx.Config             `json:",optional"`
-	Userupdates         kitex.RpcClientConf     `json:",optional"`
-	DialogOutboxWorkers DialogOutboxWorkersConf `json:",optional"`
-}
-
-type DialogOutboxWorkersConf struct {
-	Enabled        bool  `json:",optional"`
-	BatchSize      int32 `json:",optional"`
-	LeaseSeconds   int32 `json:",optional"`
-	PollIntervalMs int32 `json:",optional"`
+	Mysql               sqlx.Config                  `json:",optional"`
+	Userupdates         kitex.RpcClientConf          `json:",optional"`
+	DialogOutboxWorkers conf.DialogOutboxWorkersConf `json:",optional"`
 }

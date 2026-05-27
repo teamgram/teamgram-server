@@ -20,3 +20,19 @@ type ZRpcServerConf struct {
 	WriteBufferSize int `json:",default=32768"`
 	ReadBufferSize  int `json:",default=32768"`
 }
+
+type DialogOutboxWorkersConf struct {
+	Enabled        bool  `json:",optional"`
+	BatchSize      int32 `json:",optional"`
+	LeaseSeconds   int32 `json:",optional"`
+	PollIntervalMs int32 `json:",optional"`
+}
+
+type SmsVerifyCodeConfig struct {
+	Name          string
+	SendCodeUrl   string
+	VerifyCodeUrl string
+	Key           string
+	Secret        string
+	RegionId      string
+}

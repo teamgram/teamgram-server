@@ -21,18 +21,18 @@ package server
 import (
 	"flag"
 
-	"github.com/cloudwego/kitex/server"
+	"github.com/teamgram/teamgram-server/v2/app/service/biz/biz/internal/config"
+	chathelper "github.com/teamgram/teamgram-server/v2/app/service/biz/chat"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/chat/chat/chatservice"
+	codehelper "github.com/teamgram/teamgram-server/v2/app/service/biz/code"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/code/code/codeservice"
+	dialoghelper "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog/dialogservice"
 	userhelper "github.com/teamgram/teamgram-server/v2/app/service/biz/user"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/user/userservice"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 
-	"github.com/teamgram/teamgram-server/v2/app/service/biz/biz/internal/config"
-	chathelper "github.com/teamgram/teamgram-server/v2/app/service/biz/chat"
-	codehelper "github.com/teamgram/teamgram-server/v2/app/service/biz/code"
-	dialoghelper "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog"
+	"github.com/cloudwego/kitex/server"
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -59,9 +59,10 @@ func buildUserConfig(c config.Config) userhelper.Config {
 
 func buildDialogConfig(c config.Config) dialoghelper.Config {
 	return dialoghelper.Config{
-		RpcServerConf: c.RpcServerConf,
-		Mysql:         c.Mysql,
-		Userupdates:   withServiceName(c.UserupdatesClient, "RPCUserupdates"),
+		RpcServerConf:       c.RpcServerConf,
+		Mysql:               c.Mysql,
+		Userupdates:         withServiceName(c.UserupdatesClient, "RPCUserupdates"),
+		DialogOutboxWorkers: c.DialogOutboxWorkers,
 	}
 }
 

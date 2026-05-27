@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -407,6 +409,63 @@ func TestDialogFiltersSlugLookupUsesExplicitSlug(t *testing.T) {
 	}
 	if row.Title != "Work" {
 		t.Fatalf("Title = %q, want Work", row.Title)
+	}
+}
+
+func TestDialogFiltersSchemaUsesUserAndFilterIDAsOnlyUniqueKey(t *testing.T) {
+	sqlPath := filepath.Join("..", "..", "..", "..", "..", "..", "teamgooo", "deploy", "sql", "0_teamgooo.sql")
+	data, err := os.ReadFile(sqlPath)
+	if err != nil {
+		t.Fatalf("read deploy schema: %v", err)
+	}
+	schema := string(data)
+	if !strings.Contains(schema, "PRIMARY KEY (`user_id`,`dialog_filter_id`)") {
+		t.Fatalf("dialog_filters primary key must be user_id + dialog_filter_id")
+	}
+	if strings.Contains(schema, "uk_user_slug") {
+		t.Fatalf("dialog_filters must not define a unique slug key")
+	}
+}
+
+func TestDialogFiltersInsertOrUpdateUsesUserAndFilterIDKey(t *testing.T) {
+	ctx := context.Background()
+	repo := NewRepositoryWithDBForTest(openDialogIntegrationDB(t))
+	base := time.Now().UnixNano()
+	userID := base%1_000_000_000 + 951
+	for _, filter := range []dialogModelFilter{
+		{
+			UserId:              userID,
+			DialogFilterId:      1,
+			Slug:                "shared",
+			Title:               "First",
+			OrderValue:          1,
+			Enabled:             true,
+			FilterSchemaVersion: 1,
+			FilterPayload:       []byte(`{"schema_version":1,"id":1}`),
+		},
+		{
+			UserId:              userID,
+			DialogFilterId:      2,
+			Slug:                "shared",
+			Title:               "Second",
+			OrderValue:          2,
+			Enabled:             true,
+			FilterSchemaVersion: 1,
+			FilterPayload:       []byte(`{"schema_version":1,"id":2}`),
+		},
+	} {
+		if _, _, err := repo.model.DialogFiltersModel.InsertOrUpdate(ctx, filter.toModel()); err != nil {
+			t.Fatalf("InsertOrUpdate(filter_id=%d) error = %v", filter.DialogFilterId, err)
+		}
+	}
+	for id, wantTitle := range map[int32]string{1: "First", 2: "Second"} {
+		row, err := repo.model.DialogFiltersModel.Select(ctx, userID, id)
+		if err != nil {
+			t.Fatalf("Select(filter_id=%d) error = %v", id, err)
+		}
+		if row.Title != wantTitle {
+			t.Fatalf("filter_id=%d title = %q, want %q", id, row.Title, wantTitle)
+		}
 	}
 }
 

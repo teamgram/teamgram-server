@@ -20,6 +20,7 @@ package config
 
 import (
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
+	"github.com/teamgram/teamgram-server/v2/pkg/conf"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/kv"
@@ -27,11 +28,12 @@ import (
 
 type Config struct {
 	kitex.RpcServerConf
-	Mysql             sqlx.Config
-	Cache             cache.CacheConf
-	KV                kv.KvConf
-	MediaClient       kitex.RpcClientConf
-	IdgenClient       kitex.RpcClientConf
-	UserupdatesClient kitex.RpcClientConf
-	MessageSharding   int `json:",default=1"`
+	Mysql               sqlx.Config
+	Cache               cache.CacheConf
+	KV                  kv.KvConf
+	MediaClient         kitex.RpcClientConf
+	IdgenClient         kitex.RpcClientConf
+	UserupdatesClient   kitex.RpcClientConf
+	MessageSharding     int                          `json:",default=1"`
+	DialogOutboxWorkers conf.DialogOutboxWorkersConf `json:",optional"`
 }

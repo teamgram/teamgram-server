@@ -411,7 +411,6 @@ CREATE TABLE IF NOT EXISTS `dialog_filters` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_id`,`dialog_filter_id`),
-  UNIQUE KEY `uk_user_slug` (`user_id`,`slug`),
   KEY `idx_user_deleted_order` (`user_id`,`deleted`,`order_value`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
