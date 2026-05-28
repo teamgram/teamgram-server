@@ -12,18 +12,21 @@ package service
 
 import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/account/internal/svc"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 type Service struct {
 	svcCtx *svc.ServiceContext
+	tg.RPCAccount
 }
 
 func (s *Service) GetServiceContext() *svc.ServiceContext {
 	return s.svcCtx
 }
 
-func New(ctx *svc.ServiceContext) *Service {
+func New(ctx *svc.ServiceContext, next tg.RPCAccount) *Service {
 	return &Service{
-		svcCtx: ctx,
+		svcCtx:     ctx,
+		RPCAccount: next,
 	}
 }

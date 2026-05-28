@@ -55,7 +55,7 @@ func (s *Server) Initialize() error {
 	s.kitexSrv = kitex.MustNewServer(
 		c.RpcServerConf,
 		func(s server.Server) error {
-			return accountservice.RegisterService(s, service.New(ctx))
+			return accountservice.RegisterService(s, service.New(ctx, nil))
 		})
 
 	return nil

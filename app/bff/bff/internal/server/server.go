@@ -376,7 +376,7 @@ func (s *Server) Initialize() error {
 			// accounthelper
 			_ = accountservice.RegisterService(
 				s,
-				accounthelper.New(buildAccountConfig(c)))
+				accounthelper.New(buildAccountConfig(c), nil))
 
 			// usernameshelper
 			_ = usernamesservice.RegisterService(
