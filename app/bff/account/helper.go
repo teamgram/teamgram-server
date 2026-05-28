@@ -20,13 +20,12 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/bff/account/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/bff/account/internal/server/tg/service"
 	"github.com/teamgram/teamgram-server/v2/app/bff/account/internal/svc"
-	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
 type (
 	Config = config.Config
 )
 
-func New(c Config, next tg.RPCAccount) *service.Service {
-	return service.New(svc.NewServiceContext(c), next)
+func New(c Config) *service.Service {
+	return service.New(svc.NewServiceContext(c))
 }
