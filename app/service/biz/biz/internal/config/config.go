@@ -36,4 +36,5 @@ type Config struct {
 	UserupdatesClient   kitex.RpcClientConf
 	MessageSharding     int                          `json:",default=1"`
 	DialogOutboxWorkers conf.DialogOutboxWorkersConf `json:",optional"`
+	Projection          conf.ProjectionConf          `json:",optional"`
 }

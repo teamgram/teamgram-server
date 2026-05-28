@@ -54,6 +54,7 @@ func buildUserConfig(c config.Config) userhelper.Config {
 		Mysql:         c.Mysql,
 		Cache:         c.Cache,
 		MediaClient:   withServiceName(c.MediaClient, "RPCMedia"),
+		Projection:    c.Projection,
 	}
 }
 

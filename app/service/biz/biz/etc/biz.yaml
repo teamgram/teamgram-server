@@ -55,3 +55,11 @@ UserupdatesClient:
     Hosts:
       - 127.0.0.1:2379
     Key: messenger.userupdates
+
+Projection:
+  SQLInChunkSize: 500
+  MaxViewerUserIds: 8
+  MaxTargetUserIds: 1000
+  MaxProjectionPairs: 5000
+  ContactMapCacheDisabled: false
+  ContactMapMaxEntries: 1000

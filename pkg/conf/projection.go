@@ -1,4 +1,5 @@
-// Copyright (c) 2026 The Teamgram Authors. All rights reserved.
+// Copyright (c) 2026-present, The Teamgram Authors (https://teamgram.net).
+//  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,23 +12,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// Author: teamgramio (teamgram.io@gmail.com)
 
-package config
+package conf
 
-import (
-	"github.com/teamgram/marmota/pkg/stores/sqlx"
-	"github.com/teamgram/teamgram-server/v2/pkg/conf"
-	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex"
-	
-	"github.com/zeromicro/go-zero/core/stores/cache"
-)
-
-type Config struct {
-	kitex.RpcServerConf
-	Mysql       sqlx.Config
-	Cache       cache.CacheConf
-	MediaClient kitex.RpcClientConf
-	Projection  conf.ProjectionConf `json:",optional"`
+type ProjectionConf struct {
+	SQLInChunkSize          int  `json:",default=500"`
+	MaxViewerUserIds        int  `json:",default=8"`
+	MaxTargetUserIds        int  `json:",default=1000"`
+	MaxProjectionPairs      int  `json:",default=5000"`
+	ContactMapCacheDisabled bool `json:",optional"`
+	ContactMapMaxEntries    int  `json:",default=1000"`
 }
