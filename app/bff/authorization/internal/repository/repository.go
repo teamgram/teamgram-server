@@ -148,6 +148,19 @@ func (r *Repository) ProjectSelfUser(ctx context.Context, userId int64) (tg.User
 	return users[0], nil
 }
 
+func (r *Repository) SetAuthorizationTTL(ctx context.Context, userId int64, ttl int32) error {
+	if r.UserClient == nil {
+		return fmt.Errorf("authorization repository: user client is not configured")
+	}
+	if _, err := r.UserClient.UserSetAuthorizationTTL(ctx, &userpb.TLUserSetAuthorizationTTL{
+		UserId: userId,
+		Ttl:    ttl,
+	}); err != nil {
+		return fmt.Errorf("authorization repository: set authorization ttl %d/%d: %w", userId, ttl, err)
+	}
+	return nil
+}
+
 func isUserNotFound(err error) bool {
 	return errors.Is(err, userpb.ErrUserNotFound) || errors.Is(err, ErrUserNotFound) || strings.Contains(err.Error(), userpb.ErrUserNotFound.Error())
 }

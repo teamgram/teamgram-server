@@ -23,8 +23,14 @@ import (
 // AccountSetAuthorizationTTL
 // account.setAuthorizationTTL#bf899aa0 authorization_ttl_days:int = Bool;
 func (c *AuthorizationCore) AccountSetAuthorizationTTL(in *tg.TLAccountSetAuthorizationTTL) (*tg.Bool, error) {
-	// TODO: not impl
-	c.Logger.Errorf("account.setAuthorizationTTL - error: method AccountSetAuthorizationTTL not impl")
+	switch in.AuthorizationTtlDays {
+	case 30, 90, 180, 182, 183, 365, 548, 730:
+	default:
+		c.Logger.Errorf("account.setAuthorizationTTL - invalid authorization_ttl_days: %d", in.AuthorizationTtlDays)
+	}
 
-	return nil, tg.ErrMethodNotImpl
+	if err := c.svcCtx.Repo.SetAuthorizationTTL(c.ctx, c.MD.UserId, in.AuthorizationTtlDays); err != nil {
+		return nil, err
+	}
+	return tg.BoolTrue, nil
 }

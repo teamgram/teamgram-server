@@ -44,5 +44,6 @@ type (
 		GetUserByPhone(ctx context.Context, phone string) (*tg.ImmutableUser, error)
 		CreateUser(ctx context.Context, secretKeyId int64, phone string, countryCode string, firstName string, lastName string) (*tg.ImmutableUser, error)
 		ProjectSelfUser(ctx context.Context, userId int64) (tg.UserClazz, error)
+		SetAuthorizationTTL(ctx context.Context, userId int64, ttl int32) error
 	}
 )

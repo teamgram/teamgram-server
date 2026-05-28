@@ -263,6 +263,13 @@ func (r *fakeAuthRepository) UnbindAuthKeyUser(ctx context.Context, authKeyId in
 	return nil
 }
 
+func (r *fakeAuthRepository) SetAuthorizationTTL(ctx context.Context, userId int64, ttl int32) error {
+	_ = ctx
+	_ = userId
+	_ = ttl
+	return nil
+}
+
 func makeFakeImmutableUser(id int64, phone string, countryCode string, firstName string, lastName string) *tg.ImmutableUser {
 	return tg.MakeTLImmutableUser(&tg.TLImmutableUser{
 		User: tg.MakeTLUserData(&tg.TLUserData{
