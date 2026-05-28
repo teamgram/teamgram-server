@@ -21,6 +21,7 @@ import (
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/config"
 	"github.com/teamgram/teamgram-server/v2/app/service/biz/user/internal/repository/model"
+	"github.com/teamgram/teamgram-server/v2/pkg/conf"
 )
 
 // Repository is the dependency container for repository instances.
@@ -46,7 +47,7 @@ func NewRepository(c config.Config, mediaReader MediaReader) *Repository {
 	}
 }
 
-func projectionConfigFromConfig(c config.ProjectionConf) ProjectionConfig {
+func projectionConfigFromConfig(c conf.ProjectionConf) ProjectionConfig {
 	return normalizeProjectionConfig(ProjectionConfig{
 		SQLInChunkSize:         c.SQLInChunkSize,
 		MaxViewerUserIds:       c.MaxViewerUserIds,
