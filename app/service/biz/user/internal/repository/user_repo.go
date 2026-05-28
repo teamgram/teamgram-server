@@ -162,7 +162,9 @@ func (r *Repository) UpdateFirstAndLastName(ctx context.Context, id int64, first
 		return fmt.Errorf("%w: update first and last name %d: %w", userpb.ErrUserStorage, id, err)
 	}
 	if rowsAffected == 0 {
-		return userpb.ErrUserNotFound
+		if err := r.verifyUserUpdateTarget(ctx, id, "update first and last name"); err != nil {
+			return err
+		}
 	}
 
 	if err := r.invalidateUserDataCache(ctx, id, "invalidate user name cache"); err != nil {
@@ -263,7 +265,9 @@ func (r *Repository) ChangePhone(ctx context.Context, id int64, phone string) er
 		return fmt.Errorf("%w: change phone %d: %w", userpb.ErrUserStorage, id, err)
 	}
 	if rowsAffected == 0 {
-		return userpb.ErrUserNotFound
+		if err := r.verifyUserUpdateTarget(ctx, id, "change phone"); err != nil {
+			return err
+		}
 	}
 	if err := r.invalidateUserDataCache(ctx, id, "invalidate phone user cache"); err != nil {
 		return err
@@ -602,12 +606,29 @@ func (r *Repository) execUserUpdate(ctx context.Context, id int64, op string, fn
 		return fmt.Errorf("%w: %s %d: %w", userpb.ErrUserStorage, op, id, err)
 	}
 	if rowsAffected == 0 {
-		return userpb.ErrUserNotFound
+		if err := r.verifyUserUpdateTarget(ctx, id, op); err != nil {
+			return err
+		}
 	}
 	if err := r.invalidateUserDataCache(ctx, id, "invalidate user cache"); err != nil {
 		return err
 	}
 	return nil
+}
+
+func (r *Repository) verifyUserUpdateTarget(ctx context.Context, id int64, op string) error {
+	_, err := r.model.UsersModel.FindOne(ctx, id)
+	return userUpdateTargetError(op, id, err)
+}
+
+func userUpdateTargetError(op string, id int64, err error) error {
+	if err == nil {
+		return nil
+	}
+	if isNotFound(err) {
+		return userpb.ErrUserNotFound
+	}
+	return fmt.Errorf("%w: %s verify user %d: %w", userpb.ErrUserStorage, op, id, err)
 }
 
 func profileTabToType(tab tg.ProfileTabClazz) int32 {

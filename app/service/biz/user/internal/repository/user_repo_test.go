@@ -18,6 +18,26 @@ func TestGetImmutableUserRejectsZeroID(t *testing.T) {
 	}
 }
 
+func TestUserUpdateTargetErrorAllowsNoOpUpdate(t *testing.T) {
+	if err := userUpdateTargetError("update about", 1234, nil); err != nil {
+		t.Fatalf("expected no error for existing no-op update, got %v", err)
+	}
+}
+
+func TestUserUpdateTargetErrorMapsMissingUser(t *testing.T) {
+	err := userUpdateTargetError("update about", 1234, model.ErrNotFound)
+	if !errors.Is(err, userpb.ErrUserNotFound) {
+		t.Fatalf("expected ErrUserNotFound, got %v", err)
+	}
+}
+
+func TestUserUpdateTargetErrorWrapsStorageFailure(t *testing.T) {
+	err := userUpdateTargetError("update about", 1234, errors.New("db unavailable"))
+	if !errors.Is(err, userpb.ErrUserStorage) {
+		t.Fatalf("expected ErrUserStorage, got %v", err)
+	}
+}
+
 func TestUserFromModelPopulatesActiveEditableUsername(t *testing.T) {
 	user := userFromModel(&model.Users{
 		Id:         2002,
