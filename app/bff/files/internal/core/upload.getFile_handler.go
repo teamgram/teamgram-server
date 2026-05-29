@@ -28,34 +28,49 @@ import (
 // upload.getFile#be5335be flags:# precise:flags.0?true cdn_supported:flags.1?true location:InputFileLocation offset:long limit:int = upload.File;
 func (c *FilesCore) UploadGetFile(in *tg.TLUploadGetFile) (*tg.UploadFile, error) {
 	if in == nil {
-		return nil, tg.ErrLocationInvalid
-	}
-	location := in.Location
-	if location == nil {
+		c.Logger.Errorf("upload.getFile - error: in is nil")
+
 		return nil, tg.ErrLocationInvalid
 	}
 
-	switch location.InputFileLocationClazzName() {
-	case tg.ClazzName_inputFileLocation:
+	// location := in.Location
+	if in.Location == nil {
+		c.Logger.Errorf("upload.getFile.location - error: location is nil")
+
+		return nil, tg.ErrLocationInvalid
+	}
+
+	switch location := in.Location.(type) {
+	case *tg.TLInputFileLocation:
+		c.Logger.Errorf("upload.getFile.location - error: invalid location")
+
 		return nil, tg.ErrInputRequestInvalid
-	case tg.ClazzName_inputDocumentFileLocation,
-		tg.ClazzName_inputPhotoFileLocation,
-		tg.ClazzName_inputPeerPhotoFileLocation:
+	case *tg.TLInputDocumentFileLocation,
+		*tg.TLInputPhotoFileLocation,
+		*tg.TLInputPeerPhotoFileLocation:
 		return c.downloadResolvedFile(location, in.Offset, in.Limit)
-	case tg.ClazzName_inputEncryptedFileLocation,
-		tg.ClazzName_inputSecureFileLocation,
-		tg.ClazzName_inputTakeoutFileLocation:
+	case *tg.TLInputEncryptedFileLocation,
+		*tg.TLInputSecureFileLocation,
+		*tg.TLInputTakeoutFileLocation:
 		if !c.svcCtx.Config.Download.LegacyDownloadFallback {
+			c.Logger.Errorf("upload.getFile.legacyDownloadFallback check failed")
+
 			return nil, tg.ErrLocationInvalid
 		}
 		return c.downloadLegacyFile(location, in.Offset, in.Limit)
-	case tg.ClazzName_inputStickerSetThumb:
+	case *tg.TLInputStickerSetThumb:
 		// TODO: master resolves sticker set thumbs through enterprise plugin hooks.
+		c.Logger.Errorf("upload.getFile - error: method UploadGetFile not impl")
+
 		return nil, tg.ErrMethodNotImpl
-	case tg.ClazzName_inputGroupCallStream:
+	case *tg.TLInputGroupCallStream:
 		// TODO: master resolves group call streams through enterprise plugin hooks.
+		c.Logger.Errorf("upload.getFile - error: method UploadGetFile not impl")
+
 		return nil, tg.ErrMethodNotImpl
 	default:
+		c.Logger.Errorf("upload.getFile - unknown location")
+
 		return nil, tg.ErrLocationInvalid
 	}
 }
@@ -81,6 +96,7 @@ func (c *FilesCore) resolveFileLocation(location tg.InputFileLocationClazz) (*me
 	if c.MD != nil {
 		viewerID = c.MD.UserId
 	}
+
 	resolved, err := c.svcCtx.Repo.MediaClient.MediaResolveFileLocation(c.ctx, &mediapb.TLMediaResolveFileLocation{
 		Location: location,
 		ViewerId: viewerID,
@@ -91,6 +107,7 @@ func (c *FilesCore) resolveFileLocation(location tg.InputFileLocationClazz) (*me
 	if resolved == nil || len(resolved.ReadLease) == 0 {
 		return nil, tg.ErrLocationInvalid
 	}
+
 	return resolved, nil
 }
 
