@@ -199,7 +199,7 @@ func (d *Dao) PutMutableChat(ctx context.Context, chat *mtproto.MutableChat) err
 		},
 		func(item interface{}) {
 			kv2 := item.(*kv)
-			d.CachedConn.SetCache(ctx, kv2.k, kv2.v)
+			_ = d.CachedConn.SetCache(ctx, kv2.k, kv2.v)
 		})
 
 	return nil

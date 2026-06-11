@@ -51,6 +51,7 @@ const (
 	Predicate_chat_getRecentChatInviteRequesters    = "chat_getRecentChatInviteRequesters"
 	Predicate_chat_hideChatJoinRequests             = "chat_hideChatJoinRequests"
 	Predicate_chat_importChatInvite2                = "chat_importChatInvite2"
+	Predicate_chat_editChatParticipantRank          = "chat_editChatParticipantRank"
 )
 
 var clazzNameRegisters2 = map[string]map[int]int32{
@@ -214,6 +215,10 @@ var clazzNameRegisters2 = map[string]map[int]int32{
 		0: -589742657, // 0xdcd93dbf
 
 	},
+	Predicate_chat_editChatParticipantRank: {
+		0: 2075490336, // 0x7bb57820
+
+	},
 }
 
 var clazzIdNameRegisters2 = map[int32]string{
@@ -257,6 +262,7 @@ var clazzIdNameRegisters2 = map[int32]string{
 	-19132264:   Predicate_chat_getRecentChatInviteRequesters,    // 0xfedc1098
 	1051012305:  Predicate_chat_hideChatJoinRequests,             // 0x3ea52cd1
 	-589742657:  Predicate_chat_importChatInvite2,                // 0xdcd93dbf
+	2075490336:  Predicate_chat_editChatParticipantRank,          // 0x7bb57820
 
 }
 

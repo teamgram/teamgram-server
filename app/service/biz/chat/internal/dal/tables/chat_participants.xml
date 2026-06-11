@@ -40,7 +40,7 @@
     <operation name="SelectList" result_set="list">
         <sql>
             SELECT
-                id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2
+                id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2, rank2
             FROM
                 chat_participants
             WHERE
@@ -62,7 +62,7 @@
     <operation name="SelectByParticipantId">
         <sql>
             SELECT
-                id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2
+                id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2, rank2
             FROM
                 chat_participants
             WHERE
@@ -76,7 +76,7 @@
         </params>
         <sql>
             SELECT
-                id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2
+                id, chat_id, user_id, participant_type, link, inviter_user_id, invited_at, kicked_at, left_at, is_bot, state, date2, rank2
             FROM
                 chat_participants
             WHERE
@@ -123,6 +123,17 @@
                 chat_participants
             SET
                 participant_type=:participant_type
+            WHERE
+                id=:id
+        </sql>
+    </operation>
+
+    <operation name="UpdateRank">
+        <sql>
+            UPDATE
+                chat_participants
+            SET
+                rank2=:rank2
             WHERE
                 id=:id
         </sql>

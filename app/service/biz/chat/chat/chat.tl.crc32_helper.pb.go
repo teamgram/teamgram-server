@@ -52,4 +52,5 @@ const (
 	CRC32_chat_getRecentChatInviteRequesters    TLConstructor = -19132264   // 0xfedc1098
 	CRC32_chat_hideChatJoinRequests             TLConstructor = 1051012305  // 0x3ea52cd1
 	CRC32_chat_importChatInvite2                TLConstructor = -589742657  // 0xdcd93dbf
+	CRC32_chat_editChatParticipantRank          TLConstructor = 2075490336  // 0x7bb57820
 )

@@ -58,28 +58,30 @@ func (d *Dao) MakeImmutableChatByDO(chatsDO *dataobject.ChatsDO) (chat *mtproto.
 	chat.ExportedInvite = nil // model.ExportedChatInviteEmpty
 
 	if chatsDO.AvailableReactionsType == mtproto.ChatReactionsTypeSome {
-		jsonx.UnmarshalFromString(chatsDO.AvailableReactions, &chat.AvailableReactions)
+		_ = jsonx.UnmarshalFromString(chatsDO.AvailableReactions, &chat.AvailableReactions)
 	}
 
 	return
 }
 
 func (d *Dao) MakeImmutableChatParticipant(chatParticipantsDO *dataobject.ChatParticipantsDO) (participant *mtproto.ImmutableChatParticipant) {
-	participant = &mtproto.ImmutableChatParticipant{
+	participant = mtproto.MakeTLImmutableChatParticipant(&mtproto.ImmutableChatParticipant{
 		Id:              chatParticipantsDO.Id,
 		ChatId:          chatParticipantsDO.ChatId,
 		UserId:          chatParticipantsDO.UserId,
 		State:           chatParticipantsDO.State,
 		ParticipantType: chatParticipantsDO.ParticipantType,
 		Link:            chatParticipantsDO.Link,
+		Useage:          chatParticipantsDO.Usage2,
 		InviterUserId:   chatParticipantsDO.InviterUserId,
 		InvitedAt:       chatParticipantsDO.InvitedAt,
 		KickedAt:        chatParticipantsDO.KickedAt,
 		LeftAt:          chatParticipantsDO.LeftAt,
 		AdminRights:     nil,
-		IsBot:           chatParticipantsDO.IsBot,
 		Date:            chatParticipantsDO.Date2,
-	}
+		IsBot:           chatParticipantsDO.IsBot,
+		Rank:            chatParticipantsDO.Rank2,
+	}).To_ImmutableChatParticipant()
 
 	if participant.ParticipantType == mtproto.ChatMemberAdmin {
 		participant.AdminRights = mtproto.MakeDefaultChatAdminRights()

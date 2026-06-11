@@ -63,6 +63,7 @@ const (
 	RPCChat_ChatGetRecentChatInviteRequesters_FullMethodName    = "/chat.RPCChat/chat_getRecentChatInviteRequesters"
 	RPCChat_ChatHideChatJoinRequests_FullMethodName             = "/chat.RPCChat/chat_hideChatJoinRequests"
 	RPCChat_ChatImportChatInvite2_FullMethodName                = "/chat.RPCChat/chat_importChatInvite2"
+	RPCChat_ChatEditChatParticipantRank_FullMethodName          = "/chat.RPCChat/chat_editChatParticipantRank"
 )
 
 // RPCChatClient is the client API for RPCChat service.
@@ -103,6 +104,7 @@ type RPCChatClient interface {
 	ChatGetRecentChatInviteRequesters(ctx context.Context, in *TLChatGetRecentChatInviteRequesters, opts ...grpc.CallOption) (*RecentChatInviteRequesters, error)
 	ChatHideChatJoinRequests(ctx context.Context, in *TLChatHideChatJoinRequests, opts ...grpc.CallOption) (*RecentChatInviteRequesters, error)
 	ChatImportChatInvite2(ctx context.Context, in *TLChatImportChatInvite2, opts ...grpc.CallOption) (*ChatInviteImported, error)
+	ChatEditChatParticipantRank(ctx context.Context, in *TLChatEditChatParticipantRank, opts ...grpc.CallOption) (*mtproto.MutableChat, error)
 }
 
 type rPCChatClient struct {
@@ -453,6 +455,16 @@ func (c *rPCChatClient) ChatImportChatInvite2(ctx context.Context, in *TLChatImp
 	return out, nil
 }
 
+func (c *rPCChatClient) ChatEditChatParticipantRank(ctx context.Context, in *TLChatEditChatParticipantRank, opts ...grpc.CallOption) (*mtproto.MutableChat, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(mtproto.MutableChat)
+	err := c.cc.Invoke(ctx, RPCChat_ChatEditChatParticipantRank_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RPCChatServer is the server API for RPCChat service.
 // All implementations should embed UnimplementedRPCChatServer
 // for forward compatibility.
@@ -491,6 +503,7 @@ type RPCChatServer interface {
 	ChatGetRecentChatInviteRequesters(context.Context, *TLChatGetRecentChatInviteRequesters) (*RecentChatInviteRequesters, error)
 	ChatHideChatJoinRequests(context.Context, *TLChatHideChatJoinRequests) (*RecentChatInviteRequesters, error)
 	ChatImportChatInvite2(context.Context, *TLChatImportChatInvite2) (*ChatInviteImported, error)
+	ChatEditChatParticipantRank(context.Context, *TLChatEditChatParticipantRank) (*mtproto.MutableChat, error)
 }
 
 // UnimplementedRPCChatServer should be embedded to have
@@ -601,6 +614,9 @@ func (UnimplementedRPCChatServer) ChatHideChatJoinRequests(context.Context, *TLC
 }
 func (UnimplementedRPCChatServer) ChatImportChatInvite2(context.Context, *TLChatImportChatInvite2) (*ChatInviteImported, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ChatImportChatInvite2 not implemented")
+}
+func (UnimplementedRPCChatServer) ChatEditChatParticipantRank(context.Context, *TLChatEditChatParticipantRank) (*mtproto.MutableChat, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChatEditChatParticipantRank not implemented")
 }
 func (UnimplementedRPCChatServer) testEmbeddedByValue() {}
 
@@ -1234,6 +1250,24 @@ func _RPCChat_ChatImportChatInvite2_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RPCChat_ChatEditChatParticipantRank_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TLChatEditChatParticipantRank)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RPCChatServer).ChatEditChatParticipantRank(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RPCChat_ChatEditChatParticipantRank_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RPCChatServer).ChatEditChatParticipantRank(ctx, req.(*TLChatEditChatParticipantRank))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RPCChat_ServiceDesc is the grpc.ServiceDesc for RPCChat service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1376,6 +1410,10 @@ var RPCChat_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "chat_importChatInvite2",
 			Handler:    _RPCChat_ChatImportChatInvite2_Handler,
+		},
+		{
+			MethodName: "chat_editChatParticipantRank",
+			Handler:    _RPCChat_ChatEditChatParticipantRank_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

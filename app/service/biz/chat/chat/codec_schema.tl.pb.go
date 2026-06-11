@@ -231,6 +231,11 @@ var clazzIdRegisters2 = map[int32]func() mtproto.TLObject{
 			Constructor: -589742657,
 		}
 	},
+	2075490336: func() mtproto.TLObject { // 0x7bb57820
+		return &TLChatEditChatParticipantRank{
+			Constructor: 2075490336,
+		}
+	},
 }
 
 func NewTLObjectByClassID(classId int32) mtproto.TLObject {
@@ -2677,6 +2682,50 @@ func (m *TLChatImportChatInvite2) Decode(dBuf *mtproto.DecodeBuf) error {
 
 		m.SelfId = dBuf.Long()
 		m.Hash = dBuf.String()
+		return dBuf.GetError()
+
+	default:
+		// log.Errorf("")
+	}
+	return dBuf.GetError()
+}
+
+// TLChatEditChatParticipantRank
+///////////////////////////////////////////////////////////////////////////////
+
+func (m *TLChatEditChatParticipantRank) Encode(x *mtproto.EncodeBuf, layer int32) error {
+	switch uint32(m.Constructor) {
+	case 0x7bb57820:
+		x.UInt(0x7bb57820)
+
+		// no flags
+
+		x.Long(m.GetSelfId())
+		x.Long(m.GetChatId())
+		x.Long(m.GetParticipant())
+		x.String(m.GetRank())
+
+	default:
+		// log.Errorf("")
+	}
+
+	return nil
+}
+
+func (m *TLChatEditChatParticipantRank) CalcByteSize(layer int32) int {
+	return 0
+}
+
+func (m *TLChatEditChatParticipantRank) Decode(dBuf *mtproto.DecodeBuf) error {
+	switch uint32(m.Constructor) {
+	case 0x7bb57820:
+
+		// not has flags
+
+		m.SelfId = dBuf.Long()
+		m.ChatId = dBuf.Long()
+		m.Participant = dBuf.Long()
+		m.Rank = dBuf.String()
 		return dBuf.GetError()
 
 	default:
