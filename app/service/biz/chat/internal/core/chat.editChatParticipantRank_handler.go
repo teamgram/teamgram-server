@@ -37,7 +37,7 @@ func (c *ChatCore) ChatEditChatParticipantRank(in *chat.TLChatEditChatParticipan
 		err         error
 	)
 
-	chat2, err = c.svcCtx.Dao.GetMutableChat(c.ctx, in.ChatId, in.SelfId, in.Participant)
+	chat2, err = c.svcCtx.Dao.GetMutableChat(c.ctx, in.ChatId)
 	if err != nil {
 		c.Logger.Errorf("chat.editChatParticipantRank - error: %v", err)
 		return nil, mtproto.ErrChatIdInvalid
