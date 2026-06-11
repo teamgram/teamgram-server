@@ -13,7 +13,7 @@ Unofficial open-source [MTProto](https://core.telegram.org/mtproto) server imple
   - **Intermediate**
   - **Padded intermediate**
   - **Full**
-- **API Layer: 223**
+- **API Layer: 225**
 - **Core features**
   - **private chat**
   - **basic group**

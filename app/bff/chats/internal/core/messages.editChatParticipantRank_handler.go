@@ -32,13 +32,13 @@ func (c *ChatsCore) MessagesEditChatParticipantRank(in *mtproto.TLMessagesEditCh
 		participant = mtproto.FromInputPeer2(c.MD.UserId, in.Participant)
 	)
 
-	if peer.PeerType != mtproto.PEER_CHAT {
+	if !peer.IsChat() {
 		err := mtproto.ErrPeerIdInvalid
 		c.Logger.Errorf("messages.editChatParticipantRank - invalid peer, err: %v", err)
 		return nil, err
 	}
 
-	if participant.PeerType != mtproto.PEER_USER {
+	if !participant.IsUser() {
 		err := mtproto.ErrUserIdInvalid
 		c.Logger.Errorf("messages.editChatParticipantRank - invalid participant, err: %v", err)
 		return nil, err
