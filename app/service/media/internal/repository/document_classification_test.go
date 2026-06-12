@@ -54,6 +54,20 @@ func TestClassifyUploadedDocumentGifvRequiresMp4Transform(t *testing.T) {
 	}
 }
 
+func TestClassifyUploadedDocumentGifMimeWithoutAnimatedRequiresMp4Transform(t *testing.T) {
+	got, err := classifyUploadedDocument(uploadedDocumentForClassification(
+		"image/gif",
+		tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "5233638613358486264.tgs.json.gif"}),
+		tg.MakeTLDocumentAttributeImageSize(&tg.TLDocumentAttributeImageSize{W: 512, H: 512}),
+	))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if got.Kind != documentKindGifv || got.RenderKind != messageRenderKindVideo || got.RequiredTransform != requiredDocumentTransformGifv || !got.Video {
+		t.Fatalf("unexpected classification: %#v", got)
+	}
+}
+
 func TestClassifyUploadedDocumentMp4RequiresMp4Probe(t *testing.T) {
 	got, err := classifyUploadedDocument(uploadedDocumentForClassification("VIDEO/MP4"))
 	if err != nil {

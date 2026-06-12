@@ -223,6 +223,21 @@ func TestUploadedDocumentMediaCommitsAndProcessesByMime(t *testing.T) {
 			wantSize:      222,
 		},
 		{
+			name:     "gif without animated attribute",
+			mimeType: "image/gif",
+			fileName: "5233638613358486264.tgs.json.gif",
+			attrs: []tg.DocumentAttributeClazz{
+				tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "5233638613358486264.tgs.json.gif"}),
+				tg.MakeTLDocumentAttributeImageSize(&tg.TLDocumentAttributeImageSize{W: 512, H: 512}),
+			},
+			finalized:     testFinalizedObject("original-gif-object-no-animated", 111),
+			processed:     testProcessedDocument(t, "processed-gif-object-no-animated", "video/mp4", 222, gifAttrs, testDocumentThumbs()),
+			wantProcessor: "gif",
+			wantMime:      "video/mp4",
+			wantObjectID:  "processed-gif-object-no-animated",
+			wantSize:      222,
+		},
+		{
 			name:          "mp4",
 			mimeType:      "video/mp4",
 			fileName:      "clip.mp4",
@@ -578,6 +593,15 @@ func TestUploadedDocumentMediaViaLegacyDFSCallsLegacyWrappers(t *testing.T) {
 			attrs: []tg.DocumentAttributeClazz{
 				tg.MakeTLDocumentAttributeAnimated(&tg.TLDocumentAttributeAnimated{}),
 				tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "loop.gif"}),
+			},
+			wantGif: true,
+		},
+		{
+			name:     "gif without animated attribute",
+			mimeType: "image/gif",
+			attrs: []tg.DocumentAttributeClazz{
+				tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "loop.gif"}),
+				tg.MakeTLDocumentAttributeImageSize(&tg.TLDocumentAttributeImageSize{W: 512, H: 512}),
 			},
 			wantGif: true,
 		},

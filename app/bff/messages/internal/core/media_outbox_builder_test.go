@@ -360,6 +360,7 @@ func TestMapMediaResolveError(t *testing.T) {
 		{name: "media empty", err: tg.ErrMediaEmpty, want: tg.ErrMediaEmpty},
 		{name: "invalid uploaded file", err: mediapb.ErrMediaInvalidUploadedFile, want: tg.ErrMediaEmpty},
 		{name: "wrapped invalid uploaded file", err: errors.Join(errors.New("transform failed"), mediapb.ErrMediaInvalidUploadedFile), want: tg.ErrMediaEmpty},
+		{name: "remote invalid argument", err: errors.New("remote or network error: biz error: media: invalid argument"), want: tg.ErrMediaEmpty},
 		{name: "downstream", err: mediapb.ErrMediaDownstream, want: tg.ErrInternalServerError},
 		{name: "storage", err: mediapb.ErrMediaStorage, want: tg.ErrInternalServerError},
 		{name: "unknown", err: errors.New("boom"), want: tg.ErrInternalServerError},

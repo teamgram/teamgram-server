@@ -83,7 +83,7 @@ func classifyUploadedDocument(uploaded *tg.TLInputMediaUploadedDocument) (docume
 		}
 		return newDocumentClassification(documentKindAudio, messageRenderKindAudio, requiredDocumentTransformNone), nil
 	}
-	if mimeType == "image/gif" && attrs.animated {
+	if mimeType == "image/gif" {
 		if attrs.video {
 			return documentClassification{}, media.ErrMediaInvalidUploadedFile
 		}

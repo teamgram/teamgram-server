@@ -254,13 +254,25 @@ func mapMediaResolveError(err error) error {
 	case errors.Is(err, tg.ErrMediaEmpty):
 		return tg.ErrMediaEmpty
 	case errors.Is(err, mediapb.ErrMediaInvalidArgument),
+		isRemoteMediaError(err, mediapb.ErrMediaInvalidArgument),
 		errors.Is(err, mediapb.ErrMediaInvalidUploadedFile),
+		isRemoteMediaError(err, mediapb.ErrMediaInvalidUploadedFile),
 		errors.Is(err, mediapb.ErrMediaChecksumInvalid),
+		isRemoteMediaError(err, mediapb.ErrMediaChecksumInvalid),
 		errors.Is(err, mediapb.ErrPhotoNotFound),
+		isRemoteMediaError(err, mediapb.ErrPhotoNotFound),
 		errors.Is(err, mediapb.ErrDocumentNotFound),
+		isRemoteMediaError(err, mediapb.ErrDocumentNotFound),
 		errors.Is(err, mediapb.ErrMediaBlocked):
 		return tg.ErrMediaEmpty
 	default:
 		return tg.ErrInternalServerError
 	}
+}
+
+func isRemoteMediaError(err error, target error) bool {
+	if err == nil || target == nil {
+		return false
+	}
+	return strings.Contains(err.Error(), "biz error: "+target.Error())
 }

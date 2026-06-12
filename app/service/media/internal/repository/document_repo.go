@@ -619,15 +619,7 @@ func (r *Repository) saveDocumentAggregateWithPaths(ctx context.Context, uploade
 }
 
 func isAnimatedGif(uploaded *tg.TLInputMediaUploadedDocument) bool {
-	if uploaded.MimeType != "image/gif" {
-		return false
-	}
-	for _, attr := range uploaded.Attributes {
-		if _, ok := attr.(*tg.TLDocumentAttributeAnimated); ok {
-			return true
-		}
-	}
-	return false
+	return uploaded != nil && strings.EqualFold(strings.TrimSpace(uploaded.MimeType), "image/gif")
 }
 
 func uploadedFileName(uploaded *tg.TLInputMediaUploadedDocument) string {

@@ -35,6 +35,7 @@ func TestWrapDfsUploadErrorMapping(t *testing.T) {
 		want error
 	}{
 		{name: "invalid argument", err: dfs.ErrDfsInvalidArgument, want: media.ErrMediaInvalidArgument},
+		{name: "remote invalid argument", err: errors.New("remote or network error: biz error: dfs: invalid argument"), want: media.ErrMediaInvalidArgument},
 		{name: "checksum invalid", err: dfs.ErrDfsChecksumInvalid, want: media.ErrMediaChecksumInvalid},
 		{name: "invalid uploaded file", err: dfs.ErrDfsInvalidFilePart, want: media.ErrMediaInvalidUploadedFile},
 		{name: "missing upload part", err: &dfs.MissingUploadPartError{Part: 3}, want: media.ErrMediaInvalidUploadedFile},

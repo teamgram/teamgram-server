@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	dfsapi "github.com/teamgram/teamgram-server/v2/app/service/dfs/dfs"
 	"github.com/teamgram/teamgram-server/v2/app/service/media/internal/repository/model"
@@ -52,7 +53,7 @@ func wrapDfsUploadError(op string, err error) error {
 	if err == nil {
 		return nil
 	}
-	if errors.Is(err, dfsapi.ErrDfsInvalidArgument) {
+	if errors.Is(err, dfsapi.ErrDfsInvalidArgument) || isRemoteDfsError(err, dfsapi.ErrDfsInvalidArgument) {
 		return wrapMediaInvalidArgument(op, err)
 	}
 	if errors.Is(err, dfsapi.ErrDfsChecksumInvalid) {
@@ -69,6 +70,13 @@ func wrapDfsUploadError(op string, err error) error {
 		return wrapMediaInvalidUploadedFile(op, err)
 	}
 	return wrapMediaDownstream(op, err)
+}
+
+func isRemoteDfsError(err error, target error) bool {
+	if err == nil || target == nil {
+		return false
+	}
+	return strings.Contains(err.Error(), "biz error: "+target.Error())
 }
 
 func isServiceError(err error) bool {
