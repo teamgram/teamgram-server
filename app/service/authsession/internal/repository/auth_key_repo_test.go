@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/teamgram/marmota/pkg/stores/sqlx"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
@@ -269,6 +270,36 @@ func TestQueryAuthKeyEvictsExpiredTempKey(t *testing.T) {
 	_, err := repo.QueryAuthKey(context.Background(), 1001)
 	if !errors.Is(err, authsession.ErrAuthKeyNotFound) {
 		t.Fatalf("QueryAuthKey() error = %v, want ErrAuthKeyNotFound", err)
+	}
+}
+
+func TestQueryAuthKeyKeepsUnexpiredTempKeyWhenLifecycleMarkerMissing(t *testing.T) {
+	repo := &Repository{
+		model: &model.Models{
+			AuthKeysModel: fakeAuthKeysModel{
+				findOneByAuthKeyId: func(ctx context.Context, authKeyId int64) (*model.AuthKeys, error) {
+					return &model.AuthKeys{
+						AuthKeyId:   authKeyId,
+						Body:        "YWJj",
+						AuthKeyType: tg.AuthKeyTypeTemp,
+						ExpiresAt:   time.Now().UTC().Unix() + 3600,
+					}, nil
+				},
+			},
+		},
+		authKeyLifecycleModel: &fakeAuthKeyLifecycleModel{
+			isActive: func(ctx context.Context, authKeyId int64) (bool, error) {
+				return false, nil
+			},
+		},
+	}
+
+	got, err := repo.QueryAuthKey(context.Background(), 1001)
+	if err != nil {
+		t.Fatalf("QueryAuthKey() error = %v", err)
+	}
+	if got.AuthKeyId != 1001 {
+		t.Fatalf("got auth key id = %d, want 1001", got.AuthKeyId)
 	}
 }
 

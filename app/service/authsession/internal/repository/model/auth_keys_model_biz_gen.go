@@ -52,10 +52,10 @@ func NewAuthKeysTxModel(tx *sqlx.Tx) AuthKeysTxModel {
 }
 
 // InsertIgnore
-// insert ignore into auth_keys(auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id) values (:auth_key_id, :body, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id)
+// insert ignore into auth_keys(auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id, expires_at) values (:auth_key_id, :body, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id, :expires_at)
 func (m *defaultAuthKeysModel) InsertIgnore(ctx context.Context, data *AuthKeys) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert ignore into auth_keys(auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id) values (:auth_key_id, :body, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id)"
+		query = "insert ignore into auth_keys(auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id, expires_at) values (:auth_key_id, :body, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id, :expires_at)"
 		r     sql.Result
 	)
 
@@ -81,10 +81,10 @@ func (m *defaultAuthKeysModel) InsertIgnore(ctx context.Context, data *AuthKeys)
 }
 
 // InsertIgnore
-// insert ignore into auth_keys(auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id) values (:auth_key_id, :body, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id)
+// insert ignore into auth_keys(auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id, expires_at) values (:auth_key_id, :body, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id, :expires_at)
 func (m *defaultAuthKeysTxModel) InsertIgnore(data *AuthKeys) (lastInsertId, rowsAffected int64, err error) {
 	var (
-		query = "insert ignore into auth_keys(auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id) values (:auth_key_id, :body, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id)"
+		query = "insert ignore into auth_keys(auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id, expires_at) values (:auth_key_id, :body, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id, :expires_at)"
 		r     sql.Result
 	)
 
@@ -108,17 +108,17 @@ func (m *defaultAuthKeysTxModel) InsertIgnore(data *AuthKeys) (lastInsertId, row
 }
 
 // SelectByAuthKeyId
-// select id, auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id from auth_keys where auth_key_id = :auth_key_id
+// select id, auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id, expires_at from auth_keys where auth_key_id = :auth_key_id
 func (m *defaultAuthKeysModel) SelectByAuthKeyId(ctx context.Context, authKeyId int64) (rValue *AuthKeys, err error) {
 
 	return m.FindOneByAuthKeyId(ctx, authKeyId)
 }
 
 // SelectByAuthKeyId
-// select id, auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id from auth_keys where auth_key_id = :auth_key_id
+// select id, auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id, expires_at from auth_keys where auth_key_id = :auth_key_id
 func (m *defaultAuthKeysTxModel) SelectByAuthKeyId(authKeyId int64) (rValue *AuthKeys, err error) {
 	var (
-		query = "select id, auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id from auth_keys where auth_key_id = ?"
+		query = "select id, auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id, expires_at from auth_keys where auth_key_id = ?"
 		do    = &AuthKeys{}
 	)
 	err = m.tx.QueryRowPartial(do, query, authKeyId)

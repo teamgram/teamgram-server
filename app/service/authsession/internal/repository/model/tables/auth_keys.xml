@@ -3,16 +3,16 @@
     <operation name="InsertIgnore">
         <sql>
             INSERT IGNORE INTO auth_keys
-                (auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id)
+                (auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id, expires_at)
             VALUES
-                (:auth_key_id, :body, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id)
+                (:auth_key_id, :body, :auth_key_type, :perm_auth_key_id, :temp_auth_key_id, :media_temp_auth_key_id, :expires_at)
         </sql>
     </operation>
 
     <operation name="SelectByAuthKeyId" cache="get">
         <sql>
             SELECT
-                id, auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id
+                id, auth_key_id, body, auth_key_type, perm_auth_key_id, temp_auth_key_id, media_temp_auth_key_id, expires_at
             FROM
                 auth_keys
             WHERE

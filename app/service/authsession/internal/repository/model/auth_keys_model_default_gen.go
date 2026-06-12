@@ -68,6 +68,7 @@ type (
 		PermAuthKeyId      int64  `db:"perm_auth_key_id" json:"perm_auth_key_id"`
 		TempAuthKeyId      int64  `db:"temp_auth_key_id" json:"temp_auth_key_id"`
 		MediaTempAuthKeyId int64  `db:"media_temp_auth_key_id" json:"media_temp_auth_key_id"`
+		ExpiresAt          int64  `db:"expires_at" json:"expires_at"`
 		Deleted            bool   `db:"deleted" json:"deleted"`
 	}
 )
@@ -89,11 +90,11 @@ func newAuthKeysModel(db *sqlx.DB, c cache.CacheConf) *defaultAuthKeysModel {
 
 func (m *defaultAuthKeysModel) Insert2(ctx context.Context, data *AuthKeys) (sql.Result, error) {
 	tableName := "auth_keys"
-	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?)", tableName, authKeysRowsExpectAutoSet)
+	query := fmt.Sprintf("insert into `%s` (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", tableName, authKeysRowsExpectAutoSet)
 
 	keys := m.uniqueCacheKeys(data)
 	lastInsertId, rowsAffected, err := m.Exec(ctx, func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
-		r, err := conn.Exec(ctx, query, data.AuthKeyId, data.Body, data.AuthKeyType, data.PermAuthKeyId, data.TempAuthKeyId, data.MediaTempAuthKeyId, data.Deleted)
+		r, err := conn.Exec(ctx, query, data.AuthKeyId, data.Body, data.AuthKeyType, data.PermAuthKeyId, data.TempAuthKeyId, data.MediaTempAuthKeyId, data.ExpiresAt, data.Deleted)
 		if err != nil {
 			return 0, 0, fmt.Errorf("auth_keys.Insert2 exec: %w", err)
 		}
@@ -202,7 +203,7 @@ func (m *defaultAuthKeysModel) Update2(ctx context.Context, data *AuthKeys) erro
 	keys := m.cacheKeys(data)
 	keys = append(keys, m.cacheKeys(oldData)...)
 	_, _, err = m.Exec(ctx, func(ctx context.Context, conn *sqlx.DB) (int64, int64, error) {
-		r, err := conn.Exec(ctx, query, data.AuthKeyId, data.Body, data.AuthKeyType, data.PermAuthKeyId, data.TempAuthKeyId, data.MediaTempAuthKeyId, data.Deleted, data.Id)
+		r, err := conn.Exec(ctx, query, data.AuthKeyId, data.Body, data.AuthKeyType, data.PermAuthKeyId, data.TempAuthKeyId, data.MediaTempAuthKeyId, data.ExpiresAt, data.Deleted, data.Id)
 		if err != nil {
 			return 0, 0, fmt.Errorf("auth_keys.Update2 exec: %w", err)
 		}

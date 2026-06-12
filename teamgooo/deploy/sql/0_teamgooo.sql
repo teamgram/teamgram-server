@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS `auth_keys` (
   `perm_auth_key_id` bigint NOT NULL DEFAULT '0',
   `temp_auth_key_id` bigint NOT NULL DEFAULT '0',
   `media_temp_auth_key_id` bigint NOT NULL DEFAULT '0',
+  `expires_at` bigint NOT NULL DEFAULT '0',
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

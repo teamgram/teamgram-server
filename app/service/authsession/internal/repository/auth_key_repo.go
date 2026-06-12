@@ -18,6 +18,7 @@ package repository
 import (
 	"context"
 	"encoding/base64"
+	"time"
 
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/authsession"
 	"github.com/teamgram/teamgram-server/v2/app/service/authsession/internal/repository/model"
@@ -76,6 +77,12 @@ func (r *Repository) QueryAuthKey(ctx context.Context, authKeyId int64) (*tg.Aut
 	}
 
 	if isTempAuthKeyType(keyInfo.AuthKeyType) {
+		if key.ExpiresAt > 0 {
+			if time.Now().UTC().Unix() >= key.ExpiresAt {
+				return nil, authsession.ErrAuthKeyNotFound
+			}
+			return keyInfo, nil
+		}
 		active, err := r.checkAuthKeyActive(ctx, authKeyId)
 		if err != nil {
 			return nil, wrapStorage(err)
@@ -129,16 +136,23 @@ func (r *Repository) ExpandAuthKeyIds(ctx context.Context, authKeyIds []int64) (
 	return expandedKeyIds, nil
 }
 
-// SaveAuthKey persists an auth key and, for temp / media-temp keys, registers
-// a TTL entry in the lifecycle store so that QueryAuthKey lazily evicts
-// expired keys without touching the underlying table.
+// SaveAuthKey persists an auth key and, for temp / media-temp keys, stores a
+// durable expires_at timestamp. The lifecycle store remains a compatibility
+// fallback for legacy rows whose expires_at is still zero.
 //
 // expiredIn is interpreted as seconds, matching the MTProto semantics for
 // temp keys. A non-positive value falls back to defaultAuthKeyTTL (7 days)
 // to bound orphaned rows even when the caller forgets to supply one.
-// Permanent keys do not register a TTL — they live until explicit revocation.
+// Permanent keys do not register a TTL; they live until explicit revocation.
 func (r *Repository) SaveAuthKey(ctx context.Context, authKey *tg.AuthKeyInfo, expiredIn int32) error {
 	key := fromAuthKeyInfo(authKey)
+	ttl := int(expiredIn)
+	if isTempAuthKeyType(authKey.AuthKeyType) {
+		if ttl <= 0 {
+			ttl = defaultAuthKeyTTL
+		}
+		key.ExpiresAt = time.Now().UTC().Unix() + int64(ttl)
+	}
 	if _, _, err := r.model.AuthKeysModel.InsertIgnore(ctx, key); err != nil {
 		return wrapStorage(err)
 	}
@@ -147,10 +161,6 @@ func (r *Repository) SaveAuthKey(ctx context.Context, authKey *tg.AuthKeyInfo, e
 		return nil
 	}
 
-	ttl := int(expiredIn)
-	if ttl <= 0 {
-		ttl = defaultAuthKeyTTL
-	}
 	if err := r.activateAuthKey(ctx, authKey.AuthKeyId, ttl); err != nil {
 		return wrapStorage(err)
 	}

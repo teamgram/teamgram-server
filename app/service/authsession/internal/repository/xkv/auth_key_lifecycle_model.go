@@ -22,13 +22,13 @@ import (
 	"github.com/teamgram/marmota/pkg/stores/kv"
 )
 
-// AuthKeyLifecycleModel tracks the validity window of a temporary auth key.
+// AuthKeyLifecycleModel tracks the legacy Redis validity marker for a
+// temporary auth key.
 //
-// MTProto temp / media-temp keys must expire after the negotiated duration.
-// The auth_keys table itself does not carry an expires_at column, so we
-// piggyback on the kv store: the presence of the lifecycle entry means the
-// key is still alive, and the kv TTL guarantees automatic cleanup. Permanent
-// keys are not tracked — they are valid until explicitly revoked.
+// MTProto temp / media-temp keys now persist expires_at in the auth_keys table
+// so reconnect survives Redis loss. This model is retained for compatibility
+// with existing rows whose expires_at is still zero. Permanent keys are not
+// tracked; they are valid until explicitly revoked.
 type AuthKeyLifecycleModel interface {
 	// Activate marks the key as alive for the given TTL (in seconds).
 	// A non-positive TTL is rejected to avoid accidentally writing a key
