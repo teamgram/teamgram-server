@@ -56,6 +56,26 @@ func TestValidateServiceActionPolicyAllowsChatEditTitleAfterOwnerMutation(t *tes
 	}
 }
 
+func TestValidateServiceActionPolicyAllowsChatEditPhotoAfterOwnerMutation(t *testing.T) {
+	err := validateServiceActionPolicy(
+		tg.MakeTLMessageActionChatEditPhoto(&tg.TLMessageActionChatEditPhoto{Photo: tg.MakeTLPhotoEmpty(&tg.TLPhotoEmpty{})}),
+		payload.PeerTypeChat,
+		55,
+		1001,
+		nil,
+	)
+	if err != nil {
+		t.Fatalf("validateServiceActionPolicy() error = %v", err)
+	}
+}
+
+func TestValidateServiceActionPolicyAllowsChatDeletePhotoAfterOwnerMutation(t *testing.T) {
+	err := validateServiceActionPolicy(tg.MakeTLMessageActionChatDeletePhoto(&tg.TLMessageActionChatDeletePhoto{}), payload.PeerTypeChat, 55, 1001, nil)
+	if err != nil {
+		t.Fatalf("validateServiceActionPolicy() error = %v", err)
+	}
+}
+
 func TestValidateServiceActionPolicyRejectsStateClaim(t *testing.T) {
 	err := validateServiceActionPolicy(tg.MakeTLMessageActionPinMessage(&tg.TLMessageActionPinMessage{}), payload.PeerTypeChat, 55, 1001, nil)
 	if err == nil {
