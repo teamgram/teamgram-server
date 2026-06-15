@@ -21,6 +21,8 @@ import (
 	dialogpb "github.com/teamgram/teamgram-server/v2/app/service/biz/dialog/dialog"
 	userclient "github.com/teamgram/teamgram-server/v2/app/service/biz/user/client"
 	userpb "github.com/teamgram/teamgram-server/v2/app/service/biz/user/user"
+	mediaclient "github.com/teamgram/teamgram-server/v2/app/service/media/client"
+	mediapb "github.com/teamgram/teamgram-server/v2/app/service/media/media"
 	"github.com/teamgram/teamgram-server/v2/pkg/net/kitex/metadata"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
@@ -34,6 +36,7 @@ type chatsFakeChatClient struct {
 	getProjection  func(context.Context, *chatpb.TLChatGetChatProjectionBundle) (*chatpb.ChatProjectionBundle, error)
 	editAbout      func(context.Context, *chatpb.TLChatEditChatAbout) (*tg.MutableChat, error)
 	editTitle      func(context.Context, *chatpb.TLChatEditChatTitle) (*tg.MutableChat, error)
+	editPhoto      func(context.Context, *chatpb.TLChatEditChatPhoto) (*tg.MutableChat, error)
 	editDefault    func(context.Context, *chatpb.TLChatEditChatDefaultBannedRights) (*tg.MutableChat, error)
 	deleteChat     func(context.Context, *chatpb.TLChatDeleteChat) (*tg.MutableChat, error)
 	editAdmin      func(context.Context, *chatpb.TLChatEditChatAdmin) (*tg.MutableChat, error)
@@ -57,6 +60,10 @@ func (f *chatsFakeChatClient) ChatEditChatAbout(ctx context.Context, in *chatpb.
 
 func (f *chatsFakeChatClient) ChatEditChatTitle(ctx context.Context, in *chatpb.TLChatEditChatTitle) (*tg.MutableChat, error) {
 	return f.editTitle(ctx, in)
+}
+
+func (f *chatsFakeChatClient) ChatEditChatPhoto(ctx context.Context, in *chatpb.TLChatEditChatPhoto) (*tg.MutableChat, error) {
+	return f.editPhoto(ctx, in)
 }
 
 func (f *chatsFakeChatClient) ChatEditChatDefaultBannedRights(ctx context.Context, in *chatpb.TLChatEditChatDefaultBannedRights) (*tg.MutableChat, error) {
@@ -98,6 +105,21 @@ type chatsFakeMsgClient struct {
 
 func (f *chatsFakeMsgClient) MsgSendMessage(ctx context.Context, in *msgpb.TLMsgSendMessage) (*tg.Updates, error) {
 	return f.sendMessage(ctx, in)
+}
+
+type chatsFakeMediaClient struct {
+	mediaclient.MediaClient
+
+	uploadProfilePhotoFile func(context.Context, *mediapb.TLMediaUploadProfilePhotoFile) (*tg.Photo, error)
+	getPhoto               func(context.Context, *mediapb.TLMediaGetPhoto) (*tg.Photo, error)
+}
+
+func (f *chatsFakeMediaClient) MediaUploadProfilePhotoFile(ctx context.Context, in *mediapb.TLMediaUploadProfilePhotoFile) (*tg.Photo, error) {
+	return f.uploadProfilePhotoFile(ctx, in)
+}
+
+func (f *chatsFakeMediaClient) MediaGetPhoto(ctx context.Context, in *mediapb.TLMediaGetPhoto) (*tg.Photo, error) {
+	return f.getPhoto(ctx, in)
 }
 
 type chatsFakeDialogClient struct {
@@ -464,6 +486,144 @@ func TestMessagesEditChatTitleMapsRequestAndUpdates(t *testing.T) {
 	}
 	if action.Title != "new" {
 		t.Fatalf("chat edit title action title = %q, want new", action.Title)
+	}
+}
+
+func TestMessagesEditChatPhotoUploadsPhotoAndSendsServiceMessage(t *testing.T) {
+	var uploadReq *mediapb.TLMediaUploadProfilePhotoFile
+	var editReq *chatpb.TLChatEditChatPhoto
+	var sent *msgpb.TLMsgSendMessage
+	start := 3.5
+	photo := tg.MakeTLPhoto(&tg.TLPhoto{Id: 7001}).ToPhoto()
+	msgUpdates := testMsgResponseUpdates()
+	c := newChatsCoreWithRepo(&repository.Repository{
+		ChatClient: &chatsFakeChatClient{
+			editPhoto: func(_ context.Context, in *chatpb.TLChatEditChatPhoto) (*tg.MutableChat, error) {
+				editReq = in
+				return testMutableChat(in.ChatId, "chat"), nil
+			},
+		},
+		MediaClient: &chatsFakeMediaClient{
+			uploadProfilePhotoFile: func(_ context.Context, in *mediapb.TLMediaUploadProfilePhotoFile) (*tg.Photo, error) {
+				uploadReq = in
+				return photo, nil
+			},
+		},
+		MsgClient: &chatsFakeMsgClient{
+			sendMessage: func(_ context.Context, in *msgpb.TLMsgSendMessage) (*tg.Updates, error) {
+				sent = in
+				return msgUpdates, nil
+			},
+		},
+	}, 100)
+
+	r, err := c.MessagesEditChatPhoto(&tg.TLMessagesEditChatPhoto{
+		ChatId: 42,
+		Photo: tg.MakeTLInputChatUploadedPhoto(&tg.TLInputChatUploadedPhoto{
+			File:         tg.MakeTLInputFile(&tg.TLInputFile{Id: 77}),
+			Video:        tg.MakeTLInputFile(&tg.TLInputFile{Id: 88}),
+			VideoStartTs: &start,
+		}),
+	})
+	if err != nil {
+		t.Fatalf("MessagesEditChatPhoto error = %v", err)
+	}
+	if r != msgUpdates {
+		t.Fatalf("reply updates = %#v, want msg updates envelope %#v", r, msgUpdates)
+	}
+	if uploadReq == nil || uploadReq.OwnerId != 9001 || uploadReq.File == nil || uploadReq.Video == nil || uploadReq.VideoStartTs == nil || *uploadReq.VideoStartTs != start {
+		t.Fatalf("upload request = %+v, want owner auth key and uploaded photo files", uploadReq)
+	}
+	if editReq == nil || editReq.ChatId != 42 || editReq.EditUserId != 100 || editReq.ChatPhoto != photo.Clazz {
+		t.Fatalf("edit request = %+v, want chat_id=42 edit_user_id=100 uploaded photo", editReq)
+	}
+	if sent == nil || sent.UserId != 100 || sent.AuthKeyId != 9001 || sent.PeerType != payload.PeerTypeChat || sent.PeerId != 42 || len(sent.Message) != 1 {
+		t.Fatalf("send request = %+v, want one chat service message to chat 42", sent)
+	}
+	service, ok := sent.Message[0].Message.(*tg.TLMessageService)
+	if !ok {
+		t.Fatalf("outbox message = %T, want messageService", sent.Message[0].Message)
+	}
+	action, ok := service.Action.(*tg.TLMessageActionChatEditPhoto)
+	if !ok {
+		t.Fatalf("service action = %T, want messageActionChatEditPhoto", service.Action)
+	}
+	if action.Photo != photo.Clazz {
+		t.Fatalf("chat edit photo action photo = %#v, want uploaded photo %#v", action.Photo, photo.Clazz)
+	}
+}
+
+func TestMessagesEditChatPhotoReferencesExistingPhotoAndDeletesEmptyPhoto(t *testing.T) {
+	var getReq *mediapb.TLMediaGetPhoto
+	var editPhotos []tg.PhotoClazz
+	photo := tg.MakeTLPhoto(&tg.TLPhoto{Id: 7002}).ToPhoto()
+	c := newChatsCoreWithRepo(&repository.Repository{
+		ChatClient: &chatsFakeChatClient{
+			editPhoto: func(_ context.Context, in *chatpb.TLChatEditChatPhoto) (*tg.MutableChat, error) {
+				editPhotos = append(editPhotos, in.ChatPhoto)
+				return testMutableChat(in.ChatId, "chat"), nil
+			},
+		},
+		MediaClient: &chatsFakeMediaClient{
+			getPhoto: func(_ context.Context, in *mediapb.TLMediaGetPhoto) (*tg.Photo, error) {
+				getReq = in
+				return photo, nil
+			},
+		},
+		MsgClient: &chatsFakeMsgClient{
+			sendMessage: func(context.Context, *msgpb.TLMsgSendMessage) (*tg.Updates, error) {
+				return testMsgResponseUpdates(), nil
+			},
+		},
+	}, 100)
+
+	_, err := c.MessagesEditChatPhoto(&tg.TLMessagesEditChatPhoto{
+		ChatId: 42,
+		Photo: tg.MakeTLInputChatPhoto(&tg.TLInputChatPhoto{
+			Id: tg.MakeTLInputPhoto(&tg.TLInputPhoto{Id: 7002}),
+		}),
+	})
+	if err != nil {
+		t.Fatalf("MessagesEditChatPhoto existing photo error = %v", err)
+	}
+	_, err = c.MessagesEditChatPhoto(&tg.TLMessagesEditChatPhoto{
+		ChatId: 42,
+		Photo: tg.MakeTLInputChatPhoto(&tg.TLInputChatPhoto{
+			Id: tg.MakeTLInputPhotoEmpty(&tg.TLInputPhotoEmpty{}),
+		}),
+	})
+	if err != nil {
+		t.Fatalf("MessagesEditChatPhoto empty input photo error = %v", err)
+	}
+	if getReq == nil || getReq.PhotoId != 7002 {
+		t.Fatalf("get photo request = %+v, want photo_id=7002", getReq)
+	}
+	if len(editPhotos) != 2 || editPhotos[0] != photo.Clazz {
+		t.Fatalf("edit photos = %#v, want existing photo followed by empty photo", editPhotos)
+	}
+	if _, ok := editPhotos[1].(*tg.TLPhotoEmpty); !ok {
+		t.Fatalf("delete edit photo = %T, want photoEmpty", editPhotos[1])
+	}
+}
+
+func TestMapEditChatPhotoMediaError(t *testing.T) {
+	tests := []struct {
+		name string
+		err  error
+		want error
+	}{
+		{name: "photo not found", err: mediapb.ErrPhotoNotFound, want: tg.ErrPhotoIdInvalid},
+		{name: "invalid upload", err: mediapb.ErrMediaInvalidUploadedFile, want: tg.ErrPhotoInvalid},
+		{name: "remote invalid upload", err: errors.New("remote or network error: biz error: media: invalid uploaded file"), want: tg.ErrPhotoInvalid},
+		{name: "remote downstream", err: errors.New("remote or network error: biz error: media: downstream failure"), want: tg.ErrInternalServerError},
+		{name: "storage", err: mediapb.ErrMediaStorage, want: tg.ErrInternalServerError},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := mapEditChatPhotoMediaError(tt.err); got != tt.want {
+				t.Fatalf("mapEditChatPhotoMediaError(%v) = %v, want %v", tt.err, got, tt.want)
+			}
+		})
 	}
 }
 

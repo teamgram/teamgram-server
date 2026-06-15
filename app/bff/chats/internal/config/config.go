@@ -24,6 +24,7 @@ type Config struct {
 	kitex.RpcServerConf
 	ChatClient   kitex.RpcClientConf
 	DialogClient kitex.RpcClientConf
+	MediaClient  kitex.RpcClientConf
 	MsgClient    kitex.RpcClientConf
 	UserClient   kitex.RpcClientConf
 }

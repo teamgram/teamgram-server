@@ -66,6 +66,12 @@ func TestBuildBizBackedConfigSetsConcreteKitexClients(t *testing.T) {
 	if chats.MsgClient.ServiceName != "RPCMsg" {
 		t.Fatalf("expected chats msg client service name RPCMsg, got %#v", chats.MsgClient)
 	}
+	if chats.MediaClient.DestService != "service.media" {
+		t.Fatalf("expected chats media client dest service to be forwarded, got %#v", chats.MediaClient)
+	}
+	if chats.MediaClient.ServiceName != "RPCMedia" {
+		t.Fatalf("expected chats media client service name RPCMedia, got %#v", chats.MediaClient)
+	}
 
 	messages := buildMessagesConfig(src)
 	if messages.ChatClient.DestService != "service.biz_service" {

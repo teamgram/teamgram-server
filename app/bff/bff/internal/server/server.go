@@ -103,6 +103,7 @@ func buildChatsConfig(c config.Config) chatshelper.Config {
 		RpcServerConf: c.RpcServerConf,
 		ChatClient:    withServiceName(c.BizServiceClient, "RPCChat"),
 		DialogClient:  withServiceName(c.BizServiceClient, "RPCDialog"),
+		MediaClient:   withServiceName(c.MediaClient, "RPCMedia"),
 		MsgClient:     withServiceName(c.MsgClient, "RPCMsg"),
 		UserClient:    withServiceName(c.BizServiceClient, "RPCUser"),
 	}
