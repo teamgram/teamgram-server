@@ -303,6 +303,88 @@ func TestQueryAuthKeyKeepsUnexpiredTempKeyWhenLifecycleMarkerMissing(t *testing.
 	}
 }
 
+func TestQueryAuthKeyKeepsExpiredBoundTempKey(t *testing.T) {
+	const (
+		tempAuthKeyId = int64(1001)
+		permAuthKeyId = int64(2002)
+	)
+	repo := &Repository{
+		model: &model.Models{
+			AuthKeysModel: fakeAuthKeysModel{
+				findOneByAuthKeyId: func(ctx context.Context, authKeyId int64) (*model.AuthKeys, error) {
+					switch authKeyId {
+					case tempAuthKeyId:
+						return &model.AuthKeys{
+							AuthKeyId:     tempAuthKeyId,
+							Body:          "YWJj",
+							AuthKeyType:   tg.AuthKeyTypeTemp,
+							PermAuthKeyId: permAuthKeyId,
+							ExpiresAt:     time.Now().UTC().Unix() - 60,
+						}, nil
+					case permAuthKeyId:
+						return &model.AuthKeys{
+							AuthKeyId:     permAuthKeyId,
+							Body:          "ZGVm",
+							AuthKeyType:   tg.AuthKeyTypePerm,
+							PermAuthKeyId: permAuthKeyId,
+						}, nil
+					default:
+						t.Fatalf("unexpected auth_key_id = %d", authKeyId)
+						return nil, nil
+					}
+				},
+			},
+		},
+	}
+
+	got, err := repo.QueryAuthKey(context.Background(), tempAuthKeyId)
+	if err != nil {
+		t.Fatalf("QueryAuthKey() error = %v", err)
+	}
+	if got.AuthKeyId != tempAuthKeyId || got.PermAuthKeyId != permAuthKeyId {
+		t.Fatalf("QueryAuthKey() = %#v, want temp key bound to perm key", got)
+	}
+}
+
+func TestQueryAuthKeyRejectsExpiredTempKeyWhenPermKeyMissing(t *testing.T) {
+	const (
+		tempAuthKeyId = int64(1001)
+		permAuthKeyId = int64(2002)
+	)
+	repo := &Repository{
+		model: &model.Models{
+			AuthKeysModel: fakeAuthKeysModel{
+				findOneByAuthKeyId: func(ctx context.Context, authKeyId int64) (*model.AuthKeys, error) {
+					switch authKeyId {
+					case tempAuthKeyId:
+						return &model.AuthKeys{
+							AuthKeyId:     tempAuthKeyId,
+							Body:          "YWJj",
+							AuthKeyType:   tg.AuthKeyTypeTemp,
+							PermAuthKeyId: permAuthKeyId,
+							ExpiresAt:     time.Now().UTC().Unix() - 60,
+						}, nil
+					case permAuthKeyId:
+						return nil, &model.NotFoundError{
+							Resource: "auth_keys",
+							Key:      "auth_key_id=2002",
+							Cause:    model.ErrNotFound,
+						}
+					default:
+						t.Fatalf("unexpected auth_key_id = %d", authKeyId)
+						return nil, nil
+					}
+				},
+			},
+		},
+	}
+
+	_, err := repo.QueryAuthKey(context.Background(), tempAuthKeyId)
+	if !errors.Is(err, authsession.ErrAuthKeyNotFound) {
+		t.Fatalf("QueryAuthKey() error = %v, want ErrAuthKeyNotFound", err)
+	}
+}
+
 func TestQueryAuthKeySkipsLifecycleForPerm(t *testing.T) {
 	repo := &Repository{
 		model: &model.Models{

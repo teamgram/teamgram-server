@@ -79,7 +79,10 @@ func (r *Repository) QueryAuthKey(ctx context.Context, authKeyId int64) (*tg.Aut
 	if isTempAuthKeyType(keyInfo.AuthKeyType) {
 		if key.ExpiresAt > 0 {
 			if time.Now().UTC().Unix() >= key.ExpiresAt {
-				return nil, authsession.ErrAuthKeyNotFound
+				if err := r.allowExpiredBoundTempAuthKey(ctx, keyInfo); err != nil {
+					return nil, err
+				}
+				return keyInfo, nil
 			}
 			return keyInfo, nil
 		}
@@ -92,6 +95,24 @@ func (r *Repository) QueryAuthKey(ctx context.Context, authKeyId int64) (*tg.Aut
 		}
 	}
 	return keyInfo, nil
+}
+
+func (r *Repository) allowExpiredBoundTempAuthKey(ctx context.Context, keyInfo *tg.AuthKeyInfo) error {
+	if keyInfo.PermAuthKeyId == 0 {
+		return authsession.ErrAuthKeyNotFound
+	}
+
+	permKey, err := r.model.AuthKeysModel.FindOneByAuthKeyId(ctx, keyInfo.PermAuthKeyId)
+	if err != nil {
+		if isNotFound(err) {
+			return authsession.ErrAuthKeyNotFound
+		}
+		return wrapStorage(err)
+	}
+	if permKey == nil || permKey.AuthKeyType != tg.AuthKeyTypePerm {
+		return authsession.ErrAuthKeyNotFound
+	}
+	return nil
 }
 
 func (r *Repository) ListAuthKeysByIds(ctx context.Context, authKeyIds []int64) (map[int64]*tg.AuthKeyInfo, error) {
