@@ -18,6 +18,7 @@
 package core
 
 import (
+	"github.com/teamgram/teamgram-server/v2/app/service/mediaprocessor/internal/processor"
 	"github.com/teamgram/teamgram-server/v2/app/service/mediaprocessor/mediaprocessor"
 )
 
@@ -35,7 +36,11 @@ func (c *MediaProcessorCore) MediaProcessorProcessMp4(in *mediaprocessor.TLMedia
 	if err != nil {
 		return nil, err
 	}
-	attributes, err := encodeVideoAttributes(metadata, in.FileName, false)
+	sourceAttrs, err := processor.DecodeDocumentAttributes(in.Attributes)
+	if err != nil {
+		return nil, err
+	}
+	attributes, err := encodeVideoAttributes(metadata, in.FileName, false, sourceAttrs)
 	if err != nil {
 		return nil, err
 	}

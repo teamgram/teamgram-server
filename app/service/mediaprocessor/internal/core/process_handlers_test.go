@@ -14,6 +14,8 @@ import (
 	"github.com/teamgram/teamgram-server/v2/app/service/mediaprocessor/mediaprocessor"
 	"github.com/teamgram/teamgram-server/v2/pkg/media/ffmpeg2"
 	"github.com/teamgram/teamgram-server/v2/pkg/media/imaging2"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/bin"
+	"github.com/teamgram/teamgram-server/v2/pkg/proto/iface"
 	"github.com/teamgram/teamgram-server/v2/pkg/proto/tg"
 )
 
@@ -291,6 +293,46 @@ func TestProcessMp4ProbeCoverFailureIsNonFatal(t *testing.T) {
 	assertAttributes(t, out.Attributes, false, "video.mp4")
 }
 
+func TestProcessMp4PreservesRoundMessageAttribute(t *testing.T) {
+	original := []byte("original-mp4")
+	dfsFake := &fakeDFS{readBytes: original, putResults: []*dfs.FileFinalizedObject{
+		dfs.MakeTLFileFinalizedObject(&dfs.TLFileFinalizedObject{ObjectId: "thumb-object"}).ToFileFinalizedObject(),
+	}}
+	procFake := &fakeProcessor{
+		metadata: &ffmpeg2.VideoMetadata{Width: 400, Height: 400, Duration: 3},
+		cover:    []byte("cover"),
+	}
+	c := New(context.Background(), &svc.ServiceContext{DfsClient: dfsFake, Processor: procFake})
+	req := validMp4Request()
+	req.Attributes = mustEncodeProcessorDocumentAttrs(t, []tg.DocumentAttributeClazz{
+		tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "round.mp4"}),
+		tg.MakeTLDocumentAttributeVideo(&tg.TLDocumentAttributeVideo{
+			RoundMessage:      true,
+			SupportsStreaming: true,
+			Duration:          3.5,
+			W:                 400,
+			H:                 400,
+		}),
+	})
+
+	out, err := c.MediaProcessorProcessMp4(req)
+	if err != nil {
+		t.Fatalf("MediaProcessorProcessMp4() error = %v", err)
+	}
+
+	decoded, err := processor.DecodeDocumentAttributes(out.Attributes)
+	if err != nil {
+		t.Fatalf("DecodeDocumentAttributes() error = %v", err)
+	}
+	video, ok := findCoreProcessorDocumentAttribute[*tg.TLDocumentAttributeVideo](decoded)
+	if !ok {
+		t.Fatalf("attributes = %#v, want video attribute", decoded)
+	}
+	if !video.RoundMessage {
+		t.Fatalf("RoundMessage = false, want true; attributes = %#v", decoded)
+	}
+}
+
 func TestProcessHandlersPropagateDFSReadAndPutErrors(t *testing.T) {
 	t.Run("read", func(t *testing.T) {
 		c := New(context.Background(), &svc.ServiceContext{
@@ -527,11 +569,14 @@ func validGifRequest() *mediaprocessor.TLMediaProcessorProcessGif {
 
 func validMp4Request() *mediaprocessor.TLMediaProcessorProcessMp4 {
 	return &mediaprocessor.TLMediaProcessorProcessMp4{
-		OwnerId:    1001,
-		ObjectId:   "original-mp4",
-		ReadLease:  []byte("lease"),
-		FileName:   "video.mp4",
-		Attributes: []byte("ignored"),
+		OwnerId:   1001,
+		ObjectId:  "original-mp4",
+		ReadLease: []byte("lease"),
+		FileName:  "video.mp4",
+		Attributes: encodeProcessorDocumentAttrsForTest([]tg.DocumentAttributeClazz{
+			tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "video.mp4"}),
+			tg.MakeTLDocumentAttributeVideo(&tg.TLDocumentAttributeVideo{Duration: 12, W: 1920, H: 1080}),
+		}),
 	}
 }
 
@@ -720,4 +765,27 @@ func assertAttributes(t *testing.T, encoded []byte, animated bool, fileName stri
 			t.Fatalf("decoded[2] = %T, want animated", decoded[2])
 		}
 	}
+}
+
+func mustEncodeProcessorDocumentAttrs(t *testing.T, attrs []tg.DocumentAttributeClazz) []byte {
+	t.Helper()
+	return encodeProcessorDocumentAttrsForTest(attrs)
+}
+
+func encodeProcessorDocumentAttrsForTest(attrs []tg.DocumentAttributeClazz) []byte {
+	x := bin.NewEncoder()
+	if err := iface.EncodeObjectList(x, attrs, processor.DocumentAttributeLayer); err != nil {
+		panic(err)
+	}
+	return x.Clone()
+}
+
+func findCoreProcessorDocumentAttribute[T tg.DocumentAttributeClazz](attrs []tg.DocumentAttributeClazz) (T, bool) {
+	var zero T
+	for _, attr := range attrs {
+		if typed, ok := attr.(T); ok {
+			return typed, true
+		}
+	}
+	return zero, false
 }

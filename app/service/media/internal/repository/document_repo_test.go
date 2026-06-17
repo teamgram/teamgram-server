@@ -361,6 +361,60 @@ func TestUploadedDocumentMediaReturnsVideoFlagsForMp4(t *testing.T) {
 	}
 }
 
+func TestUploadedDocumentMediaReturnsRoundVideoMessageMediaDocument(t *testing.T) {
+	attrs := []tg.DocumentAttributeClazz{
+		tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{FileName: "round.mp4"}),
+		tg.MakeTLDocumentAttributeVideo(&tg.TLDocumentAttributeVideo{
+			RoundMessage:      true,
+			SupportsStreaming: true,
+			Duration:          3.5,
+			W:                 400,
+			H:                 400,
+		}),
+	}
+	documents := &captureDocumentsModel{}
+	dfsClient := &fakeDfsMediaClient{finalized: testFinalizedObject("original-round-object", 333)}
+	processorClient := &fakeMediaProcessorClient{document: testProcessedDocument(t, "processed-round-object", "video/mp4", 444, attrs, nil)}
+	r := &Repository{
+		model:                &model.Models{DocumentsModel: documents, FileReferencesModel: newCaptureFileReferencesModel(), PhotoSizesModel: &capturePhotoSizesModel{}, VideoSizesModel: &captureVideoSizesModel{}},
+		dfsClient:            dfsClient,
+		processorClient:      processorClient,
+		fileReferenceService: NewFileReferenceService([]byte("test-secret"), func() time.Time { return time.Unix(1700000000, 0) }),
+		fileReferenceTTL:     time.Hour,
+	}
+
+	got, err := r.UploadedDocumentMedia(context.Background(), &media.TLMediaUploadedDocumentMedia{
+		OwnerId: 77,
+		Media: tg.MakeTLInputMediaUploadedDocument(&tg.TLInputMediaUploadedDocument{
+			File:       tg.MakeTLInputFile(&tg.TLInputFile{Id: 8, Parts: 1, Name: "round.mp4"}),
+			MimeType:   "video/mp4",
+			Attributes: attrs,
+		}),
+	})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	mediaDoc, ok := got.ToMessageMediaDocument()
+	if !ok || mediaDoc.Document == nil {
+		t.Fatalf("expected messageMediaDocument, got %#v", got)
+	}
+	if !mediaDoc.Video || !mediaDoc.Round || mediaDoc.Voice {
+		t.Fatalf("unexpected round messageMediaDocument flags: %#v", mediaDoc)
+	}
+	doc, ok := mediaDoc.Document.(*tg.TLDocument)
+	if !ok {
+		t.Fatalf("expected TLDocument, got %#v", mediaDoc.Document)
+	}
+	video, hasVideo := findRepositoryDocumentAttribute[*tg.TLDocumentAttributeVideo](doc.Attributes)
+	if !hasVideo || !video.RoundMessage {
+		t.Fatalf("expected round documentAttributeVideo, got %#v", doc.Attributes)
+	}
+	if processorClient.mp4Req == nil || len(processorClient.mp4Req.Attributes) == 0 {
+		t.Fatalf("expected mp4 processor attributes request, got %#v", processorClient.mp4Req)
+	}
+}
+
 func TestUploadedDocumentMediaReturnsVideoCover(t *testing.T) {
 	videoTimestamp := int32(17)
 	attrs := []tg.DocumentAttributeClazz{

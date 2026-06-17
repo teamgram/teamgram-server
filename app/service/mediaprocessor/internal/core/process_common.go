@@ -122,8 +122,8 @@ func thumbFileName(fileName string) string {
 	return strings.TrimSuffix(fileName, ext) + "_thumb.jpg"
 }
 
-func encodeVideoAttributes(metadata *ffmpeg2.VideoMetadata, fileName string, animated bool) ([]byte, error) {
-	return processor.EncodeDocumentAttributes(metadata, fileName, animated)
+func encodeVideoAttributes(metadata *ffmpeg2.VideoMetadata, fileName string, animated bool, sourceAttrs ...[]tg.DocumentAttributeClazz) ([]byte, error) {
+	return processor.EncodeDocumentAttributes(metadata, fileName, animated, sourceAttrs...)
 }
 
 func makeThumbDerivative(stored *dfs.FileFinalizedObject, fileName string, metadata *ffmpeg2.VideoMetadata, cover []byte) *mediaprocessor.ProcessorDerivative {

@@ -63,16 +63,22 @@ func (p *Processor) ProbeMP4(ctx context.Context, input []byte) (*ffmpeg2.VideoM
 	return p.ffmpeg.GetVideoMetadata(ctx, bytes.NewReader(input))
 }
 
-func EncodeDocumentAttributes(metadata *ffmpeg2.VideoMetadata, fileName string, animated bool) ([]byte, error) {
+func EncodeDocumentAttributes(metadata *ffmpeg2.VideoMetadata, fileName string, animated bool, sourceAttrs ...[]tg.DocumentAttributeClazz) ([]byte, error) {
 	if metadata == nil {
 		metadata = &ffmpeg2.VideoMetadata{}
 	}
+	sourceVideo := firstVideoAttribute(sourceAttrs...)
 	attrs := []tg.DocumentAttributeClazz{
 		tg.MakeTLDocumentAttributeVideo(&tg.TLDocumentAttributeVideo{
 			SupportsStreaming: true,
+			RoundMessage:      sourceVideo.RoundMessage,
+			Nosound:           sourceVideo.Nosound,
 			Duration:          float64(metadata.Duration),
 			W:                 metadata.Width,
 			H:                 metadata.Height,
+			PreloadPrefixSize: sourceVideo.PreloadPrefixSize,
+			VideoStartTs:      sourceVideo.VideoStartTs,
+			VideoCodec:        sourceVideo.VideoCodec,
 		}),
 		tg.MakeTLDocumentAttributeFilename(&tg.TLDocumentAttributeFilename{
 			FileName: fileName,
@@ -89,7 +95,21 @@ func EncodeDocumentAttributes(metadata *ffmpeg2.VideoMetadata, fileName string, 
 	return x.Clone(), nil
 }
 
+func firstVideoAttribute(sourceAttrs ...[]tg.DocumentAttributeClazz) *tg.TLDocumentAttributeVideo {
+	for _, attrs := range sourceAttrs {
+		for _, attr := range attrs {
+			if video, ok := attr.(*tg.TLDocumentAttributeVideo); ok {
+				return video
+			}
+		}
+	}
+	return &tg.TLDocumentAttributeVideo{}
+}
+
 func DecodeDocumentAttributes(data []byte) ([]tg.DocumentAttributeClazz, error) {
+	if len(data) == 0 {
+		return []tg.DocumentAttributeClazz{}, nil
+	}
 	attrs, err := iface.DecodeObjectList[tg.DocumentAttributeClazz](bin.NewDecoder(data))
 	if err != nil {
 		return nil, fmt.Errorf("decode document attributes: %w", err)
