@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2025 Teamgram Authors.
+ * Copyright (c) 2026 The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -123,7 +123,7 @@ func (s *Service) MessagesReceivedMessages(ctx context.Context, request *mtproto
 }
 
 // MessagesSendMessage
-// messages.sendMessage#545cd15a flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int schedule_repeat_period:flags.24?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long allow_paid_stars:flags.21?long suggested_post:flags.22?SuggestedPost = Updates;
+// messages.sendMessage#fef48f62 flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int schedule_repeat_period:flags.24?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long allow_paid_stars:flags.21?long suggested_post:flags.22?SuggestedPost rich_message:flags.23?InputRichMessage = Updates;
 func (s *Service) MessagesSendMessage(ctx context.Context, request *mtproto.TLMessagesSendMessage) (*mtproto.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.sendMessage - metadata: {%s}, request: {%s}", c.MD, request)
@@ -228,7 +228,7 @@ func (s *Service) MessagesGetMessageEditData(ctx context.Context, request *mtpro
 }
 
 // MessagesEditMessage
-// messages.editMessage#51e842e1 flags:# no_webpage:flags.1?true invert_media:flags.16?true peer:InputPeer id:int message:flags.11?string media:flags.14?InputMedia reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.15?int schedule_repeat_period:flags.18?int quick_reply_shortcut_id:flags.17?int = Updates;
+// messages.editMessage#b106e66c flags:# no_webpage:flags.1?true invert_media:flags.16?true peer:InputPeer id:int message:flags.11?string media:flags.14?InputMedia reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.15?int schedule_repeat_period:flags.18?int quick_reply_shortcut_id:flags.17?int rich_message:flags.23?InputRichMessage = Updates;
 func (s *Service) MessagesEditMessage(ctx context.Context, request *mtproto.TLMessagesEditMessage) (*mtproto.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.editMessage - metadata: {%s}, request: {%s}", c.MD, request)
@@ -378,7 +378,7 @@ func (s *Service) MessagesGetSearchResultsPositions(ctx context.Context, request
 }
 
 // MessagesToggleNoForwards
-// messages.toggleNoForwards#b11eafa2 peer:InputPeer enabled:Bool = Updates;
+// messages.toggleNoForwards#b2081a35 flags:# peer:InputPeer enabled:Bool request_msg_id:flags.0?int = Updates;
 func (s *Service) MessagesToggleNoForwards(ctx context.Context, request *mtproto.TLMessagesToggleNoForwards) (*mtproto.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.toggleNoForwards - metadata: {%s}, request: {%s}", c.MD, request)
@@ -438,7 +438,7 @@ func (s *Service) MessagesGetOutboxReadDate(ctx context.Context, request *mtprot
 }
 
 // MessagesSummarizeText
-// messages.summarizeText#9d4104e2 flags:# peer:InputPeer id:int to_lang:flags.0?string = TextWithEntities;
+// messages.summarizeText#abbbd346 flags:# peer:InputPeer id:int to_lang:flags.0?string tone:flags.2?string = TextWithEntities;
 func (s *Service) MessagesSummarizeText(ctx context.Context, request *mtproto.TLMessagesSummarizeText) (*mtproto.TextWithEntities, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("messages.summarizeText - metadata: {%s}, request: {%s}", c.MD, request)
@@ -449,6 +449,21 @@ func (s *Service) MessagesSummarizeText(ctx context.Context, request *mtproto.TL
 	}
 
 	c.Logger.Debugf("messages.summarizeText - reply: {%s}", r)
+	return r, err
+}
+
+// MessagesGetRichMessage
+// messages.getRichMessage#501569cf peer:InputPeer id:int = messages.Messages;
+func (s *Service) MessagesGetRichMessage(ctx context.Context, request *mtproto.TLMessagesGetRichMessage) (*mtproto.Messages_Messages, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("messages.getRichMessage - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.MessagesGetRichMessage(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("messages.getRichMessage - reply: {%s}", r)
 	return r, err
 }
 

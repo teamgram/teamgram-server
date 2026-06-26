@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2025 Teamgram Authors.
+ * Copyright (c) 2026 The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -50,6 +50,7 @@ type MessagesClient interface {
 	MessagesSearchSentMedia(ctx context.Context, in *mtproto.TLMessagesSearchSentMedia) (*mtproto.Messages_Messages, error)
 	MessagesGetOutboxReadDate(ctx context.Context, in *mtproto.TLMessagesGetOutboxReadDate) (*mtproto.OutboxReadDate, error)
 	MessagesSummarizeText(ctx context.Context, in *mtproto.TLMessagesSummarizeText) (*mtproto.TextWithEntities, error)
+	MessagesGetRichMessage(ctx context.Context, in *mtproto.TLMessagesGetRichMessage) (*mtproto.Messages_Messages, error)
 	ChannelsGetSendAs(ctx context.Context, in *mtproto.TLChannelsGetSendAs) (*mtproto.Channels_SendAsPeers, error)
 	ChannelsSearchPosts(ctx context.Context, in *mtproto.TLChannelsSearchPosts) (*mtproto.Messages_Messages, error)
 	ChannelsCheckSearchPostsFlood(ctx context.Context, in *mtproto.TLChannelsCheckSearchPostsFlood) (*mtproto.SearchPostsFlood, error)
@@ -115,7 +116,7 @@ func (m *defaultMessagesClient) MessagesReceivedMessages(ctx context.Context, in
 }
 
 // MessagesSendMessage
-// messages.sendMessage#545cd15a flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int schedule_repeat_period:flags.24?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long allow_paid_stars:flags.21?long suggested_post:flags.22?SuggestedPost = Updates;
+// messages.sendMessage#fef48f62 flags:# no_webpage:flags.1?true silent:flags.5?true background:flags.6?true clear_draft:flags.7?true noforwards:flags.14?true update_stickersets_order:flags.15?true invert_media:flags.16?true allow_paid_floodskip:flags.19?true peer:InputPeer reply_to:flags.0?InputReplyTo message:string random_id:long reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.10?int schedule_repeat_period:flags.24?int send_as:flags.13?InputPeer quick_reply_shortcut:flags.17?InputQuickReplyShortcut effect:flags.18?long allow_paid_stars:flags.21?long suggested_post:flags.22?SuggestedPost rich_message:flags.23?InputRichMessage = Updates;
 func (m *defaultMessagesClient) MessagesSendMessage(ctx context.Context, in *mtproto.TLMessagesSendMessage) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesSendMessage(ctx, in)
@@ -164,7 +165,7 @@ func (m *defaultMessagesClient) MessagesGetMessageEditData(ctx context.Context, 
 }
 
 // MessagesEditMessage
-// messages.editMessage#51e842e1 flags:# no_webpage:flags.1?true invert_media:flags.16?true peer:InputPeer id:int message:flags.11?string media:flags.14?InputMedia reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.15?int schedule_repeat_period:flags.18?int quick_reply_shortcut_id:flags.17?int = Updates;
+// messages.editMessage#b106e66c flags:# no_webpage:flags.1?true invert_media:flags.16?true peer:InputPeer id:int message:flags.11?string media:flags.14?InputMedia reply_markup:flags.2?ReplyMarkup entities:flags.3?Vector<MessageEntity> schedule_date:flags.15?int schedule_repeat_period:flags.18?int quick_reply_shortcut_id:flags.17?int rich_message:flags.23?InputRichMessage = Updates;
 func (m *defaultMessagesClient) MessagesEditMessage(ctx context.Context, in *mtproto.TLMessagesEditMessage) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesEditMessage(ctx, in)
@@ -234,7 +235,7 @@ func (m *defaultMessagesClient) MessagesGetSearchResultsPositions(ctx context.Co
 }
 
 // MessagesToggleNoForwards
-// messages.toggleNoForwards#b11eafa2 peer:InputPeer enabled:Bool = Updates;
+// messages.toggleNoForwards#b2081a35 flags:# peer:InputPeer enabled:Bool request_msg_id:flags.0?int = Updates;
 func (m *defaultMessagesClient) MessagesToggleNoForwards(ctx context.Context, in *mtproto.TLMessagesToggleNoForwards) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesToggleNoForwards(ctx, in)
@@ -262,10 +263,17 @@ func (m *defaultMessagesClient) MessagesGetOutboxReadDate(ctx context.Context, i
 }
 
 // MessagesSummarizeText
-// messages.summarizeText#9d4104e2 flags:# peer:InputPeer id:int to_lang:flags.0?string = TextWithEntities;
+// messages.summarizeText#abbbd346 flags:# peer:InputPeer id:int to_lang:flags.0?string tone:flags.2?string = TextWithEntities;
 func (m *defaultMessagesClient) MessagesSummarizeText(ctx context.Context, in *mtproto.TLMessagesSummarizeText) (*mtproto.TextWithEntities, error) {
 	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
 	return client.MessagesSummarizeText(ctx, in)
+}
+
+// MessagesGetRichMessage
+// messages.getRichMessage#501569cf peer:InputPeer id:int = messages.Messages;
+func (m *defaultMessagesClient) MessagesGetRichMessage(ctx context.Context, in *mtproto.TLMessagesGetRichMessage) (*mtproto.Messages_Messages, error) {
+	client := mtproto.NewRPCMessagesClient(m.cli.Conn())
+	return client.MessagesGetRichMessage(ctx, in)
 }
 
 // ChannelsGetSendAs

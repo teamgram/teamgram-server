@@ -47,18 +47,18 @@ func (s *Service) AccountUpdateWebBrowserSettings(ctx context.Context, request *
 	return r, err
 }
 
-// AccountToggleWebBrowserSettingsException
-// account.toggleWebBrowserSettingsException#2d0a0571 flags:# delete:flags.1?true open_external_browser:flags.0?Bool url:string = Bool;
-func (s *Service) AccountToggleWebBrowserSettingsException(ctx context.Context, request *mtproto.TLAccountToggleWebBrowserSettingsException) (*mtproto.Bool, error) {
+// AccountToggleWebBrowserSettingsException60ED4229
+// account.toggleWebBrowserSettingsException#60ed4229 flags:# delete:flags.1?true open_external_browser:flags.0?Bool url:string = Updates;
+func (s *Service) AccountToggleWebBrowserSettingsException60ED4229(ctx context.Context, request *mtproto.TLAccountToggleWebBrowserSettingsException60ED4229) (*mtproto.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("account.toggleWebBrowserSettingsException - metadata: {%s}, request: {%s}", c.MD, request)
+	c.Logger.Debugf("account.toggleWebBrowserSettingsException60ED4229 - metadata: {%s}, request: {%s}", c.MD, request)
 
-	r, err := c.AccountToggleWebBrowserSettingsException(request)
+	r, err := c.AccountToggleWebBrowserSettingsException60ED4229(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("account.toggleWebBrowserSettingsException - reply: {%s}", r)
+	c.Logger.Debugf("account.toggleWebBrowserSettingsException60ED4229 - reply: {%s}", r)
 	return r, err
 }
 
@@ -74,5 +74,20 @@ func (s *Service) AccountDeleteWebBrowserSettingsExceptions(ctx context.Context,
 	}
 
 	c.Logger.Debugf("account.deleteWebBrowserSettingsExceptions - reply: {%s}", r)
+	return r, err
+}
+
+// AccountToggleWebBrowserSettingsException2D0A0571
+// account.toggleWebBrowserSettingsException#2d0a0571 flags:# delete:flags.1?true open_external_browser:flags.0?Bool url:string = Bool;
+func (s *Service) AccountToggleWebBrowserSettingsException2D0A0571(ctx context.Context, request *mtproto.TLAccountToggleWebBrowserSettingsException2D0A0571) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("account.toggleWebBrowserSettingsException2D0A0571 - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.AccountToggleWebBrowserSettingsException2D0A0571(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("account.toggleWebBrowserSettingsException2D0A0571 - reply: {%s}", r)
 	return r, err
 }
