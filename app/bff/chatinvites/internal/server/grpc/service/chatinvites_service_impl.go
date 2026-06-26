@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgram Authors.
+ * Copyright (c) 2026 The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -47,18 +47,18 @@ func (s *Service) MessagesCheckChatInvite(ctx context.Context, request *mtproto.
 	return r, err
 }
 
-// MessagesImportChatInvite
-// messages.importChatInvite#6c50051c hash:string = Updates;
-func (s *Service) MessagesImportChatInvite(ctx context.Context, request *mtproto.TLMessagesImportChatInvite) (*mtproto.Updates, error) {
+// MessagesImportChatInviteDE91436E
+// messages.importChatInvite#de91436e hash:string = messages.ChatInviteJoinResult;
+func (s *Service) MessagesImportChatInviteDE91436E(ctx context.Context, request *mtproto.TLMessagesImportChatInviteDE91436E) (*mtproto.Messages_ChatInviteJoinResult, error) {
 	c := core.New(ctx, s.svcCtx)
-	c.Logger.Debugf("messages.importChatInvite - metadata: {%s}, request: {%s}", c.MD, request)
+	c.Logger.Debugf("messages.importChatInviteDE91436E - metadata: {%s}, request: {%s}", c.MD, request)
 
-	r, err := c.MessagesImportChatInvite(request)
+	r, err := c.MessagesImportChatInviteDE91436E(request)
 	if err != nil {
 		return nil, err
 	}
 
-	c.Logger.Debugf("messages.importChatInvite - reply: {%s}", r)
+	c.Logger.Debugf("messages.importChatInviteDE91436E - reply: {%s}", r)
 	return r, err
 }
 
@@ -213,7 +213,7 @@ func (s *Service) ChannelsToggleJoinToSend(ctx context.Context, request *mtproto
 }
 
 // ChannelsToggleJoinRequest
-// channels.toggleJoinRequest#4c2985b6 channel:InputChannel enabled:Bool = Updates;
+// channels.toggleJoinRequest#ecc2618 flags:# apply_to_invites:flags.1?true channel:InputChannel enabled:Bool guard_bot:flags.0?InputUser = Updates;
 func (s *Service) ChannelsToggleJoinRequest(ctx context.Context, request *mtproto.TLChannelsToggleJoinRequest) (*mtproto.Updates, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("channels.toggleJoinRequest - metadata: {%s}, request: {%s}", c.MD, request)
@@ -224,5 +224,20 @@ func (s *Service) ChannelsToggleJoinRequest(ctx context.Context, request *mtprot
 	}
 
 	c.Logger.Debugf("channels.toggleJoinRequest - reply: {%s}", r)
+	return r, err
+}
+
+// MessagesImportChatInvite6C50051C
+// messages.importChatInvite#6c50051c hash:string = Updates;
+func (s *Service) MessagesImportChatInvite6C50051C(ctx context.Context, request *mtproto.TLMessagesImportChatInvite6C50051C) (*mtproto.Updates, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("messages.importChatInvite6C50051C - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.MessagesImportChatInvite6C50051C(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("messages.importChatInvite6C50051C - reply: {%s}", r)
 	return r, err
 }

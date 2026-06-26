@@ -49,6 +49,7 @@ import (
 	userchannelprofileshelper "github.com/teamgram/teamgram-server/app/bff/userchannelprofiles"
 	usernames_helper "github.com/teamgram/teamgram-server/app/bff/usernames"
 	users_helper "github.com/teamgram/teamgram-server/app/bff/users"
+	webbrowserhelper "github.com/teamgram/teamgram-server/app/bff/webbrowser"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -351,6 +352,12 @@ func (s *Server) Initialize() error {
 		mtproto.RegisterRPCPasskeyServer(
 			grpcServer,
 			passkeyhelper.New(passkeyhelper.Config{
+				RpcServerConf: c.RpcServerConf,
+			}))
+
+		mtproto.RegisterRPCWebBrowserServer(
+			grpcServer,
+			webbrowserhelper.New(webbrowserhelper.Config{
 				RpcServerConf: c.RpcServerConf,
 			}))
 	})

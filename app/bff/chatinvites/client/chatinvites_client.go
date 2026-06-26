@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgram Authors.
+ * Copyright (c) 2026 The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -23,7 +23,7 @@ var _ *mtproto.Bool
 type ChatInvitesClient interface {
 	MessagesExportChatInvite(ctx context.Context, in *mtproto.TLMessagesExportChatInvite) (*mtproto.ExportedChatInvite, error)
 	MessagesCheckChatInvite(ctx context.Context, in *mtproto.TLMessagesCheckChatInvite) (*mtproto.ChatInvite, error)
-	MessagesImportChatInvite(ctx context.Context, in *mtproto.TLMessagesImportChatInvite) (*mtproto.Updates, error)
+	MessagesImportChatInviteDE91436E(ctx context.Context, in *mtproto.TLMessagesImportChatInviteDE91436E) (*mtproto.Messages_ChatInviteJoinResult, error)
 	MessagesGetExportedChatInvites(ctx context.Context, in *mtproto.TLMessagesGetExportedChatInvites) (*mtproto.Messages_ExportedChatInvites, error)
 	MessagesGetExportedChatInvite(ctx context.Context, in *mtproto.TLMessagesGetExportedChatInvite) (*mtproto.Messages_ExportedChatInvite, error)
 	MessagesEditExportedChatInvite(ctx context.Context, in *mtproto.TLMessagesEditExportedChatInvite) (*mtproto.Messages_ExportedChatInvite, error)
@@ -35,6 +35,7 @@ type ChatInvitesClient interface {
 	MessagesHideAllChatJoinRequests(ctx context.Context, in *mtproto.TLMessagesHideAllChatJoinRequests) (*mtproto.Updates, error)
 	ChannelsToggleJoinToSend(ctx context.Context, in *mtproto.TLChannelsToggleJoinToSend) (*mtproto.Updates, error)
 	ChannelsToggleJoinRequest(ctx context.Context, in *mtproto.TLChannelsToggleJoinRequest) (*mtproto.Updates, error)
+	MessagesImportChatInvite6C50051C(ctx context.Context, in *mtproto.TLMessagesImportChatInvite6C50051C) (*mtproto.Updates, error)
 }
 
 type defaultChatInvitesClient struct {
@@ -61,11 +62,11 @@ func (m *defaultChatInvitesClient) MessagesCheckChatInvite(ctx context.Context, 
 	return client.MessagesCheckChatInvite(ctx, in)
 }
 
-// MessagesImportChatInvite
-// messages.importChatInvite#6c50051c hash:string = Updates;
-func (m *defaultChatInvitesClient) MessagesImportChatInvite(ctx context.Context, in *mtproto.TLMessagesImportChatInvite) (*mtproto.Updates, error) {
+// MessagesImportChatInviteDE91436E
+// messages.importChatInvite#de91436e hash:string = messages.ChatInviteJoinResult;
+func (m *defaultChatInvitesClient) MessagesImportChatInviteDE91436E(ctx context.Context, in *mtproto.TLMessagesImportChatInviteDE91436E) (*mtproto.Messages_ChatInviteJoinResult, error) {
 	client := mtproto.NewRPCChatInvitesClient(m.cli.Conn())
-	return client.MessagesImportChatInvite(ctx, in)
+	return client.MessagesImportChatInviteDE91436E(ctx, in)
 }
 
 // MessagesGetExportedChatInvites
@@ -139,8 +140,15 @@ func (m *defaultChatInvitesClient) ChannelsToggleJoinToSend(ctx context.Context,
 }
 
 // ChannelsToggleJoinRequest
-// channels.toggleJoinRequest#4c2985b6 channel:InputChannel enabled:Bool = Updates;
+// channels.toggleJoinRequest#ecc2618 flags:# apply_to_invites:flags.1?true channel:InputChannel enabled:Bool guard_bot:flags.0?InputUser = Updates;
 func (m *defaultChatInvitesClient) ChannelsToggleJoinRequest(ctx context.Context, in *mtproto.TLChannelsToggleJoinRequest) (*mtproto.Updates, error) {
 	client := mtproto.NewRPCChatInvitesClient(m.cli.Conn())
 	return client.ChannelsToggleJoinRequest(ctx, in)
+}
+
+// MessagesImportChatInvite6C50051C
+// messages.importChatInvite#6c50051c hash:string = Updates;
+func (m *defaultChatInvitesClient) MessagesImportChatInvite6C50051C(ctx context.Context, in *mtproto.TLMessagesImportChatInvite6C50051C) (*mtproto.Updates, error) {
+	client := mtproto.NewRPCChatInvitesClient(m.cli.Conn())
+	return client.MessagesImportChatInvite6C50051C(ctx, in)
 }

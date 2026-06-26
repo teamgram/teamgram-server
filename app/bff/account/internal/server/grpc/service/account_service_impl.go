@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgram Authors.
+ * Copyright (c) 2026 The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -134,5 +134,20 @@ func (s *Service) AccountConfirmPhone(ctx context.Context, request *mtproto.TLAc
 	}
 
 	c.Logger.Debugf("account.confirmPhone - reply: {%s}", r)
+	return r, err
+}
+
+// AccountConfirmBotConnection
+// account.confirmBotConnection#67ed1f68 bot_id:InputUser = Bool;
+func (s *Service) AccountConfirmBotConnection(ctx context.Context, request *mtproto.TLAccountConfirmBotConnection) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("account.confirmBotConnection - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.AccountConfirmBotConnection(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("account.confirmBotConnection - reply: {%s}", r)
 	return r, err
 }

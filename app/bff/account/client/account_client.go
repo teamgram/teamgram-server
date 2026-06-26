@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2024 Teamgram Authors.
+ * Copyright (c) 2026 The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -29,6 +29,7 @@ type AccountClient interface {
 	AccountResetAuthorization(ctx context.Context, in *mtproto.TLAccountResetAuthorization) (*mtproto.Bool, error)
 	AccountSendConfirmPhoneCode(ctx context.Context, in *mtproto.TLAccountSendConfirmPhoneCode) (*mtproto.Auth_SentCode, error)
 	AccountConfirmPhone(ctx context.Context, in *mtproto.TLAccountConfirmPhone) (*mtproto.Bool, error)
+	AccountConfirmBotConnection(ctx context.Context, in *mtproto.TLAccountConfirmBotConnection) (*mtproto.Bool, error)
 }
 
 type defaultAccountClient struct {
@@ -95,4 +96,11 @@ func (m *defaultAccountClient) AccountSendConfirmPhoneCode(ctx context.Context, 
 func (m *defaultAccountClient) AccountConfirmPhone(ctx context.Context, in *mtproto.TLAccountConfirmPhone) (*mtproto.Bool, error) {
 	client := mtproto.NewRPCAccountClient(m.cli.Conn())
 	return client.AccountConfirmPhone(ctx, in)
+}
+
+// AccountConfirmBotConnection
+// account.confirmBotConnection#67ed1f68 bot_id:InputUser = Bool;
+func (m *defaultAccountClient) AccountConfirmBotConnection(ctx context.Context, in *mtproto.TLAccountConfirmBotConnection) (*mtproto.Bool, error) {
+	client := mtproto.NewRPCAccountClient(m.cli.Conn())
+	return client.AccountConfirmBotConnection(ctx, in)
 }

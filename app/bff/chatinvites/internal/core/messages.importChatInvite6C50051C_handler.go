@@ -1,4 +1,4 @@
-// Copyright 2022 Teamgram Authors
+// Copyright (c) 2026 The Teamgram Authors (https://teamgram.net).
 //  All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,23 +14,22 @@
 // limitations under the License.
 //
 // Author: teamgramio (teamgram.io@gmail.com)
-//
 
 package core
 
 import (
-	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
-	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 	"math/rand"
 
 	"github.com/teamgram/proto/mtproto"
 	msgpb "github.com/teamgram/teamgram-server/app/messenger/msg/msg/msg"
+	"github.com/teamgram/teamgram-server/app/messenger/sync/sync"
 	chatpb "github.com/teamgram/teamgram-server/app/service/biz/chat/chat"
+	"github.com/teamgram/teamgram-server/app/service/biz/user/user"
 )
 
-// MessagesImportChatInvite
+// MessagesImportChatInvite6C50051C
 // messages.importChatInvite#6c50051c hash:string = Updates;
-func (c *ChatInvitesCore) MessagesImportChatInvite(in *mtproto.TLMessagesImportChatInvite) (*mtproto.Updates, error) {
+func (c *ChatInvitesCore) MessagesImportChatInvite6C50051C(in *mtproto.TLMessagesImportChatInvite6C50051C) (*mtproto.Updates, error) {
 	// Code	Type	Description
 	// 400	INVITE_HASH_EMPTY	The invite hash is empty.
 	// 400	INVITE_HASH_EXPIRED	The invite link has expired.
