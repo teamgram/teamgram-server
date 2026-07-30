@@ -12,13 +12,33 @@ import (
 	"github.com/teamgram/teamgram-server/app/service/status/status"
 )
 
-// mockKVStore embeds kv.Store interface; override only the methods we need.
+// mockKVStore implements kv.ExtStore; override only the methods we need.
 // Unimplemented methods will panic if called (signals a test gap).
 type mockKVStore struct {
 	kv.Store
 	evalCtxFn    func(ctx context.Context, script, key string, args ...any) (any, error)
 	hdelCtxFn    func(ctx context.Context, key, field string) (bool, error)
 	hgetallCtxFn func(ctx context.Context, key string) (map[string]string, error)
+}
+
+func (m *mockKVStore) ExpireWithResult(key string, seconds int) (bool, error) {
+	panic("unexpected call to ExpireWithResult")
+}
+
+func (m *mockKVStore) ExpireWithResultCtx(ctx context.Context, key string, seconds int) (bool, error) {
+	panic("unexpected call to ExpireWithResultCtx")
+}
+
+func (m *mockKVStore) Mget(keys ...string) ([]string, error) {
+	panic("unexpected call to Mget")
+}
+
+func (m *mockKVStore) MgetCtx(ctx context.Context, keys ...string) ([]string, error) {
+	panic("unexpected call to MgetCtx")
+}
+
+func (m *mockKVStore) GetPipeline(key string) (kv.Pipeline, error) {
+	panic("unexpected call to GetPipeline")
 }
 
 func (m *mockKVStore) EvalCtx(ctx context.Context, script, key string, args ...any) (any, error) {
@@ -33,7 +53,7 @@ func (m *mockKVStore) HgetallCtx(ctx context.Context, key string) (map[string]st
 	return m.hgetallCtxFn(ctx, key)
 }
 
-func newTestCore(store kv.Store, expire int) *StatusCore {
+func newTestCore(store kv.ExtStore, expire int) *StatusCore {
 	svcCtx := &svc.ServiceContext{
 		Config: config.Config{StatusExpire: expire},
 		Dao:    &dao.Dao{KV: store},
