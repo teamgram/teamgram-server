@@ -44,15 +44,9 @@ func (c *StatusCore) StatusGetUsersOnlineSessionsList(in *status.TLStatusGetUser
 
 	for _, id := range users {
 		k := getUserKey(id)
-		rawPipe, err := c.svcCtx.Dao.KV.GetPipeline(k)
+		p, err := c.svcCtx.Dao.KV.GetPipeline(k)
 		if err != nil {
 			c.Logger.Errorf("status.getUsersOnlineSessionsList - GetPipeline(userId=%d) error: %v", id, err)
-			failedUsers = append(failedUsers, id)
-			continue
-		}
-		p, ok := rawPipe.(kv.Pipeline)
-		if !ok {
-			c.Logger.Errorf("status.getUsersOnlineSessionsList - unexpected pipeline type: %T", rawPipe)
 			failedUsers = append(failedUsers, id)
 			continue
 		}
