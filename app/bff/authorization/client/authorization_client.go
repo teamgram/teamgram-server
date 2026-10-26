@@ -42,6 +42,7 @@ type AuthorizationClient interface {
 	AuthResetLoginEmail(ctx context.Context, in *mtproto.TLAuthResetLoginEmail) (*mtproto.Auth_SentCode, error)
 	AuthReportMissingCode(ctx context.Context, in *mtproto.TLAuthReportMissingCode) (*mtproto.Bool, error)
 	AuthCheckPaidAuth(ctx context.Context, in *mtproto.TLAuthCheckPaidAuth) (*mtproto.Auth_SentCode, error)
+	AuthCancelWebTokenAuthorization(ctx context.Context, in *mtproto.TLAuthCancelWebTokenAuthorization) (*mtproto.Bool, error)
 	AuthInitFirebasePnvLogin(ctx context.Context, in *mtproto.TLAuthInitFirebasePnvLogin) (*mtproto.Auth_FirebasePnvIntent, error)
 	AuthFinishFirebasePnvLogin(ctx context.Context, in *mtproto.TLAuthFinishFirebasePnvLogin) (*mtproto.Auth_Authorization, error)
 	AuthFirebasePnvSignUp(ctx context.Context, in *mtproto.TLAuthFirebasePnvSignUp) (*mtproto.Auth_Authorization, error)
@@ -212,8 +213,15 @@ func (m *defaultAuthorizationClient) AuthCheckPaidAuth(ctx context.Context, in *
 	return client.AuthCheckPaidAuth(ctx, in)
 }
 
+// AuthCancelWebTokenAuthorization
+// auth.cancelWebTokenAuthorization#490dada1 web_auth_token:string = Bool;
+func (m *defaultAuthorizationClient) AuthCancelWebTokenAuthorization(ctx context.Context, in *mtproto.TLAuthCancelWebTokenAuthorization) (*mtproto.Bool, error) {
+	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
+	return client.AuthCancelWebTokenAuthorization(ctx, in)
+}
+
 // AuthInitFirebasePnvLogin
-// auth.initFirebasePnvLogin#777df37a api_id:int api_hash:string = auth.FirebasePnvIntent;
+// auth.initFirebasePnvLogin#644f15c0 flags:# except_ids:flags.0?Vector<long> api_id:int api_hash:string = auth.FirebasePnvIntent;
 func (m *defaultAuthorizationClient) AuthInitFirebasePnvLogin(ctx context.Context, in *mtproto.TLAuthInitFirebasePnvLogin) (*mtproto.Auth_FirebasePnvIntent, error) {
 	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
 	return client.AuthInitFirebasePnvLogin(ctx, in)

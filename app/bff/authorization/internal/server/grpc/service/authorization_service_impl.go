@@ -332,8 +332,23 @@ func (s *Service) AuthCheckPaidAuth(ctx context.Context, request *mtproto.TLAuth
 	return r, err
 }
 
+// AuthCancelWebTokenAuthorization
+// auth.cancelWebTokenAuthorization#490dada1 web_auth_token:string = Bool;
+func (s *Service) AuthCancelWebTokenAuthorization(ctx context.Context, request *mtproto.TLAuthCancelWebTokenAuthorization) (*mtproto.Bool, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("auth.cancelWebTokenAuthorization - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.AuthCancelWebTokenAuthorization(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("auth.cancelWebTokenAuthorization - reply: {%s}", r)
+	return r, err
+}
+
 // AuthInitFirebasePnvLogin
-// auth.initFirebasePnvLogin#777df37a api_id:int api_hash:string = auth.FirebasePnvIntent;
+// auth.initFirebasePnvLogin#644f15c0 flags:# except_ids:flags.0?Vector<long> api_id:int api_hash:string = auth.FirebasePnvIntent;
 func (s *Service) AuthInitFirebasePnvLogin(ctx context.Context, request *mtproto.TLAuthInitFirebasePnvLogin) (*mtproto.Auth_FirebasePnvIntent, error) {
 	c := core.New(ctx, s.svcCtx)
 	c.Logger.Debugf("auth.initFirebasePnvLogin - metadata: {%s}, request: {%s}", c.MD, request)
