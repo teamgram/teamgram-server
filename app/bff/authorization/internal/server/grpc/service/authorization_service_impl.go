@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2025 Teamgram Authors.
+ * Copyright (c) 2026 The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -329,6 +329,51 @@ func (s *Service) AuthCheckPaidAuth(ctx context.Context, request *mtproto.TLAuth
 	}
 
 	c.Logger.Debugf("auth.checkPaidAuth - reply: {%s}", r)
+	return r, err
+}
+
+// AuthInitFirebasePnvLogin
+// auth.initFirebasePnvLogin#777df37a api_id:int api_hash:string = auth.FirebasePnvIntent;
+func (s *Service) AuthInitFirebasePnvLogin(ctx context.Context, request *mtproto.TLAuthInitFirebasePnvLogin) (*mtproto.Auth_FirebasePnvIntent, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("auth.initFirebasePnvLogin - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.AuthInitFirebasePnvLogin(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("auth.initFirebasePnvLogin - reply: {%s}", r)
+	return r, err
+}
+
+// AuthFinishFirebasePnvLogin
+// auth.finishFirebasePnvLogin#2c85094c google_token:string = auth.Authorization;
+func (s *Service) AuthFinishFirebasePnvLogin(ctx context.Context, request *mtproto.TLAuthFinishFirebasePnvLogin) (*mtproto.Auth_Authorization, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("auth.finishFirebasePnvLogin - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.AuthFinishFirebasePnvLogin(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("auth.finishFirebasePnvLogin - reply: {%s}", r)
+	return r, err
+}
+
+// AuthFirebasePnvSignUp
+// auth.firebasePnvSignUp#783f6b56 flags:# no_joined_notifications:flags.0?true first_name:string last_name:string = auth.Authorization;
+func (s *Service) AuthFirebasePnvSignUp(ctx context.Context, request *mtproto.TLAuthFirebasePnvSignUp) (*mtproto.Auth_Authorization, error) {
+	c := core.New(ctx, s.svcCtx)
+	c.Logger.Debugf("auth.firebasePnvSignUp - metadata: {%s}, request: {%s}", c.MD, request)
+
+	r, err := c.AuthFirebasePnvSignUp(request)
+	if err != nil {
+		return nil, err
+	}
+
+	c.Logger.Debugf("auth.firebasePnvSignUp - reply: {%s}", r)
 	return r, err
 }
 

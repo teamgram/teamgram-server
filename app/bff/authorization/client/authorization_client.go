@@ -2,7 +2,7 @@
  * WARNING! All changes made in this file will be lost!
  * Created from 'scheme.tl' by 'mtprotoc'
  *
- * Copyright 2025 Teamgram Authors.
+ * Copyright (c) 2026 The Teamgram Authors (https://teamgram.net).
  *  All rights reserved.
  *
  * Author: teamgramio (teamgram.io@gmail.com)
@@ -42,6 +42,9 @@ type AuthorizationClient interface {
 	AuthResetLoginEmail(ctx context.Context, in *mtproto.TLAuthResetLoginEmail) (*mtproto.Auth_SentCode, error)
 	AuthReportMissingCode(ctx context.Context, in *mtproto.TLAuthReportMissingCode) (*mtproto.Bool, error)
 	AuthCheckPaidAuth(ctx context.Context, in *mtproto.TLAuthCheckPaidAuth) (*mtproto.Auth_SentCode, error)
+	AuthInitFirebasePnvLogin(ctx context.Context, in *mtproto.TLAuthInitFirebasePnvLogin) (*mtproto.Auth_FirebasePnvIntent, error)
+	AuthFinishFirebasePnvLogin(ctx context.Context, in *mtproto.TLAuthFinishFirebasePnvLogin) (*mtproto.Auth_Authorization, error)
+	AuthFirebasePnvSignUp(ctx context.Context, in *mtproto.TLAuthFirebasePnvSignUp) (*mtproto.Auth_Authorization, error)
 	AccountSendVerifyEmailCode(ctx context.Context, in *mtproto.TLAccountSendVerifyEmailCode) (*mtproto.Account_SentEmailCode, error)
 	AccountVerifyEmail32DA4CF(ctx context.Context, in *mtproto.TLAccountVerifyEmail32DA4CF) (*mtproto.Account_EmailVerified, error)
 	AccountResetPassword(ctx context.Context, in *mtproto.TLAccountResetPassword) (*mtproto.Account_ResetPasswordResult, error)
@@ -207,6 +210,27 @@ func (m *defaultAuthorizationClient) AuthReportMissingCode(ctx context.Context, 
 func (m *defaultAuthorizationClient) AuthCheckPaidAuth(ctx context.Context, in *mtproto.TLAuthCheckPaidAuth) (*mtproto.Auth_SentCode, error) {
 	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
 	return client.AuthCheckPaidAuth(ctx, in)
+}
+
+// AuthInitFirebasePnvLogin
+// auth.initFirebasePnvLogin#777df37a api_id:int api_hash:string = auth.FirebasePnvIntent;
+func (m *defaultAuthorizationClient) AuthInitFirebasePnvLogin(ctx context.Context, in *mtproto.TLAuthInitFirebasePnvLogin) (*mtproto.Auth_FirebasePnvIntent, error) {
+	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
+	return client.AuthInitFirebasePnvLogin(ctx, in)
+}
+
+// AuthFinishFirebasePnvLogin
+// auth.finishFirebasePnvLogin#2c85094c google_token:string = auth.Authorization;
+func (m *defaultAuthorizationClient) AuthFinishFirebasePnvLogin(ctx context.Context, in *mtproto.TLAuthFinishFirebasePnvLogin) (*mtproto.Auth_Authorization, error) {
+	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
+	return client.AuthFinishFirebasePnvLogin(ctx, in)
+}
+
+// AuthFirebasePnvSignUp
+// auth.firebasePnvSignUp#783f6b56 flags:# no_joined_notifications:flags.0?true first_name:string last_name:string = auth.Authorization;
+func (m *defaultAuthorizationClient) AuthFirebasePnvSignUp(ctx context.Context, in *mtproto.TLAuthFirebasePnvSignUp) (*mtproto.Auth_Authorization, error) {
+	client := mtproto.NewRPCAuthorizationClient(m.cli.Conn())
+	return client.AuthFirebasePnvSignUp(ctx, in)
 }
 
 // AccountSendVerifyEmailCode
